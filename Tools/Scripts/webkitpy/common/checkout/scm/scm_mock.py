@@ -38,13 +38,11 @@ class MockSCM(object):
         self._filesystem = filesystem or MockFileSystem()
         self._executive = executive or MockExecutive()
 
-    def add(self, destination_path, return_exit_code=False):
-        self.add_list([destination_path], return_exit_code)
+    def add(self, destination_path):
+        self.add_list([destination_path])
 
-    def add_list(self, destination_paths, return_exit_code=False):
+    def add_list(self, destination_paths):
         self.added_paths.update(set(destination_paths))
-        if return_exit_code:
-            return 0
 
     def has_working_directory_changes(self):
         return False

@@ -32,6 +32,7 @@ import os.path
 import BaseHTTPServer
 
 from webkitpy.common.host import Host  # FIXME: This should not be needed!
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
@@ -114,13 +115,13 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
         destination_path = filesystem.join(
             target_expectations_directory, destination_file)
         filesystem.copyfile(source_path, destination_path)
-        exit_code = scm.add(destination_path, return_exit_code=True)
-        if exit_code:
-            log('    Could not update %s in SCM, exit code %d' %
-                (destination_file, exit_code))
-            return False
-        else:
+        try:
+            scm.add(destination_path)
             log('    Updated %s' % destination_file)
+        except ScriptError, error:
+            log('    Could not update %s in SCM, exit code %d' %
+                (destination_file, error.exit_code))
+            return False
 
     return True
 
@@ -150,13 +151,13 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
         source_path = filesystem.join(source_directory, file_name)
         destination_path = filesystem.join(destination_directory, file_name)
         filesystem.copyfile(source_path, destination_path)
-        exit_code = test_config.scm.add(destination_path, return_exit_code=True)
-        if exit_code:
-            log('    Could not update %s in SCM, exit code %d' %
-                (file_name, exit_code))
-            return False
-        else:
+        try:
+            test_config.scm.add(destination_path)
             log('    Moved %s' % file_name)
+        except ScriptError, error:
+            log('    Could not update %s in SCM, exit code %d' %
+                (file_name, error.exit_code))
+            return False
 
     return True
 
