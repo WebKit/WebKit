@@ -118,7 +118,7 @@ void wkSetHTTPPipeliningPriority(CFURLRequestRef, int priority);
 
 void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void wkSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
+CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 
 WKCFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef protectionSpace);
 

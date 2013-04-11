@@ -1,3 +1,10 @@
+2013-04-08  Roger Fong  <roger_fong@apple.com>
+
+        Build fix.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2013-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/10416316> [Mac] WebSocket doesn't work with authenticating proxies
