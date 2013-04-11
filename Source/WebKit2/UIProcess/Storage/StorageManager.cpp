@@ -212,14 +212,14 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 }
 
-void StorageManager::createStorageArea(CoreIPC::Connection* connection, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
+void StorageManager::createStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
-    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageAreaIDPair(connection, storageAreaID);
+    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageAreaIDPair)));
+    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::AddResult result = m_storageAreas.add(connectionAndStorageAreaIDPair, 0);
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::AddResult result = m_storageAreas.add(connectionAndStorageMapIDPair, 0);
 
     // FIXME: This should be a message check.
     ASSERT(result.isNewEntry);
@@ -237,26 +237,26 @@ void StorageManager::createStorageArea(CoreIPC::Connection* connection, uint64_t
     ASSERT(connection == sessionStorageNamespace->allowedConnection());
 
     RefPtr<StorageArea> storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
-    storageArea->addListener(connection, storageAreaID);
+    storageArea->addListener(connection, storageMapID);
 
     result.iterator->value = storageArea.release();
 }
 
-void StorageManager::destroyStorageArea(CoreIPC::Connection* connection, uint64_t storageAreaID)
+void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID)
 {
-    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageAreaIDPair(connection, storageAreaID);
+    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageAreaIDPair)));
+    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::iterator it = m_storageAreas.find(connectionAndStorageAreaIDPair);
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::iterator it = m_storageAreas.find(connectionAndStorageMapIDPair);
 
     // FIXME: This should be a message check.
     ASSERT(it != m_storageAreas.end());
 
-    it->value->removeListener(connection, storageAreaID);
+    it->value->removeListener(connection, storageMapID);
 
-    m_storageAreas.remove(connectionAndStorageAreaIDPair);
+    m_storageAreas.remove(connectionAndStorageMapIDPair);
 }
 
 void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, String>&)
@@ -264,16 +264,16 @@ void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, S
     // FIXME: Implement this.
 }
 
-void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageAreaID, const String& key, const String& value, const String& urlString)
+void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, const String& key, const String& value, const String& urlString)
 {
-    StorageArea* storageArea = findStorageArea(connection, storageAreaID);
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
 
     // FIXME: This should be a message check.
     ASSERT(storageArea);
 
     bool quotaError;
-    storageArea->setItem(connection, storageAreaID, key, value, urlString, quotaError);
-    connection->send(Messages::StorageAreaMap::DidSetItem(key, quotaError), storageAreaID);
+    storageArea->setItem(connection, storageMapID, key, value, urlString, quotaError);
+    connection->send(Messages::StorageAreaMap::DidSetItem(key, quotaError), storageMapID);
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

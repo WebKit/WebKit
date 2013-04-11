@@ -59,9 +59,9 @@ private:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder) OVERRIDE;
 
     // Message handlers.
-    void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
-    void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
-    void getValues(CoreIPC::Connection*, uint64_t storageAreaID, HashMap<String, String>& values);
+    void createStorageMap(CoreIPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void destroyStorageMap(CoreIPC::Connection*, uint64_t storageMapID);
+    void getValues(CoreIPC::Connection*, uint64_t storageMapID, HashMap<String, String>& values);
     void setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value, const String& urlString);
 
     void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);

@@ -59,13 +59,13 @@ StorageAreaImpl::StorageAreaImpl(StorageNamespaceImpl* StorageNamespaceImpl, Pas
     , m_storageAreaID(generateStorageAreaID())
     , m_securityOrigin(securityOrigin)
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageMap(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
     WebProcess::shared().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID, this);
 }
 
 StorageAreaImpl::~StorageAreaImpl()
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageMap(m_storageAreaID), 0);
     WebProcess::shared().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID);
 }
 
