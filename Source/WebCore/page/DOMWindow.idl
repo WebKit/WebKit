@@ -791,6 +791,7 @@
 
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
     attribute MutationObserverConstructor MutationObserver;
+    attribute MutationRecordConstructor MutationRecord;
 
     [Conditional=MEDIA_SOURCE] attribute MediaSourceConstructor WebKitMediaSource;
     [Conditional=MEDIA_SOURCE] attribute SourceBufferConstructor WebKitSourceBuffer;
