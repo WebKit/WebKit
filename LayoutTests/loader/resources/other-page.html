@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script>
+    function registerListeners() {
+        // Notify opener.
+        opener.postMessage('other-page', '*');
+
+        // Our opener will tell us to perform various loads.
+        window.addEventListener('message', function(event) {
+
+            // Navigate first resource.
+            if (event.data === 'navigate-first-page') {
+                window.location = 'first-page.html';
+                return;
+            }
+
+            // Navigate back.
+            if (event.data === 'navigate-back') {
+                window.history.back();
+                return;
+            }
+
+        }, false);
+    }
+    </script>
+</head>
+<body onload="registerListeners();">
+</body>
+</html>
