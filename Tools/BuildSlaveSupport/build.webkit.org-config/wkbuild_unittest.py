@@ -20,8 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest2 as unittest
-
+import unittest
 import wkbuild
 
 
@@ -36,8 +35,6 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/canvas/philip/tests/size.attributes.parse.exp-expected.txt", "LayoutTests/canvas/philip/tests/size.attributes.parse.exp.html"], ["*"]),
-        (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
-        (["LayoutTests/platform/chromium-win/fast/compact/001-expected.txt"], ["chromium-win"]),
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
         (["LayoutTests/platform/mac-lion/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-leopard", "mac-snowleopard"]),
@@ -47,12 +44,11 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
         (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
-        (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
-        (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
+        (["Source/WebCore/mac/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/WebCore/win/foo"], ["win"]),
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
         (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
-        (["Source/WebCore/rendering/RenderThemeChromiumDefault.h"], ["chromium-linux"]),
         (["Source/WebCore/rendering/RenderThemeWinCE.h"], []),
         (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]

@@ -55,28 +55,24 @@ def _should_file_trigger_build(target_platform, file):
         ("wx", []),
 
         # Directories that should trigger builds on only some bots.
-        ("Source/WebCore/image-decoders", ["chromium"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
         ("cairo", ["gtk", "wincairo"]),
-        ("cf", ["chromium-mac", "mac", "qt", "win"]),
-        ("chromium", ["chromium"]),
-        ("cocoa", ["chromium-mac", "mac"]),
+        ("cf", ["mac", "qt", "win"]),
+        ("cocoa", ["mac"]),
         ("curl", ["gtk", "wincairo"]),
         ("gobject", ["gtk"]),
-        ("gpu", ["chromium", "mac"]),
+        ("gpu", ["mac"]),
         ("gstreamer", ["gtk"]),
         ("gtk", ["gtk"]),
-        ("mac", ["chromium-mac", "mac"]),
+        ("mac", ["mac"]),
         ("mac-leopard", ["mac-leopard"]),
         ("mac-lion", ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]),
         ("mac-snowleopard", ["mac-leopard", "mac-snowleopard"]),
         ("mac-wk2", ["mac-lion", "mac-snowleopard", "mac-mountainlion", "win"]),
         ("objc", ["mac"]),
         ("qt", ["qt"]),
-        ("skia", ["chromium"]),
         ("soup", ["gtk"]),
-        ("v8", ["chromium"]),
-        ("win", ["chromium-win", "win"]),
+        ("win", ["win"]),
     ]
     patterns = [
         # Patterns that shouldn't trigger builds on any bots.
@@ -92,11 +88,9 @@ def _should_file_trigger_build(target_platform, file):
 
         # Patterns that should trigger builds on only some bots.
         (r"(?:^|/)GNUmakefile\.am$", ["gtk"]),
-        (r"/\w+Chromium\w*\.(?:cpp|h|mm)$", ["chromium"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
         (r"\.(?:vcproj|vsprops|sln|vcxproj|props|filters)$", ["win"]),
         (r"\.exp(?:\.in)?$", ["mac"]),
-        (r"\.gypi?", ["chromium"]),
         (r"\.order$", ["mac"]),
         (r"\.pr[io]$", ["qt"]),
         (r"\.(?:vcproj|vcxproj)/", ["win"]),

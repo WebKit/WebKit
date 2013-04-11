@@ -1,3 +1,15 @@
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove code for Chromium from wkbuild.py
+        https://bugs.webkit.org/show_bug.cgi?id=114423
+
+        Reviewed by Benjamin Poulain.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        (ShouldBuildTest):
+
 2013-04-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, update my IRC nickname.
