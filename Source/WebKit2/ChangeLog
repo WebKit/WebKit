@@ -1,3 +1,40 @@
+2013-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Add support for clearing storage areas
+        https://bugs.webkit.org/show_bug.cgi?id=114479
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        Store the quota size so we can recreate the underlying StorageMap when clearing.
+        
+        (WebKit::StorageManager::StorageArea::clear):
+        Create a new storage map and dispatch events.
+
+        (WebKit::StorageManager::clear):
+        Find the right storage area and call clear.
+
+        * UIProcess/Storage/StorageManager.messages.in:
+        Add Clear message.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::clear):
+        Call the storage map.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::clear):
+        Reset the cached values and send a clear message.
+
+        (WebKit::StorageAreaMap::resetValues):
+        New helper function.
+
+        (WebKit::StorageAreaMap::didClear):
+        New stub.
+
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        Add DidClear message.
+
 2013-04-11  Beth Dakin  <bdakin@apple.com>
 
         WebKit should set the header and footer layers' contentsScale when the device 

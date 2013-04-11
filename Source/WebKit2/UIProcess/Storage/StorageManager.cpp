@@ -48,6 +48,7 @@ public:
 
     void setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
     void removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
+    void clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
 
     const HashMap<String, String>& items() const { return m_storageMap->items(); }
 
@@ -56,6 +57,7 @@ private:
 
     void dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
+    unsigned m_quotaInBytes;
     RefPtr<StorageMap> m_storageMap;
     HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t> > m_eventListeners;
 };
@@ -66,7 +68,8 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(unsi
 }
 
 StorageManager::StorageArea::StorageArea(unsigned quotaInBytes)
-    : m_storageMap(StorageMap::create(quotaInBytes))
+    : m_quotaInBytes(quotaInBytes)
+    , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
 }
 
@@ -107,6 +110,16 @@ void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnecti
         return;
 
     dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
+}
+
+void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
+{
+    if (!m_storageMap->length())
+        return;
+
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+
+    dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
 }
 
 void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
@@ -301,6 +314,17 @@ void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storag
 
     storageArea->removeItem(connection, sourceStorageAreaID, key, urlString);
     connection->send(Messages::StorageAreaMap::DidRemoveItem(key), storageMapID);
+}
+
+void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& urlString)
+{
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
+
+    // FIXME: This should be a message check.
+    ASSERT(storageArea);
+
+    storageArea->clear(connection, sourceStorageAreaID, urlString);
+    connection->send(Messages::StorageAreaMap::DidClear(), storageMapID);
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

@@ -141,11 +141,18 @@ void StorageAreaImpl::removeItem(const String& key, ExceptionCode& ec, Frame* so
     m_storageAreaMap->removeItem(sourceFrame, this, key);
 }
 
-void StorageAreaImpl::clear(ExceptionCode&, Frame* sourceFrame)
+void StorageAreaImpl::clear(ExceptionCode& ec, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(sourceFrame);
+    ec = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (disabledByPrivateBrowsingInFrame(sourceFrame))
+        return;
+
+    m_storageAreaMap->clear(sourceFrame, this);
 }
 
 bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
