@@ -2447,6 +2447,9 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
 static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObject* o, LineMidpointState& lineMidpointState)
 {
     RenderObject* next = bidiNextSkippingEmptyInlines(block, o);
+    while (next && next->isFloatingOrOutOfFlowPositioned())
+        next = bidiNextSkippingEmptyInlines(block, next);
+
     if (next && !next->isBR() && next->isText() && toRenderText(next)->textLength() > 0) {
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characterAt(0);
