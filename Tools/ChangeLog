@@ -1,3 +1,15 @@
+2013-04-10  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148158.
+        http://trac.webkit.org/changeset/148158
+        https://bugs.webkit.org/show_bug.cgi?id=114405
+
+        We need to migrate status data (Requested by rniwa on
+        #webkit).
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer):
+
 2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Mass remove all the empty directories
