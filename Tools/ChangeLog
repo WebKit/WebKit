@@ -1,3 +1,15 @@
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leaks builder should not be triggered upon new commits
+        https://bugs.webkit.org/show_bug.cgi?id=114475
+
+        Reviewed by Jessie Berlin.
+
+        Don't trigger them on new checkins. Wait for Mountain Lion (Build), which already triggers
+        the leak builder when builds are done.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-04-11  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Windows build failure after r136056

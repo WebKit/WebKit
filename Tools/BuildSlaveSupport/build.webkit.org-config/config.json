@@ -276,7 +276,7 @@
                       "builderNames": ["Apple Lion Release (Build)", "Apple Lion Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mountainlion", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion (Leaks)"]
+                      "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
