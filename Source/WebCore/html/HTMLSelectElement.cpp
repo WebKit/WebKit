@@ -52,6 +52,7 @@
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
+#include "Settings.h"
 #include "SpatialNavigation.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/Unicode.h>
@@ -1120,6 +1121,14 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         bool handled = true;
         const Vector<HTMLElement*>& listItems = this->listItems();
         int listIndex = optionToListIndex(selectedIndex());
+
+        // When using caret browsing, we want to be able to move the focus
+        // out of the select element when user hits a left or right arrow key.
+        const Frame* frame = document()->frame();
+        if (frame && frame->settings() && frame->settings()->caretBrowsingEnabled()) {
+            if (keyIdentifier == "Left" || keyIdentifier == "Right")
+                return;
+        }
 
         if (keyIdentifier == "Down" || keyIdentifier == "Right")
             listIndex = nextValidIndex(listIndex, SkipForwards, 1);

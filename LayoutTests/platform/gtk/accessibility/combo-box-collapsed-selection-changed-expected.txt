@@ -1,5 +1,3 @@
-Accessibility object emitted "focus-event = 1" / Name: "foo" / Role: 11
-Accessibility object emitted "state-change:focused = 1" / Name: "foo" / Role: 11
 Accessibility object emitted "focus-event = 1" / Name: "bar" / Role: 11
 Accessibility object emitted "state-change:focused = 1" / Name: "bar" / Role: 11
 Accessibility object emitted "state-change:selected = 1" / Name: "bar" / Role: 34

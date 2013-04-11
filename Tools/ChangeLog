@@ -1,3 +1,16 @@
+2013-04-11  Brian Holt  <brian.holt@samsung.com>
+
+        [Gtk] Combo boxes should be arrow-out-of-able similar to list boxes when caret-browsing is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=76796
+
+        Reviewed by Chris Fleizach.
+
+        Make the Gtk window for the DRT a toplevel so that it gets the
+        focus from the window manager when the test starts.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main):
+
 2013-04-04  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Use CSS4 image-rendering to determing image scaling quality

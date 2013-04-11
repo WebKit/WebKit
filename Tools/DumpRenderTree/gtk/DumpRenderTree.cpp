@@ -1484,7 +1484,7 @@ int main(int argc, char* argv[])
     initializeGlobalsFromCommandLineOptions(argc, argv);
     initializeFonts();
 
-    window = gtk_window_new(GTK_WINDOW_POPUP);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #ifdef GTK_API_VERSION_2
     container = gtk_hbox_new(TRUE, 0);
 #else
