@@ -1,3 +1,9 @@
+2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        * GNUmakefile.am: Removing extra whitespace that's producing warnings.
+
 2013-04-10  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] Remove unused return_exit_code argument and returned values from SCM.{add,add_list}
