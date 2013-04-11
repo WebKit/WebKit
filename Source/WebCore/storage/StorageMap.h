@@ -49,6 +49,7 @@ public:
     bool contains(const String& key) const;
 
     void importItems(const HashMap<String, String>&);
+    const HashMap<String, String>& items() const { return m_map; }
 
     unsigned quota() const { return m_quotaSize; }
 

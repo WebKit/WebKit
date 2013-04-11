@@ -47,6 +47,7 @@ public:
     void removeListener(CoreIPC::Connection*, uint64_t storageMapID);
 
     void setItem(CoreIPC::Connection*, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
+    const HashMap<String, String>& items() const { return m_storageMap->items(); }
 
 private:
     explicit StorageArea(unsigned quotaInBytes);
@@ -256,9 +257,14 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
-void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, String>&)
+void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storageMapID, HashMap<String, String>& values)
 {
-    // FIXME: Implement this.
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
+
+    // FIXME: This should be a message check.
+    ASSERT(storageArea);
+
+    values = storageArea->items();
 }
 
 void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString)
