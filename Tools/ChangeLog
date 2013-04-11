@@ -1,5 +1,13 @@
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix roll-chromium-deps and hi.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi.execute):
+        (RollChromiumDEPS.execute):
+
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove webkitpy code to roll Chromium DEPS
         https://bugs.webkit.org/show_bug.cgi?id=114415
 

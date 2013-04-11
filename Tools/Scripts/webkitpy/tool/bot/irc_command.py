@@ -114,6 +114,8 @@ class Hi(IRCCommand):
     help_string = "Retrieves a random quip from Bugzilla."
 
     def execute(self, nick, args, tool, sheriff):
+        if len(args) and args[0] == 'webkitbot!':
+            return "%s: hi %s!" % (nick, nick)
         quips = tool.bugs.quips()
         quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
         return random.choice(quips)
@@ -133,11 +135,9 @@ class RollChromiumDEPS(IRCCommand):
     help_string = "Rolls WebKit's Chromium DEPS to the given revision???"
 
     def execute(self, nick, args, tool, sheriff):
-        revision = self._parse_args(args)
-        if not revision:
+        if not len(args):
             return self.usage(nick)
-
-        tool.irc().post("%s: Thank You." % nick)
+        return "%s: Thank You." % nick
 
 
 class Rollout(IRCCommand):
