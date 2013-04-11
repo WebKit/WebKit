@@ -66,6 +66,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const { return m_context; }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
     void clearOwner() { m_owner = 0; }
     Node* owner() const;
@@ -82,6 +83,7 @@ private:
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
     void scheduleAddTrackEvent(PassRefPtr<TextTrack>);
+    void scheduleRemoveTrackEvent(PassRefPtr<TextTrack>);
     void asyncEventTimerFired(Timer<TextTrackList>*);
 
     void invalidateTrackIndexesAfterTrack(TextTrack*);

@@ -36,6 +36,7 @@
     TextTrack item(in unsigned long index);
 
     attribute EventListener onaddtrack;
+    attribute EventListener onremovetrack;
 
     void addEventListener(in DOMString type,
                           in EventListener listener,

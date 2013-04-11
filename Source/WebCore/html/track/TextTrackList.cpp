@@ -208,7 +208,9 @@ void TextTrackList::remove(TextTrack* track)
     ASSERT(!track->mediaElement() || track->mediaElement() == m_owner);
     track->setMediaElement(0);
 
+    RefPtr<TextTrack> trackRef = (*tracks)[index];
     tracks->remove(index);
+    scheduleRemoveTrackEvent(trackRef.release());
 }
 
 bool TextTrackList::contains(TextTrack* track) const
@@ -248,6 +250,29 @@ void TextTrackList::scheduleAddTrackEvent(PassRefPtr<TextTrack> track)
     initializer.cancelable = false;
 
     m_pendingEvents.append(TrackEvent::create(eventNames().addtrackEvent, initializer));
+    if (!m_pendingEventTimer.isActive())
+        m_pendingEventTimer.startOneShot(0);
+}
+
+void TextTrackList::scheduleRemoveTrackEvent(PassRefPtr<TextTrack> track)
+{
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // When a track element's parent element changes and the old parent was a
+    // media element, then the user agent must remove the track element's
+    // corresponding text track from the media element's list of text tracks,
+    // and then queue a task to fire a trusted event with the name removetrack,
+    // that does not bubble and is not cancelable, and that uses the TrackEvent
+    // interface, with the track attribute initialized to the text track's
+    // TextTrack object, at the media element's textTracks attribute's
+    // TextTrackList object.
+
+    RefPtr<TrackBase> trackRef = track;
+    TrackEventInit initializer;
+    initializer.track = trackRef;
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    m_pendingEvents.append(TrackEvent::create(eventNames().removetrackEvent, initializer));
     if (!m_pendingEventTimer.isActive())
         m_pendingEventTimer.startOneShot(0);
 }
