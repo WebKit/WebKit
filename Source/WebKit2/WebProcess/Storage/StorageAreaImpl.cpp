@@ -26,17 +26,12 @@
 #include "config.h"
 #include "StorageAreaImpl.h"
 
-#include "SecurityOriginData.h"
-#include "StorageAreaMapMessages.h"
-#include "StorageManagerMessages.h"
-#include "StorageNamespaceImpl.h"
-#include "WebProcess.h"
+#include "StorageAreaMap.h"
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>
-#include <WebCore/SecurityOrigin.h>
-#include <WebCore/StorageMap.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -48,25 +43,24 @@ static uint64_t generateStorageAreaID()
     return ++storageAreaID;
 }
 
-PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
+PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(PassRefPtr<StorageAreaMap> storageAreaMap)
 {
-    return adoptRef(new StorageAreaImpl(StorageNamespaceImpl, securityOrigin));
+    return adoptRef(new StorageAreaImpl(storageAreaMap));
 }
 
-StorageAreaImpl::StorageAreaImpl(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
-    : m_storageNamespaceID(StorageNamespaceImpl->storageNamespaceID())
-    , m_quotaInBytes(StorageNamespaceImpl->quotaInBytes())
-    , m_storageAreaID(generateStorageAreaID())
-    , m_securityOrigin(securityOrigin)
+StorageAreaImpl::StorageAreaImpl(PassRefPtr<StorageAreaMap> storageAreaMap)
+    : m_storageAreaID(generateStorageAreaID())
+    , m_storageAreaMap(storageAreaMap)
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageMap(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
-    WebProcess::shared().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID, this);
 }
 
 StorageAreaImpl::~StorageAreaImpl()
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageMap(m_storageAreaID), 0);
-    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID);
+}
+
+StorageType StorageAreaImpl::storageType() const
+{
+    return m_storageAreaMap->storageType();
 }
 
 unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* sourceFrame)
@@ -80,8 +74,7 @@ unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* sourceFrame)
     if (disabledByPrivateBrowsingInFrame(sourceFrame))
         return 0;
 
-    loadValuesIfNeeded();
-    return m_storageMap->length();
+    return m_storageAreaMap->length();
 }
 
 String StorageAreaImpl::key(unsigned index, ExceptionCode& ec, Frame* sourceFrame)
@@ -91,12 +84,11 @@ String StorageAreaImpl::key(unsigned index, ExceptionCode& ec, Frame* sourceFram
         ec = SECURITY_ERR;
         return String();
     }
+
     if (disabledByPrivateBrowsingInFrame(sourceFrame))
         return String();
 
-    loadValuesIfNeeded();
-
-    return m_storageMap->key(index);
+    return m_storageAreaMap->key(index);
 }
 
 String StorageAreaImpl::getItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
@@ -106,11 +98,11 @@ String StorageAreaImpl::getItem(const String& key, ExceptionCode& ec, Frame* sou
         ec = SECURITY_ERR;
         return String();
     }
+
     if (disabledByPrivateBrowsingInFrame(sourceFrame))
         return String();
 
-    loadValuesIfNeeded();
-    return m_storageMap->getItem(key);
+    return m_storageAreaMap->item(key);
 }
 
 void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame)
@@ -128,24 +120,11 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
         return;
     }
 
-    loadValuesIfNeeded();
-
-    ASSERT(m_storageMap->hasOneRef());
-    String oldValue;
     bool quotaException;
-    m_storageMap->setItem(key, value, oldValue, quotaException);
+    m_storageAreaMap->setItem(this, key, value, quotaException);
 
-    if (quotaException) {
+    if (quotaException)
         ec = QUOTA_EXCEEDED_ERR;
-        return;
-    }
-
-    if (oldValue == value)
-        return;
-
-    m_pendingValueChanges.add(key);
-
-    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageAreaID, key, value, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaImpl::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
@@ -173,9 +152,7 @@ bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* sour
     if (disabledByPrivateBrowsingInFrame(sourceFrame))
         return false;
 
-    loadValuesIfNeeded();
-
-    return m_storageMap->contains(key);
+    return m_storageAreaMap->contains(key);
 }
 
 bool StorageAreaImpl::canAccessStorage(Frame* frame)
@@ -204,43 +181,6 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     ASSERT_NOT_REACHED();
 }
 
-
-void StorageAreaImpl::didSetItem(const String& key, bool quotaError)
-{
-    ASSERT(m_pendingValueChanges.contains(key));
-
-    m_pendingValueChanges.remove(key);
-
-    if (quotaError)
-        resetValues();
-}
-
-void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
-{
-    if (!shouldApplyChangesForKey(key))
-        return;
-
-    ASSERT(!key.isNull());
-    ASSERT(!newValue.isNull());
-
-    ASSERT(m_storageMap->hasOneRef());
-    m_storageMap->setItemIgnoringQuota(key, newValue);
-
-    if (storageType() == SessionStorage)
-        dispatchSessionStorageEvent(key, oldValue, newValue, urlString);
-    else
-        dispatchLocalStorageEvent(key, oldValue, newValue, urlString);
-}
-
-StorageType StorageAreaImpl::storageType() const
-{
-    // A zero storage namespace ID is used for local storage.
-    if (!m_storageNamespaceID)
-        return LocalStorage;
-
-    return SessionStorage;
-}
-
 bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const
 {
     if (!sourceFrame->page()->settings()->privateBrowsingEnabled())
@@ -250,63 +190,6 @@ bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame)
         return true;
 
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
-}
-
-bool StorageAreaImpl::shouldApplyChangesForKey(const String& key) const
-{
-    // We have not yet loaded anything from this storage map.
-    if (!m_storageMap)
-        return false;
-
-    // Check if this storage area is currently waiting for the storage manager to update the given key.
-    // If that is the case, we don't want to apply any changes made by other storage areas, since
-    // our change was made last.
-    if (m_pendingValueChanges.contains(key))
-        return false;
-
-    return true;
-}
-
-void StorageAreaImpl::loadValuesIfNeeded()
-{
-    if (m_storageMap)
-        return;
-
-    HashMap<String, String> values;
-    // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
-    // (This flag does not yet exist).
-    WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageAreaID), Messages::StorageManager::GetValues::Reply(values), 0);
-
-    m_storageMap = StorageMap::create(m_quotaInBytes);
-    m_storageMap->importItems(values);
-}
-
-void StorageAreaImpl::resetValues()
-{
-    m_storageMap = nullptr;
-    m_pendingValueChanges.clear();
-}
-
-void StorageAreaImpl::dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
-{
-    ASSERT(storageType() == SessionStorage);
-
-    // FIXME: Implement.
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(oldValue);
-    UNUSED_PARAM(newValue);
-    UNUSED_PARAM(urlString);
-}
-
-void StorageAreaImpl::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
-{
-    ASSERT(storageType() == LocalStorage);
-
-    // FIXME: Implement.
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(oldValue);
-    UNUSED_PARAM(newValue);
-    UNUSED_PARAM(urlString);
 }
 
 } // namespace WebKit

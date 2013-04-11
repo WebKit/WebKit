@@ -26,14 +26,29 @@
 #include "config.h"
 #include "StorageAreaMap.h"
 
+#include "StorageNamespaceImpl.h"
+#include <WebCore/StorageMap.h>
+
+using namespace WebCore;
+
 namespace WebKit {
 
-PassRefPtr<StorageAreaMap> StorageAreaMap::create()
+static uint64_t generateStorageMapID()
 {
-    return adoptRef(new StorageAreaMap);
+    static uint64_t storageMapID;
+    return ++storageMapID;
 }
 
-StorageAreaMap::StorageAreaMap()
+PassRefPtr<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl* storageNamespace, PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+{
+    return adoptRef(new StorageAreaMap(storageNamespace, securityOrigin));
+}
+
+StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+    : m_storageMapID(generateStorageMapID())
+    , m_storageNamespaceID(storageNamespace->storageNamespaceID())
+    , m_quotaInBytes(storageNamespace->quotaInBytes())
+    , m_securityOrigin(securityOrigin)
 {
 }
 
@@ -41,12 +56,52 @@ StorageAreaMap::~StorageAreaMap()
 {
 }
 
+StorageType StorageAreaMap::storageType() const
+{
+    // A zero storage namespace ID is used for local storage.
+    if (!m_storageNamespaceID)
+        return LocalStorage;
+
+    return SessionStorage;
+}
+
+unsigned StorageAreaMap::length()
+{
+    // FIXME: Implement.
+    return 0;
+}
+
+String StorageAreaMap::key(unsigned index)
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String StorageAreaMap::item(const String& key)
+{
+    // FIXME: Implement.
+    return String();
+}
+
+void StorageAreaMap::setItem(StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
+{
+    // FIXME: Implement.
+}
+
+bool StorageAreaMap::contains(const String& key)
+{
+    // FIXME: Implement.
+    return false;
+}
+
 void StorageAreaMap::didSetItem(const String& key, bool quotaError)
 {
+    // FIXME: Implement.
 }
 
 void StorageAreaMap::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

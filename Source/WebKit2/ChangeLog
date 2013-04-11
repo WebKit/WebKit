@@ -1,5 +1,45 @@
 2013-04-10  Anders Carlsson  <andersca@apple.com>
 
+        Make StorageAreaImpl a wrapper around StorageAreaMap
+        https://bugs.webkit.org/show_bug.cgi?id=114404
+
+        Reviewed by Oliver Hunt.
+
+        Prepare for moving all the code that deals with local storage values to StorageAreaMap,
+        and make StorageAreaImpl a dumb wrapper that simply calls through to the map.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::create):
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::~StorageAreaImpl):
+        (WebKit::StorageAreaImpl::storageType):
+        (WebKit::StorageAreaImpl::length):
+        (WebKit::StorageAreaImpl::key):
+        (WebKit::StorageAreaImpl::getItem):
+        (WebKit::StorageAreaImpl::setItem):
+        (WebKit::StorageAreaImpl::contains):
+        * WebProcess/Storage/StorageAreaImpl.h:
+        (WebKit::StorageAreaImpl::storageAreaID):
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::generateStorageMapID):
+        (WebKit::StorageAreaMap::create):
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::storageType):
+        (WebKit::StorageAreaMap::length):
+        (WebKit::StorageAreaMap::key):
+        (WebKit::StorageAreaMap::item):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::contains):
+        (WebKit::StorageAreaMap::didSetItem):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        * WebProcess/Storage/StorageAreaMap.h:
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::storageArea):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        (StorageNamespaceImpl):
+
+2013-04-10  Anders Carlsson  <andersca@apple.com>
+
         Rename StorageManager messages to refer to the StorageMap instead of the StorageArea
         https://bugs.webkit.org/show_bug.cgi?id=114401
 

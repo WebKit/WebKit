@@ -27,25 +27,53 @@
 #define StorageAreaMap_h
 
 #include "MessageReceiver.h"
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+namespace WebCore {
+class SecurityOrigin;
+class StorageMap;
+}
+
 namespace WebKit {
+
+class StorageAreaImpl;
+class StorageNamespaceImpl;
 
 class StorageAreaMap : public RefCounted<StorageAreaMap>, private CoreIPC::MessageReceiver {
 public:
-    static PassRefPtr<StorageAreaMap> create();
+    static PassRefPtr<StorageAreaMap> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
     ~StorageAreaMap();
 
+    WebCore::StorageType storageType() const;
+
+    unsigned length();
+    String key(unsigned index);
+    String item(const String& key);
+    void setItem(StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
+    bool contains(const String& key);
+
 private:
-    StorageAreaMap();
+    StorageAreaMap(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didSetItem(const String& key, bool quotaError);
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
+
+    void loadValuesIfNeeded();
+
+    uint64_t m_storageMapID;
+    uint64_t m_storageNamespaceID;
+    unsigned m_quotaInBytes;
+    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
+
+
+    RefPtr<WebCore::StorageMap> m_storageMap;
 };
 
 } // namespace WebKit

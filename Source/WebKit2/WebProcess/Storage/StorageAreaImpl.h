@@ -31,21 +31,20 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 
-namespace WebCore {
-class StorageMap;
-}
-
 namespace WebKit {
 
-class StorageNamespaceImpl;
+class StorageAreaMap;
 
-class StorageAreaImpl : public WebCore::StorageArea, private CoreIPC::MessageReceiver {
+class StorageAreaImpl : public WebCore::StorageArea {
 public:
-    static PassRefPtr<StorageAreaImpl> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
+    static PassRefPtr<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
     virtual ~StorageAreaImpl();
 
+    uint64_t storageAreaID() const { return m_storageAreaID; }
+    WebCore::StorageType storageType() const;
+
 private:
-    StorageAreaImpl(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
+    StorageAreaImpl(PassRefPtr<StorageAreaMap>);
 
     // WebCore::StorageArea.
     virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
@@ -61,30 +60,10 @@ private:
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-
-    void didSetItem(const String& key, bool quotaError);
-    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
-
-    WebCore::StorageType storageType() const;
     bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
 
-    bool shouldApplyChangesForKey(const String& key) const;
-    void loadValuesIfNeeded();
-    void resetValues();
-
-    void dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
-    void dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
-
-    uint64_t m_storageNamespaceID;
-    unsigned m_quotaInBytes;
     uint64_t m_storageAreaID;
-
-    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
-    RefPtr<WebCore::StorageMap> m_storageMap;
-
-    HashCountedSet<String> m_pendingValueChanges;
+    RefPtr<StorageAreaMap> m_storageAreaMap;
 };
 
 } // namespace WebKit
