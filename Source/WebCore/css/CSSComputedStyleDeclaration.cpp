@@ -2819,6 +2819,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #endif
 #if ENABLE(CSS_SHADERS)
         case CSSPropertyMix:
+        case CSSPropertyParameters:
 #endif
             break;
 

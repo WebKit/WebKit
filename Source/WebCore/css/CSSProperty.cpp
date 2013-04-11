@@ -681,6 +681,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #endif
 #if ENABLE(CSS_SHADERS)
     case CSSPropertyMix:
+    case CSSPropertyParameters:
 #endif
 #if ENABLE(SVG)
     case CSSPropertyClipPath:

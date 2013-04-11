@@ -256,6 +256,7 @@ public:
     bool parseFilterRuleMix();
     bool parseGeometry(CSSPropertyID, CSSParserValue*, bool);
     bool parseGridDimensions(CSSParserValueList*, RefPtr<CSSValueList>&); 
+    bool parseFilterRuleParameters();
     PassRefPtr<WebKitCSSShaderValue> parseFilterRuleSrcUriAndFormat(CSSParserValueList*);
 #endif
 #endif

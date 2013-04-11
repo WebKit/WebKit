@@ -133,6 +133,7 @@ min-height
 min-width
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
 mix
+parameters
 #endif
 opacity
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,

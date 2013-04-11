@@ -2363,6 +2363,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (!m_inFilterRule)
             return false;
         return parseFilterRuleMix();
+    case CSSPropertyParameters:
+        // The parameters property is just supported inside of an @filter rule.
+        if (!m_inFilterRule)
+            return false;
+        return parseFilterRuleParameters();
 #endif
 
     case CSSPropertyUnicodeRange:
@@ -8916,6 +8921,16 @@ bool CSSParser::parseGridDimensions(CSSParserValueList* args, RefPtr<CSSValueLis
     // Commit the second numeric value we found.
     gridValueList->append(createPrimitiveNumericValue(arg));
     args->next();
+    return true;
+}
+
+bool CSSParser::parseFilterRuleParameters()
+{
+    RefPtr<CSSValueList> paramsList = parseCustomFilterParameters(m_valueList.get());
+    if (!paramsList)
+        return false;
+
+    addProperty(CSSPropertyParameters, paramsList.release(), m_important);
     return true;
 }
 

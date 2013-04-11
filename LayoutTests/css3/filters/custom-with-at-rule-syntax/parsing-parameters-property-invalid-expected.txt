@@ -1,0 +1,237 @@
+Test parameters property parsing in the @-webkit-filter at-rule.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+========================================
+Number parameter tests.
+========================================
+
+Too many parameter values.
+parameters: n 1 2 3 4 5;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid parameter type.
+parameters: n 1.0 2.0 'text';
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No parameter definition.
+parameters: ;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No parameter definition with comma.
+parameters: ,;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No parameter definition before valid parameter defintion.
+parameters: , n 1;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No parameter value.
+parameters: n;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No parameter value with multiple parameters.
+parameters: n1, n2, n3;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
+Transform parameter tests.
+========================================
+
+One invalid transform function.
+parameters: t invalid-rotate(0deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Multiple invalid transform functions.
+parameters: t invalid-rotate(0deg) invalid-perspective(0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid transform function between valid ones.
+parameters: t rotate(0deg) invalid-rotate(0deg) perspective(0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Valid transform function between invalid ones.
+parameters: t invalid-rotate(0deg) perspective(0) invalid-translate(0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Valid transform function with trailing comma.
+parameters: t perspective(0),;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid transform with trailing comma.
+parameters: t invalid-rotate(0deg),;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Valid transform with invalid characters
+parameters: t rotate(0deg) *.-,;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
+Array parameter tests.
+========================================
+
+Empty array.
+parameters: a array();
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+One comma in array.
+parameters: a array(,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Multiple commas in array.
+parameters: a array(,,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Multiple commas with a value in array.
+parameters: a array(,,1,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+One comma followed by a negative value in array.
+parameters: a array(,-4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+One comma followed by a value in array.
+parameters: a array(,4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+One negative value followed by a comma in array.
+parameters: a array(-4,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+One value followed by a comma in array.
+parameters: a array(4,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Valid values followed by a comma in array.
+parameters: a array(1, 2, 3, 4,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Valid values followed by a letter in array.
+parameters: a array(1, 2, 3, 4, x);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Two commas as separator between values in array.
+parameters: a array(1, 2, , 4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Leading comma in array.
+parameters: a array(,1, 2, 3, 4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Semicolon separated values in array.
+parameters: a array(1; 2; 3; 4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Space separated values in array.
+parameters: a array(1 2 3 4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Space separated values with comma terminator in array.
+parameters: a array(1 2 3 4,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Space separated values with leading comma in array.
+parameters: a array(, 1 2 3 4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+NaN in array.
+parameters: a array(NaN);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+NaN between valid values in array.
+parameters: a array(1, 2, NaN, 3);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid value 'none' in array.
+parameters: a array(none);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid value unit 'px' in array.
+parameters: a array(1px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid value unit 'deg' in array.
+parameters: a array(1deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Invalid value unit 'px' in array after valid values.
+parameters: a array(1, 2, 3, 4px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
