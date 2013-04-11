@@ -30,9 +30,6 @@
 #include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/BitmapImage.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/IntPoint.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -138,18 +135,8 @@ void WebIconDatabaseProxy::setIconURLForPageURL(const String& iconURL, const Str
 
 void WebIconDatabaseProxy::setIconDataForIconURL(PassRefPtr<SharedBuffer> iconData, const String& iconURL)
 {
-    RefPtr<Image> image = BitmapImage::create();
-    ShareableBitmap::Handle handle;
-
-    if (image->setData(iconData, true) && !image->size().isEmpty()) {
-        RefPtr<ShareableBitmap> shareableBitmap = ShareableBitmap::createShareable(image->size(), ShareableBitmap::SupportsAlpha);
-        OwnPtr<GraphicsContext> bitmapContext = shareableBitmap->createGraphicsContext();
-        bitmapContext->drawImage(image.get(), ColorSpaceDeviceRGB, IntPoint());
-
-        shareableBitmap->createHandle(handle, SharedMemory::ReadOnly);
-    }
-
-    m_process->connection()->send(Messages::WebIconDatabase::SetIconBitmapForIconURL(handle, iconURL), 0);
+    CoreIPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData ? iconData->data() : 0), iconData ? iconData->size() : 0);
+    m_process->connection()->send(Messages::WebIconDatabase::SetIconDataForIconURL(data, iconURL), 0);
 }
 
 void WebIconDatabaseProxy::urlImportFinished()

@@ -24,7 +24,7 @@ messages -> WebIconDatabase {
     RetainIconForPageURL(WTF::String pageURL)
     ReleaseIconForPageURL(WTF::String pageURL)
     SetIconURLForPageURL(WTF::String iconURL, WTF::String pageURL)
-    SetIconBitmapForIconURL(WebKit::ShareableBitmap::Handle bitmapHandle, WTF::String iconURL)
+    SetIconDataForIconURL(CoreIPC::DataReference iconData, WTF::String iconURL)
     
     SynchronousIconDataForPageURL(WTF::String pageURL) -> (CoreIPC::DataReference iconData)
     SynchronousIconURLForPageURL(WTF::String pageURL) -> (WTF::String iconURL)

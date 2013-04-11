@@ -1,3 +1,26 @@
+2013-04-11  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148034, r148052, r148097, and
+        r148194.
+        http://trac.webkit.org/changeset/148034
+        http://trac.webkit.org/changeset/148052
+        http://trac.webkit.org/changeset/148097
+        http://trac.webkit.org/changeset/148194
+        https://bugs.webkit.org/show_bug.cgi?id=114463
+
+        broke mutiresolution favicons, among other things (Requested
+        by thorton on #webkit).
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setIconDataForIconURL):
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+        * UIProcess/WebIconDatabase.messages.in:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::setIconDataForIconURL):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::destroy):
+
 2013-04-11  Anders Carlsson  <andersca@apple.com>
 
         Implement StorageManager::getValues

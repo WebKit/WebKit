@@ -26,7 +26,6 @@
 #ifndef IconDatabaseBase_h
 #define IconDatabaseBase_h
 
-#include "Image.h"
 #include "ImageSource.h"
 #include "SharedBuffer.h"
 
@@ -173,7 +172,6 @@ public:
 
     virtual void setIconURLForPageURL(const String&, const String&) { }
     virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer>, const String&) { }
-    virtual void setIconBitmapForIconURL(PassRefPtr<Image>, const String&) { }
 
     // Synchronous calls used internally by WebCore.
     // Usage should be replaced by asynchronous calls.
