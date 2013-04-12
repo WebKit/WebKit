@@ -476,7 +476,7 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     return true;
 }
 
-void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCore::IntPoint& end)
+void SelectionHandler::setSelection(WebCore::IntPoint start, WebCore::IntPoint end)
 {
     m_selectionActive = true;
 
@@ -503,6 +503,17 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
 
     // At least one of the locations must be valid.
     ASSERT(startIsValid || m_lastUpdatedEndPointIsValid);
+
+    if (m_webPage->m_inputHandler->isInputMode() && !m_webPage->m_inputHandler->isMultilineInputMode()) {
+        WebCore::IntRect caret(startCaretViewportRect(m_webPage->frameOffset(focusedFrame)));
+        if (!caret.isEmpty()) {
+            int centerOfCaretY = caret.center().y();
+            if (startIsValid)
+                start.setY(centerOfCaretY);
+            if (m_lastUpdatedEndPointIsValid)
+                end.setY(centerOfCaretY);
+        }
+    }
 
     WebCore::IntPoint relativeStart = start;
     WebCore::IntPoint relativeEnd = end;
@@ -621,6 +632,21 @@ bool SelectionHandler::selectNodeIfFatFingersResultIsLink(FatFingersResult fatFi
         return true;
     }
     return false;
+}
+
+WebCore::IntRect SelectionHandler::startCaretViewportRect(const WebCore::IntPoint& frameOffset) const
+{
+    WebCore::IntRect caretRect;
+    Frame* frame = m_webPage->focusedOrMainFrame();
+    if (!frame)
+        return caretRect;
+
+    if (frame->selection()->selectionType() != VisibleSelection::NoSelection) {
+        caretRect = frame->selection()->selection().visibleStart().absoluteCaretBounds();
+        caretRect.moveBy(frameOffset);
+    }
+
+    return caretRect;
 }
 
 void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, SelectionExpansionType selectionExpansionType)
@@ -1274,14 +1300,12 @@ void SelectionHandler::caretPositionChanged(bool userTouchTriggered)
     // This function should only reach this point if input mode is active.
     ASSERT(m_webPage->m_inputHandler->isInputMode());
 
-    WebCore::IntPoint frameOffset(m_webPage->frameOffset(m_webPage->focusedOrMainFrame()));
     WebCore::IntRect clippingRectForContent(clippingRectForVisibleContent());
+    WebCore::IntPoint frameOffset(m_webPage->frameOffset(m_webPage->focusedOrMainFrame()));
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() == VisibleSelection::CaretSelection) {
-        caretLocation = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
-        caretLocation.move(frameOffset.x(), frameOffset.y());
-
-        // Clip against the containing frame and node boundaries.
-        caretLocation.intersect(clippingRectForContent);
+        caretLocation = startCaretViewportRect(frameOffset);
+        if (!caretLocation.isEmpty())
+            caretLocation.intersect(clippingRectForContent); // Clip against the containing frame and node boundaries.
     }
 
     m_caretActive = !caretLocation.isEmpty();
@@ -1294,7 +1318,7 @@ void SelectionHandler::caretPositionChanged(bool userTouchTriggered)
     WebCore::IntRect nodeBoundingBox = isSingleLineInput ? m_webPage->m_inputHandler->boundingBoxForInputField() : WebCore::IntRect();
 
     if (!nodeBoundingBox.isEmpty()) {
-        nodeBoundingBox.move(frameOffset.x(), frameOffset.y());
+        nodeBoundingBox.moveBy(frameOffset);
 
         // Clip against the containing frame and node boundaries.
         nodeBoundingBox.intersect(clippingRectForContent);

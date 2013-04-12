@@ -63,7 +63,7 @@ public:
 
     bool selectionContains(const WebCore::IntPoint&);
 
-    void setSelection(const WebCore::IntPoint& start, const WebCore::IntPoint& end);
+    void setSelection(WebCore::IntPoint start, WebCore::IntPoint end);
     void selectAtPoint(const WebCore::IntPoint&, SelectionExpansionType);
     void selectObject(const WebCore::IntPoint&, WebCore::TextGranularity);
     void selectObject(WebCore::TextGranularity);
@@ -106,6 +106,8 @@ private:
     BlackBerry::Platform::RequestedHandlePosition requestedSelectionHandlePosition(const WebCore::VisibleSelection&) const;
 
     bool selectNodeIfFatFingersResultIsLink(FatFingersResult);
+
+    WebCore::IntRect startCaretViewportRect(const WebCore::IntPoint& frameOffset) const;
 
     WebPagePrivate* m_webPage;
 

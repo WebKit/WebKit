@@ -1,3 +1,26 @@
+2013-04-12  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Enable selecting text in single line input field without selection point being actually on the targeted text vertically
+        https://bugs.webkit.org/show_bug.cgi?id=114515
+
+        Reviewed by Rob Buis.
+
+        PR #317924.
+        Internally reviewed by Mike Fenton.
+
+        It was still hard to select text in URL bar with an inverted selection handle.
+        We improve the issue by replacing the Y coordinate of selection point with Y
+        coordinate of start caret for single line input filed. Thus, the Y coordinate
+        is always valid regardless of the actual location of the selection handle.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (BlackBerry::WebKit::SelectionHandler::startCaretViewportRect):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Crash running layout tests
