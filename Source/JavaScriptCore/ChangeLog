@@ -1,3 +1,17 @@
+2013-04-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Block freeing thread should call Region::destroy instead of delete
+        https://bugs.webkit.org/show_bug.cgi?id=114544
+
+        Reviewed by Oliver Hunt.
+
+        Since Region doesn't have a virtual destructor, calling delete will not properly clean up all of 
+        the state of the Region. We should call destroy() instead.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::releaseFreeRegions):
+        (JSC::BlockAllocator::blockFreeingThreadMain):
+
 2013-04-11  Benjamin Poulain  <bpoulain@apple.com>
 
         Merge CharacterClassTable into CharacterClass

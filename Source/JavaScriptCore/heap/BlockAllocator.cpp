@@ -78,7 +78,7 @@ void BlockAllocator::releaseFreeRegions()
         if (!region)
             break;
 
-        delete region;
+        region->destroy();
     }
 }
 
@@ -150,7 +150,7 @@ void BlockAllocator::blockFreeingThreadMain()
             if (!region)
                 break;
             
-            delete region;
+            region->destroy();
         }
     }
 }
