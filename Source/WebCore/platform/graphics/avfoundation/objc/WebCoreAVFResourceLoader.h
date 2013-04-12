@@ -30,7 +30,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
