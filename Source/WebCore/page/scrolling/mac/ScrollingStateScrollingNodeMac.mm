@@ -29,8 +29,6 @@
 #include "GraphicsLayer.h"
 #include "ScrollingStateTree.h"
 
-#if ENABLE(THREADED_SCROLLING)
-
 namespace WebCore {
 
 PlatformLayer* ScrollingStateScrollingNode::counterScrollingPlatformLayer() const
@@ -53,5 +51,3 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(GraphicsLayer* graphi
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)
