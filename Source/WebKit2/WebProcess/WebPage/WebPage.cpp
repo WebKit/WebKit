@@ -370,6 +370,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // Page defaults to in-window, but setIsInWindow depends on it being a valid indicator of actually having been put into a window.
     if (!parameters.isInWindow)
         m_page->setIsInWindow(false);
+    else
+        WebProcess::shared().pageDidEnterWindow(this);
 
     setIsInWindow(parameters.isInWindow);
 

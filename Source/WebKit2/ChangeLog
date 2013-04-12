@@ -1,3 +1,16 @@
+2013-04-11  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r146956): ASSERTion failure: WebKit::WebProcess::pageWillLeaveWindow
+        https://bugs.webkit.org/show_bug.cgi?id=114481
+        <rdar://problem/13534784>
+
+        Reviewed by Simon Fraser.
+
+        Inform the WebProcess of WebPages which are already in a window when created.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2013-04-11  Anders Carlsson  <andersca@apple.com>
 
         Add support for clearing storage areas
