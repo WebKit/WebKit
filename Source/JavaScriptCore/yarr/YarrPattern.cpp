@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -177,7 +177,7 @@ public:
 
     PassOwnPtr<CharacterClass> charClass()
     {
-        OwnPtr<CharacterClass> characterClass = adoptPtr(new CharacterClass(0));
+        OwnPtr<CharacterClass> characterClass = adoptPtr(new CharacterClass);
 
         characterClass->m_matches.swap(m_matches);
         characterClass->m_ranges.swap(m_ranges);

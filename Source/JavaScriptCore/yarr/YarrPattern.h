@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,37 +50,28 @@ struct CharacterRange {
     }
 };
 
-struct CharacterClassTable : RefCounted<CharacterClassTable> {
-    const char* m_table;
-    bool m_inverted;
-    static PassRefPtr<CharacterClassTable> create(const char* table, bool inverted)
-    {
-        return adoptRef(new CharacterClassTable(table, inverted));
-    }
-
-private:
-    CharacterClassTable(const char* table, bool inverted)
-        : m_table(table)
-        , m_inverted(inverted)
-    {
-    }
-};
-
 struct CharacterClass {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // All CharacterClass instances have to have the full set of matches and ranges,
-    // they may have an optional table for faster lookups (which must match the
+    // they may have an optional m_table for faster lookups (which must match the
     // specified matches and ranges)
-    CharacterClass(PassRefPtr<CharacterClassTable> table)
+    CharacterClass()
+        : m_table(0)
+    {
+    }
+    CharacterClass(const char* table, bool inverted)
         : m_table(table)
+        , m_tableInverted(inverted)
     {
     }
     Vector<UChar> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
-    RefPtr<CharacterClassTable> m_table;
+
+    const char* m_table;
+    bool m_tableInverted;
 };
 
 enum QuantifierType {

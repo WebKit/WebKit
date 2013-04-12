@@ -1,3 +1,23 @@
+2013-04-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Merge CharacterClassTable into CharacterClass
+        https://bugs.webkit.org/show_bug.cgi?id=114409
+
+        Reviewed by Darin Adler.
+
+        CharacterClassTable is only a pointer and a boolean.
+        It is a little overkill to make a separate allocation
+        for that.
+
+        * create_regex_tables:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        * yarr/YarrPattern.h:
+        (CharacterClass):
+        (JSC::Yarr::CharacterClass::CharacterClass):
+
 2013-04-11  Michael Saboff  <msaboff@apple.com>
 
         Added UNLIKELY() suggested in https://bugs.webkit.org/show_bug.cgi?id=114366
