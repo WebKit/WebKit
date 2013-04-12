@@ -3392,9 +3392,8 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
     if (!shouldPaintSelectionGaps())
         return GapRects();
 
-    // FIXME: this is broken with transforms
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
-    mapLocalToContainer(repaintContainer, transformState);
+    mapLocalToContainer(repaintContainer, transformState, ApplyContainerFlip | UseTransforms);
     LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint());
 
     if (hasOverflowClip())
