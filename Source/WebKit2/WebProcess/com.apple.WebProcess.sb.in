@@ -215,9 +215,8 @@
         (literal "/private/etc/services")
         (literal "/private/etc/host"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-(deny file-write-create (vnode-type SYMLINK))
-#endif
+(if (defined? 'vnode-type)
+        (deny file-write-create (vnode-type SYMLINK)))
 
 (deny file-read* file-write* (with no-log)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
