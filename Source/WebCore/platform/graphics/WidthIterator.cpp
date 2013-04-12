@@ -189,8 +189,10 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
 
         if (fontData != lastFontData && width) {
-            if (shouldApplyFontTransforms())
+            if (shouldApplyFontTransforms()) {
                 m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, m_typesettingFeatures, charactersTreatedAsSpace);
+                lastGlyphCount = glyphBuffer->size(); // applyFontTransforms doesn't update when there had been only one glyph.
+            }
 
             lastFontData = fontData;
             if (m_fallbackFonts && fontData != primaryFont) {
