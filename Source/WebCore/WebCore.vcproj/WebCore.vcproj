@@ -28686,6 +28686,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedRawResourceClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedResource.cpp"
 					>
 				</File>

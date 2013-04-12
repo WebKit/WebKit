@@ -5455,6 +5455,7 @@
 		E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */; };
 		E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */; };
 		E1B533471717D0A100F205F9 /* CachedSVGDocumentReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B533461717D0A000F205F9 /* CachedSVGDocumentReference.cpp */; };
+		E1B533491717DEE300F205F9 /* CachedRawResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B533481717DEE300F205F9 /* CachedRawResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1B7839C163740A70007B692 /* SharedWorkerStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1B784201639CBBE0007B692 /* SharedWorkerRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */; };
 		E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */; };
@@ -12260,6 +12261,7 @@
 		E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StylePropertyShorthand.h; sourceTree = "<group>"; };
 		E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CredentialStorageMac.mm; sourceTree = "<group>"; };
 		E1B533461717D0A000F205F9 /* CachedSVGDocumentReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGDocumentReference.cpp; sourceTree = "<group>"; };
+		E1B533481717DEE300F205F9 /* CachedRawResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResourceClient.h; sourceTree = "<group>"; };
 		E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorkerStrategy.h; path = workers/SharedWorkerStrategy.h; sourceTree = "<group>"; };
 		E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorkerRepository.cpp; path = workers/SharedWorkerRepository.cpp; sourceTree = "<group>"; };
 		E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleClient.cpp; sourceTree = "<group>"; };
@@ -17560,6 +17562,7 @@
 				319FBD5D15D2F444009640A6 /* CachedImageClient.h */,
 				D0EDA772143E303C0028E383 /* CachedRawResource.cpp */,
 				D0EDA773143E303C0028E383 /* CachedRawResource.h */,
+				E1B533481717DEE300F205F9 /* CachedRawResourceClient.h */,
 				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
 				BCB16C070979C3BD00467741 /* CachedResource.h */,
 				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
@@ -24056,6 +24059,7 @@
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
+				E1B533491717DEE300F205F9 /* CachedRawResourceClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

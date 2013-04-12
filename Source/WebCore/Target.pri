@@ -2035,6 +2035,8 @@ HEADERS += \
     loader/cache/CachedCSSStyleSheet.h \
     loader/cache/CachedFont.h \
     loader/cache/CachedImage.h \
+    loader/cache/CachedRawResource.h \
+    loader/cache/CachedRawResourceClient.h \
     loader/cache/CachedResourceClientWalker.h \
     loader/cache/CachedResource.h \
     loader/cache/CachedResourceHandle.h \

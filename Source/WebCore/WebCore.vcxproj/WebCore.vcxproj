@@ -11531,6 +11531,7 @@
     <ClInclude Include="..\loader\cache\CachedFont.h" />
     <ClInclude Include="..\loader\cache\CachedImage.h" />
     <ClInclude Include="..\loader\cache\CachedRawResource.h" />
+    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h" />
     <ClInclude Include="..\loader\cache\CachedResource.h" />
     <ClInclude Include="..\loader\cache\CachedResourceClient.h" />
     <ClInclude Include="..\loader\cache\CachedResourceClientWalker.h" />

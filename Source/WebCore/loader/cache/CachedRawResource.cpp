@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CachedRawResource.h"
 
-#include "CachedResourceClient.h"
+#include "CachedRawResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "ResourceBuffer.h"

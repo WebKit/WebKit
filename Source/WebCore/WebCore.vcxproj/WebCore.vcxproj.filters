@@ -2412,6 +2412,9 @@
     <ClCompile Include="..\loader\cache\CachedRawResource.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
+    <ClCompile Include="..\loader\cache\CachedRawResourceClient.cpp">
+      <Filter>loader\cache</Filter>
+    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedResource.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
