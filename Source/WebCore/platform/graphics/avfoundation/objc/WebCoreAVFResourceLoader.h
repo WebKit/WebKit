@@ -30,6 +30,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/NonCopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -37,6 +38,7 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 
 namespace WebCore {
 
+class CachedRawResource;
 class CachedResourceLoader;
 class MediaPlayerPrivateAVFoundationObjC;
 
