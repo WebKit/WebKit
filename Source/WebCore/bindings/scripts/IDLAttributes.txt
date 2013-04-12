@@ -104,6 +104,7 @@ Reflect=*
 Replaceable
 ReplaceableConstructor
 ReturnNewObject
+SkipVTableValidation
 StrictTypeChecking
 Supplemental=*
 SuppressToJSObject
@@ -130,7 +131,6 @@ V8NoWrapperCache
 V8MeasureAs=*
 V8PerWorldBindings
 V8ReadOnly
-V8SkipVTableValidation
 V8Unforgeable
 V8WrapAsFunction
 V8DeliverCustomElementCallbacks

@@ -27,6 +27,7 @@
     CustomNamedSetter,
     IndexedGetter,
     CustomEnumerateProperty,
+    SkipVTableValidation
 ] interface CSSStyleDeclaration {
              [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString        cssText
                  setter raises(DOMException);

@@ -30,6 +30,7 @@
     CustomEnumerateProperty,
     V8CustomIndexedGetter,
     CustomNamedSetter,
+    SkipVTableValidation
 ] interface Storage {
     [NotEnumerable] readonly attribute unsigned long length getter raises(DOMException);
     [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(in unsigned long index)

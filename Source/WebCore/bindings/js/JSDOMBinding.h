@@ -200,6 +200,19 @@ class DOMStringList;
         return createWrapper<WrapperClass>(exec, globalObject, domObject);
     }
 
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue getExistingWrapper(JSC::ExecState* exec, DOMClass* domObject)
+    {
+        ASSERT(domObject);
+        return getCachedWrapper(currentWorld(exec), domObject);
+    }
+
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue createNewWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* domObject)
+    {
+        ASSERT(domObject);
+        ASSERT(!getCachedWrapper(currentWorld(exec), domObject));
+        return createWrapper<WrapperClass>(exec, globalObject, domObject);
+    }
+
     inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, unsigned index)
     {
         return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);

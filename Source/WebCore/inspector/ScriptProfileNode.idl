@@ -26,7 +26,8 @@
 
 [
     Conditional=JAVASCRIPT_DEBUGGER,
-    OmitConstructor
+    OmitConstructor,
+    ImplementationLacksVTable
 ] interface ScriptProfileNode {
     readonly attribute DOMString functionName;
     readonly attribute DOMString url;

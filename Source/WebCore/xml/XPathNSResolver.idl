@@ -21,7 +21,7 @@
 [
     ObjCProtocol,
     OmitConstructor,
-    V8SkipVTableValidation
+    SkipVTableValidation
 ] interface XPathNSResolver {
     [TreatReturnedNullStringAs=Null] DOMString lookupNamespaceURI(in [Optional=DefaultIsUndefined] DOMString prefix);
 };

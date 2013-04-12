@@ -9984,6 +9984,14 @@
 		A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
 		A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckingHelper.cpp; sourceTree = "<group>"; };
 		A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckingHelper.h; sourceTree = "<group>"; };
+		A7F1F4BA17148BDB00CD4852 /* DOMWindowQuota.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = DOMWindowQuota.idl; path = Modules/quota/DOMWindowQuota.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4BB17148BDB00CD4852 /* NavigatorStorageQuota.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = NavigatorStorageQuota.idl; path = Modules/quota/NavigatorStorageQuota.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4BC17148BDB00CD4852 /* StorageErrorCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageErrorCallback.idl; path = Modules/quota/StorageErrorCallback.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4BD17148BDB00CD4852 /* StorageInfo.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageInfo.idl; path = Modules/quota/StorageInfo.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4BE17148BDB00CD4852 /* StorageQuota.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageQuota.idl; path = Modules/quota/StorageQuota.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4BF17148BDB00CD4852 /* StorageQuotaCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageQuotaCallback.idl; path = Modules/quota/StorageQuotaCallback.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4C017148BDB00CD4852 /* StorageUsageCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageUsageCallback.idl; path = Modules/quota/StorageUsageCallback.idl; sourceTree = SOURCE_ROOT; };
+		A7F1F4C117148BDB00CD4852 /* WorkerNavigatorStorageQuota.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = WorkerNavigatorStorageQuota.idl; path = Modules/quota/WorkerNavigatorStorageQuota.idl; sourceTree = SOURCE_ROOT; };
 		A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderingContext.cpp; sourceTree = "<group>"; };
 		A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderingContext.h; sourceTree = "<group>"; };
 		A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMShadowRoot.h; sourceTree = "<group>"; };
@@ -15470,6 +15478,14 @@
 		89F60B17157F6A020075E157 /* Quota */ = {
 			isa = PBXGroup;
 			children = (
+				A7F1F4BA17148BDB00CD4852 /* DOMWindowQuota.idl */,
+				A7F1F4BB17148BDB00CD4852 /* NavigatorStorageQuota.idl */,
+				A7F1F4BC17148BDB00CD4852 /* StorageErrorCallback.idl */,
+				A7F1F4BD17148BDB00CD4852 /* StorageInfo.idl */,
+				A7F1F4BE17148BDB00CD4852 /* StorageQuota.idl */,
+				A7F1F4BF17148BDB00CD4852 /* StorageQuotaCallback.idl */,
+				A7F1F4C017148BDB00CD4852 /* StorageUsageCallback.idl */,
+				A7F1F4C117148BDB00CD4852 /* WorkerNavigatorStorageQuota.idl */,
 				892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */,
 				892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */,
 				892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */,

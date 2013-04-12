@@ -9,6 +9,7 @@
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
 # Copyright (C) 2011 Patrick Gansterer <paroga@webkit.org>
 # Copyright (C) 2012 Ericsson AB. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2012 Google Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -1395,6 +1396,128 @@ END
 END
 }
 
+sub GetNativeTypeForConversions
+{
+    my $interface = shift;
+    my $interfaceName = $interface->name;
+    $interfaceName = $codeGenerator->GetSVGTypeNeedingTearOff($interfaceName) if $codeGenerator->IsSVGTypeNeedingTearOff($interfaceName);
+    return $interfaceName;
+}
+
+# See http://refspecs.linux-foundation.org/cxxabi-1.83.html.
+sub GetGnuVTableRefForInterface
+{
+    my $interface = shift;
+    my $vtableName = GetGnuVTableNameForInterface($interface);
+    if (!$vtableName) {
+        return "0";
+    }
+    my $typename = GetNativeTypeForConversions($interface);
+    my $offset = GetGnuVTableOffsetForType($typename);
+    return "&" . $vtableName . "[" . $offset . "]";
+}
+
+sub GetGnuVTableNameForInterface
+{
+    my $interface = shift;
+    my $typename = GetNativeTypeForConversions($interface);
+    my $templatePosition = index($typename, "<");
+    return "" if $templatePosition != -1;
+    return "" if GetImplementationLacksVTableForInterface($interface);
+    return "" if GetSkipVTableValidationForInterface($interface);
+    return "_ZTV" . GetGnuMangledNameForInterface($interface);
+}
+
+sub GetGnuMangledNameForInterface
+{
+    my $interface = shift;
+    my $typename = GetNativeTypeForConversions($interface);
+    my $templatePosition = index($typename, "<");
+    if ($templatePosition != -1) {
+        return "";
+    }
+    my $mangledType = length($typename) . $typename;
+    my $namespace = GetNamespaceForInterface($interface);
+    my $mangledNamespace =  "N" . length($namespace) . $namespace;
+    return $mangledNamespace . $mangledType . "E";
+}
+
+sub GetGnuVTableOffsetForType
+{
+    my $typename = shift;
+    if ($typename eq "SVGAElement"
+        || $typename eq "SVGCircleElement"
+        || $typename eq "SVGClipPathElement"
+        || $typename eq "SVGDefsElement"
+        || $typename eq "SVGEllipseElement"
+        || $typename eq "SVGForeignObjectElement"
+        || $typename eq "SVGGElement"
+        || $typename eq "SVGImageElement"
+        || $typename eq "SVGLineElement"
+        || $typename eq "SVGPathElement"
+        || $typename eq "SVGPolyElement"
+        || $typename eq "SVGPolygonElement"
+        || $typename eq "SVGPolylineElement"
+        || $typename eq "SVGRectElement"
+        || $typename eq "SVGSVGElement"
+        || $typename eq "SVGStyledLocatableElement"
+        || $typename eq "SVGStyledTransformableElement"
+        || $typename eq "SVGSwitchElement"
+        || $typename eq "SVGTextElement"
+        || $typename eq "SVGTransformable"
+        || $typename eq "SVGUseElement") {
+        return "3";
+    }
+    return "2";
+}
+
+# See http://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B_Name_Mangling.
+sub GetWinVTableRefForInterface
+{
+    my $interface = shift;
+    my $vtableName = GetWinVTableNameForInterface($interface);
+    return 0 if !$vtableName;
+    return "__identifier(\"" . $vtableName . "\")";
+}
+
+sub GetWinVTableNameForInterface
+{
+    my $interface = shift;
+    my $typename = GetNativeTypeForConversions($interface);
+    my $templatePosition = index($typename, "<");
+    return "" if $templatePosition != -1;
+    return "" if GetImplementationLacksVTableForInterface($interface);
+    return "" if GetSkipVTableValidationForInterface($interface);
+    return "??_7" . GetWinMangledNameForInterface($interface) . "6B@";
+}
+
+sub GetWinMangledNameForInterface
+{
+    my $interface = shift;
+    my $typename = GetNativeTypeForConversions($interface);
+    my $namespace = GetNamespaceForInterface($interface);
+    return $typename . "@" . $namespace . "@@";
+}
+
+sub GetNamespaceForInterface
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{"ImplementationNamespace"} || "WebCore";
+}
+
+sub GetImplementationLacksVTableForInterface
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{"ImplementationLacksVTable"};
+}
+
+sub GetSkipVTableValidationForInterface
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{"SkipVTableValidation"};
+}
+
+
 sub GenerateImplementation
 {
     my ($object, $interface) = @_;
@@ -1922,7 +2045,6 @@ sub GenerateImplementation
                         }
 
                         unshift(@arguments, @callWithArgs);
-
                         my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
                         push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n") if !$attribute->isStatic;
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
@@ -2578,13 +2700,59 @@ sub GenerateImplementation
     }
 
     if (ShouldGenerateToJSImplementation($hasParent, $interface)) {
+        my $vtableNameGnu = GetGnuVTableNameForInterface($interface);
+        my $vtableRefGnu = GetGnuVTableRefForInterface($interface);
+        my $vtableRefWin = GetWinVTableRefForInterface($interface);
+
+        push(@implContent, <<END) if $vtableNameGnu;
+#if ENABLE(BINDING_INTEGRITY)
+#if defined(OS_WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const ${vtableRefWin}[])(); }
+#else
+extern "C" { extern void* ${vtableNameGnu}[]; }
+#endif
+#endif
+END
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
+        push(@implContent, <<END);
+    if (!impl)
+        return jsNull();
+END
+
         if ($svgPropertyType) {
-            push(@implContent, "    return wrap<$className, $implType>(exec, globalObject, impl);\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(exec, impl)) return result;\n");
         } else {
-            push(@implContent, "    return wrap<$className>(exec, globalObject, impl);\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(exec, impl)) return result;\n");
         }
+        push(@implContent, <<END) if $vtableNameGnu;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if defined(OS_WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
+#else
+    void* expectedVTablePointer = ${vtableRefGnu};
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic($implType), ${implType}_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+END
+        push(@implContent, <<END) if $interface->extendedAttributes->{"ImplementationLacksVTable"} && $vtableNameGnu;
+#if COMPILER(CLANG)
+        COMPILE_ASSERT(!__is_polymorphic($implType), ${implType}_is_polymorphic_but_idl_claims_not_to_be);
+#endif
+END
+
+        if ($svgPropertyType) {
+            push(@implContent, "    return createNewWrapper<$className, $implType>(exec, globalObject, impl);\n");
+        } else {
+            push(@implContent, "    return createNewWrapper<$className>(exec, globalObject, impl);\n");
+        }
+
         push(@implContent, "}\n\n");
     }
 

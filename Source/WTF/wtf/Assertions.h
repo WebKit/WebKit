@@ -416,7 +416,7 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 #endif
 
 #if ASSERT_DISABLED
-#define RELEASE_ASSERT(assertion) (!(assertion) ? (CRASH()) : (void)0)
+#define RELEASE_ASSERT(assertion) (UNLIKELY(!(assertion)) ? (CRASH()) : (void)0)
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) RELEASE_ASSERT(assertion)
 #define RELEASE_ASSERT_NOT_REACHED() CRASH()
 #else
