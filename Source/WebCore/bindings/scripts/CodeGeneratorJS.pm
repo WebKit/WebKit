@@ -2747,7 +2747,7 @@ END
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
 END
-        push(@implContent, <<END) if $interface->extendedAttributes->{"ImplementationLacksVTable"} && $vtableNameGnu;
+        push(@implContent, <<END) if $interface->extendedAttributes->{"ImplementationLacksVTable"};
 #if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
     // attribute. You should remove that attribute. If the class has subclasses
