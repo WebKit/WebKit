@@ -11919,7 +11919,6 @@
     <ClInclude Include="..\platform\network\ResourceHandleClient.h" />
     <ClInclude Include="..\platform\network\ResourceHandleInternal.h" />
     <ClInclude Include="..\platform\network\ResourceHandleTypes.h" />
-    <ClInclude Include="..\platform\network\ResourceLoadInfo.h" />
     <ClInclude Include="..\platform\network\ResourceLoadPriority.h" />
     <ClInclude Include="..\platform\network\ResourceLoadTiming.h" />
     <ClInclude Include="..\platform\network\ResourceRequestBase.h" />

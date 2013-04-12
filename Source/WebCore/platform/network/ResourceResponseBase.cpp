@@ -589,20 +589,6 @@ void ResourceResponseBase::setResourceLoadTiming(PassRefPtr<ResourceLoadTiming> 
     m_resourceLoadTiming = resourceLoadTiming;
 }
 
-PassRefPtr<ResourceLoadInfo> ResourceResponseBase::resourceLoadInfo() const
-{
-    lazyInit(CommonAndUncommonFields);
-
-    return m_resourceLoadInfo.get();
-}
-
-void ResourceResponseBase::setResourceLoadInfo(PassRefPtr<ResourceLoadInfo> loadInfo)
-{
-    lazyInit(CommonAndUncommonFields);
-
-    m_resourceLoadInfo = loadInfo;
-}
-
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 {
     const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);
@@ -618,7 +604,6 @@ void ResourceResponseBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addMember(m_httpStatusText, "httpStatusText");
     info.addMember(m_httpHeaderFields, "httpHeaderFields");
     info.addMember(m_resourceLoadTiming, "resourceLoadTiming");
-    info.addMember(m_resourceLoadInfo, "resourceLoadInfo");
 }
     
 bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResponse& b)

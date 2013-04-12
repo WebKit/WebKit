@@ -148,26 +148,13 @@ static PassRefPtr<TypeBuilder::Network::Response> buildObjectForResourceResponse
     if (response.isNull())
         return 0;
 
-
-    double status;
-    String statusText;
-    if (response.resourceLoadInfo() && response.resourceLoadInfo()->httpStatusCode) {
-        status = response.resourceLoadInfo()->httpStatusCode;
-        statusText = response.resourceLoadInfo()->httpStatusText;
-    } else {
-        status = response.httpStatusCode();
-        statusText = response.httpStatusText();
-    }
-    RefPtr<InspectorObject> headers;
-    if (response.resourceLoadInfo())
-        headers = buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders);
-    else
-        headers = buildObjectForHeaders(response.httpHeaderFields());
+    double status = response.httpStatusCode();
+    RefPtr<InspectorObject> headers = buildObjectForHeaders(response.httpHeaderFields());
 
     RefPtr<TypeBuilder::Network::Response> responseObject = TypeBuilder::Network::Response::create()
         .setUrl(response.url().string())
         .setStatus(status)
-        .setStatusText(statusText)
+        .setStatusText(response.httpStatusText())
         .setHeaders(headers)
         .setMimeType(response.mimeType())
         .setConnectionReused(response.connectionReused())
@@ -176,15 +163,6 @@ static PassRefPtr<TypeBuilder::Network::Response> buildObjectForResourceResponse
     responseObject->setFromDiskCache(response.wasCached());
     if (response.resourceLoadTiming())
         responseObject->setTiming(buildObjectForTiming(*response.resourceLoadTiming(), loader));
-
-    if (response.resourceLoadInfo()) {
-        if (!response.resourceLoadInfo()->responseHeadersText.isEmpty())
-            responseObject->setHeadersText(response.resourceLoadInfo()->responseHeadersText);
-
-        responseObject->setRequestHeaders(buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
-        if (!response.resourceLoadInfo()->requestHeadersText.isEmpty())
-            responseObject->setRequestHeadersText(response.resourceLoadInfo()->requestHeadersText);
-    }
 
     return responseObject;
 }

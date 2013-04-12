@@ -33198,10 +33198,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceLoadInfo.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\network\ResourceLoadPriority.h"
 					>
 				</File>

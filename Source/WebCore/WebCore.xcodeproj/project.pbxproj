@@ -1254,7 +1254,6 @@
 		49140257168E02EC002D6C6A /* TimelineTraceEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140255168E02B4002D6C6A /* TimelineTraceEventProcessor.h */; };
 		49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */; };
 		49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49182B5115DCE6F000548418 /* PlatformInstrumentation.h */; };
-		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4945BFD313CF809000CC3B38 /* TransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4945BFD113CF809000CC3B38 /* TransformState.cpp */; };
@@ -7604,7 +7603,6 @@
 		49140255168E02B4002D6C6A /* TimelineTraceEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineTraceEventProcessor.h; sourceTree = "<group>"; };
 		49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformInstrumentation.cpp; sourceTree = "<group>"; };
 		49182B5115DCE6F000548418 /* PlatformInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformInstrumentation.h; sourceTree = "<group>"; };
-		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
 		493E5E0812D6420500020081 /* PlatformCALayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerClient.h; path = ca/PlatformCALayerClient.h; sourceTree = "<group>"; };
 		4945BFD113CF809000CC3B38 /* TransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformState.cpp; path = transforms/TransformState.cpp; sourceTree = "<group>"; };
@@ -14523,7 +14521,6 @@
 				514C76650CE923A1007EF3CD /* ResourceHandleClient.h */,
 				514C76660CE923A1007EF3CD /* ResourceHandleInternal.h */,
 				51E4143216A6595100C633C7 /* ResourceHandleTypes.h */,
-				492863981253B8FC00F792D6 /* ResourceLoadInfo.h */,
 				E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */,
 				861C2EA513FB4FFF00062ABB /* ResourceLoadTiming.cpp */,
 				8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */,
@@ -23252,7 +23249,6 @@
 				656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */,
 				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
 				51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */,
-				492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */,
 				973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */,
 				E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */,
 				D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */,
