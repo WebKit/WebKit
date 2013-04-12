@@ -370,6 +370,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_overflowExceedsContentsSize(false)
     , m_resetVirtualViewportOnCommitted(true)
     , m_shouldUseFixedDesktopMode(false)
+    , m_inspectorEnabled(false)
     , m_preventIdleDimmingCount(0)
 #if ENABLE(TOUCH_EVENTS)
     , m_preventDefaultOnTouchStart(false)
@@ -5156,26 +5157,29 @@ bool WebPage::isDNSPrefetchEnabled() const
 
 void WebPage::enableWebInspector()
 {
-    if (!d->m_inspectorClient)
+    if (isWebInspectorEnabled() || !d->m_inspectorClient)
         return;
 
     d->m_page->inspectorController()->connectFrontend(d->m_inspectorClient);
     d->m_page->settings()->setDeveloperExtrasEnabled(true);
     d->setPreventsScreenDimming(true);
+    d->m_inspectorEnabled = true;
 }
 
 void WebPage::disableWebInspector()
 {
-    if (isWebInspectorEnabled()) {
-        d->m_page->inspectorController()->disconnectFrontend();
-        d->m_page->settings()->setDeveloperExtrasEnabled(false);
-        d->setPreventsScreenDimming(false);
-    }
+    if (!isWebInspectorEnabled())
+        return;
+
+    d->m_page->inspectorController()->disconnectFrontend();
+    d->m_page->settings()->setDeveloperExtrasEnabled(false);
+    d->setPreventsScreenDimming(false);
+    d->m_inspectorEnabled = false;
 }
 
 bool WebPage::isWebInspectorEnabled()
 {
-    return d->m_page->settings()->developerExtrasEnabled();
+    return d->m_inspectorEnabled;
 }
 
 void WebPage::enablePasswordEcho()

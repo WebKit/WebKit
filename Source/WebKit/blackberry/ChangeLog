@@ -1,3 +1,30 @@
+2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Crash running layout tests when WebPage is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=114497
+
+        Reviewed by Xan Lopez.
+
+        PR 324649
+        Internally reviewed by Konrad Piascik and Rob Buis.
+
+        Use a bool member to keep track of whether the inspector is
+        enabled or not instead of relaying on the enable developer extras
+        setting, that can be set in other places than enableWebInspector().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate): Initialize
+        m_inspectorEnabled.
+        (BlackBerry::WebKit::WebPage::enableWebInspector): Return early if
+        inspector is already enabled and set m_inspectorEnabled to true.
+        (BlackBerry::WebKit::WebPage::disableWebInspector): Return early
+        if inspector is not enabled and set m_inspectorEnabled to false.
+        (BlackBerry::WebKit::WebPage::isWebInspectorEnabled): Check the
+        current value of m_inspectorEnabled instead of the developer
+        extras setting.
+        * Api/WebPage_p.h:
+        (WebPagePrivate): Add m_inspectorEnabled.
+
 2013-04-11  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Initial scale changes depending on the order of page navigations

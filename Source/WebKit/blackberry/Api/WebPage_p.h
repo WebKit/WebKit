@@ -479,6 +479,7 @@ public:
     bool m_overflowExceedsContentsSize;
     bool m_resetVirtualViewportOnCommitted;
     bool m_shouldUseFixedDesktopMode;
+    bool m_inspectorEnabled;
     int m_preventIdleDimmingCount;
 
 #if ENABLE(TOUCH_EVENTS)
