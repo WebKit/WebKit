@@ -1,3 +1,16 @@
+2013-04-12  Hanyee Kim  <choco@company100.net>
+
+        [GTK] Webkit fails to build webkit2gtk-tests-resources.gresource.
+        https://bugs.webkit.org/show_bug.cgi?id=114485
+
+        Reviewed by Martin Robinson.
+
+        Generating webkit2gtk-tests-resources.gresource can be failed due to
+        the non-existing target directory.
+        We need to make target directory before generating it.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+
 2013-04-12  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r145869): Right-click on SWF contents displays the context menu at the wrong place.
