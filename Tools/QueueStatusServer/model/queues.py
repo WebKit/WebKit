@@ -75,6 +75,7 @@ class Queue(object):
     def display_name(self):
         display_name = self._name.replace("-", " ")
         display_name = display_name.title()
+        display_name = display_name.replace("Wk2", "WK2")
         display_name = display_name.replace("Ews", "EWS")
         return display_name
 
