@@ -87,6 +87,7 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/PluginDatabase.h>
 #include <WebCore/PluginView.h>
+#include <WebCore/PolicyChecker.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoader.h>

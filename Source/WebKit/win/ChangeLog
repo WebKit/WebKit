@@ -1,3 +1,17 @@
+2013-04-12  Anders Carlsson  <andersca@apple.com>
+
+        All tests crash on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=114522
+
+        Reviewed by Ryosuke Niwa.
+
+        In the MSVC++ ABI, a member function pointer will have a different size depending on whether the
+        class it belongs to is defined or not. Because of this, when passing member function pointers as parameters
+        it's important to ensure that the class is known by both the caller and the callee.
+
+        * WebFrame.cpp:
+        Include PolicyChecker.h
+
 2013-04-12  Jer Noble  <jer.noble@apple.com>
 
         TimeRanges::nearest() returns incorrect results.
