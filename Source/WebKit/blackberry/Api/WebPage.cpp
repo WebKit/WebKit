@@ -490,7 +490,7 @@ WebPagePrivate::~WebPagePrivate()
     m_proximityDetector = 0;
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    delete m_dumpRenderTree;
+    BlackBerry::Platform::deleteGuardedObject(static_cast<DumpRenderTree*>(m_dumpRenderTree));
     m_dumpRenderTree = 0;
 #endif
 

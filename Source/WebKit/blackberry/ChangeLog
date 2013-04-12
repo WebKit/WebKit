@@ -1,5 +1,22 @@
 2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] Crash running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=114503
+
+        Reviewed by Xan Lopez.
+
+        Hit an assertion in ~GuardedPointerBase when DRT is
+        deleted. DumpRenderTree class derives from
+        BlackBerry::Platform::LayoutTestClient that derives from
+        BlackBerry::Platform::GuardedPointerBase, so the DRT pointer
+        should no be released with delete but with
+        BlackBerry::Platform::deleteGuardedObject().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+
+2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Crash running layout tests when WebPage is destroyed
         https://bugs.webkit.org/show_bug.cgi?id=114497
 
