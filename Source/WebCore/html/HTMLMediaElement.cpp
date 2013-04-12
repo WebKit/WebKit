@@ -2792,7 +2792,7 @@ double HTMLMediaElement::percentLoaded() const
 
 #if ENABLE(VIDEO_TRACK)
 
-void HTMLMediaElement::mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
+void HTMLMediaElement::mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
@@ -2824,10 +2824,10 @@ void HTMLMediaElement::mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>
     // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
     // interface, with the track attribute initialized to the text track's TextTrack object, at the media element's
     // textTracks attribute's TextTrackList object.
-    addTrack(textTrack.get());
+    addTextTrack(textTrack.get());
 }
 
-void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
+void HTMLMediaElement::mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
@@ -2836,12 +2836,12 @@ void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPriva
         return;
 
     // This cast is safe because we created the InbandTextTrack with the InbandTextTrackPrivate
-    // passed to mediaPlayerDidAddTrack.
+    // passed to mediaPlayerDidAddTextTrack.
     RefPtr<InbandTextTrack> textTrack = static_cast<InbandTextTrack*>(prpTrack->client());
     if (!textTrack)
         return;
 
-    removeTrack(textTrack.get());
+    removeTextTrack(textTrack.get());
 }
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
@@ -2920,14 +2920,14 @@ void HTMLMediaElement::closeCaptionTracksChanged()
 #endif
 }
 
-void HTMLMediaElement::addTrack(TextTrack* track)
+void HTMLMediaElement::addTextTrack(TextTrack* track)
 {
     textTracks()->append(track);
     
     closeCaptionTracksChanged();
 }
 
-void HTMLMediaElement::removeTrack(TextTrack* track)
+void HTMLMediaElement::removeTextTrack(TextTrack* track)
 {
     TrackDisplayUpdateScope scope(this);
     TextTrackCueList* cues = track->cues();
@@ -2948,7 +2948,7 @@ void HTMLMediaElement::removeAllInbandTracks()
         TextTrack* track = m_textTracks->item(i);
 
         if (track->trackType() == TextTrack::InBand)
-            removeTrack(track);
+            removeTextTrack(track);
     }
 }
 
@@ -2978,7 +2978,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     // first append the track to the text track list.
 
     // 6. Add the new text track to the media element's list of text tracks.
-    addTrack(textTrack.get());
+    addTextTrack(textTrack.get());
 
     // ... its text track readiness state to the text track loaded state ...
     textTrack->setReadinessState(TextTrack::Loaded);
@@ -3000,7 +3000,7 @@ TextTrackList* HTMLMediaElement::textTracks()
     return m_textTracks.get();
 }
 
-void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
+void HTMLMediaElement::didAddTextTrack(HTMLTrackElement* trackElement)
 {
     ASSERT(trackElement->hasTagName(trackTag));
 
@@ -3015,7 +3015,7 @@ void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
     if (!textTrack)
         return;
     
-    addTrack(textTrack.get());
+    addTextTrack(textTrack.get());
     
     // Do not schedule the track loading until parsing finishes so we don't start before all tracks
     // in the markup have been added.
@@ -3026,7 +3026,7 @@ void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
         mediaControls()->closedCaptionTracksChanged();
 }
 
-void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
+void HTMLMediaElement::didRemoveTextTrack(HTMLTrackElement* trackElement)
 {
     ASSERT(trackElement->hasTagName(trackTag));
 
@@ -3053,7 +3053,7 @@ void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
     // When a track element's parent element changes and the old parent was a media element, 
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
-    removeTrack(textTrack.get());
+    removeTextTrack(textTrack.get());
 
     size_t index = m_textTracksWhenResourceSelectionBegan.find(textTrack.get());
     if (index != notFound)

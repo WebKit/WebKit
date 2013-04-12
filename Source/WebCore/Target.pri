@@ -3978,6 +3978,7 @@ enable?(VIDEO_TRACK) {
         html/track/TextTrackList.h \
         html/track/TrackBase.h \
         html/track/TrackEvent.h \
+        html/track/TrackListBase.h \
         html/track/WebVTTParser.h \
         html/track/WebVTTToken.h \
         html/track/WebVTTTokenizer.h \
@@ -4001,6 +4002,7 @@ enable?(VIDEO_TRACK) {
         html/track/TextTrackList.cpp \
         html/track/TrackBase.cpp \
         html/track/TrackEvent.cpp \
+        html/track/TrackListBase.cpp \
         html/track/WebVTTElement.cpp \
         html/track/WebVTTParser.cpp \
         html/track/WebVTTTokenizer.cpp \

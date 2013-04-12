@@ -58,7 +58,6 @@ class MediaController;
 class MediaControls;
 class MediaError;
 class KURL;
-class TextTrackList;
 class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
@@ -72,6 +71,7 @@ class MediaKeys;
 
 #if ENABLE(VIDEO_TRACK)
 class InbandTextTrackPrivate;
+class TextTrackList;
 
 typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
 typedef CueIntervalTree::IntervalType CueInterval;
@@ -229,17 +229,17 @@ public:
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
-    void addTrack(TextTrack*);
-    void removeTrack(TextTrack*);
+    void addTextTrack(TextTrack*);
+    void removeTextTrack(TextTrack*);
     void removeAllInbandTracks();
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
 
-    virtual void didAddTrack(HTMLTrackElement*);
-    virtual void didRemoveTrack(HTMLTrackElement*);
+    virtual void didAddTextTrack(HTMLTrackElement*);
+    virtual void didRemoveTextTrack(HTMLTrackElement*);
 
-    virtual void mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
-    virtual void mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
+    virtual void mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
+    virtual void mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) OVERRIDE;

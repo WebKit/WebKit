@@ -114,14 +114,12 @@ TextTrack* TextTrack::captionMenuAutomaticItem()
 }
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType type)
-    : TrackBase(context, TrackBase::TextTrack)
+    : TrackBase(TrackBase::TextTrack, label, language)
     , m_cues(0)
+    , m_scriptExecutionContext(context)
 #if ENABLE(WEBVTT_REGIONS)
     , m_regions(0)
 #endif
-    , m_mediaElement(0)
-    , m_label(label)
-    , m_language(language)
     , m_mode(disabledKeyword().string())
     , m_client(client)
     , m_trackType(type)
@@ -149,6 +147,31 @@ TextTrack::~TextTrack()
     clearClient();
 }
 
+const AtomicString& TextTrack::interfaceName() const
+{
+    return eventNames().interfaceForTextTrack;
+}
+
+ScriptExecutionContext* TextTrack::scriptExecutionContext() const
+{
+    return m_scriptExecutionContext;
+}
+
+EventTargetData* TextTrack::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* TextTrack::ensureEventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+bool TextTrack::isValidKind(const AtomicString& value) const
+{
+    return TextTrack::isValidKindKeyword(value);
+}
+
 bool TextTrack::isValidKindKeyword(const AtomicString& value)
 {
     if (value == subtitlesKeyword())
@@ -167,16 +190,13 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     return false;
 }
 
-void TextTrack::setKind(const AtomicString& kind)
+void TextTrack::setKind(const AtomicString& newKind)
 {
-    String oldKind = m_kind;
+    String oldKind = kind();
 
-    if (isValidKindKeyword(kind))
-        m_kind = kind;
-    else
-        m_kind = subtitlesKeyword();
+    TrackBase::setKind(newKind);
 
-    if (m_client && oldKind != m_kind)
+    if (m_client && oldKind != kind())
         m_client->textTrackKindChanged(this);
 }
 
@@ -419,7 +439,7 @@ void TextTrack::invalidateTrackIndex()
 
 bool TextTrack::isRendered()
 {
-    if (m_kind != captionsKeyword() && m_kind != subtitlesKeyword())
+    if (kind() != captionsKeyword() && kind() != subtitlesKeyword())
         return false;
 
     if (m_mode != showingKeyword())
@@ -510,19 +530,19 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
     if (m_platformTextTrack)
         return m_platformTextTrack;
 
-    PlatformTextTrack::TrackKind kind = PlatformTextTrack::Caption;
-    if (m_kind == subtitlesKeyword())
-        kind = PlatformTextTrack::Subtitle;
-    else if (m_kind == captionsKeyword())
-        kind = PlatformTextTrack::Caption;
-    else if (m_kind == descriptionsKeyword())
-        kind = PlatformTextTrack::Description;
-    else if (m_kind == chaptersKeyword())
-        kind = PlatformTextTrack::Chapter;
-    else if (m_kind == metadataKeyword())
-        kind = PlatformTextTrack::MetaData;
-    else if (m_kind == forcedKeyword())
-        kind = PlatformTextTrack::Forced;
+    PlatformTextTrack::TrackKind platformKind = PlatformTextTrack::Caption;
+    if (kind() == subtitlesKeyword())
+        platformKind = PlatformTextTrack::Subtitle;
+    else if (kind() == captionsKeyword())
+        platformKind = PlatformTextTrack::Caption;
+    else if (kind() == descriptionsKeyword())
+        platformKind = PlatformTextTrack::Description;
+    else if (kind() == chaptersKeyword())
+        platformKind = PlatformTextTrack::Chapter;
+    else if (kind() == metadataKeyword())
+        platformKind = PlatformTextTrack::MetaData;
+    else if (kind() == forcedKeyword())
+        platformKind = PlatformTextTrack::Forced;
 
     PlatformTextTrack::TrackType type = PlatformTextTrack::OutOfBand;
     if (m_trackType == TrackElement)
@@ -532,7 +552,7 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
     else if (m_trackType == InBand)
         type = PlatformTextTrack::InBand;
 
-    m_platformTextTrack = PlatformTextTrack::create(this, m_label, m_language, kind, type);
+    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformKind, type);
 
     return m_platformTextTrack;
 }
@@ -544,7 +564,7 @@ bool TextTrack::isMainProgramContent() const
     // directors commentary is not "main program" because it is not essential for the presentation. HTML5 doesn't have
     // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
     // tracks are main content and all other track types are not.
-    return m_kind == captionsKeyword();
+    return kind() == captionsKeyword();
 }
 
 } // namespace WebCore

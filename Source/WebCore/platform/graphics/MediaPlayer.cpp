@@ -1108,7 +1108,7 @@ void MediaPlayer::addTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
     if (!m_mediaPlayerClient)
         return;
 
-    m_mediaPlayerClient->mediaPlayerDidAddTrack(track);
+    m_mediaPlayerClient->mediaPlayerDidAddTextTrack(track);
 }
 
 void MediaPlayer::removeTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
@@ -1116,7 +1116,7 @@ void MediaPlayer::removeTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
     if (!m_mediaPlayerClient)
         return;
 
-    m_mediaPlayerClient->mediaPlayerDidRemoveTrack(track);
+    m_mediaPlayerClient->mediaPlayerDidRemoveTextTrack(track);
 }
 
 bool MediaPlayer::requiresTextTrackRepresentation() const

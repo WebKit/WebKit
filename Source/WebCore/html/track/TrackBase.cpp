@@ -30,8 +30,10 @@
 
 namespace WebCore {
 
-TrackBase::TrackBase(ScriptExecutionContext* context, Type type)
-    : m_scriptExecutionContext(context)
+TrackBase::TrackBase(Type type, const AtomicString& label, const AtomicString& language)
+    : m_mediaElement(0)
+    , m_label(label)
+    , m_language(language)
 {
     ASSERT(type != BaseTrack);
     m_type = type;
@@ -41,24 +43,14 @@ TrackBase::~TrackBase()
 {
 }
 
-const AtomicString& TrackBase::interfaceName() const
+void TrackBase::setKind(const AtomicString& kind)
 {
-    return eventNames().interfaceForTextTrack;
-}
+    String oldKind = m_kind;
 
-ScriptExecutionContext* TrackBase::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext;
-}
-
-EventTargetData* TrackBase::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData* TrackBase::ensureEventTargetData()
-{
-    return &m_eventTargetData;
+    if (isValidKind(kind))
+        m_kind = kind;
+    else
+        m_kind = defaultKindKeyword();
 }
 
 } // namespace WebCore

@@ -30230,6 +30230,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\InbandTextTrackPrivate.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\IntPoint.h"
 					>
 				</File>
@@ -65750,10 +65754,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\track\InbandTextTrackPrivate.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\track\LoadableTextTrack.cpp"
 					>
 				</File>
@@ -65815,6 +65815,14 @@
 				</File>
 				<File
 					RelativePath="..\html\track\TrackEvent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackListBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackListBase.h"
 					>
 				</File>
 				<File

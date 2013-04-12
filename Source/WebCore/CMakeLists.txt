@@ -549,12 +549,6 @@ set(WebCore_IDL_FILES
     html/shadow/HTMLContentElement.idl
     html/shadow/HTMLShadowElement.idl
 
-    html/track/TextTrack.idl
-    html/track/TextTrackCue.idl
-    html/track/TextTrackCueList.idl
-    html/track/TextTrackList.idl
-    html/track/TrackEvent.idl
-
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
@@ -1593,19 +1587,6 @@ set(WebCore_SOURCES
     html/shadow/SpinButtonElement.cpp
     html/shadow/TextControlInnerElements.cpp
 
-    html/track/InbandTextTrack.cpp
-    html/track/LoadableTextTrack.cpp
-    html/track/TextTrack.cpp
-    html/track/TextTrackCue.cpp
-    html/track/TextTrackCueGeneric.cpp
-    html/track/TextTrackCueList.cpp
-    html/track/TextTrackList.cpp
-    html/track/TrackBase.cpp
-    html/track/TrackEvent.cpp
-    html/track/WebVTTElement.cpp
-    html/track/WebVTTParser.cpp
-    html/track/WebVTTTokenizer.cpp
-
     inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtils.cpp
     inspector/DOMEditor.cpp
@@ -1739,7 +1720,6 @@ set(WebCore_SOURCES
     loader/cache/CachedShader.cpp
     loader/cache/CachedSVGDocument.cpp
     loader/cache/CachedSVGDocumentReference.cpp
-    loader/cache/CachedTextTrack.cpp
     loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp
 
@@ -2704,7 +2684,31 @@ if (ENABLE_WEBGL)
 endif ()
 
 if (ENABLE_VIDEO_TRACK)
+    list(APPEND WebCore_IDL_FILES
+        html/track/TextTrack.idl
+        html/track/TextTrackCue.idl
+        html/track/TextTrackCueList.idl
+        html/track/TextTrackList.idl
+        html/track/TrackEvent.idl
+    )
+
     list(APPEND WebCore_SOURCES
+        html/track/InbandTextTrack.cpp
+        html/track/LoadableTextTrack.cpp
+        html/track/TextTrack.cpp
+        html/track/TextTrackCue.cpp
+        html/track/TextTrackCueGeneric.cpp
+        html/track/TextTrackCueList.cpp
+        html/track/TextTrackList.cpp
+        html/track/TrackBase.cpp
+        html/track/TrackEvent.cpp
+        html/track/TrackListBase.cpp
+        html/track/WebVTTElement.cpp
+        html/track/WebVTTParser.cpp
+        html/track/WebVTTTokenizer.cpp
+
+        loader/cache/CachedTextTrack.cpp
+
         platform/graphics/TextTrackRepresentation.cpp
     )
 endif ()

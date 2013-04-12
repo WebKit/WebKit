@@ -33,35 +33,42 @@
 
 namespace WebCore {
 
-class ScriptExecutionContext;
+class HTMLMediaElement;
 
-class TrackBase : public RefCounted<TrackBase>, public EventTarget {
+class TrackBase : public RefCounted<TrackBase> {
 public:
     virtual ~TrackBase();
 
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };
     Type type() const { return m_type; }
 
-    virtual const AtomicString& interfaceName() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-    
-    using RefCounted<TrackBase>::ref;
-    using RefCounted<TrackBase>::deref;
+    void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
+    HTMLMediaElement* mediaElement() { return m_mediaElement; }
+
+    AtomicString kind() const { return m_kind; }
+    virtual void setKind(const AtomicString&);
+
+    AtomicString label() const { return m_label; }
+    void setLabel(const AtomicString& label) { m_label = label; }
+
+    AtomicString language() const { return m_language; }
+    void setLanguage(const AtomicString& language) { m_language = language; }
+
+    virtual void clearClient() = 0;
 
 protected:
-    TrackBase(ScriptExecutionContext*, Type);
-    
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    TrackBase(Type, const AtomicString& label, const AtomicString& language);
+
+    virtual bool isValidKind(const AtomicString&) const = 0;
+    virtual const AtomicString& defaultKindKeyword() const = 0;
+
+    HTMLMediaElement* m_mediaElement;
 
 private:
     Type m_type;
-    
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    
-    ScriptExecutionContext* m_scriptExecutionContext;
-    EventTargetData m_eventTargetData;
+    AtomicString m_kind;
+    AtomicString m_label;
+    AtomicString m_language;
 };
 
 } // namespace WebCore
