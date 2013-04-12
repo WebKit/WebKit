@@ -1,3 +1,14 @@
+2013-04-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Lower the pango dependency
+        https://bugs.webkit.org/show_bug.cgi?id=114520
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/Versions.m4: Only depend on Pango 1.30.0 instead of
+        Pango 1.32.0. 1.32.0 isn't strictly necessary and the version of GTK+ that
+        we depend on (3.6.0) depends on 1.30.0.
+
 2013-04-12  Jer Noble  <jer.noble@apple.com>
 
         TimeRanges::nearest() returns incorrect results.
