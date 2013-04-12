@@ -82,7 +82,7 @@
 (allow ipc-posix-shm-read-data
     (ipc-posix-name "com.apple.AppleDatabaseChanged")
     (ipc-posix-name "FNetwork.defaultStorageSession")
-    (ipc-posix-name-regex #"^apple\.Safari\.PrivateBrowsing\-"))
+    (ipc-posix-name-regex #"^apple\.Safari\.PrivateBrowsing-"))
 (allow ipc-posix-shm-write-data
     (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
