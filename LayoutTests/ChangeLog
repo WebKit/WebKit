@@ -1,5 +1,22 @@
 2013-04-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r138686
+
+    2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Mac and Chromium rebaselines after r138654.
+
+            * editing/deleting/delete-to-select-table-expected.txt: Added.
+            * platform/chromium-mac/editing/deleting/delete-to-select-table-expected.txt: Added.
+            * platform/chromium/editing/deleting/delete-to-select-table-expected.txt: Removed.
+            * platform/efl/editing/deleting/delete-to-select-table-expected.txt: Removed.
+            * platform/gtk/editing/deleting/delete-to-select-table-expected.txt: Removed.
+            * platform/mac-lion/editing/deleting/delete-to-select-table-expected.txt: Added.
+            * platform/mac-wk2/editing/deleting: Added.
+            * platform/mac-wk2/editing/deleting/delete-to-select-table-expected.txt: Added.
+
+2013-04-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r138654
 
     2013-01-02  Douglas Stockwell  <dstockwell@chromium.org>
