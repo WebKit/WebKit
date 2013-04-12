@@ -389,9 +389,33 @@ void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknow
     jsTestSerializedScriptValueInterface->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestSerializedScriptValueInterface@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore34TestSerializedScriptValueInterfaceE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSerializedScriptValueInterface* impl)
 {
-    return wrap<JSTestSerializedScriptValueInterface>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestSerializedScriptValueInterface>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestSerializedScriptValueInterface@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore34TestSerializedScriptValueInterfaceE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestSerializedScriptValueInterface), TestSerializedScriptValueInterface_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestSerializedScriptValueInterface>(exec, globalObject, impl);
 }
 
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue value)

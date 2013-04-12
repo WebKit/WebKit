@@ -234,9 +234,33 @@ void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
     jsTestEventConstructor->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestEventConstructor@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore20TestEventConstructorE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventConstructor* impl)
 {
-    return wrap<JSTestEventConstructor>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestEventConstructor>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestEventConstructor@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore20TestEventConstructorE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestEventConstructor), TestEventConstructor_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestEventConstructor>(exec, globalObject, impl);
 }
 
 TestEventConstructor* toTestEventConstructor(JSC::JSValue value)

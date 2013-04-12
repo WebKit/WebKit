@@ -197,9 +197,33 @@ void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handl
     jsTestMediaQueryListListener->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestMediaQueryListListener@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore26TestMediaQueryListListenerE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMediaQueryListListener* impl)
 {
-    return wrap<JSTestMediaQueryListListener>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestMediaQueryListListener>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestMediaQueryListListener@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore26TestMediaQueryListListenerE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestMediaQueryListListener), TestMediaQueryListListener_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestMediaQueryListListener>(exec, globalObject, impl);
 }
 
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)

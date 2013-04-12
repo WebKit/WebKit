@@ -176,9 +176,33 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     jsTestException->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestException@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore13TestExceptionE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestException* impl)
 {
-    return wrap<JSTestException>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestException>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestException@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore13TestExceptionE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestException), TestException_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestException>(exec, globalObject, impl);
 }
 
 TestException* toTestException(JSC::JSValue value)

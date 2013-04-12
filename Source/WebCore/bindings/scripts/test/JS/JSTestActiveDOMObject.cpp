@@ -235,9 +235,33 @@ void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
     jsTestActiveDOMObject->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestActiveDOMObject@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore19TestActiveDOMObjectE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestActiveDOMObject* impl)
 {
-    return wrap<JSTestActiveDOMObject>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestActiveDOMObject>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestActiveDOMObject@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore19TestActiveDOMObjectE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestActiveDOMObject), TestActiveDOMObject_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestActiveDOMObject>(exec, globalObject, impl);
 }
 
 TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue value)

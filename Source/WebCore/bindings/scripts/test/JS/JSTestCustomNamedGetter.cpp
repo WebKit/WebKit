@@ -219,9 +219,33 @@ void JSTestCustomNamedGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, vo
     jsTestCustomNamedGetter->releaseImpl();
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestCustomNamedGetter@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore21TestCustomNamedGetterE[]; }
+#endif
+#endif
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
 {
-    return wrap<JSTestCustomNamedGetter>(exec, globalObject, impl);
+    if (!impl)
+        return jsNull();
+    if (JSValue result = getExistingWrapper<JSTestCustomNamedGetter>(exec, impl)) return result;
+
+#if ENABLE(BINDING_INTEGRITY)
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+#if PLATFORM(WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestCustomNamedGetter@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore21TestCustomNamedGetterE[2];
+#if COMPILER(CLANG)
+    COMPILE_ASSERT(__is_polymorphic(TestCustomNamedGetter), TestCustomNamedGetter_is_not_polymorphic);
+#endif
+#endif
+    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    return createNewWrapper<JSTestCustomNamedGetter>(exec, globalObject, impl);
 }
 
 TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)

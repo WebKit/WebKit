@@ -2706,7 +2706,7 @@ sub GenerateImplementation
 
         push(@implContent, <<END) if $vtableNameGnu;
 #if ENABLE(BINDING_INTEGRITY)
-#if defined(OS_WIN)
+#if PLATFORM(WIN)
 #pragma warning(disable: 4483)
 extern "C" { extern void (*const ${vtableRefWin}[])(); }
 #else
@@ -2730,7 +2730,7 @@ END
 
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
-#if defined(OS_WIN)
+#if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
 #else
     void* expectedVTablePointer = ${vtableRefGnu};
