@@ -1,3 +1,9 @@
+2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed, remove an old email address for myself.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-04-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [WK2] WebPageProxy loadURL() won't work when called just after terminateProcess()
