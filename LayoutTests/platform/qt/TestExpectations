@@ -1202,6 +1202,12 @@ css3/filters/custom-with-at-rule-syntax/parsing-at-rule-invalid.html
 css3/filters/custom-with-at-rule-syntax/parsing-at-rule-valid.html
 css3/filters/custom-with-at-rule-syntax/parsing-src-property-invalid.html
 css3/filters/custom-with-at-rule-syntax/parsing-src-property-valid.html
+css3/filters/custom-with-at-rule-syntax/parsing-geometry-property-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-geometry-property-valid.html
+css3/filters/custom-with-at-rule-syntax/parsing-mix-property-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-mix-property-valid.html
+css3/filters/custom-with-at-rule-syntax/parsing-parameters-property-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-parameters-property-valid.html
 
 # The following tests need further investigation:
 # https://bugs.webkit.org/show_bug.cgi?id=101531
