@@ -6191,12 +6191,18 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
     if (HTMLFrameOwnerElement* owner = frame->ownerElement())
         isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
 
-    if (hasOverflow && isVisibleToHitTest ? frameView->addScrollableArea(this) : frameView->removeScrollableArea(this))
+    bool isScrollable = hasOverflow && isVisibleToHitTest;
+    bool addedOrRemoved = false;
+    if (isScrollable)
+        addedOrRemoved = frameView->addScrollableArea(this);
+    else
+        addedOrRemoved = frameView->removeScrollableArea(this);
+    
+    if (addedOrRemoved) {
 #if USE(ACCELERATED_COMPOSITING)
         updateNeedsCompositedScrolling();
-#else
-        return;
 #endif
+    }
 }
 
 void RenderLayer::updateScrollCornerStyle()
