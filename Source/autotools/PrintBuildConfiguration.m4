@@ -16,6 +16,7 @@ Features:
  WebKit1 support                                          : $enable_webkit1
  WebKit2 support                                          : $enable_webkit2
  Accelerated Compositing                                  : $enable_accelerated_compositing
+ Accelerated 2D canvas                                    : $enable_accelerated_canvas
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
  HTML5 video element support                              : $enable_video

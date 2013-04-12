@@ -71,6 +71,12 @@ else
     CONFIGURABLE_FEATURE_DEFINES="$CONFIGURABLE_FEATURE_DEFINES ENABLE_3D_RENDERING=0"
 fi
 
+if test "$enable_accelerated_canvas" = "yes"; then
+    CONFIGURABLE_FEATURE_DEFINES="$CONFIGURABLE_FEATURE_DEFINES ENABLE_ACCELERATED_2D_CANVAS=1"
+else
+    CONFIGURABLE_FEATURE_DEFINES="$CONFIGURABLE_FEATURE_DEFINES ENABLE_ACCELERATED_2D_CANVAS=0"
+fi
+
 if test "$enable_web_audio" = "yes"; then
     CONFIGURABLE_FEATURE_DEFINES="$CONFIGURABLE_FEATURE_DEFINES ENABLE_WEB_AUDIO=1"
 else
@@ -82,7 +88,6 @@ fi
 # this command now rather than use AC_CONFIG_COMMANDS because automake rules depend
 # on the output file (WebKitFeatures.txt).
 $srcdir/Tools/gtk/generate-feature-defines-files $CONFIGURABLE_FEATURE_DEFINES \
-    ENABLE_ACCELERATED_2D_CANVAS=0 \
     ENABLE_BATTERY_STATUS=0 \
     ENABLE_BLOB=1 \
     ENABLE_CANVAS_PATH=0 \

@@ -23,7 +23,12 @@
 #include "GraphicsContext3D.h"
 #include "OpenGLShims.h"
 #include <GL/glx.h>
+#include <cairo.h>
 #include <wtf/OwnPtr.h>
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include <cairo-gl.h>
+#endif
 
 namespace WebCore {
 
@@ -168,6 +173,7 @@ GLContextGLX::GLContextGLX(GLXContext context)
     , m_pbuffer(0)
     , m_pixmap(0)
     , m_glxPixmap(0)
+    , m_cairoDevice(0)
 {
 }
 
@@ -177,11 +183,15 @@ GLContextGLX::GLContextGLX(GLXContext context, Pixmap pixmap, GLXPixmap glxPixma
     , m_pbuffer(0)
     , m_pixmap(pixmap)
     , m_glxPixmap(glxPixmap)
+    , m_cairoDevice(0)
 {
 }
 
 GLContextGLX::~GLContextGLX()
 {
+    if (m_cairoDevice)
+        cairo_device_destroy(m_cairoDevice);
+
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
         // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
@@ -249,6 +259,18 @@ void GLContextGLX::swapBuffers()
 void GLContextGLX::waitNative()
 {
     glXWaitX();
+}
+
+cairo_device_t* GLContextGLX::cairoDevice()
+{
+    if (m_cairoDevice)
+        return m_cairoDevice;
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    m_cairoDevice = cairo_glx_device_create(sharedX11Display(), m_context);
+#endif
+
+    return m_cairoDevice;
 }
 
 #if USE(3D_GRAPHICS)

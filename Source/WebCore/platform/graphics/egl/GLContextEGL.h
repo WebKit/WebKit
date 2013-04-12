@@ -41,7 +41,7 @@ public:
     virtual void waitNative();
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
-
+    virtual cairo_device_t* cairoDevice();
 
 #if ENABLE(WEBGL)
     virtual PlatformGraphicsContext3D platformContext();
@@ -59,6 +59,7 @@ private:
     EGLContext m_context;
     EGLSurface m_surface;
     EGLSurfaceType m_type;
+    cairo_device_t* m_cairoDevice;
 };
 
 } // namespace WebCore
