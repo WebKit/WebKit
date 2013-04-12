@@ -1,3 +1,11 @@
+2013-04-12  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13334446> [Mac] Tweak sandbox profile.
+
+        Reviewed by Jessie Berlin.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Split GtkAuthenticationDialog in two widgets
