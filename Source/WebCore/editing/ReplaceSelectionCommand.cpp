@@ -174,7 +174,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     }
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
-    String text = plainText(range.get(), TextIteratorEmitsOriginalText);
+    String text = plainText(range.get(), static_cast<TextIteratorBehavior>(TextIteratorEmitsOriginalText | TextIteratorIgnoresStyleVisibility));
 
     removeInterchangeNodes(holder.get());
     removeUnrenderedNodes(holder.get());
