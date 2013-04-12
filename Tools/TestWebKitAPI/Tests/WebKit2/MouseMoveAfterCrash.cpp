@@ -37,11 +37,6 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
     didFinishLoad = true;
 }
 
-static void processDidCrash(WKPageRef page, const void*)
-{
-    WKPageReload(page);
-}
-
 static void setPageLoaderClient(WKPageRef page)
 {
     WKPageLoaderClient loaderClient;
@@ -49,7 +44,6 @@ static void setPageLoaderClient(WKPageRef page)
     loaderClient.version = 0;
     loaderClient.clientInfo = 0;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.processDidCrash = processDidCrash;
 
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
@@ -79,11 +73,11 @@ TEST(WebKit2, MouseMoveAfterCrash)
     webView.simulateMouseMove(10, 10);
     webView.simulateMouseMove(20, 20);
 
-    // After moving the mouse (while the web process was hung on the Pause message), kill the web process. It is restarted in
-    // processDidCrash by reloading the page.
+    // After moving the mouse (while the web process was hung on the Pause message), kill the web process. It is restarted by reloading the page.
     WKPageTerminate(webView.page());
+    WKPageReload(webView.page());
 
-    // Wait until we load the page a second time (via reloading the page in processDidCrash).
+    // Wait until we load the page a second time.
     Util::run(&didFinishLoad);
 
     EXPECT_JS_FALSE(webView.page(), "didMoveMouse()");

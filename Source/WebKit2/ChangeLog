@@ -1,3 +1,42 @@
+2013-04-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [WK2] WebPageProxy loadURL() won't work when called just after terminateProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=110743
+
+        Reviewed by Benjamin Poulain.
+
+        A call to loadURL() just after terminating WebProcess will fail thanks to
+        WebPageProxy being in an undefined state since it is in the middle of its own
+        cleanup after process termination.
+
+        To properly fix this, not only WebPageProxy cleanup should be made
+        at WebProcess termination request, but also WebProcessProxy needs
+        to only return to its caller after terminating the process and
+        closing connections. Otherwise, WebPageProxy can even be able to
+        detect that WebProcess is no longer running, but a call to respawn
+        the process will fail.
+
+        To fix these issues, this patch moves the cleanup code to a shared private function
+        that is used for both the cases i.e. user termination and real crash. WebProcess
+        shutdown is done using a new method that ensures that all cleanup was done before
+        returning.
+
+        A last change introduced in this patch is that for user requested termination,
+        clients are no longer notified of a crash (since it is not a crash).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::terminateProcess):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::userRequestedTerminate):
+        (WebKit):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2013-04-12  Gavin Barraclough  <barraclough@apple.com>
 
         Add contentAnchor to WKView

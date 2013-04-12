@@ -1,3 +1,31 @@
+2013-04-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [WK2] WebPageProxy loadURL() won't work when called just after terminateProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=110743
+
+        Reviewed by Benjamin Poulain.
+
+        Adding a new test file to check if loading a page just after WebProcess
+        has crashed (or was terminated) works. The test executes the
+        following steps (Load, Crash, Load), thus stressing WebProcess
+        reattach and process termination code path.
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/LoadPageOnCrash.cpp: Added.
+        (TestWebKitAPI):
+        (WebKit2CrashLoader):
+        (TestWebKitAPI::WebKit2CrashLoader::WebKit2CrashLoader):
+        (TestWebKitAPI::WebKit2CrashLoader::loadUrl):
+        (TestWebKitAPI::WebKit2CrashLoader::crashWebProcess):
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WebKit2.pro:
+
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] REGRESSION: Auto substitution strips new lines

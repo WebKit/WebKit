@@ -1567,7 +1567,8 @@ void WebPageProxy::terminateProcess()
     if (!m_isValid)
         return;
 
-    m_process->terminate();
+    m_process->requestTermination();
+    resetStateAfterProcessExited();
 }
 
 #if !USE(CF) || defined(BUILDING_QT__)
@@ -3798,8 +3799,17 @@ void WebPageProxy::processDidBecomeResponsive()
 
 void WebPageProxy::processDidCrash()
 {
-    ASSERT(m_pageClient);
+    ASSERT(m_isValid);
 
+    resetStateAfterProcessExited();
+
+    m_pageClient->processDidCrash();
+    m_loaderClient.processDidCrash(this);
+}
+
+void WebPageProxy::resetStateAfterProcessExited()
+{
+    ASSERT(m_pageClient);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     m_isValid = false;
@@ -3886,16 +3896,11 @@ void WebPageProxy::processDidCrash()
 
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
-    m_pageClient->processDidCrash();
-    m_loaderClient.processDidCrash(this);
-
-    if (!m_isValid) {
-        // If the call out to the loader client didn't cause the web process to be relaunched, 
-        // we'll call setNeedsDisplay on the view so that we won't have the old contents showing.
-        // If the call did cause the web process to be relaunched, we'll keep the old page contents showing
-        // until the new web process has painted its contents.
-        setViewNeedsDisplay(IntRect(IntPoint(), viewSize()));
-    }
+    // If the call out to the loader client didn't cause the web process to be relaunched,
+    // we'll call setNeedsDisplay on the view so that we won't have the old contents showing.
+    // If the call did cause the web process to be relaunched, we'll keep the old page contents showing
+    // until the new web process has painted its contents.
+    setViewNeedsDisplay(IntRect(IntPoint(), viewSize()));
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();
