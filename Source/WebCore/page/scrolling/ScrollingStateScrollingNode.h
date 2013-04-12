@@ -26,6 +26,8 @@
 #ifndef ScrollingStateScrollingNode_h
 #define ScrollingStateScrollingNode_h
 
+#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+
 #include "IntRect.h"
 #include "Region.h"
 #include "ScrollTypes.h"
@@ -169,5 +171,7 @@ inline ScrollingStateScrollingNode* toScrollingStateScrollingNode(ScrollingState
 void toScrollingStateScrollingNode(const ScrollingStateScrollingNode*);
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #endif // ScrollingStateScrollingNode_h

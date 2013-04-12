@@ -24,8 +24,9 @@
  */
  
 #include "config.h"
-
 #include "ScrollingStateTree.h"
+
+#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateScrollingNode.h"
@@ -179,3 +180,5 @@ ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLay
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)

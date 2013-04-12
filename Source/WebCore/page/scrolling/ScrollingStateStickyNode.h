@@ -26,6 +26,8 @@
 #ifndef ScrollingStateStickyNode_h
 #define ScrollingStateStickyNode_h
 
+#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+
 #include "ScrollingConstraints.h"
 #include "ScrollingStateNode.h"
 
@@ -73,5 +75,7 @@ inline ScrollingStateStickyNode* toScrollingStateStickyNode(ScrollingStateNode* 
 void toScrollingStateStickyNode(const ScrollingStateStickyNode*);
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #endif // ScrollingStateStickyNode_h

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollingStateStickyNode.h"
 
+#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+
 #include "GraphicsLayer.h"
 #include "ScrollingStateTree.h"
 #include "TextStream.h"
@@ -129,3 +131,5 @@ void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)

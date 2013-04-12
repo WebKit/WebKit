@@ -31,6 +31,8 @@
 #include "TextStream.h"
 #include <wtf/OwnPtr.h>
 
+#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+
 namespace WebCore {
 
 PassOwnPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
@@ -110,3 +112,5 @@ void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent) const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
