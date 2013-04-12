@@ -49,11 +49,23 @@ public:
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
     InbandTextTrackPrivateClient* client() { return m_client; }
 
-    enum Mode { Disabled, Hidden, Showing };
+    enum Mode {
+        Disabled,
+        Hidden,
+        Showing
+    };
     virtual void setMode(Mode mode) { m_mode = mode; };
     virtual InbandTextTrackPrivate::Mode mode() const { return m_mode; }
 
-    enum Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, None };
+    enum Kind {
+        Subtitles,
+        Captions,
+        Descriptions,
+        Chapters,
+        Metadata,
+        Forced,
+        None
+    };
     virtual Kind kind() const { return Subtitles; }
     virtual bool isClosedCaptions() const { return false; }
     virtual bool containsOnlyForcedSubtitles() const { return false; }

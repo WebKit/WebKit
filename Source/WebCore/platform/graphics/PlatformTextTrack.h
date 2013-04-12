@@ -46,8 +46,19 @@ public:
 
 class PlatformTextTrack : public RefCounted<PlatformTextTrack> {
 public:
-    enum TrackKind { Subtitle = 0, Caption = 1, Description = 2, Chapter = 3, MetaData = 4 };
-    enum TrackType { InBand = 0, OutOfBand = 1, Script = 2 };
+    enum TrackKind {
+        Subtitle = 0,
+        Caption = 1,
+        Description = 2,
+        Chapter = 3,
+        MetaData = 4,
+        Forced = 5,
+    };
+    enum TrackType {
+        InBand = 0,
+        OutOfBand = 1,
+        Script = 2
+    };
 
     static PassRefPtr<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type)
     {

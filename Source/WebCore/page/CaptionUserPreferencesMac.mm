@@ -619,37 +619,54 @@ String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
 int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
     CaptionDisplayMode displayMode = captionDisplayMode();
-    if (displayMode == ForcedOnly)
-        return 0;
     if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions()))
         return 0;
-    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
-        return 0;
-    if (track->containsOnlyForcedSubtitles())
+    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->kind() != TextTrack::forcedKeyword())
         return 0;
     if (!track->isMainProgramContent())
+        return 0;
+    if (displayMode == ForcedOnly && !track->containsOnlyForcedSubtitles())
         return 0;
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
 
-    if (displayMode == Automatic) {
+    if (displayMode == Automatic || track->containsOnlyForcedSubtitles()) {
 
-        // Only enable a text track if the current audio track is not in the user's preferred language.
         if (!mediaElement || !mediaElement->player())
             return 0;
 
-        String audioTrackLanguage = mediaElement->player()->languageOfPrimaryAudioTrack();
+        String audioTrackLanguage;
+
+        Vector<String> languageList;
+        languageList.reserveCapacity(1);
+
+        if (testingMode())
+            audioTrackLanguage = primaryAudioTrackLanguageOverride();
+        else
+            audioTrackLanguage = mediaElement->player()->languageOfPrimaryAudioTrack();
 
         if (audioTrackLanguage.isEmpty())
             return 0;
 
-        Vector<String> languages;
-        languages.append(defaultLanguage());
-        size_t offset = indexOfBestMatchingLanguageInList(audioTrackLanguage, languages);
-        if (!offset)
-            return 0;
+        if (displayMode == Automatic) {
+            // Only enable a text track if the current audio track is not in the user's preferred language.
+            languageList.append(defaultLanguage());
+            size_t offset = indexOfBestMatchingLanguageInList(audioTrackLanguage, languageList);
+            if (offset)
+                return 0;
+        } else {
+            // Only consider a forced-only track if it is in the same language as the primary audio track.
+            String trackLanguage = track->language();
+            if (trackLanguage.isEmpty())
+                return 0;
 
-        userPreferredCaptionLanguages = languages;
+            languageList.append(audioTrackLanguage);
+            size_t offset = indexOfBestMatchingLanguageInList(trackLanguage, languageList);
+            if (offset)
+                return 0;
+        }
+
+        userPreferredCaptionLanguages = languageList;
     }
 
     int trackScore = 0;

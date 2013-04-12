@@ -1,7 +1,16 @@
-var captionsButtonCoordinates;
+var captionsButtonCoordinates = null;
 
 function clickCCButton()
 {
+    if (!captionsButtonCoordinates) {
+        try {
+            captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
+        } catch (exception) {
+            failTest(exception.description);
+            return;
+        }
+    }
+
     eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
     eventSender.mouseDown();
     eventSender.mouseUp();
@@ -13,12 +22,6 @@ function startTrackMenuTest(testFunction)
         consoleWrite("<br>*** Set the user language preference.");
         run("internals.setUserPreferredLanguages(['en'])");
 
-        try {
-            captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
-        } catch (exception) {
-            failTest(exception.description);
-            return;
-        }
         clickCCButton();
         window.setTimeout(testFunction, 100);
     }

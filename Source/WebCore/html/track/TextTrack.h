@@ -87,6 +87,7 @@ public:
     static const AtomicString& descriptionsKeyword();
     static const AtomicString& chaptersKeyword();
     static const AtomicString& metadataKeyword();
+    static const AtomicString& forcedKeyword();
     static bool isValidKindKeyword(const AtomicString&);
 
     AtomicString label() const { return m_label; }

@@ -2202,4 +2202,43 @@ void Internals::setCaptionsStyleSheetOverride(const String& override, ExceptionC
 #endif
 }
 
+void Internals::setPrimaryAudioTrackLanguageOverride(const String& language, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
+    document->page()->group().captionPreferences()->setPrimaryAudioTrackLanguageOverride(language);
+#else
+    UNUSED_PARAM(language);
+#endif
+}
+
+void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
+    CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
+    
+    if (equalIgnoringCase(mode, "Automatic"))
+        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::Automatic);
+    else if (equalIgnoringCase(mode, "ForcedOnly"))
+        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
+    else if (equalIgnoringCase(mode, "AlwaysOn"))
+        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
+    else
+        ec = SYNTAX_ERR;
+#else
+    UNUSED_PARAM(mode);
+#endif
+}
+
 }

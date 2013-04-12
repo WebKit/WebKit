@@ -81,6 +81,9 @@ public:
     virtual String displayNameForTrack(TextTrack*) const;
     virtual Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*);
 
+    void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
+    String primaryAudioTrackLanguageOverride() const;
+
     virtual bool testingMode() const { return m_testingMode; }
     virtual void setTestingMode(bool override) { m_testingMode = override; }
     
@@ -99,6 +102,7 @@ private:
     Timer<CaptionUserPreferences> m_timer;
     String m_userPreferredLanguage;
     String m_captionsStyleSheetOverride;
+    String m_primaryAudioTrackLanguageOverride;
     bool m_testingMode;
     bool m_havePreferences;
 };

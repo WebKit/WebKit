@@ -244,6 +244,12 @@ void CaptionUserPreferences::updateCaptionStyleSheetOveride()
         Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
 }
 
+String CaptionUserPreferences::primaryAudioTrackLanguageOverride() const
+{
+    if (!m_primaryAudioTrackLanguageOverride.isEmpty())
+        return m_primaryAudioTrackLanguageOverride;
+    return defaultLanguage();
+}
     
 }
 

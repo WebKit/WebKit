@@ -318,6 +318,8 @@ public:
 
     String captionsStyleSheetOverride(ExceptionCode&);
     void setCaptionsStyleSheetOverride(const String&, ExceptionCode&);
+    void setPrimaryAudioTrackLanguageOverride(const String&, ExceptionCode&);
+    void setCaptionDisplayMode(const String&, ExceptionCode&);
 
 private:
     explicit Internals(Document*);

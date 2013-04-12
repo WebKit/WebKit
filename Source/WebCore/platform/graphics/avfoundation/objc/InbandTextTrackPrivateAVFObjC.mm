@@ -99,9 +99,13 @@ InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
         return None;
 
     NSString *mediaType = [m_mediaSelectionOption mediaType];
+    
     if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
         return Captions;
     if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
+
+        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
+            return Forced;
 
         // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
         // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
@@ -153,17 +157,20 @@ AtomicString InbandTextTrackPrivateAVFObjC::label() const
     if (!m_mediaSelectionOption)
         return emptyAtom;
 
+    NSString *title = 0;
+
     NSArray *titles = [AVMetadataItem metadataItemsFromArray:[m_mediaSelectionOption.get() commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
         NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
         if ([titlesForPreferredLanguages count])
-            return [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
+            title = [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
 
-        return [[titles objectAtIndex:0] stringValue];
+        if (!title)
+            title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return emptyAtom;
+    return title ? AtomicString(title) : emptyAtom;
 }
 
 AtomicString InbandTextTrackPrivateAVFObjC::language() const

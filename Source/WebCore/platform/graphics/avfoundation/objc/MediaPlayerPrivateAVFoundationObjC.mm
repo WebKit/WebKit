@@ -1331,9 +1331,6 @@ void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
         if (!newTrack)
             continue;
 
-        if ([[option mediaType] isEqualToString:AVMediaTypeSubtitle] && [option hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
-            continue;
-
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
     }
 
@@ -1404,6 +1401,8 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     AVMediaSelectionOptionType *currentlySelectedAudibleOption = [m_avPlayerItem.get() selectedMediaOptionInMediaSelectionGroup:audibleGroup];
     if (currentlySelectedAudibleOption) {
         m_languageOfPrimaryAudioTrack = [[currentlySelectedAudibleOption locale] localeIdentifier];
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - returning language of selected audible option: %s", this, m_languageOfPrimaryAudioTrack.utf8().data());
+
         return m_languageOfPrimaryAudioTrack;
     }
 #endif // HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
@@ -1413,6 +1412,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     NSArray *tracks = [m_avAsset.get() tracksWithMediaType:AVMediaTypeAudio];
     if (!tracks || [tracks count] != 1) {
         m_languageOfPrimaryAudioTrack = emptyString();
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - %i audio tracks, returning emptyString()", this, (tracks ? [tracks count] : 0));
         return m_languageOfPrimaryAudioTrack;
     }
 
@@ -1422,9 +1422,11 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     // Some legacy tracks have "und" as a language, treat that the same as no language at all.
     if (language && ![language isEqualToString:@"und"]) {
         m_languageOfPrimaryAudioTrack = language;
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - returning language of single audio track: %s", this, m_languageOfPrimaryAudioTrack.utf8().data());
         return m_languageOfPrimaryAudioTrack;
     }
 
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - single audio track has no language, returning emptyString()", this);
     m_languageOfPrimaryAudioTrack = emptyString();
     return m_languageOfPrimaryAudioTrack;
 }

@@ -69,6 +69,9 @@ InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClien
     case InbandTextTrackPrivate::Metadata:
         setKind(TextTrack::metadataKeyword());
         break;
+    case InbandTextTrackPrivate::Forced:
+        setKind(TextTrack::forcedKeyword());
+        break;
     case InbandTextTrackPrivate::None:
     default:
         ASSERT_NOT_REACHED();

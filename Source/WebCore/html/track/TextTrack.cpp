@@ -76,6 +76,12 @@ const AtomicString& TextTrack::metadataKeyword()
     DEFINE_STATIC_LOCAL(const AtomicString, metadata, ("metadata", AtomicString::ConstructFromLiteral));
     return metadata;
 }
+    
+const AtomicString& TextTrack::forcedKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, forced, ("forced", AtomicString::ConstructFromLiteral));
+    return forced;
+}
 
 const AtomicString& TextTrack::disabledKeyword()
 {
@@ -154,6 +160,8 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     if (value == chaptersKeyword())
         return true;
     if (value == metadataKeyword())
+        return true;
+    if (value == forcedKeyword())
         return true;
 
     return false;
@@ -513,6 +521,8 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
         kind = PlatformTextTrack::Chapter;
     else if (m_kind == metadataKeyword())
         kind = PlatformTextTrack::MetaData;
+    else if (m_kind == forcedKeyword())
+        kind = PlatformTextTrack::Forced;
 
     PlatformTextTrack::TrackType type = PlatformTextTrack::OutOfBand;
     if (m_trackType == TrackElement)

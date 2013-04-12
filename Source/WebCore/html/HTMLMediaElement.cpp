@@ -3074,7 +3074,9 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     RefPtr<TextTrack> trackToEnable;
     RefPtr<TextTrack> defaultTrack;
     RefPtr<TextTrack> fallbackTrack;
+    RefPtr<TextTrack> forcedSubitleTrack;
     int highestTrackScore = 0;
+    int highestForcedScore = 0;
     for (size_t i = 0; i < group.tracks.size(); ++i) {
         RefPtr<TextTrack> textTrack = group.tracks[i];
 
@@ -3101,6 +3103,10 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
                 defaultTrack = textTrack;
             if (!defaultTrack && !fallbackTrack)
                 fallbackTrack = textTrack;
+            if (textTrack->containsOnlyForcedSubtitles() && trackScore > highestForcedScore) {
+                forcedSubitleTrack = textTrack;
+                highestForcedScore = trackScore;
+            }
         } else if (!group.visibleTrack && !defaultTrack && textTrack->isDefault()) {
             // * If the track element has a default attribute specified, and there is no other text track in the media
             // element's list of text tracks whose text track mode is showing or showing by default
@@ -3111,6 +3117,11 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
     if (!trackToEnable && defaultTrack)
         trackToEnable = defaultTrack;
+
+    // If no track matches the user's preferred language, none was marked as 'default', and there is a forced subtitle track
+    // in the same language as the language of the primary audio track, enable it.
+    if (!trackToEnable && forcedSubitleTrack)
+        trackToEnable = forcedSubitleTrack;
 
     // If no track matches the user's preferred language and non was marked 'default', enable the first track
     // because the user has explicitly stated a preference for this kind of track.
@@ -3189,7 +3200,7 @@ void HTMLMediaElement::configureTextTracks()
 
         String kind = textTrack->kind();
         TrackGroup* currentGroup;
-        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword())
+        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword() || kind == TextTrack::forcedKeyword())
             currentGroup = &captionAndSubtitleTracks;
         else if (kind == TextTrack::descriptionsKeyword())
             currentGroup = &descriptionTracks;

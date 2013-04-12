@@ -356,7 +356,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
                 if (cueData->position() >= 0 && cueData->size() > 0)
                     cueData->setPosition(cueData->position() - cueData->size() / 2);
                 
-                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time %.2f", this, cueData->startTime());
+                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
                 client()->addGenericCue(this, cueData);
             }
         } else
