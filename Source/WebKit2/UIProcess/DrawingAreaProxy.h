@@ -62,7 +62,7 @@ public:
     virtual void waitForBackingStoreUpdateOnNextPaint() { }
 
     const WebCore::IntSize& size() const { return m_size; }
-    void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
+    void setSize(const WebCore::IntSize&, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
     virtual void pageCustomRepresentationChanged() { }
     virtual void waitForPossibleGeometryUpdate() { }
@@ -86,6 +86,7 @@ protected:
     WebPageProxy* m_webPageProxy;
 
     WebCore::IntSize m_size;
+    WebCore::IntSize m_layerPosition;
     WebCore::IntSize m_scrollOffset;
 
 #if USE(COORDINATED_GRAPHICS)

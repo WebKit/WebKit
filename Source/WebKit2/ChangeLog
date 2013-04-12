@@ -1,3 +1,69 @@
+2013-04-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Add contentAnchor to WKView
+        http://bugs.webkit.org/show_bug.cgi?id=114469
+        
+        Currently if you call setFrameSize: while frame size updates are disabled, or if the geometry
+        update times out, then the previously rendered page content will be rendered anchored to the
+        top left corner of the frame.
+
+        This is appropriate if the frame is being resized from the bottom right corner. In order to
+        achieve a more desirable appearance if the frame is being resized from another corner we
+        should allow the corner at which the content anchors to be specified.
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+            - If the content anchor has been set, then updating the frame size moves the origin within the layer.
+        (-[WKView _setDrawingAreaSize:]):
+            - Instruct the drawing area to paint at the correct position within the layer.
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+            - If the root layer is cleared this implicitly resets any origin position we had set within it.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+            - initialize new data members.
+        (-[WKView setContentAnchor:]):
+        (-[WKView contentAnchor]):
+            - Accessor implementation for @property contentAnchor.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        (NS_ENUM):
+            - Added WKContentAnchor enum type, and @property contentAnchor.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setSize):
+            - Don't suppress geometry updates where the layer poistion has changed.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (DrawingAreaProxy):
+            - Added m_layerPosition, layerPosition argument to setSize
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        (TiledCoreAnimationDrawingAreaProxy):
+            - Added m_lastSentLayerPosition
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+            - Don't suppress geometry updates where the layer poistion has changed.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+            - Pass layer position in UpdateGeometry message.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateGeometry):
+            - Added layerPosition argument to updateGeometry
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+            - Added layerPosition argument to updateGeometry
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+            - Added layerPosition argument to updateGeometry
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+            - Added layerPosition argument to updateGeometry
+
 2013-04-12  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148296 and r148297.

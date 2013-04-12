@@ -339,11 +339,11 @@ void QRawWebView::setSize(const QSize& size)
         return;
 
     if (d->m_webPageProxy->useFixedLayout())
-        drawingArea->setSize(size, WebCore::IntSize());
+        drawingArea->setSize(size, WebCore::IntSize(), WebCore::IntSize());
 
     d->m_size = size;
 
-    drawingArea->setSize(d->m_size, WebCore::IntSize());
+    drawingArea->setSize(d->m_size, WebCore::IntSize(), WebCore::IntSize());
     drawingArea->setVisibleContentsRect(WebCore::IntRect(WebCore::IntPoint(), d->m_size), WebCore::FloatPoint());
 }
 

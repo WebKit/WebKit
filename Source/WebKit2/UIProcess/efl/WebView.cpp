@@ -272,7 +272,7 @@ void WebView::updateViewportSize()
 {
     if (DrawingAreaProxy* drawingArea = page()->drawingArea()) {
         // Web Process expects sizes in UI units, and not raw device units.
-        drawingArea->setSize(roundedIntSize(dipSize()), IntSize());
+        drawingArea->setSize(roundedIntSize(dipSize()), IntSize(), IntSize());
         drawingArea->setVisibleContentsRect(FloatRect(contentPosition(), dipSize()), FloatPoint());
     }
 }

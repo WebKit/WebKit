@@ -120,7 +120,7 @@ private:
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.
-    virtual void updateGeometry(const WebCore::IntSize& viewSize) { }
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) { }
     virtual void setDeviceScaleFactor(float) { }
     virtual void setColorSpace(const ColorSpaceData&) { }
 #endif

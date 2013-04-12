@@ -94,6 +94,16 @@
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKProcessGroupPrivate.h"
 
+inline bool isWKContentAnchorRight(WKContentAnchor x)
+{
+    return x == WKContentAnchorTopRight || x == WKContentAnchorBottomRight;
+}
+
+inline bool isWKContentAnchorBottom(WKContentAnchor x)
+{
+    return x == WKContentAnchorBottomLeft || x == WKContentAnchorBottomRight;
+}
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static BOOL windowOcclusionNotificationsAreRegistered = NO;
 #endif
@@ -224,6 +234,13 @@ struct WKViewInterpretKeyEventsParameters {
     String _promisedFilename;
     String _promisedURL;
 
+    // The frame origin can be seen as a position within the layer of painted page content where the
+    // top left corner of the frame will be positioned. This is usually 0,0 - but if the content
+    // anchor is set to a corner other than the top left, the origin will implicitly move as the
+    // the frame size is modified.
+    NSPoint _frameOrigin;
+    WKContentAnchor _contentAnchor;
+    
     NSSize _intrinsicContentSize;
     BOOL _expandsToFitContentViaAutoLayout;
     BOOL _isWindowOccluded;
@@ -385,9 +402,35 @@ struct WKViewInterpretKeyEventsParameters {
     if (!NSEqualSizes(size, [self frame].size))
         _data->_windowHasValidBackingStore = NO;
 
+    bool frameSizeUpdatesEnabled = ![self frameSizeUpdatesDisabled];
+    NSPoint newFrameOrigin;
+
+    // If frame updates are enabled we'll synchronously wait on the repaint, so we can reposition
+    // the layers back to the origin. If frame updates are disabled then shift the layer position
+    // so that the currently painted contents remain anchored appropriately.
+    if (frameSizeUpdatesEnabled)
+        newFrameOrigin = NSZeroPoint;
+    else {
+        newFrameOrigin = _data->_frameOrigin;
+        if (isWKContentAnchorRight(_data->_contentAnchor))
+            newFrameOrigin.x += [self frame].size.width - size.width;
+        if (isWKContentAnchorBottom(_data->_contentAnchor))
+            newFrameOrigin.y += [self frame].size.height - size.height;
+    }
+    
+    // If the frame origin has changed then update the layer position.
+    if (!NSEqualPoints(_data->_frameOrigin, newFrameOrigin)) {
+        _data->_frameOrigin = newFrameOrigin;
+        CALayer *rootLayer = [_data->_layerHostingView layer].sublayers[0];
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        rootLayer.position = NSMakePoint(-newFrameOrigin.x, -newFrameOrigin.y);
+        [CATransaction commit];
+    }
+
     [super setFrameSize:size];
 
-    if (![self frameSizeUpdatesDisabled]) {
+    if (frameSizeUpdatesEnabled) {
         if (_data->_expandsToFitContentViaAutoLayout)
             _data->_page->viewExposedRectChanged([self visibleRect]);
         [self _setDrawingAreaSize:size];
@@ -2247,7 +2290,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!_data->_page->drawingArea())
         return;
     
-    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
+    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_frameOrigin.x, _data->_frameOrigin.y), IntSize(_data->_resizeScrollOffset));
     _data->_resizeScrollOffset = NSZeroSize;
 }
 
@@ -2716,6 +2759,7 @@ static void windowBecameOccluded(uint32_t, void* data, uint32_t dataLength, void
             [_data->_layerHostingView setWantsLayer:NO];
 
             _data->_layerHostingView = nullptr;
+            _data->_frameOrigin = NSZeroPoint;
         }
     }
 
@@ -3152,6 +3196,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
     _data->_windowOcclusionDetectionEnabled = YES;
 
+    _data->_frameOrigin = NSZeroPoint;
+    _data->_contentAnchor = WKContentAnchorTopLeft;
+    
     [self _registerDraggedTypes];
 
     if ([self _shouldUseTiledDrawingArea]) {
@@ -3370,6 +3417,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [self _enableWindowOcclusionNotifications];
     else
         [self _disableWindowOcclusionNotifications];
+}
+
+- (void)setContentAnchor:(WKContentAnchor)contentAnchor
+{
+    _data->_contentAnchor = contentAnchor;
+}
+
+- (WKContentAnchor)contentAnchor
+{
+    return _data->_contentAnchor;
 }
 
 @end

@@ -605,7 +605,7 @@ void QQuickWebViewPrivate::didRelaunchProcess()
     qWarning("WARNING: The web process has been successfully restarted.");
 
     if (DrawingAreaProxy *drawingArea = webPageProxy->drawingArea()) {
-        drawingArea->setSize(viewSize(), IntSize());
+        drawingArea->setSize(viewSize(), IntSize(), IntSize());
 
         updateViewportSize();
         updateUserScripts();
@@ -981,7 +981,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
         // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
         // whether its fixed or not. We still need to tell the drawing area which part of it
         // has to be rendered on tiles, and in desktop mode it's all of it.
-        drawingArea->setSize(viewportSize.toSize(), IntSize());
+        drawingArea->setSize(viewportSize.toSize(), IntSize(), IntSize());
         // The backing store scale factor should already be set to the device pixel ratio
         // of the underlying window, thus we set the effective scale to 1 here.
         drawingArea->setVisibleContentsRect(FloatRect(FloatPoint(), FloatSize(viewportSize)), FloatPoint());

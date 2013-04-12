@@ -143,7 +143,7 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry(const IntSize& newInt
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
-    if (m_lastSentSize != m_size || m_lastSentMinimumLayoutWidth != minimumLayoutWidth)
+    if (m_lastSentSize != m_size || m_lastSentLayerPosition != m_layerPosition || m_lastSentMinimumLayoutWidth != minimumLayoutWidth)
         sendUpdateGeometry();
 
     if (minimumLayoutWidth > 0)
@@ -162,7 +162,8 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 
     m_lastSentMinimumLayoutWidth = m_webPageProxy->minimumLayoutWidth();
     m_lastSentSize = m_size;
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size), m_webPageProxy->pageID());
+    m_lastSentLayerPosition = m_layerPosition;
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy->pageID());
     m_isWaitingForDidUpdateGeometry = true;
 }
 

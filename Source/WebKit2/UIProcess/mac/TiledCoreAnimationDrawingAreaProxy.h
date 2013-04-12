@@ -65,6 +65,7 @@ private:
 
     // The last size we sent to the web process.
     WebCore::IntSize m_lastSentSize;
+    WebCore::IntSize m_lastSentLayerPosition;
 
     // The last minimum layout width we sent to the web process.
     double m_lastSentMinimumLayoutWidth;

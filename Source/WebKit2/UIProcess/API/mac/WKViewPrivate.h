@@ -25,11 +25,19 @@
 
 #import <WebKit2/WKView.h>
 
+typedef NS_ENUM(NSUInteger, WKContentAnchor) {
+    WKContentAnchorTopLeft,
+    WKContentAnchorTopRight,
+    WKContentAnchorBottomLeft,
+    WKContentAnchorBottomRight,
+};
+
 @interface WKView (Private)
 
 /* C SPI support. */
 
 @property(readonly) WKPageRef pageRef;
+@property WKContentAnchor contentAnchor;
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;

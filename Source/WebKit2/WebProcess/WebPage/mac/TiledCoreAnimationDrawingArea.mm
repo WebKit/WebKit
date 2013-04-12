@@ -413,7 +413,7 @@ void TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged(bool isScrolla
             tiledBacking->setClipsToExposedRect(!isScrollable);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
 {
     m_inUpdateGeometry = true;
 
@@ -444,7 +444,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    m_rootLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
+    m_rootLayer.get().frame = CGRectMake(layerPosition.width(), layerPosition.height(), viewSize.width(), viewSize.height());
 
     [CATransaction commit];
     
