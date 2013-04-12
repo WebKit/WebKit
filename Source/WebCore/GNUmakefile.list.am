@@ -4856,6 +4856,7 @@ webcore_svg_sources += \
 	Source/WebCore/loader/cache/CachedSVGDocument.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocument.h \
 	Source/WebCore/loader/cache/CachedSVGDocumentClient.h \
+	Source/WebCore/loader/cache/CachedSVGDocumentReference.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocumentReference.h \
 	Source/WebCore/platform/graphics/SVGGlyph.cpp \
 	Source/WebCore/platform/graphics/SVGGlyph.h \

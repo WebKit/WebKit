@@ -5454,6 +5454,7 @@
 		E1B25106152A0BAF0069B779 /* StylePropertyShorthand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B25104152A0BAF0069B779 /* StylePropertyShorthand.cpp */; };
 		E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */; };
 		E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */; };
+		E1B533471717D0A100F205F9 /* CachedSVGDocumentReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B533461717D0A000F205F9 /* CachedSVGDocumentReference.cpp */; };
 		E1B7839C163740A70007B692 /* SharedWorkerStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1B784201639CBBE0007B692 /* SharedWorkerRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */; };
 		E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */; };
@@ -12258,6 +12259,7 @@
 		E1B25104152A0BAF0069B779 /* StylePropertyShorthand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StylePropertyShorthand.cpp; sourceTree = "<group>"; };
 		E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StylePropertyShorthand.h; sourceTree = "<group>"; };
 		E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CredentialStorageMac.mm; sourceTree = "<group>"; };
+		E1B533461717D0A000F205F9 /* CachedSVGDocumentReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGDocumentReference.cpp; sourceTree = "<group>"; };
 		E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorkerStrategy.h; path = workers/SharedWorkerStrategy.h; sourceTree = "<group>"; };
 		E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorkerRepository.cpp; path = workers/SharedWorkerRepository.cpp; sourceTree = "<group>"; };
 		E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleClient.cpp; sourceTree = "<group>"; };
@@ -17578,6 +17580,7 @@
 				A104F24114C71F7A009E2C23 /* CachedSVGDocument.cpp */,
 				A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */,
 				1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */,
+				E1B533461717D0A000F205F9 /* CachedSVGDocumentReference.cpp */,
 				FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */,
 				0753860014489E9800B78452 /* CachedTextTrack.cpp */,
 				0753860114489E9800B78452 /* CachedTextTrack.h */,
@@ -26998,6 +27001,7 @@
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
 				E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */,
+				E1B533471717D0A100F205F9 /* CachedSVGDocumentReference.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4074,6 +4074,7 @@
     <ClCompile Include="..\loader\cache\CachedScript.cpp" />
     <ClCompile Include="..\loader\cache\CachedShader.cpp" />
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp" />
+    <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp" />
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
     <ClCompile Include="..\loader\cache\CachedXSLStyleSheet.cpp" />
     <ClCompile Include="..\loader\cache\MemoryCache.cpp" />

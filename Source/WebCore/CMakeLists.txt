@@ -1738,6 +1738,7 @@ set(WebCore_SOURCES
     loader/cache/CachedScript.cpp
     loader/cache/CachedShader.cpp
     loader/cache/CachedSVGDocument.cpp
+    loader/cache/CachedSVGDocumentReference.cpp
     loader/cache/CachedTextTrack.cpp
     loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp

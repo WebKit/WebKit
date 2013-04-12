@@ -2436,6 +2436,9 @@
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
+    <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp">
+      <Filter>loader\cache</Filter>
+    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>

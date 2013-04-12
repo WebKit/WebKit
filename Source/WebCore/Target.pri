@@ -858,7 +858,7 @@ SOURCES += \
     loader/cache/CachedScript.cpp \
     loader/cache/CachedShader.cpp \
     loader/cache/CachedSVGDocument.cpp \
-    loader/cache/CachedSVGDocument.h \
+    loader/cache/CachedSVGDocumentReference.cpp \
     loader/cache/CachedXSLStyleSheet.cpp \
     loader/CookieJar.cpp \
     loader/CrossOriginAccessControl.cpp \
