@@ -1,3 +1,10 @@
+2013-04-09  Roger Fong  <roger_fong@apple.com>
+
+        Re-enable WinEWS tests.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Split GtkAuthenticationDialog in two widgets

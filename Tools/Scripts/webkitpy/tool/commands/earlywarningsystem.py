@@ -182,6 +182,7 @@ class QtWK2EWS(AbstractEarlyWarningSystem):
 class WinEWS(AbstractEarlyWarningSystem):
     name = "win-ews"
     port_name = "win"
+    _default_run_tests = True
 
 class MacEWS(AbstractEarlyWarningSystem):
     name = "mac-ews"
