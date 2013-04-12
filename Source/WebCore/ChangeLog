@@ -1,3 +1,46 @@
+2013-04-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r138654
+
+    2013-01-02  Douglas Stockwell  <dstockwell@chromium.org>
+
+            Crash in WebCore::InlineBox::deleteLine
+            https://bugs.webkit.org/show_bug.cgi?id=93448
+
+            Reviewed by Eric Seidel.
+
+            When we ran off the end of the line while looking for line breaks in an
+            inline with white-space:nowrap nested in a block with white-space:pre
+            it was possible for the line break to be set at or before the current
+            position -- this could result in duplications in the render tree or
+            infinite looping.
+
+            This patch changes the "fixup" logic that runs after we have finished
+            iterating through elements and text and have potentially found a break
+            point. In the case of a block setting white-space:pre we would back up
+            a character in some cases. Not doing so could leave whitespace that
+            should have been collapsed at the end of an inline.
+
+            For example in '<span style="white-space:nowrap">x_</span>_y' if a
+            break was inserted before 'y' the space after 'x' would still be
+            rendered (rather than be collapsed with the break).
+
+            To avoid this problem we will not take the opportunity to break until
+            we have finished collapsing whitespace.
+
+            Tests: fast/text/whitespace/inline-whitespace-wrapping-1.html
+                   fast/text/whitespace/inline-whitespace-wrapping-2.html
+                   fast/text/whitespace/inline-whitespace-wrapping-3.html
+                   fast/text/whitespace/inline-whitespace-wrapping-4.html
+                   fast/text/whitespace/nowrap-white-space-collapse.html
+                   fast/text/whitespace/pre-block-normal-inline-crash-1.html
+                   fast/text/whitespace/pre-block-normal-inline-crash-2.html
+
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::RenderBlock::LineBreaker::nextLineBreak): Collapse
+            whitespace before breaking. Avoid setting the break before the current
+            position.
+
 2013-04-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r136554
