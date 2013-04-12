@@ -301,6 +301,7 @@ set(WebKit2_SOURCES
     UIProcess/WebUIClient.cpp
     UIProcess/WebVibrationProvider.cpp
     UIProcess/WebVibrationProxy.cpp
+    UIProcess/WebViewportAttributes.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
@@ -343,6 +344,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKResourceCacheManager.cpp
     UIProcess/API/C/WKTextChecker.cpp
     UIProcess/API/C/WKVibration.cpp
+    UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp
 

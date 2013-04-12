@@ -94,6 +94,7 @@ class WebRenderLayer;
 class WebRenderObject;
 class WebTextChecker;
 class WebVibrationProxy;
+class WebViewportAttributes;
 
 WK_ADD_API_MAPPING(WKApplicationCacheManagerRef, WebApplicationCacheManagerProxy)
 WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
@@ -138,6 +139,7 @@ WK_ADD_API_MAPPING(WKRenderLayerRef, WebRenderLayer)
 WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
+WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 
 /* Enum conversions */

@@ -25,8 +25,10 @@
 
 #include "config.h"
 #include "WebViewClient.h"
+#include "WebViewportAttributes.h"
 
 #include "WKAPICast.h"
+#include "WKBase.h"
 #include "WKRetainPtr.h"
 
 using namespace WebCore;
@@ -87,6 +89,15 @@ void WebViewClient::didCompletePageTransition(WebView* view)
         return;
 
     m_client.didCompletePageTransition(toAPI(view), m_client.clientInfo);
+}
+
+void WebViewClient::didChangeViewportAttributes(WebView* view, const ViewportAttributes& attributes)
+{
+    if (!m_client.didChangeViewportAttributes)
+        return;
+
+    WKRetainPtr<WKViewportAttributesRef> wkAttributes = adoptWK(toAPI(WebViewportAttributes::create(attributes).leakRef()));
+    m_client.didChangeViewportAttributes(toAPI(view), wkAttributes.get(), m_client.clientInfo);
 }
 
 } // namespace WebKit

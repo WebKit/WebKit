@@ -1,13 +1,13 @@
 /*
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the followlayoutSizeing disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
+ *    notice, this list Viewof conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
@@ -23,36 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebViewClient_h
-#define WebViewClient_h
+#include "config.h"
+#include "WKViewportAttributes.h"
 
-#include "APIClient.h"
-#include "WKView.h"
-#include <wtf/text/WTFString.h>
+#include "WKAPICast.h"
+#include "WebViewportAttributes.h"
 
-namespace WebCore {
-class IntPoint;
-class IntRect;
-class IntSize;
-class ViewportAttributes;
+using namespace WebKit;
+
+WKTypeID WKViewportAttributesGetTypeID()
+{
+    return toAPI(WebViewportAttributes::APIType);
 }
-
-namespace WebKit {
-
-class WebView;
-
-class WebViewClient: public APIClient<WKViewClient, kWKViewClientCurrentVersion> {
-public:
-    void viewNeedsDisplay(WebView*, const WebCore::IntRect&);
-    void didChangeContentsSize(WebView*, const WebCore::IntSize&);
-    void webProcessCrashed(WebView*, const String& url);
-    void webProcessDidRelaunch(WebView*);
-    void didChangeContentsPosition(WebView*, const WebCore::IntPoint&);
-    void didRenderFrame(WebView*, const WebCore::IntSize&, const WebCore::IntRect&);
-    void didCompletePageTransition(WebView*);
-    void didChangeViewportAttributes(WebView*, const WebCore::ViewportAttributes&);
-};
-
-} // namespace WebKit
-
-#endif // WebViewClient_h

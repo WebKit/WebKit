@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -7,7 +7,7 @@
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
+ *    notice, this list Viewof conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
@@ -23,42 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewClientEfl_h
-#define ViewClientEfl_h
+#ifndef WKViewportAttributes_h
+#define WKViewportAttributes_h
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKGeometry.h>
-#include <wtf/PassOwnPtr.h>
 
-class EwkView;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
+WK_EXPORT WKTypeID WKViewportAttributesGetTypeID();
 
-class ViewClientEfl {
-public:
-    static PassOwnPtr<ViewClientEfl> create(EwkView* view)
-    {
-        return adoptPtr(new ViewClientEfl(view));
-    }
+#ifdef __cplusplus
+}
+#endif
 
-    ~ViewClientEfl();
-
-private:
-    explicit ViewClientEfl(EwkView*);
-
-    static EwkView* toEwkView(const void* clientInfo);
-    static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
-    static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
-    static void webProcessCrashed(WKViewRef, WKURLRef, const void* clientInfo);
-    static void webProcessDidRelaunch(WKViewRef, const void* clientInfo);
-    static void didChangeContentsPosition(WKViewRef, WKPoint, const void* clientInfo);
-    static void didRenderFrame(WKViewRef, WKSize, WKRect, const void* clientInfo);
-    static void didCompletePageTransition(WKViewRef, const void* clientInfo);
-    static void didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef, const void* clientInfo);
-
-    EwkView* m_view;
-};
-
-} // namespace WebKit
-
-#endif // ViewClientEfl_h
+#endif /* WKViewportAttributes_h */

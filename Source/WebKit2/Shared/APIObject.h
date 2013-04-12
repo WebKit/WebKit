@@ -109,6 +109,7 @@ public:
         TypePreferences,
         TypeTextChecker,
         TypeVibration,
+        TypeViewportAttributes,
 
         // Bundle types
         TypeBundle,

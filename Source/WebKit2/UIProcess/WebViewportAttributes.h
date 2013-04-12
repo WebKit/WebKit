@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -7,7 +7,7 @@
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
+ *    notice, this list Viewof conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
@@ -23,42 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewClientEfl_h
-#define ViewClientEfl_h
+#ifndef WebViewportAttributes_h
+#define WebViewportAttributes_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
-#include <wtf/PassOwnPtr.h>
-
-class EwkView;
+#include "APIObject.h"
+#include <WebCore/ViewportArguments.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-class ViewClientEfl {
+class WebViewportAttributes : public TypedAPIObject<APIObject::TypeViewportAttributes> {
 public:
-    static PassOwnPtr<ViewClientEfl> create(EwkView* view)
+    static PassRefPtr<WebViewportAttributes> create(const WebCore::ViewportAttributes& attributes)
     {
-        return adoptPtr(new ViewClientEfl(view));
+        return adoptRef(new WebViewportAttributes(attributes));
     }
 
-    ~ViewClientEfl();
+    virtual ~WebViewportAttributes();
+
+    const WebCore::ViewportAttributes& originalAttributes() const { return m_attributes; }
 
 private:
-    explicit ViewClientEfl(EwkView*);
+    explicit WebViewportAttributes(const WebCore::ViewportAttributes&);
 
-    static EwkView* toEwkView(const void* clientInfo);
-    static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
-    static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
-    static void webProcessCrashed(WKViewRef, WKURLRef, const void* clientInfo);
-    static void webProcessDidRelaunch(WKViewRef, const void* clientInfo);
-    static void didChangeContentsPosition(WKViewRef, WKPoint, const void* clientInfo);
-    static void didRenderFrame(WKViewRef, WKSize, WKRect, const void* clientInfo);
-    static void didCompletePageTransition(WKViewRef, const void* clientInfo);
-    static void didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef, const void* clientInfo);
-
-    EwkView* m_view;
+    WebCore::ViewportAttributes m_attributes;
 };
 
 } // namespace WebKit
 
-#endif // ViewClientEfl_h
+#endif // WebViewportAttributes_h

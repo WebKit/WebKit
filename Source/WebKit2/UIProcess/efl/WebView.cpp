@@ -529,13 +529,7 @@ FloatRect WebView::convertToUserSpace(const FloatRect& deviceRect)
 
 void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
-    if (m_page->useFixedLayout()) {
-#if USE(ACCELERATED_COMPOSITING)
-        m_ewkView->pageViewportController()->didChangeViewportAttributes(attr);
-#endif
-        return;
-    }
-    m_ewkView->scheduleUpdateDisplay();
+    m_client.didChangeViewportAttributes(this, attr);
 }
 
 void WebView::pageDidRequestScroll(const IntPoint& position)

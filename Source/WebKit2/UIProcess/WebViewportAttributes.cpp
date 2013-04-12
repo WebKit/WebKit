@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewClientEfl_h
-#define ViewClientEfl_h
-
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
-#include <wtf/PassOwnPtr.h>
-
-class EwkView;
+#include "config.h"
+#include "WebViewportAttributes.h"
 
 namespace WebKit {
 
-class ViewClientEfl {
-public:
-    static PassOwnPtr<ViewClientEfl> create(EwkView* view)
-    {
-        return adoptPtr(new ViewClientEfl(view));
-    }
+WebViewportAttributes::WebViewportAttributes(const WebCore::ViewportAttributes& attributes)
+    : m_attributes(attributes)
+{
+}
 
-    ~ViewClientEfl();
-
-private:
-    explicit ViewClientEfl(EwkView*);
-
-    static EwkView* toEwkView(const void* clientInfo);
-    static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
-    static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
-    static void webProcessCrashed(WKViewRef, WKURLRef, const void* clientInfo);
-    static void webProcessDidRelaunch(WKViewRef, const void* clientInfo);
-    static void didChangeContentsPosition(WKViewRef, WKPoint, const void* clientInfo);
-    static void didRenderFrame(WKViewRef, WKSize, WKRect, const void* clientInfo);
-    static void didCompletePageTransition(WKViewRef, const void* clientInfo);
-    static void didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef, const void* clientInfo);
-
-    EwkView* m_view;
-};
+WebViewportAttributes::~WebViewportAttributes()
+{
+}
 
 } // namespace WebKit
-
-#endif // ViewClientEfl_h
