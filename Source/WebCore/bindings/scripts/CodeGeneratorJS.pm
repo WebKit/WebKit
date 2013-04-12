@@ -2735,15 +2735,25 @@ END
 #else
     void* expectedVTablePointer = ${vtableRefGnu};
 #if COMPILER(CLANG)
+    // If this fails $implType does not have a vtable, so you need to add the
+    // ImplementationLacksVTable attribute to the interface definition
     COMPILE_ASSERT(__is_polymorphic($implType), ${implType}_is_not_polymorphic);
 #endif
 #endif
+    // If you hit this assertion you either have a use after free bug, or
+    // $implType has subclasses. If $implType has subclasses that get passed
+    // to toJS() we currently require $interfaceName you to opt out of binding hardening
+    // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ImplementationLacksVTable"} && $vtableNameGnu;
 #if COMPILER(CLANG)
-        COMPILE_ASSERT(!__is_polymorphic($implType), ${implType}_is_polymorphic_but_idl_claims_not_to_be);
+    // If you hit this failure the interface definition has the ImplementationLacksVTable
+    // attribute. You should remove that attribute. If the class has subclasses
+    // that may be passed through this toJS() function you should use the SkipVTableValidation
+    // attribute to $interfaceName.
+    COMPILE_ASSERT(!__is_polymorphic($implType), ${implType}_is_polymorphic_but_idl_claims_not_to_be);
 #endif
 END
 

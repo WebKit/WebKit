@@ -361,9 +361,15 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore15TestEventTargetE[2];
 #if COMPILER(CLANG)
+    // If this fails TestEventTarget does not have a vtable, so you need to add the
+    // ImplementationLacksVTable attribute to the interface definition
     COMPILE_ASSERT(__is_polymorphic(TestEventTarget), TestEventTarget_is_not_polymorphic);
 #endif
 #endif
+    // If you hit this assertion you either have a use after free bug, or
+    // TestEventTarget has subclasses. If TestEventTarget has subclasses that get passed
+    // to toJS() we currently require TestEventTarget you to opt out of binding hardening
+    // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
     return createNewWrapper<JSTestEventTarget>(exec, globalObject, impl);

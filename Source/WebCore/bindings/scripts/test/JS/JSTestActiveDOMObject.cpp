@@ -256,9 +256,15 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestAct
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore19TestActiveDOMObjectE[2];
 #if COMPILER(CLANG)
+    // If this fails TestActiveDOMObject does not have a vtable, so you need to add the
+    // ImplementationLacksVTable attribute to the interface definition
     COMPILE_ASSERT(__is_polymorphic(TestActiveDOMObject), TestActiveDOMObject_is_not_polymorphic);
 #endif
 #endif
+    // If you hit this assertion you either have a use after free bug, or
+    // TestActiveDOMObject has subclasses. If TestActiveDOMObject has subclasses that get passed
+    // to toJS() we currently require TestActiveDOMObject you to opt out of binding hardening
+    // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
     return createNewWrapper<JSTestActiveDOMObject>(exec, globalObject, impl);
