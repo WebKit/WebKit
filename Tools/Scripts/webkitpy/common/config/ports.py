@@ -62,6 +62,7 @@ class DeprecatedPort(object):
     def port(port_name):
         ports = {
             "gtk": GtkPort,
+            "gtk-wk2": GtkWK2Port,
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
             "win": WinPort,
@@ -152,6 +153,24 @@ class GtkPort(DeprecatedPort):
     def run_webkit_tests_command(self):
         command = super(GtkPort, self).run_webkit_tests_command()
         command.append("--gtk")
+        return command
+
+
+class GtkWK2Port(DeprecatedPort):
+    port_flag_name = "gtk-wk2"
+
+    def build_webkit_command(self, build_style=None):
+        command = super(GtkWK2Port, self).build_webkit_command(build_style=build_style)
+        command.append("--gtk")
+        command.append("--update-gtk")
+        command.append("--no-webkit1")
+        command.append(super(GtkWK2Port, self).makeArgs())
+        return command
+
+    def run_webkit_tests_command(self):
+        command = super(GtkWK2Port, self).run_webkit_tests_command()
+        command.append("--gtk")
+        command.append("-2")
         return command
 
 

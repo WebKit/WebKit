@@ -144,6 +144,14 @@ class GtkEWS(AbstractEarlyWarningSystem):
     ]
 
 
+class GtkWK2EWS(AbstractEarlyWarningSystem):
+    name = "gtk-wk2-ews"
+    port_name = "gtk-wk2"
+    watchers = AbstractEarlyWarningSystem.watchers + [
+        "xan.lopez@gmail.com",
+    ]
+
+
 class EflEWS(AbstractEarlyWarningSystem):
     name = "efl-ews"
     port_name = "efl"
