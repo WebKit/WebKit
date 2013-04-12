@@ -1,5 +1,11 @@
 2013-04-12  Oliver Hunt  <oliver@apple.com>
 
+        Apologies to all, I have no idea what happened to cause this change.
+
+        * wtf/Platform.h:
+
+2013-04-12  Oliver Hunt  <oliver@apple.com>
+
         [Qt][Win] r148257 broke the build
         https://bugs.webkit.org/show_bug.cgi?id=114512
 
