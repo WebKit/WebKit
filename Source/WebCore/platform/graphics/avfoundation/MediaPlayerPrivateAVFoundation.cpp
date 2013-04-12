@@ -57,6 +57,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_preload(MediaPlayer::Auto)
     , m_cachedMaxTimeLoaded(0)
     , m_cachedMaxTimeSeekable(0)
+    , m_cachedMinTimeSeekable(0)
     , m_cachedDuration(MediaPlayer::invalidTime())
     , m_reportedDuration(MediaPlayer::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaPlayer::invalidTime())
@@ -361,7 +362,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundation::buffered() const
     return m_cachedLoadedTimeRanges->copy();
 }
 
-float MediaPlayerPrivateAVFoundation::maxTimeSeekable() const
+double MediaPlayerPrivateAVFoundation::maxTimeSeekableDouble() const
 {
     if (!metaDataAvailable())
         return 0;
@@ -371,6 +372,18 @@ float MediaPlayerPrivateAVFoundation::maxTimeSeekable() const
 
     LOG(Media, "MediaPlayerPrivateAVFoundation::maxTimeSeekable(%p) - returning %f", this, m_cachedMaxTimeSeekable);
     return m_cachedMaxTimeSeekable;   
+}
+
+double MediaPlayerPrivateAVFoundation::minTimeSeekable() const
+{
+    if (!metaDataAvailable())
+        return 0;
+
+    if (!m_cachedMinTimeSeekable)
+        m_cachedMinTimeSeekable = platformMinTimeSeekable();
+
+    LOG(Media, "MediaPlayerPrivateAVFoundation::minTimeSeekable(%p) - returning %f", this, m_cachedMinTimeSeekable);
+    return m_cachedMinTimeSeekable;
 }
 
 float MediaPlayerPrivateAVFoundation::maxTimeLoaded() const
@@ -570,6 +583,7 @@ void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
 void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 {
     m_cachedMaxTimeSeekable = 0;
+    m_cachedMinTimeSeekable = 0;
 }
 
 void MediaPlayerPrivateAVFoundation::timeChanged(double time)

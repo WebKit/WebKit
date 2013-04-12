@@ -105,9 +105,10 @@ public:
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
-    virtual PassRefPtr<TimeRanges> seekable() const { return maxTimeSeekable() ? TimeRanges::create(0, maxTimeSeekable()) : TimeRanges::create(); }
+    virtual PassRefPtr<TimeRanges> seekable() const { return maxTimeSeekableDouble() ? TimeRanges::create(minTimeSeekable(), maxTimeSeekableDouble()) : TimeRanges::create(); }
     virtual float maxTimeSeekable() const { return 0; }
     virtual double maxTimeSeekableDouble() const { return maxTimeSeekable(); }
+    virtual double minTimeSeekable() const { return 0; }
     virtual PassRefPtr<TimeRanges> buffered() const = 0;
 
     virtual bool didLoadingProgress() const = 0;

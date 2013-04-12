@@ -315,6 +315,7 @@ public:
 
     PassRefPtr<TimeRanges> buffered();
     PassRefPtr<TimeRanges> seekable();
+    double minTimeSeekable();
     double maxTimeSeekable();
 
     bool didLoadingProgress();

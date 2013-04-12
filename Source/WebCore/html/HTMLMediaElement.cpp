@@ -3778,7 +3778,7 @@ bool HTMLMediaElement::pausedForUserInteraction() const
 
 double HTMLMediaElement::minTimeSeekable() const
 {
-    return 0;
+    return m_player ? m_player->minTimeSeekable() : 0;
 }
 
 double HTMLMediaElement::maxTimeSeekable() const

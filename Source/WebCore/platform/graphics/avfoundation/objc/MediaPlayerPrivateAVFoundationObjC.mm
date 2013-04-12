@@ -601,7 +601,7 @@ float MediaPlayerPrivateAVFoundationObjC::currentTime() const
     return 0;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::seekToTime(float time)
+void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time)
 {
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
@@ -669,23 +669,44 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeR
     return timeRanges.release();
 }
 
-float MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
+double MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable() const
+{
+    NSArray *seekableRanges = [m_avPlayerItem.get() seekableTimeRanges];
+    if (!seekableRanges || ![seekableRanges count])
+        return 0;
+
+    double minTimeSeekable = std::numeric_limits<double>::infinity();
+    bool hasValidRange = false;
+    for (NSValue *thisRangeValue in seekableRanges) {
+        CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
+        if (!CMTIMERANGE_IS_VALID(timeRange) || CMTIMERANGE_IS_EMPTY(timeRange))
+            continue;
+
+        hasValidRange = true;
+        double startOfRange = CMTimeGetSeconds(timeRange.start);
+        if (minTimeSeekable > startOfRange)
+            minTimeSeekable = startOfRange;
+    }
+    return hasValidRange ? minTimeSeekable : 0;
+}
+
+double MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 {
     NSArray *seekableRanges = [m_avPlayerItem.get() seekableTimeRanges];
     if (!seekableRanges)
         return 0;
 
-    float maxTimeSeekable = 0;
+    double maxTimeSeekable = 0;
     for (NSValue *thisRangeValue in seekableRanges) {
         CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
         if (!CMTIMERANGE_IS_VALID(timeRange) || CMTIMERANGE_IS_EMPTY(timeRange))
             continue;
         
-        float endOfRange = narrowPrecisionToFloat(CMTimeGetSeconds(CMTimeRangeGetEnd(timeRange)));
+        double endOfRange = CMTimeGetSeconds(CMTimeRangeGetEnd(timeRange));
         if (maxTimeSeekable < endOfRange)
             maxTimeSeekable = endOfRange;
     }
-    return maxTimeSeekable;   
+    return maxTimeSeekable;
 }
 
 float MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
@@ -1430,7 +1451,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     m_languageOfPrimaryAudioTrack = emptyString();
     return m_languageOfPrimaryAudioTrack;
 }
-    
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys;

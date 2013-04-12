@@ -135,6 +135,7 @@ public:
     virtual MediaPlayer::ReadyState readyState() const { return MediaPlayer::HaveNothing; }
 
     virtual double maxTimeSeekableDouble() const { return 0; }
+    virtual double minTimeSeekable() const { return 0; }
     virtual PassRefPtr<TimeRanges> buffered() const { return TimeRanges::create(); }
 
     virtual unsigned totalBytes() const { return 0; }
@@ -679,6 +680,11 @@ PassRefPtr<TimeRanges> MediaPlayer::seekable()
 double MediaPlayer::maxTimeSeekable()
 {
     return m_private->maxTimeSeekableDouble();
+}
+
+double MediaPlayer::minTimeSeekable()
+{
+    return m_private->minTimeSeekable();
 }
 
 bool MediaPlayer::didLoadingProgress()

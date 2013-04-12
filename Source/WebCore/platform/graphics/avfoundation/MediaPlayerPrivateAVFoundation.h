@@ -157,7 +157,8 @@ protected:
     virtual void setClosedCaptionsVisible(bool) = 0;
     virtual MediaPlayer::NetworkState networkState() const { return m_networkState; }
     virtual MediaPlayer::ReadyState readyState() const { return m_readyState; }
-    virtual float maxTimeSeekable() const;
+    virtual double maxTimeSeekableDouble() const;
+    virtual double minTimeSeekable() const;
     virtual PassRefPtr<TimeRanges> buffered() const;
     virtual bool didLoadingProgress() const;
     virtual void setSize(const IntSize&);
@@ -209,10 +210,11 @@ protected:
     virtual void checkPlayability() = 0;
     virtual void updateRate() = 0;
     virtual float rate() const = 0;
-    virtual void seekToTime(float time) = 0;
+    virtual void seekToTime(double time) = 0;
     virtual unsigned totalBytes() const = 0;
     virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const = 0;
-    virtual float platformMaxTimeSeekable() const = 0;
+    virtual double platformMaxTimeSeekable() const = 0;
+    virtual double platformMinTimeSeekable() const = 0;
     virtual float platformMaxTimeLoaded() const = 0;
     virtual float platformDuration() const = 0;
 
@@ -285,11 +287,12 @@ private:
 
     IntSize m_cachedNaturalSize;
     mutable float m_cachedMaxTimeLoaded;
-    mutable float m_cachedMaxTimeSeekable;
+    mutable double m_cachedMaxTimeSeekable;
+    mutable double m_cachedMinTimeSeekable;
     mutable float m_cachedDuration;
     float m_reportedDuration;
     mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
-    float m_seekTo;
+    double m_seekTo;
     float m_requestedRate;
     mutable int m_delayCallbacks;
     bool m_mainThreadCallPending;
