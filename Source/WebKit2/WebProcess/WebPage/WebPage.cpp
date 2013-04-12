@@ -2053,9 +2053,6 @@ void WebPage::suspendActiveDOMObjectsAndAnimations()
 void WebPage::resumeActiveDOMObjectsAndAnimations()
 {
     m_page->resumeActiveDOMObjectsAndAnimations();
-
-    // We need to repaint on resume to kickstart animated painting again.
-    m_drawingArea->setNeedsDisplay();
 }
 
 IntPoint WebPage::screenToWindow(const IntPoint& point)

@@ -573,6 +573,11 @@ Color BitmapImage::solidColor() const
 {
     return m_solidColor;
 }
+    
+bool BitmapImage::canAnimate()
+{
+    return shouldAnimate() && frameCount() > 1;
+}
 
 void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {

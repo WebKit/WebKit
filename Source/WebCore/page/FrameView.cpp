@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "BackForwardController.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1060,6 +1061,13 @@ void FrameView::setIsInWindow(bool isInWindow)
 {
     if (RenderView* renderView = this->renderView())
         renderView->setIsInWindow(isInWindow);
+
+    if (isInWindow) {
+        // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
+        // require that we repaint animated images to kickstart the animation loop.
+
+        CachedImage::resumeAnimatingImagesForLoader(frame()->document()->cachedResourceLoader());
+    }
 }
 
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const

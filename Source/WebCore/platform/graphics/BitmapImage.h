@@ -184,6 +184,8 @@ public:
 #endif
 
     void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+    
+    bool canAnimate();
 
 private:
     void updateSize() const;

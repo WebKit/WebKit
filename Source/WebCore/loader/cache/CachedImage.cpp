@@ -475,6 +475,27 @@ void CachedImage::changedInRect(const Image* image, const IntRect& rect)
     notifyObservers(&rect);
 }
 
+void CachedImage::resumeAnimatingImagesForLoader(CachedResourceLoader* loader)
+{
+    const CachedResourceLoader::DocumentResourceMap& resources = loader->allCachedResources();
+
+    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = resources.begin(), end = resources.end(); it != end; ++it) {
+        const CachedResourceHandle<CachedResource>& resource = it->value;
+        if (!resource || !resource->isImage())
+            continue;
+        CachedImage* cachedImage = static_cast<CachedImage*>(resource.get());
+        if (!cachedImage->hasImage())
+            continue;
+        Image* image = cachedImage->image();
+        if (!image->isBitmapImage())
+            continue;
+        BitmapImage* bitmapImage = static_cast<BitmapImage*>(image);
+        if (!bitmapImage->canAnimate())
+            continue;
+        cachedImage->animationAdvanced(bitmapImage);
+    }
+}
+
 void CachedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);

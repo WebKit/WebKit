@@ -96,6 +96,8 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+    static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
+
 private:
     void clear();
 
