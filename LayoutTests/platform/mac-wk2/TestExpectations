@@ -335,10 +335,6 @@ webkit.org/b/113515 compositing/iframes/remove-iframe-crash.html [ Crash Pass ]
 webkit.org/b/104954 [ Release ] http/tests/canvas/canvas-slow-font-loading.html [ Pass ImageOnlyFailure ]
 webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
-# The test pass reliably on WebKit2 Mountain Lion in release.
-webkit.org/b/60731 [ MountainLion Release ] ietestcenter/css3/grid/grid-items-003.htm [ Pass ]
-webkit.org/b/60731 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
-
 # Flaky everywhere.
 webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
 
