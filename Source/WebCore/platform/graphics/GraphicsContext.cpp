@@ -757,7 +757,7 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 }
 #endif
 
-#if !USE(SKIA) && !USE(CG) && !USE(CAIRO)
+#if !USE(SKIA) && !USE(CG)
 bool GraphicsContext::isAcceleratedContext() const
 {
     return false;

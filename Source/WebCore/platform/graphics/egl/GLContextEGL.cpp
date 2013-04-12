@@ -22,7 +22,6 @@
 #if USE(EGL)
 
 #include "GraphicsContext3D.h"
-#include <cairo.h>
 #include <wtf/OwnPtr.h>
 
 #if USE(OPENGL_ES_2)
@@ -30,10 +29,6 @@
 #include <GLES2/gl2ext.h>
 #else
 #include "OpenGLShims.h"
-#endif
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include <cairo-gl.h>
 #endif
 
 namespace WebCore {
@@ -213,15 +208,11 @@ GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceTyp
     : m_context(context)
     , m_surface(surface)
     , m_type(type)
-    , m_cairoDevice(0)
 {
 }
 
 GLContextEGL::~GLContextEGL()
 {
-    if (m_cairoDevice)
-        cairo_device_destroy(m_cairoDevice);
-
     EGLDisplay display = sharedEGLDisplay();
     if (m_context) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -271,18 +262,6 @@ void GLContextEGL::swapBuffers()
 void GLContextEGL::waitNative()
 {
     eglWaitNative(EGL_CORE_NATIVE_ENGINE);
-}
-
-cairo_device_t* GLContextEGL::cairoDevice()
-{
-    if (m_cairoDevice)
-        return m_cairoDevice;
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    m_cairoDevice = cairo_egl_device_create(sharedEGLDisplay(), m_context);
-#endif
-
-    return m_cairoDevice;
 }
 
 #if ENABLE(WEBGL)

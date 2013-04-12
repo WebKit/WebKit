@@ -1,3 +1,16 @@
+2013-04-11  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148247.
+        http://trac.webkit.org/changeset/148247
+        https://bugs.webkit.org/show_bug.cgi?id=114490
+
+        Cairo dep fails to build on builders due to missing EGL
+        headers (Requested by zdobersek on #webkit).
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/PrintBuildConfiguration.m4:
+        * Source/autotools/SetupWebKitFeatures.m4:
+
 2013-04-11  Paweł Forysiuk  <tuxator@o2.pl>
 
         [GTK] Webkit fails to build with MinGW compiler after changeset 146468

@@ -2119,18 +2119,11 @@ sub buildAutotoolsProject($@)
         "web-audio" => 1,
         "xslt" => 1,
     );
-
-    # These features are ones which build-webkit cannot control, typically because
-    # they can only be active when we have the proper dependencies.
-    my %unsetFeatures = (
-        "accelerated-2d-canvas" => 1,
-    );
-
     my @overridableFeatures = ();
     foreach (@features) {
         if ($configurableFeatures{$_->{option}}) {
             push @buildArgs, autotoolsFlag(${$_->{value}}, $_->{option});;
-        } elsif (!$unsetFeatures{$_->{option}}) {
+        } else {
             push @overridableFeatures, $_->{define} . "=" . (${$_->{value}} ? "1" : "0");
         }
     }

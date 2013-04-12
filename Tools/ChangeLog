@@ -1,3 +1,16 @@
+2013-04-11  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148247.
+        http://trac.webkit.org/changeset/148247
+        https://bugs.webkit.org/show_bug.cgi?id=114490
+
+        Cairo dep fails to build on builders due to missing EGL
+        headers (Requested by zdobersek on #webkit).
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+        * gtk/jhbuild.modules:
+
 2013-04-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add accelerated 2D canvas support using cairo-gl

@@ -44,68 +44,22 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include "GLContext.h"
-#include "OpenGLShims.h"
-#include "TextureMapperGL.h"
-#include <cairo-gl.h>
-#endif
-
 using namespace std;
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData(const IntSize& size)
+ImageBufferData::ImageBufferData(const IntSize&)
     : m_platformContext(0)
-    , m_size(size)
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    , m_texture(0)
-#endif
 {
 }
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-PassRefPtr<cairo_surface_t> createCairoGLSurface(const IntSize& size, uint32_t& texture)
-{
-    GLContext::sharingContext()->makeContextCurrent();
-
-    // We must generate the texture ourselves, because there is no Cairo API for extracting it
-    // from a pre-existing surface.
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    glTexImage2D(GL_TEXTURE_2D, 0 /* level */, GL_RGBA8, size.width(), size.height(), 0 /* border */, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-    GLContext* context = GLContext::sharingContext();
-    cairo_device_t* device = context->cairoDevice();
-
-    // Thread-awareness is a huge performance hit on non-Intel drivers.
-    cairo_gl_device_set_thread_aware(device, FALSE);
-
-    return adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, texture, size.width(), size.height()));
-}
-#endif
-
-ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode renderingMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode, bool& success)
     : m_data(size)
     , m_size(size)
     , m_logicalSize(size)
 {
     success = false;  // Make early return mean error.
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (renderingMode == Accelerated)
-        m_data.m_surface = createCairoGLSurface(size, m_data.m_texture);
-    else
-#endif
-        m_data.m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
-
+    m_data.m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
     if (cairo_surface_status(m_data.m_surface.get()) != CAIRO_STATUS_SUCCESS)
         return;  // create will notice we didn't set m_initialized and fail.
 
@@ -160,9 +114,7 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 {
-    // FIXME: Enable color space conversions on accelerated canvases.
-    if (cairo_surface_get_type(m_data.m_surface.get()) != CAIRO_SURFACE_TYPE_IMAGE)
-        return;
+    ASSERT(cairo_surface_get_type(m_data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 
     unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface.get());
     int stride = cairo_image_surface_get_stride(m_data.m_surface.get());
@@ -181,46 +133,13 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), 0, 0, m_size.width(), m_size.height());
 }
 
-static cairo_surface_t* mapSurfaceToImage(cairo_surface_t* surface, const IntSize& size)
-{
-    if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE)
-        return surface;
-
-    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height());
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(imageSurface));
-    cairo_set_source_surface(cr.get(), surface, 0, 0);
-    cairo_paint(cr.get());
-    return imageSurface;
-}
-
-static void unmapSurfaceFromImage(cairo_surface_t* surface, cairo_surface_t* imageSurface, const IntRect& dirtyRectangle = IntRect())
-{
-    if (surface == imageSurface && dirtyRectangle.isEmpty())
-        return;
-
-    if (dirtyRectangle.isEmpty()) {
-        cairo_surface_destroy(imageSurface);
-        return;
-    }
-
-    if (surface == imageSurface) {
-        cairo_surface_mark_dirty_rectangle(surface, dirtyRectangle.x(), dirtyRectangle.y(), dirtyRectangle.width(), dirtyRectangle.height());
-        return;
-    }
-
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface));
-    cairo_set_source_surface(cr.get(), imageSurface, 0, 0);
-    cairo_rectangle(cr.get(), dirtyRectangle.x(), dirtyRectangle.y(), dirtyRectangle.width(), dirtyRectangle.height());
-    cairo_fill(cr.get());
-    cairo_surface_destroy(imageSurface);
-}
-
 template <Multiply multiplied>
 PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
 {
+    ASSERT(cairo_surface_get_type(data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
+
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
-    cairo_surface_t* imageSurface = mapSurfaceToImage(data.m_surface.get(), size);
-    unsigned char* dataSrc = cairo_image_surface_get_data(imageSurface);
+    unsigned char* dataSrc = cairo_image_surface_get_data(data.m_surface.get());
     unsigned char* dataDst = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
@@ -248,7 +167,7 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         endy = size.height();
     int numRows = endy - originy;
 
-    int stride = cairo_image_surface_get_stride(imageSurface);
+    int stride = cairo_image_surface_get_stride(data.m_surface.get());
     unsigned destBytesPerRow = 4 * rect.width();
 
     unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
@@ -281,7 +200,6 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         destRows += destBytesPerRow;
     }
 
-    unmapSurfaceFromImage(data.m_surface.get(), imageSurface);
     return result.release();
 }
 
@@ -297,8 +215,9 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRe
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
-    cairo_surface_t* imageSurface = mapSurfaceToImage(m_data.m_surface.get(), sourceSize);
-    unsigned char* dataDst = cairo_image_surface_get_data(imageSurface);
+    ASSERT(cairo_surface_get_type(m_data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    unsigned char* dataDst = cairo_image_surface_get_data(m_data.m_surface.get());
 
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -327,7 +246,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
-    int stride = cairo_image_surface_get_stride(imageSurface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface.get());
 
     unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
@@ -355,8 +274,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         }
         srcRows += srcBytesPerRow;
     }
-
-    unmapSurfaceFromImage(m_data.m_surface.get(), imageSurface, IntRect(destx, desty, numColumns, numRows));
+    cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), destx, desty, numColumns, numRows);
 }
 
 #if !PLATFORM(GTK)
@@ -390,33 +308,5 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateS
     return "data:" + mimeType + ";base64," + base64Data;
 }
 #endif
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-void ImageBufferData::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
-{
-    if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {
-        notImplemented();
-        return;
-    }
-
-    ASSERT(m_texture);
-
-    // Cairo may change the active context, so we make sure to change it back after flushing.
-    GLContext* previousActiveContext = GLContext::getCurrent();
-    cairo_surface_flush(m_surface.get());
-    previousActiveContext->makeContextCurrent();
-
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_texture, TextureMapperGL::ShouldBlend, m_size, targetRect, matrix, opacity);
-}
-#endif
-
-PlatformLayer* ImageBuffer::platformLayer() const
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_data.m_texture)
-        return const_cast<ImageBufferData*>(&m_data);
-#endif
-    return 0;
-}
 
 } // namespace WebCore

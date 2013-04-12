@@ -61,8 +61,7 @@
     </branch>
   </autotools>
 
-  <autotools id="cairo" autogen-sh="configure"
-             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes">
+  <autotools id="cairo" autogen-sh="configure">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>

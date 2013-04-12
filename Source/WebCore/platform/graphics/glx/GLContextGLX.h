@@ -46,7 +46,6 @@ public:
     virtual void waitNative();
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
-    virtual cairo_device_t* cairoDevice();
 
 #if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext();
@@ -64,7 +63,6 @@ private:
     GLXPbuffer m_pbuffer;
     Pixmap m_pixmap;
     GLXPixmap m_glxPixmap;
-    cairo_device_t* m_cairoDevice;
 };
 
 } // namespace WebCore
