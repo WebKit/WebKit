@@ -1,5 +1,52 @@
 2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Split GtkAuthenticationDialog in two widgets
+        https://bugs.webkit.org/show_bug.cgi?id=103644
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.cpp: Removed.
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.h: Removed.
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp: Added.
+        (webkitAuthenticationDialogAuthenticate): Use the
+        AuthenticationChallengeProxy to authenticate and destroy the dialog.
+        (okButtonClicked): Call webkitAuthenticationDialogAuthenticate()
+        with the credential.
+        (cancelButtonClicked): Call
+        webkitAuthenticationDialogAuthenticate() with a NULL credential to
+        continue without credential.
+        (webkitAuthenticationDialogInitialize): Build the UI.
+        (webkitAuthenticationDialogDraw): Draw a background.
+        (webkitAuthenticationDialogMap): Grab default button.
+        (webkitAuthenticationDialogConstructed): Create a GtkStyleContext
+        with the GtkWindow path to draw the widget background like a real
+        dialog.
+        (webkit_authentication_dialog_class_init):
+        (webkitAuthenticationDialogNew): Create a new
+        WebKitAuthenticationDialog widget.
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h: Added.
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewHandleAuthenticationChallenge): Create a
+        WebKitAuthenticationDialog widget and pass add it to the
+        container.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate): Updated to use the widget directly.
+        (webkitWebViewChildIsInternalWidget): Ditto.
+        (webkitWebViewBaseAddAuthenticationDialog): Ditto.
+        (webkitWebViewBaseCancelAuthenticationDialog): Ditto.
+        (webkitWebViewBaseContainerRemove): Ditto.
+        (webkitWebViewBaseContainerForall): Ditto.
+        (resizeWebKitWebViewBaseFromAllocation): Ditto.
+        (webkitWebViewBaseFocus): Ditto.
+        (webkitWebViewBaseDestroy): Destroy the auth widget is present.
+        (webkit_web_view_base_class_init): Add implementation for
+        GtkWidgetClass::destroy.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
+2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Web Process crash when the UI process finishes too early
         https://bugs.webkit.org/show_bug.cgi?id=112729
 

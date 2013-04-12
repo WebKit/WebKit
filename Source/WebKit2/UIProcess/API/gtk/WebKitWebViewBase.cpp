@@ -36,6 +36,7 @@
 #include "WebEventFactory.h"
 #include "WebFullScreenClientGtk.h"
 #include "WebInspectorProxy.h"
+#include "WebKitAuthenticationDialog.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBaseAccessible.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -104,7 +105,7 @@ struct _WebKitWebViewBasePrivate {
     IntSize resizerSize;
     GRefPtr<AtkObject> accessible;
     bool needsResizeOnMap;
-    WebKit2GtkAuthenticationDialog* authenticationDialog;
+    GtkWidget* authenticationDialog;
     GtkWidget* inspectorView;
     unsigned inspectorViewHeight;
     GOwnPtr<GdkEvent> contextMenuEvent;
@@ -272,7 +273,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
 static bool webkitWebViewChildIsInternalWidget(WebKitWebViewBase* webViewBase, GtkWidget* widget)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    return widget == priv->inspectorView || (priv->authenticationDialog && priv->authenticationDialog->widget() == widget);
+    return widget == priv->inspectorView || widget == priv->authenticationDialog;
 }
 
 static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* widget)
@@ -291,18 +292,22 @@ static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* wi
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
 
-void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase* webViewBase, WebKit2GtkAuthenticationDialog* dialog)
+void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase* webViewBase, GtkWidget* dialog)
 {
-    webViewBase->priv->authenticationDialog = dialog;
-    gtk_container_add(GTK_CONTAINER(webViewBase), dialog->widget());
-    gtk_widget_queue_draw(GTK_WIDGET(webViewBase)); // We need to draw the shadow over the widget.
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    priv->authenticationDialog = dialog;
+    gtk_container_add(GTK_CONTAINER(webViewBase), dialog);
+    gtk_widget_show(dialog);
+
+    // We need to draw the shadow over the widget.
+    gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }
 
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->authenticationDialog)
-        priv->authenticationDialog->destroy();
+        gtk_widget_destroy(priv->authenticationDialog);
 }
 
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector)
@@ -323,7 +328,7 @@ static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget*
     if (priv->inspectorView == widget) {
         priv->inspectorView = 0;
         priv->inspectorViewHeight = 0;
-    } else if (priv->authenticationDialog && priv->authenticationDialog->widget() == widget) {
+    } else if (priv->authenticationDialog == widget) {
         priv->authenticationDialog = 0;
     } else {
         ASSERT(priv->children.contains(widget));
@@ -347,7 +352,7 @@ static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean i
         (*callback)(priv->inspectorView, callbackData);
 
     if (includeInternals && priv->authenticationDialog)
-        (*callback)(priv->authenticationDialog->widget(), callbackData);
+        (*callback)(priv->authenticationDialog, callbackData);
 }
 
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* child, const IntRect& childRect)
@@ -473,7 +478,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
     // after calculating the inspector allocation.
     if (priv->authenticationDialog) {
         GtkRequisition naturalSize;
-        gtk_widget_get_preferred_size(priv->authenticationDialog->widget(), 0, &naturalSize);
+        gtk_widget_get_preferred_size(priv->authenticationDialog, 0, &naturalSize);
 
         GtkAllocation childAllocation = {
             (viewRect.width() - naturalSize.width) / 2,
@@ -481,7 +486,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
             naturalSize.width,
             naturalSize.height
         };
-        gtk_widget_size_allocate(priv->authenticationDialog->widget(), &childAllocation);
+        gtk_widget_size_allocate(priv->authenticationDialog, &childAllocation);
     }
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -817,11 +822,20 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
     if (priv->authenticationDialog) {
         gboolean returnValue;
-        g_signal_emit_by_name(priv->authenticationDialog->widget(), "focus", direction, &returnValue);
+        g_signal_emit_by_name(priv->authenticationDialog, "focus", direction, &returnValue);
         return returnValue;
     }
 
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
+}
+
+static void webkitWebViewBaseDestroy(GtkWidget* widget)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    if (priv->authenticationDialog)
+        gtk_widget_destroy(priv->authenticationDialog);
+
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->destroy(widget);
 }
 
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
@@ -850,6 +864,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->drag_data_received = webkitWebViewBaseDragDataReceived;
     widgetClass->get_accessible = webkitWebViewBaseGetAccessible;
     widgetClass->parent_set = webkitWebViewBaseParentSet;
+    widgetClass->destroy = webkitWebViewBaseDestroy;
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
     gobjectClass->constructed = webkitWebViewBaseConstructed;

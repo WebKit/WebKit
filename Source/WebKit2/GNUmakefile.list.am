@@ -647,8 +647,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
-	Source/WebKit2/UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.cpp \
-	Source/WebKit2/UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \

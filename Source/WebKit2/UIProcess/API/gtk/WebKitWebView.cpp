@@ -26,6 +26,7 @@
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebData.h"
+#include "WebKitAuthenticationDialog.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitContextMenuClient.h"
 #include "WebKitContextMenuItemPrivate.h"
@@ -1666,17 +1667,13 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
-    WebKit2GtkAuthenticationDialog* dialog;
-    GtkAuthenticationDialog::CredentialStorageMode credentialStorageMode;
-
+    CredentialStorageMode credentialStorageMode;
     if (webkit_settings_get_enable_private_browsing(webView->priv->settings.get()))
-        credentialStorageMode = GtkAuthenticationDialog::DisallowPersistentStorage;
+        credentialStorageMode = DisallowPersistentStorage;
     else
-        credentialStorageMode = GtkAuthenticationDialog::AllowPersistentStorage;
+        credentialStorageMode = AllowPersistentStorage;
 
-    dialog = new WebKit2GtkAuthenticationDialog(authenticationChallenge, credentialStorageMode);
-    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), dialog);
-    dialog->show();
+    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(authenticationChallenge, credentialStorageMode));
 }
 
 void webkitWebViewInsecureContentDetected(WebKitWebView* webView, WebKitInsecureContentEvent type)

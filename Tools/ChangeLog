@@ -1,3 +1,16 @@
+2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Split GtkAuthenticationDialog in two widgets
+        https://bugs.webkit.org/show_bug.cgi?id=103644
+
+        Reviewed by Xan Lopez.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Do not generate api docs for
+        WebKitAuthenticationDialog which is private in WebKit2.
+        (get_webkit1_options): Do not generate api docs for
+        webkitauthenticationdialog which is private in WebKit1.
+
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit Queues should capitalize K in Wk2
