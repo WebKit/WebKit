@@ -30,10 +30,28 @@ static const char introspectionXML[] =
     "   <arg type='t' name='pageID' direction='in'/>"
     "   <arg type='s' name='title' direction='out'/>"
     "  </method>"
+    "  <signal name='DocumentLoaded'/>"
     " </interface>"
     "</node>";
 
-static void methodCallCallback(GDBusConnection*, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)
+static void documentLoadedCallback(WebKitWebPage*, gpointer userData)
+{
+    bool ok = g_dbus_connection_emit_signal(G_DBUS_CONNECTION(userData),
+        0,
+        "/org/webkit/gtk/WebExtensionTest",
+        "org.webkit.gtk.WebExtensionTest",
+        "DocumentLoaded",
+        0,
+        0);
+    g_assert(ok);
+}
+
+static void pageCreatedCallback(WebKitWebExtension*, WebKitWebPage* webPage, gpointer userData)
+{
+    g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), userData);
+}
+
+static void methodCallCallback(GDBusConnection* connection, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)
 {
     if (g_strcmp0(interfaceName, "org.webkit.gtk.WebExtensionTest"))
         return;
@@ -78,6 +96,8 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
         &error.outPtr());
     if (!registrationID)
         g_warning("Failed to register object: %s\n", error->message);
+
+    g_signal_connect(WEBKIT_WEB_EXTENSION(userData), "page-created", G_CALLBACK(pageCreatedCallback), connection);
 }
 
 extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)

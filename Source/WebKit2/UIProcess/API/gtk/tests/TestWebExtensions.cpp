@@ -45,6 +45,33 @@ static void testWebExtension(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(title, ==, "WebKitGTK+ Web Extensions Test");
 }
 
+static void documentLoadedCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant*, WebViewTest* test)
+{
+    g_main_loop_quit(test->m_mainLoop);
+}
+
+static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
+{
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
+    guint id = g_dbus_connection_signal_subscribe(connection,
+        0,
+        "org.webkit.gtk.WebExtensionTest",
+        "DocumentLoaded",
+        "/org/webkit/gtk/WebExtensionTest",
+        0,
+        G_DBUS_SIGNAL_FLAGS_NONE,
+        reinterpret_cast<GDBusSignalCallback>(documentLoadedCallback),
+        test,
+        0);
+    g_assert(id);
+
+    test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
+    g_main_loop_run(test->m_mainLoop);
+    g_dbus_connection_signal_unsubscribe(connection, id);
+}
+
 void beforeAll()
 {
     webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
@@ -53,6 +80,7 @@ void beforeAll()
         return;
 
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtension);
+    WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
 }
 
 void afterAll()
