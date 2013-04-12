@@ -1,6 +1,6 @@
 (version 1)
 (deny default (with partial-symbolication))
-(allow system-audit file-read-metadata)
+(allow ipc-posix-shm system-audit file-read-metadata)
 
 (import "system.sb")
 
@@ -77,14 +77,6 @@
 ;; IOKit user clients
 (allow iokit-open
     (iokit-user-client-class "RootDomainUserClient"))
-
-;; Shared memory.
-(allow ipc-posix-shm-read-data
-    (ipc-posix-name "com.apple.AppleDatabaseChanged")
-    (ipc-posix-name "FNetwork.defaultStorageSession")
-    (ipc-posix-name-regex #"^apple\.Safari\.PrivateBrowsing-"))
-(allow ipc-posix-shm-write-data
-    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
