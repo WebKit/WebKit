@@ -79,34 +79,6 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily.get();
 }
 
-#if !ERROR_DISABLED
-#if defined(__LP64__) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 || (__MAC_OS_X_VERSION_MAX_ALLOWED >= 107 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 106)
-static NSString* pathFromFont(NSFont*)
-{
-    // FMGetATSFontRefFromFont is not available. As pathFromFont is only used for debugging purposes,
-    // returning nil is acceptable.
-    return nil;
-}
-#else
-static NSString* pathFromFont(NSFont *font)
-{
-    ATSFontRef atsFont = FMGetATSFontRefFromFont(CTFontGetPlatformFont(toCTFontRef(font), 0));
-    FSRef fileRef;
-
-    OSStatus status = ATSFontGetFileReference(atsFont, &fileRef);
-    if (status != noErr)
-        return nil;
-
-    UInt8 filePathBuffer[PATH_MAX];
-    status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
-    if (status == noErr)
-        return [NSString stringWithUTF8String:(const char*)filePathBuffer];
-
-    return nil;
-}
-#endif // __LP64__
-#endif // !ERROR_DISABLED
-
 const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *key) const
 {
     if (key && !CFEqual(RetainPtr<CFStringRef>(AdoptCF, CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort"))) {
@@ -166,11 +138,6 @@ void SimpleFontData::platformInit()
             m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:fallbackFontFamily]);
         else
             m_platformData.setFont([NSFont fontWithName:fallbackFontFamily size:m_platformData.size()]);
-#if !ERROR_DISABLED
-        NSString *filePath = pathFromFont(initialFont.get());
-        if (!filePath)
-            filePath = @"not known";
-#endif
         if (!initFontData(this)) {
             if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
                 // OK, couldn't setup Times New Roman as an alternate to Times, fallback
@@ -178,19 +145,19 @@ void SimpleFontData::platformInit()
                 m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:webFallbackFontFamily()]);
                 if (!initFontData(this)) {
                     // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
-                    LOG_ERROR("unable to initialize with font %@ at %@", initialFont.get(), filePath);
+                    LOG_ERROR("unable to initialize with font %@", initialFont.get());
                     failedSetup = true;
                 }
             } else {
                 // We tried the requested font and the system font. No joy. We have to give up.
-                LOG_ERROR("unable to initialize with font %@ at %@", initialFont.get(), filePath);
+                LOG_ERROR("unable to initialize with font %@", initialFont.get());
                 failedSetup = true;
             }
         }
 
         // Report the problem.
-        LOG_ERROR("Corrupt font detected, using %@ in place of %@ located at \"%@\".",
-            [m_platformData.font() familyName], [initialFont.get() familyName], filePath);
+        LOG_ERROR("Corrupt font detected, using %@ in place of %@.",
+            [m_platformData.font() familyName], [initialFont.get() familyName]);
     }
 
     // If all else fails, try to set up using the system font.
