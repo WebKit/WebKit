@@ -282,5 +282,9 @@
     [Conditional=VIDEO_TRACK] void setPrimaryAudioTrackLanguageOverride(in DOMString language) raises(DOMException);
     [Conditional=VIDEO_TRACK] void setCaptionDisplayMode(in DOMString mode) raises (DOMException);
 
+    [Conditional=VIDEO] TimeRanges createTimeRanges(in Float32Array startTimes, in Float32Array
+     endTimes);
+    [Conditional=VIDEO] double closestTimeToTimeRanges(in double time, in TimeRanges ranges);
+
     boolean isSelectPopupVisible(in Node node);
 };

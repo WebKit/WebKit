@@ -427,3 +427,11 @@ EXPORTS
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
 #endif
+
+#if ENABLE(VIDEO)
+        ?toTimeRanges@WebCore@@YAPAVTimeRanges@1@VJSValue@JSC@@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVTimeRanges@1@@Z
+        ?toFloat32Array@WebCore@@YAPAVFloat32Array@WTF@@VJSValue@JSC@@@Z
+        ?nearest@TimeRanges@WebCore@@QBENN@Z
+        ?add@TimeRanges@WebCore@@QAEXNN@Z
+#endif

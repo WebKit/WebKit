@@ -1,3 +1,14 @@
+2013-04-12  Jer Noble  <jer.noble@apple.com>
+
+        TimeRanges::nearest() returns incorrect results.
+        https://bugs.webkit.org/show_bug.cgi?id=114483
+
+        Reviewed by Eric Carlson.
+
+        Add symbols needed by WebCoreTestSupport to exports list.
+
+        * Source/autotools/symbols.filter:
+
 2013-04-12  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148262.

@@ -51,9 +51,6 @@
 #include "FrameView.h"
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
-#if ENABLE(VIDEO)
-#include "HTMLMediaElement.h"
-#endif
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
@@ -135,6 +132,11 @@
 #if ENABLE(VIDEO_TRACK)
 #include "CaptionUserPreferences.h"
 #include "PageGroup.h"
+#endif
+
+#if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
+#include "TimeRanges.h"
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -2240,5 +2242,24 @@ void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
     UNUSED_PARAM(mode);
 #endif
 }
+
+#if ENABLE(VIDEO)
+PassRefPtr<TimeRanges> Internals::createTimeRanges(Float32Array* startTimes, Float32Array* endTimes)
+{
+    ASSERT(startTimes && endTimes);
+    ASSERT(startTimes->length() == endTimes->length());
+    RefPtr<TimeRanges> ranges = TimeRanges::create();
+
+    unsigned count = std::min(startTimes->length(), endTimes->length());
+    for (unsigned i = 0; i < count; ++i)
+        ranges->add(startTimes->item(i), endTimes->item(i));
+    return ranges;
+}
+
+double Internals::closestTimeToTimeRanges(double time, TimeRanges* ranges)
+{
+    return ranges->nearest(time);
+}
+#endif
 
 }

@@ -32,6 +32,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
 #include <wtf/ArrayBuffer.h>
+#include <wtf/Float32Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -57,6 +58,7 @@ class ShadowRoot;
 class WebKitPoint;
 class MallocStatistics;
 class SerializedScriptValue;
+class TimeRanges;
 class TypeConversions;
 
 typedef int ExceptionCode;
@@ -320,6 +322,11 @@ public:
     void setCaptionsStyleSheetOverride(const String&, ExceptionCode&);
     void setPrimaryAudioTrackLanguageOverride(const String&, ExceptionCode&);
     void setCaptionDisplayMode(const String&, ExceptionCode&);
+
+#if ENABLE(VIDEO)
+    PassRefPtr<TimeRanges> createTimeRanges(Float32Array* startTimes, Float32Array* endTimes);
+    double closestTimeToTimeRanges(double time, TimeRanges*);
+#endif
 
 private:
     explicit Internals(Document*);

@@ -167,17 +167,22 @@ bool TimeRanges::contain(double time) const
 
 double TimeRanges::nearest(double time) const
 {
-    double closest = 0;
+    double closestDelta = std::numeric_limits<double>::infinity();
+    double closestTime = 0;
     unsigned count = length();
     for (unsigned ndx = 0; ndx < count; ndx++) {
         double startTime = start(ndx, IGNORE_EXCEPTION);
         double endTime = end(ndx, IGNORE_EXCEPTION);
         if (time >= startTime && time <= endTime)
             return time;
-        if (fabs(startTime - time) < closest)
-            closest = fabsf(startTime - time);
-        else if (fabs(endTime - time) < closest)
-            closest = fabsf(endTime - time);
+        if (fabs(startTime - time) < closestDelta) {
+            closestTime = startTime;
+            closestDelta = fabsf(startTime - time);
+        }
+        if (fabs(endTime - time) < closestDelta) {
+            closestTime = endTime;
+            closestDelta = fabsf(endTime - time);
+        }
     }
-    return closest;
+    return closestTime;
 }
