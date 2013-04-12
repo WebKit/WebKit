@@ -106,7 +106,7 @@ void HTMLOListElement::setStart(int start)
 
 void HTMLOListElement::updateItemValues()
 {
-    for (RenderListItem* listItem = RenderListItem::nextListItem(this); listItem; listItem = RenderListItem::nextListItem(this, listItem))
+    for (RenderListItem* listItem = RenderListItem::nextListItem(renderer()); listItem; listItem = RenderListItem::nextListItem(renderer(), listItem))
         listItem->updateValue();
 }
 
@@ -114,7 +114,7 @@ void HTMLOListElement::recalculateItemCount()
 {
     m_itemCount = 0;
 
-    for (RenderListItem* listItem = RenderListItem::nextListItem(this); listItem; listItem = RenderListItem::nextListItem(this, listItem))
+    for (RenderListItem* listItem = RenderListItem::nextListItem(renderer()); listItem; listItem = RenderListItem::nextListItem(renderer(), listItem))
         m_itemCount++;
 
     m_shouldRecalculateItemCount = false;

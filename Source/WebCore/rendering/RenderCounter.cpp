@@ -57,30 +57,94 @@ static CounterMaps& counterMaps()
 // including pseudo elements as defined in CSS 2.1.
 static RenderObject* previousInPreOrder(const RenderObject* object)
 {
-    Element* self = toElement(object->node());
-    Element* previous = ElementTraversal::previousIncludingPseudo(self);
-    while (previous && !previous->renderer())
-        previous = ElementTraversal::previousIncludingPseudo(previous);
-    return previous ? previous->renderer() : 0;
+    Element* parent;
+    Element* sibling;
+    switch (object->style()->styleType()) {
+    case NOPSEUDO:
+        ASSERT(!object->isAnonymous());
+        parent = toElement(object->node());
+        sibling = parent->previousElementSibling();
+        parent = parent->parentElement();
+        break;
+    case BEFORE:
+        return object->generatingNode()->renderer(); // It is always the generating node's renderer
+    case AFTER:
+        parent = toElement(object->generatingNode());
+        sibling = parent->lastElementChild();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    while (sibling) {
+        if (RenderObject* renderer = sibling->renderer()) {
+            if (RenderObject* after = sibling->pseudoElementRenderer(AFTER))
+                return after;
+            parent = sibling;
+            sibling = sibling->lastElementChild();
+            if (!sibling) {
+                if (RenderObject* before = toElement(renderer->node())->pseudoElementRenderer(BEFORE))
+                    return before;
+                return renderer;
+            }
+        } else
+            sibling = sibling->previousElementSibling();
+    }
+    if (!parent)
+        return 0;
+    if (RenderObject* before = parent->pseudoElementRenderer(BEFORE))
+        return before;
+    return parent->renderer();
 }
 
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
 static RenderObject* previousSiblingOrParent(const RenderObject* object)
 {
-    Element* self = toElement(object->node());
-    Element* previous = ElementTraversal::pseudoAwarePreviousSibling(self);
-    while (previous && !previous->renderer())
-        previous = ElementTraversal::pseudoAwarePreviousSibling(previous);
-    if (previous)
-        return previous->renderer();
-    previous = self->parentElement();
-    return previous ? previous->renderer() : 0;
+    Element* parent;
+    Element* sibling;
+    switch (object->style()->styleType()) {
+    case NOPSEUDO:
+        ASSERT(!object->isAnonymous());
+        parent = toElement(object->node());
+        sibling = parent->previousElementSibling();
+        parent = parent->parentElement();
+        break;
+    case BEFORE:
+        return object->generatingNode()->renderer(); // It is always the generating node's renderer
+    case AFTER:
+        parent = toElement(object->generatingNode());
+        sibling = parent->lastElementChild();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    while (sibling) {
+        if (RenderObject* renderer = sibling->renderer()) // This skips invisible nodes
+            return renderer;
+        sibling = sibling->previousElementSibling();
+    }
+    if (!parent)
+        return 0;
+    if (RenderObject* before = parent->pseudoElementRenderer(BEFORE))
+        return before;
+    return parent->renderer();
 }
 
-static inline Element* parentElement(RenderObject* object)
+static Element* parentElement(RenderObject* object)
 {
-    return toElement(object->node())->parentElement();
+    switch (object->style()->styleType()) {
+    case NOPSEUDO:
+        ASSERT(!object->isAnonymous());
+        return toElement(object->node())->parentElement();
+    case BEFORE:
+    case AFTER:
+        return toElement(object->generatingNode());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 static inline bool areRenderersElementsSiblings(RenderObject* first, RenderObject* second)
@@ -92,11 +156,44 @@ static inline bool areRenderersElementsSiblings(RenderObject* first, RenderObjec
 // including pseudo elements as defined in CSS 2.1.
 static RenderObject* nextInPreOrder(const RenderObject* object, const Element* stayWithin, bool skipDescendants = false)
 {
-    Element* self = toElement(object->node());
-    Element* next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(self, stayWithin) : ElementTraversal::nextIncludingPseudo(self, stayWithin);
-    while (next && !next->renderer())
-        next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(next, stayWithin) : ElementTraversal::nextIncludingPseudo(next, stayWithin);
-    return next ? next->renderer() : 0;
+    Element* self;
+    Element* child;
+    self = toElement(object->generatingNode());
+    if (skipDescendants)
+        goto nextsibling;
+    switch (object->style()->styleType()) {
+    case NOPSEUDO:
+        ASSERT(!object->isAnonymous());
+        if (RenderObject* before = self->pseudoElementRenderer(BEFORE))
+            return before;
+        break;
+    case BEFORE:
+        break;
+    case AFTER:
+        goto nextsibling;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    child = ElementTraversal::firstWithin(self);
+    while (true) {
+        while (child) {
+            if (RenderObject* renderer = child->renderer())
+                return renderer;
+            child = ElementTraversal::nextSkippingChildren(child, self);
+        }
+        if (RenderObject* after = self->pseudoElementRenderer(AFTER))
+            return after;
+nextsibling:
+        if (self == stayWithin)
+            return 0;
+        child = ElementTraversal::nextSkippingChildren(self);
+        self = self->parentElement();
+        if (!self) {
+            ASSERT(!child); // We can only reach this if we are searching beyond the root element
+            return 0; //  which cannot have siblings
+        }
+    }
 }
 
 static bool planCounter(RenderObject* object, const AtomicString& identifier, bool& isReset, int& value)
