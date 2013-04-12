@@ -1,3 +1,15 @@
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] REGRESSION: Auto substitution strips new lines
+        https://bugs.webkit.org/show_bug.cgi?id=114537
+
+        Reviewed by Enrica Casucci.
+
+        Add a rule to replace "helloleworld" by "hello\nworld" for testing purpose.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2013-04-09  Roger Fong  <roger_fong@apple.com>
 
         Re-enable WinEWS tests.

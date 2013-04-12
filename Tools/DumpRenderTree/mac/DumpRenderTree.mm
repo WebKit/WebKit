@@ -606,7 +606,7 @@ static void resetDefaultsToConsistentValues()
         @"message", @"mesage",
         @"would", @"wouldn",
         @"welcome", @"wellcome",
-        @"uppercase", @"upper case",
+        @"hello\nworld", @"hellolfworld",
         nil] forKey:@"NSTestCorrectionDictionary"];
 #endif
 

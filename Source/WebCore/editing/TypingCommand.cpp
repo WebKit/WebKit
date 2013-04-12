@@ -645,4 +645,9 @@ bool TypingCommand::isTypingCommand() const
     return true;
 }
 
+bool TypingCommand::callsAppliedEditingInDoApply() const
+{
+    return true;
+}
+
 } // namespace WebCore

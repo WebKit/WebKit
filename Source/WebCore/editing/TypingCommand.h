@@ -100,6 +100,7 @@ private:
     virtual void doApply();
     virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;
+    virtual bool callsAppliedEditingInDoApply() const;
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
     virtual bool shouldRetainAutocorrectionIndicator() const
     {
