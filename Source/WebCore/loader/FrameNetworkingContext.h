@@ -36,6 +36,10 @@ public:
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const
     {
+        // FIXME: PingLoader finishes without a frame, but it should use its document's referrer policy.
+        if (!m_frame)
+            return true;
+
         return m_frame->document()->referrerPolicy() == ReferrerPolicyDefault;
     }
 
