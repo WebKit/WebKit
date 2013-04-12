@@ -140,7 +140,7 @@ void Connection::platformInvalidate()
         return;
 
 #if PLATFORM(GTK)
-    m_connectionQueue->unregisterEventSourceHandler(m_socketDescriptor);
+    m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
 #endif
 
 #if PLATFORM(QT)
@@ -424,8 +424,7 @@ bool Connection::open()
 #if PLATFORM(QT)
     m_socketNotifier = m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(GTK)
-    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WTF::bind(&Connection::connectionDidClose, this));
-    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this));
+    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this), WTF::bind(&Connection::connectionDidClose, this));
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
 #endif

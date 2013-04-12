@@ -1,3 +1,59 @@
+2013-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web Process crash when the UI process finishes too early
+        https://bugs.webkit.org/show_bug.cgi?id=112729
+
+        Reviewed by Anders Carlsson.
+
+        The problem is when creating the GSocket in the WorkQeue for the
+        socket descriptor. GLib considers a programmer error to create a
+        GSocket providing an invalid socket and finishes the process with
+        g_error(). We are actually providing a valid socket when creating
+        the GSocket, but it can be invalidated by the worker thread while
+        the GSocket is being created. This is because
+        registerEventSourceHandler is called from the main thread and
+        unregisterEventSourceHandler can be called from the worker
+        thread. We are currently registering two event handlers, one to
+        read data from the socket and another one to close the CoreIPC
+        connection when the socket connection is broken. Every event
+        source registered uses its own GSocket (even if the file
+        descriptor is actually the same), so that when the UI process
+        finishes too early, the first event handler can be executed in the
+        worker thread, closing the socket descriptor, while the main
+        thread is creating the GSocket for the second one.
+        We don't really need to use a separate event handler to monitor
+        the connection, because GSocket always notifies when condition is
+        G_IO_HUP and G_IO_ERR even if they haven't been explicitly set in
+        g_socket_create_source(). We can register socket event sources
+        differently, providing also a function to be called when the
+        connection is closed, using a single socket and the same even source.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::open): Register a single socket event
+        handler providing also a function to be called when the connection
+        is closed.
+        * Platform/WorkQueue.h:
+        (WorkQueue):
+        * Platform/gtk/WorkQueueGtk.cpp: The EventSource class has been
+        split, moving everyting specific to socket event source to a
+        derived class SocketEventSource.
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::EventSource::performWork):
+        (WorkQueue::EventSource::performWorkOnce):
+        (WorkQueue::EventSource::performWorkOnTermination):
+        (WorkQueue::EventSource::deleteEventSource):
+        (WorkQueue::EventSource):
+        (WorkQueue::SocketEventSource):
+        (WorkQueue::SocketEventSource::SocketEventSource):
+        (WorkQueue::SocketEventSource::cancel):
+        (WorkQueue::SocketEventSource::didClose):
+        (WorkQueue::SocketEventSource::checkCondition):
+        (WorkQueue::SocketEventSource::eventCallback):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::unregisterSocketEventHandler):
+        (WorkQueue::dispatchOnSource):
+
 2013-04-12  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13126204> [Mac] Tweak sandbox profile.
