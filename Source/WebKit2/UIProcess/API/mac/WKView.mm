@@ -396,14 +396,10 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)_updateWindowAndViewFrames
 {
-    NSWindow *window = [self window];
-    ASSERT(window);
-    
-    NSRect windowFrameInScreenCoordinates = [window frame];
     NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
     NSPoint accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
     
-    _data->_page->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityPosition);
+    _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     if (_data->_expandsToFitContentViaAutoLayout)
         _data->_page->viewExposedRectChanged([self visibleRect]);
 }

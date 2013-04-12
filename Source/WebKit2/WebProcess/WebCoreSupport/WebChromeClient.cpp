@@ -114,7 +114,7 @@ FloatRect WebChromeClient::windowRect()
 {
 #if PLATFORM(MAC)
     if (m_page->hasCachedWindowFrame())
-        return m_page->windowFrameInScreenCoordinates();
+        return m_page->windowFrameInUnflippedScreenCoordinates();
 #endif
 
     FloatRect newWindowFrame;

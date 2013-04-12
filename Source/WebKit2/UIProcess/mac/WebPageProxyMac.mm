@@ -138,16 +138,16 @@ void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
     process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
 }
 
-void WebPageProxy::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
+void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     if (!isValid())
         return;
 
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
-    FloatRect adjustedWindowFrameInScreenCoordinates;
-    getWindowFrame(adjustedWindowFrameInScreenCoordinates);
+    FloatRect windowFrameInScreenCoordinates = m_uiClient.windowFrame(this);
+    FloatRect windowFrameInUnflippedScreenCoordinates = m_pageClient->convertToUserSpace(windowFrameInScreenCoordinates);
 
-    process()->send(Messages::WebPage::WindowAndViewFramesChanged(adjustedWindowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
+    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
 void WebPageProxy::viewExposedRectChanged(const FloatRect& exposedRect)

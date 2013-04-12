@@ -1,3 +1,33 @@
+2013-04-12  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r145869): Right-click on SWF contents displays the context menu at the wrong place.
+        <http://webkit.org/b/113836>
+        <rdar://problem/13587624>
+
+        Reviewed by Anders "Wesley Crusher" Carlsson.
+
+        Mac plugins expect flipped-Y screen coordinates, while DOM APIs speak in unflipped coordinates,
+        and we were mixing them up in the window frame caching optimization.
+
+        Solve this by having the UIProcess send both flipped and unflipped window frames to the WebProcess.
+        The flipped frame is passed on to plugins, and the unflipped frame is used for window.screenX/Y etc.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+
+            No need to retrieve the window frame here as WebPageProxy::windowAndViewFramesChanged() will
+            always override it anyway.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::windowFrameInUnflippedScreenCoordinates):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-04-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] WebView: Add callbacks to the WKViewClient to handle page viewport update
