@@ -33,14 +33,12 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
     var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
-    contextMenuElements = eventSender.contextClick();
     // Esc key to hide the context menu.
     eventSender.keyDown(String.fromCharCode(0x001B), null);
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
     shouldBeEqualToString("window.getSelection().toString()", "wellcome");
-    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
     
     // Select a correctly spelled word without surrounding whitespace or punctuation.
     wordRange.setStart(textNode, 9);
@@ -53,12 +51,10 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
     var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
-    contextMenuElements = eventSender.contextClick();
     // Esc key to hide the context menu.
     eventSender.keyDown(String.fromCharCode(0x001B), null);
 
     shouldBeEqualToString("window.getSelection().toString()", "home");
-    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "<separator>");
 });
 
 </script>

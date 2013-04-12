@@ -168,6 +168,11 @@
     boolean hasGrammarMarker(in Document document, in long from, in long length) raises (DOMException);
     boolean hasAutocorrectedMarker(in Document document, in long from, in long length) raises (DOMException);
     void setContinuousSpellCheckingEnabled(in boolean enabled) raises (DOMException);
+    void setAutomaticQuoteSubstitutionEnabled(in boolean enabled) raises (DOMException);
+    void setAutomaticLinkDetectionEnabled(in boolean enabled) raises (DOMException);
+    void setAutomaticDashSubstitutionEnabled(in boolean enabled) raises (DOMException);
+    void setAutomaticTextReplacementEnabled(in boolean enabled) raises (DOMException);
+    void setAutomaticSpellingCorrectionEnabled(in boolean enabled) raises (DOMException);
 
     boolean isOverwriteModeEnabled(in Document document) raises (DOMException);
     void toggleOverwriteModeEnabled(in Document document) raises (DOMException);

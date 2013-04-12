@@ -8,7 +8,6 @@ PASS window.getSelection().toString() is ""
 PASS window.getSelection().toString() is "wellcome!"
 PASS spellingMarkerRange.toString() is "wellcome"
 PASS window.getSelection().toString() is "wellcome!"
-PASS contextMenuElements[contextMenuElements.length - 1] is "welcome"
 PASS successfullyParsed is true
 
 TEST COMPLETE

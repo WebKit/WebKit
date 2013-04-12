@@ -1513,11 +1513,76 @@ bool Internals::hasAutocorrectedMarker(Document* document, int from, int length,
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&)
 {
-    if (!contextDocument() || !contextDocument()->frame() || !contextDocument()->frame()->editor())
+    if (!contextDocument() || !contextDocument()->frame())
         return;
 
     if (enabled != contextDocument()->frame()->editor()->isContinuousSpellCheckingEnabled())
         contextDocument()->frame()->editor()->toggleContinuousSpellChecking();
+}
+
+void Internals::setAutomaticQuoteSubstitutionEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (enabled != contextDocument()->frame()->editor()->isAutomaticQuoteSubstitutionEnabled())
+        contextDocument()->frame()->editor()->toggleAutomaticQuoteSubstitution();
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void Internals::setAutomaticLinkDetectionEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (enabled != contextDocument()->frame()->editor()->isAutomaticLinkDetectionEnabled())
+        contextDocument()->frame()->editor()->toggleAutomaticLinkDetection();
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void Internals::setAutomaticDashSubstitutionEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (enabled != contextDocument()->frame()->editor()->isAutomaticDashSubstitutionEnabled())
+        contextDocument()->frame()->editor()->toggleAutomaticDashSubstitution();
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void Internals::setAutomaticTextReplacementEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (enabled != contextDocument()->frame()->editor()->isAutomaticTextReplacementEnabled())
+        contextDocument()->frame()->editor()->toggleAutomaticTextReplacement();
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void Internals::setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (enabled != contextDocument()->frame()->editor()->isAutomaticSpellingCorrectionEnabled())
+        contextDocument()->frame()->editor()->toggleAutomaticSpellingCorrection();
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 bool Internals::isOverwriteModeEnabled(Document* document, ExceptionCode&)

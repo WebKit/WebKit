@@ -577,6 +577,13 @@ bool TestController::resetStateToConsistentValues()
 #if !PLATFORM(MAC)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    WKTextCheckerAutomaticQuoteSubstitutionEnabledStateChanged(false);
+    WKTextCheckerAutomaticLinkDetectionEnabledStateChanged(false);
+    WKTextCheckerAutomaticDashSubstitutionEnabledStateChanged(false);
+    WKTextCheckerAutomaticTextReplacementEnabledStateChanged(false);
+    WKTextCheckerAutomaticSpellingCorrectionEnabledStateChanged(true);
+#endif
 
     // in the case that a test using the chrome input field failed, be sure to clean up for the next test
     m_mainWebView->removeChromeInputField();

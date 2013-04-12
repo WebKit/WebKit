@@ -44,7 +44,6 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
     shouldBeEqualToString("window.getSelection().toString()", "wellcome");
-    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
 
     window.getSelection().removeAllRanges();
     shouldBeEqualToString("window.getSelection().toString()", "");
@@ -72,7 +71,6 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
     shouldBeEqualToString("window.getSelection().toString()", "wellcome ");
-    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
 });
 
 </script>

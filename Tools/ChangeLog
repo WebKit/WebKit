@@ -1,3 +1,16 @@
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] Enable spellchecking tests added in r141471
+        https://bugs.webkit.org/show_bug.cgi?id=108525
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (resetDefaultsToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2013-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Enable WebKit2 building on GTK EWSs

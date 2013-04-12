@@ -26,11 +26,15 @@ function initSpellTest(testElementId, testText, testFunction)
     }
     testFunctionCallback = testFunction;
     jsTestIsAsync = true;
+
+    internals.setAutomaticSpellingCorrectionEnabled(false);
+
     internals.settings.setAsynchronousSpellCheckingEnabled(true);
     internals.settings.setSmartInsertDeleteEnabled(true);
     internals.settings.setSelectTrailingWhitespaceEnabled(false);
     internals.settings.setUnifiedTextCheckerEnabled(true);
     internals.settings.setEditingBehavior("win");
+
     var destination = document.getElementById(testElementId);
     destination.focus();
     document.execCommand("InsertText", false, testText);

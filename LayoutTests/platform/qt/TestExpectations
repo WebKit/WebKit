@@ -820,15 +820,12 @@ editing/spelling/grammar-edit-word.html
 # Spellchecker behavior tests.
 # https://bugs.webkit.org/show_bug.cgi?id=108370
 editing/spelling/spelling-double-clicked-word.html
-editing/spelling/spelling-double-clicked-word-with-underscores.html
 editing/spelling/spelling-exactly-selected-multiple-words.html
 editing/spelling/spelling-exactly-selected-word.html
 editing/spelling/spelling-multiword-selection.html
 editing/spelling/spelling-should-select-multiple-words.html
-editing/spelling/spelling-should-select-single-word.html
 editing/spelling/spelling-subword-selection.html
 editing/spelling/spelling-with-punctuation-selection.html
-editing/spelling/spelling-with-underscore-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
 webkit.org/b/108370 editing/spelling/spelling-changed-text.html [ Failure ]
 
