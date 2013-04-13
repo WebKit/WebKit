@@ -30,8 +30,8 @@
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
 #include "HTTPCookieAcceptPolicy.h"
+#include "PluginModuleInfo.h"
 #include "ResourceCachesToClear.h"
-#include "WebGrammarDetail.h"
 #include "WKContext.h"
 #include "WKCookieManager.h"
 #include "WKCredentialTypes.h"
@@ -40,8 +40,9 @@
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
-#include <WebCore/CookieJar.h>
+#include "WebGrammarDetail.h"
 #include <WebCore/Credential.h>
+#include <WebCore/CookieJar.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/Settings.h>
@@ -343,6 +344,36 @@ inline WKHTTPCookieAcceptPolicy toAPI(HTTPCookieAcceptPolicy policy)
 
     ASSERT_NOT_REACHED();
     return kWKHTTPCookieAcceptPolicyAlways;
+}
+
+inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModuleLoadPolicy)
+{
+    switch (pluginModuleLoadPolicy) {
+    case PluginModuleLoadNormally:
+        return kWKPluginLoadPolicyLoadNormally;
+    case PluginModuleBlocked:
+        return kWKPluginLoadPolicyBlocked;
+    case PluginModuleInactive:
+        return kWKPluginLoadPolicyInactive;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return kWKPluginLoadPolicyBlocked;
+}
+
+inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy pluginLoadPolicy)
+{
+    switch (pluginLoadPolicy) {
+    case kWKPluginLoadPolicyLoadNormally:
+        return PluginModuleLoadNormally;
+    case kWKPluginLoadPolicyBlocked:
+        return PluginModuleBlocked;
+    case kWKPluginLoadPolicyInactive:
+        return PluginModuleInactive;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return PluginModuleBlocked;
 }
 
 inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
