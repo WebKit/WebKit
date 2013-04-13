@@ -77,9 +77,9 @@ bool History::stateChanged() const
     return m_lastStateObjectRequested != stateInternal();
 }
 
-bool History::isSameAsCurrentState(PassRefPtr<SerializedScriptValue> state) const
+bool History::isSameAsCurrentState(SerializedScriptValue* state) const
 {
-    return state == stateInternal();
+    return state == stateInternal().get();
 }
 
 void History::back()

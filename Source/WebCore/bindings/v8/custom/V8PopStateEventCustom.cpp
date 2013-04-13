@@ -70,7 +70,7 @@ v8::Handle<v8::Value> V8PopStateEvent::stateAccessorGetter(v8::Local<v8::String>
     // The current history state object might've changed in the meantime, so we need to take care
     // of using the correct one, and always share the same deserialization with history.state.
 
-    bool isSameState = history->isSameAsCurrentState(event->serializedState());
+    bool isSameState = history->isSameAsCurrentState(event->serializedState().get());
 
     if (isSameState) {
         v8::Handle<v8::Object> v8History = toV8(history, info.GetIsolate()).As<v8::Object>();
