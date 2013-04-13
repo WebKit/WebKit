@@ -1,5 +1,33 @@
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge r140891
+
+    2013-01-25  Kentaro Hara  <haraken@chromium.org>
+
+            Keep a RefPtr<SerializedScriptValue*> when we call serialize()/deserialize() for MessageEvent
+            https://bugs.webkit.org/show_bug.cgi?id=107900
+
+            Reviewed by Abhishek Arya.
+
+            If you use a raw SerializedScriptValue* for serialize()/deserialize(),
+            it can potentially cause a use-after-free. This is because serialize()/
+            deserialize() can destruct a RefPtr of the SerializedScriptValue*,
+            depending on data that is serialized/deserialized. So we should keep a
+            RefPtr<SerializedScriptValue*> when we call serialize()/deserialize().
+            (See https://bugs.webkit.org/show_bug.cgi?id=107792 for more details.)
+
+            No tests. This is just a just-in-case fix. I couldn't find any bug
+            even in an ASAN build.
+
+            * bindings/js/JSMessageEventCustom.cpp:
+            (WebCore::JSMessageEvent::data):
+            * bindings/v8/custom/V8MessageEventCustom.cpp:
+            (WebCore::V8MessageEvent::dataAccessorGetter):
+            * dom/MessageEvent.h:
+            (WebCore::MessageEvent::dataAsSerializedScriptValue):
+
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge r140748.
 
     2013-01-24  Kentaro Hara  <haraken@chromium.org>

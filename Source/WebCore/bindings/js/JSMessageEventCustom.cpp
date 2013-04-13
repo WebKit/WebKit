@@ -62,7 +62,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     }
 
     case MessageEvent::DataTypeSerializedScriptValue:
-        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue()) {
+        if (RefPtr<SerializedScriptValue> serializedValue = event->dataAsSerializedScriptValue()) {
             MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
             result = serializedValue->deserialize(exec, globalObject(), ports, NonThrowing);
         }
