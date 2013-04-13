@@ -1,3 +1,28 @@
+2013-04-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r129814
+
+    2012-09-27  Levi Weintraub  <leviw@chromium.org>
+
+            REGRESSION(r129186): Pressing enter at the end of a line deletes the line
+            https://bugs.webkit.org/show_bug.cgi?id=97763
+
+            Reviewed by Ryosuke Niwa.
+
+            r129186 exposed incorrect behavior in RenderText whereby RenderText's lines were
+            dirtied but the renderer wasn't marked for layout. Rich text editing in GMail exposed
+            this behavior. RenderText::setTextWithOffset is called with a text string identical
+            to the current text. It still dirties lines, then calls setText, which has a check
+            for the case when the strings are the same and returns early and doesn't mark us as
+            needing layout.
+
+            This change adds the same early bailing logic in setText to setTextWithOffset, but
+            forces setText to work its magic whenever we dirty lines there (and avoid double-
+            checking that the strings are equal).
+
+            * rendering/RenderText.cpp:
+            (WebCore::RenderText::setTextWithOffset):
+
 2013-04-12  Roger Fong  <roger_fong@apple.com>
 
         Merge r143565.
