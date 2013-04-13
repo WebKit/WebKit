@@ -3215,10 +3215,9 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 RenderText* nextText = toRenderText(next);
                 if (nextText->textLength()) {
                     UChar c = nextText->characterAt(0);
-                    // If the next item on the line is text, and if we did not end with
-                    // a space, then the next text run continues our word (and so it needs to
-                    // keep adding to the uncommitted width. Just update and continue.
-                    checkForBreak = !currentCharacterIsSpace && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
+                    // If we allow whitespace collapsing, 'word  ' and 'word' are equivalent before a whitespace
+                    // character, so treat both as a potential linebreak.
+                    checkForBreak = (ignoringSpaces || !currentCharacterIsSpace) && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
                 } else if (nextText->isWordBreak())
                     checkForBreak = true;
 
