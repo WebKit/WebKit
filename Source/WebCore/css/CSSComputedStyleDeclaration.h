@@ -62,7 +62,6 @@ public:
     bool getPropertyPriority(CSSPropertyID) const;
 
     virtual PassRefPtr<StylePropertySet> copy() const;
-    virtual PassRefPtr<StylePropertySet> makeMutable();
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout) const;
     PassRefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;

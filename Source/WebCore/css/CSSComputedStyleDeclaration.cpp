@@ -2933,11 +2933,6 @@ PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copy() const
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
-PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::makeMutable()
-{
-    return copy();
-}
-
 PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand) const
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();

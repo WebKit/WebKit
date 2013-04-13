@@ -72,7 +72,6 @@ private:
     
     virtual bool cssPropertyMatches(CSSPropertyID, const CSSValue*) const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
-    virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
 
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     

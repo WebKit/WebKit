@@ -307,12 +307,6 @@ PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::copy() const
     return m_propertySet->copy();
 }
 
-PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::makeMutable()
-{
-    ASSERT(m_propertySet->isMutable());
-    return m_propertySet;
-}
-
 bool PropertySetCSSStyleDeclaration::cssPropertyMatches(CSSPropertyID propertyID, const CSSValue* propertyValue) const
 {
     return m_propertySet->propertyMatches(propertyID, propertyValue);
