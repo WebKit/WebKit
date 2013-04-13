@@ -57,24 +57,20 @@ static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
 
 RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
 {
-    RetainPtr<CFArrayRef> hostNames(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStore());
-#if ENABLE(CACHE_PARTITIONING)
-    RetainPtr<CFMutableArrayRef> partitions(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    CFIndex size = CFArrayGetCount(hostNames.get());
-    for (CFIndex i = 0; i < size; ++i) {
-        RetainPtr<CFStringRef> partition = partitionName(static_cast<CFStringRef>(CFArrayGetValueAtIndex(hostNames.get(), i)));
-        RetainPtr<CFArrayRef> partitionHostNames(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(partition.get()));
-        if (CFArrayGetCount(partitionHostNames.get()))
-            CFArrayAppendValue(partitions.get(), partition.get());
-    }
-
-    RetainPtr<CFArrayRef> rootHostNames(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
-    CFArrayAppendArray(partitions.get(), rootHostNames.get(), CFRangeMake(0, CFArrayGetCount(rootHostNames.get())));
-    return partitions;
-#else
-    return hostNames;
-#endif
+    return RetainPtr<CFArrayRef>(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStore());
 }
+
+#if ENABLE(CACHE_PARTITIONING)
+void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(CacheCallback callback)
+{
+    WKCFURLCacheCopyAllPartitionNames(^(CFArrayRef partitionNames) {
+        CFMutableArrayRef hostNames = CFArrayCreateMutableCopy(0, 0, WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
+        CFArrayAppendArray(hostNames, partitionNames, CFRangeMake(0, CFArrayGetCount(partitionNames)));
+        CFRelease(partitionNames);
+        callback(adoptCF(hostNames));
+    });
+}
+#endif
 
 void WebResourceCacheManager::clearCFURLCacheForHostNames(CFArrayRef hostNames)
 {

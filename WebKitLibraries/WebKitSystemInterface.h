@@ -501,8 +501,11 @@ void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 bool WKIsPublicSuffix(NSString *domain);
 
 CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFStringRef partition);
+typedef void (^CFURLCacheCopyAllPartitionNamesResultsNotification)(CFArrayRef partitionNames);
+
 void WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(CFArrayRef hostArray, CFStringRef partition);
 CFStringRef WKCachePartitionKey(void);
+void WKCFURLCacheCopyAllPartitionNames(CFURLCacheCopyAllPartitionNamesResultsNotification resultsBlock);
 #endif
 
 #ifdef __cplusplus

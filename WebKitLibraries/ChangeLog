@@ -1,3 +1,14 @@
+2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
+
+        Query directly for cache partition names
+        https://bugs.webkit.org/show_bug.cgi?id=114538
+
+        Reviewed by David Kilzer.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-04-08  Roger Fong  <roger_fong@apple.com>
 
         Build fix.

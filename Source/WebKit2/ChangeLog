@@ -1,3 +1,24 @@
+2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
+
+        Query directly for cache partition names
+        https://bugs.webkit.org/show_bug.cgi?id=114538
+
+        Reviewed by David Kilzer.
+
+        Call back into WebKitSystemInterface to ask it for the cache
+        partition names instead of trying to figure them out.
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins):
+        (WebKit):
+        (WebKit::WebResourceCacheManager::returnCacheOrigins):
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+        (WebResourceCacheManager):
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNames):
+        (WebKit):
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNamesWithCallback):
+
 2013-04-12  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix - too soon!

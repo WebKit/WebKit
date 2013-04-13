@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "ResourceCachesToClear.h"
 #include "WebProcessSupplement.h"
+#include <WebCore/MemoryCache.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -51,11 +52,16 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getCacheOrigins(uint64_t callbackID) const;
+    void returnCacheOrigins(uint64_t callbackID, const WebCore::MemoryCache::SecurityOriginSet&) const;
     void clearCacheForOrigin(const SecurityOriginData&, uint32_t cachesToClear) const;
     void clearCacheForAllOrigins(uint32_t cachesToClear) const;
 
 #if USE(CFURLCACHE)
     static RetainPtr<CFArrayRef> cfURLCacheHostNames();
+#if ENABLE(CACHE_PARTITIONING)
+    typedef void (^CacheCallback)(RetainPtr<CFArrayRef>);
+    static void cfURLCacheHostNamesWithCallback(CacheCallback);
+#endif
     static void clearCFURLCacheForHostNames(CFArrayRef);
 #endif
 
