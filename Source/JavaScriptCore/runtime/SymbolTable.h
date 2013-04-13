@@ -314,8 +314,8 @@ namespace JSC {
                 return;
             freeFatEntrySlow();
         }
-        
-        void freeFatEntrySlow();
+
+        JS_EXPORT_PRIVATE void freeFatEntrySlow();
 
         void pack(int index, bool readOnly, bool dontEnum)
         {
