@@ -1,5 +1,18 @@
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge r148284
+
+    2013-04-12  Alexey Proskuryakov  <ap@apple.com> 
+
+            <rdar://problem/13126204> [Mac] Tweak sandbox profile. 
+
+            Reviewed by Anders Carlsson. 
+
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: 
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge r141445 (cherry-picking the fix for <rdar://problem/13266396>)
 
     2013-01-31  Alexey Proskuryakov  <ap@apple.com>
