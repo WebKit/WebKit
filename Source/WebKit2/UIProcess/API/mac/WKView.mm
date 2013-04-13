@@ -419,9 +419,9 @@ struct WKViewInterpretKeyEventsParameters {
     }
     
     // If the frame origin has changed then update the layer position.
-    if (!NSEqualPoints(_data->_frameOrigin, newFrameOrigin)) {
+    if (_data->_layerHostingView && !NSEqualPoints(_data->_frameOrigin, newFrameOrigin)) {
         _data->_frameOrigin = newFrameOrigin;
-        CALayer *rootLayer = [_data->_layerHostingView layer].sublayers[0];
+        CALayer *rootLayer = [[_data->_layerHostingView layer].sublayers objectAtIndex:0];
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         rootLayer.position = NSMakePoint(-newFrameOrigin.x, -newFrameOrigin.y);
