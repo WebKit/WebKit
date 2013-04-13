@@ -1,3 +1,25 @@
+2013-04-12  Roger Fong  <roger_fong@apple.com>
+
+        Merge r143565.
+
+    2013-02-20  Wei James  <james.wei@intel.com>
+    
+            ChannelMergerNode may need check for deferred updating of output channels
+            https://bugs.webkit.org/show_bug.cgi?id=108863
+    
+            There can in rare cases be a slight delay before the output bus is updated
+            to the new number of channels because of tryLocks() in the context's
+            updating system. So need to check the channel number before processing.
+    
+            Reviewed by Chris Rogers.
+    
+            * Modules/webaudio/ChannelMergerNode.cpp:
+            (WebCore::ChannelMergerNode::ChannelMergerNode):
+            (WebCore::ChannelMergerNode::process):
+            (WebCore::ChannelMergerNode::checkNumberOfChannelsForInput):
+            * Modules/webaudio/ChannelMergerNode.h:
+            (ChannelMergerNode):
+
 2013-04-12  Tim Horton  <timothy_horton@apple.com> 
 
         Merge r132856
