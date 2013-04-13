@@ -1,3 +1,11 @@
+2013-04-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r148311.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (resizeWebKitWebViewBaseFromAllocation): Passing IntSize() as the scroll offset
+        argument to the DrawingAreaProxy::setSize method.
+
 2013-04-12  Gavin Barraclough  <barraclough@apple.com>
 
         Add private interface to WKView to asynchronously update the drawing area size

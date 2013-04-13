@@ -495,7 +495,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
 #endif
 
     if (priv->pageProxy->drawingArea())
-        priv->pageProxy->drawingArea()->setSize(viewRect.size(), IntSize());
+        priv->pageProxy->drawingArea()->setSize(viewRect.size(), IntSize(), IntSize());
 
     webkitWebViewBaseNotifyResizerSize(webViewBase);
 }
