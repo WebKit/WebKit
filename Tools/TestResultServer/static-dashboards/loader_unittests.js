@@ -44,17 +44,15 @@ test('loading steps', 1, function() {
         resourceLoader.load();
     }
 
-    try {
-        resourceLoader._loadingSteps = [loadingStep1, loadingStep2];
-        resourceLoader.load();
-    } 
+    resourceLoader._loadingSteps = [loadingStep1, loadingStep2];
+    resourceLoader.load();
 });
 
 // Total number of assertions is 1 for the deepEqual of the builder lists
 // and then 2 per builder (one for ok, one for deepEqual of tests).
-test('results files loading', 11, function() {
+test('results files loading', 9, function() {
     resetGlobals();
-    var expectedLoadedBuilders =  ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win', 'WebKit Win (dbg)'];
+    var expectedLoadedBuilders =  ['Apple Lion Debug WK2 (Tests)', 'Apple Lion Release WK2 (Tests)', 'GTK Linux 64-bit Release', 'Qt Linux Tests'];
     var loadedBuilders = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {
@@ -67,12 +65,12 @@ test('results files loading', 11, function() {
 
     var requestFunction = loader.request;
     loader.request = function(url, successCallback, errorCallback) {
-        var builderName = /builder=([\w ().]+)&/.exec(url)[1];
+        var builderName = /builder=([\w ().-]+)&/.exec(url)[1];
         loadedBuilders.push(builderName);
         successCallback({responseText: '{"version": 4, "' + builderName + '": {"secondsSinceEpoch": [' + Date.now() + '], "tests": {}}}'});
     }
 
-    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+    loadBuildersList('@ToT - webkit.org', 'layout-tests');
  
     try {
         resourceLoader._loadResultsFiles();
@@ -84,8 +82,8 @@ test('results files loading', 11, function() {
 test('expectations files loading', 1, function() {
     resetGlobals();
     g_history.parseCrossDashboardParameters();
-    var expectedLoadedPlatforms = ["chromium", "chromium-android", "efl", "efl-wk1", "efl-wk2", "gtk",
-                                   "gtk-wk2", "mac", "mac-lion", "mac-snowleopard", "qt", "win", "wk2"];
+    var expectedLoadedPlatforms = ["efl", "efl-wk1", "efl-wk2", "gtk", "gtk-wk2",
+        "mac", "mac-lion", "mac-snowleopard", "qt", "win", "wk2"];
     var loadedPlatforms = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {
@@ -107,7 +105,7 @@ test('expectations files loading', 1, function() {
 
 test('results file failing to load', 2, function() {
     resetGlobals();
-    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+    loadBuildersList('@ToT - webkit.org', 'layout-tests');
     
     var resourceLoader = new loader.Loader();
     var resourceLoadCount = 0;
@@ -130,7 +128,7 @@ test('results file failing to load', 2, function() {
 
 test('Default builder gets set.', 3, function() {
     resetGlobals();
-    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+    loadBuildersList('@ToT - webkit.org', 'layout-tests');
     
     var defaultBuilder = currentBuilderGroup().defaultBuilder();
     ok(defaultBuilder, "Default builder should exist.");

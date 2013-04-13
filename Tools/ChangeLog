@@ -1,3 +1,24 @@
+2013-04-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix flakiness dashboard unit test failures
+        https://bugs.webkit.org/show_bug.cgi?id=114518
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the current failures in unit tests for the flakiness dashboard by adjusting failing
+        test cases to simulate loading the builders list from the webkit.org build master, replacing
+        the Chromium builders and platforms that are used in tests with builders and platforms for the
+        Apple Mac Lion WebKit2 port, and removing two test cases that were testing Chromium-specific
+        functionality of the dashboard.
+
+        This is sort of an interlude to the flakiness dashboard cleanup, with the removal of Chromium-specific
+        code and hopefully general simplification of the dashboard codebase coming in near future.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        (test):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-04-12  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Make AccessibilityUIElementIOS.mm build on iOS
