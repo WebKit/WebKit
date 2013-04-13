@@ -72,4 +72,7 @@ typedef enum {
 - (BOOL)windowOcclusionDetectionEnabled;
 - (void)setWindowOcclusionDetectionEnabled:(BOOL)flag;
 
+- (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size;
+- (void)waitForAsyncDrawingAreaSizeUpdate;
+
 @end

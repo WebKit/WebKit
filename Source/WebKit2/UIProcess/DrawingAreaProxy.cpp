@@ -38,6 +38,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const double DrawingAreaProxy::didUpdateBackingStoreStateTimeout = 0.5;
+
 DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPageProxy)
     : m_type(type)
     , m_webPageProxy(webPageProxy)

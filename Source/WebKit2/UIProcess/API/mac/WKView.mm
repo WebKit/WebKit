@@ -2290,7 +2290,13 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!_data->_page->drawingArea())
         return;
     
-    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_frameOrigin.x, _data->_frameOrigin.y), IntSize(_data->_resizeScrollOffset));
+    NSSize layerOffset = NSMakeSize(_data->_frameOrigin.x, _data->_frameOrigin.y);
+    if (isWKContentAnchorRight(_data->_contentAnchor))
+        layerOffset.width += [self frame].size.width - size.width;
+    if (isWKContentAnchorBottom(_data->_contentAnchor))
+        layerOffset.height += [self frame].size.height - size.height;
+
+    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(layerOffset), IntSize(_data->_resizeScrollOffset));
     _data->_resizeScrollOffset = NSZeroSize;
 }
 
@@ -3231,6 +3237,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     else
         self.layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
 
+    // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
+    // then subsequent calls to setFrameSize should not result in us waiting for the did
+    // udpate response if setFrameSize is called.
+    if ([self frameSizeUpdatesDisabled])
+        return;
+
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
         drawingArea->waitForPossibleGeometryUpdate();
 }
@@ -3427,6 +3439,34 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (WKContentAnchor)contentAnchor
 {
     return _data->_contentAnchor;
+}
+
+// This method forces a drawing area geometry update, even if frame size updates are disabled.
+// The updated is performed asynchronously; we don't wait for the geometry update before returning.
+// The area drawn need not match the current frame size - if it differs it will be anchored to the
+// frame according to the current contentAnchor.
+- (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
+{
+    if (_data->_expandsToFitContentViaAutoLayout)
+        _data->_page->viewExposedRectChanged([self visibleRect]);
+    [self _setDrawingAreaSize:size];
+
+    // If a geometry update is pending the new update won't be sent. Poll without waiting for any
+    // pending did-update message now, such that the new update can be sent. We do so after setting
+    // the drawing area size such that the latest update is sent.
+    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
+        drawingArea->waitForPossibleGeometryUpdate(0);
+}
+
+- (void)waitForAsyncDrawingAreaSizeUpdate
+{
+    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea()) {
+        // If a geometry update is still pending then the action of recieving the
+        // first geometry update may result in another update being scheduled -
+        // we should wait for this to complete too.
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
+    }
 }
 
 @end

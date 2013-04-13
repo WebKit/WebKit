@@ -46,7 +46,7 @@ private:
     virtual void layerHostingModeDidChange() OVERRIDE;
     virtual void visibilityDidChange() OVERRIDE;
     virtual void sizeDidChange() OVERRIDE;
-    virtual void waitForPossibleGeometryUpdate() OVERRIDE;
+    virtual void waitForPossibleGeometryUpdate(double timeout = didUpdateBackingStoreStateTimeout) OVERRIDE;
     virtual void colorSpaceDidChange() OVERRIDE;
     virtual void minimumLayoutWidthDidChange() OVERRIDE;
 

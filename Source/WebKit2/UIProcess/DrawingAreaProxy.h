@@ -64,8 +64,11 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     void setSize(const WebCore::IntSize&, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
+    // The timeout, in seconds, we use when waiting for a DidUpdateGeometry message.
+    static const double didUpdateBackingStoreStateTimeout;
+
     virtual void pageCustomRepresentationChanged() { }
-    virtual void waitForPossibleGeometryUpdate() { }
+    virtual void waitForPossibleGeometryUpdate(double timeout = didUpdateBackingStoreStateTimeout) { }
 
     virtual void colorSpaceDidChange() { }
     virtual void minimumLayoutWidthDidChange() { }

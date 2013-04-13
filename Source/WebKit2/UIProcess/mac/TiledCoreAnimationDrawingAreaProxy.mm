@@ -86,7 +86,7 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate()
+void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(double timeout)
 {
     if (!m_isWaitingForDidUpdateGeometry)
         return;
@@ -94,9 +94,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate()
     if (m_webPageProxy->process()->isLaunching())
         return;
 
-    // The timeout, in seconds, we use when waiting for a DidUpdateGeometry message.
-    static const double didUpdateBackingStoreStateTimeout = 0.5;
-    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
+    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), timeout);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
