@@ -1,3 +1,46 @@
+2013-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Merge 145580, 145587, 145594, r145595, r145647, 145759.  Part 2/2 for <rdar://problem/13438603>.
+
+    2013-03-13  Oliver Hunt  <oliver@apple.com>
+
+            Simplify Checked<> multiplication
+            https://bugs.webkit.org/show_bug.cgi?id=112286
+
+            Reviewed by James Robinson.
+
+            Add tests for multiplication by zero and max to ensure we don't
+            mess them up should we ever make changes to Checked<> in future.
+
+            * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+            (TestWebKitAPI):
+
+    2013-03-12  Oliver Hunt  <oliver@apple.com>
+
+            Unbreak api tests
+
+            * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+            (TestWebKitAPI):
+
+    2013-03-12  Oliver Hunt  <oliver@apple.com>
+
+            Appease MSVC
+
+            * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+            (TestWebKitAPI):
+
+    2013-03-12  Oliver Hunt  <oliver@apple.com>
+
+            Add more Checked<> tests
+            https://bugs.webkit.org/show_bug.cgi?id=112190
+
+            Reviewed by Geoffrey Garen.
+
+            Tests!
+
+            * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+            (TestWebKitAPI):
+
 2013-03-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed. Merge the latest delete-stale-build-files to make bots green.

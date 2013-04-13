@@ -1,3 +1,24 @@
+2013-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Merge 145580, 145587, 145594, r145595, r145647, 145759.  Part 2/2 for <rdar://problem/13438603>.
+
+    2013-03-11  Oliver Hunt  <oliver@apple.com>
+
+            Harden JSStringJoiner
+            https://bugs.webkit.org/show_bug.cgi?id=112093
+
+            Reviewed by Filip Pizlo.
+
+            Harden JSStringJoiner, make it use our CheckedArithmetic
+            class to simplify everything.
+
+            * runtime/JSStringJoiner.cpp:
+            (JSC::JSStringJoiner::build):
+            * runtime/JSStringJoiner.h:
+            (JSStringJoiner):
+            (JSC::JSStringJoiner::JSStringJoiner):
+            (JSC::JSStringJoiner::append):
+
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r135794
