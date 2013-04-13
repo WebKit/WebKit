@@ -424,7 +424,7 @@ struct WKViewInterpretKeyEventsParameters {
         CALayer *rootLayer = [[_data->_layerHostingView layer].sublayers objectAtIndex:0];
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        rootLayer.position = NSMakePoint(-newFrameOrigin.x, -newFrameOrigin.y);
+        rootLayer.position = CGPointMake(-newFrameOrigin.x, -newFrameOrigin.y);
         [CATransaction commit];
     }
 

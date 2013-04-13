@@ -1,3 +1,10 @@
+2013-04-12  Jessie Berlin  <jberlin@apple.com>
+
+        32-bit build fix.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+
 2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
 
         Query directly for cache partition names
