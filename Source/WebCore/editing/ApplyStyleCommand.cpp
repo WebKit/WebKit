@@ -300,7 +300,7 @@ static PassRefPtr<StylePropertySet> copyStyleOrCreateEmpty(const StylePropertySe
 {
     if (!style)
         return StylePropertySet::create();
-    return style->copy();
+    return style->mutableCopy();
 }
 
 void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)

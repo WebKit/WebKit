@@ -5662,7 +5662,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Frame* coreFrame = core(webFrame);
     // FIXME: We shouldn't have to make a copy here.
     if (coreFrame)
-        coreFrame->editor()->applyStyle(core(style)->copy().get());
+        coreFrame->editor()->applyStyle(core(style)->copyProperties().get());
 }
 
 @end

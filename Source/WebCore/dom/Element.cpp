@@ -3042,7 +3042,7 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
     , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_attributeVector(other.m_attributeVector)
 {
-    m_inlineStyle = other.m_inlineStyle ? other.m_inlineStyle->copy() : 0;
+    m_inlineStyle = other.m_inlineStyle ? other.m_inlineStyle->mutableCopy() : 0;
 }
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)

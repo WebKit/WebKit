@@ -137,13 +137,13 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet) const;
 
-    PassRefPtr<StylePropertySet> copy() const;
+    PassRefPtr<MutableStylePropertySet> mutableCopy() const;
     PassRefPtr<StylePropertySet> immutableCopyIfNeeded() const;
 
     void removeEquivalentProperties(const StylePropertySet*);
     void removeEquivalentProperties(const CSSStyleDeclaration*);
 
-    PassRefPtr<StylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
+    PassRefPtr<MutableStylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
 

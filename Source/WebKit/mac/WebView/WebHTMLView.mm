@@ -4348,7 +4348,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 {
     if (Frame* coreFrame = core([self _frame])) {
         // FIXME: We shouldn't have to make a copy here. We want callers of this function to work directly with StylePropertySet eventually.
-        coreFrame->editor()->applyStyleToSelection(core(style)->copy().get(), undoAction);
+        coreFrame->editor()->applyStyleToSelection(core(style)->copyProperties().get(), undoAction);
     }
 }
 
@@ -4650,7 +4650,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
         if (Frame* coreFrame = core([self _frame])) {
             // FIXME: We shouldn't have to make a copy here.
-            coreFrame->editor()->applyStyle(core(style)->copy().get(), [self _undoActionFromColorPanelWithSelector:selector]);
+            coreFrame->editor()->applyStyle(core(style)->copyProperties().get(), [self _undoActionFromColorPanelWithSelector:selector]);
         }
     }
 

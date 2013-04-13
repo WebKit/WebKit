@@ -44,7 +44,7 @@ StyleKeyframe::~StyleKeyframe()
 StylePropertySet* StyleKeyframe::mutableProperties()
 {
     if (!m_properties->isMutable())
-        m_properties = m_properties->copy();
+        m_properties = m_properties->mutableCopy();
     return m_properties.get();
 }
     

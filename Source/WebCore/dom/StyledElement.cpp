@@ -152,7 +152,7 @@ MutableStylePropertySet* StyledElement::ensureMutableInlineStyle()
     if (!inlineStyle)
         inlineStyle = StylePropertySet::create(strictToCSSParserMode(isHTMLElement() && !document()->inQuirksMode()));
     else if (!inlineStyle->isMutable())
-        inlineStyle = inlineStyle->copy();
+        inlineStyle = inlineStyle->mutableCopy();
     ASSERT(inlineStyle->isMutable());
     return static_cast<MutableStylePropertySet*>(inlineStyle.get());
 }

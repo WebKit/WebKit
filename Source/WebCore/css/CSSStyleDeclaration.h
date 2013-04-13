@@ -31,6 +31,7 @@ class CSSProperty;
 class CSSRule;
 class CSSStyleSheet;
 class CSSValue;
+class MutableStylePropertySet;
 class StylePropertySet;
 class StyledElement;
 
@@ -64,7 +65,7 @@ public:
     virtual String getPropertyValueInternal(CSSPropertyID) = 0;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<StylePropertySet> copy() const = 0;
+    virtual PassRefPtr<MutableStylePropertySet> copyProperties() const = 0;
 
     virtual bool cssPropertyMatches(CSSPropertyID, const CSSValue*) const = 0;
     virtual CSSStyleSheet* parentStyleSheet() const { return 0; }

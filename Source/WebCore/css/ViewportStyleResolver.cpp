@@ -61,7 +61,7 @@ void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
         return;
 
     if (!m_propertySet) {
-        m_propertySet = propertySet->copy();
+        m_propertySet = propertySet->mutableCopy();
         return;
     }
 
