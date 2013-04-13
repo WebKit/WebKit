@@ -2,6 +2,12 @@
 
         Build fix - too soon!
 
+        * UIProcess/API/mac/WKViewPrivate.h:
+
+2013-04-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix - too soon!
+
         * UIProcess/API/mac/WKView.mm:
         (-[WKView setFrameSize:]):
 

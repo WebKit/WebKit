@@ -25,12 +25,12 @@
 
 #import <WebKit2/WKView.h>
 
-typedef NS_ENUM(NSUInteger, WKContentAnchor) {
+typedef enum {
     WKContentAnchorTopLeft,
     WKContentAnchorTopRight,
     WKContentAnchorBottomLeft,
     WKContentAnchorBottomRight,
-};
+} WKContentAnchor;
 
 @interface WKView (Private)
 
