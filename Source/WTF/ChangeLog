@@ -1,3 +1,53 @@
+2013-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Add Source/WTF/wtf/EnumClass.h
+
+        Merge r141499, r141950, r141965.  Part 1/2 for <rdar://problem/13438603>.
+
+    2013-02-05  Mark Lam  <mark.lam@apple.com>
+
+            Fix EnumClass so that it can be used with switch statements.
+            https://bugs.webkit.org/show_bug.cgi?id=109004.
+
+            Reviewed by Sam Weinig.
+
+            * wtf/EnumClass.h:
+            (WTF::EnumClass::operator==):
+            (WTF::EnumClass::operator!=):
+            (WTF::EnumClass::operator<):
+            (WTF::EnumClass::operator<=):
+            (WTF::EnumClass::operator>):
+            (WTF::EnumClass::operator>=):
+            (EnumClass):
+            (WTF::EnumClass::operator Value):
+
+    2013-02-05  Mark Lam  <mark.lam@apple.com>
+
+            Rename ENUM_CLASS_BEGIN() macro to ENUM_CLASS(), and make DatabaseType a strong enum.
+            https://bugs.webkit.org/show_bug.cgi?id=108988.
+
+            Reviewed by Alexey Proskuryakov.
+
+            * wtf/EnumClass.h:
+
+    2013-01-31  Mark Lam  <mark.lam@apple.com>
+
+            Abstraction for hiding enum class.
+            https://bugs.webkit.org/show_bug.cgi?id=108533
+
+            Reviewed by Anders Carlsson.
+
+            * wtf/Compiler.h:
+            * wtf/EnumClass.h: Copied from Source/WTF/wtf/TypeSafeEnum.h.
+            (WTF::EnumClass::EnumClass):
+            (WTF::EnumClass::operator==):
+            (WTF::EnumClass::operator!=):
+            (WTF::EnumClass::operator<):
+            (WTF::EnumClass::operator<=):
+            (WTF::EnumClass::operator>):
+            (WTF::EnumClass::operator>=):
+            * wtf/TypeSafeEnum.h: Removed.
+
 2012-11-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r134797
