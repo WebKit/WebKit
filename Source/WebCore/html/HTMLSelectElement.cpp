@@ -1452,8 +1452,10 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         return;
 
     int selected = selectedIndex();
-    int index = (optionToListIndex(selected >= 0 ? selected : 0) + searchStartOffset) % itemCount;
-    ASSERT(index >= 0);
+    int index = optionToListIndex(selected >= 0 ? selected : 0);
+    if (index < 0)
+        return;
+    index = (index + searchStartOffset) % itemCount;
 
     // Compute a case-folded copy of the prefix string before beginning the search for
     // a matching element. This code uses foldCase to work around the fact that

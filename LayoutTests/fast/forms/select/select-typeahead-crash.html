@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p>Please run this with DumpRenderTree.</p>
+<select id="test"><optgroup></optgroup><optgroup></optgroup></select>
+<div id="console"></div>
+<script>
+description('Select element without option but optgroup causes crash on key press');
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+var test = document.getElementById("test");
+test.focus();
+keyDown('a');
+keyDown('b');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
