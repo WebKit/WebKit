@@ -92,7 +92,6 @@ public:
 
     PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapObject(ScriptValue, const String& groupName) const;
     PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapNode(Node*, const String& groupName);
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapSerializedObject(SerializedScriptValue*, const String& groupName) const;
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
