@@ -251,6 +251,7 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JS
 
 void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 {
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     Evas_Object* view = browser->mainView();
     if (!view)
         return;
@@ -265,6 +266,9 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
         ewk_view_mode_set(view, EWK_VIEW_MODE_MAXIMIZED);
     else if (equals(mode, "minimized"))
         ewk_view_mode_set(view, EWK_VIEW_MODE_MINIMIZED);
+#else
+    UNUSED_PARAM(mode);
+#endif
 }
 
 void TestRunner::setWindowIsKey(bool)

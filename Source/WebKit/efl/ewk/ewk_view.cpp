@@ -4259,19 +4259,30 @@ bool ewk_view_need_touch_events_get(const Evas_Object* ewkView)
 
 Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
 {
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     priv->page->setViewMode(static_cast<WebCore::Page::ViewMode>(viewMode));
     return true;
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(viewMode);
+    return false;
+#endif
 }
 
 Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
 {
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_VIEW_MODE_INVALID);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_VIEW_MODE_INVALID);
 
     return static_cast<Ewk_View_Mode>(priv->page->viewMode());
+#else
+    UNUSED_PARAM(ewkView);
+    return EWK_VIEW_MODE_INVALID;
+#endif
 }
 
 Eina_Bool ewk_view_mixed_content_displayed_get(const Evas_Object* ewkView)
