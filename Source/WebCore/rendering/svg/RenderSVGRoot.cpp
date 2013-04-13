@@ -293,15 +293,19 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset);
     childPaintInfo.applyTransform(AffineTransform::translation(adjustedPaintOffset.x() - x(), adjustedPaintOffset.y() - y()) * localToParentTransform());
 
-    SVGRenderingContext renderingContext;
-    bool continueRendering = true;
-    if (childPaintInfo.phase == PaintPhaseForeground) {
-        renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
-        continueRendering = renderingContext.isRenderingPrepared();
-    }
+    // SVGRenderingContext must be destroyed before we restore the childPaintInfo.context, because a filter may have
+    // changed the context and it is only reverted when the SVGRenderingContext destructor finishes applying the filter.
+    {
+        SVGRenderingContext renderingContext;
+        bool continueRendering = true;
+        if (childPaintInfo.phase == PaintPhaseForeground) {
+            renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+            continueRendering = renderingContext.isRenderingPrepared();
+        }
 
-    if (continueRendering)
-        RenderBox::paint(childPaintInfo, LayoutPoint());
+        if (continueRendering)
+            RenderBox::paint(childPaintInfo, LayoutPoint());
+    }
 
     childPaintInfo.context->restore();
 }

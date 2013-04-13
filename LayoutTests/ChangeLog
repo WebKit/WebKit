@@ -1,3 +1,19 @@
+2013-04-12  Tim Horton  <timothy_horton@apple.com> 
+
+        Merge r132856
+
+    2012-10-25  Stephen Chenney  <schenney@chromium.org>
+
+            feImage should not be allowed to self reference
+            https://bugs.webkit.org/show_bug.cgi?id=94652
+
+            Reviewed by Eric Seidel.
+
+            Additional test case for situations when the filter is applied to multiple objects that it also references.
+
+            * svg/filters/feImage-self-and-other-referencing-expected.html: Added.
+            * svg/filters/feImage-self-and-other-referencing.html: Added.
+
 2013-04-12  Tim Horton  <timothy_horton@apple.com>
 
         Merge r131488
