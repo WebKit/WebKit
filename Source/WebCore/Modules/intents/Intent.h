@@ -55,7 +55,7 @@ public:
 
     const String& action() const { return m_action; }
     const String& type() const { return m_type; }
-    SerializedScriptValue* data() const { return m_data.get(); }
+    PassRefPtr<SerializedScriptValue> data() const { return m_data.get(); }
 
     MessagePortChannelArray* messagePorts() const { return m_ports.get(); }
     const KURL& service() const { return m_service; }

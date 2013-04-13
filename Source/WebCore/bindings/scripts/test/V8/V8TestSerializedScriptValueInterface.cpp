@@ -76,7 +76,7 @@ static v8::Handle<v8::Value> cachedValueAttrGetter(v8::Local<v8::String> name, c
     if (!value.IsEmpty())
         return value;
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    SerializedScriptValue* serialized = imp->cachedValue();
+    RefPtr<SerializedScriptValue> serialized = imp->cachedValue();
     value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
@@ -114,7 +114,7 @@ static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String>
     if (!value.IsEmpty())
         return value;
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    SerializedScriptValue* serialized = imp->cachedReadonlyValue();
+    RefPtr<SerializedScriptValue> serialized = imp->cachedReadonlyValue();
     value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;

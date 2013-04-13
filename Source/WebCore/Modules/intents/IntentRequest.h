@@ -47,8 +47,8 @@ public:
 
     Intent* intent() { return m_intent.get(); }
 
-    void postResult(SerializedScriptValue*);
-    void postFailure(SerializedScriptValue*);
+    void postResult(PassRefPtr<SerializedScriptValue>);
+    void postFailure(PassRefPtr<SerializedScriptValue>);
 
     virtual void contextDestroyed() OVERRIDE;
 

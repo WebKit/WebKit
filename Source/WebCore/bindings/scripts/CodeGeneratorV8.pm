@@ -1005,7 +1005,7 @@ END
         if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
             my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
             push(@implContentDecls, <<END);
-    SerializedScriptValue* serialized = imp->${getterFunc}();
+    RefPtr<SerializedScriptValue> serialized = imp->${getterFunc}();
     value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
@@ -3475,7 +3475,7 @@ sub GetNativeTypeForCallbacks
 {
     my $type = shift;
     return "const String&" if $type eq "DOMString";
-    return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
+    return "PassRefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
 
     # Callbacks use raw pointers, so pass isParameter = 1
     return GetNativeType($type, 1);

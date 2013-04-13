@@ -1,5 +1,46 @@
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge r140892
+
+    2013-01-25  Kentaro Hara  <haraken@chromium.org>
+
+            Keep a RefPtr<SerializedScriptValue*> when we call serialize()/deserialize() in code generators
+            https://bugs.webkit.org/show_bug.cgi?id=107902
+
+            Reviewed by Abhishek Arya.
+
+            If you use a raw SerializedScriptValue* for serialize()/deserialize(),
+            it can potentially cause a use-after-free. This is because serialize()/
+            deserialize() can destruct a RefPtr of the SerializedScriptValue*,
+            depending on data that is serialized/deserialized. So we should keep a
+            RefPtr<SerializedScriptValue*> when we call serialize()/deserialize().
+            (See https://bugs.webkit.org/show_bug.cgi?id=107792 for more details.)
+
+            No tests. This is just a just-in-case fix.
+
+            * Modules/intents/Intent.h:
+            (WebCore::Intent::data):
+            * Modules/intents/IntentRequest.cpp:
+            (WebCore::IntentRequest::postResult):
+            (WebCore::IntentRequest::postFailure):
+            * Modules/intents/IntentRequest.h:
+            (IntentRequest):
+            * Modules/intents/IntentResultCallback.h:
+            (IntentResultCallback):
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GetNativeTypeForCallbacks):
+            * bindings/scripts/CodeGeneratorV8.pm:
+            (GenerateNormalAttrGetter):
+            (GetNativeTypeForCallbacks):
+            * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+            (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetter):
+            (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetter):
+            * dom/MessagePortChannel.h:
+            (WebCore::MessagePortChannel::EventData::message):
+
+
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge r140891
 
     2013-01-25  Kentaro Hara  <haraken@chromium.org>

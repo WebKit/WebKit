@@ -84,7 +84,7 @@ namespace WebCore {
         public:
             static PassOwnPtr<EventData> create(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
 
-            SerializedScriptValue* message() { return m_message.get(); }
+            PassRefPtr<SerializedScriptValue> message() { return m_message; }
             PassOwnPtr<MessagePortChannelArray> channels() { return m_channels.release(); }
 
         private:
