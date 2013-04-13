@@ -1,5 +1,22 @@
 2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge r141445 (cherry-picking the fix for <rdar://problem/13266396>)
+
+    2013-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+            WebProcess sandbox profile overhaul.
+
+            Reviewed by Sam Weinig.
+
+            Moves some rules together by susbystem for easier maintenance.
+
+            Addresses <rdar://problem/9276393>, <rdar://problem/10844321>, <rdar://problem/12408537>,
+            <rdar://problem/12558524>.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge r141445 (cherry-picking the actual fix)
 
     2013-01-31  Alexey Proskuryakov  <ap@apple.com>
