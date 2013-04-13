@@ -36,7 +36,7 @@ from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
 from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.watchlist.watchlistloader import WatchListLoader
+from webkitpy.common.watchlist.watchlistparser import WatchListParser
 from webkitpy.layout_tests.port.factory import PortFactory
 
 
@@ -91,4 +91,10 @@ class Host(SystemHost):
 
     @memoized
     def watch_list(self):
-        return WatchListLoader(self.filesystem).load()
+        config_path = self.filesystem.dirname(self.filesystem.path_to_module('webkitpy.common.config'))
+        watch_list_full_path = self.filesystem.join(config_path, 'watchlist')
+        if not self.filesystem.exists(watch_list_full_path):
+            raise Exception('Watch list file (%s) not found.' % watch_list_full_path)
+
+        watch_list_contents = self.filesystem.read_text_file(watch_list_full_path)
+        return WatchListParser().parse(watch_list_contents)
