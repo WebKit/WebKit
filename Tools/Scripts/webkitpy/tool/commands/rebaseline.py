@@ -88,7 +88,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
         self._scm_changes = {'add': []}
 
     def _results_url(self, builder_name):
-        return self._tool.buildbot_for_builder_name(builder_name).builder_with_name(builder_name).latest_layout_test_results_url()
+        return self._tool.buildbot.builder_with_name(builder_name).latest_layout_test_results_url()
 
     def _baseline_directory(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -465,7 +465,7 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         return [self._builder_with_name(name) for name in chosen_names]
 
     def _builder_with_name(self, name):
-        return self._tool.buildbot_for_builder_name(name).builder_with_name(name)
+        return self._tool.buildbot.builder_with_name(name)
 
     def _tests_to_update(self, builder):
         failing_tests = builder.latest_layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])

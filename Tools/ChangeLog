@@ -1,3 +1,30 @@
+2013-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove more Chromium specific code from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=114552
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host.checkout):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase):
+        (JSONResultsGeneratorBase.__init__):
+        (JSONResultsGeneratorBase._is_results_all_of_type):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port):
+        (Port.expected_filename):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._new_port_name_from_old):
+        (CommitQueue.did_pass_testing_ews):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._results_url):
+        (Rebaseline._builder_with_name):
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.irc):
+
 2013-04-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix flakiness dashboard unit test failures

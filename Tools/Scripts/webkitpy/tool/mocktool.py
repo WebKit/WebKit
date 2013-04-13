@@ -83,6 +83,3 @@ class MockTool(MockHost):
 
     def irc(self):
         return self._irc
-
-    def buildbot_for_builder_name(self, name):
-        return MockBuildBot()

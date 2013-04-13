@@ -188,16 +188,12 @@ class JSONResultsGeneratorBase(object):
 
     URL_FOR_TEST_LIST_JSON = "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s&master=%s"
 
-    # FIXME: Remove generate_incremental_results once the reference to it in
-    # http://src.chromium.org/viewvc/chrome/trunk/tools/build/scripts/slave/gtest_slave_utils.py
-    # has been removed.
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_results_map, svn_repositories=None,
         test_results_server=None,
         test_type="",
-        master_name="",
-        generate_incremental_results=None):
+        master_name=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -645,8 +641,3 @@ class JSONResultsGeneratorBase(object):
         """Returns whether all the results are of the given type
         (e.g. all passes)."""
         return len(results) == 1 and results[0][1] == type
-
-
-# Left here not to break anything.
-class JSONResultsGenerator(JSONResultsGeneratorBase):
-    pass

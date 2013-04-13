@@ -73,8 +73,7 @@ class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package."""
 
     # Subclasses override this. This should indicate the basic implementation
-    # part of the port name, e.g., 'chromium-mac', 'win', 'gtk'; there is probably (?)
-    # one unique value per class.
+    # part of the port name, e.g., 'win', 'gtk'; there is probably (?) one unique value per class.
 
     # FIXME: We should probably rename this to something like 'implementation_name'.
     port_name = None
@@ -485,8 +484,7 @@ class Port(object):
         suffix: file suffix of the expected results, including dot; e.g. '.txt'
             or '.png'.  This should not be None, but may be an empty string.
         platform: the most-specific directory name to use to build the
-            search list of directories, e.g., 'chromium-win', or
-            'chromium-cg-mac-leopard' (we follow the WebKit format)
+            search list of directories; e.g. 'mountainlion-wk2'
         return_default: if True, returns the path to the generic expectation if nothing
             else is found; if False, returns None.
 
