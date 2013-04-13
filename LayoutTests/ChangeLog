@@ -1,5 +1,19 @@
 2013-04-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r136596
+
+    2012-12-04  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed. Add Windows specific results for some tests following r136558 and r136560.
+
+            Tests are indeed passing. The output is just slightly different on Windows.
+
+            * platform/win/TestExpectations:
+            * platform/win/fast/css/image-set-value-not-removed-crash-expected.txt: Added.
+            * platform/win/fast/images/crossfade-client-not-removed-crash-expected.txt: Added.
+
+2013-04-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r133701
 
     2012-11-06  Alice Boxhall  <aboxhall@chromium.org>
