@@ -5352,8 +5352,8 @@
 		E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */; };
 		E0FEF372B37C53EAC1C1FBEE /* JSEventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B37C53EAC1C1FBEE /* JSEventSource.h */; };
 		E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B47C53EAC1C1FBEE /* JSEventSource.cpp */; };
-		E100EE751546EAC100BA11D1 /* StyleBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E100EE731546EAC100BA11D1 /* StyleBuilder.cpp */; };
-		E100EE761546EAC100BA11D1 /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E100EE741546EAC100BA11D1 /* StyleBuilder.h */; };
+		E100EE751546EAC100BA11D1 /* DeprecatedStyleBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E100EE731546EAC100BA11D1 /* DeprecatedStyleBuilder.cpp */; };
+		E100EE761546EAC100BA11D1 /* DeprecatedStyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E100EE741546EAC100BA11D1 /* DeprecatedStyleBuilder.h */; };
 		E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */; };
 		E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E107400C0E77BDC00033AF24 /* JSMessageChannel.h */; };
 		E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */; };
@@ -12130,8 +12130,8 @@
 		E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSource.cpp; sourceTree = "<group>"; };
 		E0FEF371B37C53EAC1C1FBEE /* JSEventSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventSource.h; sourceTree = "<group>"; };
 		E0FEF371B47C53EAC1C1FBEE /* JSEventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSource.cpp; sourceTree = "<group>"; };
-		E100EE731546EAC100BA11D1 /* StyleBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBuilder.cpp; sourceTree = "<group>"; };
-		E100EE741546EAC100BA11D1 /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
+		E100EE731546EAC100BA11D1 /* DeprecatedStyleBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedStyleBuilder.cpp; sourceTree = "<group>"; };
+		E100EE741546EAC100BA11D1 /* DeprecatedStyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedStyleBuilder.h; sourceTree = "<group>"; };
 		E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannel.cpp; sourceTree = "<group>"; };
 		E107400C0E77BDC00033AF24 /* JSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannel.h; sourceTree = "<group>"; };
 		E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomXPathNSResolver.h; sourceTree = "<group>"; };
@@ -19776,6 +19776,8 @@
 				E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */,
 				CAE9F90E146441F000C245B1 /* CSSVariableValue.h */,
 				A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */,
+				E100EE731546EAC100BA11D1 /* DeprecatedStyleBuilder.cpp */,
+				E100EE741546EAC100BA11D1 /* DeprecatedStyleBuilder.h */,
 				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
 				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
 				FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */,
@@ -19845,8 +19847,6 @@
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
 				A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */,
 				5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */,
-				E100EE731546EAC100BA11D1 /* StyleBuilder.cpp */,
-				E100EE741546EAC100BA11D1 /* StyleBuilder.h */,
 				E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */,
 				E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -23488,7 +23488,7 @@
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
-				E100EE761546EAC100BA11D1 /* StyleBuilder.h in Headers */,
+				E100EE761546EAC100BA11D1 /* DeprecatedStyleBuilder.h in Headers */,
 				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
 				9393E605151A9A1800066F06 /* StyleCachedImageSet.h in Headers */,
 				5038BE301472AD230095E0D1 /* StyleCachedShader.h in Headers */,
@@ -26546,7 +26546,7 @@
 				B23540F20D00782E002382FA /* StringTruncator.cpp in Sources */,
 				BC5EB6A20E81DC4F00B25965 /* StyleBackgroundData.cpp in Sources */,
 				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,
-				E100EE751546EAC100BA11D1 /* StyleBuilder.cpp in Sources */,
+				E100EE751546EAC100BA11D1 /* DeprecatedStyleBuilder.cpp in Sources */,
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
 				9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */,
 				5038BE2F1472AD230095E0D1 /* StyleCachedShader.cpp in Sources */,

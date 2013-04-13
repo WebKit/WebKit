@@ -1058,6 +1058,7 @@ set(WebCore_SOURCES
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
     css/DOMWindowCSS.cpp
+    css/DeprecatedStyleBuilder.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
     css/FontFeatureValue.cpp
@@ -1084,7 +1085,6 @@ set(WebCore_SOURCES
     css/SelectorCheckerFastPath.cpp
     css/SelectorFilter.cpp
     css/ShadowValue.cpp
-    css/StyleBuilder.cpp
     css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp

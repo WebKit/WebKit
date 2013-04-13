@@ -3690,6 +3690,9 @@
     <ClCompile Include="..\css\CSSValuePool.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\DeprecatedStyleBuilder.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\FontFeatureValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -3739,9 +3742,6 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\ShadowValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\StyleBuilder.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp">
@@ -10479,6 +10479,9 @@
     <ClInclude Include="..\css\DashboardRegion.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\DeprecatedStyleBuilder.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\FontFeatureValue.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -10534,9 +10537,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\SiblingTraversalStrategies.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\StyleBuilder.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h">

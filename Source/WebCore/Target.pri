@@ -306,6 +306,7 @@ SOURCES += \
     css/CSSValueList.cpp \
     css/CSSValuePool.cpp \
     css/DOMWindowCSS.cpp \
+    css/DeprecatedStyleBuilder.cpp \
     css/DocumentRuleSets.cpp \
     css/ElementRuleCollector.cpp \
     css/FontFeatureValue.cpp \
@@ -330,7 +331,6 @@ SOURCES += \
     css/SelectorCheckerFastPath.cpp \
     css/SelectorFilter.cpp \
     css/ShadowValue.cpp \
-    css/StyleBuilder.cpp \
     css/StyleInvalidationAnalysis.cpp \
     css/StyleMedia.cpp \
     css/StylePropertySet.cpp \
@@ -1554,6 +1554,7 @@ HEADERS += \
     css/CSSValueList.h \
     css/CSSValuePool.h \
     css/CSSVariableValue.h \
+    css/DeprecatedStyleBuilder.h \
     css/DOMWindowCSS.h \
     css/FontFeatureValue.h \
     css/FontLoader.h \
@@ -1572,7 +1573,6 @@ HEADERS += \
     css/ShadowValue.h \
     css/SiblingTraversalStrategies.h \
     css/StyleMedia.h \
-    css/StyleBuilder.h \
     css/StyleInvalidationAnalysis.h \
     css/StylePropertySet.h \
     css/StylePropertyShorthand.h \

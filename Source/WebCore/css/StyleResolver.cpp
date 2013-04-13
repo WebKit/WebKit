@@ -58,6 +58,7 @@
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
+#include "DeprecatedStyleBuilder.h"
 #include "DocumentStyleSheetCollection.h"
 #include "ElementRuleCollector.h"
 #include "ElementShadow.h"
@@ -110,7 +111,6 @@
 #include "ShadowRoot.h"
 #include "ShadowValue.h"
 #include "SkewTransformOperation.h"
-#include "StyleBuilder.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
@@ -258,7 +258,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(document))
 #endif
-    , m_styleBuilder(StyleBuilder::sharedStyleBuilder())
+    , m_deprecatedStyleBuilder(DeprecatedStyleBuilder::sharedStyleBuilder())
     , m_styleMap(this)
 {
     Element* root = document->documentElement();
@@ -2248,7 +2248,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #endif
 
     // Check lookup table for implementations and use when available.
-    const PropertyHandler& handler = m_styleBuilder.propertyHandler(id);
+    const PropertyHandler& handler = m_deprecatedStyleBuilder.propertyHandler(id);
     if (handler.isValid()) {
         if (isInherit)
             handler.applyInheritValue(id, this);
@@ -2890,13 +2890,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 
-    // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
+    // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
     case CSSPropertyTransitionProperty:
     case CSSPropertyTransitionTimingFunction:
         return;
-    // These properties are implemented in the StyleBuilder lookup table.
+    // These properties are implemented in the DeprecatedStyleBuilder lookup table.
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
     case CSSPropertyBackgroundColor:
@@ -4523,7 +4523,7 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
     info.addMember(m_fontSelector, "fontSelector");
     info.addMember(m_viewportDependentMediaQueryResults, "viewportDependentMediaQueryResults");
-    info.ignoreMember(m_styleBuilder);
+    info.ignoreMember(m_deprecatedStyleBuilder);
     info.addMember(m_inspectorCSSOMWrappers);
     info.addMember(m_scopeResolver, "scopeResolver");
 

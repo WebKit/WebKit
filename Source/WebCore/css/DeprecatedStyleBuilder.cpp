@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "StyleBuilder.h"
+#include "DeprecatedStyleBuilder.h"
 
 #include "BasicShapeFunctions.h"
 #include "BasicShapes.h"
@@ -66,7 +66,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
+        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyInheritValue(propertyID, styleResolver);
@@ -87,7 +87,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
+        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyInitialValue(propertyID, styleResolver);
@@ -108,7 +108,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
+        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyValue(propertyID, styleResolver, value);
@@ -2072,13 +2072,13 @@ public:
     }
 };
 
-const StyleBuilder& StyleBuilder::sharedStyleBuilder()
+const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
-    DEFINE_STATIC_LOCAL(StyleBuilder, styleBuilderInstance, ());
+    DEFINE_STATIC_LOCAL(DeprecatedStyleBuilder, styleBuilderInstance, ());
     return styleBuilderInstance;
 }
 
-StyleBuilder::StyleBuilder()
+DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 {
     for (int i = 0; i < numCSSProperties; ++i)
         m_propertyMap[i] = PropertyHandler();

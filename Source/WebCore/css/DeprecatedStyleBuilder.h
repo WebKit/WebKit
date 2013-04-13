@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleBuilder_h
-#define StyleBuilder_h
+#ifndef DeprecatedStyleBuilder_h
+#define DeprecatedStyleBuilder_h
 
 #include "CSSPropertyNames.h"
 #include "StylePropertyShorthand.h"
@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class CSSValue;
-class StyleBuilder;
+class DeprecatedStyleBuilder;
 class StyleResolver;
 
 class PropertyHandler {
@@ -56,10 +56,10 @@ private:
     ApplyFunction m_apply;
 };
 
-class StyleBuilder {
-    WTF_MAKE_NONCOPYABLE(StyleBuilder); WTF_MAKE_FAST_ALLOCATED;
+class DeprecatedStyleBuilder {
+    WTF_MAKE_NONCOPYABLE(DeprecatedStyleBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static const StyleBuilder& sharedStyleBuilder();
+    static const DeprecatedStyleBuilder& sharedStyleBuilder();
 
     const PropertyHandler& propertyHandler(CSSPropertyID property) const
     {
@@ -67,7 +67,7 @@ public:
         return m_propertyMap[index(property)];
     }
 private:
-    StyleBuilder();
+    DeprecatedStyleBuilder();
     static int index(CSSPropertyID property)
     {
         return property - firstCSSProperty;
@@ -102,4 +102,4 @@ private:
 
 }
 
-#endif // StyleBuilder_h
+#endif // DeprecatedStyleBuilder_h
