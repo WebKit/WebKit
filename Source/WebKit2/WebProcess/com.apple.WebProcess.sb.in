@@ -208,6 +208,10 @@
         (literal "/private/etc/services")
         (literal "/private/etc/host"))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 
+(deny file-write-create (vnode-type SYMLINK)) 
+#endif
+
 (deny file-read* file-write* (with no-log)
        ;; FIXME: Should be removed after <rdar://problem/9422957> is fixed.
        (home-literal "/Library/Caches/Cache.db")
