@@ -341,6 +341,13 @@ webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ 
 # Flaky everywhere.
 webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
 
+webkit.org/b/114571 [ Debug ] fast/regions/fixed-pos-elem-in-region.html [ Pass Failure ]
+
+webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Failure ]
+
+webkit.org/b/114573 fast/repaint/selection-gap-fixed-child.html [ Failure ]
+webkit.org/b/114573 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
