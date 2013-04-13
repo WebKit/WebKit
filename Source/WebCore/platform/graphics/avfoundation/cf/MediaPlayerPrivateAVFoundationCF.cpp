@@ -489,7 +489,7 @@ float MediaPlayerPrivateAVFoundationCF::currentTime() const
     return 0;
 }
 
-void MediaPlayerPrivateAVFoundationCF::seekToTime(float time)
+void MediaPlayerPrivateAVFoundationCF::seekToTime(double time)
 {
     if (!m_avfWrapper)
         return;
@@ -568,7 +568,31 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRan
     return timeRanges.release();
 }
 
-float MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable() const
+double MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable() const 
+{ 
+    RetainPtr<CFArrayRef> seekableRanges(AdoptCF, AVCFPlayerItemCopySeekableTimeRanges(avPlayerItem(m_avfWrapper)));
+    if (!seekableRanges) 
+        return 0; 
+
+    double minTimeSeekable = std::numeric_limits<double>::infinity(); 
+    bool hasValidRange = false; 
+    CFIndex rangeCount = CFArrayGetCount(seekableRanges.get());
+    for (CFIndex i = 0; i < rangeCount; i++) {
+        CFDictionaryRef range = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(seekableRanges.get(), i));
+        CMTime start = CMTimeMakeFromDictionary(static_cast<CFDictionaryRef>(CFDictionaryGetValue(range, CMTimeRangeStartKey())));
+        CMTime duration = CMTimeMakeFromDictionary(static_cast<CFDictionaryRef>(CFDictionaryGetValue(range, CMTimeRangeDurationKey())));
+        if (!timeRangeIsValidAndNotEmpty(start, duration))
+            continue;
+
+        hasValidRange = true; 
+        double startOfRange = CMTimeGetSeconds(start); 
+        if (minTimeSeekable > startOfRange) 
+            minTimeSeekable = startOfRange; 
+    } 
+    return hasValidRange ? minTimeSeekable : 0; 
+} 
+
+double MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable() const
 {
     if (!avPlayerItem(m_avfWrapper))
         return 0;
@@ -577,7 +601,7 @@ float MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable() const
     if (!seekableRanges)
         return 0;
 
-    float maxTimeSeekable = 0;
+    double maxTimeSeekable = 0;
     CFIndex rangeCount = CFArrayGetCount(seekableRanges.get());
     for (CFIndex i = 0; i < rangeCount; i++) {
         CFDictionaryRef range = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(seekableRanges.get(), i));
@@ -586,7 +610,7 @@ float MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable() const
         if (!timeRangeIsValidAndNotEmpty(start, duration))
             continue;
         
-        float endOfRange = narrowPrecisionToFloat(CMTimeGetSeconds(CMTimeAdd(start, duration)));
+        double endOfRange = CMTimeGetSeconds(CMTimeAdd(start, duration));
         if (maxTimeSeekable < endOfRange)
             maxTimeSeekable = endOfRange;
     }

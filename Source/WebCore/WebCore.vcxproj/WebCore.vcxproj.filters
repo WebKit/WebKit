@@ -2412,9 +2412,6 @@
     <ClCompile Include="..\loader\cache\CachedRawResource.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\cache\CachedRawResourceClient.cpp">
-      <Filter>loader\cache</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedResource.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
@@ -6858,6 +6855,9 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\cg\SubimageCacheWithTimer.cpp">
       <Filter>platform\graphics\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\TrackListBase.cpp">
+      <Filter>html\track</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14374,6 +14374,11 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\cg\SubimageCacheWithTimer.h">
       <Filter>platform\graphics\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h" />
+    <ClInclude Include="..\platform\VisitedLinkStrategy.h" />
+    <ClInclude Include="..\html\track\TrackListBase.h">
+      <Filter>html\track</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
