@@ -1,3 +1,22 @@
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge r140748.
+
+    2013-01-24  Kentaro Hara  <haraken@chromium.org>
+
+            Regression(r107058): Use-after-free in SerializedScriptValue::deserialize
+            https://bugs.webkit.org/show_bug.cgi?id=107792
+
+            Reviewed by Abhishek Arya.
+
+            Added a test that demonstrated a crash due to use-after-free
+            of SerializedScriptValue.
+
+            Test: fast/history/replacestate-nocrash.html
+
+            * fast/history/replacestate-nocrash-expected.txt: Added.
+            * fast/history/replacestate-nocrash.html: Added.
+
 2013-04-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r136596

@@ -1,3 +1,48 @@
+2013-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge r140748.
+
+    2013-01-24  Kentaro Hara  <haraken@chromium.org>
+
+            Regression(r107058): Use-after-free in SerializedScriptValue::deserialize
+            https://bugs.webkit.org/show_bug.cgi?id=107792
+
+            Reviewed by Abhishek Arya.
+
+            Imagine the following call path:
+
+            (1) history.state is accessed.
+            (2) V8History::stateAccessorGetter() calls History::state(), which calls
+            HistoryItem::stateObject().
+            (3) HistoryItem holds m_stateObject as RefPtr<SerializedScriptValue>,
+            but HistoryItem::stateObject() returns SerializedScriptValue*.
+            (4) V8History::stateAccessorGetter calls SerializedScriptValue::deserialize()
+            for the SerializedScriptValue* obtained in (3).
+            (5) SerializedScriptValue::deserialize() can call history.replaceState()
+            in its deserialization process (See the test case in the Chromium bug).
+            (6) history.replaceState() replaces HistoryItem::m_stateObject.
+            This replacement destructs the original HistoryItem::m_stateObject.
+            (7) The current deserialization process can crash due to the premature destruction.
+
+            To avoid the problem, we have to pass PassRefPtr<SerializedScriptValue> around
+            instead of SerializedScriptValue*.
+
+            Test: fast/history/replacestate-nocrash.html
+
+            * bindings/v8/custom/V8HistoryCustom.cpp:
+            (WebCore::V8History::stateAccessorGetter):
+            * history/HistoryItem.h:
+            (WebCore):
+            (WebCore::HistoryItem::stateObject):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::loadInSameDocument):
+            * loader/FrameLoader.h:
+            * page/History.cpp:
+            (WebCore::History::state):
+            (WebCore::History::stateInternal):
+            * page/History.h:
+            (History):
+
 2013-04-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r129814

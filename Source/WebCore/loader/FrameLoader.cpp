@@ -968,7 +968,7 @@ void FrameLoader::setFirstPartyForCookies(const KURL& url)
 
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
-void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* stateObject, bool isNewNavigation)
+void FrameLoader::loadInSameDocument(const KURL& url, PassRefPtr<SerializedScriptValue> stateObject, bool isNewNavigation)
 {
     // If we have a state object, we cannot also be a new navigation.
     ASSERT(!stateObject || (stateObject && !isNewNavigation));
@@ -1021,7 +1021,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
 
     m_client->dispatchDidNavigateWithinPage();
 
-    m_frame->document()->statePopped(stateObject ? stateObject : SerializedScriptValue::nullValue());
+    m_frame->document()->statePopped(stateObject ? stateObject.get() : SerializedScriptValue::nullValue());
     m_client->dispatchDidPopStateWithinPage();
     
     if (hashChange) {
