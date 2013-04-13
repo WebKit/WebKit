@@ -32,7 +32,8 @@ from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 
-class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase):
+
+class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
     """A JSON results generator for layout tests."""
 
     LAYOUT_TESTS_PATH = "LayoutTests"
@@ -40,8 +41,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
     # Additional JSON fields.
     WONTFIX = "wontfixCounts"
 
-    FAILURE_TO_CHAR = {test_expectations.PASS: json_results_generator.JSONResultsGeneratorBase.PASS_RESULT,
-                       test_expectations.SKIP: json_results_generator.JSONResultsGeneratorBase.SKIP_RESULT,
+    FAILURE_TO_CHAR = {test_expectations.PASS: json_results_generator.JSONResultsGenerator.PASS_RESULT,
+                       test_expectations.SKIP: json_results_generator.JSONResultsGenerator.SKIP_RESULT,
                        test_expectations.CRASH: "C",
                        test_expectations.TIMEOUT: "T",
                        test_expectations.IMAGE: "I",

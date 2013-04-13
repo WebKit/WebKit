@@ -150,7 +150,7 @@ class TestResult(object):
         return self.failed or self.modifier == self.DISABLED
 
 
-class JSONResultsGeneratorBase(object):
+class JSONResultsGenerator(object):
     """A JSON results generator for generic tests."""
 
     MAX_NUMBER_OF_BUILD_RESULTS_TO_LOG = 750

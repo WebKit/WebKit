@@ -91,7 +91,7 @@ class JSONGeneratorTest(unittest.TestCase):
         host = MockHost()
         port = Mock()
         port._filesystem = host.filesystem
-        generator = json_results_generator.JSONResultsGeneratorBase(port,
+        generator = json_results_generator.JSONResultsGenerator(port,
             self.builder_name, self.build_name, self.build_number,
             '',
             None,   # don't fetch past json results archive
@@ -121,7 +121,7 @@ class JSONGeneratorTest(unittest.TestCase):
                              fixable_count,
                              json, num_runs):
         # Aliasing to a short name for better access to its constants.
-        JRG = json_results_generator.JSONResultsGeneratorBase
+        JRG = json_results_generator.JSONResultsGenerator
 
         self.assertIn(JRG.VERSION_KEY, json)
         self.assertIn(self.builder_name, json)
