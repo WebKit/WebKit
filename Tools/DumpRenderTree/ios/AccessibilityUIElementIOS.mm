@@ -79,6 +79,10 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 @end
 
+@interface NSObject (WebAccessibilityObjectWrapperPrivate)
+- (CGPathRef)_accessibilityPath;
+@end
+
 static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)
 {
     Vector<UniChar> buffer([attribute length]);
@@ -344,7 +348,6 @@ void AccessibilityUIElement::elementsForRange(unsigned location, unsigned length
 static void _CGPathEnumerationIteration(void *info, const CGPathElement *element)
 {
     NSMutableString *result = (NSMutableString *)info;
-    CGPoint* points = element->points;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
         [result appendString:@"\tMove to point\n"];

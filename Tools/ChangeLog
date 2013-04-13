@@ -1,3 +1,14 @@
+2013-04-12  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Make AccessibilityUIElementIOS.mm build on iOS
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm: Declare
+        -_accessibilityPath from the WebAccessibilityObjectWrapper
+        class.
+        (_CGPathEnumerationIteration): Remove unused CGPoint* variable.
+
 2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, remove an old email address for myself.
