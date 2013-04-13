@@ -82,14 +82,9 @@ void SVGImageCache::imageContentChanged()
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it)
         it->second.imageNeedsUpdate = true;
 
-    // If we're in the middle of layout, start redrawing dirty
-    // images on a timer; otherwise it's safe to draw immediately.
-    FrameView* frameView = m_svgImage->frameView();
-    if (frameView && (frameView->needsLayout() || frameView->isInLayout())) {
-        if (!m_redrawTimer.isActive())
-            m_redrawTimer.startOneShot(0);
-    } else
-       redraw();
+    // Always redraw on a timer because this method may be invoked from destructors of things we are intending to draw.
+    if (!m_redrawTimer.isActive())
+        m_redrawTimer.startOneShot(0);
 }
 
 void SVGImageCache::redraw()
