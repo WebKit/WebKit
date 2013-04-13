@@ -38,7 +38,7 @@ from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations, BASELINE_SUFFIX_LIST
 from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.port import factory
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 
 _log = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ def _baseline_name(fs, test_name, suffix):
     return fs.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
 
 
-class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
+class AbstractRebaseliningCommand(Command):
     # not overriding execute() - pylint: disable=W0223
 
     move_overwritten_baselines_option = optparse.make_option("--move-overwritten-baselines", action="store_true", default=False,

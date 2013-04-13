@@ -38,8 +38,9 @@ from webkitpy.tool.multicommandtool import MultiCommandTool, Command, TryAgain
 class TrivialCommand(Command):
     name = "trivial"
     show_in_main_help = True
+    help_text = "help text"
     def __init__(self, **kwargs):
-        Command.__init__(self, "help text", **kwargs)
+        Command.__init__(self, **kwargs)
 
     def execute(self, options, args, tool):
         pass
@@ -53,9 +54,10 @@ class UncommonCommand(TrivialCommand):
 class LikesToRetry(Command):
     name = "likes-to-retry"
     show_in_main_help = True
+    help_text = "help text"
 
     def __init__(self, **kwargs):
-        Command.__init__(self, "help text", **kwargs)
+        Command.__init__(self, **kwargs)
         self.execute_count = 0
 
     def execute(self, options, args, tool):
@@ -66,9 +68,11 @@ class LikesToRetry(Command):
 
 class CommandTest(unittest.TestCase):
     def test_name_with_arguments(self):
-        command_with_args = TrivialCommand(argument_names="ARG1 ARG2")
+        TrivialCommand.argument_names = "ARG1 ARG2"
+        command_with_args = TrivialCommand()
         self.assertEqual(command_with_args.name_with_arguments(), "trivial ARG1 ARG2")
 
+        TrivialCommand.argument_names = None
         command_with_args = TrivialCommand(options=[make_option("--my_option")])
         self.assertEqual(command_with_args.name_with_arguments(), "trivial [options]")
 
@@ -80,7 +84,8 @@ class CommandTest(unittest.TestCase):
         self.assertRaises(Exception, Command._parse_required_arguments, "[ARG1 ARG2]")
 
     def test_required_arguments(self):
-        two_required_arguments = TrivialCommand(argument_names="ARG1 ARG2 [ARG3]")
+        TrivialCommand.argument_names = "ARG1 ARG2 [ARG3]"
+        two_required_arguments = TrivialCommand()
         expected_logs = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
         exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [None, ["foo"], TrivialTool()], expected_logs=expected_logs)
         self.assertEqual(exit_code, 1)
@@ -167,7 +172,8 @@ See 'trivial-tool help COMMAND' for more information on a specific command.
 
 
     def test_command_help(self):
-        command_with_options = TrivialCommand(options=[make_option("--my_option")], long_help="LONG HELP")
+        command_with_options = TrivialCommand(options=[make_option("--my_option")])
+        command_with_options.long_help = "LONG HELP"
         tool = TrivialTool(commands=[command_with_options])
         expected_subcommand_help = "trivial [options]   help text\n\nLONG HELP\n\nOptions:\n  --my_option=MY_OPTION\n\n"
         self._assert_tool_main_outputs(tool, ["tool", "help", "trivial"], expected_subcommand_help)

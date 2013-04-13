@@ -30,12 +30,12 @@ import logging
 import re
 import sys
 
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 
 
-class OpenBugs(AbstractDeclarativeCommand):
+class OpenBugs(Command):
     name = "open-bugs"
     help_text = "Finds all bug numbers passed in arguments (or stdin if no args provided) and opens them in a web browser"
 

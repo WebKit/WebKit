@@ -72,7 +72,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--exit-after-iteration", action="store", type="int", dest="iterations", default=None, help="Stop running the queue after iterating this number of times."),
         ]
-        Command.__init__(self, "Run the %s" % self.name, options=options_list)
+        self.help_text = "Run the %s" % self.name
+        Command.__init__(self, options=options_list)
         self._iteration_count = 0
 
     def _cc_watchers(self, bug_id):

@@ -43,12 +43,12 @@ from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.grammar import pluralize, join_with_separators
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 
 
-class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
+class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
     help_text = "Print a commit message suitable for the uncommitted changes"
 
@@ -56,7 +56,7 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
         options = [
             steps.Options.git_commit,
         ]
-        AbstractDeclarativeCommand.__init__(self, options=options)
+        Command.__init__(self, options=options)
 
     def execute(self, options, args, tool):
         # This command is a useful test to make sure commit_message_for_this_commit
@@ -64,7 +64,7 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
         print "%s" % tool.checkout().commit_message_for_this_commit(options.git_commit).message()
 
 
-class CleanPendingCommit(AbstractDeclarativeCommand):
+class CleanPendingCommit(Command):
     name = "clean-pending-commit"
     help_text = "Clear r+ on obsolete patches so they do not appear in the pending-commit list."
 
@@ -94,7 +94,7 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
 
 
 # FIXME: This should be share more logic with AssignToCommitter and CleanPendingCommit
-class CleanReviewQueue(AbstractDeclarativeCommand):
+class CleanReviewQueue(Command):
     name = "clean-review-queue"
     help_text = "Clear r? on obsolete patches so they do not appear in the pending-review list."
 
@@ -119,7 +119,7 @@ class CleanReviewQueue(AbstractDeclarativeCommand):
             self._tool.bugs.obsolete_attachment(patch.id(), message)
 
 
-class AssignToCommitter(AbstractDeclarativeCommand):
+class AssignToCommitter(Command):
     name = "assign-to-committer"
     help_text = "Assign bug to whoever attached the most recent r+'d patch"
 
@@ -306,7 +306,7 @@ class EditChangeLogs(AbstractSequencedCommand):
     ]
 
 
-class PostCommits(AbstractDeclarativeCommand):
+class PostCommits(Command):
     name = "post-commits"
     help_text = "Attach a range of local commits to bugs as patch files"
     argument_names = "COMMITISH"
@@ -320,7 +320,7 @@ class PostCommits(AbstractDeclarativeCommand):
             steps.Options.review,
             steps.Options.request_commit,
         ]
-        AbstractDeclarativeCommand.__init__(self, options=options, requires_local_commits=True)
+        Command.__init__(self, options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
         comment_text = None
@@ -358,7 +358,7 @@ class PostCommits(AbstractDeclarativeCommand):
 
 
 # FIXME: This command needs to be brought into the modern age with steps and CommitInfo.
-class MarkBugFixed(AbstractDeclarativeCommand):
+class MarkBugFixed(Command):
     name = "mark-bug-fixed"
     help_text = "Mark the specified bug as fixed"
     argument_names = "[SVN_REVISION]"
@@ -369,7 +369,7 @@ class MarkBugFixed(AbstractDeclarativeCommand):
             make_option("--open", action="store_true", default=False, dest="open_bug", help="Open bug in default web browser (Mac only)."),
             make_option("--update-only", action="store_true", default=False, dest="update_only", help="Add comment to the bug, but do not close it."),
         ]
-        AbstractDeclarativeCommand.__init__(self, options=options)
+        Command.__init__(self, options=options)
 
     # FIXME: We should be using checkout().changelog_entries_for_revision(...) instead here.
     def _fetch_commit_log(self, tool, svn_revision):
@@ -439,7 +439,7 @@ class MarkBugFixed(AbstractDeclarativeCommand):
 
 
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
-class CreateBug(AbstractDeclarativeCommand):
+class CreateBug(Command):
     name = "create-bug"
     help_text = "Create a bug from local changes or local commits"
     argument_names = "[COMMITISH]"
@@ -452,7 +452,7 @@ class CreateBug(AbstractDeclarativeCommand):
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
-        AbstractDeclarativeCommand.__init__(self, options=options)
+        Command.__init__(self, options=options)
 
     def create_bug_from_commit(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)

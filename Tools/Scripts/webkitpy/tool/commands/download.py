@@ -38,7 +38,7 @@ from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCom
 from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.grammar import pluralize
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 
@@ -145,7 +145,7 @@ class CheckStyleLocal(AbstractSequencedCommand):
     ]
 
 
-class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
+class AbstractPatchProcessingCommand(Command):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.
     #

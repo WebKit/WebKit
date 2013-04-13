@@ -29,12 +29,12 @@
 from optparse import make_option
 
 from webkitpy.common.net.omahaproxy import OmahaProxy
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 import re
 
 
-class ChromeChannels(AbstractDeclarativeCommand):
+class ChromeChannels(Command):
     name = "chrome-channels"
     help_text = "List which chrome channels include the patches in bugs returned by QUERY."
     argument_names = "QUERY"
@@ -53,7 +53,7 @@ documentation on the query format."""
     rollout_pattern = "Rolled out in http://trac.webkit.org/changeset/[0-9]+"
 
     def __init__(self):
-        AbstractDeclarativeCommand.__init__(self)
+        Command.__init__(self)
         self._re_committed = re.compile(self.commited_pattern)
         self._re_rollout = re.compile(self.rollout_pattern)
         self._omahaproxy = OmahaProxy()

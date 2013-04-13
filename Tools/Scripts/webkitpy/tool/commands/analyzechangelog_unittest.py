@@ -36,7 +36,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.commands.analyzechangelog import AnalyzeChangeLog
 from webkitpy.tool.commands.analyzechangelog import ChangeLogAnalyzer
 from webkitpy.tool.commands.commandtest import CommandsTest
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 
 class AnalyzeChangeLogTest(CommandsTest):

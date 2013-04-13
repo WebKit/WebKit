@@ -34,10 +34,10 @@ from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.tool import steps
 from webkitpy.tool.grammar import join_with_separators
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 
-class SuggestNominations(AbstractDeclarativeCommand):
+class SuggestNominations(Command):
     name = "suggest-nominations"
     help_text = "Suggest contributors for committer/reviewer nominations"
 
@@ -49,7 +49,7 @@ class SuggestNominations(AbstractDeclarativeCommand):
             make_option("--show-commits", action="store_true", dest="show_commits", default=False, help="Show commit history with nomination suggestions."),
         ]
 
-        AbstractDeclarativeCommand.__init__(self, options=options)
+        Command.__init__(self, options=options)
         # FIXME: This should probably be on the tool somewhere.
         self._committer_list = CommitterList()
 

@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import Command
 
 
-class AddUsersToGroups(AbstractDeclarativeCommand):
+class AddUsersToGroups(Command):
     name = "add-users-to-groups"
     help_text = "Add users matching subtring to specified groups"
 

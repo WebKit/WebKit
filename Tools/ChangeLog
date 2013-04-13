@@ -1,3 +1,90 @@
+2013-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge AbstractDeclarativeCommand into Command as a comment suggests
+        https://bugs.webkit.org/show_bug.cgi?id=114559
+
+        Reviewed by Antti Koivisto.
+
+        Merged two classes as the comment right above AbstractDeclarativeCommand suggested.
+        We need to merge a lot more classes to make webkitpy hackable.
+
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        (AbstractLocalServerCommand):
+        (AbstractLocalServerCommand.__init__):
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        (AbstractSequencedCommand):
+        (AbstractSequencedCommand.__init__):
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py:
+        (AddUsersToGroups):
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        (AnalyzeChangeLog):
+        (AnalyzeChangeLog.__init__):
+        * Scripts/webkitpy/tool/commands/analyzechangelog_unittest.py:
+        * Scripts/webkitpy/tool/commands/bugfortest.py:
+        (BugForTest):
+        * Scripts/webkitpy/tool/commands/bugsearch.py:
+        (BugSearch):
+        * Scripts/webkitpy/tool/commands/chromechannels.py:
+        (ChromeChannels):
+        (__init__):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand):
+        * Scripts/webkitpy/tool/commands/findusers.py:
+        (FindUsers):
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        (OpenBugs):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (BugsToCommit):
+        (PatchesInCommitQueue):
+        (PatchesToCommitQueue):
+        (PatchesToCommitQueue.__init__):
+        (PatchesToReview):
+        (PatchesToReview.__init__):
+        (PatchesToReview.execute):
+        (WhatBroke):
+        (ResultsFor):
+        (FailureReason):
+        (FindFlakyTests):
+        (TreeStatus):
+        (CrashLog):
+        (PrintExpectations):
+        (PrintExpectations.__init__):
+        (PrintBaselines):
+        (PrintBaselines.__init__):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations):
+        (SuggestNominations.__init__):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CommitMessageForCurrentDiff):
+        (CommitMessageForCurrentDiff.__init__):
+        (CleanPendingCommit):
+        (CleanReviewQueue):
+        (AssignToCommitter):
+        (PostCommits):
+        (PostCommits.__init__):
+        (MarkBugFixed):
+        (MarkBugFixed.__init__):
+        (CreateBug):
+        (CreateBug.__init__):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (Command):
+        (Command.__init__):
+        (Command.main):
+        (HelpCommand):
+        (HelpCommand.__init__):
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        (TrivialCommand):
+        (TrivialCommand.__init__):
+        (LikesToRetry):
+        (LikesToRetry.__init__):
+        (CommandTest.test_name_with_arguments):
+        (CommandTest.test_required_arguments):
+        (test_command_help):
+
 2013-04-13  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] --minimal build fails with error: 'ViewModeInvalid' is not a member of 'WebCore::Page'
