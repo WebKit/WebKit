@@ -80,4 +80,8 @@ static WebFormDelegate *sharedDelegate = nil;
     [listener continue];
 }
 
+- (void)willSendSubmitEventToForm:(DOMHTMLFormElement *)element inFrame:(WebFrame *)sourceFrame withValues:(NSDictionary *)values
+{
+}
+
 @end

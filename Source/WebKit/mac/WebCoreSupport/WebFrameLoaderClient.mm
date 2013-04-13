@@ -34,6 +34,7 @@
 #undef private
 
 #import "DOMElementInternal.h"
+#import "DOMHTMLFormElementInternal.h"
 #import "WebBackForwardList.h"
 #import "WebCachedFramePlatformData.h"
 #import "WebChromeClient.h"
@@ -761,6 +762,28 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& 
     [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:m_webFrame.get()];    
 }
 
+static NSDictionary *makeFormFieldValuesDictionary(FormState* formState)
+{
+    const StringPairVector& textFieldValues = formState->textFieldValues();
+    size_t size = textFieldValues.size();
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [dictionary setObject:textFieldValues[i].second forKey:textFieldValues[i].first];
+
+    return [dictionary autorelease];
+}
+
+void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState> formState)
+{
+    id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
+    if (!formDelegate)
+        return;
+
+    DOMHTMLFormElement *formElement = kit(formState->form());
+    NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(willSendSubmitEventToForm:inFrame:withValues:), formElement, m_webFrame.get(), values);
+}
+
 void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
@@ -769,15 +792,8 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
         return;
     }
 
-    const StringPairVector& textFieldValues = formState->textFieldValues();
-    size_t size = textFieldValues.size();
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [dictionary setObject:textFieldValues[i].second forKey:textFieldValues[i].first];
-
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), dictionary, setUpPolicyListener(function).get());
-
-    [dictionary release];
+    NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(function).get());
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)

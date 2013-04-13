@@ -100,6 +100,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMHTMLFormElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHRElement.h \

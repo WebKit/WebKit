@@ -111,6 +111,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 WebHistoryDelegateImplementationCache* WebViewGetHistoryDelegateImplementations(WebView *webView);
 
 id CallFormDelegate(WebView *, SEL, id, id);
+id CallFormDelegate(WebView *, SEL, id, id, id);
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5);
 BOOL CallFormDelegateReturningBoolean(BOOL, WebView *, SEL, id, SEL, id);
 

@@ -29,6 +29,7 @@
 #import <AppKit/AppKit.h>
 
 @class DOMElement;
+@class DOMHTMLFormElement;
 @class DOMHTMLInputElement;
 @class DOMHTMLTextAreaElement;
 @class WebFrame;
@@ -62,6 +63,8 @@
 // listener must be sent continue when the delegate is done.
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form
     withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
+
+- (void)willSendSubmitEventToForm:(DOMHTMLFormElement *)element inFrame:(WebFrame *)sourceFrame withValues:(NSDictionary *)values;
 
 @end
 

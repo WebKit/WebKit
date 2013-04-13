@@ -611,6 +611,19 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     return nil;
 }
 
+id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3)
+{
+    id delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    @try {
+        return wtfObjcMsgSend<id>(delegate, selector, object1, object2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5)
 {
     id delegate = self->_private->formDelegate;

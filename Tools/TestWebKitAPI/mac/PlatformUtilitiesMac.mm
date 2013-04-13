@@ -78,6 +78,9 @@ bool isKeyDown(WKNativeEventPtr event)
 
 std::string toSTD(NSString *string)
 {
+    if (!string)
+        return std::string();
+
     size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
     NSUInteger stringLength;
