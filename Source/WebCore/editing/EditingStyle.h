@@ -50,6 +50,7 @@ class CSSValue;
 class Document;
 class Element;
 class HTMLElement;
+class MutableStylePropertySet;
 class Node;
 class Position;
 class QualifiedName;
@@ -98,10 +99,10 @@ public:
 
     ~EditingStyle();
 
-    StylePropertySet* style() { return m_mutableStyle.get(); }
+    MutableStylePropertySet* style() { return m_mutableStyle.get(); }
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
-    void setStyle(PassRefPtr<StylePropertySet>);
+    void setStyle(PassRefPtr<MutableStylePropertySet>);
     void overrideWithStyle(const StylePropertySet*);
     void clear();
     PassRefPtr<EditingStyle> copy() const;
@@ -163,7 +164,7 @@ private:
     void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyle(const StylePropertySet*, CSSPropertyOverrideMode);
 
-    RefPtr<StylePropertySet> m_mutableStyle;
+    RefPtr<MutableStylePropertySet> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;
     float m_fontSizeDelta;
 
@@ -217,7 +218,7 @@ public:
         return !(*this == other);
     }
 private:
-    void extractTextStyles(Document*, StylePropertySet*, bool shouldUseFixedFontDefaultSize);
+    void extractTextStyles(Document*, MutableStylePropertySet*, bool shouldUseFixedFontDefaultSize);
 
     String m_cssStyle;
     bool m_applyBold;

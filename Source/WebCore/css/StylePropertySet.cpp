@@ -1106,7 +1106,7 @@ void MutableStylePropertySet::clear()
 
 const unsigned numBlockProperties = WTF_ARRAY_LENGTH(blockProperties);
 
-PassRefPtr<StylePropertySet> StylePropertySet::copyBlockProperties() const
+PassRefPtr<MutableStylePropertySet> StylePropertySet::copyBlockProperties() const
 {
     return copyPropertiesInSet(blockProperties, numBlockProperties);
 }

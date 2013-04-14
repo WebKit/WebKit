@@ -117,7 +117,7 @@ public:
     bool removeProperty(CSSPropertyID, String* returnText = 0);
     void removePrefixedOrUnprefixedProperty(CSSPropertyID);
 
-    PassRefPtr<StylePropertySet> copyBlockProperties() const;
+    PassRefPtr<MutableStylePropertySet> copyBlockProperties() const;
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
 
