@@ -28,6 +28,7 @@
 
 #include "JSValue.h"
 #include "UString.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

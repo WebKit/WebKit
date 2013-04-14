@@ -1,5 +1,18 @@
 2013-04-13  David Kilzer  <ddkilzer@apple.com>
 
+        Attempt to fix Windows build after r148370
+
+        Try to fix the following build failure:
+
+            4>JSStringJoiner.cpp
+            4>..\..\runtime\JSStringJoiner.cpp(112) : error C2653: 'CheckedState' : is not a class or namespace name
+            4>..\..\runtime\JSStringJoiner.cpp(112) : error C2065: 'DidOverflow' : undeclared identifier
+            4>..\..\runtime\JSStringJoiner.cpp(112) : warning C4805: '==' : unsafe mix of type 'bool' and type ''unknown-type'' in operation
+
+        * runtime/JSStringJoiner.h: Include <wtf/CheckedArithmetic.h>.
+
+2013-04-13  David Kilzer  <ddkilzer@apple.com>
+
         Merge 145580, 145587, 145594, r145595, r145647, 145759.  Part 2/2 for <rdar://problem/13438603>.
 
     2013-03-11  Oliver Hunt  <oliver@apple.com>
