@@ -173,7 +173,7 @@ PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()
 {
     if (!inlineStyle() || !inlineStyle()->hasCSSOMWrapper())
         return 0;
-    PropertySetCSSStyleDeclaration* cssomWrapper = ensureUniqueElementData()->m_inlineStyle->cssStyleDeclaration();
+    PropertySetCSSStyleDeclaration* cssomWrapper = ensureMutableInlineStyle()->cssStyleDeclaration();
     ASSERT(cssomWrapper && cssomWrapper->parentElement() == this);
     return cssomWrapper;
 }

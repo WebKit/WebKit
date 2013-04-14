@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ using namespace std;
 
 namespace WebCore {
 
-typedef HashMap<const StylePropertySet*, OwnPtr<PropertySetCSSStyleDeclaration> > PropertySetCSSOMWrapperMap;
+typedef HashMap<MutableStylePropertySet*, OwnPtr<PropertySetCSSStyleDeclaration> > PropertySetCSSOMWrapperMap;
 static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 {
     DEFINE_STATIC_LOCAL(PropertySetCSSOMWrapperMap, propertySetCSSOMWrapperMapInstance, ());
@@ -121,7 +121,7 @@ MutableStylePropertySet::MutableStylePropertySet(const StylePropertySet& other)
     }
 }
 
-StylePropertySet::~StylePropertySet()
+MutableStylePropertySet::~MutableStylePropertySet()
 {
     ASSERT(!m_ownsCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
     if (m_ownsCSSOMWrapper)
@@ -1209,11 +1209,10 @@ PassRefPtr<MutableStylePropertySet> StylePropertySet::copyPropertiesInSet(const 
     return MutableStylePropertySet::create(list.data(), list.size());
 }
 
-PropertySetCSSStyleDeclaration* StylePropertySet::cssStyleDeclaration()
+PropertySetCSSStyleDeclaration* MutableStylePropertySet::cssStyleDeclaration()
 {
     if (!m_ownsCSSOMWrapper)
         return 0;
-    ASSERT(isMutable());
     return propertySetCSSOMWrapperMap().get(this);
 }
 
@@ -1230,14 +1229,14 @@ CSSStyleDeclaration* MutableStylePropertySet::ensureCSSStyleDeclaration()
     return cssomWrapper;
 }
 
-CSSStyleDeclaration* MutableStylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement)
+CSSStyleDeclaration* MutableStylePropertySet::ensureInlineCSSStyleDeclaration(StyledElement* parentElement)
 {
     if (m_ownsCSSOMWrapper) {
         ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
         return propertySetCSSOMWrapperMap().get(this);
     }
     m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(this, const_cast<StyledElement*>(parentElement));
+    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(this, parentElement);
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
 }
