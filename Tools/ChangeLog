@@ -1,3 +1,32 @@
+2013-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitbot should provide full name, email address, and IRC nicknames on whois
+        https://bugs.webkit.org/show_bug.cgi?id=114494
+
+        Reviewed by Benjamin Poulain.
+
+        A response like the one below is useless. Improve it:
+        webkitbot: rniwa: zdobersek is zdobersek (zandobersek@gmail.com). Why do you ask?
+
+        We now report full name, email address, committer/reviewer status, and IRC nickname.
+
+        Also teach webkitbot how to respond to ping.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (PingPong): Moved 
+        (PingPong.execute):
+        (Whois._full_record_and_nick): Renamed and rewritten.
+        (Whois.execute):
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois): Updated test cases as needed.
+
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help): Added ping.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot): Teached WKR how to respond to hi.
+
 2013-04-13  Anders Carlsson  <andersca@apple.com>
 
         Add form delegate method that's invoked right before sending a submit event to a form element

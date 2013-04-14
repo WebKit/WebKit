@@ -35,6 +35,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.irc_command import IRCCommand
 from webkitpy.tool.bot.irc_command import Help
 from webkitpy.tool.bot.irc_command import Hi
+from webkitpy.tool.bot.irc_command import PingPong
 from webkitpy.tool.bot.irc_command import Restart
 from webkitpy.tool.bot.ircbot import IRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
@@ -43,16 +44,12 @@ from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 _log = logging.getLogger(__name__)
 
 
-class PingPong(IRCCommand):
-    def execute(self, nick, args, tool, sheriff):
-        return nick + ": pong"
-
-
 class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
     name = "new-commit-bot"
     watchers = AbstractQueue.watchers + ["rniwa@webkit.org"]
 
     _commands = {
+        "hi": Hi,
         "ping": PingPong,
         "restart": Restart,
     }
