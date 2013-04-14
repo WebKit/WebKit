@@ -193,8 +193,10 @@ inline void StyledElement::setInlineStyleFromString(const AtomicString& newStyle
 
     if (!inlineStyle)
         inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
-    else
-        inlineStyle->parseDeclaration(newStyleString, document()->elementSheet()->contents());
+    else {
+        ASSERT(inlineStyle->isMutable());
+        static_pointer_cast<MutableStylePropertySet>(inlineStyle)->parseDeclaration(newStyleString, document()->elementSheet()->contents());
+    }
 }
 
 void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason reason)
