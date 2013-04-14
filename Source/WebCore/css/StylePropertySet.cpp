@@ -688,7 +688,7 @@ bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet);
+    return CSSParser::parseValue(static_cast<MutableStylePropertySet*>(this), propertyID, value, important, cssParserMode(), contextStyleSheet);
 }
 
 void StylePropertySet::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)
@@ -758,17 +758,15 @@ void MutableStylePropertySet::parseDeclaration(const String& styleDeclaration, S
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 
-void StylePropertySet::addParsedProperties(const Vector<CSSProperty>& properties)
+void MutableStylePropertySet::addParsedProperties(const Vector<CSSProperty>& properties)
 {
-    ASSERT(isMutable());
     mutablePropertyVector().reserveCapacity(mutablePropertyVector().size() + properties.size());
     for (unsigned i = 0; i < properties.size(); ++i)
         addParsedProperty(properties[i]);
 }
 
-void StylePropertySet::addParsedProperty(const CSSProperty& property)
+void MutableStylePropertySet::addParsedProperty(const CSSProperty& property)
 {
-    ASSERT(isMutable());
     // Only add properties that have no !important counterpart present
     if (!propertyIsImportant(property.id()) || property.isImportant())
         setProperty(property);

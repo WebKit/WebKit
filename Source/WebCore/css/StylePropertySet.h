@@ -117,9 +117,6 @@ public:
     bool removeProperty(CSSPropertyID, String* returnText = 0);
     void removePrefixedOrUnprefixedProperty(CSSPropertyID);
 
-    void addParsedProperties(const Vector<CSSProperty>&);
-    void addParsedProperty(const CSSProperty&);
-
     PassRefPtr<StylePropertySet> copyBlockProperties() const;
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
@@ -231,6 +228,9 @@ public:
     static PassRefPtr<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
 
     MutableStylePropertySet(const StylePropertySet&);
+
+    void addParsedProperties(const Vector<CSSProperty>&);
+    void addParsedProperty(const CSSProperty&);
 
     void clear();
     void parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet);
