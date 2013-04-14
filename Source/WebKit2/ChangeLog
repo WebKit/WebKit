@@ -1,3 +1,17 @@
+2013-04-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Regression(r148274): Broke rendering in the browser
+        https://bugs.webkit.org/show_bug.cgi?id=114593
+
+        Reviewed by Anders Carlsson.
+
+        r148274 added a new "didChangeViewportAttributes" callback to
+        WKView but did not hook it up in ViewClientEfl. This patch
+        fixes this and makes rendering work again in the browser.
+
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::ViewClientEfl):
+
 2013-04-14  Andreas Kling  <akling@apple.com>
 
         Move CSSOM classes to using MutableStylePropertySet over StylePropertySet.

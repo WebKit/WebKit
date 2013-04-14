@@ -161,6 +161,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.didChangeContentsPosition = didChangeContentsPosition;
     viewClient.didRenderFrame = didRenderFrame;
     viewClient.didCompletePageTransition = didCompletePageTransition;
+    viewClient.didChangeViewportAttributes = didChangeViewportAttributes;
 
     WKViewSetViewClient(m_view->wkView(), &viewClient);
 }
