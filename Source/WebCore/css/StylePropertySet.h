@@ -50,8 +50,6 @@ public:
     // the appropriate subclass type.
     void deref();
 
-    static PassRefPtr<StylePropertySet> createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode);
-
     class PropertyReference {
     public:
         PropertyReference(const StylePropertySet& propertySet, unsigned index)
@@ -133,7 +131,7 @@ public:
     void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet) const;
 
     PassRefPtr<MutableStylePropertySet> mutableCopy() const;
-    PassRefPtr<StylePropertySet> immutableCopyIfNeeded() const;
+    PassRefPtr<ImmutableStylePropertySet> immutableCopyIfNeeded() const;
 
     void removeEquivalentProperties(const StylePropertySet*);
     void removeEquivalentProperties(const CSSStyleDeclaration*);
@@ -206,10 +204,13 @@ private:
 
 class ImmutableStylePropertySet : public StylePropertySet {
 public:
-    ImmutableStylePropertySet(const CSSProperty*, unsigned count, CSSParserMode);
     ~ImmutableStylePropertySet();
+    static PassRefPtr<ImmutableStylePropertySet> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     void* m_storage;
+
+private:
+    ImmutableStylePropertySet(const CSSProperty*, unsigned count, CSSParserMode);
 };
 
 inline const CSSValue** StylePropertySet::immutableValueArray() const
