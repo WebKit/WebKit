@@ -409,10 +409,6 @@ inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& gram
 
 } // namespace WebKit
 
-#if (defined(WIN32) || defined(_WIN32)) && !defined(BUILDING_QT__)
-#include "WKAPICastWin.h"
-#endif
-
 #if defined(BUILDING_GTK__)
 #include "WKAPICastGtk.h"
 #endif

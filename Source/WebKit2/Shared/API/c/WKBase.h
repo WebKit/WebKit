@@ -29,10 +29,6 @@
 
 #include <stdint.h>
 
-#if (defined(WIN32) || defined(_WIN32)) && !defined(BUILDING_QT__)
-#include <WebKit2/WKBaseWin.h>
-#endif
-
 #if defined(BUILDING_GTK__)
 #include <WebKit2/WKBaseGtk.h>
 #endif
