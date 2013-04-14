@@ -182,6 +182,8 @@ public:
     ~ImmutableStylePropertySet();
     static PassRefPtr<ImmutableStylePropertySet> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
+    unsigned propertyCount() const { return m_arraySize; }
+
     void* m_storage;
 
 private:
@@ -206,6 +208,8 @@ public:
     static PassRefPtr<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
 
     MutableStylePropertySet(const StylePropertySet&);
+
+    unsigned propertyCount() const { return m_propertyVector.size(); }
 
     void addParsedProperties(const Vector<CSSProperty>&);
     void addParsedProperty(const CSSProperty&);
