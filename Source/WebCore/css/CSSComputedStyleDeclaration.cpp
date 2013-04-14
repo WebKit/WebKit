@@ -2990,7 +2990,7 @@ PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyPropertiesI
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return static_pointer_cast<MutableStylePropertySet>(StylePropertySet::create(list.data(), list.size()));
+    return MutableStylePropertySet::create(list.data(), list.size());
 }
 
 void CSSComputedStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

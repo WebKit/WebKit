@@ -473,7 +473,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (!color.isValid())
             return false;
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
-        RefPtr<StylePropertySet> style = StylePropertySet::create();
+        RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
         style->setProperty(CSSPropertyColor, color.serialized(), false);
         if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))
             return false;

@@ -2194,7 +2194,7 @@ void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<s
     knownExpressions.append(expression);
 
     // FIXME: It would be faster not to re-parse from strings, but for now CSS property validation lives inside the parser so we do it there.
-    RefPtr<StylePropertySet> resultSet = StylePropertySet::create();
+    RefPtr<MutableStylePropertySet> resultSet = MutableStylePropertySet::create();
     if (!CSSParser::parseValue(resultSet.get(), id, expression.second, false, document()))
         return; // expression failed to parse.
 

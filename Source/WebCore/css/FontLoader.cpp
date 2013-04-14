@@ -269,7 +269,7 @@ static void applyPropertyToCurrentStyle(StyleResolver* styleResolver, CSSPropert
 bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
 {
     // Interpret fontString in the same way as the 'font' attribute of CanvasRenderingContext2D.
-    RefPtr<StylePropertySet> parsedStyle = StylePropertySet::create();
+    RefPtr<MutableStylePropertySet> parsedStyle = MutableStylePropertySet::create();
     CSSParser::parseValue(parsedStyle.get(), CSSPropertyFont, fontString, true, CSSStrictMode, 0);
     if (parsedStyle->isEmpty())
         return false;

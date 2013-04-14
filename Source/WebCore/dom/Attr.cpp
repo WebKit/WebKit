@@ -196,7 +196,7 @@ CSSStyleDeclaration* Attr::style()
     // This function only exists to support the Obj-C bindings.
     if (!m_element || !m_element->isStyledElement())
         return 0;
-    m_style = StylePropertySet::create();
+    m_style = MutableStylePropertySet::create();
     static_cast<StyledElement*>(m_element)->collectStyleForPresentationAttribute(qualifiedName(), value(), static_cast<MutableStylePropertySet*>(m_style.get()));
     return m_style->ensureCSSStyleDeclaration();
 }

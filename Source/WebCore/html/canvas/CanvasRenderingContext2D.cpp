@@ -2026,7 +2026,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (newFont == state().m_unparsedFont && state().m_realizedFont)
         return;
 
-    RefPtr<StylePropertySet> parsedStyle = StylePropertySet::create();
+    RefPtr<MutableStylePropertySet> parsedStyle = MutableStylePropertySet::create();
     CSSParser::parseValue(parsedStyle.get(), CSSPropertyFont, newFont, true, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode), 0);
     if (parsedStyle->isEmpty())
         return;

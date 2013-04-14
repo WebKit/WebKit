@@ -73,7 +73,7 @@ bool DOMWindowCSS::supports(const String& property, const String& value) const
     if (normalizedValue.isEmpty())
         return false;
 
-    RefPtr<StylePropertySet> dummyStyle = StylePropertySet::create();
+    RefPtr<MutableStylePropertySet> dummyStyle = MutableStylePropertySet::create();
     return CSSParser::parseValue(dummyStyle.get(), propertyID, normalizedValue, false, CSSStrictMode, 0);
 }
 

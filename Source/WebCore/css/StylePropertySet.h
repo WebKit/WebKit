@@ -50,8 +50,6 @@ public:
     // the appropriate subclass type.
     void deref();
 
-    static PassRefPtr<StylePropertySet> create(CSSParserMode = CSSQuirksMode);
-    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, unsigned count);
     static PassRefPtr<StylePropertySet> createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     class PropertyReference {
@@ -233,13 +231,18 @@ inline const StylePropertyMetadata* StylePropertySet::immutableMetadataArray() c
 
 class MutableStylePropertySet : public StylePropertySet {
 public:
+    static PassRefPtr<MutableStylePropertySet> create(CSSParserMode = CSSQuirksMode);
+    static PassRefPtr<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
+
+    MutableStylePropertySet(const StylePropertySet&);
+
+    Vector<CSSProperty, 4> m_propertyVector;
+
+private:
     MutableStylePropertySet(CSSParserMode cssParserMode)
         : StylePropertySet(cssParserMode)
     { }
     MutableStylePropertySet(const CSSProperty* properties, unsigned count);
-    MutableStylePropertySet(const StylePropertySet&);
-
-    Vector<CSSProperty, 4> m_propertyVector;
 };
 
 inline Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector()

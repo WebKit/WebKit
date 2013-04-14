@@ -150,7 +150,7 @@ MutableStylePropertySet* StyledElement::ensureMutableInlineStyle()
 {
     RefPtr<StylePropertySet>& inlineStyle = ensureUniqueElementData()->m_inlineStyle;
     if (!inlineStyle)
-        inlineStyle = StylePropertySet::create(strictToCSSParserMode(isHTMLElement() && !document()->inQuirksMode()));
+        inlineStyle = MutableStylePropertySet::create(strictToCSSParserMode(isHTMLElement() && !document()->inQuirksMode()));
     else if (!inlineStyle->isMutable())
         inlineStyle = inlineStyle->mutableCopy();
     ASSERT(inlineStyle->isMutable());
@@ -333,7 +333,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
         style = cacheIterator->value->value;
         presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
     } else {
-        style = StylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
+        style = MutableStylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
             const Attribute* attribute = attributeItem(i);
