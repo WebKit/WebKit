@@ -1,3 +1,15 @@
+2013-04-14  Andreas Kling  <akling@apple.com>
+
+        Move CSSOM classes to using MutableStylePropertySet over StylePropertySet.
+        <http://webkit.org/b/114581>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldApplyStyle):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _typingStyle]):
+
 2013-04-10  Sam Weinig  <sam@webkit.org>
 
         Make Frame's ScriptController an OwnPtr and remove the #include

@@ -146,8 +146,6 @@ public:
     String asText() const;
 
     PropertySetCSSStyleDeclaration* cssStyleDeclaration();
-    CSSStyleDeclaration* ensureCSSStyleDeclaration();
-    CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement);
 
     bool isMutable() const { return m_isMutable; }
     bool hasCSSOMWrapper() const { return m_ownsCSSOMWrapper; }
@@ -235,6 +233,9 @@ public:
     static PassRefPtr<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
 
     MutableStylePropertySet(const StylePropertySet&);
+
+    CSSStyleDeclaration* ensureCSSStyleDeclaration();
+    CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement);
 
     Vector<CSSProperty, 4> m_propertyVector;
 

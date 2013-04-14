@@ -1232,31 +1232,27 @@ PropertySetCSSStyleDeclaration* StylePropertySet::cssStyleDeclaration()
     return propertySetCSSOMWrapperMap().get(this);
 }
 
-CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration()
+CSSStyleDeclaration* MutableStylePropertySet::ensureCSSStyleDeclaration()
 {
-    ASSERT(isMutable());
-
     if (m_ownsCSSOMWrapper) {
         ASSERT(!static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule());
         ASSERT(!propertySetCSSOMWrapperMap().get(this)->parentElement());
         return propertySetCSSOMWrapperMap().get(this);
     }
     m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this));
+    PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(this);
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
 }
 
-CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement)
+CSSStyleDeclaration* MutableStylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement)
 {
-    ASSERT(isMutable());
-
     if (m_ownsCSSOMWrapper) {
         ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
         return propertySetCSSOMWrapperMap().get(this);
     }
     m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<StyledElement*>(parentElement));
+    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(this, const_cast<StyledElement*>(parentElement));
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
 }

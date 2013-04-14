@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CSSStyleDeclaration;
+class MutableStylePropertySet;
 class StylePropertySet;
 class StyleRuleCSSStyleDeclaration;
 class WebKitCSSKeyframesRule;
@@ -50,7 +51,7 @@ public:
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
     
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
     void setProperties(PassRefPtr<StylePropertySet>);
     
     String cssText() const;

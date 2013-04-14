@@ -41,11 +41,11 @@ StyleKeyframe::~StyleKeyframe()
 {
 }
 
-StylePropertySet* StyleKeyframe::mutableProperties()
+MutableStylePropertySet* StyleKeyframe::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return m_properties.get();
+    return static_cast<MutableStylePropertySet*>(m_properties.get());
 }
     
 void StyleKeyframe::setProperties(PassRefPtr<StylePropertySet> properties)

@@ -180,7 +180,7 @@ bool EditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, E
 bool EditorClient::shouldApplyStyle(WebCore::StylePropertySet* set, WebCore::Range* range)
 {
     gboolean accept = TRUE;
-    GRefPtr<WebKitDOMCSSStyleDeclaration> kitDeclaration(kit(set->ensureCSSStyleDeclaration()));
+    GRefPtr<WebKitDOMCSSStyleDeclaration> kitDeclaration(kit(set->mutableCopy()->ensureCSSStyleDeclaration()));
     GRefPtr<WebKitDOMRange> kitRange(adoptGRef(kit(range)));
     g_signal_emit_by_name(m_webView, "should-apply-style", kitDeclaration.get(), kitRange.get(), &accept);
     return accept;

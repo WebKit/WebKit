@@ -312,7 +312,7 @@ bool PropertySetCSSStyleDeclaration::cssPropertyMatches(CSSPropertyID propertyID
     return m_propertySet->propertyMatches(propertyID, propertyValue);
 }
     
-StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(StylePropertySet* propertySet, CSSRule* parentRule)
+StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStylePropertySet* propertySet, CSSRule* parentRule)
     : PropertySetCSSStyleDeclaration(propertySet)
     , m_refCount(1)
     , m_parentRule(parentRule) 
@@ -358,7 +358,7 @@ CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
-void StyleRuleCSSStyleDeclaration::reattach(StylePropertySet* propertySet)
+void StyleRuleCSSStyleDeclaration::reattach(MutableStylePropertySet* propertySet)
 {
     ASSERT(propertySet);
     m_propertySet->deref();

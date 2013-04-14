@@ -768,7 +768,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return nil;
-    RefPtr<StylePropertySet> typingStyle = _private->coreFrame->selection()->copyTypingStyle();
+    RefPtr<MutableStylePropertySet> typingStyle = _private->coreFrame->selection()->copyTypingStyle();
     if (!typingStyle)
         return nil;
     return kit(typingStyle->ensureCSSStyleDeclaration());

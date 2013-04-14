@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,7 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleRule;
 class CSSStyleSheet;
+class MutableStylePropertySet;
 class StylePropertySet;
 
 class StyleRuleBase : public WTF::RefCountedBase {
@@ -124,7 +125,7 @@ public:
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
     
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -150,7 +151,7 @@ public:
     ~StyleRuleFontFace();
 
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
 
     void setProperties(PassRefPtr<StylePropertySet>);
 
@@ -173,7 +174,7 @@ public:
 
     const CSSSelector* selector() const { return m_selectorList.first(); }    
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
 
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -293,7 +294,7 @@ public:
     ~StyleRuleViewport();
 
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
 
     void setProperties(PassRefPtr<StylePropertySet>);
 
@@ -339,7 +340,7 @@ public:
     const String& filterName() const { return m_filterName; }
 
     const StylePropertySet* properties() const { return m_properties.get(); }
-    StylePropertySet* mutableProperties();
+    MutableStylePropertySet* mutableProperties();
 
     void setProperties(PassRefPtr<StylePropertySet>);
 

@@ -162,7 +162,8 @@ bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange
     
 bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(m_page, style->ensureCSSStyleDeclaration(), range);
+    RefPtr<MutableStylePropertySet> mutableStyle = style->isMutable() ? static_cast<MutableStylePropertySet*>(style) : style->mutableCopy();
+    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(m_page, mutableStyle->ensureCSSStyleDeclaration(), range);
     notImplemented();
     return result;
 }

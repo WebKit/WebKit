@@ -36,13 +36,13 @@ namespace WebCore {
 class CSSRule;
 class CSSProperty;
 class CSSValue;
-class StylePropertySet;
+class MutableStylePropertySet;
 class StyleSheetContents;
 class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
-    PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
+    PropertySetCSSStyleDeclaration(MutableStylePropertySet* propertySet) : m_propertySet(propertySet) { }
     
     virtual StyledElement* parentElement() const { return 0; }
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
@@ -80,14 +80,14 @@ protected:
     virtual void willMutate() { }
     virtual void didMutate(MutationType) { }
 
-    StylePropertySet* m_propertySet;
+    MutableStylePropertySet* m_propertySet;
     OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue> > > m_cssomCSSValueClones;
 };
 
 class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
 {
 public:
-    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(StylePropertySet* propertySet, CSSRule* parentRule)
+    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(MutableStylePropertySet* propertySet, CSSRule* parentRule)
     {
         return adoptRef(new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
     }
@@ -98,12 +98,12 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
-    void reattach(StylePropertySet*);
+    void reattach(MutableStylePropertySet*);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
-    StyleRuleCSSStyleDeclaration(StylePropertySet*, CSSRule*);
+    StyleRuleCSSStyleDeclaration(MutableStylePropertySet*, CSSRule*);
 
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
 
@@ -119,7 +119,7 @@ private:
 class InlineCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
 {
 public:
-    InlineCSSStyleDeclaration(StylePropertySet* propertySet, StyledElement* parentElement)
+    InlineCSSStyleDeclaration(MutableStylePropertySet* propertySet, StyledElement* parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)
         , m_parentElement(parentElement) 
     {

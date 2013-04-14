@@ -1,3 +1,13 @@
+2013-04-14  Andreas Kling  <akling@apple.com>
+
+        Move CSSOM classes to using MutableStylePropertySet over StylePropertySet.
+        <http://webkit.org/b/114581>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldApplyStyle):
+
 2013-04-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix for WebKit2 EFL after r148373 due to missing
