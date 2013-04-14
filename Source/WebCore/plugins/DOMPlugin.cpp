@@ -21,6 +21,7 @@
 
 #include "PluginData.h"
 #include "Frame.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

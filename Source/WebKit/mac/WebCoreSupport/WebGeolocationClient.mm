@@ -34,6 +34,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/Geolocation.h>
 

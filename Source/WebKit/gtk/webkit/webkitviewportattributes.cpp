@@ -22,6 +22,7 @@
 #include "webkitviewportattributes.h"
 
 #include "Chrome.h"
+#include "Document.h"
 #include "Frame.h"
 #include "Page.h"
 #include "webkitglobalsprivate.h"

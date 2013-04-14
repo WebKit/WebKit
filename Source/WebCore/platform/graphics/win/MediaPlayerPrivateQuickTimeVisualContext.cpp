@@ -30,6 +30,7 @@
 
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"

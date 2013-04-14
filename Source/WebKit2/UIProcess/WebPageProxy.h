@@ -100,6 +100,7 @@ namespace WebCore {
     class Cursor;
     class DragData;
     class FloatRect;
+    class GraphicsLayer;
     class IntSize;
     class ProtectionSpace;
     class SharedBuffer;

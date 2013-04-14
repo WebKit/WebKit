@@ -31,6 +31,8 @@
 #import "DOMAbstractViewInternal.h"
 
 #import "DOMDocumentInternal.h"
+#import "DOMWindow.h"
+#import "Document.h"
 #import "ExceptionHandlers.h"
 #import "Frame.h"
 #import "ThreadCheck.h"

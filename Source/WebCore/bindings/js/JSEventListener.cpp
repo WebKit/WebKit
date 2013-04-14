@@ -26,6 +26,7 @@
 #include "JSEvent.h"
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
+#include "ScriptController.h"
 #include "WorkerContext.h"
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>

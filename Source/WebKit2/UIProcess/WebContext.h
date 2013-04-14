@@ -58,6 +58,10 @@
 #include "NetworkProcessProxy.h"
 #endif
 
+#if PLATFORM(MAC)
+OBJC_CLASS NSString;
+#endif
+
 namespace WebKit {
 
 class DownloadProxy;

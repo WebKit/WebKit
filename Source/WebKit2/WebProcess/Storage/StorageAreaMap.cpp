@@ -33,6 +33,7 @@
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Storage.h>

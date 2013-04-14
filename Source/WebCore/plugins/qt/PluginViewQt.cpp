@@ -48,6 +48,7 @@
 #include "IFrameShimSupport.h"
 #include "Image.h"
 #include "JSDOMBinding.h"
+#include "JSDOMWindowBase.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"

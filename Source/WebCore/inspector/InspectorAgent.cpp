@@ -48,6 +48,7 @@
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "ResourceRequest.h"
+#include "ScriptController.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include "SecurityOrigin.h"

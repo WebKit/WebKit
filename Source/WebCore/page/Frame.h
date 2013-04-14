@@ -37,7 +37,6 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "NavigationScheduler.h"
-#include "ScriptController.h"
 #include "UserScriptTypes.h"
 
 #if PLATFORM(WIN)
@@ -69,6 +68,7 @@ namespace WebCore {
     class RegularExpression;
     class RenderPart;
     class TiledBackingStore;
+    class ScriptController;
 
 #if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };
@@ -223,7 +223,7 @@ namespace WebCore {
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 
-        ScriptController m_script;
+        OwnPtr<ScriptController> m_script;
 
         mutable Editor m_editor;
         mutable FrameSelection m_selection;
@@ -283,7 +283,7 @@ namespace WebCore {
 
     inline ScriptController* Frame::script()
     {
-        return &m_script;
+        return m_script.get();
     }
 
     inline Document* Frame::document() const

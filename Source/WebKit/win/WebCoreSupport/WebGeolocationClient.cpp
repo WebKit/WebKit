@@ -32,6 +32,7 @@
 #include "WebGeolocationPosition.h"
 #include "WebSecurityOrigin.h"
 #include "WebView.h"
+#include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Geolocation.h>
 #include <WebCore/SecurityOrigin.h>

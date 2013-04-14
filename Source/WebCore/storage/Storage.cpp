@@ -28,6 +28,7 @@
 
 #include "Frame.h"
 #include "Page.h"
+#include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>

@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "QWebPageAdapter.h"
 #include "RenderObject.h"
+#include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SubstituteData.h"

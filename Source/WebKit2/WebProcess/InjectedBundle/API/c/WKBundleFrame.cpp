@@ -33,6 +33,7 @@
 #include "WKData.h"
 #include "WebFrame.h"
 #include "WebSecurityOrigin.h"
+#include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>

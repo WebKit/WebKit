@@ -31,6 +31,7 @@
 #include "WebContext.h"
 #include "WebContextClient.h"
 #include "WebProcessMessages.h"
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 

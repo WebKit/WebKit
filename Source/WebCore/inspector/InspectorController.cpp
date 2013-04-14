@@ -34,6 +34,7 @@
 
 #include "InspectorController.h"
 
+#include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"

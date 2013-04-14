@@ -51,6 +51,7 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderTextControl.h"
+#include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "ValidityState.h"

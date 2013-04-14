@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginView.h"
+#include "ScriptController.h"
 #include "ScriptDebugListener.h"
 #include "Widget.h"
 #include <runtime/JSLock.h>

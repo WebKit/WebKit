@@ -49,6 +49,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
 #include "RenderWordBreak.h"
+#include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "StylePropertySet.h"

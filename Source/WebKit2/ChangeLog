@@ -1,3 +1,26 @@
+2013-04-12  Sam Weinig  <sam@webkit.org>
+
+        Make Frame's ScriptController an OwnPtr and remove the #include
+        https://bugs.webkit.org/show_bug.cgi?id=114105
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebHitTestResult.cpp:
+        * Shared/WebHitTestResult.h:
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2013-04-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r148311.

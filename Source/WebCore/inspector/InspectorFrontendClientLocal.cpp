@@ -35,6 +35,7 @@
 #include "InspectorFrontendClientLocal.h"
 
 #include "Chrome.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -46,6 +47,7 @@
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
 #include "Page.h"
+#include "ScriptController.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"

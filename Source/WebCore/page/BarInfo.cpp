@@ -32,6 +32,7 @@
 #include "Chrome.h"
 #include "Frame.h"
 #include "Page.h"
+#include "ScriptWrappableInlines.h"
 
 namespace WebCore {
 

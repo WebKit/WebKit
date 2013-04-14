@@ -46,6 +46,7 @@
 #import "JSNode.h"
 #import "NodeFilter.h"
 #import "RenderImage.h"
+#import "ScriptController.h"
 #import "WebScriptObjectPrivate.h"
 #import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>

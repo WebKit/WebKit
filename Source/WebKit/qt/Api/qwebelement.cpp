@@ -44,6 +44,7 @@
 #include "qt_runtime.h"
 #include "NodeList.h"
 #include "RenderImage.h"
+#include "ScriptController.h"
 #include "ScriptState.h"
 #include "StaticNodeList.h"
 #include "StyleResolver.h"

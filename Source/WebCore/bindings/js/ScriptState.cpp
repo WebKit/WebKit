@@ -35,6 +35,7 @@
 #include "JSDOMWindowBase.h"
 #include "Node.h"
 #include "Page.h"
+#include "ScriptController.h"
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
 #include <heap/StrongInlines.h>

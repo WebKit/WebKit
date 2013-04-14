@@ -29,7 +29,6 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "WebNetscapePluginStream.h"
 
-#import "WebNetscapePluginView.h"
 #import "WebFrameInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -37,17 +36,20 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebNetscapePluginPackage.h"
+#import "WebNetscapePluginView.h"
 #import <Foundation/NSURLResponse.h>
-#import <runtime/JSLock.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/JSDOMWindowBase.h>
 #import <WebCore/ResourceLoadScheduler.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKitSystemInterface.h>
+#import <runtime/JSLock.h>
 #import <wtf/HashMap.h>
 #import <wtf/StdLibExtras.h>
 

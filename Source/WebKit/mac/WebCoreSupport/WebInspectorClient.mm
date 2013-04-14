@@ -47,6 +47,7 @@
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/Page.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/DOMExtensions.h>

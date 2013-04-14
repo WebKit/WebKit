@@ -29,6 +29,7 @@
 #include "qwebscriptworld.h"
 #include "qwebscriptworld_p.h"
 #include "qwebsecurityorigin.h"
+#include "DOMWrapperWorld.h"
 #include <QMultiMap>
 #include <qdebug.h>
 #include <qevent.h>

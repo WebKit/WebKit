@@ -29,6 +29,7 @@
 #import "DOMNodeInternal.h"
 #import "Frame.h"
 #import "JSNode.h"
+#import "ScriptController.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
 

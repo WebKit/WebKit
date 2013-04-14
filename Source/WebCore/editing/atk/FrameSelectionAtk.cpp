@@ -23,6 +23,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
+#include "Document.h"
 #include "Frame.h"
 #include "WebKitAccessibleWrapperAtk.h"
 

@@ -42,6 +42,7 @@
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageConsole.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 
 using WebCore::TypeBuilder::Runtime::ExecutionContextDescription;

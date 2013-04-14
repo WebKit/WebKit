@@ -82,6 +82,7 @@
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptController.h"
 #include "ScriptValue.h"
 #include "Settings.h"
 #include "WebKitDOMDocumentPrivate.h"

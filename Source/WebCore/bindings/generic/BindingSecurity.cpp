@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLParserIdioms.h"
+#include "JSDOMBinding.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 

@@ -37,6 +37,7 @@
 #include "EventListener.h"
 #include "JSNode.h"
 #include "Frame.h"
+#include "ScriptController.h"
 #include <runtime/Executable.h>
 #include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>

@@ -30,6 +30,7 @@
 #include "NetworkInfoConnection.h"
 
 #if ENABLE(NETWORK_INFO)
+#include "Document.h"
 #include "Event.h"
 #include "Frame.h"
 #include "NetworkInfoClient.h"

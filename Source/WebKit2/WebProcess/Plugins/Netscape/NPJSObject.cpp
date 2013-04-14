@@ -31,10 +31,12 @@
 #include "JSNPObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <WebCore/Frame.h>  
+#include <WebCore/Frame.h>
 #include <WebCore/IdentifierRep.h>
 #include <wtf/text/WTFString.h>
 

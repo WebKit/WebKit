@@ -49,6 +49,8 @@
 #import <wtf/Uint8Array.h>
 #import <wtf/Uint16Array.h>
 #import <wtf/Uint32Array.h>
+#import <wtf/CurrentTime.h>
+#import <wtf/text/CString.h>
 
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
