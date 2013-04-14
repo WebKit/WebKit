@@ -26,10 +26,10 @@
 #import "config.h"
 #import "InjectedBundle.h"
 
+#import "ObjCObjectGraph.h"
 #import "WKBundleAPICast.h"
 #import "WKBundleInitialize.h"
 #import "WKWebProcessPlugInInternal.h"
-
 #import <Foundation/NSBundle.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
@@ -107,8 +107,17 @@ bool InjectedBundle::load(APIObject* initializationUserData)
     // Create the shared WKWebProcessPlugInController.
     [[WKWebProcessPlugInController alloc] _initWithPrincipalClassInstance:instance bundleRef:toAPI(this)];
 
-    if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)])
+    if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
+        RetainPtr<id> objCInitializationUserData;
+        if (initializationUserData && initializationUserData->type() == APIObject::TypeObjCObjectGraph)
+            objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
+        [instance webProcessPlugIn:[WKWebProcessPlugInController _shared] initializeWithObject:objCInitializationUserData.get()];
+    } else if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)]) {
+        CLANG_PRAGMA("clang diagnostic push")
+        CLANG_PRAGMA("clang diagnostic ignored \"-Wdeprecated-declarations\"")
         [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
+        CLANG_PRAGMA("clang diagnostic pop")
+    }
 
     return true;
 #else

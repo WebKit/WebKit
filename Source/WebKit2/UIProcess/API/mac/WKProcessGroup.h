@@ -29,6 +29,11 @@
 @class WKProcessGroup, WKProcessGroupData, WKConnection;
 
 @protocol WKProcessGroupDelegate <NSObject>
+@optional
+
+- (id)processGroupWillCreateConnectionToWebProcessPlugIn:(WKProcessGroup *)processGroup;
+
+@required
 
 - (void)processGroup:(WKProcessGroup *)processGroup didCreateConnectionToWebProcessPlugIn:(WKConnection *)connection;
 

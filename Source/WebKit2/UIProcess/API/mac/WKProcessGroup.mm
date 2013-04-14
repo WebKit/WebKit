@@ -27,6 +27,7 @@
 #import "WKProcessGroup.h"
 #import "WKProcessGroupPrivate.h"
 
+#import "ObjCObjectGraph.h"
 #import "WKConnectionInternal.h"
 #import "WKContext.h"
 #import "WKRetainPtr.h"
@@ -69,6 +70,30 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
     WKContextSetConnectionClient(contextRef, &connectionClient);
 }
 
+static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
+{
+    WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
+    if ([processGroup.delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
+        RetainPtr<id> initializationUserData = [processGroup.delegate processGroupWillCreateConnectionToWebProcessPlugIn:processGroup];
+        RefPtr<WebKit::ObjCObjectGraph> wkMessageBody = WebKit::ObjCObjectGraph::create(initializationUserData.get());
+        return (WKTypeRef)wkMessageBody.release().leakRef();
+    }
+
+    return 0;
+}
+
+static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+{
+    WKContextInjectedBundleClient injectedBundleClient;
+    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+
+    injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
+    injectedBundleClient.clientInfo = processGroup;
+    injectedBundleClient.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
+
+    WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient);
+}
+
 - (id)init
 {
     return [self initWithInjectedBundleURL:nil];
@@ -88,6 +113,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
         _data->_contextRef = adoptWK(WKContextCreate());
 
     setUpConnectionClient(self, _data->_contextRef.get());
+    setUpInectedBundleClient(self, _data->_contextRef.get());
 
     return self;
 }
@@ -95,6 +121,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 - (void)dealloc
 {
     WKContextSetConnectionClient(_data->_contextRef.get(), 0);
+    WKContextSetInjectedBundleClient(_data->_contextRef.get(), 0);
 
     [_data release];
     [super dealloc];

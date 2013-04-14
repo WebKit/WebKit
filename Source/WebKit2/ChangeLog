@@ -1,5 +1,31 @@
 2013-04-13  Sam Weinig  <sam@webkit.org>
 
+        Add ObjC API for setting initialization data for the WKWebProcessPlugIn
+        https://bugs.webkit.org/show_bug.cgi?id=103846
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKProcessGroup.h:
+        Adds a new optional processGroupWillCreateConnectionToWebProcessPlugIn: method for the WKProcessGroupDelegate protocol,
+        which allows the user to pass (via an autoreleased return value) initialization data to the web process plugin.
+
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (getInjectedBundleInitializationUserData):
+        (setUpInectedBundleClient):
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        (-[WKProcessGroup dealloc]):
+        Use the existing WKContextInjectedBundleClient infrastructure to pass the initialization data to the bundle
+        via the new ObjCObjectGraph APIObject.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        Adds webProcessPlugIn:initializeWithObject: to the WKWebProcessPlugIn protocol, replacing webProcessPlugInInitialize:.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::load):
+        Pass the initialization data to the web process plugin.
+
+2013-04-13  Sam Weinig  <sam@webkit.org>
+
         Attempt Build Fix.
 
         * WebProcess/Plugins/Netscape/NPJSObject.cpp:
