@@ -1,3 +1,9 @@
+2013-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Try to fix non-apple windows builds
+
+        * wtf/Platform.h:
+
 2013-04-14  David Kilzer  <ddkilzer@apple.com>
 
         Add EnumClass.h to project files
