@@ -35,6 +35,7 @@
 #import "Editor.h"
 #import "FileList.h"
 #import "Frame.h"
+#import "FrameSnapshottingMac.h"
 #import "Image.h"
 #import "Page.h"
 #import "Pasteboard.h"
@@ -44,7 +45,6 @@
 #import "ScriptExecutionContext.h"
 #import "SecurityOrigin.h"
 #import "WebCoreSystemInterface.h"
-
 
 namespace WebCore {
 
@@ -418,7 +418,7 @@ NSImage *ClipboardMac::dragNSImage(NSPoint& loc) const
         if (m_frame) {
             NSRect imageRect;
             NSRect elementRect;
-            result = m_frame->snapshotDragImage(m_dragImageElement.get(), &imageRect, &elementRect);
+            result = snapshotDragImage(m_frame, m_dragImageElement.get(), &imageRect, &elementRect);
             // Client specifies point relative to element, not the whole image, which may include child
             // layers spread out all over the place.
             loc.x = elementRect.origin.x - imageRect.origin.x + m_dragLoc.x();

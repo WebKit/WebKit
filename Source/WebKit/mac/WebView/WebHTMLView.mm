@@ -73,6 +73,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
 #import <WebCore/CachedResourceLoader.h>
@@ -80,7 +81,6 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
-#import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentMarkerController.h>
@@ -95,6 +95,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
+#import <WebCore/FrameSnapshottingMac.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
@@ -106,8 +107,8 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Range.h>
-#import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceBuffer.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -1809,7 +1810,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
     if (![self _hasSelection])
         return nil;
-    NSImage *dragImage = core([self _frame])->selectionImage();
+    NSImage *dragImage = selectionImage(core([self _frame]));
     [dragImage _web_dissolveToFraction:WebDragImageAlpha];
     return dragImage;
 }
@@ -5925,7 +5926,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     if (![self _hasSelection])
         return nil;
-    return core([self _frame])->selectionImage(forceBlackText);
+    return selectionImage(core([self _frame]), forceBlackText);
 }
 
 - (NSRect)selectionImageRect

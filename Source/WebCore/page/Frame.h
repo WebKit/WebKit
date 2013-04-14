@@ -190,12 +190,6 @@ namespace WebCore {
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
-#if PLATFORM(MAC)
-        NSImage* selectionImage(bool forceBlackText = false) const;
-        NSImage* rangeImage(Range*, bool forceBlackText = false) const;
-        NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
-        NSImage* imageFromRect(NSRect) const;
-#endif
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();
         bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }

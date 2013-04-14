@@ -1,3 +1,14 @@
+2013-04-14  Sam Weinig  <sam@webkit.org>
+
+        Move Mac specific snapshotting code into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=114597
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView selectionImageForcingBlackText:]):
+
 2013-04-14  Andreas Kling  <akling@apple.com>
 
         Move CSSOM classes to using MutableStylePropertySet over StylePropertySet.

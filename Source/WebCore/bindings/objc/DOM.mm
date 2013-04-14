@@ -38,6 +38,7 @@
 #import "DOMRangeInternal.h"
 #import "Font.h"
 #import "Frame.h"
+#import "FrameSnapshottingMac.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
@@ -328,7 +329,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
-    return frame->rangeImage(range, forceBlackText);
+    return WebCore::rangeImage(frame, range, forceBlackText);
 }
 
 - (NSArray *)textRects
