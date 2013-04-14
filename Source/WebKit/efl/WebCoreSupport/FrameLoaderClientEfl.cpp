@@ -54,6 +54,7 @@
 #include "RenderPart.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "WebKitVersion.h"
 #include "ewk_frame_private.h"

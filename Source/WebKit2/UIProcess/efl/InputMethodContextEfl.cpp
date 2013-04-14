@@ -25,6 +25,7 @@
 #include "WebPageProxy.h"
 #include <Ecore_Evas.h>
 #include <Ecore_IMF_Evas.h>
+#include <WebCore/Editor.h>
 
 using namespace WebCore;
 

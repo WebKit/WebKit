@@ -32,6 +32,7 @@
 #include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <sys/stat.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 

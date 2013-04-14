@@ -40,6 +40,7 @@ class Cursor;
 class GraphicsContext3D;
 class GraphicsLayer;
 #endif
+class HTMLPlugInElement;
 class PopupMenuClient;
 }
 

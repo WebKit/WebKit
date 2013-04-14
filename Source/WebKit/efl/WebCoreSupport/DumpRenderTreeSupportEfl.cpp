@@ -30,6 +30,7 @@
 
 #include <APICast.h>
 #include <AnimationController.h>
+#include <DOMWindow.h>
 #include <DocumentLoader.h>
 #include <EditorClientEfl.h>
 #include <Eina.h>
@@ -43,6 +44,7 @@
 #include <InspectorController.h>
 #include <IntRect.h>
 #include <JSCSSStyleDeclaration.h>
+#include <JSDOMWindow.h>
 #include <JSElement.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <MemoryCache.h>
@@ -53,6 +55,7 @@
 #include <ResourceLoadScheduler.h>
 #include <RuntimeEnabledFeatures.h>
 #include <SchemeRegistry.h>
+#include <ScriptController.h>
 #include <ScriptValue.h>
 #include <Settings.h>
 #include <TextIterator.h>

@@ -1,3 +1,11 @@
+2013-04-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix for WebKit2 EFL after r148373 due to missing
+        header includes.
+
+        * UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp:
+        * UIProcess/efl/InputMethodContextEfl.cpp:
+
 2013-04-13  Sam Weinig  <sam@webkit.org>
 
         Add ObjC API for setting initialization data for the WKWebProcessPlugIn

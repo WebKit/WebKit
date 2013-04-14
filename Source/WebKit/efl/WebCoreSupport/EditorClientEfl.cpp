@@ -23,6 +23,7 @@
 #include "config.h"
 #include "EditorClientEfl.h"
 
+#include "Document.h"
 #include "DumpRenderTreeSupportEfl.h"
 #include "Editor.h"
 #include "EflKeyboardUtilities.h"

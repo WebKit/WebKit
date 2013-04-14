@@ -1,3 +1,17 @@
+2013-04-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix for WebKit1 EFL after r148373 due to missing
+        header includes.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        * WebCoreSupport/EditorClientEfl.cpp:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view_private.h:
+        (WebCore):
+
 2013-04-13  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] --minimal build fails with error: 'ViewModeInvalid' is not a member of 'WebCore::Page'

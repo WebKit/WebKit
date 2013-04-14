@@ -26,6 +26,7 @@
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "ewk_view_private.h"
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

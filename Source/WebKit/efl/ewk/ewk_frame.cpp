@@ -50,6 +50,7 @@
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
+#include "ScriptController.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"

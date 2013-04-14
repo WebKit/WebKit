@@ -60,6 +60,7 @@
 #include "RenderThemeEfl.h"
 #include "ResourceHandle.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "TiledBackingStore.h"
 #include "c_instance.h"
