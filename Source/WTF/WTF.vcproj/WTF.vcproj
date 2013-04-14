@@ -721,6 +721,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\EnumClass.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\FastAllocBase.h"
 			>
 		</File>

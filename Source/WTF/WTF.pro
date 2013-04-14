@@ -49,6 +49,7 @@ HEADERS += \
     dtoa/utils.h \
     DynamicAnnotations.h \
     Encoder.h \
+    EnumClass.h \
     FastAllocBase.h \
     FastMalloc.h \
     FixedArray.h \

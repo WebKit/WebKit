@@ -1,3 +1,24 @@
+2013-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        Try to fix Windows Elgar build again after r148370
+
+        Merge r148401.
+
+        Add EnumClass.h to the MSVC project.
+
+    2013-04-14  David Kilzer  <ddkilzer@apple.com>
+
+            Add EnumClass.h to project files
+            <http://webkit.org/b/114582>
+
+            Rubber-stamped by Dan Bernstein.
+
+            * WTF.pro: Add EnumClass.h to project.
+            * WTF.vcproj/WTF.vcproj: Ditto.
+            * WTF.vcxproj/WTF.vcxproj: Ditto.
+            * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+            * WTF.xcodeproj/project.pbxproj: Ditto.
+
 2013-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Merge 145580, 145587, 145594, r145595, r145647, 145759.  Part 2/2 for <rdar://problem/13438603>.
