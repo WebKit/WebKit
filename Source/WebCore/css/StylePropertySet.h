@@ -76,19 +76,8 @@ public:
         CSSProperty toCSSProperty() const { return CSSProperty(propertyMetadata(), const_cast<CSSValue*>(propertyValue())); }
 
     private:
-        StylePropertyMetadata propertyMetadata() const
-        {
-            if (m_propertySet.isMutable())
-                return m_propertySet.mutablePropertyVector().at(m_index).metadata();
-            return m_propertySet.immutableMetadataArray()[m_index];
-        }
-
-        const CSSValue* propertyValue() const
-        {
-            if (m_propertySet.isMutable())
-                return m_propertySet.mutablePropertyVector().at(m_index).value();
-            return m_propertySet.immutableValueArray()[m_index];
-        }
+        StylePropertyMetadata propertyMetadata() const;
+        const CSSValue* propertyValue() const;
 
         const StylePropertySet& m_propertySet;
         unsigned m_index;
@@ -131,9 +120,6 @@ public:
     void showStyle();
 #endif
 
-    const CSSValue** immutableValueArray() const;
-    const StylePropertyMetadata* immutableMetadataArray() const;
-
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
 protected:
@@ -152,9 +138,6 @@ protected:
     { }
 
     int findPropertyIndex(CSSPropertyID) const;
-
-    Vector<CSSProperty, 4>& mutablePropertyVector();
-    const Vector<CSSProperty, 4>& mutablePropertyVector() const;
 
     unsigned m_cssParserMode : 2;
     mutable unsigned m_ownsCSSOMWrapper : 1;
@@ -184,21 +167,22 @@ public:
 
     unsigned propertyCount() const { return m_arraySize; }
 
+    const CSSValue** valueArray() const;
+    const StylePropertyMetadata* metadataArray() const;
+
     void* m_storage;
 
 private:
     ImmutableStylePropertySet(const CSSProperty*, unsigned count, CSSParserMode);
 };
 
-inline const CSSValue** StylePropertySet::immutableValueArray() const
+inline const CSSValue** ImmutableStylePropertySet::valueArray() const
 {
-    ASSERT(!m_isMutable);
     return reinterpret_cast<const CSSValue**>(const_cast<const void**>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage)));
 }
 
-inline const StylePropertyMetadata* StylePropertySet::immutableMetadataArray() const
+inline const StylePropertyMetadata* ImmutableStylePropertySet::metadataArray() const
 {
-    ASSERT(!m_isMutable);
     return reinterpret_cast<const StylePropertyMetadata*>(&reinterpret_cast<const char*>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage))[m_arraySize * sizeof(CSSValue*)]);
 }
 
@@ -252,22 +236,24 @@ private:
     CSSProperty* findCSSPropertyWithID(CSSPropertyID);
 };
 
-inline Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector()
+inline StylePropertyMetadata StylePropertySet::PropertyReference::propertyMetadata() const
 {
-    ASSERT(m_isMutable);
-    return static_cast<MutableStylePropertySet*>(this)->m_propertyVector;
+    if (m_propertySet.isMutable())
+        return static_cast<const MutableStylePropertySet&>(m_propertySet).m_propertyVector.at(m_index).metadata();
+    return static_cast<const ImmutableStylePropertySet&>(m_propertySet).metadataArray()[m_index];
 }
 
-inline const Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector() const
+inline const CSSValue* StylePropertySet::PropertyReference::propertyValue() const
 {
-    ASSERT(m_isMutable);
-    return static_cast<const MutableStylePropertySet*>(this)->m_propertyVector;
+    if (m_propertySet.isMutable())
+        return static_cast<const MutableStylePropertySet&>(m_propertySet).m_propertyVector.at(m_index).value();
+    return static_cast<const ImmutableStylePropertySet&>(m_propertySet).valueArray()[m_index];
 }
 
 inline unsigned StylePropertySet::propertyCount() const
 {
     if (m_isMutable)
-        return mutablePropertyVector().size();
+        return static_cast<const MutableStylePropertySet*>(this)->m_propertyVector.size();
     return m_arraySize;
 }
 
