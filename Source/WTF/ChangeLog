@@ -1,3 +1,16 @@
+2013-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        Add EnumClass.h to project files
+        <http://webkit.org/b/114582>
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WTF.pro: Add EnumClass.h to project.
+        * WTF.vcproj/WTF.vcproj: Ditto.
+        * WTF.vcxproj/WTF.vcxproj: Ditto.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+
 2013-04-12  Oliver Hunt  <oliver@apple.com>
 
         Apologies to all, I have no idea what happened to cause this change.
