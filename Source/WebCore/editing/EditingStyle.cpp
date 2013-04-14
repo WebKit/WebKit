@@ -652,7 +652,7 @@ TriState EditingStyle::triStateOfStyle(EditingStyle* style) const
 
 TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties shouldIgnoreTextOnlyProperties) const
 {
-    RefPtr<StylePropertySet> difference = getPropertiesNotIn(m_mutableStyle.get(), styleToCompare);
+    RefPtr<MutableStylePropertySet> difference = getPropertiesNotIn(m_mutableStyle.get(), styleToCompare);
 
     if (shouldIgnoreTextOnlyProperties == IgnoreTextOnlyProperties)
         difference->removePropertiesInSet(textOnlyProperties, WTF_ARRAY_LENGTH(textOnlyProperties));
@@ -1124,7 +1124,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     m_mutableStyle->mergeAndOverrideOnConflict(fromComputedStyle.get());
 }
 
-static void removePropertiesInStyle(StylePropertySet* styleToRemovePropertiesFrom, StylePropertySet* style)
+static void removePropertiesInStyle(MutableStylePropertySet* styleToRemovePropertiesFrom, StylePropertySet* style)
 {
     unsigned propertyCount = style->propertyCount();
     Vector<CSSPropertyID> propertiesToRemove(propertyCount);
@@ -1311,7 +1311,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
     return foundDirection;
 }
 
-static void reconcileTextDecorationProperties(StylePropertySet* style)
+static void reconcileTextDecorationProperties(MutableStylePropertySet* style)
 {    
     RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);

@@ -111,8 +111,8 @@ public:
     bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
 
-    StylePropertySet* animatedSMILStyleProperties() const;
-    StylePropertySet* ensureAnimatedSMILStyleProperties();
+    MutableStylePropertySet* animatedSMILStyleProperties() const;
+    MutableStylePropertySet* ensureAnimatedSMILStyleProperties();
     void setUseOverrideComputedStyle(bool);
 
     virtual bool haveLoadedRequiredResources();

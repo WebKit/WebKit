@@ -594,14 +594,14 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
     return document()->styleResolver()->styleForElement(correspondingElement(), style, DisallowStyleSharing);
 }
 
-StylePropertySet* SVGElement::animatedSMILStyleProperties() const
+MutableStylePropertySet* SVGElement::animatedSMILStyleProperties() const
 {
     if (hasSVGRareData())
         return svgRareData()->animatedSMILStyleProperties();
     return 0;
 }
 
-StylePropertySet* SVGElement::ensureAnimatedSMILStyleProperties()
+MutableStylePropertySet* SVGElement::ensureAnimatedSMILStyleProperties()
 {
     return ensureSVGRareData()->ensureAnimatedSMILStyleProperties();
 }

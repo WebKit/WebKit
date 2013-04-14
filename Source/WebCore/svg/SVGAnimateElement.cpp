@@ -239,7 +239,7 @@ static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSProper
 {
     ASSERT(!targetElement->m_deletionHasBegun);
 
-    StylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
+    MutableStylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
     if (!propertySet->setProperty(id, value, false, 0))
         return;
 
