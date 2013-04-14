@@ -1,3 +1,9 @@
+2013-04-13  Sam Weinig  <sam@webkit.org>
+
+        Attempt Build Fix.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+
 2013-04-12  Sam Weinig  <sam@webkit.org>
 
         Make Frame's ScriptController an OwnPtr and remove the #include
