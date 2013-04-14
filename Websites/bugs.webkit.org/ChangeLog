@@ -1,3 +1,15 @@
+2013-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete bubbles from webkit-commit-queue.appspot.com now that we've completed the transition
+        https://bugs.webkit.org/show_bug.cgi?id=114476
+
+        Reviewed by Gyuyoung Kim.
+
+        * code-review.js:
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
 2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make old EWS bubbles less opaque to disambiguate two set of bubbles.
