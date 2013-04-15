@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -53,6 +54,7 @@ class DocumentLoader;
 class GraphicsContext;
 class HitTestResult;
 class InspectorCSSAgent;
+class InspectorInstrumentation;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
 class KURL;
@@ -78,7 +80,23 @@ class WebSocketHandshakeResponse;
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (!hasFrontends()) return value;
 
-typedef pair<InstrumentingAgents*, int> InspectorInstrumentationCookie;
+class InspectorInstrumentationCookie {
+public:
+    InspectorInstrumentationCookie();
+    InspectorInstrumentationCookie(InstrumentingAgents*, int);
+    InspectorInstrumentationCookie(const InspectorInstrumentationCookie&);
+    InspectorInstrumentationCookie& operator=(const InspectorInstrumentationCookie&);
+    ~InspectorInstrumentationCookie();
+
+private:
+    friend class InspectorInstrumentation;
+    InstrumentingAgents* instrumentingAgents() const { return m_instrumentingAgents.get(); }
+    bool isValid() const { return !!m_instrumentingAgents; }
+    bool hasMatchingTimelineAgentId(int id) const { return m_timelineAgentId == id; }
+
+    RefPtr<InstrumentingAgents> m_instrumentingAgents;
+    int m_timelineAgentId;
+};
 
 class InspectorInstrumentation {
 public:
@@ -606,7 +624,7 @@ inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumenta
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didCallFunctionImpl(cookie);
 #endif
 }
@@ -625,7 +643,7 @@ inline void InspectorInstrumentation::didChangeXHRReadyState(const InspectorInst
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didChangeXHRReadyStateImpl(cookie);
 #endif
 }
@@ -644,7 +662,7 @@ inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrument
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didDispatchEventImpl(cookie);
 #endif
 }
@@ -663,7 +681,7 @@ inline void InspectorInstrumentation::didHandleEvent(const InspectorInstrumentat
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didHandleEventImpl(cookie);
 #endif
 }
@@ -682,7 +700,7 @@ inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorIn
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didDispatchEventOnWindowImpl(cookie);
 #endif
 }
@@ -701,7 +719,7 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didEvaluateScriptImpl(cookie);
 #endif
 }
@@ -720,7 +738,7 @@ inline void InspectorInstrumentation::didFireTimer(const InspectorInstrumentatio
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didFireTimerImpl(cookie);
 #endif
 }
@@ -757,7 +775,7 @@ inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCo
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didLayoutImpl(cookie);
 #endif
 }
@@ -776,7 +794,7 @@ inline void InspectorInstrumentation::didLoadXHR(const InspectorInstrumentationC
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didLoadXHRImpl(cookie);
 #endif
 }
@@ -795,7 +813,7 @@ inline void InspectorInstrumentation::didPaint(const InspectorInstrumentationCoo
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didPaintImpl(cookie);
 #endif
 }
@@ -814,7 +832,7 @@ inline void InspectorInstrumentation::didRecalculateStyle(const InspectorInstrum
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didRecalculateStyleImpl(cookie);
 #endif
 }
@@ -842,7 +860,7 @@ inline void InspectorInstrumentation::didMatchRule(const InspectorInstrumentatio
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didMatchRuleImpl(cookie, matched);
 #endif
 }
@@ -863,7 +881,7 @@ inline void InspectorInstrumentation::didProcessRule(const InspectorInstrumentat
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didProcessRuleImpl(cookie);
 #endif
 }
@@ -961,7 +979,7 @@ inline void InspectorInstrumentation::didReceiveResourceData(const InspectorInst
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didReceiveResourceDataImpl(cookie);
 #endif
 }
@@ -979,7 +997,13 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(const Inspector
 {
 #if ENABLE(INSPECTOR)
     // Call this unconditionally so that we're able to log to console with no front-end attached.
-    didReceiveResourceResponseImpl(cookie, identifier, loader, response);
+    if (cookie.isValid())
+        didReceiveResourceResponseImpl(cookie, identifier, loader, response);
+#else
+    UNUSED_PARAM(cookie);
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(loader);
+    UNUSED_PARAM(response);
 #endif
 }
 
@@ -1138,7 +1162,7 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didWriteHTMLImpl(cookie, endLine);
 #endif
 }
@@ -1301,7 +1325,7 @@ inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstr
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.first)
+    if (cookie.isValid())
         didFireAnimationFrameImpl(cookie);
 #endif
 }

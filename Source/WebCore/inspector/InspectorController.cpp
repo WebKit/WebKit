@@ -74,7 +74,7 @@
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
+    : m_instrumentingAgents(InstrumentingAgents::create())
     , m_injectedScriptManager(InjectedScriptManager::createForPage())
     , m_state(adoptPtr(new InspectorState(inspectorClient)))
     , m_page(page)
@@ -160,6 +160,8 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 
 InspectorController::~InspectorController()
 {
+    m_instrumentingAgents->reset();
+
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
         (*it)->discardAgent();
 

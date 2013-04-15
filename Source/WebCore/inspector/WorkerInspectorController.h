@@ -81,7 +81,7 @@ private:
     WorkerContext* m_workerContext;
     OwnPtr<InspectorStateClient> m_stateClient;
     OwnPtr<InspectorState> m_state;
-    OwnPtr<InstrumentingAgents> m_instrumentingAgents;
+    RefPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
