@@ -85,7 +85,7 @@ static void jpegErrorExit(j_common_ptr compressData)
 
 bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize& size, Vector<char>& jpegData)
 {
-    struct jpeg_compress_struct compressData = { 0 };
+    struct jpeg_compress_struct compressData;
     JPEGCompressErrorMgr err;
     compressData.err = jpeg_std_error(&err);
     err.error_exit = jpegErrorExit;
