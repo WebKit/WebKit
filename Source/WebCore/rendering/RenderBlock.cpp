@@ -60,6 +60,7 @@
 #include "SVGTextRunRenderingContext.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 
 using namespace std;
 using namespace WTF;
@@ -106,6 +107,8 @@ typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderInline*>*> ContinuationOutl
 typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
 static int gDelayUpdateScrollInfo = 0;
 static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
+
+static bool gIsInColumnFlowSplit = false;
 
 // We only create "generated" renderers like one for first-letter and
 // before/after pseudo elements if:
@@ -851,47 +854,33 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         beforeChild = beforeChild->nextSibling();
 
     // Check for a spanning element in columns.
-    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
-    if (columnsBlockAncestor) {
-        // We are placing a column-span element inside a block. 
-        RenderBlock* newBox = createAnonymousColumnSpanBlock();
-        
-        if (columnsBlockAncestor != this) {
-            // We are nested inside a multi-column element and are being split by the span.  We have to break up
-            // our block into continuations.
-            RenderBoxModelObject* oldContinuation = continuation();
-
-            // When we split an anonymous block, there's no need to do any continuation hookup,
-            // since we haven't actually split a real element.
-            if (!isAnonymousBlock())
-                setContinuation(newBox);
-
-            // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
-            // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
-            // content gets properly destroyed.
-            bool isFirstChild = (beforeChild == firstChild());
-            bool isLastChild = (beforeChild == lastChild());
-            if (document()->usesBeforeAfterRules())
-                children()->updateBeforeAfterContent(this, AFTER);
-            if (isLastChild && beforeChild != lastChild()) {
-                // We destroyed the last child, so now we need to update our insertion
-                // point to be 0. It's just a straight append now.
-                beforeChild = 0;
-            } else if (isFirstChild && beforeChild != firstChild()) {
-                // If beforeChild was the last anonymous block that collapsed,
-                // then we need to update its value.
-                beforeChild = firstChild();
+    if (!gIsInColumnFlowSplit) {
+        RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
+        if (columnsBlockAncestor) {
+            TemporaryChange<bool> isInColumnFlowSplit(gIsInColumnFlowSplit, true);
+            // We are placing a column-span element inside a block.
+            RenderBlock* newBox = createAnonymousColumnSpanBlock();
+            
+            if (columnsBlockAncestor != this) {
+                // We are nested inside a multi-column element and are being split by the span. We have to break up
+                // our block into continuations.
+                RenderBoxModelObject* oldContinuation = continuation();
+                
+                // When we split an anonymous block, there's no need to do any continuation hookup,
+                // since we haven't actually split a real element.
+                if (!isAnonymousBlock())
+                    setContinuation(newBox);
+                
+                splitFlow(beforeChild, newBox, newChild, oldContinuation);
+                return;
             }
 
-            splitFlow(beforeChild, newBox, newChild, oldContinuation);
+            // We have to perform a split of this block's children. This involves creating an anonymous block box to hold
+            // the column-spanning |newChild|. We take all of the children from before |newChild| and put them into
+            // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
+            makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
             return;
         }
-
-        // We have to perform a split of this block's children.  This involves creating an anonymous block box to hold
-        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
-        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
-        makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
-        return;
     }
 
     bool madeBoxesNonInline = false;
