@@ -121,16 +121,20 @@ defineTest(detectFeatures) {
                 WEBKIT_CONFIG += video use_qtkit
             }
         }
-    } else: linux-* {
-        !contains(QT_CONFIG, no-pkg-config):packagesExist("glib-2.0 gio-2.0 gstreamer-1.0 gstreamer-plugins-base-1.0") {
+    } else: !contains(QT_CONFIG, no-pkg-config) {
+        packagesExist("glib-2.0 gio-2.0 gstreamer-1.0 gstreamer-plugins-base-1.0") {
             WEBKIT_CONFIG += video use_gstreamer
-        } else:!contains(QT_CONFIG, no-pkg-config):packagesExist("glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'") {
+        } else: packagesExist("glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'") {
             WEBKIT_CONFIG += video use_gstreamer use_gstreamer010
-        } else {
-            CONFIGURE_WARNINGS += "Missing GLib/Gio/GStreamer, disabling media element support"
         }
-    } else: haveQtModule(multimediawidgets) {
+    }
+
+    !enable?(video):haveQtModule(multimediawidgets) {
         WEBKIT_CONFIG += video use_qt_multimedia
+    }
+
+    !enable?(video) {
+        CONFIGURE_WARNINGS += "Missing GStreamer, QTKit or QtMultimedia, disabling media element support"
     }
 
     # Try to use an system wide SQlite installation
