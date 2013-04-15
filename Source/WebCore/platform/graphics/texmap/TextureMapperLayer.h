@@ -63,6 +63,7 @@ public:
     void setID(uint32_t id) { m_id = id; }
     uint32_t id() { return m_id; }
 
+    const Vector<TextureMapperLayer*>& children() const { return m_children; }
     TextureMapperLayer* findScrollableContentsLayerAt(const FloatPoint& pos);
 
     void setScrollClient(ScrollingClient* scrollClient) { m_scrollClient = scrollClient; }
