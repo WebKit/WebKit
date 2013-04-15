@@ -272,7 +272,7 @@ def riscLowerMalformedAddressesDouble(list)
 end
 
 #
-# Lowering of misplaced immediates. For example:
+# Lowering of misplaced immediates for opcodes in opcodeList. For example, if storei is in opcodeList:
 #
 # storei 0, [foo]
 #
@@ -282,13 +282,12 @@ end
 # storei tmp, [foo]
 #
 
-def riscLowerMisplacedImmediates(list)
+def riscLowerMisplacedImmediates(list, opcodeList)
     newList = []
     list.each {
         | node |
         if node.is_a? Instruction
-            case node.opcode
-            when "storeb", "storei", "storep"
+            if opcodeList.include? node.opcode
                 operands = node.operands
                 newOperands = []
                 operands.each {

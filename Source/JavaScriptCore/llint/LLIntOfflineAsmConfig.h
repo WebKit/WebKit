@@ -41,6 +41,7 @@
 #define OFFLINE_ASM_X86_64 0
 #define OFFLINE_ASM_ARMv7s 0
 #define OFFLINE_ASM_MIPS 0
+#define OFFLINE_ASM_SH4 0
 
 #else // !ENABLE(LLINT_C_LOOP)
 
@@ -87,6 +88,12 @@
 #define OFFLINE_ASM_MIPS 1
 #else
 #define OFFLINE_ASM_MIPS 0
+#endif
+
+#if CPU(SH4)
+#define OFFLINE_ASM_SH4 1
+#else
+#define OFFLINE_ASM_SH4 0
 #endif
 
 #endif // !ENABLE(LLINT_C_LOOP)

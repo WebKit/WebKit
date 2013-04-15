@@ -113,7 +113,7 @@ macro cCall2(function, arg1, arg2)
         poke arg1, 0
         poke arg2, 1
         call function
-    elsif MIPS
+    elsif MIPS or SH4
         move arg1, a0
         move arg2, a1
         call function
@@ -138,7 +138,7 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
         poke arg3, 2
         poke arg4, 3
         call function
-    elsif MIPS
+    elsif MIPS or SH4
         move arg1, a0
         move arg2, a1
         move arg3, a2
@@ -1910,6 +1910,19 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp JSFunction::m_executable[t1], t1
         move t2, cfr
         move t0, a0
+        call executableOffsetToFunction[t1]
+        restoreReturnAddressBeforeReturn(t3)
+        loadp JITStackFrame::globalData[sp], t3
+    elsif SH4
+        loadp JITStackFrame::globalData[sp], t3
+        storep cfr, JSGlobalData::topCallFrame[t3]
+        move t0, t2
+        preserveReturnAddressAfterCall(t3)
+        storep t3, ReturnPC[cfr]
+        move cfr, t0
+        loadi Callee + PayloadOffset[cfr], t1
+        loadp JSFunction::m_executable[t1], t1
+        move t2, cfr
         call executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
         loadp JITStackFrame::globalData[sp], t3

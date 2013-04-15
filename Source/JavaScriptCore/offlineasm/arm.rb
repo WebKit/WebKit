@@ -217,7 +217,7 @@ class Sequence
             end
         }
         result = riscLowerMalformedAddressesDouble(result)
-        result = riscLowerMisplacedImmediates(result)
+        result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep"])
         result = riscLowerMalformedImmediates(result, 0..0xff)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)

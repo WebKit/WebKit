@@ -671,6 +671,10 @@ class Address < Node
         raise "Bad offset for address #{offset.inspect} at #{codeOriginString}" unless offset.is_a? Variable or offset.immediate?
     end
     
+    def withOffset(extraOffset)
+        Address.new(codeOrigin, @base, Immediate.new(codeOrigin, @offset.value + extraOffset))
+    end
+    
     def children
         [@base, @offset]
     end
@@ -727,6 +731,10 @@ class BaseIndex < Node
         end
     end
     
+    def withOffset(extraOffset)
+        BaseIndex.new(codeOrigin, @base, @index, @scale, Immediate.new(codeOrigin, @offset.value + extraOffset))
+    end
+    
     def children
         [@base, @index, @offset]
     end
@@ -762,6 +770,10 @@ class AbsoluteAddress < NoChildren
     def initialize(codeOrigin, address)
         super(codeOrigin)
         @address = address
+    end
+    
+    def withOffset(extraOffset)
+        AbsoluteAddress.new(codeOrigin, Immediate.new(codeOrigin, @address.value + extraOffset))
     end
     
     def dump

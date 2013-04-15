@@ -1780,6 +1780,18 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "move $a0, $s0" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
+#elif COMPILER(GCC) && CPU(SH4)
+asm(
+".text" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "add #-40, r14" "\n"
+    "mov.l @r14, r14" "\n"
+    "mov r14, r4" "\n"
+    "bra " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+    "nop" "\n"
+);
 #endif
 
 extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWithExecState(ExecState* exec)

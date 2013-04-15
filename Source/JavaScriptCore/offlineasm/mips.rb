@@ -566,7 +566,7 @@ class Sequence
             end
         }
         result = riscLowerMalformedAddressesDouble(result)
-        result = riscLowerMisplacedImmediates(result)
+        result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep"])
         result = mipsLowerMisplacedImmediates(result)
         result = riscLowerMalformedImmediates(result, -0xffff..0xffff)
         result = mipsLowerMisplacedAddresses(result)
