@@ -1152,8 +1152,8 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
 void RenderStyle::setBlendedFontSize(int size)
 {
     float sizef = (float)size;
-    ASSERT(isfinite(sizef);
-    if (!isfinite(sizef || size < 0)
+    ASSERT(isfinite(sizef));
+    if (!isfinite(sizef) || size < 0)
         size = 0;
     else
         size = min(maximumAllowedFontSize, sizef);

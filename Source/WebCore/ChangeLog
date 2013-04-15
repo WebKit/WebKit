@@ -1,5 +1,13 @@
 2013-04-15  Roger Fong  <roger_fong@apple.com>
 
+        Build fix for r148472.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setBlendedFontSize):
+        * rendering/style/RenderStyle.h:
+
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
         Merged r138821.
 
     01/04/13 John Mellor  <johnme@chromium.org>
