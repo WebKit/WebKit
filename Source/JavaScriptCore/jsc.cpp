@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include "APIShims.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
 #include "Completion.h"
@@ -760,8 +761,8 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect JSGlobalData creation, and thus
     // comes first.
     CommandLine options(argc, argv);
-    RefPtr<JSGlobalData> globalData = JSGlobalData::create(LargeHeap);
-    JSLockHolder lock(globalData.get());
+    JSGlobalData* globalData = JSGlobalData::create(LargeHeap).leakRef();
+    APIEntryShim shim(globalData);
     int result;
 
     if (options.m_profile && !globalData->m_perBytecodeProfiler)

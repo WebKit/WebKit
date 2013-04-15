@@ -809,19 +809,19 @@ void Heap::markDeadObjects()
     m_objectSpace.forEachDeadCell<MarkObject>();
 }
 
-void Heap::setActivityCallback(GCActivityCallback* activityCallback)
+void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 {
     m_activityCallback = activityCallback;
 }
 
 GCActivityCallback* Heap::activityCallback()
 {
-    return m_activityCallback;
+    return m_activityCallback.get();
 }
 
 IncrementalSweeper* Heap::sweeper()
 {
-    return m_sweeper;
+    return m_sweeper.get();
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
@@ -862,15 +862,6 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 void Heap::addCompiledCode(ExecutableBase* executable)
 {
     m_compiledCode.append(executable);
-}
-
-void Heap::didStartVMShutdown()
-{
-    m_activityCallback->didStartVMShutdown();
-    m_activityCallback = 0;
-    m_sweeper->didStartVMShutdown();
-    m_sweeper = 0;
-    lastChanceToFinalize();
 }
 
 class Zombify : public MarkedBlock::VoidFunctor {

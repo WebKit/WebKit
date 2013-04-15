@@ -59,7 +59,6 @@ public:
     
     virtual ~HeapTimer();
 
-    void didStartVMShutdown();
     virtual void synchronize();
     virtual void doWork() = 0;
     

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RegExp.h"
 
+#include "APIShims.h"
 #include <wtf/CurrentTime.h>
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
@@ -499,8 +500,8 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int realMain(int argc, char** argv)
 {
-    RefPtr<JSGlobalData> globalData = JSGlobalData::create(LargeHeap);
-    JSLockHolder lock(globalData.get());
+    JSGlobalData* globalData = JSGlobalData::create(LargeHeap).leakRef();
+    APIEntryShim shim(globalData);
 
     CommandLine options;
     parseArguments(argc, argv, options);

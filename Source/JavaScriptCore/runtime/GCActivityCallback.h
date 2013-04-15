@@ -70,7 +70,7 @@ protected:
 
 class DefaultGCActivityCallback : public GCActivityCallback {
 public:
-    static DefaultGCActivityCallback* create(Heap*);
+    static PassOwnPtr<DefaultGCActivityCallback> create(Heap*);
 
     DefaultGCActivityCallback(Heap*);
 
@@ -94,9 +94,9 @@ private:
 #endif
 };
 
-inline DefaultGCActivityCallback* DefaultGCActivityCallback::create(Heap* heap)
+inline PassOwnPtr<DefaultGCActivityCallback> DefaultGCActivityCallback::create(Heap* heap)
 {
-    return new DefaultGCActivityCallback(heap);
+    return adoptPtr(new DefaultGCActivityCallback(heap));
 }
 
 }

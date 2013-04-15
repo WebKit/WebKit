@@ -35,18 +35,11 @@
 namespace JSC {
 
 class APIEntryShimWithoutLock {
-public:
-    enum RefGlobalDataTag { DontRefGlobalData = 0, RefGlobalData };
-
 protected:
-    APIEntryShimWithoutLock(JSGlobalData* globalData, bool registerThread, RefGlobalDataTag shouldRefGlobalData)
-        : m_shouldRefGlobalData(shouldRefGlobalData)
-        , m_globalData(globalData)
+    APIEntryShimWithoutLock(JSGlobalData* globalData, bool registerThread)
+        : m_globalData(globalData)
         , m_entryIdentifierTable(wtfThreadData().setCurrentIdentifierTable(globalData->identifierTable))
     {
-        if (shouldRefGlobalData)
-            m_globalData->ref();
-        UNUSED_PARAM(registerThread);
         if (registerThread)
             globalData->heap.machineThreads().addCurrentThread();
         m_globalData->heap.activityCallback()->synchronize();
@@ -56,13 +49,10 @@ protected:
     ~APIEntryShimWithoutLock()
     {
         wtfThreadData().setCurrentIdentifierTable(m_entryIdentifierTable);
-        if (m_shouldRefGlobalData)
-            m_globalData->deref();
     }
 
 protected:
-    RefGlobalDataTag m_shouldRefGlobalData;
-    JSGlobalData* m_globalData;
+    RefPtr<JSGlobalData> m_globalData;
     IdentifierTable* m_entryIdentifierTable;
 };
 
@@ -70,36 +60,26 @@ class APIEntryShim : public APIEntryShimWithoutLock {
 public:
     // Normal API entry
     APIEntryShim(ExecState* exec, bool registerThread = true)
-        : APIEntryShimWithoutLock(&exec->globalData(), registerThread, RefGlobalData)
+        : APIEntryShimWithoutLock(&exec->globalData(), registerThread)
+        , m_lockHolder(exec)
     {
-        init();
-    }
-
-    // This constructor is necessary for HeapTimer to prevent it from accidentally resurrecting 
-    // the ref count of a "dead" JSGlobalData.
-    APIEntryShim(JSGlobalData* globalData, RefGlobalDataTag refGlobalData, bool registerThread = true)
-        : APIEntryShimWithoutLock(globalData, registerThread, refGlobalData)
-    {
-        init();
     }
 
     // JSPropertyNameAccumulator only has a globalData.
     APIEntryShim(JSGlobalData* globalData, bool registerThread = true)
-        : APIEntryShimWithoutLock(globalData, registerThread, RefGlobalData)
+        : APIEntryShimWithoutLock(globalData, registerThread)
+        , m_lockHolder(globalData)
     {
-        init();
     }
 
     ~APIEntryShim()
     {
-        m_globalData->apiLock().unlock();
+        // Destroying our JSLockHolder should also destroy the JSGlobalData.
+        m_globalData.clear();
     }
 
 private:
-    void init()
-    {
-        m_globalData->apiLock().lock();
-    }
+    JSLockHolder m_lockHolder;
 };
 
 class APICallbackShim {

@@ -72,13 +72,15 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE ~JSLockHolder();
     private:
+        void init();
+
         RefPtr<JSGlobalData> m_globalData;
     };
 
-    class JSLock {
+    class JSLock : public ThreadSafeRefCounted<JSLock> {
         WTF_MAKE_NONCOPYABLE(JSLock);
     public:
-        JSLock();
+        JSLock(JSGlobalData*);
         JS_EXPORT_PRIVATE ~JSLock();
 
         JS_EXPORT_PRIVATE void lock();
@@ -89,11 +91,15 @@ namespace JSC {
         static void lock(JSGlobalData&);
         static void unlock(JSGlobalData&);
 
+        JSGlobalData* globalData() { return m_globalData; }
+
         JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
         unsigned dropAllLocks();
         unsigned dropAllLocksUnconditionally();
         void grabAllLocks(unsigned lockCount);
+
+        void willDestroyGlobalData(JSGlobalData*);
 
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
@@ -113,6 +119,7 @@ namespace JSC {
         ThreadIdentifier m_ownerThread;
         intptr_t m_lockCount;
         unsigned m_lockDropDepth;
+        JSGlobalData* m_globalData;
     };
 
 } // namespace

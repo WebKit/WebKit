@@ -105,7 +105,7 @@ namespace JSC {
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
-        JS_EXPORT_PRIVATE void setActivityCallback(GCActivityCallback*);
+        JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
         JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
         JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
@@ -172,7 +172,6 @@ namespace JSC {
         void didAbandon(size_t);
 
         bool isPagedOut(double deadline);
-        void didStartVMShutdown();
         
         const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }
 
@@ -265,8 +264,8 @@ namespace JSC {
 
         DoublyLinkedList<ExecutableBase> m_compiledCode;
         
-        GCActivityCallback* m_activityCallback;
-        IncrementalSweeper* m_sweeper;
+        OwnPtr<GCActivityCallback> m_activityCallback;
+        OwnPtr<IncrementalSweeper> m_sweeper;
         Vector<MarkedBlock*> m_blockSnapshot;
     };
 

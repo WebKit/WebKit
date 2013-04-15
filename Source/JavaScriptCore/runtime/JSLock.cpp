@@ -53,36 +53,50 @@ void GlobalJSLock::initialize()
 JSLockHolder::JSLockHolder(ExecState* exec)
     : m_globalData(&exec->globalData())
 {
-    m_globalData->apiLock().lock();
+    init();
 }
 
 JSLockHolder::JSLockHolder(JSGlobalData* globalData)
     : m_globalData(globalData)
 {
-    m_globalData->apiLock().lock();
+    init();
 }
 
 JSLockHolder::JSLockHolder(JSGlobalData& globalData)
     : m_globalData(&globalData)
+{
+    init();
+}
+
+void JSLockHolder::init()
 {
     m_globalData->apiLock().lock();
 }
 
 JSLockHolder::~JSLockHolder()
 {
-    m_globalData->apiLock().unlock();
+    RefPtr<JSLock> apiLock(&m_globalData->apiLock());
+    m_globalData.clear();
+    apiLock->unlock();
 }
 
-JSLock::JSLock()
+JSLock::JSLock(JSGlobalData* globalData)
     : m_ownerThread(0)
     , m_lockCount(0)
     , m_lockDropDepth(0)
+    , m_globalData(globalData)
 {
     m_spinLock.Init();
 }
 
 JSLock::~JSLock()
 {
+}
+
+void JSLock::willDestroyGlobalData(JSGlobalData* globalData)
+{
+    ASSERT_UNUSED(globalData, m_globalData == globalData);
+    m_globalData = 0;
 }
 
 void JSLock::lock()

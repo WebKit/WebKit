@@ -1,3 +1,93 @@
+2013-04-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        HeapTimer lifetime should be less complicated
+        https://bugs.webkit.org/show_bug.cgi?id=114529
+
+        Reviewed by Oliver Hunt.
+
+        Right now our HeapTimer lifetime is rather complicated. HeapTimers are "owned" by the JSGlobalData, 
+        but there's an issue in that there can be races between a thread that is trying to tear down a JSGlobalData 
+        and the HeapTimer's fire function. Our current code for tearing down HeapTimers is an intricate and delicate 
+        dance which probably contains subtle bugs.
+
+        We can make our lives easier by changing things around a bit. 
+
+        1) We should free the API lock from being solely owned by the JSGlobalData so we don't have to worry about 
+           grabbing the lock out of invalid memory when our HeapTimer callback fires. 
+
+        2) We should also make it so that we deref the JSGlobalData first, then unlock the API lock so that when we 
+           have the lock, the JSGlobalData is in one of two states: fully valid or completely destroyed, and we know exactly which one. 
+
+        3) The JSLock can tell us this information by keeping a back pointer to the JSGlobalData. When the JSGlobalData's 
+           destructor is called, it clears this pointer in the JSLock. Other clients of the API lock can then check 
+           this pointer to determine whether or not the JSGlobalData is still around.
+
+        4) The CFRunLoopTimer will use the API lock as its context rather than the HeapTimer itself. The only way 
+           the HeapTimer's callback can get to the HeapTimer is through the API lock's JSGlobalData pointer.
+
+        5) The CFRunLoopTimerContext struct has two fields for retain and release callbacks for the context's info field. 
+           We'll provide these callbacks to ref() and deref() the JSLock as necessary. Thus, the timer becomes the other 
+           owner of the JSLock apart from the JSGlobalData.
+
+        * API/APIShims.h: Remove the cruft that was required by the previous design, such as RefGlobalDataTag.
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        (JSC::APIEntryShimWithoutLock::~APIEntryShimWithoutLock):
+        (APIEntryShimWithoutLock):
+        (JSC::APIEntryShim::APIEntryShim):
+        (JSC::APIEntryShim::~APIEntryShim): Protect the API lock with a RefPtr, deref the JSGlobalData, which could destroy it,
+        then unlock the API lock. This ordering prevents others from obtaining the API lock while the JSGlobalData is in the 
+        middle of being torn down.
+        (JSC::APIEntryShim::init): We now take the lock, then ref the JSGlobalData, which is the opposite order of when we 
+        tear down the shim.
+        * heap/Heap.cpp:
+        (JSC::Heap::setActivityCallback): Use PassOwnPtr now.
+        (JSC::Heap::activityCallback): Ditto.
+        (JSC::Heap::sweeper): Ditto.
+        (JSC):
+        * heap/Heap.h:
+        (Heap):
+        * heap/HeapTimer.cpp:
+        (JSC::retainAPILock): Retain callback for CFRunLoopTimerContext struct.
+        (JSC::releaseAPILock): Release callback for the CFRunLoopTimerContext struct.
+        (JSC::HeapTimer::HeapTimer): Use the API lock as the context's info field rather than the HeapTimer.
+        (JSC::HeapTimer::timerDidFire): Grab the API lock. Return early if the JSGlobalData has already been destroyed.
+        Otherwise, figure out which kind of HeapTimer we are based on the CFRunLoopTimerRef passed to the callback and 
+        call the HeapTimer's callback.
+        * heap/HeapTimer.h:
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::create): PassOwnPtr all the things.
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * jsc.cpp:
+        (jscmain): We use an APIEntryShim instead of a RefPtr for the JSGlobalData because we need to 
+        tear down the JSGlobalData while we still hold the lock, which the APIEntryShim handles correctly.
+        * runtime/GCActivityCallback.h:
+        (DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::create):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData): Notify the API lock that the JSGlobalData is being torn down.
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::apiLock):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder): Ref, then lock (just like the API shim).
+        (JSC):
+        (JSC::JSLock::willDestroyGlobalData):
+        (JSC::JSLockHolder::init):
+        (JSC::JSLockHolder::~JSLockHolder): Protect, deref, then unlock (just like the API shim).
+        (JSC::JSLock::JSLock):
+        * runtime/JSLock.h: Add back pointer to the JSGlobalData and a callback for when the JSGlobalData is being
+        torn down that clears this pointer to notify other clients (i.e. timer callbacks) that the JSGlobalData is no
+        longer valid.
+        (JSLockHolder):
+        (JSLock):
+        (JSC::JSLock::globalData):
+        * testRegExp.cpp:
+        (realMain): We use an APIEntryShim instead of a RefPtr for the JSGlobalData because we need to 
+        tear down the JSGlobalData while we still hold the lock, which the APIEntryShim handles correctly.
+
 2013-04-15  Julien Brianceau  <jbrianceau@nds.com>
 
         LLInt SH4 backend implementation

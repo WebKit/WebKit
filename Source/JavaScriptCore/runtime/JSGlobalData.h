@@ -191,7 +191,7 @@ namespace JSC {
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
 
     private:
-        JSLock m_apiLock;
+        RefPtr<JSLock> m_apiLock;
 
     public:
 #if ENABLE(ASSEMBLER)
@@ -468,7 +468,7 @@ namespace JSC {
             }
         }
 
-        JSLock& apiLock() { return m_apiLock; }
+        JSLock& apiLock() { return *m_apiLock; }
         CodeCache* codeCache() { return m_codeCache.get(); }
 
         JS_EXPORT_PRIVATE void discardAllCode();

@@ -134,11 +134,11 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 #endif // ENABLE(!ASSEMBLER)
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
-    :
+    : m_apiLock(adoptRef(new JSLock(this)))
 #if ENABLE(ASSEMBLER)
-      executableAllocator(*this),
+    , executableAllocator(*this)
 #endif
-      heap(this, heapType)
+    , heap(this, heapType)
     , globalDataType(globalDataType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
@@ -270,8 +270,9 @@ JSGlobalData::~JSGlobalData()
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler.clear();
     
-    ASSERT(!m_apiLock.currentThreadIsHoldingLock());
-    heap.didStartVMShutdown();
+    ASSERT(m_apiLock->currentThreadIsHoldingLock());
+    m_apiLock->willDestroyGlobalData(this);
+    heap.lastChanceToFinalize();
 
     delete interpreter;
 #ifndef NDEBUG
