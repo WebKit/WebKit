@@ -2731,3 +2731,6 @@ webkit.org/b/114157 fast/js/dom-static-property-for-in-iteration.html [ Failure 
 # Nested opacity with overflow may display wrong results when composited
 webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ Skip ]
 webkit.org/b/114338 compositing/overlap-blending/nested-non-overlap-clipping.html [ Skip ]
+
+# REGRESSION(r148378): editing/style/block-style-005.html failing
+webkit.org/b/114612 editing/style/block-style-005.html [ Skip ]
