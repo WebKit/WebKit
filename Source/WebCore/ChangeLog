@@ -1,3 +1,24 @@
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
+        Merged r138213.
+
+    2013-01-09  Abhishek Arya  <inferno@chromium.org>
+
+            Mitigate out-of-bounds access in InlineIterator
+            https://bugs.webkit.org/show_bug.cgi?id=104812
+
+            Reviewed by Levi Weintraub.
+
+            Share code between InlineIterator::current and InlineIterator::previousInSameNode,
+            thereby checking for access outside text renderer's length.
+
+            * rendering/InlineIterator.h:
+            (InlineIterator):
+            (WebCore::InlineIterator::characterAt):
+            (WebCore):
+            (WebCore::InlineIterator::current):
+            (WebCore::InlineIterator::previousInSameNode):
+
 2012-12-13  Lucas Forschler  <lforschler@apple.com>
 
     Rollout r
