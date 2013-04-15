@@ -52,7 +52,6 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
     , m_compositedNativeImagePtr(0)
     , m_changeMask(NoChanges)
     , m_needsDisplay(false)
-    , m_hasOwnBackingStore(true)
     , m_fixedToViewport(false)
     , m_debugBorderWidth(0)
     , m_contentsLayer(0)
@@ -88,7 +87,7 @@ void GraphicsLayerTextureMapper::willBeDestroyed()
 */
 void GraphicsLayerTextureMapper::setNeedsDisplay()
 {
-    if (!drawsContent() || !m_hasOwnBackingStore)
+    if (!drawsContent())
         return;
 
     m_needsDisplay = true;
@@ -108,7 +107,7 @@ void GraphicsLayerTextureMapper::setContentsNeedsDisplay()
 */
 void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (!drawsContent() || !m_hasOwnBackingStore)
+    if (!drawsContent())
         return;
 
     if (m_needsDisplay)
@@ -281,7 +280,7 @@ void GraphicsLayerTextureMapper::setDrawsContent(bool value)
     GraphicsLayer::setDrawsContent(value);
     notifyChange(DrawsContentChange);
 
-    if (value && m_hasOwnBackingStore)
+    if (value)
         setNeedsDisplay();
 }
 
@@ -434,8 +433,6 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 
 void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()
 {
-    if (!m_hasOwnBackingStore)
-        return;
     if (!shouldHaveBackingStore()) {
         m_backingStore.clear();
         m_changeMask |= BackingStoreChange;
@@ -451,7 +448,6 @@ void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()
 
 void GraphicsLayerTextureMapper::updateDebugBorderAndRepaintCount()
 {
-    ASSERT(m_hasOwnBackingStore);
     if (isShowingDebugBorder())
         updateDebugIndicators();
 
@@ -590,9 +586,6 @@ void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
 
 void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
 {
-    if (!m_hasOwnBackingStore)
-        return;
-
     TextureMapper* textureMapper = m_layer->textureMapper();
     if (!textureMapper)
         return;
@@ -674,16 +667,6 @@ bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
     return GraphicsLayer::setFilters(filters);
 }
 #endif
-
-void GraphicsLayerTextureMapper::setBackingStore(PassRefPtr<TextureMapperBackingStore> backingStore)
-{
-    ASSERT(!m_hasOwnBackingStore);
-    if (m_backingStore == backingStore)
-        return;
-
-    m_backingStore = backingStore;
-    notifyChange(BackingStoreChange);
-}
 
 void GraphicsLayerTextureMapper::setFixedToViewport(bool fixed)
 {

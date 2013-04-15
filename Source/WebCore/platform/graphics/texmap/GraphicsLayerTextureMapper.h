@@ -92,10 +92,6 @@ public:
     virtual bool setFilters(const FilterOperations&);
 #endif
 
-    // FIXME: It will be removed after removing dependency of CoordinatedGraphicsScene on GraphicsLayerTextureMapper.
-    void setHasOwnBackingStore(bool b) { m_hasOwnBackingStore = b; }
-    void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
-
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
 

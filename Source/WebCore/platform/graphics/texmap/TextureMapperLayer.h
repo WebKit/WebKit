@@ -87,6 +87,11 @@ public:
     void setContentsRect(const IntRect&);
     void setMasksToBounds(bool);
     void setDrawsContent(bool);
+    bool drawsContent() const { return m_state.drawsContent; }
+    bool contentsAreVisible() const { return m_state.contentsVisible; }
+    FloatSize size() const { return m_state.size; }
+    float opacity() const { return m_state.opacity; }
+    TransformationMatrix transform() const { return m_state.transform; }
     void setContentsVisible(bool);
     void setContentsOpaque(bool);
     void setBackfaceVisibility(bool);
@@ -106,10 +111,12 @@ public:
     }
 
     void setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth, bool showRepaintCounter);
+    bool isShowingRepaintCounter() const { return m_state.showRepaintCounter; }
     void setRepaintCount(int);
     void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const GraphicsLayerAnimations&);
     void setFixedToViewport(bool);
+    bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
 
     void syncAnimations();
@@ -120,6 +127,7 @@ public:
     void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
     void applyAnimationsRecursively();
+    void addChild(TextureMapperLayer*);
 
 private:
     const TextureMapperLayer* rootLayer() const;
@@ -132,7 +140,6 @@ private:
     FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta - m_userScrollOffset; }
     bool isAncestorFixedToViewport() const;
     TransformationMatrix replicaTransform();
-    void addChild(TextureMapperLayer*);
     void removeFromParent();
     void removeAllChildren();
 
