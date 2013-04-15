@@ -37,11 +37,7 @@ equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
 }
 
 # Try to detect if we're running under Windows cmd.exe or not
-win32* {
-    pwd = $$(PWD) # Normally empty for cmd.exe
-    pwd_starts_with_slash = $$find(pwd, ^/)
-    isEmpty(pwd_starts_with_slash): CONFIG += win_cmd_shell
-}
+win32:isEmpty(MINGW_IN_SHELL): CONFIG += win_cmd_shell
 
 # Default location of generated sources
 GENERATED_SOURCES_DESTDIR = generated

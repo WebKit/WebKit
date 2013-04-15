@@ -1,3 +1,17 @@
+2013-04-15  Jonathan Liu  <net147@gmail.com>
+
+        Improve Windows cmd.exe detection
+        https://bugs.webkit.org/show_bug.cgi?id=114620
+
+        Reviewed by Jocelyn Turcotte.
+
+        The current detection code handles Windows cmd.exe and Cygwin shell
+        but not does not handle MSYS shell correctly. Simplify and improve the
+        detection by checking MINGW_IN_SHELL instead as used in other places
+        (e.g. qt_functions.prf).
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2013-04-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [webkitpy] Use $NUMBER_OF_PROCESSORS in Executive.cpu_count()
