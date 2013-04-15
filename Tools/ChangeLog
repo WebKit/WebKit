@@ -1,3 +1,15 @@
+2013-04-15  Xan Lopez  <xlopez@igalia.com>
+
+        [BlackBerry] ASSERT in StyleResolver::ensureScopeResolver()
+        https://bugs.webkit.org/show_bug.cgi?id=114615
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the style scoped feature if we have support for it.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2013-04-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] QtMultimedia not used when GStreamer is not found

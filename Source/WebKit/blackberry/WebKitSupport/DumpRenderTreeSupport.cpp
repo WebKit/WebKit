@@ -31,6 +31,7 @@
 #include "JSCSSStyleDeclaration.h"
 #include "JSElement.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WebPage_p.h"
 #include "bindings/js/GCController.h"
 #include <JavaScriptCore/APICast.h>
@@ -120,6 +121,13 @@ void DumpRenderTreeSupport::scalePageBy(WebPage* webPage, float scaleFactor, flo
 {
     corePage(webPage)->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
+
+#if ENABLE(STYLE_SCOPED)
+void DumpRenderTreeSupport::setStyleScopedEnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::setStyleScopedEnabled(enabled);
+}
+#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
 DeviceOrientationClientMock* toDeviceOrientationClientMock(DeviceOrientationClient* client)

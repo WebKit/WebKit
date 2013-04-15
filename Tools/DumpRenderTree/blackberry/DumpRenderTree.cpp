@@ -324,6 +324,9 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
 
     setAcceptsEditing(true);
     DumpRenderTreeSupport::setLinksIncludedInFocusChain(true);
+#if ENABLE(STYLE_SCOPED)
+    DumpRenderTreeSupport::setStyleScopedEnabled(true);
+#endif
 
     m_page->setVirtualViewportSize(Platform::IntSize(800, 600));
     m_page->resetVirtualViewportOnCommitted(false);
