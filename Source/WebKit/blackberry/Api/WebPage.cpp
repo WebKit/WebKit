@@ -510,6 +510,9 @@ Page* WebPagePrivate::core(const WebPage* webPage)
 
 void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 {
+    m_webSettings = WebSettings::createFromStandardSettings();
+    m_webSettings->setUserAgentString(defaultUserAgent());
+
     ChromeClientBlackBerry* chromeClient = new ChromeClientBlackBerry(this);
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuClientBlackBerry* contextMenuClient = 0;
@@ -579,8 +582,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     WebCore::provideNetworkInfoTo(m_page, new WebCore::NetworkInfoClientBlackBerry(this));
 #endif
 
-    m_webSettings = WebSettings::createFromStandardSettings();
-    m_webSettings->setUserAgentString(defaultUserAgent());
     m_page->setDeviceScaleFactor(m_webSettings->devicePixelRatio());
 
     m_page->addLayoutMilestones(DidFirstVisuallyNonEmptyLayout);

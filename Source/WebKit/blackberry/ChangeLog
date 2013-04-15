@@ -1,3 +1,17 @@
+2013-04-15  Liam Quinn  <lquinn@blackberry.com>
+
+        [BlackBerry] Crash from null m_webSettings in WebPagePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=114633
+        RIM PR 303745
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Leo Yang.
+
+        Speculative fix suggested by George Staikos--initialize m_webSettings first thing in the init() method.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2013-04-15  Andy Chen  <andchen@blackberry.com>
 
         [BlackBerry] Forward userGesture when creating a new window
