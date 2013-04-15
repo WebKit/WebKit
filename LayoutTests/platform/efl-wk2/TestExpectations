@@ -42,6 +42,7 @@ editing/spelling/spelling-attribute-change.html [ Pass ]
 editing/spelling/spelling-backspace-between-lines.html [ Pass ]
 editing/spelling/spelling-hasspellingmarker.html [ Pass ]
 editing/spelling/spelling-linebreak.html [ Pass ]
+editing/spelling/spelling-with-whitespace-selection.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
