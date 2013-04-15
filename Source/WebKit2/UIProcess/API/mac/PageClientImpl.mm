@@ -197,6 +197,13 @@ bool PageClientImpl::isViewVisible()
     if (![[m_wkView window] isVisible])
         return false;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
+    // Mountain Lion and previous do not support occlusion notifications, and as such will
+    // continue to report as "visible" when not on the active space.
+    if (![[m_wkView window] isOnActiveSpace])
+        return false;
+#endif
+
     if ([m_wkView isHiddenOrHasHiddenAncestor])
         return false;
 

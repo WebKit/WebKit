@@ -1,3 +1,18 @@
+2013-04-15  Jer Noble  <jer.noble@apple.com>
+
+        After switching to another space and back, video races to catch up with audio
+        https://bugs.webkit.org/show_bug.cgi?id=114634
+
+        Reviewed by Tim Horton.
+
+        In Mountain Lion and previous, report that a view is "not visible" when its window
+        is not in the active space. This causes us to notify AVFoundation that its CAImageQueues
+        will not be serviced and results in not having the "catch up" behavior when returning
+        to the browser's space.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisible):
+
 2013-04-15  Seulgi Kim  <seulgikim@company100.net>
 
         Schedule rendering at regular interval (60fps)
