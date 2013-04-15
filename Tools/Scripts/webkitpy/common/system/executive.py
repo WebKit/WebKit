@@ -142,6 +142,12 @@ class Executive(object):
         return child_output
 
     def cpu_count(self):
+        try:
+            cpus = int(os.environ.get('NUMBER_OF_PROCESSORS'))
+            if cpus > 0:
+                return cpus
+        except (ValueError, TypeError):
+            pass
         return multiprocessing.cpu_count()
 
     @staticmethod
