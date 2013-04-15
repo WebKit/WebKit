@@ -21,7 +21,9 @@
 #include "KURL.h"
 #include "ResourceHandleManager.h"
 
+#include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
