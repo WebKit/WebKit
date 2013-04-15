@@ -48,7 +48,6 @@
 #include "DOMWindowNotifications.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
-#include "DeviceProximityController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -105,6 +104,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(PROXIMITY_EVENTS)
+#include "DeviceProximityController.h"
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "RequestAnimationFrameCallback.h"

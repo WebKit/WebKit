@@ -34,7 +34,6 @@
 #include "DatabaseManager.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
-#include "DeviceProximityController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -53,6 +52,10 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
+
+#if ENABLE(PROXIMITY_EVENTS)
+#include "DeviceProximityController.h"
+#endif
 
 using namespace std;
 
