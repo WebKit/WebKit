@@ -33,6 +33,7 @@ namespace WebCore {
 
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
     macro(color, "color") \
+    macro(color_index, "color-index") \
     macro(grid, "grid") \
     macro(monochrome, "monochrome") \
     macro(height, "height") \
@@ -45,6 +46,7 @@ namespace WebCore {
     macro(device_height, "device-height") \
     macro(device_width, "device-width") \
     macro(max_color, "max-color") \
+    macro(max_color_index, "max-color-index") \
     macro(max_aspect_ratio, "max-aspect-ratio") \
     macro(max_device_aspect_ratio, "max-device-aspect-ratio") \
     macro(max_device_pixel_ratio, "-webkit-max-device-pixel-ratio") \
@@ -55,6 +57,7 @@ namespace WebCore {
     macro(max_width, "max-width") \
     macro(max_resolution, "max-resolution") \
     macro(min_color, "min-color") \
+    macro(min_color_index, "min-color-index") \
     macro(min_aspect_ratio, "min-aspect-ratio") \
     macro(min_device_aspect_ratio, "min-device-aspect-ratio") \
     macro(min_device_pixel_ratio, "-webkit-min-device-pixel-ratio") \

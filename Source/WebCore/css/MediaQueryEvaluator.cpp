@@ -69,10 +69,8 @@ typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
 static FunctionMap* gFunctionMap;
 
 /*
- * FIXME: following media features are not implemented: color_index, scan
+ * FIXME: following media features are not implemented: scan
  *
- * color_index, min-color-index, max_color_index: It's unknown how to retrieve
- * the information if the display mode is indexed
  * scan: The "scan" media feature describes the scanning process of
  * tv output devices. It's unknown how to retrieve this information from
  * the platform
@@ -216,6 +214,17 @@ static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, M
         return numberValue(value, number) && compareValue(bitsPerComponent, static_cast<int>(number), op);
 
     return bitsPerComponent != 0;
+}
+
+static bool color_indexMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
+{
+    // FIXME: It's unknown how to retrieve the information if the display mode is indexed
+    // Assume we don't support indexed display.
+    if (!value)
+        return false;
+
+    float number;
+    return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
 }
 
 static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
@@ -419,6 +428,16 @@ static bool min_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame
 static bool max_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
 {
     return colorMediaFeatureEval(value, style, frame, MaxPrefix);
+}
+
+static bool min_color_indexMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+{
+    return color_indexMediaFeatureEval(value, style, frame, MinPrefix);
+}
+
+static bool max_color_indexMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+{
+    return color_indexMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
 static bool min_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
