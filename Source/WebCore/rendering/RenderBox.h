@@ -327,7 +327,7 @@ public:
 
     bool stretchesToViewport() const
     {
-        return document()->inQuirksMode() && style()->logicalHeight().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
+        return document()->inQuirksMode() && style()->logicalHeight().isAuto() && !isPositioned() && (isRoot() || isBody()) && !document()->shouldDisplaySeamlesslyWithParent() && !isInline();
     }
 
     virtual IntSize intrinsicSize() const { return IntSize(); }
