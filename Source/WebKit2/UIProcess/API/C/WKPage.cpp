@@ -40,6 +40,10 @@
 #include <Block.h>
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+#include "WebContextMenuItem.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -878,4 +882,11 @@ void WKPageSetOverridePrivateBrowsingEnabled(WKPageRef pageRef, bool enabled)
 bool WKPageGetOverridePrivateBrowsingEnabled(WKPageRef pageRef)
 {
     return toImpl(pageRef)->overridePrivateBrowsingEnabled();
+}
+
+void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item)
+{
+#if ENABLE(CONTEXT_MENUS)
+    toImpl(page)->contextMenuItemSelected(*(toImpl(item)->data()));
+#endif
 }

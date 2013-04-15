@@ -60,7 +60,7 @@ template<> struct APIClientTraits<WKBundlePageUIClient> {
 };
 
 template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
+    static const size_t interfaceSizesByVersion[4];
 };
 
 template<> struct APIClientTraits<WKPageLoaderClient> {

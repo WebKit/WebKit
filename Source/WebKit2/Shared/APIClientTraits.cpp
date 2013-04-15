@@ -58,6 +58,7 @@ const size_t APIClientTraits<WKBundlePageFullScreenClient>::interfaceSizesByVers
 const size_t APIClientTraits<WKPageContextMenuClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageContextMenuClient, contextMenuDismissed),
     offsetof(WKPageContextMenuClient, getContextMenuFromProposedMenu),
+    offsetof(WKPageContextMenuClient, showContextMenu),
     sizeof(WKPageContextMenuClient)
 };
 

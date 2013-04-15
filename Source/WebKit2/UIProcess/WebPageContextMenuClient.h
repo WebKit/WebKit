@@ -31,6 +31,7 @@
 #include "APIClient.h"
 #include "WebHitTestResult.h"
 #include "WKPage.h"
+#include <WebCore/IntPoint.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -44,6 +45,8 @@ public:
     bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data&, APIObject* userData);
     void customContextMenuItemSelected(WebPageProxy*, const WebContextMenuItemData&);
     void contextMenuDismissed(WebPageProxy*);
+    bool showContextMenu(WebPageProxy*, const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
+    bool hideContextMenu(WebPageProxy*);
 };
 
 } // namespace WebKit

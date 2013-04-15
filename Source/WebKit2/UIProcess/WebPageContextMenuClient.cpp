@@ -42,7 +42,7 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
     if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0)
         return false;
 
-    if (m_client.version == kWKPageContextMenuClientCurrentVersion && !m_client.getContextMenuFromProposedMenu)
+    if (m_client.version >= 2 && !m_client.getContextMenuFromProposedMenu)
         return false;
 
     unsigned size = proposedMenuVector.size();
@@ -52,7 +52,7 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
         proposedMenu->append(WebContextMenuItem::create(proposedMenuVector[i]).get());
         
     WKArrayRef newMenu = 0;
-    if (m_client.version == kWKPageContextMenuClientCurrentVersion) {
+    if (m_client.version >= 2) {
         RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(hitTestResultData);
         m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(proposedMenu.get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
     } else
@@ -91,6 +91,34 @@ void WebPageContextMenuClient::contextMenuDismissed(WebPageProxy* page)
         return;
     
     m_client.contextMenuDismissed(toAPI(page), m_client.clientInfo);
+}
+
+bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore::IntPoint& menuLocation, const Vector<WebContextMenuItemData>& menuItemsVector)
+{
+    if (!m_client.showContextMenu)
+        return false;
+
+    unsigned size = menuItemsVector.size();
+
+    Vector<RefPtr<APIObject> > menuItems;
+    menuItems.reserveCapacity(size);
+
+    for (unsigned i = 0; i < size; ++i)
+        menuItems.uncheckedAppend(WebContextMenuItem::create(menuItemsVector[i]).get());
+
+    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(ImmutableArray::adopt(menuItems).get()), m_client.clientInfo);
+
+    return true;
+}
+
+bool WebPageContextMenuClient::hideContextMenu(WebPageProxy* page)
+{
+    if (!m_client.hideContextMenu)
+        return false;
+
+    m_client.hideContextMenu(toAPI(page), m_client.clientInfo);
+
+    return true;
 }
 
 } // namespace WebKit

@@ -54,6 +54,8 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     contextMenuClient.customContextMenuItemSelected = 0;
     contextMenuClient.contextMenuDismissed = 0;
     contextMenuClient.getContextMenuFromProposedMenu = 0;
+    contextMenuClient.showContextMenu = 0;
+    contextMenuClient.hideContextMenu = 0;
 
     WKPageSetPageContextMenuClient(pageRef, &contextMenuClient);
 }

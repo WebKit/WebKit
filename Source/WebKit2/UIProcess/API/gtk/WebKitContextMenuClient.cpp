@@ -40,6 +40,8 @@ void attachContextMenuClientToView(WebKitWebView* webView)
         0, // customContextMenuItemSelected
         0, // contextMenuDismissed
         getContextMenuFromProposedMenu,
+        0, // showContextMenu
+        0, // hideContextMenu
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageContextMenuClient(wkPage, &wkContextMenuClient);
