@@ -1,3 +1,20 @@
+2013-04-15  Andy Estes  <aestes@apple.com>
+
+        Merged r138990.
+
+    2013-01-07  Tom Sepez  <tsepez@chromium.org>
+
+        Document::initSecurityContext() gives parent security context to iframes with invalid URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=104960
+
+        Reviewed by Adam Barth.
+
+        Change covers the case of an invalid non-empty URL.  We know nothing
+        about that kind of URL and choose not to inherit origins.
+        
+        * dom/Document.cpp:
+        (WebCore::shouldInheritSecurityOriginFromOwner):
+
 2013-04-15  Tim Horton  <timothy_horton@apple.com>
 
     Merge r138460.
