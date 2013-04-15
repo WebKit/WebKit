@@ -34,13 +34,13 @@ namespace WTF {
 
 static DoublyLinkedList<PlatformThreadSpecificKey>& destructorsList()
 {
-    DEFINE_STATIC_LOCAL(DoublyLinkedList<PlatformThreadSpecificKey>, staticList, ());
+    static DoublyLinkedList<PlatformThreadSpecificKey> staticList;
     return staticList;
 }
 
 static Mutex& destructorsMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    static Mutex staticMutex;
     return staticMutex;
 }
 
@@ -91,7 +91,9 @@ DWORD* tlsKeys()
 
 void threadSpecificKeyCreate(ThreadSpecificKey* key, void (*destructor)(void *))
 {
-    *key = new PlatformThreadSpecificKey(destructor);
+    // Use the original malloc() instead of fastMalloc() to use this function in FastMalloc code.
+    *key = static_cast<PlatformThreadSpecificKey*>(::malloc(sizeof(PlatformThreadSpecificKey)));
+    new (*key) PlatformThreadSpecificKey(destructor);
 
     MutexLocker locker(destructorsMutex());
     destructorsList().push(*key);
@@ -101,7 +103,8 @@ void threadSpecificKeyDelete(ThreadSpecificKey key)
 {
     MutexLocker locker(destructorsMutex());
     destructorsList().remove(key);
-    delete key;
+    key->~PlatformThreadSpecificKey();
+    ::free(key);
 }
 
 void threadSpecificSet(ThreadSpecificKey key, void* data)
