@@ -72,16 +72,24 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
 
         _log.info('Last SVN revision: %d' % self._last_svn_revision)
 
-        for revision in range(self._last_svn_revision + 1, self._last_svn_revision + self._maximum_number_of_revisions_to_avoid_spamming_irc):
+        count = 0
+        while count < self._maximum_number_of_revisions_to_avoid_spamming_irc:
+            new_revision = self._last_svn_revision + 1
             try:
                 commit_log = self._tool.executive.run_command(['svn', 'log', 'https://svn.webkit.org/repository/webkit/trunk', '--non-interactive', '--revision',
-                    self._tool.scm().strip_r_from_svn_revision(revision)])
+                    self._tool.scm().strip_r_from_svn_revision(new_revision)])
             except ScriptError:
                 break
-            if self._is_empty_log(commit_log) or commit_log.find('No such revision') >= 0:
+
+            if commit_log.find('No such revision') >= 0:
                 continue
-            _log.info('Found revision %d' % revision)
-            self._last_svn_revision = revision
+
+            self._last_svn_revision = new_revision
+            if self._is_empty_log(commit_log):
+                continue
+
+            count += 1
+            _log.info('Found revision %d' % new_revision)
             self._tool.irc().post(self._summarize_commit_log(commit_log).encode('utf-8'))
 
     def _is_empty_log(self, commit_log):

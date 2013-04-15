@@ -1,3 +1,16 @@
+2013-04-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WKR gets stuck when there are many merges
+        https://bugs.webkit.org/show_bug.cgi?id=114632
+
+        Reviewed by Andreas Kling.
+
+        Move the last revision forward when it exists in a branch.
+        Otherwise, we'll be stuck looping over revisions made to merge patches.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot.next_work_item):
+
 2013-04-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Missing a few packages for building on stock Fedora
