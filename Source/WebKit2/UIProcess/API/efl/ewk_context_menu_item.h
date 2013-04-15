@@ -41,7 +41,7 @@ extern "C" {
 /**
  * \enum    Ewk_Context_Menu_Item_Type
  * @brief   Defines the types of the items for the context menu.
- * @info    Keep this in sync with ContextMenuItem.h
+ * @info    Keep this in sync with WKContextMenuItemTypes.h
  */
 typedef enum {
     EWK_ACTION_TYPE,
@@ -53,7 +53,6 @@ typedef enum {
 /**
  * \enum    Ewk_Context_Menu_Action
  * @brief   Provides the actions of items for the context menu.
- * @info    Keep this in sync with ContextMenuItem.h
  */
 typedef enum {
     EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION,
@@ -127,9 +126,6 @@ typedef enum {
     EWK_CONTEXT_MENU_ITEM_TAG_ENTER_VIDEO_FULLSCREEN,
     EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_PLAY_PAUSE,
     EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_MUTE,
-    EWK_CONTEXT_MENU_ITEM_BASE_CUSTOM_TAG = 5000,
-    EWK_CONTEXT_MENU_ITEM_CUSTOM_TAG_NO_ACTION = 5998,
-    EWK_CONTEXT_MENU_ITEM_LAST_CUSTOM_TAG = 5999,
     EWK_CONTEXT_MENU_ITEM_BASE_APPLICATION_TAG = 10000
 } Ewk_Context_Menu_Item_Action;
 

@@ -804,7 +804,7 @@ void EwkView::dismissColorPicker()
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
 
-void EwkView::showContextMenu(WebContextMenuProxyEfl* contextMenuProxy, const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items)
+void EwkView::showContextMenu(WKPoint position, WKArrayRef items)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
@@ -817,9 +817,9 @@ void EwkView::showContextMenu(WebContextMenuProxyEfl* contextMenuProxy, const We
     if (m_contextMenu)
         hideContextMenu();
 
-    m_contextMenu = Ewk_Context_Menu::create(this, contextMenuProxy, items);
+    m_contextMenu = Ewk_Context_Menu::create(this, items);
 
-    sd->api->context_menu_show(sd, position.x(), position.y(), m_contextMenu.get());
+    sd->api->context_menu_show(sd, position.x, position.y, m_contextMenu.get());
 }
 
 void EwkView::hideContextMenu()

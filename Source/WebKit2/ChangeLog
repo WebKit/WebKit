@@ -1,3 +1,48 @@
+2013-04-15  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Use C API in ewk_context_menu
+        https://bugs.webkit.org/show_bug.cgi?id=109698
+
+        Reviewed by Andreas Kling.
+
+        EFL port unlike others does not handle context menus inside WebKit but exposes an API:
+        ewk_context_menu and ewk_context_menu_item, and leaves context menu to application.
+        Currently EFL port's context menu API uses internal C++ classes, while it should use WK2 C API,
+        to avoid violating layering.
+        This patch changes EFL context menu API to use only WK2 C API.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::showContextMenu):
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (EwkView):
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        (EwkContextMenu::EwkContextMenu):
+        (EwkContextMenu::contextMenuItemSelected):
+        (ewk_context_menu_item_select):
+        (getWKTagFromEwkAction):
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (EwkContextMenuItem::EwkContextMenuItem):
+        (getEwkActionFromWKTag):
+        * UIProcess/API/efl/ewk_context_menu_item.h:
+        * UIProcess/API/efl/ewk_context_menu_item_private.h:
+        (EwkContextMenuItem::create):
+        (EwkContextMenuItem):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu::create):
+        (EwkContextMenu):
+        * UIProcess/efl/ContextMenuClientEfl.cpp:
+        (showContextMenu):
+        (hideContextMenu):
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+        * UIProcess/efl/ContextMenuClientEfl.h:
+        (WebKit::ContextMenuClientEfl::view):
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        (WebKit::WebContextMenuProxyEfl::hideContextMenu):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+        (WebContextMenuProxyEfl):
+
 2013-04-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CoordGfx] Background color should not be part of GraphicsLayerState

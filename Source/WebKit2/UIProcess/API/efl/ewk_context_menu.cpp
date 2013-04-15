@@ -28,34 +28,34 @@
 
 #include "APIObject.h"
 #include "EwkView.h"
-#include "WebContextMenuItemData.h"
-#include "WebContextMenuProxyEfl.h"
+#include "WKArray.h"
+#include "WKContextMenuItem.h"
+#include "WKString.h"
 #include "ewk_context_menu_item.h"
 #include "ewk_context_menu_item_private.h"
 #include "ewk_context_menu_private.h"
 
 using namespace WebKit;
 
-EwkContextMenu::EwkContextMenu(EwkView* view, WebContextMenuProxyEfl* contextMenuProxy, const Vector<WebKit::WebContextMenuItemData>& items)
+static WKContextMenuItemTag getWKTagFromEwkAction(Ewk_Context_Menu_Item_Action action);
+
+EwkContextMenu::EwkContextMenu(EwkView* view, WKArrayRef items)
     : m_viewImpl(view)
-    , m_contextMenuProxy(contextMenuProxy)
     , m_contextMenuItems(0)
 {
-    const size_t size = items.size();
+    size_t size = WKArrayGetSize(items);
     for (size_t i = 0; i < size; ++i)
-        m_contextMenuItems = eina_list_append(m_contextMenuItems, Ewk_Context_Menu_Item::create(items[i]).leakPtr());
+        m_contextMenuItems = eina_list_append(m_contextMenuItems, Ewk_Context_Menu_Item::create(static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(items, i))).leakPtr());
 }
 
 EwkContextMenu::EwkContextMenu()
     : m_viewImpl(0)
-    , m_contextMenuProxy(0)
     , m_contextMenuItems(0)
 {
 }
 
 EwkContextMenu::EwkContextMenu(Eina_List* items)
     : m_viewImpl(0)
-    , m_contextMenuProxy(0)
     , m_contextMenuItems(0)
 {
     Eina_List* l;
@@ -86,9 +86,9 @@ void Ewk_Context_Menu::removeItem(EwkContextMenuItem* item)
     m_contextMenuItems = eina_list_remove(m_contextMenuItems, item);
 }
 
-void EwkContextMenu::contextMenuItemSelected(const WebKit::WebContextMenuItemData& item)
+void EwkContextMenu::contextMenuItemSelected(WKContextMenuItemRef item)
 {
-    m_contextMenuProxy->contextMenuItemSelected(item); 
+    WKPageSelectContextMenuItem(m_viewImpl->wkPage(), item);
 } 
 
 Ewk_Context_Menu* ewk_context_menu_new()
@@ -140,10 +140,173 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
-    WebCore::ContextMenuItemType type = static_cast<WebCore::ContextMenuItemType>(item->type());
-    WebCore::ContextMenuAction action = static_cast<WebCore::ContextMenuAction>(item->action());
+    WKContextMenuItemRef wkItem;
 
-    menu->contextMenuItemSelected(WebContextMenuItemData(type, action, item->title(), item->enabled(), item->checked()));
+    switch (item->type()) {
+    case EWK_ACTION_TYPE:
+        wkItem = WKContextMenuItemCreateAsAction(getWKTagFromEwkAction(item->action()), adoptWK(WKStringCreateWithUTF8CString(item->title())).get(), item->enabled());
+        break;
+    case EWK_CHECKABLE_ACTION_TYPE:
+        wkItem = WKContextMenuItemCreateAsCheckableAction(getWKTagFromEwkAction(item->action()), adoptWK(WKStringCreateWithUTF8CString(item->title())).get(), item->enabled(), item->checked());
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    menu->contextMenuItemSelected(wkItem);
 
     return true;
+}
+
+static WKContextMenuItemTag getWKTagFromEwkAction(Ewk_Context_Menu_Item_Action action)
+{
+    switch (action) {
+    case EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION:
+        return kWKContextMenuItemTagNoAction;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK_IN_NEW_WINDOW:
+        return kWKContextMenuItemTagOpenLinkInNewWindow;
+    case EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_LINK_TO_DISK:
+        return kWKContextMenuItemTagDownloadLinkToDisk;
+    case EWK_CONTEXT_MENU_ITEM_TAG_COPY_LINK_TO_CLIPBOARD:
+        return kWKContextMenuItemTagCopyLinkToClipboard;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OPEN_IMAGE_IN_NEW_WINDOW:
+        return kWKContextMenuItemTagOpenImageInNewWindow;
+    case EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_IMAGE_TO_DISK:
+        return kWKContextMenuItemTagDownloadImageToDisk;
+    case EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_TO_CLIPBOARD:
+        return kWKContextMenuItemTagCopyImageToClipboard;
+    case EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_URL_TO_CLIPBOARD:
+        return kWKContextMenuItemTagCopyImageUrlToClipboard;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OPEN_FRAME_IN_NEW_WINDOW:
+        return kWKContextMenuItemTagOpenFrameInNewWindow;
+    case EWK_CONTEXT_MENU_ITEM_TAG_COPY:
+        return kWKContextMenuItemTagCopy;
+    case EWK_CONTEXT_MENU_ITEM_TAG_GO_BACK:
+        return kWKContextMenuItemTagGoBack;
+    case EWK_CONTEXT_MENU_ITEM_TAG_GO_FORWARD:
+        return kWKContextMenuItemTagGoForward;
+    case EWK_CONTEXT_MENU_ITEM_TAG_STOP:
+        return kWKContextMenuItemTagStop;
+    case EWK_CONTEXT_MENU_ITEM_TAG_RELOAD:
+        return kWKContextMenuItemTagReload;
+    case EWK_CONTEXT_MENU_ITEM_TAG_CUT:
+        return kWKContextMenuItemTagCut;
+    case EWK_CONTEXT_MENU_ITEM_TAG_PASTE:
+        return kWKContextMenuItemTagPaste;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SELECT_ALL:
+        return kWKContextMenuItemTagSelectAll;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_GUESS:
+        return kWKContextMenuItemTagSpellingGuess;
+    case EWK_CONTEXT_MENU_ITEM_TAG_NO_GUESSES_FOUND:
+        return kWKContextMenuItemTagNoGuessesFound;
+    case EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING:
+        return kWKContextMenuItemTagIgnoreSpelling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING:
+        return kWKContextMenuItemTagLearnSpelling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OTHER:
+        return kWKContextMenuItemTagOther;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_IN_SPOTLIGHT:
+        return kWKContextMenuItemTagSearchInSpotlight;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_WEB:
+        return kWKContextMenuItemTagSearchWeb;
+    case EWK_CONTEXT_MENU_ITEM_TAG_LOOK_UP_IN_DICTIONARY:
+        return kWKContextMenuItemTagLookUpInDictionary;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OPEN_WITH_DEFAULT_APPLICATION:
+        return kWKContextMenuItemTagOpenWithDefaultApplication;
+    case EWK_CONTEXT_MENU_ITEM_PDFACTUAL_SIZE:
+        return kWKContextMenuItemTagPDFActualSize;
+    case EWK_CONTEXT_MENU_ITEM_PDFZOOM_IN:
+        return kWKContextMenuItemTagPDFZoomIn;
+    case EWK_CONTEXT_MENU_ITEM_PDFZOOM_OUT:
+        return kWKContextMenuItemTagPDFZoomOut;
+    case EWK_CONTEXT_MENU_ITEM_PDFAUTO_SIZE:
+        return kWKContextMenuItemTagPDFAutoSize;
+    case EWK_CONTEXT_MENU_ITEM_PDFSINGLE_PAGE:
+        return kWKContextMenuItemTagPDFSinglePage;
+    case EWK_CONTEXT_MENU_ITEM_PDFFACING_PAGES:
+        return kWKContextMenuItemTagPDFFacingPages;
+    case EWK_CONTEXT_MENU_ITEM_PDFCONTINUOUS:
+        return kWKContextMenuItemTagPDFContinuous;
+    case EWK_CONTEXT_MENU_ITEM_PDFNEXT_PAGE:
+        return kWKContextMenuItemTagPDFNextPage;
+    case EWK_CONTEXT_MENU_ITEM_PDFPREVIOUS_PAGE:
+        return kWKContextMenuItemTagPDFPreviousPage;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK:
+        return kWKContextMenuItemTagOpenLink;
+    case EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_GRAMMAR:
+        return kWKContextMenuItemTagIgnoreGrammar;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU:
+        return kWKContextMenuItemTagSpellingMenu;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SHOW_SPELLING_PANEL:
+        return kWKContextMenuItemTagShowSpellingPanel;
+    case EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING:
+        return kWKContextMenuItemTagCheckSpelling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING:
+        return kWKContextMenuItemTagCheckSpellingWhileTyping;
+    case EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING:
+        return kWKContextMenuItemTagCheckGrammarWithSpelling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU:
+        return kWKContextMenuItemTagFontMenu;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SHOW_FONTS:
+        return kWKContextMenuItemTagShowFonts;
+    case EWK_CONTEXT_MENU_ITEM_TAG_BOLD:
+        return kWKContextMenuItemTagBold;
+    case EWK_CONTEXT_MENU_ITEM_TAG_ITALIC:
+        return kWKContextMenuItemTagItalic;
+    case EWK_CONTEXT_MENU_ITEM_TAG_UNDERLINE:
+        return kWKContextMenuItemTagUnderline;
+    case EWK_CONTEXT_MENU_ITEM_TAG_OUTLINE:
+        return kWKContextMenuItemTagOutline;
+    case EWK_CONTEXT_MENU_ITEM_TAG_STYLES:
+        return kWKContextMenuItemTagStyles;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SHOW_COLORS:
+        return kWKContextMenuItemTagShowColors;
+    case EWK_CONTEXT_MENU_ITEM_TAG_SPEECH_MENU:
+        return kWKContextMenuItemTagSpeechMenu;
+    case EWK_CONTEXT_MENU_ITEM_TAG_START_SPEAKING:
+        return kWKContextMenuItemTagStartSpeaking;
+    case EWK_CONTEXT_MENU_ITEM_TAG_STOP_SPEAKING:
+        return kWKContextMenuItemTagStopSpeaking;
+    case EWK_CONTEXT_MENU_ITEM_TAG_WRITING_DIRECTION_MENU:
+        return kWKContextMenuItemTagWritingDirectionMenu;
+    case EWK_CONTEXT_MENU_ITEM_TAG_DEFAULT_DIRECTION:
+        return kWKContextMenuItemTagDefaultDirection;
+    case EWK_CONTEXT_MENU_ITEM_TAG_LEFT_TO_RIGHT:
+        return kWKContextMenuItemTagLeftToRight;
+    case EWK_CONTEXT_MENU_ITEM_TAG_RIGHT_TO_LEFT:
+        return kWKContextMenuItemTagRightToLeft;
+    case EWK_CONTEXT_MENU_ITEM_TAG_PDFSINGLE_PAGE_SCROLLING:
+        return kWKContextMenuItemTagPDFSinglePageScrolling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_PDFFACING_PAGES_SCROLLING:
+        return kWKContextMenuItemTagPDFFacingPagesScrolling;
+    case EWK_CONTEXT_MENU_ITEM_TAG_INSPECT_ELEMENT:
+        return kWKContextMenuItemTagInspectElement;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_MENU:
+        return kWKContextMenuItemTagTextDirectionMenu;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_DEFAULT:
+        return kWKContextMenuItemTagTextDirectionDefault;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_LEFT_TO_RIGHT:
+        return kWKContextMenuItemTagTextDirectionLeftToRight;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_RIGHT_TO_LEFT:
+        return kWKContextMenuItemTagTextDirectionRightToLeft;
+    case EWK_CONTEXT_MENU_ITEM_OPEN_MEDIA_IN_NEW_WINDOW:
+        return kWKContextMenuItemTagOpenMediaInNewWindow;
+    case EWK_CONTEXT_MENU_ITEM_TAG_COPY_MEDIA_LINK_TO_CLIPBOARD:
+        return kWKContextMenuItemTagCopyMediaLinkToClipboard;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_CONTROLS:
+        return kWKContextMenuItemTagToggleMediaControls;
+    case EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_LOOP:
+        return kWKContextMenuItemTagToggleMediaLoop;
+    case EWK_CONTEXT_MENU_ITEM_TAG_ENTER_VIDEO_FULLSCREEN:
+        return kWKContextMenuItemTagEnterVideoFullscreen;
+    case EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_PLAY_PAUSE:
+        return kWKContextMenuItemTagMediaPlayPause;
+    case EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_MUTE:
+        return kWKContextMenuItemTagMediaMute;
+    case EWK_CONTEXT_MENU_ITEM_BASE_APPLICATION_TAG:
+        return kWKContextMenuItemBaseApplicationTag;
+    default:
+        return static_cast<WKContextMenuItemTag>(action);
+    }
 }

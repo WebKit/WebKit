@@ -51,8 +51,6 @@ public:
     void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     void hideContextMenu();
 
-    void contextMenuItemSelected(const WebContextMenuItemData&);
-
 private:
     WebContextMenuProxyEfl(EwkView*, WebPageProxy*);
 

@@ -26,8 +26,8 @@
 #ifndef ewk_context_menu_item_private_h
 #define ewk_context_menu_item_private_h
 
+#include "WKContextMenuItem.h"
 #include "WKEinaSharedString.h"
-#include "WebContextMenuItemData.h"
 #include "ewk_context_menu.h"
 #include "ewk_context_menu_item.h"
 #include <wtf/PassOwnPtr.h>
@@ -38,7 +38,7 @@
  */
 class EwkContextMenuItem {
 public:
-    static PassOwnPtr<EwkContextMenuItem> create(const WebKit::WebContextMenuItemData& item)
+    static PassOwnPtr<EwkContextMenuItem> create(WKContextMenuItemRef item)
     {
         return adoptPtr(new EwkContextMenuItem(item));
     }
@@ -64,7 +64,7 @@ public:
     void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
 private:
-    explicit EwkContextMenuItem(const WebKit::WebContextMenuItemData&);
+    explicit EwkContextMenuItem(WKContextMenuItemRef);
     EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu);
 
     Ewk_Context_Menu_Item_Type m_type;

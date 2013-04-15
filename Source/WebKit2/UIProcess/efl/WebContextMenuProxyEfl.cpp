@@ -31,7 +31,7 @@
 #include "EwkView.h"
 #include "WebContextMenuItemData.h"
 #include "WebPageProxy.h"
-#include <wtf/text/CString.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -47,19 +47,14 @@ WebContextMenuProxyEfl::~WebContextMenuProxyEfl()
 {
 }
 
-void WebContextMenuProxyEfl::showContextMenu(const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items)
+void WebContextMenuProxyEfl::showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&)
 {
-    m_view->showContextMenu(this, position, items);
+    notImplemented();
 }
 
 void WebContextMenuProxyEfl::hideContextMenu()
 {
-    m_view->hideContextMenu();
-}
-
-void WebContextMenuProxyEfl::contextMenuItemSelected(const WebContextMenuItemData& item)
-{
-    m_page->contextMenuItemSelected(item);
+    notImplemented();
 }
 
 } // namespace WebKit

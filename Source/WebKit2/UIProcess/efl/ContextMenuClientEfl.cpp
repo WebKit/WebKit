@@ -27,17 +27,24 @@
 #include "ContextMenuClientEfl.h"
 
 #include "EwkView.h"
-#include "NotImplemented.h"
 #include "WKArray.h"
 #include "WKPage.h"
-#include "WebContextMenuItem.h"   
-#include <Evas.h>
 
 using namespace WebKit;
 
 static inline ContextMenuClientEfl* toContextClientEfl(const void* clientInfo)
 {
     return static_cast<ContextMenuClientEfl*>(const_cast<void*>(clientInfo));
+}
+
+static void showContextMenu(WKPageRef, WKPoint menuLocation, WKArrayRef menuItems, const void* clientInfo)
+{
+    toContextClientEfl(clientInfo)->view()->showContextMenu(menuLocation, menuItems);
+}
+
+static void hideContextMenu(WKPageRef, const void* clientInfo)
+{
+    toContextClientEfl(clientInfo)->view()->hideContextMenu();
 }
 
 ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
@@ -54,13 +61,9 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     contextMenuClient.customContextMenuItemSelected = 0;
     contextMenuClient.contextMenuDismissed = 0;
     contextMenuClient.getContextMenuFromProposedMenu = 0;
-    contextMenuClient.showContextMenu = 0;
-    contextMenuClient.hideContextMenu = 0;
+    contextMenuClient.showContextMenu = showContextMenu;
+    contextMenuClient.hideContextMenu = hideContextMenu;
 
     WKPageSetPageContextMenuClient(pageRef, &contextMenuClient);
 }
 
-void ContextMenuClientEfl::getContextMenuFromProposedMenu(WKPageRef, WKArrayRef, WKArrayRef*, WKHitTestResultRef, WKTypeRef, const void*)
-{
-    notImplemented();
-}

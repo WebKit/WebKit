@@ -28,17 +28,19 @@
 
 #include "ewk_context_menu_item_private.h"
 #include "ewk_private.h"
+#include <WebKit2/WKContextMenuItemTypes.h>
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
 using namespace WebKit;
 
-EwkContextMenuItem::EwkContextMenuItem(const WebContextMenuItemData& item)
-    : m_type(static_cast<Ewk_Context_Menu_Item_Type>(item.type()))
-    , m_action(static_cast<Ewk_Context_Menu_Item_Action>(item.action()))
-    , m_title(item.title().utf8().data())
-    , m_isChecked(item.checked())
-    , m_isEnabled(item.enabled())
+static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action);
+
+EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item)
+    : m_type(static_cast<Ewk_Context_Menu_Item_Type>(WKContextMenuItemGetType(item)))
+    , m_action(getEwkActionFromWKTag((WKContextMenuItemGetTag(item))))
+    , m_title(WKEinaSharedString(AdoptWK, WKContextMenuItemCopyTitle(item)))
+    , m_isChecked(WKContextMenuItemGetChecked(item))
+    , m_isEnabled(WKContextMenuItemGetEnabled(item))
     , m_parentMenu(0)
     , m_subMenu(0)
 {
@@ -145,80 +147,154 @@ Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* item, Eina_Bo
     return true;
 }
 
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION, WebCore::ContextMenuItemTagNoAction);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK_IN_NEW_WINDOW, WebCore::ContextMenuItemTagOpenLinkInNewWindow);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_LINK_TO_DISK, WebCore::ContextMenuItemTagDownloadLinkToDisk);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_COPY_LINK_TO_CLIPBOARD, WebCore::ContextMenuItemTagCopyLinkToClipboard);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OPEN_IMAGE_IN_NEW_WINDOW, WebCore::ContextMenuItemTagOpenImageInNewWindow);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_IMAGE_TO_DISK, WebCore::ContextMenuItemTagDownloadImageToDisk);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_TO_CLIPBOARD, WebCore::ContextMenuItemTagCopyImageToClipboard);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_URL_TO_CLIPBOARD, WebCore::ContextMenuItemTagCopyImageUrlToClipboard);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OPEN_FRAME_IN_NEW_WINDOW, WebCore::ContextMenuItemTagOpenFrameInNewWindow);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_COPY, WebCore::ContextMenuItemTagCopy);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_GO_BACK, WebCore::ContextMenuItemTagGoBack);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_GO_FORWARD, WebCore::ContextMenuItemTagGoForward);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_STOP, WebCore::ContextMenuItemTagStop);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_RELOAD, WebCore::ContextMenuItemTagReload);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_CUT, WebCore::ContextMenuItemTagCut);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_PASTE, WebCore::ContextMenuItemTagPaste);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SELECT_ALL, WebCore::ContextMenuItemTagSelectAll);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_GUESS, WebCore::ContextMenuItemTagSpellingGuess);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_NO_GUESSES_FOUND, WebCore::ContextMenuItemTagNoGuessesFound);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING, WebCore::ContextMenuItemTagIgnoreSpelling);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING, WebCore::ContextMenuItemTagLearnSpelling);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OTHER, WebCore::ContextMenuItemTagOther);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_IN_SPOTLIGHT, WebCore::ContextMenuItemTagSearchInSpotlight);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_WEB, WebCore::ContextMenuItemTagSearchWeb);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_LOOK_UP_IN_DICTIONARY, WebCore::ContextMenuItemTagLookUpInDictionary);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OPEN_WITH_DEFAULT_APPLICATION, WebCore::ContextMenuItemTagOpenWithDefaultApplication);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFACTUAL_SIZE, WebCore::ContextMenuItemPDFActualSize);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFZOOM_IN, WebCore::ContextMenuItemPDFZoomIn);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFZOOM_OUT, WebCore::ContextMenuItemPDFZoomOut);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFAUTO_SIZE, WebCore::ContextMenuItemPDFAutoSize);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFSINGLE_PAGE, WebCore::ContextMenuItemPDFSinglePage);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFFACING_PAGES, WebCore::ContextMenuItemPDFFacingPages);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFCONTINUOUS, WebCore::ContextMenuItemPDFContinuous);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFNEXT_PAGE, WebCore::ContextMenuItemPDFNextPage);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_PDFPREVIOUS_PAGE, WebCore::ContextMenuItemPDFPreviousPage);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK, WebCore::ContextMenuItemTagOpenLink);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_GRAMMAR, WebCore::ContextMenuItemTagIgnoreGrammar);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU, WebCore::ContextMenuItemTagSpellingMenu);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SHOW_SPELLING_PANEL, WebCore::ContextMenuItemTagShowSpellingPanel);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING, WebCore::ContextMenuItemTagCheckSpelling);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING, WebCore::ContextMenuItemTagCheckSpellingWhileTyping);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING, WebCore::ContextMenuItemTagCheckGrammarWithSpelling);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU, WebCore::ContextMenuItemTagFontMenu);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SHOW_FONTS, WebCore::ContextMenuItemTagShowFonts);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_BOLD, WebCore::ContextMenuItemTagBold);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_ITALIC, WebCore::ContextMenuItemTagItalic);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_UNDERLINE, WebCore::ContextMenuItemTagUnderline);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_OUTLINE, WebCore::ContextMenuItemTagOutline);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_STYLES, WebCore::ContextMenuItemTagStyles);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SHOW_COLORS, WebCore::ContextMenuItemTagShowColors);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_SPEECH_MENU, WebCore::ContextMenuItemTagSpeechMenu);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_START_SPEAKING, WebCore::ContextMenuItemTagStartSpeaking);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_STOP_SPEAKING, WebCore::ContextMenuItemTagStopSpeaking);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_WRITING_DIRECTION_MENU, WebCore::ContextMenuItemTagWritingDirectionMenu);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_DEFAULT_DIRECTION, WebCore::ContextMenuItemTagDefaultDirection);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_LEFT_TO_RIGHT, WebCore::ContextMenuItemTagLeftToRight);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_RIGHT_TO_LEFT, WebCore::ContextMenuItemTagRightToLeft);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_PDFSINGLE_PAGE_SCROLLING, WebCore::ContextMenuItemTagPDFSinglePageScrolling);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_PDFFACING_PAGES_SCROLLING, WebCore::ContextMenuItemTagPDFFacingPagesScrolling);
-#if ENABLE(INSPECTOR)
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_INSPECT_ELEMENT, WebCore::ContextMenuItemTagInspectElement);
-#endif
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_MENU, WebCore::ContextMenuItemTagTextDirectionMenu);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_DEFAULT, WebCore::ContextMenuItemTagTextDirectionDefault);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_LEFT_TO_RIGHT, WebCore::ContextMenuItemTagTextDirectionLeftToRight);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_RIGHT_TO_LEFT, WebCore::ContextMenuItemTagTextDirectionRightToLeft);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_OPEN_MEDIA_IN_NEW_WINDOW, WebCore::ContextMenuItemTagOpenMediaInNewWindow);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_COPY_MEDIA_LINK_TO_CLIPBOARD, WebCore::ContextMenuItemTagCopyMediaLinkToClipboard);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_CONTROLS, WebCore::ContextMenuItemTagToggleMediaControls);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_LOOP, WebCore::ContextMenuItemTagToggleMediaLoop);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_ENTER_VIDEO_FULLSCREEN, WebCore::ContextMenuItemTagEnterVideoFullscreen);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_PLAY_PAUSE, WebCore::ContextMenuItemTagMediaPlayPause);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_MUTE, WebCore::ContextMenuItemTagMediaMute);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_BASE_CUSTOM_TAG, WebCore::ContextMenuItemBaseCustomTag);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_CUSTOM_TAG_NO_ACTION, WebCore::ContextMenuItemCustomTagNoAction);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_LAST_CUSTOM_TAG, WebCore::ContextMenuItemLastCustomTag);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_BASE_APPLICATION_TAG, WebCore::ContextMenuItemBaseApplicationTag);
+static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action)
+{
+    switch (action) {
+    case kWKContextMenuItemTagNoAction:
+        return EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION;
+    case kWKContextMenuItemTagOpenLinkInNewWindow:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK_IN_NEW_WINDOW;
+    case kWKContextMenuItemTagDownloadLinkToDisk:
+        return EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_LINK_TO_DISK;
+    case kWKContextMenuItemTagCopyLinkToClipboard:
+        return EWK_CONTEXT_MENU_ITEM_TAG_COPY_LINK_TO_CLIPBOARD;
+    case kWKContextMenuItemTagOpenImageInNewWindow:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_IMAGE_IN_NEW_WINDOW;
+    case kWKContextMenuItemTagDownloadImageToDisk:
+        return EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_IMAGE_TO_DISK;
+    case kWKContextMenuItemTagCopyImageToClipboard:
+        return EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_TO_CLIPBOARD;
+    case kWKContextMenuItemTagCopyImageUrlToClipboard:
+        return EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_URL_TO_CLIPBOARD;
+    case kWKContextMenuItemTagOpenFrameInNewWindow:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_FRAME_IN_NEW_WINDOW;
+    case kWKContextMenuItemTagCopy:
+        return EWK_CONTEXT_MENU_ITEM_TAG_COPY;
+    case kWKContextMenuItemTagGoBack:
+        return EWK_CONTEXT_MENU_ITEM_TAG_GO_BACK;
+    case kWKContextMenuItemTagGoForward:
+        return EWK_CONTEXT_MENU_ITEM_TAG_GO_FORWARD;
+    case kWKContextMenuItemTagStop:
+        return EWK_CONTEXT_MENU_ITEM_TAG_STOP;
+    case kWKContextMenuItemTagReload:
+        return EWK_CONTEXT_MENU_ITEM_TAG_RELOAD;
+    case kWKContextMenuItemTagCut:
+        return EWK_CONTEXT_MENU_ITEM_TAG_CUT;
+    case kWKContextMenuItemTagPaste:
+        return EWK_CONTEXT_MENU_ITEM_TAG_PASTE;
+    case kWKContextMenuItemTagSelectAll:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SELECT_ALL;
+    case kWKContextMenuItemTagSpellingGuess:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_GUESS;
+    case kWKContextMenuItemTagNoGuessesFound:
+        return EWK_CONTEXT_MENU_ITEM_TAG_NO_GUESSES_FOUND;
+    case kWKContextMenuItemTagIgnoreSpelling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING;
+    case kWKContextMenuItemTagLearnSpelling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING;
+    case kWKContextMenuItemTagOther:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OTHER;
+    case kWKContextMenuItemTagSearchInSpotlight:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_IN_SPOTLIGHT;
+    case kWKContextMenuItemTagSearchWeb:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SEARCH_WEB;
+    case kWKContextMenuItemTagLookUpInDictionary:
+        return EWK_CONTEXT_MENU_ITEM_TAG_LOOK_UP_IN_DICTIONARY;
+    case kWKContextMenuItemTagOpenWithDefaultApplication:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_WITH_DEFAULT_APPLICATION;
+    case kWKContextMenuItemTagPDFActualSize:
+        return EWK_CONTEXT_MENU_ITEM_PDFACTUAL_SIZE;
+    case kWKContextMenuItemTagPDFZoomIn:
+        return EWK_CONTEXT_MENU_ITEM_PDFZOOM_IN;
+    case kWKContextMenuItemTagPDFZoomOut:
+        return EWK_CONTEXT_MENU_ITEM_PDFZOOM_OUT;
+    case kWKContextMenuItemTagPDFAutoSize:
+        return EWK_CONTEXT_MENU_ITEM_PDFAUTO_SIZE;
+    case kWKContextMenuItemTagPDFSinglePage:
+        return EWK_CONTEXT_MENU_ITEM_PDFSINGLE_PAGE;
+    case kWKContextMenuItemTagPDFFacingPages:
+        return EWK_CONTEXT_MENU_ITEM_PDFFACING_PAGES;
+    case kWKContextMenuItemTagPDFContinuous:
+        return EWK_CONTEXT_MENU_ITEM_PDFCONTINUOUS;
+    case kWKContextMenuItemTagPDFNextPage:
+        return EWK_CONTEXT_MENU_ITEM_PDFNEXT_PAGE;
+    case kWKContextMenuItemTagPDFPreviousPage:
+        return EWK_CONTEXT_MENU_ITEM_PDFPREVIOUS_PAGE;
+    case kWKContextMenuItemTagOpenLink:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK;
+    case kWKContextMenuItemTagIgnoreGrammar:
+        return EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_GRAMMAR;
+    case kWKContextMenuItemTagSpellingMenu:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU;
+    case kWKContextMenuItemTagShowSpellingPanel:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SHOW_SPELLING_PANEL;
+    case kWKContextMenuItemTagCheckSpelling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING;
+    case kWKContextMenuItemTagCheckSpellingWhileTyping:
+        return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING;
+    case kWKContextMenuItemTagCheckGrammarWithSpelling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING;
+    case kWKContextMenuItemTagFontMenu:
+        return EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU;
+    case kWKContextMenuItemTagShowFonts:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SHOW_FONTS;
+    case kWKContextMenuItemTagBold:
+        return EWK_CONTEXT_MENU_ITEM_TAG_BOLD;
+    case kWKContextMenuItemTagItalic:
+        return EWK_CONTEXT_MENU_ITEM_TAG_ITALIC;
+    case kWKContextMenuItemTagUnderline:
+        return EWK_CONTEXT_MENU_ITEM_TAG_UNDERLINE;
+    case kWKContextMenuItemTagOutline:
+        return EWK_CONTEXT_MENU_ITEM_TAG_OUTLINE;
+    case kWKContextMenuItemTagStyles:
+        return EWK_CONTEXT_MENU_ITEM_TAG_STYLES;
+    case kWKContextMenuItemTagShowColors:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SHOW_COLORS;
+    case kWKContextMenuItemTagSpeechMenu:
+        return EWK_CONTEXT_MENU_ITEM_TAG_SPEECH_MENU;
+    case kWKContextMenuItemTagStartSpeaking:
+        return EWK_CONTEXT_MENU_ITEM_TAG_START_SPEAKING;
+    case kWKContextMenuItemTagStopSpeaking:
+        return EWK_CONTEXT_MENU_ITEM_TAG_STOP_SPEAKING;
+    case kWKContextMenuItemTagWritingDirectionMenu:
+        return EWK_CONTEXT_MENU_ITEM_TAG_WRITING_DIRECTION_MENU;
+    case kWKContextMenuItemTagDefaultDirection:
+        return EWK_CONTEXT_MENU_ITEM_TAG_DEFAULT_DIRECTION;
+    case kWKContextMenuItemTagLeftToRight:
+        return EWK_CONTEXT_MENU_ITEM_TAG_LEFT_TO_RIGHT;
+    case kWKContextMenuItemTagRightToLeft:
+        return EWK_CONTEXT_MENU_ITEM_TAG_RIGHT_TO_LEFT;
+    case kWKContextMenuItemTagPDFSinglePageScrolling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_PDFSINGLE_PAGE_SCROLLING;
+    case kWKContextMenuItemTagPDFFacingPagesScrolling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_PDFFACING_PAGES_SCROLLING;
+    case kWKContextMenuItemTagInspectElement:
+        return EWK_CONTEXT_MENU_ITEM_TAG_INSPECT_ELEMENT;
+    case kWKContextMenuItemTagTextDirectionMenu:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_MENU;
+    case kWKContextMenuItemTagTextDirectionDefault:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_DEFAULT;
+    case kWKContextMenuItemTagTextDirectionLeftToRight:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_LEFT_TO_RIGHT;
+    case kWKContextMenuItemTagTextDirectionRightToLeft:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_RIGHT_TO_LEFT;
+    case kWKContextMenuItemTagOpenMediaInNewWindow:
+        return EWK_CONTEXT_MENU_ITEM_OPEN_MEDIA_IN_NEW_WINDOW;
+    case kWKContextMenuItemTagCopyMediaLinkToClipboard:
+        return EWK_CONTEXT_MENU_ITEM_TAG_COPY_MEDIA_LINK_TO_CLIPBOARD;
+    case kWKContextMenuItemTagToggleMediaControls:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_CONTROLS;
+    case kWKContextMenuItemTagToggleMediaLoop:
+        return EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_LOOP;
+    case kWKContextMenuItemTagEnterVideoFullscreen:
+        return EWK_CONTEXT_MENU_ITEM_TAG_ENTER_VIDEO_FULLSCREEN;
+    case kWKContextMenuItemTagMediaPlayPause:
+        return EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_PLAY_PAUSE;
+    case kWKContextMenuItemTagMediaMute:
+        return EWK_CONTEXT_MENU_ITEM_TAG_MEDIA_MUTE;
+    case kWKContextMenuItemBaseApplicationTag:
+        return EWK_CONTEXT_MENU_ITEM_BASE_APPLICATION_TAG;
+    default:
+        return static_cast<Ewk_Context_Menu_Item_Action>(action);
+    }
+}

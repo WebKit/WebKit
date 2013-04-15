@@ -66,8 +66,6 @@ class ViewClientEfl;
 class PageViewportController;
 class PageViewportControllerClientEfl;
 #endif
-class WebContextMenuItemData;
-class WebContextMenuProxyEfl;
 class WebPageGroup;
 class WebPageProxy;
 
@@ -176,7 +174,7 @@ public:
     void requestPopupMenu(WKPopupMenuListenerRef, const WKRect&, WKPopupItemTextDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex);
     void closePopupMenu();
 
-    void showContextMenu(WebKit::WebContextMenuProxyEfl*, const WebCore::IntPoint& position, const Vector<WebKit::WebContextMenuItemData>& items);
+    void showContextMenu(WKPoint position, WKArrayRef items);
     void hideContextMenu();
 
     void updateTextInputState();

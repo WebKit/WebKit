@@ -26,12 +26,7 @@
 #ifndef ContextMenuClientEfl_h
 #define ContextMenuClientEfl_h
 
-#include "WKRetainPtr.h"
-#include "ewk_context.h"
-#include <WebKit2/WKBase.h>
-#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/text/WTFString.h>
 
 class EwkView;
 
@@ -44,7 +39,7 @@ public:
         return adoptPtr(new ContextMenuClientEfl(viewImpl));
     }
 
-    static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKHitTestResultRef, WKTypeRef userData, const void* clientInfo);
+    EwkView* view() { return m_view; }
 
 private:
     explicit ContextMenuClientEfl(EwkView*);
