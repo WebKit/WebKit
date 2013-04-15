@@ -1,3 +1,20 @@
+2013-04-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Deprecate land-cowboy in favor of land-cowhand
+        https://bugs.webkit.org/show_bug.cgi?id=104470
+
+        Reviewed by Darin Adler.
+
+        Move the LandCowboy command implementation under the LandCowhand command and deprecate the former.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (LandCowhand):
+        (LandCowboy):
+        (LandCowboy._prepare_state):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_land_cowhand): Adjust the unit tests by testing both LandCowhand and LandCowboy,
+        also checking the deprecation message in the output of the latter.
+
 2013-04-15  Jonathan Liu  <net147@gmail.com>
 
         Improve Windows cmd.exe detection

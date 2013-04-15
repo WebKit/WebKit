@@ -155,7 +155,7 @@ Updating bug 50000
         self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
-    def test_land_cowboy(self):
+    def test_land_cowhand(self):
         expected_logs = """MOCK run_and_throw_if_fail: ['mock-prepare-ChangeLog', '--email=MOCK email', '--merge-base=None', 'MockFile1'], cwd=/mock-checkout
 MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1', '--filter', '-changelog'], cwd=/mock-checkout
 MOCK run_command: ['ruby', '-I', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch/prettify.rb'], cwd=None, input=Patch1
@@ -180,6 +180,9 @@ Committed r49824: <http://trac.webkit.org/changeset/49824>
 No bug id provided.
 """
         mock_tool = MockTool(log_executive=True)
+        self.assert_execute_outputs(LandCowhand(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
+
+        expected_logs = "land-cowboy is deprecated, use land-cowhand instead.\n" + expected_logs
         self.assert_execute_outputs(LandCowboy(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
 
     def test_land_red_builders(self):
