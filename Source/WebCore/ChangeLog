@@ -1,3 +1,62 @@
+2013-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Merge r142759.
+
+    2013-02-13  Florin Malita  <fmalita@chromium.org>
+
+            [SVG] OOB access in SVGListProperty::replaceItemValues()
+            https://bugs.webkit.org/show_bug.cgi?id=109293
+
+            Replacing a list property item with itself should be a no-op. This patch updates the related
+            APIs and logic to detect the self-replace case and prevent removal of the item from the list.
+
+            To avoid scanning the list multiple times, removeItemFromList() is updated to operate on
+            indices and a findItem() method is added to resolve an item to an index.
+
+            Reviewed by Dirk Schulze.
+
+            No new tests: updated existing tests cover the change.
+
+            * svg/properties/SVGAnimatedListPropertyTearOff.h:
+            (WebCore::SVGAnimatedListPropertyTearOff::findItem):
+            (SVGAnimatedListPropertyTearOff):
+            (WebCore::SVGAnimatedListPropertyTearOff::removeItemFromList):
+            * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+            (WebCore::SVGAnimatedPathSegListPropertyTearOff::findItem):
+            (SVGAnimatedPathSegListPropertyTearOff):
+            (WebCore::SVGAnimatedPathSegListPropertyTearOff::removeItemFromList):
+            Add a findItem() delegating method, and update removeItemFromList() to use the new
+            index-based API.
+
+            * svg/properties/SVGListProperty.h:
+            (WebCore::SVGListProperty::insertItemBeforeValues):
+            (WebCore::SVGListProperty::insertItemBeforeValuesAndWrappers):
+            (WebCore::SVGListProperty::replaceItemValues):
+            (WebCore::SVGListProperty::replaceItemValuesAndWrappers):
+            (SVGListProperty):
+            Updated to handle the no-op case for insertItemBefore() & replaceItem().
+
+            * svg/properties/SVGListPropertyTearOff.h:
+            (WebCore::SVGListPropertyTearOff::findItem):
+            (WebCore::SVGListPropertyTearOff::removeItemFromList):
+            Index-based API updates.
+
+            (WebCore::SVGListPropertyTearOff::processIncomingListItemValue):
+            (WebCore::SVGListPropertyTearOff::processIncomingListItemWrapper):
+            * svg/properties/SVGPathSegListPropertyTearOff.cpp:
+            (WebCore::SVGPathSegListPropertyTearOff::processIncomingListItemValue):
+            Detect the self-replace case and return without removing the item from the list.
+
+            * svg/properties/SVGPathSegListPropertyTearOff.h:
+            (WebCore::SVGPathSegListPropertyTearOff::findItem):
+            (WebCore::SVGPathSegListPropertyTearOff::removeItemFromList):
+            (SVGPathSegListPropertyTearOff):
+            (WebCore::SVGPathSegListPropertyTearOff::processIncomingListItemWrapper):
+            * svg/properties/SVGStaticListPropertyTearOff.h:
+            (WebCore::SVGStaticListPropertyTearOff::processIncomingListItemValue):
+            (WebCore::SVGStaticListPropertyTearOff::processIncomingListItemWrapper):
+            Index-based API updates.
+
 2013-04-15  Timothy Hatcher  <timothy@apple.com>
 
         Merge r140127.

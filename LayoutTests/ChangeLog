@@ -1,3 +1,25 @@
+2013-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Merge r142759.
+
+    2013-02-13  Florin Malita  <fmalita@chromium.org>
+
+            [SVG] OOB access in SVGListProperty::replaceItemValues()
+            https://bugs.webkit.org/show_bug.cgi?id=109293
+
+            Updated tests to cover the crash and new behavior.
+
+            Reviewed by Dirk Schulze.
+
+            * svg/dom/SVGLengthList-basics-expected.txt:
+            * svg/dom/SVGLengthList-basics.xhtml:
+            * svg/dom/SVGNumberList-basics-expected.txt:
+            * svg/dom/SVGNumberList-basics.xhtml:
+            * svg/dom/SVGPointList-basics-expected.txt:
+            * svg/dom/SVGPointList-basics.xhtml:
+            * svg/dom/SVGTransformList-basics-expected.txt:
+            * svg/dom/SVGTransformList-basics.xhtml:
+
 2012-12-13  Lucas Forschler  <lforschler@apple.com>
 
     Rollout r145643. <rdar://problem/13334979>
@@ -6183,22 +6205,6 @@
         * platform/efl/fast/replaced/width100percent-checkbox-expected.txt:
         * platform/efl/fast/replaced/width100percent-radio-expected.txt:
 
-2012-04-23  Levi Weintraub  <leviw@chromium.org>
-
-        [meta] Switch away from integers representing pixels for layout/event handling/rendering
-        https://bugs.webkit.org/show_bug.cgi?id=60318
-
-        Reviewed by Eric Seidel.
-
-        * fast/sub-pixel: Added.
-        * fast/sub-pixel/client-width-height-snapping-expected.txt: Added.
-        * fast/sub-pixel/client-width-height-snapping.html: Added.
-        * fast/sub-pixel/size-of-box-with-zoom-expected.html: Added.
-        * fast/sub-pixel/size-of-box-with-zoom.html: Added.
-        * fast/sub-pixel/layout-boxes-with-zoom-expected.html: Added.
-        * fast/sub-pixel/layout-boxes-with-zoom.html: Added.
-
-<<<<<<< .mine
 2012-05-03  Levi Weintraub  <leviw@chromium.org>
 
         [meta] Switch away from integers representing pixels for layout/event handling/rendering
@@ -6233,7 +6239,6 @@
         * platform/wincairo/Skipped: Ditto.
         * platform/wk2/Skipped: Ditto.
 
-=======
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, remove expectation which was failing.

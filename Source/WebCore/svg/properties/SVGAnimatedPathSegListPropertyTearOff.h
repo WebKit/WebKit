@@ -46,11 +46,18 @@ public:
         return static_cast<SVGListProperty<SVGPathSegList>*>(m_animVal.get());
     }
 
-    int removeItemFromList(const RefPtr<SVGPathSeg>& segment, bool shouldSynchronizeWrappers)
+    int findItem(const RefPtr<SVGPathSeg>& segment) const
     {
         // This should ever be called for our baseVal, as animVal can't modify the list.
         ASSERT(m_baseVal);
-        return static_cast<SVGPathSegListPropertyTearOff*>(m_baseVal.get())->removeItemFromList(segment, shouldSynchronizeWrappers);
+        return static_cast<SVGPathSegListPropertyTearOff*>(m_baseVal.get())->findItem(segment);
+    }
+
+    void removeItemFromList(size_t itemIndex, bool shouldSynchronizeWrappers)
+    {
+        // This should ever be called for our baseVal, as animVal can't modify the list.
+        ASSERT(m_baseVal);
+        static_cast<SVGPathSegListPropertyTearOff*>(m_baseVal.get())->removeItemFromList(itemIndex, shouldSynchronizeWrappers);
     }
 
     static PassRefPtr<SVGAnimatedPathSegListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGPathSegList& values)

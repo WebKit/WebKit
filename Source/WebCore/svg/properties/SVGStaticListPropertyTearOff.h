@@ -90,14 +90,16 @@ private:
         m_values->commitChange(m_contextElement.get());
     }
 
-    virtual void processIncomingListItemValue(const ListItemType&, unsigned*)
+    virtual bool processIncomingListItemValue(const ListItemType&, unsigned*)
     {
         // no-op for static lists
+        return true;
     }
 
-    virtual void processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
+    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
     {
         ASSERT_NOT_REACHED();
+        return true;
     }
 
 private:
