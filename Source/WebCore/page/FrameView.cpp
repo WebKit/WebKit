@@ -3672,6 +3672,12 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
+void FrameView::setIsVisuallyNonEmpty()
+{
+    m_isVisuallyNonEmpty = true;
+    adjustTiledBackingCoverage();
+}
+
 void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const IntSize& maxSize)
 {
     ASSERT(!enable || !minSize.isEmpty());

@@ -192,6 +192,9 @@ public:
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     double backingStoreMemoryEstimate() const;
 
+    bool didSwitchToFullTileCoverageDuringLoading() const { return m_didSwitchToFullTileCoverageDuringLoading; }
+    void setDidSwitchToFullTileCoverageDuringLoading() { m_didSwitchToFullTileCoverageDuringLoading = true; }
+
 #if ENABLE(CSS_COMPOSITING)
     void setBlendMode(BlendMode);
 #endif
@@ -306,6 +309,7 @@ private:
     bool m_canCompositeFilters;
 #endif
     bool m_backgroundLayerPaintsFixedRootBackground;
+    bool m_didSwitchToFullTileCoverageDuringLoading;
 
     static bool m_creatingPrimaryGraphicsLayer;
 };

@@ -120,6 +120,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_canCompositeFilters(false)
 #endif
     , m_backgroundLayerPaintsFixedRootBackground(false)
+    , m_didSwitchToFullTileCoverageDuringLoading(false)
 {
     if (layer->isRootLayer()) {
         Frame* frame = toRenderView(renderer())->frameView()->frame();
@@ -209,7 +210,7 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
     return m_graphicsLayer->tiledBacking();
 }
 
-static TiledBacking::TileCoverage computeTileCoverage(const RenderLayerBacking* backing)
+static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backing)
 {
     // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
     Frame* frame = backing->owningLayer()->renderer()->frame();
@@ -219,7 +220,13 @@ static TiledBacking::TileCoverage computeTileCoverage(const RenderLayerBacking* 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     FrameView* frameView = frame->view();
     bool useMinimalTilesDuringLiveResize = frameView->inLiveResize();
-    bool useMinimalTilesDuringLoading = frame->page()->progress()->isLoadProgressing() && !frameView->wasScrolledByUser();
+    bool useMinimalTilesDuringLoading = false;
+    // Avoid churn.
+    if (!backing->didSwitchToFullTileCoverageDuringLoading()) {
+        useMinimalTilesDuringLoading = !frameView->isVisuallyNonEmpty() || (frame->page()->progress()->isLoadProgressing() && !frameView->wasScrolledByUser());
+        if (!useMinimalTilesDuringLoading)
+            backing->setDidSwitchToFullTileCoverageDuringLoading();
+    }
     if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
         bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
         if (frameView->horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
