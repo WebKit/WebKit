@@ -1631,7 +1631,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
 
     // Iterate over the array, ignoring missing values, counting undefined ones, and inserting all other ones into the tree.
     for (; numDefined < usedVectorLength; ++numDefined) {
-        if (numDefined > m_vectorLength)
+        if (numDefined >= m_vectorLength)
             break;
         JSValue v = m_storage->m_vector[numDefined].get();
         if (!v || v.isUndefined())
@@ -1640,7 +1640,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
         tree.insert(numDefined);
     }
     for (unsigned i = numDefined; i < usedVectorLength; ++i) {
-        if (i > m_vectorLength)
+        if (i >= m_vectorLength)
             break;
         JSValue v = m_storage->m_vector[i].get();
         if (v) {
