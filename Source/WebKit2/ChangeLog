@@ -1,3 +1,13 @@
+2013-04-15  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL][WK2] build fix after r148434
+        https://bugs.webkit.org/show_bug.cgi?id=114647
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::showContextMenu):
+
 2013-04-15  Jer Noble  <jer.noble@apple.com>
 
         After switching to another space and back, video races to catch up with audio

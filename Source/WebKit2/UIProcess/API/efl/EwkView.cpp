@@ -809,8 +809,6 @@ void EwkView::showContextMenu(WKPoint position, WKArrayRef items)
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
 
-    ASSERT(contextMenuProxy);
-
     if (!sd->api->context_menu_show)
         return;
 
