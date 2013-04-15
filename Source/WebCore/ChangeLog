@@ -1,3 +1,27 @@
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
+        Merged r138821.
+
+    01/04/13 John Mellor  <johnme@chromium.org>
+
+            Clamp font sizes to valid range in RenderStyle::setFontSize
+            https://bugs.webkit.org/show_bug.cgi?id=106014
+
+            Reviewed by Emil A Eklund.
+
+            There is a test-case attached to http://crbug.com/167443, but I can't
+            think of a good way of automatically testing this. Functionality
+            shouldn't change on normal pages.
+
+            * rendering/style/RenderStyleConstants.h:
+                Add constant for maximum allowed font size.
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::getComputedSizeFromSpecifiedSize):
+                Use constant from RenderStyleConstants.h instead of hardcoding.
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::setFontSize):
+                Clamp non-finite and out of range font sizes.
+
 2013-04-15  Andy Estes  <aestes@apple.com>
 
         Merged r138990.

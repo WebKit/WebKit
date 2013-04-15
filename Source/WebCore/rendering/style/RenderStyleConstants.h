@@ -466,6 +466,9 @@ enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowStart, WrapFlowEnd, WrapFlow
 
 enum WrapThrough { WrapThroughWrap, WrapThroughNone };
 
+// Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).
+static const float maximumAllowedFontSize = 1000000.0f;
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

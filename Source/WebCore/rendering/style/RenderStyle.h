@@ -90,6 +90,7 @@
 #include "SVGRenderStyle.h"
 #endif
 
+
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<T>(u); }
 
 #define SET_VAR(group, variable, value) \

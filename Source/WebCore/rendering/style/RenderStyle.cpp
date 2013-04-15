@@ -38,6 +38,7 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "RenderTheme.h"
 #endif
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
@@ -1150,6 +1151,13 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
 
 void RenderStyle::setBlendedFontSize(int size)
 {
+    float sizef = (float)size;
+    ASSERT(isfinite(sizef);
+    if (!isfinite(sizef || size < 0)
+        size = 0;
+    else
+        size = min(maximumAllowedFontSize, sizef);
+
     FontSelector* currentFontSelector = font().fontSelector();
     FontDescription desc(fontDescription());
     desc.setSpecifiedSize(size);
