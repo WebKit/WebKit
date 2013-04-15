@@ -2196,12 +2196,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             }
             }
         case CSSPropertyTextIndent: {
+            // If CSS3_TEXT is disabled or text-indent has only one value(<length> | <percentage>),
+            // getPropertyCSSValue() returns CSSValue.
             RefPtr<CSSValue> textIndent = zoomAdjustedPixelValueForLength(style->textIndent(), style.get());
 #if ENABLE(CSS3_TEXT)
-            if (style->textIndentLine() == TextIndentEachLine) {
+            // If CSS3_TEXT is enabled and text-indent has -webkit-each-line or -webkit-hanging,
+            // getPropertyCSSValue() returns CSSValueList.
+            if (style->textIndentLine() == TextIndentEachLine || style->textIndentType() == TextIndentHanging) {
                 RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
                 list->append(textIndent.release());
-                list->append(cssValuePool().createIdentifierValue(CSSValueWebkitEachLine));
+                if (style->textIndentLine() == TextIndentEachLine)
+                    list->append(cssValuePool().createIdentifierValue(CSSValueWebkitEachLine));
+                if (style->textIndentType() == TextIndentHanging)
+                    list->append(cssValuePool().createIdentifierValue(CSSValueWebkitHanging));
                 return list.release();
             }
 #endif

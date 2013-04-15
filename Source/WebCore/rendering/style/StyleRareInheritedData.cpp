@@ -89,6 +89,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_textOrientation(TextOrientationVerticalRight)
 #if ENABLE(CSS3_TEXT)
     , m_textIndentLine(RenderStyle::initialTextIndentLine())
+    , m_textIndentType(RenderStyle::initialTextIndentType())
 #endif
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -163,6 +164,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_textOrientation(o.m_textOrientation)
 #if ENABLE(CSS3_TEXT)
     , m_textIndentLine(o.m_textIndentLine)
+    , m_textIndentType(o.m_textIndentType)
 #endif
     , m_lineBoxContain(o.m_lineBoxContain)
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -261,6 +263,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_textOrientation == o.m_textOrientation
 #if ENABLE(CSS3_TEXT)
         && m_textIndentLine == o.m_textIndentLine
+        && m_textIndentType == o.m_textIndentType
 #endif
         && m_lineBoxContain == o.m_lineBoxContain
         && hyphenationString == o.hyphenationString

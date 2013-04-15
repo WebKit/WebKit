@@ -517,6 +517,7 @@ static const float maximumAllowedFontSize = 1000000.0f;
 
 #if ENABLE(CSS3_TEXT)
 enum TextIndentLine { TextIndentFirstLine, TextIndentEachLine };
+enum TextIndentType { TextIndentNormal, TextIndentHanging };
 #endif
 
 } // namespace WebCore

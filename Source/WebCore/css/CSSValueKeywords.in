@@ -1027,5 +1027,6 @@ no-drag
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 // text-indent
 -webkit-each-line
+-webkit-hanging
 #endif
 

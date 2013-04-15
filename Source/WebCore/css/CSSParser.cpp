@@ -9413,46 +9413,40 @@ bool CSSParser::parseTextEmphasisStyle(bool important)
 
 PassRefPtr<CSSValue> CSSParser::parseTextIndent()
 {
+    // <length> | <percentage> | inherit  when CSS3_TEXT is disabled.
+    // [ <length> | <percentage> ] && [ -webkit-hanging || -webkit-each-line ]? | inherit  when CSS3_TEXT is enabled.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-
-    // <length> | <percentage> | inherit
-    if (m_valueList->size() == 1) {
-        CSSParserValue* value = m_valueList->current();
-        if (!value->id && validUnit(value, FLength | FPercent)) {
-            list->append(createPrimitiveNumericValue(value));
-            m_valueList->next();
-            return list.release();
-        }
-    }
-
+    bool hasLengthOrPercentage = false;
 #if ENABLE(CSS3_TEXT)
-    // The case where text-indent has only <length>(or <percentage>) value
-    // is handled above if statement even though CSS3_TEXT is enabled.
-
-    // [ [ <length> | <percentage> ] && -webkit-each-line ] | inherit
-    if (m_valueList->size() != 2)
-        return 0;
-
-    CSSParserValue* firstValue = m_valueList->current();
-    CSSParserValue* secondValue = m_valueList->next();
-    CSSParserValue* lengthOrPercentageValue = 0;
-
-    // [ <length> | <percentage> ] -webkit-each-line
-    if (validUnit(firstValue, FLength | FPercent) && secondValue->id == CSSValueWebkitEachLine)
-        lengthOrPercentageValue = firstValue;
-    // -webkit-each-line [ <length> | <percentage> ]
-    else if (firstValue->id == CSSValueWebkitEachLine && validUnit(secondValue, FLength | FPercent))
-        lengthOrPercentageValue = secondValue;
-
-    if (lengthOrPercentageValue) {
-        list->append(createPrimitiveNumericValue(lengthOrPercentageValue));
-        list->append(cssValuePool().createIdentifierValue(CSSValueWebkitEachLine));
-        m_valueList->next();
-        return list.release();
-    }
+    bool hasEachLine = false;
+    bool hasHanging = false;
 #endif
 
-    return 0;
+    CSSParserValue* value = m_valueList->current();
+    while (value) {
+        if (!hasLengthOrPercentage && validUnit(value, FLength | FPercent)) {
+            list->append(createPrimitiveNumericValue(value));
+            hasLengthOrPercentage = true;
+        }
+#if ENABLE(CSS3_TEXT)
+        else if (!hasEachLine && value->id == CSSValueWebkitEachLine) {
+            list->append(cssValuePool().createIdentifierValue(CSSValueWebkitEachLine));
+            hasEachLine = true;
+        } else if (!hasHanging && value->id == CSSValueWebkitHanging) {
+            list->append(cssValuePool().createIdentifierValue(CSSValueWebkitHanging));
+            hasHanging = true;
+        }
+#endif
+        else
+            return 0;
+
+        value = m_valueList->next();
+    }
+
+    if (!hasLengthOrPercentage)
+        return 0;
+
+    return list.release();
 }
 
 bool CSSParser::parseLineBoxContain(bool important)

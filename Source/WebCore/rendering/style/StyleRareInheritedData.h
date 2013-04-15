@@ -101,7 +101,8 @@ public:
     unsigned textEmphasisPosition : 1; // TextEmphasisPosition
     unsigned m_textOrientation : 2; // TextOrientation
 #if ENABLE(CSS3_TEXT)
-    unsigned m_textIndentLine : 1; // TextIndentEachLine
+    unsigned m_textIndentLine : 1; // TextIndentLine
+    unsigned m_textIndentType : 1; // TextIndentType
 #endif
     unsigned m_lineBoxContain: 7; // LineBoxContain
     // CSS Image Values Level 3

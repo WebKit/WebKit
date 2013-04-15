@@ -2029,6 +2029,7 @@ public:
         styleResolver->style()->setTextIndent(styleResolver->parentStyle()->textIndent());
 #if ENABLE(CSS3_TEXT)
         styleResolver->style()->setTextIndentLine(styleResolver->parentStyle()->textIndentLine());
+        styleResolver->style()->setTextIndentType(styleResolver->parentStyle()->textIndentType());
 #endif
     }
 
@@ -2037,6 +2038,7 @@ public:
         styleResolver->style()->setTextIndent(RenderStyle::initialTextIndent());
 #if ENABLE(CSS3_TEXT)
         styleResolver->style()->setTextIndentLine(RenderStyle::initialTextIndentLine());
+        styleResolver->style()->setTextIndentType(RenderStyle::initialTextIndentType());
 #endif
     }
 
@@ -2045,24 +2047,33 @@ public:
         if (!value->isValueList())
             return;
 
-        // [ <length> | <percentage> ] -webkit-each-line
-        // The order is guaranteed. See CSSParser::parseTextIndent.
-        // The second value, -webkit-each-line is handled only when CSS3_TEXT is enabled.
-
+        Length lengthOrPercentageValue;
+#if ENABLE(CSS3_TEXT)
+        TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
+        TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
+#endif
         CSSValueList* valueList = static_cast<CSSValueList*>(value);
-        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(valueList->itemWithoutBoundsCheck(0));
-        Length lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+        for (size_t i = 0; i < valueList->length(); ++i) {
+            CSSValue* item = valueList->itemWithoutBoundsCheck(i);
+            if (!item->isPrimitiveValue())
+                continue;
+
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+            if (!primitiveValue->getIdent())
+                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+#if ENABLE(CSS3_TEXT)
+            else if (primitiveValue->getIdent() == CSSValueWebkitEachLine)
+                textIndentLineValue = TextIndentEachLine;
+            else if (primitiveValue->getIdent() == CSSValueWebkitHanging)
+                textIndentTypeValue = TextIndentHanging;
+#endif
+        }
+
         ASSERT(!lengthOrPercentageValue.isUndefined());
         styleResolver->style()->setTextIndent(lengthOrPercentageValue);
-
 #if ENABLE(CSS3_TEXT)
-        ASSERT(valueList->length() <= 2);
-        CSSPrimitiveValue* eachLineValue = static_cast<CSSPrimitiveValue*>(valueList->item(1));
-        if (eachLineValue) {
-            ASSERT(eachLineValue->getIdent() == CSSValueWebkitEachLine);
-            styleResolver->style()->setTextIndentLine(TextIndentEachLine);
-        } else
-            styleResolver->style()->setTextIndentLine(TextIndentFirstLine);
+        styleResolver->style()->setTextIndentLine(textIndentLineValue);
+        styleResolver->style()->setTextIndentType(textIndentTypeValue);
 #endif
     }
 
