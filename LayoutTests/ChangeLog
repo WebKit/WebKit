@@ -1,5 +1,19 @@
 2013-04-15  Roger Fong  <roger_fong@apple.com>
 
+        Merge r142922.
+
+    2013-02-14  Abhishek Arya  <inferno@chromium.org>
+
+            Bad cast in RenderBlock::splitBlocks.
+            https://bugs.webkit.org/show_bug.cgi?id=108691
+
+            Reviewed by Levi Weintraub.
+
+            * fast/multicol/remove-child-split-flow-crash-expected.txt: Added.
+            * fast/multicol/remove-child-split-flow-crash.html: Added.
+
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
         Merge r138988.
 
     2013-01-07  Abhishek Arya  <inferno@chromium.org>
@@ -1087,10 +1101,10 @@
 
 2013-02-06  Lucas Forschler  <lforschler@apple.com>
 
-	<rdar://problem/12967921>
-	Update test results.
-	
-	Reviewed by Enrica Casucci.
+    <rdar://problem/12967921>
+    Update test results.
+    
+    Reviewed by Enrica Casucci.
 
     * editing/pasteboard/paste-noscript-xhtml-expected.txt:
 

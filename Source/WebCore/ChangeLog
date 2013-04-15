@@ -1,5 +1,25 @@
 2013-04-15  Roger Fong  <roger_fong@apple.com>
 
+        Merge r142922.
+
+    2013-02-14  Abhishek Arya  <inferno@chromium.org>
+
+            Bad cast in RenderBlock::splitBlocks.
+            https://bugs.webkit.org/show_bug.cgi?id=108691
+
+            Reviewed by Levi Weintraub.
+
+            Test: fast/multicol/remove-child-split-flow-crash.html
+
+            * rendering/RenderBlock.cpp:
+            (WebCore):
+            (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): rename gIsInColumnFlowSplit to gColumnFlowSplitEnabled
+            and use it to decide when to do the column flow split or not.
+            (WebCore::RenderBlock::removeChild): Do not allow column flow split inside removeChild
+            since we might be merging anonymous blocks.
+
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
         Merge r138988.
 
     2013-01-07  Abhishek Arya  <inferno@chromium.org>
