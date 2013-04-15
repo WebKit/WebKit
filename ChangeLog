@@ -1,3 +1,13 @@
+2013-04-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] REGRESSION(r147499): HTTP auth dialog doesn't remember passwords anymore
+        https://bugs.webkit.org/show_bug.cgi?id=114613
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/SetupAutoconfHeader.m4: Correct definition of ENABLE_CREDENTIAL_STORAGE
+        so that the ENABLE(CREDENTIAL_STORAGE) macro work properly.
+
 2013-04-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Lower the pango dependency

@@ -116,6 +116,6 @@ if test "$enable_spellcheck" = "yes"; then
 fi
 
 if test "$enable_credential_storage" = "yes"; then
-    AC_DEFINE([WTF_ENABLE_CREDENTIAL_STORAGE], [1], [ ])
+    AC_DEFINE([ENABLE_CREDENTIAL_STORAGE], [1], [ ])
 fi
 
