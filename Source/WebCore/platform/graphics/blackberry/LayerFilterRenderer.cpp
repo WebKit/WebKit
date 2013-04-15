@@ -709,8 +709,10 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
     LayerRendererSurface* surface = layer->layerRendererSurface();
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds() );
+    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+    glEnableVertexAttribArray(m_positionLocation);
     glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+    glEnableVertexAttribArray(m_texCoordLocation);
 
     m_texture->protect(surface->texture()->size(), BlackBerry::Platform::Graphics::AlwaysBacked);
     if (requireSnapshot)
