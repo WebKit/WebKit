@@ -130,6 +130,19 @@ void WorkerPlatformAsyncFileSystemCallbacks::notifyReadMetadata(const BlackBerry
     m_mutex.unlock();
 }
 
+void WorkerPlatformAsyncFileSystemCallbacks::notifyCreateSnapshotFileAndReadMetadata(const BlackBerry::Platform::WebFileInfo& fileInfo)
+{
+    m_mutex.lock();
+    if (!m_context) {
+        m_mutex.unlock();
+        PlatformAsyncFileSystemCallbacks::deleteMe();
+        return;
+    }
+
+    postTaskToWorkerThread(createCallbackTask(&notifyCreateSnapshotFileAndReadMetadataOnWorkerThread, this, fileInfo));
+    m_mutex.unlock();
+}
+
 void WorkerPlatformAsyncFileSystemCallbacks::notifyReadDirectory(const std::vector<BlackBerry::Platform::WebFileSystemEntry>& entries, bool hasMore)
 {
     m_mutex.lock();
@@ -198,6 +211,11 @@ void WorkerPlatformAsyncFileSystemCallbacks::notifyFailOnWorkerThread(ScriptExec
 void WorkerPlatformAsyncFileSystemCallbacks::notifyReadMetadataOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks* callbacks, const BlackBerry::Platform::WebFileInfo& fileInfo)
 {
     callbacks->PlatformAsyncFileSystemCallbacks::notifyReadMetadata(fileInfo);
+}
+
+void WorkerPlatformAsyncFileSystemCallbacks::notifyCreateSnapshotFileAndReadMetadataOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks* callbacks, const BlackBerry::Platform::WebFileInfo& fileInfo)
+{
+    callbacks->PlatformAsyncFileSystemCallbacks::notifyCreateSnapshotFileAndReadMetadata(fileInfo);
 }
 
 void WorkerPlatformAsyncFileSystemCallbacks::notifyReadDirectoryEntryOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks* callbacks, const std::vector<BlackBerry::Platform::WebFileSystemEntry>& entries, bool hasMore)

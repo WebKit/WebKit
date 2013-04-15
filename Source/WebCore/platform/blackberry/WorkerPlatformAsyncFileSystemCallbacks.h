@@ -84,6 +84,7 @@ public:
     virtual void notifySucceed();
     virtual void notifyFail(BlackBerry::Platform::WebFileError);
     virtual void notifyReadMetadata(const BlackBerry::Platform::WebFileInfo&);
+    virtual void notifyCreateSnapshotFileAndReadMetadata(const BlackBerry::Platform::WebFileInfo&);
     virtual void notifyReadDirectory(const std::vector<BlackBerry::Platform::WebFileSystemEntry>& entries, bool hasMore);
     virtual void notifyCreateFileWriter(BlackBerry::Platform::WebFileWriter* platformWriter, long long length);
     virtual PassOwnPtr<AsyncFileSystem> createAsyncFileSystem(PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem);
@@ -97,6 +98,7 @@ private:
     static void notifySucceedOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*);
     static void notifyFailOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, BlackBerry::Platform::WebFileError);
     static void notifyReadMetadataOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, const BlackBerry::Platform::WebFileInfo&);
+    static void notifyCreateSnapshotFileAndReadMetadataOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, const BlackBerry::Platform::WebFileInfo&);
     static void notifyReadDirectoryEntryOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, const std::vector<BlackBerry::Platform::WebFileSystemEntry>& entries, bool hasMore);
     static void notifyCreateFileWriterOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, BlackBerry::Platform::WebFileWriter* platformWriter, long long length);
 
