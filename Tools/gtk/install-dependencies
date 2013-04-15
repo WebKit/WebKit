@@ -114,7 +114,7 @@ function installDependenciesWithYum {
         freetype-devel \
         gcc-c++ \
         geoclue-devel \
-        gettext \
+        gettext-devel \
         gobject-introspection-devel \
         gperf \
         gstreamer1-devel \
@@ -131,13 +131,15 @@ function installDependenciesWithYum {
         libwebp-devel \
         libxslt-devel \
         libXt-devel \
+        libXtst-devel \
         libgudev1-devel \
         mesa-libGL-devel \
         pcre-devel \
         ruby \
         sqlite-devel \
         perl-Switch \
-        perl-version
+        perl-version \
+        python-devel
 
     # These are dependencies necessary for running tests.
     yum install \
