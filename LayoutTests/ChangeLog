@@ -1,5 +1,19 @@
 2013-04-15  Tim Horton  <timothy_horton@apple.com>
 
+        Merge r143454.
+
+    2013-02-20  Florin Malita  <fmalita@chromium.org>
+
+        Clear SVGPathSeg role on removal.
+        https://bugs.webkit.org/show_bug.cgi?id=110058
+
+        Reviewed by Dirk Schulze.
+
+        * svg/dom/SVGPathSegList-crash-expected.txt: Added.
+        * svg/dom/SVGPathSegList-crash.html: Added.
+
+2013-04-15  Tim Horton  <timothy_horton@apple.com>
+
         Merge r142759.
 
     2013-02-13  Florin Malita  <fmalita@chromium.org>
