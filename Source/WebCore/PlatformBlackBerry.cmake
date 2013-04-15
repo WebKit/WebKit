@@ -35,9 +35,6 @@ list(APPEND WebCore_SOURCES
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
     platform/text/LocaleNone.cpp
-    platform/text/TextBreakIteratorICU.cpp
-    platform/text/TextCodecICU.cpp
-    platform/text/TextEncodingDetectorICU.cpp
     platform/text/blackberry/TextBreakIteratorInternalICUBlackBerry.cpp
 )
 

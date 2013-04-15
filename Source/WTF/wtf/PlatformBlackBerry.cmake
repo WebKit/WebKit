@@ -4,7 +4,6 @@ list(APPEND WTF_SOURCES
     ThreadIdentifierDataPthreads.cpp
     ThreadingPthreads.cpp
     blackberry/MainThreadBlackBerry.cpp
-    unicode/icu/CollatorICU.cpp
 )
 
 list(INSERT WTF_INCLUDE_DIRECTORIES 0

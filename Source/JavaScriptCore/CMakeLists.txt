@@ -339,6 +339,15 @@ set(JavaScriptCore_LIBRARIES
     ${WTF_LIBRARY_NAME}
 )
 
+if (WTF_USE_ICU_UNICODE)
+    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+        ${ICU_INCLUDE_DIRS}
+    )
+    list(APPEND JavaScriptCore_LIBRARIES
+        ${ICU_I18N_LIBRARIES}
+    )
+endif ()
+
 if (ENABLE_LLINT)
     # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro

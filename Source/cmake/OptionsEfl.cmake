@@ -27,6 +27,7 @@ find_package(ZLIB REQUIRED)
 find_package(GLIB 2.33.2 REQUIRED COMPONENTS gio gobject gthread)
 find_package(LibSoup 2.40.3 REQUIRED)
 
+set(WTF_USE_ICU_UNICODE 1)
 set(WTF_USE_SOUP 1)
 
 add_definitions(-DWTF_USE_GLIB=1)

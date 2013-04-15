@@ -226,6 +226,30 @@ set(WTF_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
 )
 
+if (WTF_USE_ICU_UNICODE)
+    list(APPEND WTF_HEADERS
+        unicode/icu/UnicodeIcu.h
+    )
+    list(APPEND WTF_SOURCES
+        unicode/icu/CollatorICU.cpp
+    )
+    list(APPEND WTF_INCLUDE_DIRECTORIES
+        ${ICU_INCLUDE_DIRS}
+    )
+    list(APPEND WTF_LIBRARIES
+        ${ICU_I18N_LIBRARIES}
+        ${ICU_LIBRARIES}
+    )
+elseif (WTF_USE_WCHAR_UNICODE)
+    list(APPEND WTF_HEADERS
+        unicode/wchar/UnicodeWchar.h
+    )
+    list(APPEND WTF_SOURCES
+        unicode/CollatorDefault.cpp
+        unicode/wchar/UnicodeWchar.cpp
+    )
+endif ()
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_WRAP_SOURCELIST(${WTF_SOURCES})

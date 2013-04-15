@@ -8,8 +8,6 @@ list(APPEND WTF_SOURCES
     OSAllocatorPosix.cpp
     ThreadIdentifierDataPthreads.cpp
     ThreadingPthreads.cpp
-
-    unicode/icu/CollatorICU.cpp
 )
 
 list(APPEND WTF_LIBRARIES
@@ -17,8 +15,6 @@ list(APPEND WTF_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
-    ${ICU_LIBRARIES}
-    ${ICU_I18N_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
     ${ECORE_IMF_LIBRARIES}
@@ -36,7 +32,6 @@ list(APPEND WTF_INCLUDE_DIRECTORIES
     ${EO_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
-    ${ICU_INCLUDE_DIRS}
     ${JAVASCRIPTCORE_DIR}/wtf/gobject
     ${JAVASCRIPTCORE_DIR}/wtf/unicode
     ${JAVASCRIPTCORE_DIR}/wtf/efl

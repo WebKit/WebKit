@@ -1,3 +1,17 @@
+2013-04-15  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add WTF_USE_*_UNICODE variables
+        https://bugs.webkit.org/show_bug.cgi?id=114556
+
+        Reviewed by Brent Fulgham.
+
+        WTF_USE_ICU_UNICODE and WTF_USE_WCHAR_UNICODE are used to
+        reduce duplication in the platform specific CMake files.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+
 2013-04-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] REGRESSION(r147499): HTTP auth dialog doesn't remember passwords anymore

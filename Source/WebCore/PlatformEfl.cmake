@@ -166,9 +166,6 @@ list(APPEND WebCore_SOURCES
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
     platform/text/enchant/TextCheckerEnchant.cpp
     platform/text/LocaleICU.cpp
-    platform/text/TextBreakIteratorICU.cpp
-    platform/text/TextCodecICU.cpp
-    platform/text/TextEncodingDetectorICU.cpp
 )
 
 if (ENABLE_BATTERY_STATUS)
@@ -220,7 +217,6 @@ list(APPEND WebCore_LIBRARIES
     ${EVAS_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE_LIBRARIES}
-    ${ICU_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
@@ -248,7 +244,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${EINA_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
-    ${ICU_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
