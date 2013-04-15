@@ -70,6 +70,67 @@
 
 2013-04-15  Roger Fong  <roger_fong@apple.com>
 
+        Merge 133840, 134191, 134197.
+
+    2012-11-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Build fix after r134191. Turns out that FrameView::performPostLayoutTasks calls FrameSelection::updateAppearance
+            in the middle of a layout. So we can't have assertions in recomputeCaretRect and updateAppearance.
+
+            Furthermore, we can't update layout in updateAppearance. So do that in its call sites.
+        
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::setSelection):
+            (WebCore::FrameSelection::recomputeCaretRect):
+            (WebCore::FrameSelection::updateAppearance):
+            (WebCore::FrameSelection::setCaretVisibility):
+
+    2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Multiple Layout Tests (e.g. fast/repaint/japanese-rl-selection-clear.html) is failing after r133840.
+            https://bugs.webkit.org/show_bug.cgi?id=101547
+
+            Reviewed by Simon Fraser.
+
+            I overlooked the fact when the selection is null, we still have to invalidate the caret rect that
+            previously existed. Revert the optimization added in r133840 to skip caret invalidation when new
+            selection is null, and add a special method to be called by FrameLoader prior to destruction instead.
+            This will let us avoid doing an extra layout upon destruction and not regress repaint tests.
+
+            Covered by existing tests.
+
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::setSelection): Added DoNotUpdateAppearance option.
+            (WebCore::FrameSelection::prepareForDestruction): Added.
+            (WebCore::FrameSelection::updateAppearance): Reverted the flawed optimization added in r133840.
+            Also, don't update style before updating selection unless text caret is disabled since we always
+            update the layout (including style) when text caret is enabled.
+            * editing/FrameSelection.h:
+            (FrameSelection):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::clear): Call prepareForDestruction instead of clear to avoid a layout.
+
+    2012-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in WebCore::RenderLayer::normalFlowList
+            https://bugs.webkit.org/show_bug.cgi?id=101528
+
+            Reviewed by Simon Fraser.
+
+            Make sure the layout is up to date before re-computing the caret rect.
+            Avoid doing the layout when the selection is cleared since we don't can
+            since we can always stop the blink timer in that case.
+
+            Unfortunately, we haven't found any reproduction of this crash yet.
+
+            * editing/FrameSelection.cpp:
+            (WebCore::isNonOrphanedCaret):
+            (WebCore):
+            (WebCore::FrameSelection::localCaretRect):
+            (WebCore::FrameSelection::updateAppearance):
+ 
+2013-04-15  Roger Fong  <roger_fong@apple.com>
+
         Merged r138213.
 
     2013-01-09  Abhishek Arya  <inferno@chromium.org>
