@@ -2933,6 +2933,7 @@ void HTMLMediaElement::removeTextTrack(TextTrack* track)
     TextTrackCueList* cues = track->cues();
     if (cues)
         textTrackRemoveCues(track, cues);
+    track->clearClient();
     m_textTracks->remove(track);
 
     closeCaptionTracksChanged();
