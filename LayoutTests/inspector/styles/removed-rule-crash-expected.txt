@@ -1,0 +1,18 @@
+Tests that disabling style property after the style rule has been removed does not crash the inspected page.
+
+Before disable
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (removed-rule-crash.html:4)
+font-weight: bold;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+PASS: No crash
+

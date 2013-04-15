@@ -216,10 +216,11 @@ protected:
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
+    typedef Vector<RefPtr<CSSStyleRule> > CSSStyleRuleVector;
     friend class InspectorStyle;
 
     static void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
-    static void collectFlatRules(PassRefPtr<CSSRuleList>, Vector<CSSStyleRule*>* result);
+    static void collectFlatRules(PassRefPtr<CSSRuleList>, CSSStyleRuleVector* result);
     bool ensureText() const;
     bool ensureSourceData();
     void ensureFlatRules() const;
@@ -237,7 +238,7 @@ private:
     bool m_isRevalidating;
     ParsedStyleSheet* m_parsedStyleSheet;
     InspectorStyleMap m_inspectorStyles;
-    mutable Vector<CSSStyleRule*> m_flatRules;
+    mutable CSSStyleRuleVector m_flatRules;
     Listener* m_listener;
 };
 

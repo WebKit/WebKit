@@ -1,0 +1,52 @@
+<html>
+<head>
+<style>
+#container {
+    font-weight: bold;
+}
+</style>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function removeRule()
+{
+    document.styleSheets[0].removeRule(0);
+}
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("container", step0);
+
+    function step0(node)
+    {
+        InspectorTest.evaluateInPage("removeRule()", step1);
+    }
+
+    function step1()
+    {
+        InspectorTest.addResult("Before disable");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.toggleMatchedStyleProperty("font-weight", false);
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("PASS: No crash");
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that disabling style property after the style rule has been removed does not crash the inspected page.
+</p>
+
+<div id="container">
+</div>
+
+</body>
+</html>

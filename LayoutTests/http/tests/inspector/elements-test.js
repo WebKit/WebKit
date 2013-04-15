@@ -159,6 +159,12 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
     }
 };
 
+InspectorTest.toggleMatchedStyleProperty = function(propertyName, checked)
+{
+    var treeItem = InspectorTest.getMatchedStylePropertyTreeItem(propertyName);
+    treeItem.toggleEnabled({ target: { checked: checked }, consume: function() { } });
+}
+
 InspectorTest.expandAndDumpSelectedElementEventListeners = function(callback)
 {
     InspectorTest.expandSelectedElementEventListeners(function() {
