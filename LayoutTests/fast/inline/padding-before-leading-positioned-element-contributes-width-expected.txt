@@ -1,0 +1,4 @@
+https://bugs.webkit.org/show_bug.cgi?id=47554: All the black boxes should be inside the blue rectangle.
+
+X XX XX XX
+PASS

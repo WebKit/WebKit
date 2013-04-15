@@ -350,6 +350,14 @@ static bool shouldAddBorderPaddingMargin(RenderObject* child, bool &checkSide)
     return checkSide;
 }
 
+static RenderObject* previousInFlowSibling(RenderObject* child)
+{
+    child = child->previousSibling();
+    while (child && child->isOutOfFlowPositioned())
+        child = child->previousSibling();
+    return child;
+}
+
 static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
 {
     unsigned lineDepth = 1;
@@ -358,7 +366,7 @@ static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, boo
     while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
         RenderInline* parentAsRenderInline = toRenderInline(parent);
         if (!isEmptyInline(parentAsRenderInline)) {
-            if (start && shouldAddBorderPaddingMargin(child->previousSibling(), start))
+            if (start && shouldAddBorderPaddingMargin(previousInFlowSibling(child), start))
                 extraWidth += borderPaddingMarginStart(parentAsRenderInline);
             if (end && shouldAddBorderPaddingMargin(child->nextSibling(), end))
                 extraWidth += borderPaddingMarginEnd(parentAsRenderInline);
