@@ -687,7 +687,6 @@ webkit.org/b/96886 inspector/debugger/dynamic-script-tag.html [ Failure Pass ]
 Bug(EFL) inspector/profiler/heap-snapshot.html [ Failure Pass ]
 Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
 webkit.org/b/95066 inspector/styles/media-queries.html [ Failure Pass ]
-webkit.org/b/98777 inspector/styles/styles-history.html [ Failure Pass ]
 
 # New test added in r139405 that gives different output every run.
 webkit.org/b/104384 inspector/debugger/debugger-script-preprocessor.html [ Failure Pass ]
