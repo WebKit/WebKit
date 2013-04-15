@@ -1,3 +1,9 @@
+2013-04-15  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r148373.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+
 2013-04-06  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r145849.
