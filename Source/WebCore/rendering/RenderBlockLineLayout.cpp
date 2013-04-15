@@ -2124,16 +2124,9 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
     }
 
     if (layoutState.isFullLayout()) {
-        // FIXME: This should just call deleteLineBoxTree, but that causes
-        // crashes for fast/repaint tests.
-        RenderArena* arena = renderArena();
-        curr = firstRootBox();
-        while (curr) {
-            // Note: This uses nextRootBox() insted of nextLineBox() like deleteLineBoxTree does.
-            RootInlineBox* next = curr->nextRootBox();
-            curr->deleteLine(arena);
-            curr = next;
-        }
+        m_lineBoxes.deleteLineBoxTree(renderArena());
+        curr = 0;
+
         ASSERT(!firstLineBox() && !lastLineBox());
     } else {
         if (curr) {
