@@ -89,6 +89,7 @@ class CommandTest(unittest.TestCase):
         expected_logs = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
         exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [None, ["foo"], TrivialTool()], expected_logs=expected_logs)
         self.assertEqual(exit_code, 1)
+        TrivialCommand.argument_names = None
 
 
 class TrivialTool(MultiCommandTool):

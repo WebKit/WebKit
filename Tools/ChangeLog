@@ -1,3 +1,14 @@
+2013-04-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION (r148360): Failure in webkitpy.tool.multicommandtool_unittest.MultiCommandToolTest.test_command_help
+        https://bugs.webkit.org/show_bug.cgi?id=114602
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        (CommandTest.test_required_arguments): Reset the static argument_names variable on the TrivialCommand
+        interface so its value doesn't leak into the following tests.
+
 2013-04-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Deprecate land-cowboy in favor of land-cowhand
