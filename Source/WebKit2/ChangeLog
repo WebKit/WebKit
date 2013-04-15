@@ -1,3 +1,19 @@
+2013-04-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CoordGfx] Background color should not be part of GraphicsLayerState
+        https://bugs.webkit.org/show_bug.cgi?id=113785
+
+        Reviewed by Andreas Kling.
+
+        Page background is independent from layer state, send it to the UI
+        as soon as possible.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setBackgroundColor):
+
 2013-04-15  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [WK2] Add new callbacks and a function for WebKit2 context menu API

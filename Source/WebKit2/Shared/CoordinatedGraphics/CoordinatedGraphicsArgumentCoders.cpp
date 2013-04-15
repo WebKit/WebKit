@@ -1017,7 +1017,6 @@ bool ArgumentCoder<TileCreationInfo>::decode(ArgumentDecoder& decoder, TileCreat
 void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsState& state)
 {
     encoder << state.rootCompositingLayer;
-    encoder << state.backgroundColor;
     encoder << state.scrollPosition;
     encoder << state.contentsSize;
     encoder << state.coveredRect;
@@ -1044,9 +1043,6 @@ void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, c
 bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsState& state)
 {
     if (!decoder.decode(state.rootCompositingLayer))
-        return false;
-
-    if (!decoder.decode(state.backgroundColor))
         return false;
 
     if (!decoder.decode(state.scrollPosition))

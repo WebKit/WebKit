@@ -616,9 +616,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
     if (state.rootCompositingLayer != m_rootLayerID)
         setRootLayerID(state.rootCompositingLayer);
 
-    if (state.backgroundColor != m_backgroundColor)
-        setBackgroundColor(state.backgroundColor);
-
     for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
         updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
 

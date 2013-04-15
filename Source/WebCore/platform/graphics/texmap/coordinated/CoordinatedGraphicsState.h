@@ -176,7 +176,6 @@ struct CoordinatedGraphicsLayerState {
 
 struct CoordinatedGraphicsState {
     uint32_t rootCompositingLayer;
-    Color backgroundColor;
     FloatPoint scrollPosition;
     IntSize contentsSize;
     IntRect coveredRect;

@@ -802,8 +802,7 @@ void CoordinatedLayerTreeHost::releaseInactiveAtlasesTimerFired(Timer<Coordinate
 
 void CoordinatedLayerTreeHost::setBackgroundColor(const WebCore::Color& color)
 {
-    m_shouldSyncFrame = true;
-    m_state.backgroundColor = color;
+    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::SetBackgroundColor(color));
 }
 
 void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
