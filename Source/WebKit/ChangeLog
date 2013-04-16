@@ -1,3 +1,11 @@
+2013-04-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed VS2010 build correction.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+        Add correct link library to avoid mixture of ICU 4.0 and 4.6
+        syumbol use.
+
 2013-04-12  Jer Noble  <jer.noble@apple.com>
 
         TimeRanges::nearest() returns incorrect results.
