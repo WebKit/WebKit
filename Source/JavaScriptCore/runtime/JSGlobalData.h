@@ -53,6 +53,7 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
