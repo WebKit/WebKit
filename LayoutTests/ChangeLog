@@ -1,5 +1,13 @@
 2013-04-16  David Farler  <dfarler@apple.com>
 
+        Skip fast/dom/Geolocation/watchPosition-unique.html on safari-536.30-branch
+        <rdar://problem/13668237>
+
+        * platform/mac/Skipped:
+        Skip fast/dom/Geolocation/watchPosition-unique.html.
+
+2013-04-16  David Farler  <dfarler@apple.com>
+
         <rdar://problem/13668125> Elgar: fast/block/float/float-not-removed-from-pre-block.html fails: expected file needs updating: two spaces
 
         * fast/block/float/float-not-removed-from-pre-block-expected.txt:

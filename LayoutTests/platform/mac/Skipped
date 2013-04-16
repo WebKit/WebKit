@@ -26,6 +26,10 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+#  Geolocation test support doesn't exist on the 536.30 branch
+#  <rdar://problem/13668125>
+fast/dom/Geolocation/watchPosition-unique.html
+
 #  Text-based repaint test harness does not exist on the branch
 # <rdar://problem/12968804>
 svg/repaint/repaint-webkit-svg-shadow-container.html
