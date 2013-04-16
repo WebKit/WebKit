@@ -25,7 +25,6 @@
 
 interface [
     Conditional=ENCRYPTED_MEDIA_V2,
-    V8EnabledAtRuntime=encryptedMedia,
     ConstructorTemplate=Event 
 ] MediaKeyNeededEvent : Event {
     readonly attribute Uint8Array initData;

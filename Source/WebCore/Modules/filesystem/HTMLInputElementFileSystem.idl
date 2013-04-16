@@ -32,6 +32,6 @@
     Conditional=FILE_SYSTEM,
     Supplemental=HTMLInputElement
 ] interface HTMLInputElementFileSystem {
-    [V8EnabledAtRuntime=FileSystem,CallWith=ScriptExecutionContext] readonly attribute EntryArray webkitEntries;
+    [CallWith=ScriptExecutionContext] readonly attribute EntryArray webkitEntries;
 };
 

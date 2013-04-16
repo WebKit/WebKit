@@ -28,7 +28,6 @@
     JSGenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
     CustomEnumerateProperty,
-    V8CustomIndexedGetter,
     CustomNamedSetter,
     SkipVTableValidation
 ] interface Storage {

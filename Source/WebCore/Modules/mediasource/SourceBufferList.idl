@@ -30,7 +30,6 @@
  
 [
     Conditional=MEDIA_SOURCE,
-    V8EnabledAtRuntime=mediaSource,
     IndexedGetter,
     EventTarget,
     CallWith=ScriptExecutionContext

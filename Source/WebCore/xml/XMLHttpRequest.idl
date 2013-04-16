@@ -40,7 +40,6 @@ enum XMLHttpRequestResponseType {
     ActiveDOMObject,
     Constructor,
     CallWith=ScriptExecutionContext,
-    V8CustomConstructor,
     JSCustomMarkFunction,
     EventTarget,
     JSNoStaticTables

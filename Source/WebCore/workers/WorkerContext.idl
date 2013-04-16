@@ -34,8 +34,6 @@
     JSLegacyParent=JSWorkerContextBase,
     JSNoStaticTables,
     OmitConstructor,
-    V8CustomToJSObject,
-    V8NoWrapperCache
 ] interface WorkerContext {
 
     // WorkerGlobalScope

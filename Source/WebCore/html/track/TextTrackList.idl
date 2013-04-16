@@ -25,7 +25,6 @@
 
 [
     Conditional=VIDEO_TRACK,
-    V8EnabledAtRuntime=webkitVideoTrack,
     IndexedGetter,
     EventTarget,
     JSCustomMarkFunction,
