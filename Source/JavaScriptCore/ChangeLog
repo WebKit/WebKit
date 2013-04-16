@@ -1,3 +1,16 @@
+2013-04-16  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Do not use JAVASCRIPTCORE_DIR in add_custom_command() of JavaScriptCore project
+        https://bugs.webkit.org/show_bug.cgi?id=114265
+
+        Reviewed by Brent Fulgham.
+
+        Use CMAKE_CURRENT_SOURCE_DIR instead, since it provides the same value and is more
+        understandable. Also move the GENERATE_HASH_LUT macro into the CMakeLists.txt
+        of JavaScriptCore to avoid the usage of JAVASCRIPTCORE_DIR there too.
+
+        * CMakeLists.txt:
+
 2013-04-16  Anders Carlsson  <andersca@apple.com>
 
         Another Windows build fix attempt.

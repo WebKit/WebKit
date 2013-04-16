@@ -140,26 +140,6 @@ macro(GENERATE_DOM_NAMES _namespace _attrs)
 endmacro()
 
 
-# - Create hash table *.lut.h
-# GENERATE_HASH_LUT(input_file output_file)
-macro(GENERATE_HASH_LUT _input _output)
-    set(HASH_LUT_GENERATOR "${JAVASCRIPTCORE_DIR}/create_hash_table")
-
-    foreach (_tmp ${ARGN})
-        if (${_tmp} STREQUAL "MAIN_DEPENDENCY")
-            set(_main_dependency ${_input})
-        endif ()
-    endforeach ()
-
-    add_custom_command(
-        OUTPUT ${_output}
-        MAIN_DEPENDENCY ${_main_dependency}
-        DEPENDS ${_input} ${HASH_LUT_GENERATOR}
-        COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${_input} -i > ${_output}
-        VERBATIM)
-endmacro()
-
-
 macro(GENERATE_GRAMMAR _prefix _input _output_header _output_source _features)
     # This is a workaround for winflexbison, which does not work corretly when
     # run in a different working directory than the installation directory.
