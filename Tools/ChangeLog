@@ -1,3 +1,13 @@
+2013-04-16  Mike West  <mkwst@chromium.org>
+
+        Unreviewed update to the watchlist.
+
+        Removing 'mkwst+watchlist@chromium.org' from committers.py and the
+        watchist file; moving to 'mkwst@chromium.org' instead.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move webkitpy.layout_tests.port to webkitpy.port
