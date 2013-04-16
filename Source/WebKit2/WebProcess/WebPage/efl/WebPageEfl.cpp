@@ -29,6 +29,7 @@
 #include "WebPage.h"
 
 #include "EditorState.h"
+#include "EventHandler.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WindowsKeyboardCodes.h"

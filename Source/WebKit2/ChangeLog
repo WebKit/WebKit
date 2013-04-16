@@ -1,3 +1,9 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another EFL build fix.
+
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+
 2013-04-15  Sam Weinig  <sam@webkit.org>
 
         Remove more #includes from Frame.h
