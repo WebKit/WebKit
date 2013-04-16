@@ -555,7 +555,10 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         }
     }
 
-    [m_inspectorView.get() setFrame:inspectorFrame];
+    // Disable screen updates to make sure the layers for both views resize in sync.
+    [[m_inspectorView window] disableScreenUpdatesUntilFlush];
+
+    [m_inspectorView setFrame:inspectorFrame];
     [inspectedView setFrame:inspectedViewFrame];
 }
 

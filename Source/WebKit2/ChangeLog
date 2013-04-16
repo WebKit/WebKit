@@ -1,3 +1,15 @@
+2013-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        Make resizing the docked Web Inspector stay in sync with the inspected view.
+
+        https://webkit.org/b/114682
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        Disable screen updates to make sure the layers for both views resize in sync.
+
 2013-04-15  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from ScriptExecutionContext.h
