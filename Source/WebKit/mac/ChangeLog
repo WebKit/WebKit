@@ -1,3 +1,22 @@
+2013-04-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r146025): WebKit applications can't apply underline or strike through
+        https://bugs.webkit.org/show_bug.cgi?id=114662
+
+        Reviewed by Enrica Casucci.
+
+        Use -webkit- prefixes to apply underline. There should be no further compatibility issues
+        since -khtml- was used only internally to pass the information down to WebCore.
+
+        Unfortunately, we can't test this code like any other font panel bug.
+
+        In the long run, we need to add some abstraction layer around font panel to make this testable
+        or else we'll keep regressing this feature.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _styleFromFontAttributes:]):
+        (-[WebHTMLView _styleForAttributeChange:]):
+
 2013-04-15  Anders Carlsson  <andersca@apple.com>
 
         plugins/get-url-beforeunload-destroys-plugin.html crashes in WebKit1

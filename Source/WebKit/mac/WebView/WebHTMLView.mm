@@ -4336,11 +4336,11 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     int underlineInt = [[dictionary objectForKey:NSUnderlineStyleAttributeName] intValue];
     // FIXME: Underline wins here if we have both (see bug 3790443).
     if (strikethroughInt == NSUnderlineStyleNone && underlineInt == NSUnderlineStyleNone)
-        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
+        [style setProperty:@"-webkit-text-decorations-in-effect" value:@"none" priority:@""];
     else if (underlineInt == NSUnderlineStyleNone)
-        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"line-through" priority:@""];
+        [style setProperty:@"-webkit-text-decorations-in-effect" value:@"line-through" priority:@""];
     else
-        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
+        [style setProperty:@"-webkit-text-decorations-in-effect" value:@"underline" priority:@""];
 
     return style;
 }
@@ -4588,10 +4588,10 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
     if (sa == sb) {
         if (sa == NSUnderlineStyleNone)
-            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""]; 
+            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"none" priority:@""];
             // we really mean "no line-through" rather than "none"
         else
-            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"line-through" priority:@""];
+            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"line-through" priority:@""];
             // we really mean "add line-through" rather than "line-through"
     }
 
@@ -4610,10 +4610,10 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     int ub = [[b objectForKey:NSUnderlineStyleAttributeName] intValue];
     if (ua == ub) {
         if (ua == NSUnderlineStyleNone)
-            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
+            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"none" priority:@""];
             // we really mean "no underline" rather than "none"
         else
-            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
+            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"underline" priority:@""];
             // we really mean "add underline" rather than "underline"
     }
 
