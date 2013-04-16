@@ -1432,7 +1432,8 @@ void FrameView::addWidgetToUpdate(RenderObject* object)
     Node* node = object->node();
     if (node->hasTagName(objectTag) || node->hasTagName(embedTag)) {
         HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(node);
-        pluginElement->setNeedsWidgetUpdate(true);
+        if (!pluginElement->needsCheckForSizeChange())
+            pluginElement->setNeedsWidgetUpdate(true);
     }
 
     m_widgetUpdateSet->add(object);
@@ -2610,7 +2611,7 @@ void FrameView::updateWidget(RenderObject* object)
         if (object->isSnapshottedPlugIn()) {
             if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
                 HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
-                pluginElement->updateSnapshotInfo();
+                pluginElement->checkSnapshotStatus();
             }
             return;
         }
@@ -2619,6 +2620,10 @@ void FrameView::updateWidget(RenderObject* object)
         // updateWidget(PluginCreationOption) on HTMLElement.
         if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
             HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
+            if (pluginElement->needsCheckForSizeChange()) {
+                pluginElement->checkSnapshotStatus();
+                return;
+            }
             if (pluginElement->needsWidgetUpdate())
                 pluginElement->updateWidget(CreateAnyWidgetType);
         }

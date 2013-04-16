@@ -64,6 +64,7 @@ public:
     virtual bool canProcessDrag() const { return false; }
 
     virtual bool shouldAlwaysAutoStart() const { return false; }
+    virtual void beginSnapshottingRunningPlugin() { }
 
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
 

@@ -148,6 +148,7 @@ private:
     virtual WebCore::Scrollbar* verticalScrollbar();
     virtual bool wantsWheelEvents();
     virtual bool shouldAlwaysAutoStart() const OVERRIDE;
+    virtual void beginSnapshottingRunningPlugin() OVERRIDE;
     virtual bool shouldAllowNavigationFromDrags() const OVERRIDE;
 
     // WebCore::Widget

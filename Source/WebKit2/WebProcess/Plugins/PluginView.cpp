@@ -1640,6 +1640,11 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
     m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
 }
 
+void PluginView::beginSnapshottingRunningPlugin()
+{
+    m_pluginSnapshotTimer.restart();
+}
+
 bool PluginView::shouldAlwaysAutoStart() const
 {
     if (!m_plugin)

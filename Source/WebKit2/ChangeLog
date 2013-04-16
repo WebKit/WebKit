@@ -1,3 +1,19 @@
+2013-04-15  Dean Jackson  <dino@apple.com>
+
+        Plugins that resize might need to be snapshotted.
+        https://bugs.webkit.org/show_bug.cgi?id=102157
+        <rdar://problem/12696259>
+
+        Reviewed by Tim Horton.
+
+        Allow a running plugin to be snapshotted. All this
+        means is that we start the snapshot timer again.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::beginSnapshottingRunningPlugin): Restart
+            the timer.
+        * WebProcess/Plugins/PluginView.h: Virtual method declaration.
+
 2013-04-15  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL][WK2] build fix after r148434

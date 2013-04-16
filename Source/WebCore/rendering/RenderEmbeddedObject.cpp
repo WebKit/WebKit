@@ -293,10 +293,26 @@ void RenderEmbeddedObject::layout()
 
     updateLayerTransform();
 
-    if (!widget() && frameView() && canHaveWidget())
+    bool wasMissingWidget = false;
+    if (!widget() && frameView() && canHaveWidget()) {
+        wasMissingWidget = true;
         frameView()->addWidgetToUpdate(this);
+    }
 
     setNeedsLayout(false);
+
+    LayoutSize newSize = contentBoxRect().size();
+
+    if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
+        Element* element = toElement(node());
+        if (element && element->isPluginElement() && toHTMLPlugInElement(element)->isPlugInImageElement()) {
+            HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(element);
+            if (plugInImageElement->displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement->snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized && document()->view()) {
+                plugInImageElement->setNeedsCheckForSizeChange();
+                document()->view()->addWidgetToUpdate(this);
+            }
+        }
+    }
 
     if (!canHaveChildren())
         return;
@@ -312,7 +328,6 @@ void RenderEmbeddedObject::layout()
     if (!childBox)
         return;
     
-    LayoutSize newSize = contentBoxRect().size();
     if (newSize == oldSize && !childBox->needsLayout())
         return;
     

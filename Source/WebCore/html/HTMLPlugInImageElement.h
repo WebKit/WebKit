@@ -75,7 +75,7 @@ public:
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
     void userDidClickSnapshot(PassRefPtr<MouseEvent>, bool forwardEvent);
-    void updateSnapshotInfo();
+    void checkSnapshotStatus();
     Image* snapshotImage() const { return m_snapshotImage.get(); }
 
     // Plug-in URL might not be the same as url() with overriding parameters.
@@ -84,6 +84,18 @@ public:
 
     void setIsPrimarySnapshottedPlugIn(bool);
     bool partOfSnapshotLabel(Node*);
+
+    bool needsCheckForSizeChange() const { return m_needsCheckForSizeChange; }
+    void setNeedsCheckForSizeChange() { m_needsCheckForSizeChange = true; }
+    void checkSizeChangeForSnapshotting();
+
+    enum SnapshotDecision {
+        SnapshotNotYetDecided,
+        NeverSnapshot,
+        Snapshotted,
+        MaySnapshotWhenResized
+    };
+    SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
@@ -147,6 +159,9 @@ private:
     RefPtr<Element> m_snapshotLabel;
     bool m_createdDuringUserGesture;
     bool m_restartedPlugin;
+    bool m_needsCheckForSizeChange;
+    IntSize m_sizeWhenSnapshotted;
+    SnapshotDecision m_snapshotDecision;
 };
 
 inline HTMLPlugInImageElement* toHTMLPlugInImageElement(Node* node)
