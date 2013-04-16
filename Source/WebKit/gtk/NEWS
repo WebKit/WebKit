@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+   2.0.1
+==================
+
+What's new in WebKitGTK+ 2.0.1?
+
+  - Fix a crash in Web Process when the UI process finishes too early.
+  - Fix load notification of main resource when loaded from the memory
+    cache.
+  - Fix GObject DOM generation to make sure the right GType is used
+    for every wrapped object.
+  - Fix the build with non-bash shells.
+  - Fix WebKit1 build in windows.
+  - Several translation updates: Slovenian, Tamil, Hindi, gujarati,
+    Malayalam.
+
+==================
 WebKitGTK+   2.0.0
 ==================
 
