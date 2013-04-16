@@ -2,6 +2,8 @@
 <html>
 <title>Checks that a user generated POST request does not circumvent third-party cookie rules</title>
 <script>
+document.cookie = "test_cookie=0; path=/; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
