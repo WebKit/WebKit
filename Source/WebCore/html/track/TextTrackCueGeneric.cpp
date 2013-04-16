@@ -151,7 +151,7 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }
     
-bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
+bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
 {
     if (cue.cueType() != TextTrackCue::Generic)
         return false;
@@ -169,7 +169,7 @@ bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
     if (m_backgroundColor != other->backgroundColor())
         return false;
 
-    return TextTrackCue::operator==(cue);
+    return TextTrackCue::isEqual(cue, match);
 }
     
 } // namespace WebCore

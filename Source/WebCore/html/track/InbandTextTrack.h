@@ -31,14 +31,35 @@
 #include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateClient.h"
 #include "TextTrack.h"
+#include "TextTrackCueGeneric.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Document;
 class InbandTextTrackPrivate;
-class MediaPlayer;
 class TextTrackCue;
+
+class TextTrackCueMap {
+public:
+    TextTrackCueMap() { }
+    virtual ~TextTrackCueMap() { }
+
+    void add(GenericCueData*, TextTrackCueGeneric*);
+
+    void remove(GenericCueData*);
+    void remove(TextTrackCueGeneric*);
+    
+    PassRefPtr<GenericCueData> find(TextTrackCueGeneric*);
+    PassRefPtr<TextTrackCueGeneric> find(GenericCueData*);
+    
+private:
+    typedef HashMap<RefPtr<TextTrackCueGeneric>, RefPtr<GenericCueData> > GenericCueToCueDataMap;
+    typedef HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric> > GenericCueDataToCueMap;
+    
+    GenericCueToCueDataMap m_cueToDataMap;
+    GenericCueDataToCueMap m_dataToCueMap;
+};
 
 class InbandTextTrack : public TextTrack, public InbandTextTrackPrivateClient {
 public:
@@ -55,13 +76,19 @@ public:
 private:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual void addGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
-    virtual void addWebVTTCue(InbandTextTrackPrivate*, double, double, const String&, const String&, const String&) OVERRIDE;
+    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) OVERRIDE;
+    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
+    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
+    virtual void removeCue(TextTrackCue*, ExceptionCode&) OVERRIDE;
+
+    PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
+    void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual InbandTextTrackPrivate* privateTrack() OVERRIDE { return m_private.get(); }
 #endif
 
+    TextTrackCueMap m_cueMap;
     RefPtr<InbandTextTrackPrivate> m_private;
 };
 

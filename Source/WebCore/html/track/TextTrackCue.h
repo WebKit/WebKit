@@ -37,7 +37,6 @@
 #include "EventTarget.h"
 #include "HTMLDivElement.h"
 #include "HTMLElement.h"
-#include "TextTrack.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -179,18 +178,21 @@ public:
 
     virtual void setFontSize(int, const IntSize&, bool important);
 
-    virtual bool operator==(const TextTrackCue&) const;
-    virtual bool operator!=(const TextTrackCue& cue) const
-    {
-        return !(*this == cue);
-    }
-    
+    enum CueMatchRules {
+        MatchAllFields,
+        IgnoreDuration,
+    };
+    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
+
     enum CueType {
         Generic,
         WebVTT
     };
     virtual CueType cueType() const { return WebVTT; }
 
+    void willChange();
+    void didChange();
+    
     DEFINE_ATTRIBUTE_EVENT_LISTENER(enter);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(exit);
 
@@ -218,9 +220,6 @@ private:
     void determineTextDirection();
     void calculateDisplayParameters();
 
-    void cueWillChange();
-    void cueDidChange();
-
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
@@ -247,6 +246,7 @@ private:
     int m_textPosition;
     int m_cueSize;
     int m_cueIndex;
+    int m_processingCueChanges;
 
     WritingDirection m_writingDirection;
 

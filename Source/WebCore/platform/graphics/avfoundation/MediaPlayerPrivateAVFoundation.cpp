@@ -597,11 +597,6 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    if (currentTrack())
-        currentTrack()->resetCueValues();
-#endif
-
     m_seekTo = MediaPlayer::invalidTime();
     updateStates();
     m_player->timeChanged();

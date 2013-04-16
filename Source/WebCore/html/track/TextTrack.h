@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "ExceptionCode.h"
+#include "TextTrackCue.h"
 #include "TrackBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +44,6 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class TextTrack;
-class TextTrackCue;
 class TextTrackCueList;
 #if ENABLE(WEBVTT_REGIONS)
 class TextTrackRegion;
@@ -108,8 +108,9 @@ public:
     TextTrackClient* client() { return m_client; }
 
     void addCue(PassRefPtr<TextTrackCue>);
-    void removeCue(TextTrackCue*, ExceptionCode&);
-    bool hasCue(TextTrackCue*);
+    virtual void removeCue(TextTrackCue*, ExceptionCode&);
+
+    bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     TextTrackRegionList* regions();

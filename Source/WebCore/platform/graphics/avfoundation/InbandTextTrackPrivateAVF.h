@@ -29,11 +29,10 @@
 #if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivate.h"
+#include "InbandTextTrackPrivateClient.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-class GenericCueData;
 
 class AVFInbandTrackParent {
 public:
@@ -68,7 +67,7 @@ protected:
     double m_currentCueStartTime;
     double m_currentCueEndTime;
 
-    Vector<OwnPtr<GenericCueData> > m_cues;
+    Vector<RefPtr<GenericCueData> > m_cues;
 
     AVFInbandTrackParent* m_owner;
     int m_index;

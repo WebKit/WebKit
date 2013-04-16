@@ -27,7 +27,7 @@
 #define InbandTextTrackPrivateClient_h
 
 #include "Color.h"
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -36,20 +36,10 @@ namespace WebCore {
 
 class InbandTextTrackPrivate;
 
-class GenericCueData {
-    WTF_MAKE_NONCOPYABLE(GenericCueData); WTF_MAKE_FAST_ALLOCATED;
+class GenericCueData : public RefCounted<GenericCueData> {
 public:
-    GenericCueData()
-        : m_startTime(0)
-        , m_endTime(0)
-        , m_line(-1)
-        , m_position(-1)
-        , m_size(-1)
-        , m_align(None)
-        , m_baseFontSize(0)
-        , m_relativeFontSize(0)
-    {
-    }
+
+    static PassRefPtr<GenericCueData> create() { return adoptRef(new GenericCueData()); }
     virtual ~GenericCueData() { }
 
     double startTime() const { return m_startTime; }
@@ -97,7 +87,28 @@ public:
     Color backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32 color) { m_backgroundColor.setRGB(color); }
 
+    enum Status {
+        Uninitialized,
+        Partial,
+        Complete,
+    };
+    Status status() { return m_status; }
+    void setStatus(Status status) { m_status = status; }
+    
 private:
+    GenericCueData()
+        : m_startTime(0)
+        , m_endTime(0)
+        , m_line(-1)
+        , m_position(-1)
+        , m_size(-1)
+        , m_align(None)
+        , m_baseFontSize(0)
+        , m_relativeFontSize(0)
+        , m_status(Uninitialized)
+    {
+    }
+
     double m_startTime;
     double m_endTime;
     String m_id;
@@ -111,14 +122,16 @@ private:
     double m_relativeFontSize;
     Color m_foregroundColor;
     Color m_backgroundColor;
+    Status m_status;
 };
 
 class InbandTextTrackPrivateClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
     
-    virtual void addWebVTTCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
-    virtual void addGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
+    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;
+    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
+    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
 };
 
 } // namespace WebCore

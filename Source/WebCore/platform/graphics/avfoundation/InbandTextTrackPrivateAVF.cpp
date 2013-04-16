@@ -339,25 +339,13 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 
         if (m_currentCueEndTime >= m_currentCueStartTime) {
             for (size_t i = 0; i < m_cues.size(); i++) {
-
                 GenericCueData* cueData = m_cues[i].get();
 
-                LOG(Media, "InbandTextTrackPrivateAVF::processCue flushing cue: start=%.2f, end=%.2f, content=\"%s\" \n",
-                    m_currentCueStartTime, m_currentCueEndTime, cueData->content().utf8().data());
-                
-                if (!cueData->content().length())
-                    continue;
-                
-                cueData->setStartTime(m_currentCueStartTime);
                 cueData->setEndTime(m_currentCueEndTime);
-                
-                // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
-                // set CSS "left".
-                if (cueData->position() >= 0 && cueData->size() > 0)
-                    cueData->setPosition(cueData->position() - cueData->size() / 2);
-                
-                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
-                client()->addGenericCue(this, cueData);
+                cueData->setStatus(GenericCueData::Complete);
+
+                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) -  updating cue: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
+                client()->updateGenericCue(this, cueData);
             }
         } else
             LOG(Media, "InbandTextTrackPrivateAVF::processCue negative length cue(s) ignored: start=%.2f, end=%.2f\n", m_currentCueStartTime, m_currentCueEndTime);
@@ -378,9 +366,27 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
         if (!attributedString || !CFAttributedStringGetLength(attributedString))
             continue;
 
-        m_cues.append(adoptPtr(new GenericCueData));
-        processCueAttributes(attributedString, m_cues[i].get());
+        RefPtr<GenericCueData> cueData = GenericCueData::create();
+        processCueAttributes(attributedString, cueData.get());
+        if (!cueData->content().length())
+            continue;
+
+        m_cues.append(cueData);
+
         m_currentCueStartTime = time;
+        cueData->setStartTime(m_currentCueStartTime);
+        cueData->setEndTime(numeric_limits<double>::infinity()); // duration
+        
+        // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
+        // set CSS "left".
+        if (cueData->position() >= 0 && cueData->size() > 0)
+            cueData->setPosition(cueData->position() - cueData->size() / 2);
+        
+        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
+
+        cueData->setStatus(GenericCueData::Partial);
+        client()->addGenericCue(this, cueData.release());
+
         m_havePartialCue = true;
     }
 }
@@ -395,6 +401,11 @@ void InbandTextTrackPrivateAVF::resetCueValues()
 {
     if (m_havePartialCue && !m_currentCueEndTime)
         LOG(Media, "InbandTextTrackPrivateAVF::resetCueValues flushing data for cues: start=%.2f\n", m_currentCueStartTime);
+
+    if (client()) {
+        for (size_t i = 0; i < m_cues.size(); i++)
+            client()->removeGenericCue(this, m_cues[i].get());
+    }
 
     m_cues.resize(0);
     m_havePartialCue = false;
