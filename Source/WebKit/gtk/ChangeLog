@@ -1,3 +1,9 @@
+2013-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.0.1 release.
+
+        * NEWS: Added release notes for 2.0.1.
+
 2013-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] DOM objects created wrapping a base class have incorrect GObject type
