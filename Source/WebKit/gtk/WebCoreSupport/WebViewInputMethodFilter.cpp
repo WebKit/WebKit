@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebViewInputMethodFilter.h"
 
+#include "Editor.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"

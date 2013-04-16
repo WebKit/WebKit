@@ -33,6 +33,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
+#include "Editor.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"

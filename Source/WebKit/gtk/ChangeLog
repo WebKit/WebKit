@@ -1,3 +1,11 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ build fix attempt.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/WebViewInputMethodFilter.cpp:
+        * webkit/webkitwebframe.cpp:
+
 2013-04-14  Andreas Kling  <akling@apple.com>
 
         Move CSSOM classes to using MutableStylePropertySet over StylePropertySet.

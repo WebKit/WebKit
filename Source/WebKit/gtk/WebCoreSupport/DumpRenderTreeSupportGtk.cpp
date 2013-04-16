@@ -32,6 +32,7 @@
 #include "ChromeClientGtk.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "Editor.h"
 #include "EditorClientGtk.h"
 #include "Element.h"
 #include "FocusController.h"
