@@ -30,7 +30,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Image.h"
-#include "ScriptWrappableInlines.h"
 
 namespace WebCore {
 

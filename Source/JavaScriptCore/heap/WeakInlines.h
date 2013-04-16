@@ -33,16 +33,6 @@
 
 namespace JSC {
 
-template<typename T> inline Weak<T>::Weak()
-    : m_impl(0)
-{
-}
-
-template<typename T> inline Weak<T>::Weak(std::nullptr_t)
-    : m_impl(0)
-{
-}
-
 template<typename T> inline Weak<T>::Weak(T* cell, WeakHandleOwner* weakOwner, void* context)
     : m_impl(cell ? WeakSet::allocate(cell, weakOwner, context) : 0)
 {
@@ -61,11 +51,6 @@ template<typename T> inline Weak<T>::Weak(typename Weak<T>::HashTableDeletedValu
 template<typename T> template<typename U>  inline Weak<T>::Weak(const PassWeak<U>& other)
     : m_impl(other.leakImpl())
 {
-}
-
-template<typename T> inline Weak<T>::~Weak()
-{
-    clear();
 }
 
 template<class T> inline void swap(Weak<T>& a, Weak<T>& b)
@@ -126,14 +111,6 @@ template<typename T> inline PassWeak<T> Weak<T>::release()
     return tmp;
 }
 
-template<typename T> inline void Weak<T>::clear()
-{
-    if (!m_impl)
-        return;
-    WeakSet::deallocate(m_impl);
-    m_impl = 0;
-}
-    
 template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()
 {
     return reinterpret_cast<WeakImpl*>(-1);

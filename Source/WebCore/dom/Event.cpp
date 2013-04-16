@@ -26,7 +26,6 @@
 #include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "ScriptWrappableInlines.h"
 #include "UserGestureIndicator.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>

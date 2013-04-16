@@ -2802,6 +2802,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\Weak.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\Weak.h"
 				>
 			</File>

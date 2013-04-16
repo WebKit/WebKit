@@ -261,6 +261,9 @@
     <ClCompile Include="..\heap\VTableSpectrum.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\Weak.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\WeakBlock.cpp">
       <Filter>heap</Filter>
     </ClCompile>

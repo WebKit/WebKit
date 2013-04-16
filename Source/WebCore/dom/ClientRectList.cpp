@@ -29,7 +29,6 @@
 
 #include "ExceptionCode.h"
 #include "ClientRect.h"
-#include "ScriptWrappableInlines.h"
 
 namespace WebCore {
 

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "ClientRect.h"
 
-#include "ScriptWrappableInlines.h"
-
 namespace WebCore {
 
 ClientRect::ClientRect()

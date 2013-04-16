@@ -35,7 +35,6 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "QualifiedName.h"
-#include "ScriptWrappableInlines.h"
 #include "StaticNodeList.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>

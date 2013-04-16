@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DOMStringMap.h"
 
-#include "ScriptWrappableInlines.h"
-
 namespace WebCore {
 
 DOMStringMap::DOMStringMap()

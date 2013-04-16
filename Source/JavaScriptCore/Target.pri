@@ -86,9 +86,10 @@ SOURCES += \
     heap/CopyVisitor.cpp \
     heap/ConservativeRoots.cpp \
     heap/DFGCodeBlocks.cpp \
-    heap/WeakSet.cpp \
-    heap/WeakHandleOwner.cpp \
+    heap/Weak.cpp \
     heap/WeakBlock.cpp \
+    heap/WeakHandleOwner.cpp \
+    heap/WeakSet.cpp \
     heap/HandleSet.cpp \
     heap/HandleStack.cpp \
     heap/BlockAllocator.cpp \

@@ -147,9 +147,10 @@ set(JavaScriptCore_SOURCES
     heap/MarkStack.cpp
     heap/SlotVisitor.cpp
     heap/SuperRegion.cpp
-    heap/WeakSet.cpp
-    heap/WeakHandleOwner.cpp
+    heap/Weak.cpp
     heap/WeakBlock.cpp
+    heap/WeakHandleOwner.cpp
+    heap/WeakSet.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp

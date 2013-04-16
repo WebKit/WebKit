@@ -35,11 +35,22 @@ template<typename T> class PassWeak;
 class WeakImpl;
 class WeakHandleOwner;
 
+// This is a free function rather than a Weak<T> member function so we can put it in Weak.cpp.
+JS_EXPORT_PRIVATE void weakClearSlowCase(WeakImpl*&);
+
 template<typename T> class Weak {
     WTF_MAKE_NONCOPYABLE(Weak);
 public:
-    Weak();
-    explicit Weak(std::nullptr_t);
+    Weak()
+        : m_impl(0)
+    {
+    }
+
+    explicit Weak(std::nullptr_t)
+        : m_impl(0)
+    {
+    }
+
     explicit Weak(T*, WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
@@ -48,7 +59,10 @@ public:
 
     template<typename U> Weak(const PassWeak<U>&);
 
-    ~Weak();
+    ~Weak()
+    {
+        clear();
+    }
 
     void swap(Weak&);
     Weak& operator=(const PassWeak<T>&);
@@ -65,7 +79,12 @@ public:
     operator UnspecifiedBoolType*() const;
 
     PassWeak<T> release();
-    void clear();
+    void clear()
+    {
+        if (!m_impl)
+            return;
+        weakClearSlowCase(m_impl);
+    }
     
 private:
     static WeakImpl* hashTableDeletedValue();

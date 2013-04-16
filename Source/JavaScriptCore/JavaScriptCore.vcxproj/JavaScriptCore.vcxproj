@@ -213,6 +213,7 @@
     <ClCompile Include="..\heap\SlotVisitor.cpp" />
     <ClCompile Include="..\heap\SuperRegion.cpp" />
     <ClCompile Include="..\heap\VTableSpectrum.cpp" />
+    <ClCompile Include="..\heap\Weak.cpp" />
     <ClCompile Include="..\heap\WeakBlock.cpp" />
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
     <ClCompile Include="..\heap\WeakSet.cpp" />
