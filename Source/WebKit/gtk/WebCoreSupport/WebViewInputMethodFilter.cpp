@@ -21,6 +21,7 @@
 #include "WebViewInputMethodFilter.h"
 
 #include "Editor.h"
+#include "EventHandelr.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"

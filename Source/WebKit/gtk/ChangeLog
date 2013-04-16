@@ -1,5 +1,11 @@
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another GTK+ build fix.
+
+        * WebCoreSupport/WebViewInputMethodFilter.cpp:
+
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK+ build fix attempt.
 
         * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
