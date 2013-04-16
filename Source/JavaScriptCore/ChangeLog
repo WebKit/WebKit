@@ -1,3 +1,11 @@
+2013-04-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed VS2010 build correction.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+        Specify proper link library to avoid mixture of ICU 4.0 and 4.6
+        symbols during link.
+
 2013-04-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows clean build fix after r148479.
