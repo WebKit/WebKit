@@ -68,7 +68,7 @@ var test = function()
         var request = event.data;
         var idMatch = /\?id=([0-9]*)&/.exec(request.url);
         var requestId = idMatch[1];
-        var requestMessage = requestId + ":" + request.requestMethod + " " + request.url.replace(/[&?]date=\d+/, "");
+        var requestMessage = requestId + " " + request.type + ":" + request.requestMethod + " " + request.url.replace(/[&?]date=\d+/, "");
         requestMessages.push(requestMessage);
         if (request.requestMethod === "POST" && ++postRequestsCount === 4) {
             requestMessages.sort();
