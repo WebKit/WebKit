@@ -34,6 +34,10 @@ fast/dom/Geolocation/watchPosition-unique.html
 # <rdar://problem/12968804>
 svg/repaint/repaint-webkit-svg-shadow-container.html
 
+#  CSS variables aren't available on safari-536.30-branch
+# <rdar://problem/13668920>
+fast/css/variables/deferred-image-load-from-variable.html
+
 # CSS Regions are disabled on the 536 branch
 # <rdar://problem/10887709>
 fast/regions

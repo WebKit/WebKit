@@ -1,5 +1,13 @@
 2013-04-16  David Farler  <dfarler@apple.com>
 
+        CSS Variables aren't available on safari-536.30-branch.
+        <rdar://problem/13668920>
+
+        * platform/mac/Skipped:
+        Skip fast/css/variables/deferred-image-load-from-variable.html
+
+2013-04-16  David Farler  <dfarler@apple.com>
+
         Skip fast/dom/Geolocation/watchPosition-unique.html on safari-536.30-branch
         <rdar://problem/13668237>
 
