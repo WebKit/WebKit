@@ -587,6 +587,7 @@
 		9394AE441702B25B00344232 /* WKBundlePagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9394AE421702B25B00344232 /* WKBundlePagePrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9394AE451702B25B00344232 /* WKBundlePagePrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394AE431702B25B00344232 /* WKBundlePagePrivateMac.mm */; };
 		939AE7661316E99C00AE06A6 /* WebCoreArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */; };
+		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */; };
 		93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC679E12D3CC7400A60610 /* DecoderAdapter.h */; };
 		93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */; };
@@ -2012,6 +2013,7 @@
 		9394AE421702B25B00344232 /* WKBundlePagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePagePrivateMac.h; sourceTree = "<group>"; };
 		9394AE431702B25B00344232 /* WKBundlePagePrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePagePrivateMac.mm; sourceTree = "<group>"; };
 		939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreArgumentCoders.cpp; sourceTree = "<group>"; };
+		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
 		93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecoderAdapter.cpp; sourceTree = "<group>"; };
 		93FC679E12D3CC7400A60610 /* DecoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecoderAdapter.h; sourceTree = "<group>"; };
 		93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncoderAdapter.cpp; sourceTree = "<group>"; };
@@ -4829,6 +4831,7 @@
 				BC4075E5124FF0270068F20A /* WKNumber.cpp */,
 				BC4075E6124FF0270068F20A /* WKNumber.h */,
 				BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */,
+				93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */,
 				A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */,
 				37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */,
 				37948407150C4B9600E52CE9 /* WKRenderLayer.h */,
@@ -5219,6 +5222,7 @@
 				BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */,
 				BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */,
 				BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */,
+				93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */,
 				BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */,
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
 				BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */,

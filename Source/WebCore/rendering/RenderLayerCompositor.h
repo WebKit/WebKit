@@ -453,6 +453,7 @@ private:
     bool m_layerFlushThrottlingEnabled;
     bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
     bool m_hasPendingLayerFlush;
+    bool m_headerLayerAwaitingFirstFlush;
 
 #if !LOG_DISABLED
     int m_rootLayerUpdateCount;

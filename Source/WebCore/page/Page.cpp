@@ -1274,6 +1274,11 @@ void Page::addLayoutMilestones(LayoutMilestones milestones)
     m_layoutMilestones |= milestones;
 }
 
+void Page::removeLayoutMilestones(LayoutMilestones milestones)
+{
+    m_layoutMilestones &= ~milestones;
+}
+
 // These are magical constants that might be tweaked over time.
 static double gMinimumPaintedAreaRatio = 0.1;
 static double gMaximumUnpaintedAreaRatio = 0.04;

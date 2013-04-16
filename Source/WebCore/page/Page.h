@@ -352,6 +352,7 @@ public:
     PlatformDisplayID displayID() const { return m_displayID; }
 
     void addLayoutMilestones(LayoutMilestones);
+    void removeLayoutMilestones(LayoutMilestones);
     LayoutMilestones layoutMilestones() const { return m_layoutMilestones; }
 
     bool isCountingRelevantRepaintedObjects() const;

@@ -217,6 +217,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_layerFlushThrottlingEnabled(false)
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
     , m_hasPendingLayerFlush(false)
+    , m_headerLayerAwaitingFirstFlush(false)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
     , m_obligateCompositedLayerCount(0)
@@ -374,6 +375,16 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
+
+    if (m_headerLayerAwaitingFirstFlush) {
+        m_headerLayerAwaitingFirstFlush = false;
+        if (Page* page = this->page()) {
+            if (page->layoutMilestones() & DidFirstFlushForHeaderLayer) {
+                if (Frame* frame = page->mainFrame())
+                    frame->loader()->didLayout(DidFirstFlushForHeaderLayer);
+            }
+        }
+    }
 
     if (!m_viewportConstrainedLayersNeedingUpdate.isEmpty()) {
         HashSet<RenderLayer*>::const_iterator end = m_viewportConstrainedLayersNeedingUpdate.end();
@@ -2514,6 +2525,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         m_layerForHeader->setName("header");
 #endif
         m_scrollLayer->addChildBelow(m_layerForHeader.get(), m_rootContentLayer.get());
+        m_headerLayerAwaitingFirstFlush = true;
     }
 
     m_layerForHeader->setPosition(FloatPoint(0, 0));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutMilestones_h
-#define LayoutMilestones_h
+#ifndef WKPageLoadTypesPrivate_h
+#define WKPageLoadTypesPrivate_h
 
-namespace WebCore {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-enum LayoutMilestoneFlag {
-    DidFirstLayout = 1 << 0,
-    DidFirstVisuallyNonEmptyLayout = 1 << 1,
-    DidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2,
-    DidFirstFlushForHeaderLayer = 1 << 3
+// This is an extension of the WKLayoutMilestones enum defined in WKPageLoadTypes.h
+enum {
+    kWKDidFirstFlushForHeaderLayer = 1 << 3
 };
 
-typedef unsigned LayoutMilestones;
+#ifdef __cplusplus
+}
+#endif
 
-} // namespace WebCore
-
-#endif // LayoutMilestones_h
+#endif /* WKPageLoadTypesPrivate_h */

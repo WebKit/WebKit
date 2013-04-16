@@ -837,8 +837,12 @@ void WebPage::setHeaderLayerWithHeight(CALayer *layer, int height)
 
     m_headerLayer = layer;
     GraphicsLayer* parentLayer = frameView->setWantsLayerForHeader(m_headerLayer);
-    if (!parentLayer)
+    if (!parentLayer) {
+        m_page->removeLayoutMilestones(DidFirstFlushForHeaderLayer);
         return;
+    }
+
+    m_page->addLayoutMilestones(DidFirstFlushForHeaderLayer);
 
     m_headerLayer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
     [parentLayer->platformLayer() addSublayer:m_headerLayer.get()];

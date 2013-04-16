@@ -51,7 +51,8 @@ typedef uint32_t WKSameDocumentNavigationType;
 enum {
     kWKDidFirstLayout = 1 << 0,
     kWKDidFirstVisuallyNonEmptyLayout = 1 << 1,
-    kWKDidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2
+    kWKDidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2,
+    kWKReserved = 1 << 3 // Note that the fourth member of this enum is actually private and defined in WKPageLoadTypesPrivate.h
 };
 typedef uint32_t WKLayoutMilestones;
 

@@ -35,6 +35,7 @@
 #include "WKGeometry.h"
 #include "WKImage.h"
 #include "WKPageLoadTypes.h"
+#include "WKPageLoadTypesPrivate.h"
 #include "WKPageVisibilityTypes.h"
 #include "WebError.h"
 #include "WebEvent.h"
@@ -799,6 +800,8 @@ inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milesto
         wkMilestones |= kWKDidFirstVisuallyNonEmptyLayout;
     if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
         wkMilestones |= kWKDidHitRelevantRepaintedObjectsAreaThreshold;
+    if (milestones & WebCore::DidFirstFlushForHeaderLayer)
+        wkMilestones |= kWKDidFirstFlushForHeaderLayer;
     
     return wkMilestones;
 }
@@ -813,6 +816,8 @@ inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilesto
         milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
     if (wkMilestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
         milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+    if (wkMilestones & kWKDidFirstFlushForHeaderLayer)
+        milestones |= WebCore::DidFirstFlushForHeaderLayer;
     
     return milestones;
 }

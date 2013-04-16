@@ -1,3 +1,30 @@
+2013-04-16  Beth Dakin  <bdakin@apple.com>
+
+        Need a new layout milestone to notify bundle clients when the header has been 
+        flushed
+        https://bugs.webkit.org/show_bug.cgi?id=114706
+        -and corresponding-
+        <rdar://problem/13657284>
+
+        Reviewed by Simon Fraser.
+
+        Make this new LayoutMilestone private at the API layer. 
+        * Shared/API/c/WKPageLoadTypes.h:
+        * Shared/API/c/WKPageLoadTypesPrivate.h: Added.
+
+        Handle the new milestone.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKLayoutMilestones):
+        (WebKit::toLayoutMilestones):
+
+        New file to make the milestone private.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Add or remove the DidFirstFlushForHeaderLayer millstone based on whether we just 
+        added or removed a header.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setHeaderLayerWithHeight):
+
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another EFL build fix.
