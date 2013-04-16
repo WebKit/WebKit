@@ -388,11 +388,6 @@ public:
     bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
     void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
 
-#if USE(V8)
-    bool isV8CollectableDuringMinorGC() const { return getFlag(V8CollectableDuringMinorGCFlag); }
-    void setV8CollectableDuringMinorGC(bool flag) { setFlag(flag, V8CollectableDuringMinorGCFlag); }
-#endif
-
     enum ShouldSetAttached {
         SetAttached,
         DoNotSetAttached
@@ -728,9 +723,6 @@ private:
         HasCustomStyleCallbacksFlag = 1 << 21,
         HasScopedHTMLStyleChildFlag = 1 << 22,
         HasEventTargetDataFlag = 1 << 23,
-#if USE(V8)
-        V8CollectableDuringMinorGCFlag = 1 << 24,
-#endif
         NeedsShadowTreeWalkerFlag = 1 << 25,
         IsInShadowTreeFlag = 1 << 26,
 

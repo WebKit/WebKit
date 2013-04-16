@@ -206,64 +206,8 @@ StackTrace.prototype = {
  */
 StackTrace.create = function(stackTraceLimit, topMostFunctionToIgnore)
 {
-    if (typeof Error.captureStackTrace === "function")
-        return new StackTraceV8(stackTraceLimit, topMostFunctionToIgnore || arguments.callee);
     // FIXME: Support JSC, and maybe other browsers.
     return null;
-}
-
-/**
- * @constructor
- * @implements {StackTrace}
- * @param {number=} stackTraceLimit
- * @param {Function=} topMostFunctionToIgnore
- * @see http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
- */
-function StackTraceV8(stackTraceLimit, topMostFunctionToIgnore)
-{
-    StackTrace.call(this);
-
-    var oldPrepareStackTrace = Error.prepareStackTrace;
-    var oldStackTraceLimit = Error.stackTraceLimit;
-    if (typeof stackTraceLimit === "number")
-        Error.stackTraceLimit = stackTraceLimit;
-
-    /**
-     * @param {Object} error
-     * @param {Array.<CallSite>} structuredStackTrace
-     * @return {Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}
-     */
-    Error.prepareStackTrace = function(error, structuredStackTrace)
-    {
-        return structuredStackTrace.map(function(callSite) {
-            return {
-                sourceURL: callSite.getFileName(),
-                lineNumber: callSite.getLineNumber(),
-                columnNumber: callSite.getColumnNumber()
-            };
-        });
-    }
-
-    var holder = /** @type {{stack: Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}} */ ({});
-    Error.captureStackTrace(holder, topMostFunctionToIgnore || arguments.callee);
-    this._stackTrace = holder.stack;
-
-    Error.stackTraceLimit = oldStackTraceLimit;
-    Error.prepareStackTrace = oldPrepareStackTrace;
-}
-
-StackTraceV8.prototype = {
-    /**
-     * @override
-     * @param {number} index
-     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}|undefined}
-     */
-    callFrame: function(index)
-    {
-        return this._stackTrace[index];
-    },
-
-    __proto__: StackTrace.prototype
 }
 
 /**
@@ -2274,7 +2218,6 @@ CanvasRenderingContext2DResource.AttributeProperties = [
     "textAlign",
     "textBaseline",
     "lineDashOffset",
-    // FIXME: Temporary properties implemented in JSC, but not in V8.
     "webkitLineDash",
     "webkitLineDashOffset"
 ];

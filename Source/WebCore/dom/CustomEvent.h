@@ -53,9 +53,6 @@ public:
     }
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail);
-#if USE(V8)
-    void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue>);
-#endif
 
     virtual const AtomicString& interfaceName() const;
 

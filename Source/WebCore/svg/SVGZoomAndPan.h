@@ -77,7 +77,7 @@ public:
 
     SVGZoomAndPanType zoomAndPan() const { return SVGZoomAndPanUnknown; }
 
-    // These methods only exist to allow us to compile V8/JSSVGZoomAndPan.*.
+    // These methods only exist to allow us to compile JSSVGZoomAndPan.*.
     // These are never called, and thus ASSERT_NOT_REACHED.
     void ref();
     void deref();
