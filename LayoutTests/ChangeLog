@@ -1,3 +1,10 @@
+2013-04-16  David Farler  <dfarler@apple.com>
+
+        <rdar://problem/13668125> Elgar: fast/block/float/float-not-removed-from-pre-block.html fails: expected file needs updating: two spaces
+
+        * fast/block/float/float-not-removed-from-pre-block-expected.txt:
+        Two spaces instead of one.
+
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge r125955.
