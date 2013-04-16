@@ -414,6 +414,7 @@ namespace WebCore {
         explicit DOMWindow(Document*);
 
         Page* page();
+        bool allowedToChangeWindowGeometry() const;
 
         virtual void frameDestroyed() OVERRIDE;
         virtual void willDetachPage() OVERRIDE;

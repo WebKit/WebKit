@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1450,21 +1450,27 @@ void DOMWindow::scrollTo(int x, int y) const
     view->setScrollPosition(layoutPos);
 }
 
+bool DOMWindow::allowedToChangeWindowGeometry() const
+{
+    if (!m_frame)
+        return false;
+    const Page* page = m_frame->page();
+    if (!page)
+        return false;
+    if (m_frame != page->mainFrame())
+        return false;
+    // Prevent web content from tricking the user into initiating a drag.
+    if (m_frame->eventHandler()->mousePressed())
+        return false;
+    return true;
+}
+
 void DOMWindow::moveBy(float x, float y) const
 {
-    if (UserGestureIndicator::processingUserGesture())
-        return;
-
-    if (!m_frame)
+    if (!allowedToChangeWindowGeometry())
         return;
 
     Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    if (m_frame != page->mainFrame())
-        return;
-
     FloatRect fr = page->chrome()->windowRect();
     FloatRect update = fr;
     update.move(x, y);
@@ -1474,19 +1480,10 @@ void DOMWindow::moveBy(float x, float y) const
 
 void DOMWindow::moveTo(float x, float y) const
 {
-    if (UserGestureIndicator::processingUserGesture())
-        return;
-
-    if (!m_frame)
+    if (!allowedToChangeWindowGeometry())
         return;
 
     Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    if (m_frame != page->mainFrame())
-        return;
-
     FloatRect fr = page->chrome()->windowRect();
     FloatRect sr = screenAvailableRect(page->mainFrame()->view());
     fr.setLocation(sr.location());
@@ -1498,19 +1495,10 @@ void DOMWindow::moveTo(float x, float y) const
 
 void DOMWindow::resizeBy(float x, float y) const
 {
-    if (UserGestureIndicator::processingUserGesture())
-        return;
-
-    if (!m_frame)
+    if (!allowedToChangeWindowGeometry())
         return;
 
     Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    if (m_frame != page->mainFrame())
-        return;
-
     FloatRect fr = page->chrome()->windowRect();
     FloatSize dest = fr.size() + FloatSize(x, y);
     FloatRect update(fr.location(), dest);
@@ -1519,19 +1507,10 @@ void DOMWindow::resizeBy(float x, float y) const
 
 void DOMWindow::resizeTo(float width, float height) const
 {
-    if (UserGestureIndicator::processingUserGesture())
-        return;
-
-    if (!m_frame)
+    if (!allowedToChangeWindowGeometry())
         return;
 
     Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    if (m_frame != page->mainFrame())
-        return;
-
     FloatRect fr = page->chrome()->windowRect();
     FloatSize dest = FloatSize(width, height);
     FloatRect update(fr.location(), dest);
