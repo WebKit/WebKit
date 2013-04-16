@@ -39,9 +39,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 // A base class that prevents binding callbacks from executing when
-// active dom objects are stopped or suspended, and is used by the
-// generated callback v8 bindings code to avoid erroneously CRASH()'ing
-// after script execution on a worker has been scheduled to terminate.
+// active dom objects are stopped or suspended.
 //
 // Should only be created, used, and destroyed on the script execution
 // context thread.
@@ -51,7 +49,6 @@ public:
     virtual ~ActiveDOMCallback();
 
     bool canInvokeCallback() const;
-    bool isScriptControllerTerminating() const;
 };
 
 } // namespace WebCore

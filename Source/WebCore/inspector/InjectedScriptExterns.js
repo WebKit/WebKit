@@ -139,7 +139,6 @@ function JavaScriptFunction()
 
 var InspectorBackend = { };
 
-// http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
 /**
  * @constructor
  */

@@ -118,7 +118,7 @@ File::File(const String& path, const KURL& url, const String& type)
     m_name = pathGetFileName(path);
     // FIXME: File object serialization/deserialization does not include
     // newer file object data members: m_name and m_relativePath.
-    // See SerializedScriptValue.cpp for js and v8.
+    // See SerializedScriptValue.cpp
 }
 
 File::File(const String& path, const String& name, ContentTypeLookupPolicy policy)
