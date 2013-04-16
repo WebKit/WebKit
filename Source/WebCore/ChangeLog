@@ -1,3 +1,31 @@
+2013-04-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r147938
+
+    2013-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+            <rdar://problem/12834449> Crashes in WebSocketChannel::processFrame when processing a ping
+            https://bugs.webkit.org/show_bug.cgi?id=114178
+
+            Reviewed by Brady Eidson.
+
+            No test, I could never reproduce even manually.
+
+            Calling enqueueRawFrame() could change incoming buffer, so a subsequent skipBuffer()
+            would operate on wrong assumptions. This happened because enqueueRawFrame() actually
+            tried to process the queue, and send failure sometimed clears m_buffer.
+
+            Fixing this by decoupling enqueuing from sending, and making sure that skipBuffer()
+            in ping frame processing case is performed at a safe time.
+
+            * Modules/websockets/WebSocketChannel.cpp:
+            (WebCore::WebSocketChannel::send):
+            (WebCore::WebSocketChannel::startClosingHandshake):
+            (WebCore::WebSocketChannel::processFrame):
+            (WebCore::WebSocketChannel::enqueueTextFrame):
+            (WebCore::WebSocketChannel::enqueueRawFrame):
+            (WebCore::WebSocketChannel::enqueueBlobFrame):
+
 2013-04-16  Andy Estes  <aestes@apple.com>
 
         Merged r142631.
