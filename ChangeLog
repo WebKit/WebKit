@@ -1,3 +1,11 @@
+2013-04-16  Andy Estes  <aestes@apple.com>
+
+        Changed the default debugger from GDB to LLDB for the 'All Source' scheme in WebKit.xcworkspace.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [EFL] Bump libsoup dependency to 2.42.0
