@@ -1,3 +1,27 @@
+2013-04-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Initialize logging channels for web processes
+        https://bugs.webkit.org/show_bug.cgi?id=114621
+
+        Reviewed by Sam Weinig.
+
+        Use InitializeWebKit2 for initializing the web and plugin processes.
+        It handles initializing the logging channels and it's better to have
+        shared core for this. For the plugin process now we always create
+        a RunLoop object which is not necessary with the -scanPlugin argument
+        but it shouldn't be a problem.
+
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        (WebKit::PluginProcessMain):
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::PluginProcessMainUnix):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2013-04-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Add an API for getting context menu item's parent menu

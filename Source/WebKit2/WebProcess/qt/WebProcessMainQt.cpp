@@ -29,6 +29,7 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "WebKit2Initialize.h"
 #include <QGuiApplication>
 #include <QList>
 #include <QNetworkProxyFactory>
@@ -37,8 +38,6 @@
 #include <QUrl>
 #include <WebCore/RunLoop.h>
 #include <errno.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
 
 #if USE(QTKIT)
 #include "WebSystemInterface.h"
@@ -211,9 +210,8 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
     }
 #endif
     initializeProxy();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
+
+    InitializeWebKit2();
 
 #if USE(QTKIT)
     InitWebCoreSystemInterfaceForWK2();

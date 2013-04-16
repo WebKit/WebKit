@@ -28,6 +28,7 @@
 #include "WebProcessMainGtk.h"
 
 #include "WKBase.h"
+#include "WebKit2Initialize.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
@@ -36,9 +37,7 @@
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>
-#include <runtime/InitializeThreading.h>
 #include <unistd.h>
-#include <wtf/MainThread.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
@@ -60,10 +59,8 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
+    InitializeWebKit2();
 
-    RunLoop::initializeMainRunLoop();
     int socket = atoi(argv[1]);
 
     ChildProcessInitializationParameters parameters;

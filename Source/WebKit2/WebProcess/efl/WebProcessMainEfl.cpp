@@ -28,6 +28,7 @@
 
 #include "ProxyResolverSoup.h"
 #include "WKBase.h"
+#include "WebKit2Initialize.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -38,10 +39,8 @@
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <libsoup/soup.h>
-#include <runtime/InitializeThreading.h>
 #include <runtime/Operations.h>
 #include <unistd.h>
-#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 #ifdef HAVE_ECORE_X
@@ -113,10 +112,7 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     if (!ecore_main_loop_glib_integrate())
         return 1;
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-
-    RunLoop::initializeMainRunLoop();
+    InitializeWebKit2();
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     const char* httpProxy = getenv("http_proxy");
