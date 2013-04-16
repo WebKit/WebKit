@@ -483,14 +483,14 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     }
 
     // Split every ancestor through highest ancestor with embedding.
-    Node* n = node;
-    while (true) {
-        Element* parent = toElement(n->parentNode());
-        if (before ? n->previousSibling() : n->nextSibling())
-            splitElement(parent, before ? n : n->nextSibling());
+    RefPtr<Node> currentNode = node;
+    while (currentNode) {
+        RefPtr<Element> parent = toElement(currentNode->parentNode());
+        if (before ? currentNode->previousSibling() : currentNode->nextSibling())
+            splitElement(parent, before ? currentNode : currentNode->nextSibling());
         if (parent == highestAncestorWithUnicodeBidi)
             break;
-        n = n->parentNode();
+        currentNode = parent;
     }
     return unsplitAncestor;
 }
