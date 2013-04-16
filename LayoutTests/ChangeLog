@@ -1,5 +1,19 @@
 2013-04-15  Andy Estes  <aestes@apple.com>
 
+        Merged r131670.
+
+    2012-10-17  Tom Sepez  <tsepez@chromium.org>
+
+        Crash in ContainerNode::removeAllChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=98443
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/security/video-poster-cross-origin-crash2-expected.txt: Added.
+        * http/tests/security/video-poster-cross-origin-crash2.html: Added.
+
+2013-04-15  Andy Estes  <aestes@apple.com>
+
         Merged r142063.
 
     2013-02-06  Tom Sepez  <tsepez@chromium.org>

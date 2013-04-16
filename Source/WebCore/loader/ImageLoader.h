@@ -75,7 +75,7 @@ private:
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomicString&) const = 0;
 
-    void updatedHasPendingLoadEvent();
+    void updatedHasPendingEvent();
 
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
