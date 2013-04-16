@@ -45,7 +45,6 @@ public:
 #endif
 #if USE(DICTATION_ALTERNATIVES)
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) OVERRIDE;
-    virtual void dismissDictationAlternativeUI() OVERRIDE;
     virtual void removeDictationAlternatives(uint64_t dictationContext) OVERRIDE;
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext) OVERRIDE;
 #endif

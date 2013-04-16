@@ -80,11 +80,6 @@ void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRe
     [m_webView _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
 }
 
-void WebAlternativeTextClient::dismissDictationAlternativeUI()
-{
-    [m_webView _dismissDictationAlternativeUI];
-}
-
 Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictationContext)
 {
     return [m_webView _dictationAlternatives:dictationContext];

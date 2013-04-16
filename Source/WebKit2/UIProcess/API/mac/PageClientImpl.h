@@ -144,7 +144,6 @@ private:
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&);
     virtual void removeDictationAlternatives(uint64_t dictationContext);
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
-    virtual void dismissDictationAlternativeUI();
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext);
 #endif
 

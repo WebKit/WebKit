@@ -4382,11 +4382,6 @@ void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& bounding
     m_pageClient->showDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext);
 }
 
-void WebPageProxy::dismissDictationAlternativeUI()
-{
-    m_pageClient->dismissDictationAlternativeUI();
-}
-
 void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
 {
     m_pageClient->removeDictationAlternatives(dictationContext);

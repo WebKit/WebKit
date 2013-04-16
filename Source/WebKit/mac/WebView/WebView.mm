@@ -6510,11 +6510,6 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     });
 }
 
-- (void)_dismissDictationAlternativeUI
-{
-    _private->m_alternativeTextUIController->dismissAlternatives();
-}
-
 - (void)_removeDictationAlternatives:(uint64_t)dictationContext
 {
     _private->m_alternativeTextUIController->removeAlternatives(dictationContext);

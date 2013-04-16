@@ -116,7 +116,6 @@ OBJC_CLASS NSTextAlternatives;
 #if USE(DICTATION_ALTERNATIVES)
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange;
 - (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext;
-- (void)_dismissDictationAlternativeUI;
 - (void)_removeDictationAlternatives:(uint64_t)dictationContext;
 - (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext;
 #endif

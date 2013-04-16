@@ -589,11 +589,6 @@ Vector<String> PageClientImpl::dictationAlternatives(uint64_t dictationContext)
 {
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
-
-void PageClientImpl::dismissDictationAlternativeUI()
-{
-    m_alternativeTextUIController->dismissAlternatives();
-}
 #endif
 
 } // namespace WebKit

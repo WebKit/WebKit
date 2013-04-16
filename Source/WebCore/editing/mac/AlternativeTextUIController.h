@@ -44,12 +44,13 @@ public:
     uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&);
     void clear();
     void showAlternatives(NSView*, const FloatRect& boundingBoxOfPrimaryString, uint64_t context, void(^acceptanceHandler)(NSString*));
-    void dismissAlternatives();
     void removeAlternatives(uint64_t context);
     Vector<String> alternativesForContext(uint64_t context);
 
 private:
     void handleAcceptedAlternative(NSString* acceptedAlternative, uint64_t context, NSTextAlternatives*);
+
+    void dismissAlternatives();
 
     class AlernativeTextContextController {
     public:

@@ -215,7 +215,6 @@ public:
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) = 0;
     virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
-    virtual void dismissDictationAlternativeUI() = 0;
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
 #endif // USE(DICTATION_ALTERNATIVES)
 #endif // USE(APPKIT)

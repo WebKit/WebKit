@@ -86,11 +86,6 @@ void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRe
     m_page->send(Messages::WebPageProxy::ShowDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext));
 }
 
-void WebAlternativeTextClient::dismissDictationAlternativeUI()
-{
-    m_page->send(Messages::WebPageProxy::DismissDictationAlternativeUI());
-}
-
 Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictationContext)
 {
     Vector<String> result;
