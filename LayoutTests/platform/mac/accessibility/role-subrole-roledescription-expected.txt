@@ -86,7 +86,7 @@ PASS: dfn
       
 PASS: dl
       AXRole: AXList
-      AXSubrole: AXDescriptionList
+      AXSubrole: AXDefinitionList
       AXRoleDescription: description list
       
 PASS: dt

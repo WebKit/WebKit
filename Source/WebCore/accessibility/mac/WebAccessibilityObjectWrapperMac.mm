@@ -111,6 +111,10 @@ using namespace std;
 #define NSAccessibilityContentListSubrole @"AXContentList"
 #endif
 
+#ifndef NSAccessibilityDefinitionListSubrole
+#define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
+#endif
+
 #ifndef NSAccessibilityDescriptionListSubrole
 #define NSAccessibilityDescriptionListSubrole @"AXDescriptionList"
 #endif
@@ -1751,8 +1755,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         AccessibilityList* listObject = toAccessibilityList(m_object);
         if (listObject->isUnorderedList() || listObject->isOrderedList())
             return NSAccessibilityContentListSubrole;
-        if (listObject->isDescriptionList())
+        if (listObject->isDescriptionList()) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+            return NSAccessibilityDefinitionListSubrole;
+#else
             return NSAccessibilityDescriptionListSubrole;
+#endif
+        }
     }
     
     // ARIA content subroles.
@@ -1803,8 +1812,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXTabPanel";
         case DefinitionRole:
             return @"AXDefinition";
-        case DescriptionListRole:
-            return @"AXDescriptionList";
         case DescriptionListTermRole:
             return @"AXTerm";
         case DescriptionListDetailRole:
