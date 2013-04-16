@@ -538,9 +538,22 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTime
     m_pendingClickEventFromSnapshot = nullptr;
 }
 
+static bool documentHadRecentUserGesture(Document* document)
+{
+    double lastKnownUserGestureTimestamp = document->lastHandledUserGestureTimestamp();
+
+    if (document->frame() != document->page()->mainFrame() && document->page()->mainFrame() && document->page()->mainFrame()->document())
+        lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document->page()->mainFrame()->document()->lastHandledUserGestureTimestamp());
+
+    if (currentTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold)
+        return true;
+
+    return false;
+}
+
 void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
 {
-    if (!m_needsCheckForSizeChange || m_snapshotDecision != MaySnapshotWhenResized)
+    if (!m_needsCheckForSizeChange || m_snapshotDecision != MaySnapshotWhenResized || documentHadRecentUserGesture(document()))
         return;
 
     m_needsCheckForSizeChange = false;
@@ -609,10 +622,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    double lastKnownUserGestureTimestamp = document()->lastHandledUserGestureTimestamp();
-    if (!inMainFrame && document()->page()->mainFrame() && document()->page()->mainFrame()->document())
-        lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document()->page()->mainFrame()->document()->lastHandledUserGestureTimestamp());
-    if (currentTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold) {
+    if (documentHadRecentUserGesture(document())) {
         LOG(Plugins, "%p Plug-in was created shortly after a user gesture, set to play", this);
         m_snapshotDecision = NeverSnapshot;
         return;
