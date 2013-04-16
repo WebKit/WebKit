@@ -33,9 +33,9 @@ import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.driver import DriverOutput
-from webkitpy.layout_tests.port.test import TestDriver
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.port.driver import DriverOutput
+from webkitpy.port.test import TestDriver
+from webkitpy.port.test import TestPort
 from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
 from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestMetric

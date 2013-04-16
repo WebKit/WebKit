@@ -31,8 +31,8 @@ import os
 import re
 import time
 
-from webkitpy.layout_tests.port.server_process import ServerProcess
-from webkitpy.layout_tests.port.driver import Driver
+from webkitpy.port.server_process import ServerProcess
+from webkitpy.port.driver import Driver
 from webkitpy.common.system.file_lock import FileLock
 
 _log = logging.getLogger(__name__)

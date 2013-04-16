@@ -28,8 +28,8 @@ import unittest2 as unittest
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.port.driver import DriverOutput
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.port.driver import DriverOutput
+from webkitpy.port.test import TestPort
 
 
 class TestResultWriterTest(unittest.TestCase):

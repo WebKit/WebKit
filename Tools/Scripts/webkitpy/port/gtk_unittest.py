@@ -33,9 +33,9 @@ import os
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.gtk import GtkPort
-from webkitpy.layout_tests.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
-from webkitpy.layout_tests.port import port_testcase
+from webkitpy.port.gtk import GtkPort
+from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
+from webkitpy.port import port_testcase
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 

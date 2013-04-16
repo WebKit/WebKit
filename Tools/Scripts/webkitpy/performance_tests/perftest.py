@@ -45,8 +45,8 @@ if sys.platform not in ('cygwin', 'win32'):
     import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
-from webkitpy.layout_tests.port.driver import DriverInput
-from webkitpy.layout_tests.port.driver import DriverOutput
+from webkitpy.port.driver import DriverInput
+from webkitpy.port.driver import DriverOutput
 
 DEFAULT_TEST_RUNNER_COUNT = 4
 

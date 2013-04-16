@@ -132,7 +132,7 @@ class ConfigTest(unittest.TestCase):
         e = Executive()
         fs = FileSystem()
         c = config.Config(e, fs)
-        script = WebKitFinder(fs).path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
+        script = WebKitFinder(fs).path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'port', 'config_standalone.py')
 
         # Note: don't use 'Release' here, since that's the normal default.
         expected = 'Debug'

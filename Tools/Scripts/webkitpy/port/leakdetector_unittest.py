@@ -28,7 +28,7 @@
 
 import unittest2 as unittest
 
-from webkitpy.layout_tests.port.leakdetector import LeakDetector
+from webkitpy.port.leakdetector import LeakDetector
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive

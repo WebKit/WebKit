@@ -33,10 +33,10 @@ import unittest2 as unittest
 
 from webkitpy.common import newstringio
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.layout_tests.port import mock_drt
-from webkitpy.layout_tests.port import port_testcase
-from webkitpy.layout_tests.port import test
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.port import mock_drt
+from webkitpy.port import port_testcase
+from webkitpy.port import test
+from webkitpy.port.factory import PortFactory
 from webkitpy.tool import mocktool
 
 

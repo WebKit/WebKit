@@ -32,7 +32,7 @@ import fnmatch
 import optparse
 import re
 
-from webkitpy.layout_tests.port import builders
+from webkitpy.port import builders
 
 
 def platform_options(use_globs=False):

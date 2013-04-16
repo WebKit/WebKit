@@ -33,7 +33,7 @@ import unittest2 as unittest
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.host_mock import MockHost
-from webkitpy.layout_tests.port import test
+from webkitpy.port import test
 from webkitpy.layout_tests.servers.apache_http_server import LayoutTestApacheHttpd
 from webkitpy.layout_tests.servers.http_server_base import ServerError
 

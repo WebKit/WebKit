@@ -48,10 +48,10 @@ from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
 
-from webkitpy.layout_tests import port
+from webkitpy import port
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.port import Port
-from webkitpy.layout_tests.port import test
+from webkitpy.port import Port
+from webkitpy.port import test
 from webkitpy.test.skip import skip_if
 from webkitpy.tool.mocktool import MockOptions
 

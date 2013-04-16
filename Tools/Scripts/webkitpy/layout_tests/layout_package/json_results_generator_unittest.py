@@ -34,7 +34,7 @@ import random
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.port import test
+from webkitpy.port import test
 from webkitpy.thirdparty.mock import Mock
 
 

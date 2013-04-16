@@ -31,12 +31,12 @@ import unittest2 as unittest
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-from webkitpy.layout_tests.port import factory
-from webkitpy.layout_tests.port import gtk
-from webkitpy.layout_tests.port import mac
-from webkitpy.layout_tests.port import qt
-from webkitpy.layout_tests.port import test
-from webkitpy.layout_tests.port import win
+from webkitpy.port import factory
+from webkitpy.port import gtk
+from webkitpy.port import mac
+from webkitpy.port import qt
+from webkitpy.port import test
+from webkitpy.port import win
 
 
 class FactoryTest(unittest.TestCase):

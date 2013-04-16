@@ -55,12 +55,12 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port import config as port_config
-from webkitpy.layout_tests.port import driver
-from webkitpy.layout_tests.port import http_lock
-from webkitpy.layout_tests.port import image_diff
-from webkitpy.layout_tests.port import server_process
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.port import config as port_config
+from webkitpy.port import driver
+from webkitpy.port import http_lock
+from webkitpy.port import image_diff
+from webkitpy.port import server_process
+from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.servers import apache_http_server
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -68,7 +68,6 @@ from webkitpy.layout_tests.servers import websocket_server
 _log = logging.getLogger(__name__)
 
 
-# FIXME: This class should merge with WebKitPort now that Chromium behaves mostly like other webkit ports.
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package."""
 

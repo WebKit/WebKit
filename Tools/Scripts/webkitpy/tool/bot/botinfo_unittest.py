@@ -31,7 +31,7 @@ import unittest2 as unittest
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.net.statusserver_mock import MockStatusServer
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.port.test import TestPort
 
 
 class BotInfoTest(unittest.TestCase):

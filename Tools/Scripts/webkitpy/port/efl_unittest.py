@@ -28,9 +28,9 @@ import unittest2 as unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.efl import EflPort
-from webkitpy.layout_tests.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
-from webkitpy.layout_tests.port import port_testcase
+from webkitpy.port.efl import EflPort
+from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
+from webkitpy.port import port_testcase
 
 
 class EflPortTest(port_testcase.PortTestCase):

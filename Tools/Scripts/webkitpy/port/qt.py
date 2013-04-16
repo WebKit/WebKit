@@ -36,8 +36,8 @@ import os
 
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.base import Port
-from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
+from webkitpy.port.base import Port
+from webkitpy.port.xvfbdriver import XvfbDriver
 
 _log = logging.getLogger(__name__)
 

@@ -34,7 +34,7 @@ import logging
 import re
 import time
 
-from webkitpy.layout_tests.port import server_process
+from webkitpy.port import server_process
 
 
 _log = logging.getLogger(__name__)

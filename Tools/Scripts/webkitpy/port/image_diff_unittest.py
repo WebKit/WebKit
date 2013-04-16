@@ -30,8 +30,8 @@
 
 import unittest2 as unittest
 
-from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
-from webkitpy.layout_tests.port.image_diff import ImageDiffer
+from webkitpy.port.server_process_mock import MockServerProcess
+from webkitpy.port.image_diff import ImageDiffer
 
 
 class FakePort(object):

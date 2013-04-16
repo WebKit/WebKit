@@ -35,8 +35,8 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.watchlist.watchlist_mock import MockWatchList
 
 # New-style ports need to move down into webkitpy.common.
-from webkitpy.layout_tests.port.factory import PortFactory
-from webkitpy.layout_tests.port.test import add_unit_tests_to_mock_filesystem
+from webkitpy.port.factory import PortFactory
+from webkitpy.port.test import add_unit_tests_to_mock_filesystem
 
 
 class MockHost(MockSystemHost):

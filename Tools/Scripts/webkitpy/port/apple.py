@@ -28,7 +28,7 @@
 
 import logging
 
-from webkitpy.layout_tests.port.base import Port
+from webkitpy.port.base import Port
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 
 

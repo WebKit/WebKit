@@ -22,7 +22,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.layout_tests.port import builders
+from webkitpy.port import builders
 from webkitpy.tool.commands.rebaseline import AbstractRebaseliningCommand
 from webkitpy.tool.servers.gardeningserver import GardeningHTTPServer
 

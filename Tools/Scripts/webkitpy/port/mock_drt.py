@@ -49,8 +49,8 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput, DriverProxy
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.port.driver import DriverInput, DriverOutput, DriverProxy
+from webkitpy.port.factory import PortFactory
 
 _log = logging.getLogger(__name__)
 

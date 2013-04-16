@@ -36,8 +36,8 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations, BASELINE_SUFFIX_LIST
-from webkitpy.layout_tests.port import builders
-from webkitpy.layout_tests.port import factory
+from webkitpy.port import builders
+from webkitpy.port import factory
 from webkitpy.tool.multicommandtool import Command
 
 

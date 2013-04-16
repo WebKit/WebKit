@@ -33,7 +33,7 @@ import sys
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri
-from webkitpy.layout_tests.port.apple import ApplePort
+from webkitpy.port.apple import ApplePort
 
 
 _log = logging.getLogger(__name__)

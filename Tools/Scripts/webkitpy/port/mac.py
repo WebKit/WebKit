@@ -33,8 +33,8 @@ import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.port.apple import ApplePort
-from webkitpy.layout_tests.port.leakdetector import LeakDetector
+from webkitpy.port.apple import ApplePort
+from webkitpy.port.leakdetector import LeakDetector
 
 
 _log = logging.getLogger(__name__)

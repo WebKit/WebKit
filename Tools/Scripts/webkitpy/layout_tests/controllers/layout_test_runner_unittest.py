@@ -38,7 +38,7 @@ from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.port.test import TestPort
 
 
 TestExpectations = test_expectations.TestExpectations

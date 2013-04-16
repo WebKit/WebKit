@@ -30,9 +30,9 @@
 import os
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.base import Port
-from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
-from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
+from webkitpy.port.base import Port
+from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
+from webkitpy.port.xvfbdriver import XvfbDriver
 
 
 class EflPort(Port):

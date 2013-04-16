@@ -34,8 +34,8 @@ from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.layout_tests.port import port_testcase
-from webkitpy.layout_tests.port.win import WinPort
+from webkitpy.port import port_testcase
+from webkitpy.port.win import WinPort
 from webkitpy.tool.mocktool import MockOptions
 
 

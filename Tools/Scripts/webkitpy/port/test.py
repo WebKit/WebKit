@@ -30,8 +30,8 @@ import base64
 import sys
 import time
 
-from webkitpy.layout_tests.port import Port, Driver, DriverOutput
-from webkitpy.layout_tests.port.base import VirtualTestSuite
+from webkitpy.port import Port, Driver, DriverOutput
+from webkitpy.port.base import VirtualTestSuite
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.crashlogs import CrashLogs

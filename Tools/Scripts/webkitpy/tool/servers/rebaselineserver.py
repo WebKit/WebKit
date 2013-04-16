@@ -33,7 +33,7 @@ import BaseHTTPServer
 
 from webkitpy.common.host import Host  # FIXME: This should not be needed!
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.port.base import Port
+from webkitpy.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
 

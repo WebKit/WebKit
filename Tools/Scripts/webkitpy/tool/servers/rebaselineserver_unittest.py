@@ -32,7 +32,7 @@ import unittest2 as unittest
 from webkitpy.common.net import resultsjsonparser_unittest
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
-from webkitpy.layout_tests.port.base import Port
+from webkitpy.port.base import Port
 from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
 from webkitpy.tool.servers import rebaselineserver
 

@@ -1,3 +1,70 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move webkitpy.layout_tests.port to webkitpy.port
+        https://bugs.webkit.org/show_bug.cgi?id=114668
+
+        Reviewed by Maciej Stachowiak.
+
+        Moved. Port objects knows a lot more than just layout_tests. They doesn't belong down in layout_tests.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/lint_test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_base_unittest.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        * Scripts/webkitpy/port: Copied from Tools/Scripts/webkitpy/layout_tests/port.
+        * Scripts/webkitpy/port/apple.py:
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/base_unittest.py:
+        * Scripts/webkitpy/port/config_unittest.py:
+        (ConfigTest.test_default_configuration__standalone):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        * Scripts/webkitpy/port/efl.py:
+        * Scripts/webkitpy/port/efl_unittest.py:
+        * Scripts/webkitpy/port/factory.py:
+        * Scripts/webkitpy/port/factory_unittest.py:
+        * Scripts/webkitpy/port/gtk.py:
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        * Scripts/webkitpy/port/image_diff.py:
+        * Scripts/webkitpy/port/image_diff_unittest.py:
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        * Scripts/webkitpy/port/mac.py:
+        * Scripts/webkitpy/port/mac_unittest.py:
+        * Scripts/webkitpy/port/mock_drt.py:
+        * Scripts/webkitpy/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/port/port_testcase.py:
+        * Scripts/webkitpy/port/qt.py:
+        * Scripts/webkitpy/port/qt_unittest.py:
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/win.py:
+        * Scripts/webkitpy/port/win_unittest.py:
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        * Scripts/webkitpy/tool/bot/botinfo_unittest.py:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+
 2013-04-16  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148498.

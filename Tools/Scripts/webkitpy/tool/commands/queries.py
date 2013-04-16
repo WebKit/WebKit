@@ -48,7 +48,7 @@ from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCom
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import Command
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
-from webkitpy.layout_tests.port import platform_options, configuration_options
+from webkitpy.port import platform_options, configuration_options
 
 _log = logging.getLogger(__name__)
 

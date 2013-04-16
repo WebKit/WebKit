@@ -35,7 +35,7 @@ import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.port.test import TestPort
 from webkitpy.performance_tests.perftest import DEFAULT_TEST_RUNNER_COUNT
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 

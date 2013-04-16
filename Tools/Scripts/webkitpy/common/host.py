@@ -37,7 +37,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.port.factory import PortFactory
 
 
 _log = logging.getLogger(__name__)

@@ -33,9 +33,9 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.layout_tests.port import Port
-from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
-from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
+from webkitpy.port import Port
+from webkitpy.port.server_process_mock import MockServerProcess
+from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.tool.mocktool import MockOptions
 
 _log = logging.getLogger(__name__)
