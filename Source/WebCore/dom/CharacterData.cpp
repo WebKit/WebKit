@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FrameSelection.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"

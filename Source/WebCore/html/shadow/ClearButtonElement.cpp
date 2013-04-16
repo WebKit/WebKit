@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ClearButtonElement.h"
 
+#include "EventHandler.h"
 #include "Frame.h"
 #include "MouseEvent.h"
 #include "RenderView.h"

@@ -50,6 +50,7 @@ class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
 class RenderScrollbarPart;
+class RenderStyle;
 
 Pagination::Mode paginationModeForRenderStyle(RenderStyle*);
 

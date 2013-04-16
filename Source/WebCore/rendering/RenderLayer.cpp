@@ -44,6 +44,7 @@
 #include "config.h"
 #include "RenderLayer.h"
 
+#include "AnimationController.h"
 #include "ColumnInfo.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"

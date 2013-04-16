@@ -46,6 +46,7 @@
 #import "Image.h"
 #import "JSNode.h"
 #import "NodeFilter.h"
+#import "Range.h"
 #import "RenderImage.h"
 #import "ScriptController.h"
 #import "WebScriptObjectPrivate.h"

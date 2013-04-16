@@ -26,12 +26,13 @@
 #ifndef DeleteButtonController_h
 #define DeleteButtonController_h
 
+#if ENABLE(DELETION_UI)
+
 #include "DeleteButton.h"
+#include "Editor.h"
 #include "Frame.h"
 
 namespace WebCore {
-
-#if ENABLE(DELETION_UI)
 
 class DeleteButton;
 class HTMLElement;
@@ -95,8 +96,8 @@ private:
     RefPtr<Frame> m_frame;
 };
 
-#endif
-
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(DELETION_UI)
+
+#endif // DeleteButtonController_h

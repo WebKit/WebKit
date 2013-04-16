@@ -22,6 +22,7 @@
 #include "TouchAdjustment.h"
 
 #include "ContainerNode.h"
+#include "Editor.h"
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "FrameView.h"

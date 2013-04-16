@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "Path.h"
+#include "PlatformMouseEvent.h"
 #include "RenderView.h"
 
 namespace WebCore {

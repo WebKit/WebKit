@@ -32,6 +32,7 @@
 #include "InspectorInstrumentation.h"
 #include "NodeTraversal.h"
 #include "Position.h"
+#include "Range.h"
 #include "RenderInline.h"
 #include "RenderRegion.h"
 #include "RenderText.h"

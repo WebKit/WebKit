@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "AnimationController.h"
 #include "ApplyStyleCommand.h"
 #include "BackForwardController.h"
 #include "CSSComputedStyleDeclaration.h"
@@ -40,14 +41,17 @@
 #include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "DocumentType.h"
+#include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameDestructionObserver.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -152,10 +156,10 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_navigationScheduler(this)
     , m_ownerElement(ownerElement)
     , m_script(adoptPtr(new ScriptController(this)))
-    , m_editor(this)
-    , m_selection(this)
-    , m_eventHandler(this)
-    , m_animationController(this)
+    , m_editor(adoptPtr(new Editor(this)))
+    , m_selection(adoptPtr(new FrameSelection(this)))
+    , m_eventHandler(adoptPtr(new EventHandler(this)))
+    , m_animationController(adoptPtr(new AnimationController(this)))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
 #if ENABLE(ORIENTATION_EVENTS)
@@ -309,7 +313,7 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     // Suspend document if this frame was created in suspended state.
     if (m_doc && activeDOMObjectsAndAnimationsSuspended()) {
         m_doc->suspendScriptedAnimationControllerCallbacks();
-        m_animationController.suspendAnimationsForDocument(m_doc.get());
+        m_animationController->suspendAnimationsForDocument(m_doc.get());
         m_doc->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
     }
 }
@@ -914,7 +918,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (!document)
         return;
 
-    m_editor.dismissCorrectionPanelAsIgnored();
+    m_editor->dismissCorrectionPanelAsIgnored();
 
 #if ENABLE(SVG)
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.

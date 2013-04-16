@@ -24,6 +24,7 @@
 #include "ClipboardGtk.h"
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "GOwnPtrGtk.h"
 #include "HTMLNames.h"

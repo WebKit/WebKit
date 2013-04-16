@@ -28,9 +28,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeAlgorithms.h"
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
+#include "Editor.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FloatRect.h"
@@ -40,23 +38,26 @@
 #include "InlineTextBox.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
+#include "JSNode.h"
 #include "LoaderStrategy.h"
 #include "MemoryCache.h"
 #include "MutationEvent.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
-#include "ResourceLoadScheduler.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "RenderWidget.h"
+#include "ResourceLoadScheduler.h"
 #include "RootInlineBox.h"
 #include "TemplateContentDocumentFragment.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
-#include "JSNode.h"
+#if ENABLE(DELETION_UI)
+#include "DeleteButtonController.h"
+#endif
 
 using namespace std;
 

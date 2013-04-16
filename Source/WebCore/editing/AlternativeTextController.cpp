@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "EditCommand.h"
+#include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
 #include "ExceptionCodePlaceholder.h"

@@ -50,6 +50,7 @@ class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
 class Frontend;
+class GraphicsContext;
 class InjectedScriptManager;
 class InspectorAgent;
 class InspectorArray;

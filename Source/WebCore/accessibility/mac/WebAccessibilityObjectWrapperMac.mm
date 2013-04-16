@@ -46,6 +46,7 @@
 #import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
+#import "Editor.h"
 #import "Font.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"

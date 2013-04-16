@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Internals.h"
 
+#include "AnimationController.h"
 #include "BackForwardController.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -41,6 +42,7 @@
 #include "Document.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "Element.h"
 #include "ElementShadow.h"
 #include "EventHandler.h"

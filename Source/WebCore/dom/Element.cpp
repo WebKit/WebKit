@@ -44,6 +44,7 @@
 #include "FlowThreadController.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"

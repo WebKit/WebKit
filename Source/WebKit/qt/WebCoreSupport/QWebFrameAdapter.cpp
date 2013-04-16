@@ -25,6 +25,7 @@
 #include "Chrome.h"
 #include "ChromeClientQt.h"
 #include "DocumentLoader.h"
+#include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"

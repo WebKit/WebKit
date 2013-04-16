@@ -1,3 +1,14 @@
+2013-04-15  Sam Weinig  <sam@webkit.org>
+
+        Remove more #includes from Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=114642
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebView.mm:
+
 2013-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unused AlternativeTextClient::dismissDictationAlternativeUI

@@ -21,6 +21,7 @@
 #include "Page.h"
 
 #include "AlternativeTextClient.h"
+#include "AnimationController.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Chrome.h"
@@ -32,6 +33,7 @@
 #include "DocumentMarkerController.h"
 #include "DocumentStyleSheetCollection.h"
 #include "DragController.h"
+#include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"

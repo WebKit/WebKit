@@ -29,15 +29,14 @@
 #define Frame_h
 
 #include "AdjustViewSizeOrNot.h"
-#include "AnimationController.h"
 #include "DragImage.h"
-#include "Editor.h"
-#include "EventHandler.h"
 #include "FrameLoader.h"
-#include "FrameSelection.h"
 #include "FrameTree.h"
+#include "IntRect.h"
 #include "NavigationScheduler.h"
+#include "ScrollTypes.h"
 #include "UserScriptTypes.h"
+#include <wtf/RefCounted.h>
 
 #if PLATFORM(WIN)
 #include "FrameWin.h"
@@ -47,34 +46,37 @@
 #include "TiledBackingStoreClient.h"
 #endif
 
-#if PLATFORM(MAC)
-#ifndef __OBJC__
-class NSArray;
-class NSMutableDictionary;
-class NSString;
-#endif
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
 #endif
 
 namespace WebCore {
 
+    class AnimationController;
+    class Color;
     class Document;
+    class Editor;
+    class Element;
+    class EventHandler;
     class FrameDestructionObserver;
+    class FrameSelection;
     class FrameView;
     class HTMLTableCellElement;
+    class IntRect;
+    class Node;
     class RegularExpression;
     class RenderPart;
-    class TiledBackingStore;
+    class RenderView;
     class ScriptController;
+    class Settings;
+    class TiledBackingStore;
+    class TreeScope;
+    class VisiblePosition;
 
 #if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };
 #endif
 
-    class TreeScope;
 
     enum {
         LayerTreeFlagsIncludeDebugInfo = 1 << 0,
@@ -218,11 +220,10 @@ namespace WebCore {
         RefPtr<Document> m_doc;
 
         OwnPtr<ScriptController> m_script;
-
-        mutable Editor m_editor;
-        mutable FrameSelection m_selection;
-        mutable EventHandler m_eventHandler;
-        mutable AnimationController m_animationController;
+        OwnPtr<Editor> m_editor;
+        OwnPtr<FrameSelection> m_selection;
+        OwnPtr<EventHandler> m_eventHandler;
+        OwnPtr<AnimationController> m_animationController;
 
         float m_pageZoomFactor;
         float m_textZoomFactor;
@@ -287,17 +288,17 @@ namespace WebCore {
 
     inline FrameSelection* Frame::selection() const
     {
-        return &m_selection;
+        return m_selection.get();
     }
 
     inline Editor* Frame::editor() const
     {
-        return &m_editor;
+        return m_editor.get();
     }
 
     inline AnimationController* Frame::animation() const
     {
-        return &m_animationController;
+        return m_animationController.get();
     }
 
     inline HTMLFrameOwnerElement* Frame::ownerElement() const
@@ -332,7 +333,7 @@ namespace WebCore {
 
     inline EventHandler* Frame::eventHandler() const
     {
-        return &m_eventHandler;
+        return m_eventHandler.get();
     }
 
 } // namespace WebCore

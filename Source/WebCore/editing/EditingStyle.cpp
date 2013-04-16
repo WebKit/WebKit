@@ -34,6 +34,7 @@
 #include "CSSStyleRule.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLFontElement.h"

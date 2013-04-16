@@ -24,6 +24,7 @@
 
 #include "CachedImage.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"

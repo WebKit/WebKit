@@ -34,6 +34,7 @@
 
 #include "CaptionUserPreferences.h"
 #include "DOMTokenList.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "ExceptionCodePlaceholder.h"

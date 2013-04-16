@@ -35,6 +35,7 @@
 
 #include "AccessibilityObject.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "NotImplemented.h"
 #include "WebKitAccessibleWrapperAtk.h"

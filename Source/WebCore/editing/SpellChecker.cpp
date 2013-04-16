@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "EditorClient.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"

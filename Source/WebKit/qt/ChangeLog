@@ -1,3 +1,15 @@
+2013-04-15  Sam Weinig  <sam@webkit.org>
+
+        Remove more #includes from Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=114642
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/DragClientQt.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        * WebCoreSupport/QWebPageAdapter.cpp:
+
 2013-04-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] EventHandler should handle Space and BackSpace 

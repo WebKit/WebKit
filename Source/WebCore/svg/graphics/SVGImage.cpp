@@ -36,6 +36,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "RenderSVGRoot.h"
+#include "RenderStyle.h"
 #include "SVGDocument.h"
 #include "SVGImageChromeClient.h"
 #include "SVGSVGElement.h"

@@ -27,6 +27,7 @@
 #include "InjectedBundleNavigationAction.h"
 
 #include "WebFrame.h"
+#include <WebCore/EventHandler.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/MouseEvent.h>

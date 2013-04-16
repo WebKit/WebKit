@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityTable.h"
+#include "Editor.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"

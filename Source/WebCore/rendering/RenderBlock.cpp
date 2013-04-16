@@ -27,6 +27,7 @@
 #include "AXObjectCache.h"
 #include "ColumnInfo.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Element.h"
 #include "FloatQuad.h"
 #include "Frame.h"

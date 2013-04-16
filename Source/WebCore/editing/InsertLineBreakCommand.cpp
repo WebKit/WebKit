@@ -27,7 +27,9 @@
 #include "InsertLineBreakCommand.h"
 
 #include "Document.h"
+#include "EditingStyle.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"

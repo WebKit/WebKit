@@ -29,6 +29,7 @@
 #include "ChromeClient.h"
 #include "ClipboardQt.h"
 #include "DragController.h"
+#include "EventHandler.h"
 #include "Frame.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"

@@ -33,6 +33,7 @@
 #include "WebPageAccessibilityObject.h"
 #include "WebPageProxyMessages.h"
 #include "WindowsKeyboardCodes.h"
+#include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>

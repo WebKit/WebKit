@@ -1,3 +1,17 @@
+2013-04-15  Sam Weinig  <sam@webkit.org>
+
+        Remove more #includes from Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=114642
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+
 2013-04-16  Timothy Hatcher  <timothy@apple.com>
 
         Make resizing the docked Web Inspector stay in sync with the inspected view.

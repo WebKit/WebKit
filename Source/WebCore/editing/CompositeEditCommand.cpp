@@ -28,14 +28,12 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "EditorInsertAction.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
@@ -69,6 +67,10 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
+
+#if ENABLE(DELETION_UI)
+#include "DeleteButtonController.h"
+#endif
 
 using namespace std;
 

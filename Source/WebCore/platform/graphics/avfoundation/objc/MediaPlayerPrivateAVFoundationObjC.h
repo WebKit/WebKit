@@ -31,14 +31,15 @@
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/HashMap.h>
 
-OBJC_CLASS AVURLAsset;
+OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
 OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
-OBJC_CLASS AVAssetImageGenerator;
+OBJC_CLASS AVURLAsset;
+OBJC_CLASS NSArray;
 OBJC_CLASS WebCoreAVFMovieObserver;
 
 typedef struct objc_object* id;

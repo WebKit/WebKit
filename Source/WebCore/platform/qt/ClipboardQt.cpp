@@ -33,6 +33,7 @@
 #include "DataTransferItemListQt.h"
 #include "Document.h"
 #include "DragData.h"
+#include "Editor.h"
 #include "Element.h"
 #include "FileList.h"
 #include "Frame.h"
