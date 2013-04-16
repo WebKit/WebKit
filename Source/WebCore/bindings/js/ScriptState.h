@@ -32,9 +32,6 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-#include <heap/Strong.h>
-#include <wtf/Noncopyable.h>
-
 namespace JSC {
 class ExecState;
 class JSGlobalObject;
@@ -55,21 +52,8 @@ class WorkerContext;
 // For now, the separation is purely by convention.
 typedef JSC::ExecState ScriptState;
 
-class ScriptStateProtectedPtr {
-    WTF_MAKE_NONCOPYABLE(ScriptStateProtectedPtr);
-public:
-    explicit ScriptStateProtectedPtr(ScriptState*);
-    ~ScriptStateProtectedPtr();
-    ScriptState* get() const;
-private:
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-};
-
 DOMWindow* domWindowFromScriptState(ScriptState*);
 ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState*);
-
-bool evalEnabled(ScriptState*);
-void setEvalEnabled(ScriptState*, bool);
 
 ScriptState* mainWorldScriptState(Frame*);
 

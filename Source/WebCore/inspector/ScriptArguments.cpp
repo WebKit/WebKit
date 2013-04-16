@@ -41,7 +41,7 @@ PassRefPtr<ScriptArguments> ScriptArguments::create(ScriptState* scriptState, Ve
 }
 
 ScriptArguments::ScriptArguments(ScriptState* scriptState, Vector<ScriptValue>& arguments)
-    : m_scriptState(scriptState)
+    : m_globalObject(scriptState->globalData(), scriptState->lexicalGlobalObject())
 {
     m_arguments.swap(arguments);
 }
@@ -58,7 +58,9 @@ const ScriptValue &ScriptArguments::argumentAt(size_t index) const
 
 ScriptState* ScriptArguments::globalState() const
 {
-    return m_scriptState.get();
+    if (m_globalObject)
+        return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();
+    return 0;
 }
 
 bool ScriptArguments::getFirstArgumentAsString(String& result, bool checkForNullOrUndefined)

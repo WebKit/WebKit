@@ -31,14 +31,20 @@
 #ifndef ScriptArguments_h
 #define ScriptArguments_h
 
-#include "ScriptState.h"
+#include <heap/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class ExecState;
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
+typedef JSC::ExecState ScriptState;
 class ScriptValue;
 
 class ScriptArguments : public RefCounted<ScriptArguments> {
@@ -58,7 +64,7 @@ public:
 private:
     ScriptArguments(ScriptState*, Vector<ScriptValue>& arguments);
 
-    ScriptStateProtectedPtr m_scriptState;
+    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<ScriptValue> m_arguments;
 };
 
