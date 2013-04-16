@@ -31,6 +31,7 @@
 #include "ClipboardUtilitiesWin.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HWndDC.h"

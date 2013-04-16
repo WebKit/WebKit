@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "DocumentFragment.h"
 #include "Markup.h"
+#include "Range.h"
 #include "TextEncoding.h"
 #include <objidl.h>
 #include <shlwapi.h>
