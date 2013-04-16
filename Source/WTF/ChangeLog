@@ -1,3 +1,22 @@
+2013-04-15  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148462.
+        http://trac.webkit.org/changeset/148462
+        https://bugs.webkit.org/show_bug.cgi?id=114658
+
+        Broke Windows builds (Requested by rniwa on #webkit).
+
+        * wtf/FastMalloc.cpp:
+        (WTF):
+        (WTF::setThreadHeap):
+        (WTF::TCMalloc_ThreadCache::GetThreadHeap):
+        (WTF::TCMalloc_ThreadCache::InitTSD):
+        * wtf/ThreadSpecificWin.cpp:
+        (WTF::destructorsList):
+        (WTF::destructorsMutex):
+        (WTF::threadSpecificKeyCreate):
+        (WTF::threadSpecificKeyDelete):
+
 2013-04-15  Julien Brianceau  <jbrianceau@nds.com>
 
         LLInt SH4 backend implementation
