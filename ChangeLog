@@ -1,3 +1,15 @@
+2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [EFL] Bump libsoup dependency to 2.42.0
+        https://bugs.webkit.org/show_bug.cgi?id=113927
+
+        Reviewed by Gyuyoung Kim.
+
+        Update libsoup required version to v2.42.0 and GLib to v2.36.0 as
+        required by libsoup for EFL port.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-04-15  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add WTF_USE_*_UNICODE variables
