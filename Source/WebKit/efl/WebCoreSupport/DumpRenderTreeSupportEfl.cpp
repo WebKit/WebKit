@@ -32,6 +32,7 @@
 #include <AnimationController.h>
 #include <DOMWindow.h>
 #include <DocumentLoader.h>
+#include <Editor.h>
 #include <EditorClientEfl.h>
 #include <Eina.h>
 #include <Evas.h>
@@ -39,6 +40,7 @@
 #include <FloatSize.h>
 #include <FocusController.h>
 #include <FrameLoader.h>
+#include <FrameSelection.h>
 #include <FrameView.h>
 #include <HTMLInputElement.h>
 #include <InspectorController.h>
