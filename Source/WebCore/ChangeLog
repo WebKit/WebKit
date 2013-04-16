@@ -1,3 +1,27 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge r125955.
+
+    2012-08-17  Alice Cheng  <alice_cheng@apple.com>
+
+            Preserve styling elements in DeleteSelectionCommand
+            <rdar://problem/12040676>
+            https://bugs.webkit.org/show_bug.cgi?id=93643
+
+            Reviewed by Ryosuke Niwa.
+
+            Styling elements (<link> and <style>) can appear inside editable content. To 
+            prevent accidental deletion, we move styling elements to rootEditableElement in
+            DeleteSelectionCommand undoably.
+
+            Test: editing/execCommand/delete-selection-has-style.html
+
+            * editing/DeleteSelectionCommand.cpp:
+            (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss): Added to preserve styling elements during the command
+            (WebCore::DeleteSelectionCommand::handleGeneralDelete):  Modified to preserve styling elements during the command
+            * editing/DeleteSelectionCommand.h:
+            (DeleteSelectionCommand):
+
 2013-04-16  Lucas Forschler  <lforschler@apple.com>
 
         Merge r130313

@@ -408,6 +408,22 @@ void DeleteSelectionCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned 
     CompositeEditCommand::deleteTextFromNode(node, offset, count);
 }
 
+void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss()
+{
+    RefPtr<Range> range = m_selectionToDelete.toNormalizedRange();
+    RefPtr<Node> node = range->firstNode();
+    while (node && node != range->pastLastNode()) {
+        RefPtr<Node> nextNode = node->traverseNextNode();
+        if ((node->hasTagName(styleTag) && !(toElement(node.get())->hasAttribute(scopedAttr))) || node->hasTagName(linkTag)) {
+            nextNode = node->traverseNextSibling();
+            RefPtr<ContainerNode> rootEditableElement = node->rootEditableElement();
+            removeNode(node);
+            appendNode(node, rootEditableElement);
+        }
+        node = nextNode;
+    }
+}
+
 void DeleteSelectionCommand::handleGeneralDelete()
 {
     if (m_upstreamStart.isNull())
@@ -415,6 +431,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
     int startOffset = m_upstreamStart.deprecatedEditingOffset();
     Node* startNode = m_upstreamStart.deprecatedNode();
+    
+    makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
 
     // Never remove the start block unless it's a table, in which case we won't merge content in.
     if (startNode == m_startBlock && startOffset == 0 && canHaveChildrenForEditing(startNode) && !startNode->hasTagName(tableTag)) {
