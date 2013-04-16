@@ -1,5 +1,34 @@
 2013-04-15  Andy Estes  <aestes@apple.com>
 
+        Merged r139444.
+
+    2013-01-11  Stephen Chenney  <schenney@chromium.org>
+        Objects can be re-added to the AXObjectCache during removal
+        https://bugs.webkit.org/show_bug.cgi?id=104171
+
+        The problem occurs when a label's corresponding element is a sibling
+        that precedes it in the render tree, and the corresponding element is
+        removed. The corresponding element's AX render object is removed, but
+        then recreated when accessibilityIsIgnored() invokes correspondingControl()
+        on the label. The corresponding renderer then has an AX render object
+        that survives beyond the deleted renderer, leading to invalid memory
+        accesses.
+
+        The solution is to rearrange the calls to delete the renderer's AX
+        render object only when we are sure it will no longer be required.
+
+        Reviewed by Simon Fraser.
+
+        Test: accessibility/corresponding-control-deleted-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed): Move the call to remove the
+        renderer from the AXCache to after the renderer is removed from the
+        render tree. This means that the AXObject still exists during renderer
+        removal, as we require.
+
+2013-04-15  Andy Estes  <aestes@apple.com>
+
         Merged r131670.
 
     2012-10-17  Tom Sepez  <tsepez@chromium.org>
