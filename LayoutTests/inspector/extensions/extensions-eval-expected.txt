@@ -5,7 +5,7 @@ Running tests...
 RUNNING TEST: extension_testEvalConsoleAPI
 Evaluate: "function" (exception: undefined)
 RUNNING TEST: extension_testEvalDefinesGlobalSymbols
-Evaluate: {"func":"undefined","variable":42} (exception: undefined)
+Evaluate: {"func":"function","variable":42} (exception: undefined)
 RUNNING TEST: extension_testEvalOk
 Evaluate: {"str":"foo","num":42} (exception: undefined)
 RUNNING TEST: extension_testEvalStatement
