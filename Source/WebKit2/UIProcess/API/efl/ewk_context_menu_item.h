@@ -259,6 +259,15 @@ EAPI Eina_Bool ewk_context_menu_item_enabled_get(const Ewk_Context_Menu_Item *o)
  */
 EAPI Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item *o, Eina_Bool enabled);
 
+/**
+ * Gets the parent menu for the item.
+ *
+ * @param o item to get the parent
+ *
+ * @return the pointer to parent menu on success or @c NULL on failure
+ */
+EAPI Ewk_Context_Menu *ewk_context_menu_item_parent_menu_get(const Ewk_Context_Menu_Item *o);
+
 #ifdef __cplusplus
 }
 #endif

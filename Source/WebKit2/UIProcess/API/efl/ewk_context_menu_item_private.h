@@ -38,14 +38,14 @@
  */
 class EwkContextMenuItem {
 public:
-    static PassOwnPtr<EwkContextMenuItem> create(WKContextMenuItemRef item)
+    static PassOwnPtr<EwkContextMenuItem> create(WKContextMenuItemRef item, EwkContextMenu* parentMenu = 0)
     {
-        return adoptPtr(new EwkContextMenuItem(item));
+        return adoptPtr(new EwkContextMenuItem(item, parentMenu));
     }
 
-    static PassOwnPtr<EwkContextMenuItem> create(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu)
+    static PassOwnPtr<EwkContextMenuItem> create(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu, EwkContextMenu* parentMenu = 0)
     {
-        return adoptPtr(new EwkContextMenuItem(type, action, title, checked, enabled, subMenu));
+        return adoptPtr(new EwkContextMenuItem(type, action, title, checked, enabled, subMenu, parentMenu));
     }
 
     Ewk_Context_Menu_Item_Action action() const { return m_action; }
@@ -63,9 +63,12 @@ public:
     bool enabled() const { return m_isEnabled; }
     void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
+    EwkContextMenu* parentMenu() const { return m_parentMenu; }
+    void setParentMenu(EwkContextMenu* parentMenu) { m_parentMenu = parentMenu; }
+
 private:
-    explicit EwkContextMenuItem(WKContextMenuItemRef);
-    EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu);
+    EwkContextMenuItem(WKContextMenuItemRef, EwkContextMenu* parentMenu);
+    EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu, EwkContextMenu* parentMenu);
 
     Ewk_Context_Menu_Item_Type m_type;
     Ewk_Context_Menu_Item_Action m_action;

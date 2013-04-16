@@ -45,7 +45,7 @@ EwkContextMenu::EwkContextMenu(EwkView* view, WKArrayRef items)
 {
     size_t size = WKArrayGetSize(items);
     for (size_t i = 0; i < size; ++i)
-        m_contextMenuItems = eina_list_append(m_contextMenuItems, Ewk_Context_Menu_Item::create(static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(items, i))).leakPtr());
+        m_contextMenuItems = eina_list_append(m_contextMenuItems, Ewk_Context_Menu_Item::create(static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(items, i)), this).leakPtr());
 }
 
 EwkContextMenu::EwkContextMenu()
@@ -60,8 +60,12 @@ EwkContextMenu::EwkContextMenu(Eina_List* items)
 {
     Eina_List* l;
     void* data;
-    EINA_LIST_FOREACH(items, l, data)
-        m_contextMenuItems = eina_list_append(m_contextMenuItems, static_cast<EwkContextMenuItem*>(data));
+    EINA_LIST_FOREACH(items, l, data) {
+        if (EwkContextMenuItem* item = static_cast<EwkContextMenuItem*>(data)) {
+            item->setParentMenu(this);
+            m_contextMenuItems = eina_list_append(m_contextMenuItems, item);
+        }
+    }
 }
 
 EwkContextMenu::~EwkContextMenu()

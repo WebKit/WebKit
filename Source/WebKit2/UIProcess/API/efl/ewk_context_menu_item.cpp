@@ -35,24 +35,24 @@ using namespace WebKit;
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action);
 
-EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item)
+EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, Ewk_Context_Menu* parentMenu)
     : m_type(static_cast<Ewk_Context_Menu_Item_Type>(WKContextMenuItemGetType(item)))
     , m_action(getEwkActionFromWKTag((WKContextMenuItemGetTag(item))))
     , m_title(WKEinaSharedString(AdoptWK, WKContextMenuItemCopyTitle(item)))
     , m_isChecked(WKContextMenuItemGetChecked(item))
     , m_isEnabled(WKContextMenuItemGetEnabled(item))
-    , m_parentMenu(0)
+    , m_parentMenu(parentMenu)
     , m_subMenu(0)
 {
 }
 
-EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
+EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu, Ewk_Context_Menu* parentMenu)
     : m_type(type)
     , m_action(action)
     , m_title(title)
     , m_isChecked(checked)
     , m_isEnabled(enabled)
-    , m_parentMenu(0)
+    , m_parentMenu(parentMenu)
     , m_subMenu(subMenu)
 {
 }
@@ -145,6 +145,13 @@ Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* item, Eina_Bo
     item->setEnabled(enabled);
 
     return true;
+}
+
+Ewk_Context_Menu* ewk_context_menu_item_parent_menu_get(const Ewk_Context_Menu_Item* item)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+
+    return const_cast<Ewk_Context_Menu_Item*>(item)->parentMenu();
 }
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action)

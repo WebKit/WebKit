@@ -46,6 +46,9 @@ static Eina_Bool showContextMenu(Ewk_View_Smart_Data* smartData, Evas_Coord x, E
     Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(eina_list_nth(list, 0));
     checkBasicContextMenuItem(item, EWK_ACTION_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_GO_BACK, "Go Back", false, true);
 
+    // When context menu is created by WebKit, an item should have parent menu.
+    EXPECT_EQ(contextMenu, ewk_context_menu_item_parent_menu_get(item));
+
     item = static_cast<Ewk_Context_Menu_Item*>(eina_list_nth(list, 1));
     checkBasicContextMenuItem(item, EWK_ACTION_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_GO_FORWARD, "Go Forward", false, true);
     ewk_context_menu_item_enabled_set(item, false);
@@ -63,7 +66,12 @@ static Eina_Bool showContextMenu(Ewk_View_Smart_Data* smartData, Evas_Coord x, E
 
     // Makes new context menu items.
     Ewk_Context_Menu_Item* newItem = ewk_context_menu_item_new(EWK_ACTION_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item", false, true);
+    // When context menu item is created using ewk_context_menu_item_new, it should not have parent menu.
+    EXPECT_EQ(0, ewk_context_menu_item_parent_menu_get(newItem));
     ewk_context_menu_item_append(contextMenu, newItem);
+
+    // When context menu item is added to menu using ewk_context_menu_item_append, it should have parent menu.
+    EXPECT_EQ(contextMenu, ewk_context_menu_item_parent_menu_get(newItem));
 
     Eina_List* subMenuItemList = 0;
     Ewk_Context_Menu_Item* subMenuItem1 = ewk_context_menu_item_new(EWK_ACTION_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New SubMenu Item 1", false, true);
@@ -73,8 +81,17 @@ static Eina_Bool showContextMenu(Ewk_View_Smart_Data* smartData, Evas_Coord x, E
     subMenuItemList = eina_list_append(subMenuItemList, subMenuItem2);
     subMenuItemList = eina_list_append(subMenuItemList, subMenuItem3);
     Ewk_Context_Menu* subMenu = ewk_context_menu_new_with_items(subMenuItemList);
+
+    // When context menu is created using ewk_context_menu_new_with_items, items should have parent menu.
+    EXPECT_EQ(subMenu, ewk_context_menu_item_parent_menu_get(subMenuItem1));
+
     Ewk_Context_Menu_Item* newItem2 = ewk_context_menu_item_new_with_submenu(EWK_SUBMENU_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 2", false, true, subMenu);
+    // When context menu item is created using ewk_context_menu_item_new_with_submenu, it should not have parent menu.
+    EXPECT_EQ(0, ewk_context_menu_item_parent_menu_get(newItem));
     ewk_context_menu_item_append(contextMenu, newItem2);
+
+    // When context menu item is created using ewk_context_menu_item_new_with_submenu and added using ewk_context_menu_item_append it should have parent menu.
+    EXPECT_EQ(contextMenu, ewk_context_menu_item_parent_menu_get(newItem));
 
     Ewk_Context_Menu* subMenu2 = ewk_context_menu_new();
     Ewk_Context_Menu_Item* newItem3 = ewk_context_menu_item_new_with_submenu(EWK_SUBMENU_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 3", false, true, subMenu2);
