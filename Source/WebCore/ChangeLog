@@ -1,3 +1,24 @@
+2013-04-16  Andy Estes  <aestes@apple.com>
+
+        Merged r142631.
+
+    2013-02-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        ASSERTION FAILED: i < size(), UNKNOWN in WebCore::AccessibilityMenuListPopup::didUpdateActiveOption
+        https://bugs.webkit.org/show_bug.cgi?id=109452
+
+        Reviewed by Chris Fleizach.
+
+        Send the accessibility childrenChanged notification in
+        HTMLSelectElement::setRecalcListItems instead of in childrenChanged
+        so that all possible codepaths are caught.
+
+        Test: accessibility/insert-selected-option-into-select-causes-crash.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+
 2013-04-15  Andy Estes  <aestes@apple.com>
 
         Merged r139444.

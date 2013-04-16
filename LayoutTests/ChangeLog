@@ -1,3 +1,24 @@
+2013-04-16  Andy Estes  <aestes@apple.com>
+
+        Merged r142631.
+
+        Updated the test to account for the lack of accessibleElementById.
+
+    2013-02-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        ASSERTION FAILED: i < size(), UNKNOWN in WebCore::AccessibilityMenuListPopup::didUpdateActiveOption
+        https://bugs.webkit.org/show_bug.cgi?id=109452
+
+        Reviewed by Chris Fleizach.
+
+        Add test to ensure a crash doesn't happen if a selected option
+        is added to a select element, which was triggering a code path where
+        the DOM has added a new child of the select but the accessibility
+        object never got updated.
+
+        * accessibility/insert-selected-option-into-select-causes-crash-expected.txt: Added.
+        * accessibility/insert-selected-option-into-select-causes-crash.html: Added.
+
 2013-04-15  Andy Estes  <aestes@apple.com>
 
         Merged r139444.
