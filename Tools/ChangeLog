@@ -1,3 +1,13 @@
+2013-04-13  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Disable WinEWS tests, simply not enough bots.
+
+        All bots are running consistently now but the queue still keeps growing.
+        Until we get more bots or make the tests faster, it doesn't seem wise to keep running tests.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         The list of contributors in committers.py should be a separate JSON
