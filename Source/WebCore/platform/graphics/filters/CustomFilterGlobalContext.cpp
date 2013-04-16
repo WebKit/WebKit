@@ -32,7 +32,6 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
 
-#include "CustomFilterValidatedProgram.h"
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
@@ -43,8 +42,6 @@ CustomFilterGlobalContext::CustomFilterGlobalContext()
 
 CustomFilterGlobalContext::~CustomFilterGlobalContext()
 {
-    for (CustomFilterValidatedProgramsMap::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        iter->value->detachFromGlobalContext();
 }
 
 ANGLEWebKitBridge* CustomFilterGlobalContext::webglShaderValidator()
@@ -85,30 +82,6 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
         return;
     m_context->makeContextCurrent();
     m_context->enable(GraphicsContext3D::DEPTH_TEST);
-}
-
-PassRefPtr<CustomFilterValidatedProgram> CustomFilterGlobalContext::getValidatedProgram(const CustomFilterProgramInfo& programInfo)
-{
-    CustomFilterValidatedProgramsMap::iterator iter = m_programs.find(programInfo);
-    if (iter != m_programs.end())
-        return iter->value;
-
-    RefPtr<CustomFilterValidatedProgram> validatedProgram = CustomFilterValidatedProgram::create(this, programInfo);
-    m_programs.set(programInfo, validatedProgram.get());
-    return validatedProgram.release();
-}
-
-void CustomFilterGlobalContext::removeValidatedProgram(const CustomFilterValidatedProgram* program)
-{
-    CustomFilterValidatedProgramsMap::iterator iter = m_programs.find(program->programInfo());
-    ASSERT(iter != m_programs.end());
-    m_programs.remove(iter);
-
-#ifndef NDEBUG
-    // Check that there's no way we could have the same program under a different key.
-    for (iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        ASSERT(iter->value != program);
-#endif
 }
 
 } // namespace WebCore

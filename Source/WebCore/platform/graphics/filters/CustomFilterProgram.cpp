@@ -35,6 +35,7 @@
 #include "CustomFilterCompiledProgram.h"
 #include "CustomFilterProgramClient.h"
 #include "CustomFilterProgramInfo.h"
+#include "CustomFilterValidatedProgram.h"
 
 namespace WebCore {
 
@@ -84,6 +85,16 @@ CustomFilterProgramInfo CustomFilterProgram::programInfo() const
 {
     ASSERT(isLoaded());
     return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString(), m_programType, m_mixSettings, m_meshType);
+}
+
+PassRefPtr<CustomFilterValidatedProgram> CustomFilterProgram::validatedProgram()
+{
+    return m_validatedProgram;
+}
+
+void CustomFilterProgram::setValidatedProgram(PassRefPtr<CustomFilterValidatedProgram> validatedProgram)
+{
+    m_validatedProgram = validatedProgram;
 }
 
 } // namespace WebCore

@@ -32,17 +32,13 @@
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "ANGLEWebKitBridge.h"
-#include "CustomFilterProgramInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CustomFilterValidatedProgram;
 class HostWindow;
 class GraphicsContext3D;
-
-typedef HashMap<CustomFilterProgramInfo, CustomFilterValidatedProgram*> CustomFilterValidatedProgramsMap;
 
 class CustomFilterGlobalContext {
 public:
@@ -66,16 +62,12 @@ public:
     ANGLEWebKitBridge* mixShaderValidator();
     
     void prepareContextIfNeeded(HostWindow*);
-
-    PassRefPtr<CustomFilterValidatedProgram> getValidatedProgram(const CustomFilterProgramInfo&);
-    void removeValidatedProgram(const CustomFilterValidatedProgram*);
 private:
     static PassOwnPtr<ANGLEWebKitBridge> createShaderValidator(ShShaderSpec);
 
     RefPtr<GraphicsContext3D> m_context;
     OwnPtr<ANGLEWebKitBridge> m_webglShaderValidator;
     OwnPtr<ANGLEWebKitBridge> m_mixShaderValidator;
-    CustomFilterValidatedProgramsMap m_programs;
 };
 
 } // namespace WebCore

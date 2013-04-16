@@ -34,6 +34,7 @@
 #include "CustomFilterValidatedProgram.h"
 
 #include "ANGLEWebKitBridge.h"
+#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterConstants.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterProgramInfo.h"
@@ -158,8 +159,7 @@ String CustomFilterValidatedProgram::defaultFragmentShaderString()
 }
 
 CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
-    : m_globalContext(globalContext)
-    , m_programInfo(programInfo)
+    : m_programInfo(programInfo)
     , m_isInitialized(false)
 {
     platformInit();
@@ -174,7 +174,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
 
     // Shaders referenced from the CSS mix function use a different validator than regular WebGL shaders. See CustomFilterGlobalContext.h for more details.
     bool blendsElementTexture = (programInfo.programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
-    ANGLEWebKitBridge* validator = blendsElementTexture ? m_globalContext->mixShaderValidator() : m_globalContext->webglShaderValidator();
+    ANGLEWebKitBridge* validator = blendsElementTexture ? globalContext->mixShaderValidator() : globalContext->webglShaderValidator();
     String vertexShaderLog, fragmentShaderLog;
     Vector<ANGLEShaderSymbol> symbols;
     bool vertexShaderValid = validator->compileShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog, symbols);
@@ -202,13 +202,12 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
 
 PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledProgram()
 {
-    ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
-    if (!m_compiledProgram) {
-        m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader, m_programInfo.programType());
-        ASSERT(m_compiledProgram->isInitialized());
-        ASSERT(m_compiledProgram->samplerLocation() != -1 || !needsInputTexture());
-    }
     return m_compiledProgram;
+}
+
+void CustomFilterValidatedProgram::setCompiledProgram(PassRefPtr<CustomFilterCompiledProgram> compiledProgram)
+{
+    m_compiledProgram = compiledProgram;
 }
 
 bool CustomFilterValidatedProgram::needsInputTexture() const
@@ -597,9 +596,6 @@ String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator c
 CustomFilterValidatedProgram::~CustomFilterValidatedProgram()
 {
     platformDestroy();
-
-    if (m_globalContext)
-        m_globalContext->removeValidatedProgram(this);
 }
 
 CustomFilterProgramInfo CustomFilterValidatedProgram::validatedProgramInfo() const

@@ -48,6 +48,7 @@
 #include "CustomFilterProgram.h"
 #include "CustomFilterValidatedProgram.h"
 #include "FECustomFilter.h"
+#include "GraphicsContext3D.h"
 #include "RenderView.h"
 #include "ValidatedCustomFilterOperation.h"
 #endif

@@ -41,8 +41,8 @@
 namespace WebCore {
 
 class GraphicsContext3D;
-class CustomFilterCompiledProgram;
 class CustomFilterProgramClient;
+class CustomFilterValidatedProgram;
 
 // This is the base class for the StyleCustomFilterProgram class which knows how to keep
 // references to the cached shaders.
@@ -62,6 +62,9 @@ public:
     CustomFilterProgramType programType() const { return m_programType; }
     CustomFilterProgramMixSettings mixSettings() const { return m_mixSettings; }
     CustomFilterMeshType meshType() const { return m_meshType; }
+
+    PassRefPtr<CustomFilterValidatedProgram> validatedProgram();
+    void setValidatedProgram(PassRefPtr<CustomFilterValidatedProgram>);
 
 protected:
     // StyleCustomFilterProgram can notify the clients that the cached resources are
@@ -86,6 +89,7 @@ private:
     CustomFilterProgramType m_programType;
     CustomFilterProgramMixSettings m_mixSettings;
     CustomFilterMeshType m_meshType;
+    RefPtr<CustomFilterValidatedProgram> m_validatedProgram;
 };
 
 }

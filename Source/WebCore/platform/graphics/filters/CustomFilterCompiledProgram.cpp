@@ -52,6 +52,8 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsCont
     , m_contentSamplerLocation(-1)
     , m_isInitialized(false)
 {
+    ASSERT(!validatedVertexShader.isNull() && !validatedFragmentShader.isNull());
+
     m_context->makeContextCurrent();
 
     Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, validatedVertexShader);

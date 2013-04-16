@@ -33,6 +33,7 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "FECustomFilter.h"
 
+#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterRenderer.h"
 #include "CustomFilterValidatedProgram.h"
 #include "Extensions3D.h"
@@ -156,9 +157,16 @@ bool FECustomFilter::prepareForDrawing()
 {
     m_context->makeContextCurrent();
 
-    // Lazily inject the compiled program into the CustomFilterRenderer.
-    if (!m_customFilterRenderer->compiledProgram())
-        m_customFilterRenderer->setCompiledProgram(m_validatedProgram->compiledProgram());
+    if (!m_customFilterRenderer->compiledProgram()) {
+        RefPtr<CustomFilterCompiledProgram> compiledProgram = m_validatedProgram->compiledProgram();
+        if (!compiledProgram) {
+            // Lazily create a compiled program and let CustomFilterValidatedProgram hold on to it.
+            compiledProgram = CustomFilterCompiledProgram::create(m_context, m_validatedProgram->validatedVertexShader(), m_validatedProgram->validatedFragmentShader(), m_validatedProgram->programInfo().programType());
+            m_validatedProgram->setCompiledProgram(compiledProgram);
+        }
+        // Lazily inject the compiled program into the CustomFilterRenderer.
+        m_customFilterRenderer->setCompiledProgram(compiledProgram.release());
+    }
 
     if (!m_customFilterRenderer->prepareForDrawing())
         return false;

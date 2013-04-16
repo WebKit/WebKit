@@ -32,7 +32,6 @@
 
 #if ENABLE(CSS_SHADERS)
 
-#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterProgramInfo.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -63,15 +62,6 @@ typedef TextureMapperPlatformCompiledProgram PlatformCompiledProgram;
 // All shaders are validated through ANGLE in CustomFilterValidatedProgram before being compiled by the GraphicsContext3D in CustomFilterCompiledProgram.
 // For shaders that use the CSS mix function, CustomFilterValidatedProgram adds shader code to perform DOM texture access, blending, and compositing.
 //
-// The CustomFilterGlobalContext caches the validated programs.
-// CustomFilterValidatedProgram owns a CustomFilterCompiledProgram if validation and compilation succeeds.
-// Thus, compiled programs are cached via their validated program owners.
-//
-// CustomFilterGlobalContext has a weak reference to the CustomFilterValidatedProgram.
-// Thus, the CustomFilterValidatedProgram destructor needs to notify the CustomFilterGlobalContext to remove the program from the cache.
-// FECustomFilter is the reference owner of the CustomFilterValidatedProgram.
-// Thus, a validated and compiled shader is only kept alive as long as there is at least one visible layer that applies the shader.
-//
 class CustomFilterValidatedProgram : public RefCounted<CustomFilterValidatedProgram> {
 public:
     static PassRefPtr<CustomFilterValidatedProgram> create(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
@@ -85,6 +75,7 @@ public:
     CustomFilterProgramInfo validatedProgramInfo() const;
     
     PassRefPtr<CustomFilterCompiledProgram> compiledProgram();
+    void setCompiledProgram(PassRefPtr<CustomFilterCompiledProgram>);
 
     const String& validatedVertexShader() const 
     {
@@ -103,10 +94,6 @@ public:
 #endif
 
     bool isInitialized() const { return m_isInitialized; }
-
-    // 'detachFromGlobalContext' is called when the CustomFilterGlobalContext is deleted, and there's no need for the callback anymore. 
-    // Note that CustomFilterGlobalContext does not keep a strong reference to the CustomFilterValidatedProgram.
-    void detachFromGlobalContext() { m_globalContext = 0; }
 private:
     CustomFilterValidatedProgram(CustomFilterGlobalContext*, const CustomFilterProgramInfo&);
 
@@ -124,7 +111,6 @@ private:
 
     bool needsInputTexture() const;
 
-    CustomFilterGlobalContext* m_globalContext;
     CustomFilterProgramInfo m_programInfo;
 
     String m_validatedVertexShader;

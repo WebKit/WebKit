@@ -6332,9 +6332,15 @@ FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
             RefPtr<CustomFilterProgram> program = customOperation->program();
             if (!program->isLoaded())
                 continue;
-            
-            CustomFilterGlobalContext* globalContext = renderer()->view()->customFilterGlobalContext();
-            RefPtr<CustomFilterValidatedProgram> validatedProgram = globalContext->getValidatedProgram(program->programInfo());
+
+            RefPtr<CustomFilterValidatedProgram> validatedProgram = program->validatedProgram();
+            if (!validatedProgram) {
+                // Lazily create a validated program and store it on the CustomFilterProgram.
+                CustomFilterGlobalContext* globalContext = renderer()->view()->customFilterGlobalContext();
+                validatedProgram = CustomFilterValidatedProgram::create(globalContext, program->programInfo());
+                program->setValidatedProgram(validatedProgram);
+            }
+
             if (!validatedProgram->isInitialized())
                 continue;
 
