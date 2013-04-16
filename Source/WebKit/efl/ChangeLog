@@ -1,5 +1,12 @@
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More EFL build fixes.
+
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_view.cpp:
+
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         EFL build fix after r148545.
 
         * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:

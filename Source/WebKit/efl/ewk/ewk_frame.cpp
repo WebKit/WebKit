@@ -26,11 +26,13 @@
 
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientEfl.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLHeadElement.h"
