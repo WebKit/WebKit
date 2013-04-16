@@ -65,9 +65,10 @@ void LayerTexture::setContentsToColor(const Color& color)
         BlackBerry::Platform::Graphics::destroyBuffer(m_buffer);
 
     m_buffer = BlackBerry::Platform::Graphics::createBuffer(IntSize(1, 1), BlackBerry::Platform::Graphics::BackedWhenNecessary);
-    BlackBerry::Platform::Graphics::PlatformGraphicsContext* gc = lockBufferDrawable(m_buffer);
-    gc->setFillColor(rgba);
-    gc->addFillRect(BlackBerry::Platform::FloatRect(0, 0, 1, 1));
+    if (BlackBerry::Platform::Graphics::PlatformGraphicsContext* gc = lockBufferDrawable(m_buffer)) {
+        gc->setFillColor(rgba);
+        gc->addFillRect(BlackBerry::Platform::FloatRect(0, 0, 1, 1));
+    }
     releaseBufferDrawable(m_buffer);
 
     IntSize oldSize = m_size;
