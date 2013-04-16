@@ -1,3 +1,55 @@
+2013-04-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WK2] Add API to retrieve a snapshot from a webview
+        https://bugs.webkit.org/show_bug.cgi?id=98270
+
+        Reviewed by Anders Carlsson.
+
+        This adds the GTK+ API necessary to retrieve a snapshot from a
+        webview asynchronously. The API uses the injected bundle
+        internally to get the snapshot from the WebProcess.
+
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_snapshot_error_quark): Add snapshot API related error
+        quark.
+        * UIProcess/API/gtk/WebKitError.h: Add snapshot error handling.
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle): Handle the new
+        "DidGetSnapshot" message.
+        * UIProcess/API/gtk/WebKitPrivate.h: Add SnapshotRegion enum.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate): Add a map for the snapshot results.
+        (GetSnapshotAsyncData):
+        (webKitWebViewDidReceiveSnapshot):
+        (webKitSnapshotRegionToSnapshotRegion): Helper method for casting
+        the region option enumeration.
+        (generateSnapshotCallbackID): Method to generate unique callback
+        ids.
+        (webkit_web_view_get_snapshot):
+        (webkit_web_view_get_snapshot_finish): New snapshotting API.
+        * UIProcess/API/gtk/WebKitWebView.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Add the private method
+        to handle a received snapshot.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add the new API
+        bits.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (cairoSurfacesEqual): Add helper to compare cairo_surface_t
+        structs.
+        (testWebViewSnapshot): New test.
+        (beforeAll): Add the new test.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::selectAll): Add method to help test snapshots
+        including selection.
+        * UIProcess/API/gtk/tests/WebViewTest.h: Ditto
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (didReceiveMessageToPage): Ditto.
+        (webkitWebExtensionCreate): Register method above.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageDidReceiveMessage): Add this method. It
+        handles the new message "GetSnapshot".
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h:
+        Add method above.
+
 2013-04-16  Timothy Hatcher  <timothy@apple.com>
 
         Create full rects for the inspector and inspected views when

@@ -75,6 +75,8 @@ WebKitPolicyDecisionType
 WebKitSaveMode
 WebKitViewMode
 WebKitInsecureContentEvent
+WebKitSnapshotOptions
+WebKitSnapshotRegion
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -134,6 +136,8 @@ webkit_web_view_download_uri
 webkit_web_view_set_view_mode
 webkit_web_view_get_view_mode
 webkit_web_view_get_tls_info
+webkit_web_view_get_snapshot
+webkit_web_view_get_snapshot_finish
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -607,18 +611,21 @@ WEBKIT_POLICY_ERROR
 WEBKIT_DOWNLOAD_ERROR
 WEBKIT_PRINT_ERROR
 WEBKIT_JAVASCRIPT_ERROR
+WEBKIT_SNAPSHOT_ERROR
 WebKitNetworkError
 WebKitPluginError
 WebKitPolicyError
 WebKitDownloadError
 WebKitPrintError
 WebKitJavascriptError
+WebKitSnapshotError
 webkit_network_error_quark
 webkit_plugin_error_quark
 webkit_policy_error_quark
 webkit_download_error_quark
 webkit_print_error_quark
 webkit_javascript_error_quark
+webkit_snapshot_error_quark
 </SECTION>
 
 <SECTION>

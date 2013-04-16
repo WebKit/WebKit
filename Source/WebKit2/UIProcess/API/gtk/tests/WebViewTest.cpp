@@ -207,6 +207,11 @@ void WebViewTest::resizeView(int width, int height)
     gtk_widget_size_allocate(GTK_WIDGET(m_webView), &allocation);
 }
 
+void WebViewTest::selectAll()
+{
+    webkit_web_view_execute_editing_command(m_webView, "SelectAll");
+}
+
 static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
     size_t dataSize;

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitInjectedBundleClient.h"
 
+#include "WebImage.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -90,6 +91,10 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 
         webkitWebResourceFailed(resource.get(), resourceError.get());
         webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
+    } else if (g_str_equal(messageName, "DidGetSnapshot")) {
+        WebUInt64* callbackID = static_cast<WebUInt64*>(message.get("CallbackID"));
+        WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
+        webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
     } else
         ASSERT_NOT_REACHED();
 }

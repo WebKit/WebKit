@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "ImageOptions.h"
 #include "PlatformCertificateInfo.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
@@ -133,6 +134,7 @@ enum {
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
+typedef HashMap<uint64_t, GRefPtr<GSimpleAsyncResult> > SnapshotResultsMap;
 
 struct _WebKitWebViewPrivate {
     ~_WebKitWebViewPrivate()
@@ -178,6 +180,8 @@ struct _WebKitWebViewPrivate {
     GRefPtr<GCancellable> faviconCancellable;
     CString faviconURI;
     unsigned long faviconChangedHandlerID;
+
+    SnapshotResultsMap snapshotResultsMap;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -2919,4 +2923,107 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
         *errors = certificateInfo.tlsErrors();
 
     return !!certificateInfo.certificate();
+}
+
+struct GetSnapshotAsyncData {
+    GRefPtr<GCancellable> cancellable;
+    RefPtr<cairo_surface_t> snapshot;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetSnapshotAsyncData)
+
+void webKitWebViewDidReceiveSnapshot(WebKitWebView* webView, uint64_t callbackID, WebImage* webImage)
+{
+    GRefPtr<GSimpleAsyncResult> result = webView->priv->snapshotResultsMap.take(callbackID);
+    GetSnapshotAsyncData* data = static_cast<GetSnapshotAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
+    GError* error = 0;
+    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
+        g_simple_async_result_take_error(result.get(), error);
+    else if (webImage) {
+        if (RefPtr<ShareableBitmap> image = webImage->bitmap())
+            data->snapshot = image->createCairoSurface();
+    } else {
+        g_set_error_literal(&error, WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
+        g_simple_async_result_take_error(result.get(), error);
+    }
+
+    g_simple_async_result_complete(result.get());
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_SNAPSHOT_REGION_VISIBLE, SnapshotRegionVisible);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, SnapshotRegionFullDocument);
+
+static inline unsigned webKitSnapshotOptionsToSnapshotOptions(WebKitSnapshotOptions options)
+{
+    SnapshotOptions snapshotOptions = 0;
+
+    if (!(options & WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING))
+        snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+
+    return snapshotOptions;
+}
+
+static inline uint64_t generateSnapshotCallbackID()
+{
+    static uint64_t uniqueCallbackID = 1;
+    return uniqueCallbackID++;
+}
+
+/**
+ * webkit_web_view_get_snapshot:
+ * @web_view: a #WebKitWebView
+ * @options: #WebKitSnapshotOptions for the snapshot
+ * @region: the #WebKitSnapshotRegion for this snapshot
+ * @cancellable: (allow-none): a #GCancellable
+ * @callback: (scope async): a #GAsyncReadyCallback
+ * @user_data: (closure): user data
+ *
+ * Asynchronously retrieves a snapshot of @web_view for @region.
+ * @options specifies how the snapshot should be rendered.
+ *
+ * When the operation is finished, @callback will be called. You must
+ * call webkit_web_view_get_snapshot_finish() to get the result of the
+ * operation.
+ */
+void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion region, WebKitSnapshotOptions options, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+        reinterpret_cast<gpointer>(webkit_web_view_get_snapshot)));
+    GetSnapshotAsyncData* data = createGetSnapshotAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result.get(), data, reinterpret_cast<GDestroyNotify>(destroyGetSnapshotAsyncData));
+
+    ImmutableDictionary::MapType message;
+    uint64_t callbackID = generateSnapshotCallbackID();
+    message.set(String::fromUTF8("SnapshotOptions"), WebUInt64::create(static_cast<uint64_t>(webKitSnapshotOptionsToSnapshotOptions(options))));
+    message.set(String::fromUTF8("SnapshotRegion"), WebUInt64::create(static_cast<uint64_t>(region)));
+    message.set(String::fromUTF8("CallbackID"), WebUInt64::create(callbackID));
+
+    webView->priv->snapshotResultsMap.set(callbackID, result.get());
+    getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), ImmutableDictionary::adopt(message).get());
+}
+
+/**
+ * webkit_web_view_get_snapshot_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finishes an asynchronous operation started with webkit_web_view_get_snapshot().
+ *
+ * Returns: (transfer full): a #cairo_surface_t with the retrieved snapshot or %NULL in error.
+ */
+cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_get_snapshot);
+
+    if (g_simple_async_result_propagate_error(simple, error))
+        return 0;
+
+    return cairo_surface_reference(static_cast<GetSnapshotAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple))->snapshot.get());
 }

@@ -20,16 +20,19 @@
 #include "config.h"
 #include "WebKitWebPage.h"
 
+#include "ImageOptions.h"
 #include "ImmutableDictionary.h"
 #include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
 #include "WKBundleFrame.h"
 #include "WebFrame.h"
+#include "WebImage.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -194,6 +197,40 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient);
 
     return page;
+}
+
+void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, ImmutableDictionary& message)
+{
+    if (messageName == String("GetSnapshot")) {
+        SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<WebUInt64*>(message.get("SnapshotOptions"))->value());
+        uint64_t callbackID = static_cast<WebUInt64*>(message.get("CallbackID"))->value();
+        SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<WebUInt64*>(message.get("SnapshotRegion"))->value());
+
+        RefPtr<WebImage> snapshotImage;
+        WebPage* webPage = page->priv->webPage;
+        if (WebCore::FrameView* frameView = webPage->mainFrameView()) {
+            WebCore::IntRect snapshotRect;
+            switch (region) {
+            case SnapshotRegionVisible:
+                snapshotRect = frameView->visibleContentRect(WebCore::ScrollableArea::ExcludeScrollbars);
+                break;
+            case SnapshotRegionFullDocument:
+                snapshotRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            if (!snapshotRect.isEmpty())
+                snapshotImage = webPage->scaledSnapshotWithOptions(snapshotRect, 1, snapshotOptions | SnapshotOptionsShareable);
+        }
+
+        ImmutableDictionary::MapType messageReply;
+        messageReply.set("Page", webPage);
+        messageReply.set("CallbackID", WebUInt64::create(callbackID));
+        messageReply.set("Snapshot", snapshotImage);
+        WebProcess::shared().injectedBundle()->postMessage("WebPage.DidGetSnapshot", ImmutableDictionary::adopt(messageReply).get());
+    } else
+        ASSERT_NOT_REACHED();
 }
 
 /**
