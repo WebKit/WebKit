@@ -440,6 +440,7 @@ EXPORTS
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHI@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
+    ?weakClearSlowCase@JSC@@YAXAAPAVWeakImpl@1@@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     ?writeBarrier@HandleSet@JSC@@QAEXPAVJSValue@2@ABV32@@Z
     ?yield@WTF@@YAXXZ

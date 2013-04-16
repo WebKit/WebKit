@@ -1,3 +1,10 @@
+2013-04-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows clean build fix after r148479.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-15  Anders Carlsson  <andersca@apple.com>
 
         ScriptWrappable subclasses shouldn't have to include WeakInlines.h
