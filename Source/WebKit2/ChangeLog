@@ -1,3 +1,19 @@
+2013-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        Create full rects for the inspector and inspected views when
+        adjusting to an inspected view frame change. 
+
+        This ensures switching dock sides restores the inspected view
+        and inspector to fill the parent's bounds.
+
+        https://webkit.org/b/114666
+        rdar://problem/13660796
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+
 2013-04-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         Initialize logging channels for web processes

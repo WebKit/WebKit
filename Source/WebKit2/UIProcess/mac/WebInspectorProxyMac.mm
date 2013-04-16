@@ -526,31 +526,31 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
     WKView *inspectedView = m_page->wkView();
     NSRect inspectedViewFrame = [inspectedView frame];
-    NSRect inspectorFrame = inspectedViewFrame;
+    NSRect inspectorFrame = NSZeroRect;
     NSRect parentBounds = [[inspectedView superview] bounds];
 
     switch (m_attachmentSide) {
         case AttachmentSideBottom: {
             if (!currentDimension)
                 currentDimension = NSHeight([m_inspectorView.get() frame]);
+
             CGFloat parentHeight = NSHeight(parentBounds);
             CGFloat inspectorHeight = InspectorFrontendClientLocal::constrainedAttachedWindowHeight(currentDimension, parentHeight);
-            inspectedViewFrame.origin.y = inspectorHeight;
-            inspectedViewFrame.size.height = parentHeight - inspectorHeight;
-            inspectorFrame.origin.y = 0;
-            inspectorFrame.size.height = inspectorHeight;
+
+            inspectedViewFrame = NSMakeRect(0, inspectorHeight, NSWidth(parentBounds), parentHeight - inspectorHeight);
+            inspectorFrame = NSMakeRect(0, 0, NSWidth(inspectedViewFrame), inspectorHeight);
             break;
         }
 
         case AttachmentSideRight: {
             if (!currentDimension)
                 currentDimension = NSWidth([m_inspectorView.get() frame]);
+
             CGFloat parentWidth = NSWidth(parentBounds);
             CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
-            inspectedViewFrame.origin.x = 0;
-            inspectedViewFrame.size.width = parentWidth - inspectorWidth;
-            inspectorFrame.origin.x = parentWidth - inspectorWidth;
-            inspectorFrame.size.width = inspectorWidth;
+
+            inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, NSHeight(parentBounds));
+            inspectorFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(inspectedViewFrame));
             break;
         }
     }
