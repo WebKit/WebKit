@@ -28,8 +28,7 @@
     IndexedGetter,
     EventTarget,
     JSCustomMarkFunction,
-    JSCustomIsReachable,
-    V8GenerateIsReachable=ImplOwnerRoot
+    JSCustomIsReachable
 ] interface TextTrackList {
     readonly attribute unsigned long length;
     TextTrack item(in unsigned long index);
