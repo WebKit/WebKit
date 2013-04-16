@@ -838,7 +838,7 @@ bool WebSettings::applyDeviceScaleFactorInCompositor() const
     return m_private->getBoolean(BlackBerryApplyDeviceScaleFactorInCompositor);
 }
 
-void WebSettings::setApplyPageScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
+void WebSettings::setApplyDeviceScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
 {
     m_private->setBoolean(BlackBerryApplyDeviceScaleFactorInCompositor, applyDeviceScaleFactorInCompositor);
 }

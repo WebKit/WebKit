@@ -242,7 +242,7 @@ public:
     void setBackingStoreEnabled(bool);
 
     bool applyDeviceScaleFactorInCompositor() const;
-    void setApplyPageScaleFactorInCompositor(bool);
+    void setApplyDeviceScaleFactorInCompositor(bool);
 
 private:
     WebSettingsPrivate* m_private;

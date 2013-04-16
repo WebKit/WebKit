@@ -5921,7 +5921,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 
     coreSettings->setShouldUseCrossOriginProtocolCheck(!webSettings->allowCrossSiteRequests());
     coreSettings->setWebSecurityEnabled(!webSettings->allowCrossSiteRequests());
-    coreSettings->setApplyPageScaleFactorInCompositor(webSettings->applyDeviceScaleFactorInCompositor());
+    coreSettings->setApplyDeviceScaleFactorInCompositor(webSettings->applyDeviceScaleFactorInCompositor());
 
     updateBackgroundColor(webSettings->backgroundColor());
 
