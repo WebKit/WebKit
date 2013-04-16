@@ -111,7 +111,7 @@ void ChannelMergerNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
     for (unsigned i = 0; i < numberOfInputs(); ++i) {
         AudioNodeInput* input = this->input(i);
         if (input->isConnected())
-            numberOfOutputChannels += input->bus()->numberOfChannels();
+            numberOfOutputChannels += input->numberOfChannels();
     }
 
     // Set the correct number of channels on the output
