@@ -28,6 +28,7 @@
 
 #include "BitmapInfo.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContextCG.h"
 #include "RenderObject.h"
