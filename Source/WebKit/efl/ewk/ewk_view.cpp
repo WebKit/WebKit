@@ -81,7 +81,7 @@
 #include <Evas.h>
 #include <eina_safety_checks.h>
 #include <inttypes.h>
-#include <libsoup/soup-session.h>
+#include <libsoup/soup.h>
 #include <limits>
 #include <math.h>
 #include <sys/time.h>

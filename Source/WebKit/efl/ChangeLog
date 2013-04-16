@@ -1,3 +1,13 @@
+2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][EFL] Remove deprecated libsoup API usage
+        https://bugs.webkit.org/show_bug.cgi?id=104894
+
+        Reviewed by Philippe Normand.
+
+        Remove LIBSOUP_USE_UNSTABLE_REQUEST_API and only include
+        libsoup/soup.h.
+
 2013-04-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix for WebKit1 EFL after r148373 due to missing

@@ -27,8 +27,6 @@
 #include "ResourceError.h"
 
 #include "LocalizedStrings.h"
-#define LIBSOUP_USE_UNSTABLE_REQUEST_API
-#include <libsoup/soup-request.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>

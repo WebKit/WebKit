@@ -47,9 +47,6 @@
 #endif
 
 #if USE(SOUP)
-#define LIBSOUP_USE_UNSTABLE_REQUEST_API
-#include <libsoup/soup-multipart-input-stream.h>
-#include <libsoup/soup-request.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GRefPtr.h>
 class Frame;

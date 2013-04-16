@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#define LIBSOUP_USE_UNSTABLE_REQUEST_API
-
 #if PLATFORM(EFL)
 #include "SeccompFiltersWebProcessEfl.h"
 #endif
@@ -40,7 +38,6 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/ResourceHandle.h>
-#include <libsoup/soup-cache.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>

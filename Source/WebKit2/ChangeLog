@@ -1,3 +1,22 @@
+2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][EFL] Remove deprecated libsoup API usage
+        https://bugs.webkit.org/show_bug.cgi?id=104894
+
+        Reviewed by Philippe Normand.
+
+        Remove LIBSOUP_USE_UNSTABLE_REQUEST_API and only include
+        libsoup/soup.h.
+
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h:
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/soup/WebKitSoupRequestGeneric.h:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::registerURIScheme): Remove requester and
+        use method soup_session_add_feature_by_type().
+
 2013-04-15  Dean Jackson  <dino@apple.com>
 
         Plugins that resize might need to be snapshotted.

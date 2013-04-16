@@ -26,8 +26,7 @@
 #ifndef ProxyResolverSoup_h
 #define ProxyResolverSoup_h
 
-#include <libsoup/soup-proxy-uri-resolver.h>
-#include <libsoup/soup-uri.h>
+#include <libsoup/soup.h>
 
 G_BEGIN_DECLS
 

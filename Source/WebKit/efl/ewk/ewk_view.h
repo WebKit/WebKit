@@ -123,7 +123,7 @@
 
 #include <Evas.h>
 #include <cairo.h>
-#include <libsoup/soup-session.h>
+#include <libsoup/soup.h>
 
 #ifdef __cplusplus
 extern "C" {

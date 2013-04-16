@@ -20,8 +20,7 @@
 #include "config.h"
 #include "GOwnPtrSoup.h"
 
-#include <libsoup/soup-cookie.h>
-#include <libsoup/soup-uri.h>
+#include <libsoup/soup.h>
 
 namespace WTF {
 

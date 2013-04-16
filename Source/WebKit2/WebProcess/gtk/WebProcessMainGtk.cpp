@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebProcessMainGtk.h"
 
-#define LIBSOUP_USE_UNSTABLE_REQUEST_API
-
 #include "WKBase.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
@@ -37,7 +35,7 @@
 #include <WebKit2/WebProcess.h>
 #include <gtk/gtk.h>
 #include <libintl.h>
-#include <libsoup/soup-cache.h>
+#include <libsoup/soup.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
 #include <wtf/MainThread.h>

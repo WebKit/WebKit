@@ -20,7 +20,7 @@
 #ifndef WebKitSoupCookieJarSqlite_h
 #define WebKitSoupCookieJarSqlite_h
 
-#include <libsoup/soup-cookie-jar.h>
+#include <libsoup/soup.h>
 #include <wtf/text/WTFString.h>
 
 G_BEGIN_DECLS

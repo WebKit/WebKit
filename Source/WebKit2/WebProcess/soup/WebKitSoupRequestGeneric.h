@@ -21,8 +21,7 @@
 #define WebKitSoupRequestGeneric_h
 
 #include <glib-object.h>
-#define LIBSOUP_USE_UNSTABLE_REQUEST_API
-#include <libsoup/soup-request.h>
+#include <libsoup/soup.h>
 
 G_BEGIN_DECLS
 

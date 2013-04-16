@@ -26,7 +26,7 @@
 #define ewk_network_h
 
 #include <Eina.h>
-#include <libsoup/soup-session.h>
+#include <libsoup/soup.h>
 
 #ifdef __cplusplus
 extern "C" {
