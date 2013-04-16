@@ -45,7 +45,7 @@ class CommitInfo(object):
         return self._revision
 
     def committer(self):
-        return self._committer  # None if committer isn't in committers.py
+        return self._committer  # None if committer isn't in contributors.json
 
     def committer_email(self):
         return self._committer_email

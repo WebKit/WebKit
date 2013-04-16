@@ -1,3 +1,26 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The list of contributors in committers.py should be a separate JSON
+        https://bugs.webkit.org/show_bug.cgi?id=114673
+
+        Reviewed by Anders Carlsson.
+
+        Added webkitpy/common/config/contributors.json, made CommitterList load it.
+
+        * EWSTools/start-queue-mac.sh:
+        * EWSTools/start-queue.sh:
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        (CommitInfo.committer):
+        * Scripts/webkitpy/common/config/contributors.json: Added.
+        * Scripts/webkitpy/common/config/committers.py:
+        (Reviewer.__init__):
+        (CommitterList.__init__):
+        (CommitterList.load_json): Added.
+        (CommitterList.load_json.emails):
+        (CommitterList.load_json.nicks):
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        (MockCommitInfo.author):
+
 2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [EFL] Bump libsoup dependency to 2.42.0

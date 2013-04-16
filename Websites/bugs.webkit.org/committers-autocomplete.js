@@ -24,110 +24,29 @@
 // DAMAGE.
 
 WebKitCommitters = (function() {
-    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/committers.py';
+    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json';
     var m_committers;
 
-    function getValues(param) {
-        var nextQuote = /^[^"]*"/g;
-        var values = [];
-        nextQuote.lastIndex = 0;
-        while (nextQuote.exec(param) != null) {
-            var nextIndex = param.indexOf('"', nextQuote.lastIndex); // For emacs " to balance the quotes.
-            values.push(param.substring(nextQuote.lastIndex, nextIndex));
-            param = param.substring(nextIndex + 1);
-            nextQuote.lastIndex = 0;
-        }
-        return values;
-    }
-
-    function parseRecord(key, record) {
-        var keyIndex = record.indexOf(key);
-        if (keyIndex < 0)
-            return null;
-        record = record.substring(keyIndex + key.length);
-
-        var firstParen = /^\s*\(\s*/g;
-        firstParen.lastIndex = 0;
-        if (!firstParen.exec(record))
-            return null;
-        record = record.substring(firstParen.lastIndex);
-
-        var parsedResult = {};
-
-        // full name
-        var param = /^\s*((\[[^\]]+\])|(u?)("[^"]+"))\s*/g; // For emacs " to balance the quotes.
-        param.lastIndex = 0;
-        var nameParam = param.exec(record);
-        if (!nameParam)
-            return null;
-        record = record.substring(param.lastIndex);
-
-        // Save the name without the quotes.
-        var name = nameParam[4].slice(1, nameParam[4].length - 1);
-
-        // Convert unicode characters
-        if (nameParam[3] == 'u') {
-            var unicode = /\\u([a-f\d]{4})/i;
-            var match = unicode.exec(name);
-            while (match) {
-                name = name.replace(match[0], String.fromCharCode(parseInt(match[1], 16)));
-                match = unicode.exec(name);
-            }
-        }
-
-        parsedResult.name = name;
-
-        var paramSeparator = /^\s*,\s*/g;
-        paramSeparator.lastIndex = 0;
-        if (!paramSeparator.exec(record))
-            return null;
-        record = record.substring(paramSeparator.lastIndex);
-
-        // email
-        param.lastIndex = 0;
-        emailParam = param.exec(record);
-        if (!emailParam)
-            return null;
-
-        emails = getValues(emailParam[0]);
-        parsedResult.emails = emails;
-        record = record.substring(param.lastIndex);
-
-        paramSeparator.lastIndex = 0;
-        if (!paramSeparator.exec(record))
-            return parsedResult;
-        record = record.substring(paramSeparator.lastIndex);
-
-        // irc
-        param.lastIndex = 0;
-        ircParam = param.exec(record);
-        if (!ircParam)
-            return parsedResult;
-        record = record.substring(param.lastIndex);
-
-        irc = getValues(ircParam[0]);
-        parsedResult.irc = irc;
-        return parsedResult;
-    }
-
     function parseType(key, records, type) {
-        for (var i = 0; i < records.length; ++i) {
-            var record = records[i];
-            var result = parseRecord(key, record);
-            if (!result)
-                continue;
+        for (var name in records) {
+            var record = records[name];
+            result.name = name;
+            result.emails = record.emails;
+            result.irc = record.nicks;
             result.type = type;
             m_committers.push(result);
         }
     }
 
     function parseCommittersPy(text) {
+        var parsedContributorsJSON = JSON.parse(text);
+
         m_committers = [];
 
         var records = text.split('\n');
-        parseType('Committer', records, 'c');
-        parseType('Reviewer', records, 'r');
-        parseType('Contributor', records);
+        parseType('Committer', parsedContributorsJSON['Committers'], 'c');
+        parseType('Reviewer', parsedContributorsJSON['Reviewers'], 'r');
+        parseType('Contributor', parsedContributorsJSON['Contributors']);
     }
 
     function loadCommitters(callback) {
@@ -140,7 +59,7 @@ WebKitCommitters = (function() {
         };
 
         xhr.onerror = function() {
-            console.log('Unable to load committers.py');
+            console.log('Unable to load contributors.json');
             callback();
         };
 

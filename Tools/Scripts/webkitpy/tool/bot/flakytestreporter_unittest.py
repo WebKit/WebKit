@@ -46,7 +46,7 @@ class MockCommitInfo(object):
 
     def author(self):
         # It's definitely possible to have commits with authors who
-        # are not in our committers.py list.
+        # are not in our contributors.json list.
         if not self._author_email:
             return None
         return Committer("Mock Committer", self._author_email)
