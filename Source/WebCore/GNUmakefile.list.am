@@ -2316,6 +2316,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/IDBBindingUtilities.cpp \
 	Source/WebCore/bindings/js/IDBBindingUtilities.h \
 	Source/WebCore/bindings/js/JSArrayBufferCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioBufferCustom.cpp \
 	Source/WebCore/bindings/js/JSArrayBufferViewHelper.h \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \

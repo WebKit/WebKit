@@ -79,6 +79,7 @@ SOURCES += \
      bindings/js/Dictionary.cpp \
      bindings/js/GCController.cpp \
      bindings/js/JSArrayBufferCustom.cpp \
+     bindings/js/JSAudioBufferCustom.cpp \
      bindings/js/JSAttrCustom.cpp \
      bindings/js/JSBlobCustom.cpp \
      bindings/js/JSCDATASectionCustom.cpp \
