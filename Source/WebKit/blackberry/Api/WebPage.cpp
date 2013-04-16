@@ -84,6 +84,7 @@
 #include "InspectorOverlay.h"
 #include "JavaScriptVariant_p.h"
 #include "LayerWebKitThread.h"
+#include "LocalFileSystem.h"
 #if ENABLE(NETWORK_INFO)
 #include "NetworkInfoClientBlackBerry.h"
 #endif
@@ -172,6 +173,7 @@
 #include <BlackBerryPlatformMouseEvent.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
+#include <BlackBerryPlatformWebFileSystem.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -639,6 +641,14 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 
 #if ENABLE(WEB_TIMING)
     m_page->settings()->setMemoryInfoEnabled(true);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    static bool localFileSystemInitialized = false;
+    if (!localFileSystemInitialized) {
+        localFileSystemInitialized = true;
+        WebCore::LocalFileSystem::initializeLocalFileSystem("/");
+    }
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -4788,6 +4798,7 @@ void WebPage::clearBrowsingData()
     clearCookieCache();
     clearHistory();
     clearPluginSiteData();
+    clearWebFileSystem();
 }
 
 void WebPage::clearHistory()
@@ -4828,6 +4839,13 @@ void WebPage::clearNeverRememberSites()
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     if (d->m_webSettings->isCredentialAutofillEnabled())
         credentialManager().clearNeverRememberSites();
+#endif
+}
+
+void WebPage::clearWebFileSystem()
+{
+#if ENABLE(FILE_SYSTEM)
+    Platform::WebFileSystem::deleteAllFileSystems();
 #endif
 }
 

@@ -228,6 +228,7 @@ public:
     void clearCredentials();
     void clearAutofillData();
     void clearNeverRememberSites();
+    void clearWebFileSystem();
 
     void runLayoutTests();
 
