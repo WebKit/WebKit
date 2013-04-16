@@ -528,6 +528,19 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     return isARIAInput(ariaRole) || ariaRole == TextAreaRole || ariaRole == ButtonRole 
     || ariaRole == ComboBoxRole || ariaRole == SliderRole; 
 }
+    
+bool AccessibilityObject::isRangeControl() const
+{
+    switch (roleValue()) {
+    case ProgressIndicatorRole:
+    case SliderRole:
+    case ScrollBarRole:
+    case SpinButtonRole:
+        return true;
+    default:
+        return false;
+    }
+}
 
 IntPoint AccessibilityObject::clickPoint()
 {

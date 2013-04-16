@@ -742,23 +742,10 @@ int AccessibilityNodeObject::headingLevel() const
 
 String AccessibilityNodeObject::valueDescription() const
 {
-    if (!isARIARange())
+    if (!isRangeControl())
         return String();
 
     return getAttribute(aria_valuetextAttr).string();
-}
-
-bool AccessibilityNodeObject::isARIARange() const
-{
-    switch (m_ariaRole) {
-    case ProgressIndicatorRole:
-    case SliderRole:
-    case ScrollBarRole:
-    case SpinButtonRole:
-        return true;
-    default:
-        return false;
-    }
 }
 
 float AccessibilityNodeObject::valueForRange() const
@@ -769,7 +756,7 @@ float AccessibilityNodeObject::valueForRange() const
             return input->valueAsNumber();
     }
 
-    if (!isARIARange())
+    if (!isRangeControl())
         return 0.0f;
 
     return getAttribute(aria_valuenowAttr).toFloat();
@@ -783,7 +770,7 @@ float AccessibilityNodeObject::maxValueForRange() const
             return input->maximum();
     }
 
-    if (!isARIARange())
+    if (!isRangeControl())
         return 0.0f;
 
     return getAttribute(aria_valuemaxAttr).toFloat();
@@ -797,7 +784,7 @@ float AccessibilityNodeObject::minValueForRange() const
             return input->minimum();
     }
 
-    if (!isARIARange())
+    if (!isRangeControl())
         return 0.0f;
 
     return getAttribute(aria_valueminAttr).toFloat();
