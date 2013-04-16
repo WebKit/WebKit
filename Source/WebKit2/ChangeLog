@@ -1,3 +1,9 @@
+2013-04-16  Andreas Kling  <akling@apple.com>
+
+        Fix release builds with !LOG_DISABLED.
+
+        * Platform/mac/Logging.mac.mm:
+
 2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][EFL] Remove deprecated libsoup API usage
