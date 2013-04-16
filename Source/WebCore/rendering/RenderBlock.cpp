@@ -59,8 +59,8 @@
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "SVGTextRunRenderingContext.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "TransformState.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -72,6 +72,7 @@
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationListHashSet.h>
+#include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
 
 using namespace std;

@@ -58,6 +58,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/SHA1.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/Base64.h>

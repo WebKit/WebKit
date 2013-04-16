@@ -29,23 +29,18 @@
 #include "ScriptExecutionContext.h"
 
 #include "CachedScript.h"
-#include "ContentSecurityPolicy.h"
 #include "DOMTimer.h"
 #include "ErrorEvent.h"
-#include "EventListener.h"
-#include "EventTarget.h"
 #include "MessagePort.h"
 #include "PublicURLManager.h"
+#include "ScriptCallStack.h"
 #include "Settings.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
 
 // FIXME: This is a layering violation.
 #include "JSDOMWindow.h"

@@ -40,7 +40,7 @@
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
-#include <wtf/Vector.h>
+#include <wtf/StackStats.h>
 
 using namespace std;
 

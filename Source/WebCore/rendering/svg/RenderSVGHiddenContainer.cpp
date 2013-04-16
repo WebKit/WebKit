@@ -24,6 +24,7 @@
 
 #include "RenderSVGPath.h"
 #include "SVGStyledElement.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

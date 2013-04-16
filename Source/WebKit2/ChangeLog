@@ -1,3 +1,13 @@
+2013-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove unneeded headers from ScriptExecutionContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=114631
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/WebPage/PageOverlay.cpp:
+
 2013-04-16  Maciej Stachowiak  <mjs@apple.com>
 
         Remove even yet still more traces of v8

@@ -35,6 +35,7 @@
 #include "RenderView.h"
 #include "StylePropertySet.h"
 #include "TransformState.h"
+#include <wtf/StackStats.h>
 
 #if ENABLE(MATHML)
 #include "MathMLElement.h"

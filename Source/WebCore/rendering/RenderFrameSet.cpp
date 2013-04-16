@@ -42,6 +42,7 @@
 #include "Settings.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

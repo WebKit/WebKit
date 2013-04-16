@@ -29,6 +29,7 @@
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
+#include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 

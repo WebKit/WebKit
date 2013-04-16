@@ -31,6 +31,7 @@
 #include "HTMLMediaElement.h"
 #include "RenderFlowThread.h"
 #include "RenderView.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

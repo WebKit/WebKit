@@ -32,6 +32,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
+#include <wtf/StackStats.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerBacking.h"

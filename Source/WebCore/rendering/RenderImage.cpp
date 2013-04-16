@@ -45,6 +45,7 @@
 #include "PaintInfo.h"
 #include "RenderView.h"
 #include "SVGImage.h"
+#include <wtf/StackStats.h>
 #include <wtf/UnusedParam.h>
 
 using namespace std;

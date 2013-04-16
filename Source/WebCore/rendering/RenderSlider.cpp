@@ -41,6 +41,7 @@
 #include "StepRange.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
+#include <wtf/StackStats.h>
 
 using std::min;
 

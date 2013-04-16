@@ -46,6 +46,7 @@
 #include <WebCore/GraphicsLayerTextureMapper.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
+#include <wtf/CurrentTime.h>
 
 #include <gdk/gdk.h>
 #if defined(GDK_WINDOWING_X11)

@@ -48,6 +48,7 @@
 #include "SVGURIReference.h"
 #include "StrokeStyleApplier.h"
 #include <wtf/MathExtras.h>
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

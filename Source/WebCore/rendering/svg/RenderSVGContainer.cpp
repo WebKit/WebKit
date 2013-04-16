@@ -35,6 +35,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

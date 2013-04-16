@@ -49,6 +49,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SurfaceUpdateInfo.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
 
 #if ENABLE(CSS_SHADERS)

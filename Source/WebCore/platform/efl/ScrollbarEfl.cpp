@@ -38,6 +38,7 @@
 #include <Evas.h>
 #include <new>
 #include <string>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace std;

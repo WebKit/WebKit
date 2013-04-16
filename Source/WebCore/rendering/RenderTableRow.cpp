@@ -33,6 +33,7 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

@@ -32,6 +32,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGStyledElement.h"
 #include "SVGStyledTransformableElement.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

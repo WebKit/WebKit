@@ -34,6 +34,7 @@
 #include "RenderView.h"
 #include "VisiblePosition.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/StackStats.h>
 
 using namespace std;
 

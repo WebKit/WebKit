@@ -59,6 +59,7 @@
 #include "SpatialNavigation.h"
 #include "StyleResolver.h"
 #include <math.h>
+#include <wtf/StackStats.h>
 
 using namespace std;
 

@@ -46,6 +46,7 @@
 #include "SVGStyledElement.h"
 #include "SVGViewSpec.h"
 #include "TransformState.h"
+#include <wtf/StackStats.h>
 
 #if ENABLE(FILTERS)
 #include "RenderSVGResourceFilter.h"

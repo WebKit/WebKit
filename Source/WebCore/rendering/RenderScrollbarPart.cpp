@@ -30,6 +30,7 @@
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderView.h"
+#include <wtf/StackStats.h>
 
 using namespace std;
 

@@ -32,6 +32,7 @@
 #include "RenderListItem.h"
 #include "RenderView.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/StackStats.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

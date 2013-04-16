@@ -58,6 +58,7 @@
 #include <algorithm>
 #include <math.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
+#include <wtf/StackStats.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"

@@ -37,6 +37,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -33,6 +33,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScrollbarTheme.h>
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 

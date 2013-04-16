@@ -52,6 +52,7 @@
 #include "SimpleFontData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

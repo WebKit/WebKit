@@ -41,6 +41,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
+#include <wtf/StackStats.h>
 
 using namespace std;
 

@@ -43,6 +43,7 @@
 #include "RenderView.h"
 #include "TransformState.h"
 #include "WebKitNamedFlow.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

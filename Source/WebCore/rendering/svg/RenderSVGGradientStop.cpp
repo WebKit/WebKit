@@ -27,6 +27,7 @@
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
 #include "SVGStopElement.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
     

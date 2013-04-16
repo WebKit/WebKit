@@ -42,6 +42,7 @@
 #include "SimpleFontData.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
+#include <wtf/StackStats.h>
 
 using namespace std;
 

@@ -41,6 +41,7 @@
 #include "RenderTableSection.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
+#include <wtf/StackStats.h>
 
 using namespace std;
 

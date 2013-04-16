@@ -35,6 +35,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
 #include "TransformState.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 

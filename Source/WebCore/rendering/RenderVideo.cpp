@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
+#include <wtf/StackStats.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "RenderFullScreen.h"

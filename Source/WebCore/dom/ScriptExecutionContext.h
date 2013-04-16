@@ -31,18 +31,14 @@
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
 #include "KURL.h"
-#include "ScriptCallStack.h"
-#include "ScriptState.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
-#include <runtime/JSGlobalData.h>
-#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Threading.h>
-#include <wtf/text/StringHash.h>
+
+namespace JSC {
+class ExecState;
+class JSGlobalData;
+}
 
 namespace WebCore {
 
@@ -53,6 +49,9 @@ class EventListener;
 class EventQueue;
 class EventTarget;
 class MessagePort;
+class ScriptCallStack;
+
+typedef JSC::ExecState ScriptState;
 
 #if ENABLE(BLOB)
 class PublicURLManager;
