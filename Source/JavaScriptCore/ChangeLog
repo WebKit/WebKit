@@ -1,5 +1,12 @@
 2013-04-16  Anders Carlsson  <andersca@apple.com>
 
+        Another Windows build fix attempt.
+
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+
+2013-04-16  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * runtime/JSGlobalData.h:

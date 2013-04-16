@@ -53,7 +53,6 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/MathExtras.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -392,7 +391,7 @@ namespace JSC {
         ThreadIdentifier exclusiveThread;
 #endif
 
-        CachedTranscendentalFunction<sin> cachedSin;
+        CachedTranscendentalFunction<std::sin> cachedSin;
 
         JS_EXPORT_PRIVATE void resetDateCache();
 
