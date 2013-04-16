@@ -80,9 +80,9 @@ PASS: del
       AXRoleDescription: 
       
 PASS: dfn
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXDefinition
+      AXRoleDescription: definition
       
 PASS: dl
       AXRole: AXList

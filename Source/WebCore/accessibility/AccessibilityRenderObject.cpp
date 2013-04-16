@@ -1299,6 +1299,10 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
         return false;
 #endif
+
+    // Other non-ignored host language elements
+    if (node && node->hasTagName(dfnTag))
+        return false;
     
     // By default, objects should be ignored so that the AX hierarchy is not 
     // filled with unnecessary items.
@@ -2531,6 +2535,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (node && node->hasTagName(labelTag))
         return LabelRole;
+
+    if (node && node->hasTagName(dfnTag))
+        return DefinitionRole;
 
     if (node && node->hasTagName(divTag))
         return DivRole;
