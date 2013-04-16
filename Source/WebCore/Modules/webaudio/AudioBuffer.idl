@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    CustomToJSObject,
     ImplementationLacksVTable
 ] interface AudioBuffer {
     readonly attribute long length; // in sample-frames
