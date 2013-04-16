@@ -621,6 +621,9 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
 
 void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
 {
+    // Loading the request can cause the instance proxy to go away, so protect it.
+    RefPtr<NetscapePluginInstanceProxy> protect(this);
+
     ASSERT(m_pluginView);
     
     NSURLRequest *request = pluginRequest->request();

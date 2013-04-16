@@ -1,3 +1,20 @@
+2013-04-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r148483
+
+    2013-04-15  Anders Carlsson  <andersca@apple.com>
+
+            plugins/get-url-beforeunload-destroys-plugin.html crashes in WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=114653
+            <rdar://problem/13659541>
+
+            Reviewed by Sam Weinig.
+
+            Protect the NetscapePluginInstanceProxy since it can otherwise go away.
+
+            * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+            (WebKit::NetscapePluginInstanceProxy::performRequest):
+
 2013-01-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r138606
