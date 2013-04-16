@@ -184,7 +184,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
         if (!markup.isEmpty()) {
           RefPtr<DocumentFragment> fragment =
-              createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, FragmentScriptingNotAllowed);
+              createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, FragmentScriptingAndPluginContentNotAllowed);
           if (fragment)
               return fragment.release();
         }
@@ -194,10 +194,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         String markup = PlatformSupport::clipboardReadPlainText(buffer);
         if (!markup.isEmpty()) {
             chosePlainText = true;
-
-            RefPtr<DocumentFragment> fragment =
-                createFragmentFromText(context.get(), markup);
-            if (fragment)
+            if (RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), markup))
                 return fragment.release();
         }
     }

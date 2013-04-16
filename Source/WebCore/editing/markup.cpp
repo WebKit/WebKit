@@ -53,6 +53,7 @@
 #include "MarkupAccumulator.h"
 #include "Range.h"
 #include "RenderObject.h"
+#include "Settings.h"
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include "TextIterator.h"
@@ -665,6 +666,10 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
+
+    if (scriptingPermission == FragmentScriptingAndPluginContentNotAllowed && (!document->settings() || document->settings()->unsafePluginPastingEnabled()))
+        scriptingPermission = FragmentScriptingNotAllowed;
+
     RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, fakeBody.get(), scriptingPermission);
 
     if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())

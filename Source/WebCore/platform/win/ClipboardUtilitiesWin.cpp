@@ -631,7 +631,7 @@ PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfh
     }
 
     String markup = extractMarkupFromCFHTML(cfhtml);
-    return createFragmentFromMarkup(doc, markup, srcURL, FragmentScriptingNotAllowed);
+    return createFragmentFromMarkup(doc, markup, srcURL, FragmentScriptingAndPluginContentNotAllowed);
 }
 
 PassRefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data) 
@@ -648,7 +648,7 @@ PassRefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data)
     String html = getTextHTML(data);
     String srcURL;
     if (!html.isEmpty())
-        return createFragmentFromMarkup(doc, html, srcURL, FragmentScriptingNotAllowed);
+        return createFragmentFromMarkup(doc, html, srcURL, FragmentScriptingAndPluginContentNotAllowed);
 
     return 0;
 }
@@ -666,7 +666,7 @@ PassRefPtr<DocumentFragment> fragmentFromHTML(Document* document, const DragData
 
     String srcURL;
     if (getDataMapItem(data, texthtmlFormat(), stringData))
-        return createFragmentFromMarkup(document, stringData, srcURL, FragmentScriptingNotAllowed);
+        return createFragmentFromMarkup(document, stringData, srcURL, FragmentScriptingAndPluginContentNotAllowed);
 
     return 0;
 }

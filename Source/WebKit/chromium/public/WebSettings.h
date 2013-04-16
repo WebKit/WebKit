@@ -128,6 +128,7 @@ public:
     virtual void setUnifiedTextCheckerEnabled(bool) = 0;
     virtual void setCaretBrowsingEnabled(bool) = 0;
     virtual void setInteractiveFormValidationEnabled(bool) = 0;
+    virtual void setUnsafePluginPastingEnabled(bool) = 0;
     virtual void setValidationMessageTimerMagnification(int) = 0;
     virtual void setMinimumTimerInterval(double) = 0;
     virtual void setFullScreenEnabled(bool) = 0;

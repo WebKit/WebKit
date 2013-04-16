@@ -53,6 +53,7 @@ module window {
         boolean scrollAnimatorEnabled() raises(DOMException);
         void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);
         void setMediaPlaybackRequiresUserGesture(in boolean enabled) raises(DOMException);
+        void setUnsafePluginPastingEnabled(in boolean enabled) raises(DOMException);
     };
 }
 

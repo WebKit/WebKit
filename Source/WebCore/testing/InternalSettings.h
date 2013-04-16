@@ -74,6 +74,7 @@ public:
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
+    void setUnsafePluginPastingEnabled(bool enabled, ExceptionCode&);
 
     void restoreTo(Settings*);
 

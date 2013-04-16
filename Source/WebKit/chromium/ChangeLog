@@ -1,3 +1,23 @@
+2013-04-15  Andy Estes  <aestes@apple.com>
+
+        Merged r139111.
+
+    2013-01-08  Tom Sepez  <tsepez@chromium.org>
+
+        Copy-paste preserves <embed> tags containing active content.
+        https://bugs.webkit.org/show_bug.cgi?id=77625
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds chromium API to new unsafePluginPastingEnabled setting.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setUnsafePluginPastingEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-05-31  Ojan Vafai  <ojan@chromium.org>
 
         add back the ability to disable flexbox

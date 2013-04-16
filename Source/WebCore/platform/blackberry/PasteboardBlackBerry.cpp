@@ -97,7 +97,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     RefPtr<DocumentFragment> fragment;
     if (!html.isEmpty()) {
         String url = String::fromUTF8(BlackBerry::Platform::Clipboard::readURL().c_str());
-        if (fragment = createFragmentFromMarkup(frame->document(), html, url, FragmentScriptingNotAllowed))
+        if (fragment = createFragmentFromMarkup(frame->document(), html, url, FragmentScriptingAndPluginContentNotAllowed))
             return fragment.release();
     }
 

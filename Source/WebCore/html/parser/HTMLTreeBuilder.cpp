@@ -885,6 +885,12 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == appletTag
+        || token.name() == embedTag
+        || token.name() == objectTag) {
+        if (isParsingFragment() && !pluginContentIsAllowed(m_fragmentContext.scriptingPermission()))
+            return;
+    }
+    if (token.name() == appletTag
         || token.name() == marqueeTag
         || token.name() == objectTag) {
         m_tree.reconstructTheActiveFormattingElements();
@@ -2135,7 +2141,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_scriptToProcess = m_tree.currentElement();
             m_scriptToProcessStartPosition = m_lastScriptElementStartPosition;
             m_tree.openElements()->pop();
-            if (isParsingFragment() && m_fragmentContext.scriptingPermission() == FragmentScriptingNotAllowed)
+            if (isParsingFragment() && !scriptingContentIsAllowed(m_fragmentContext.scriptingPermission()))
                 m_scriptToProcess->removeAllChildren();
             setInsertionMode(m_originalInsertionMode);
 

@@ -329,4 +329,10 @@ void InternalSettings::setMediaPlaybackRequiresUserGesture(bool enabled, Excepti
     settings()->setMediaPlaybackRequiresUserGesture(enabled);
 }
 
+void InternalSettings::setUnsafePluginPastingEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setUnsafePluginPastingEnabled(enabled);
+}
+
 }

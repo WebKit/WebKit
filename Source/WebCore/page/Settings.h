@@ -307,6 +307,9 @@ namespace WebCore {
 
         void setXSSAuditorEnabled(bool);
         bool xssAuditorEnabled() const { return m_xssAuditorEnabled; }
+        
+        void setUnsafePluginPastingEnabled(bool);
+        bool unsafePluginPastingEnabled() const { return m_unsafePluginPastingEnabled; }
 
         void setCanvasUsesAcceleratedDrawing(bool);
         bool canvasUsesAcceleratedDrawing() const { return m_canvasUsesAcceleratedDrawing; }
@@ -665,6 +668,7 @@ namespace WebCore {
         bool m_regionBasedColumnsEnabled : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
+        bool m_unsafePluginPastingEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;
         bool m_acceleratedCompositingFor3DTransformsEnabled : 1;
         bool m_acceleratedCompositingForVideoEnabled : 1;
