@@ -81,7 +81,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
     , m_removeSnapshotTimer(this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
-    , m_restartedPlugin(false)
+    , m_isRestartedPlugin(false)
     , m_needsCheckForSizeChange(false)
     , m_snapshotDecision(SnapshotNotYetDecided)
 {
@@ -98,7 +98,7 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
 {
 #if PLATFORM(MAC)
     if (state == RestartingWithPendingMouseClick || state == Restarting) {
-        m_restartedPlugin = true;
+        m_isRestartedPlugin = true;
         m_snapshotDecision = NeverSnapshot;
         if (displayState() == DisplayingSnapshot)
             m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
@@ -426,7 +426,7 @@ void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement
 void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*)
 {
     m_snapshotImage = nullptr;
-    m_restartedPlugin = false;
+    m_isRestartedPlugin = false;
     if (renderer())
         renderer()->repaint();
 }

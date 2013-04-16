@@ -59,7 +59,7 @@ public:
     virtual void setDisplayState(DisplayState state) { m_displayState = state; }
     virtual void updateSnapshot(PassRefPtr<Image>) { }
     virtual void dispatchPendingMouseClick() { }
-    virtual bool restartedPlugin() const { return false; }
+    virtual bool isRestartedPlugin() const { return false; }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();

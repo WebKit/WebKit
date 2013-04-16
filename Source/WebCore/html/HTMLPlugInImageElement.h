@@ -122,7 +122,7 @@ protected:
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
     void restartSnapshottedPlugIn();
-    virtual bool restartedPlugin() const OVERRIDE { return m_restartedPlugin; }
+    virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
 
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -158,7 +158,7 @@ private:
     RefPtr<Element> m_shadowContainer;
     RefPtr<Element> m_snapshotLabel;
     bool m_createdDuringUserGesture;
-    bool m_restartedPlugin;
+    bool m_isRestartedPlugin;
     bool m_needsCheckForSizeChange;
     IntSize m_sizeWhenSnapshotted;
     SnapshotDecision m_snapshotDecision;

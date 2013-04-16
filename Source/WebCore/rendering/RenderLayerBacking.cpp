@@ -1537,7 +1537,7 @@ static bool isRestartedPlugin(RenderObject* renderer)
     if (!element || !element->isPluginElement())
         return false;
 
-    return toHTMLPlugInElement(element)->restartedPlugin();
+    return toHTMLPlugInElement(element)->isRestartedPlugin();
 }
 
 static bool isCompositedPlugin(RenderObject* renderer)

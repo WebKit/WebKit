@@ -180,7 +180,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
 
     if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderPart::paintContents(paintInfo, paintOffset);
-        if (!plugInElement->restartedPlugin())
+        if (!plugInElement->isRestartedPlugin())
             return;
     }
 
