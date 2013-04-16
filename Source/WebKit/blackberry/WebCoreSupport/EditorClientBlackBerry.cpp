@@ -34,6 +34,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "SelectionHandler.h"
 #include "Settings.h"
+#include "SpellChecker.h"
 #include "WebPage_p.h"
 #include "WindowsKeyboardCodes.h"
 
@@ -580,7 +581,8 @@ void EditorClientBlackBerry::checkGrammarOfString(const UChar*, int, WTF::Vector
 
 void EditorClientBlackBerry::requestCheckingOfString(PassRefPtr<TextCheckingRequest> testCheckingRequest)
 {
-    m_webPagePrivate->m_inputHandler->requestCheckingOfString(textCheckingRequest);
+    RefPtr<SpellCheckRequest> spellCheckRequest = static_cast<SpellCheckRequest*>(textCheckingRequest.get());
+    m_webPagePrivate->m_inputHandler->requestCheckingOfString(spellCheckRequest);
 }
 
 void EditorClientBlackBerry::checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&)

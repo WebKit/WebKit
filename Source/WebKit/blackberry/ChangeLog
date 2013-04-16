@@ -1,3 +1,34 @@
+2013-04-16  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        Redo spellchecking of a field if the layout has changed
+        https://bugs.webkit.org/show_bug.cgi?id=114700
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Fenton.
+
+        PR258637
+        If we insert a child node during spellchecking, the current request along
+        with the requests in queue become stale. The offsets were calculated when
+        they were created are no longer valid. We clear the queue by setting sequence
+        id to -1 and trigger spell checking again. We only trigger re-checking
+        if the layout change occurred during processing of a request. This is
+        maintained with the m_request pointer as it should be cleared after use.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::layoutFinished):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::requestCheckingOfString):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::spellCheckTextBlock):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::stopPendingSpellCheckRequests):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-04-16  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Viewport not rendered correctly

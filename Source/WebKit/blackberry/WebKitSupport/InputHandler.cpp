@@ -599,31 +599,29 @@ void InputHandler::callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>
         spellChecker->requestCheckingFor(spellCheckRequest);
 }
 
-void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> textCheckingRequest)
+void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest> spellCheckRequest)
 {
-    m_request = textCheckingRequest;
+    SpellingLog(Platform::LogLevelInfo, "InputHandler::requestCheckingOfString '%s'", spellCheckRequest->data().text().latin1().data());
 
-    InputLog(Platform::LogLevelInfo, "InputHandler::requestCheckingOfString '%s'", m_request->data().text().latin1().data());
-
-    if (!m_request) {
+    if (!spellCheckRequest) {
         SpellingLog(Platform::LogLevelWarn, "InputHandler::requestCheckingOfString did not receive a valid request.");
         return;
     }
 
-    unsigned requestLength = m_request->data().text().length();
+    unsigned requestLength = spellCheckRequest->data().text().length();
 
     // Check if the field should be spellchecked.
     if (!isActiveTextEdit() || !shouldSpellCheckElement(m_currentFocusElement.get()) || requestLength < 2) {
-        m_request->didCancel();
+        spellCheckRequest->didCancel();
         return;
     }
 
     if (requestLength >= MaxSpellCheckingStringLength) {
         // Batch requests which are generally created by us on focus, should not exceed this limit. Check that this is in fact of Incremental type.
-        ASSERT(textCheckingRequest->processType() == TextCheckingProcessIncremental);
+        ASSERT(spellCheckRequest->data().processType() == TextCheckingProcessIncremental);
 
         // Cancel this request and send it off in newly created chunks.
-        m_request->didCancel();
+        spellCheckRequest->didCancel();
         if (m_currentFocusElement->document() && m_currentFocusElement->document()->frame() && m_currentFocusElement->document()->frame()->selection()) {
             VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->start();
             // Convert from position back to selection so we can expand the range to include the previous line. This should handle cases when the user hits
@@ -640,15 +638,15 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
     wchar_t* checkingString = (wchar_t*)malloc(sizeof(wchar_t) * (requestLength + 1));
     if (!checkingString) {
         Platform::logAlways(Platform::LogLevelCritical, "InputHandler::requestCheckingOfString Cannot allocate memory for string.");
-        m_request->didCancel();
+        spellCheckRequest->didCancel();
         return;
     }
 
     int paragraphLength = 0;
-    if (!convertStringToWchar(m_request->data().text(), checkingString, requestLength + 1, &paragraphLength)) {
+    if (!convertStringToWchar(spellCheckRequest->data().text(), checkingString, requestLength + 1, &paragraphLength)) {
         Platform::logAlways(Platform::LogLevelCritical, "InputHandler::requestCheckingOfString Failed to convert String to wchar type.");
         free(checkingString);
-        m_request->didCancel();
+        spellCheckRequest->didCancel();
         return;
     }
 
@@ -659,9 +657,11 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
     // This should still take transactionId as a parameter to maintain the same behavior as if InputMethodSupport
     // were to cancel a request during processing.
     if (m_processingTransactionId == -1) { // Error before sending request to input service.
-        m_request->didCancel();
+        spellCheckRequest->didCancel();
         return;
     }
+
+    m_request = spellCheckRequest;
 }
 
 void InputHandler::spellCheckingRequestCancelled(int32_t transactionId)
@@ -672,7 +672,10 @@ void InputHandler::spellCheckingRequestCancelled(int32_t transactionId)
         m_processingTransactionId,
         transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
 
-    m_request->didCancel();
+    if (m_request) {
+        m_request->didCancel();
+        m_request = 0;
+    }
     m_processingTransactionId = -1;
 }
 
@@ -680,13 +683,20 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
 {
     SpellingLog(Platform::LogLevelWarn,
         "InputHandler::spellCheckingRequestProcessed Expected transaction id %d, received %d. %s",
-        transactionId,
         m_processingTransactionId,
+        transactionId,
         transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
 
-    if (!spannableString || !isActiveTextEdit() || !DOMSupport::elementHasContinuousSpellCheckingEnabled(m_currentFocusElement) || !m_processingTransactionId) {
+    if (!spannableString
+        || !isActiveTextEdit()
+        || !DOMSupport::elementHasContinuousSpellCheckingEnabled(m_currentFocusElement)
+        || !m_processingTransactionId
+        || !m_request) {
         SpellingLog(Platform::LogLevelWarn, "InputHandler::spellCheckingRequestProcessed Cancelling request with transactionId %d.", transactionId);
-        m_request->didCancel();
+        if (m_request) {
+            m_request->didCancel();
+            m_request = 0;
+        }
         m_processingTransactionId = -1;
         return;
     }
@@ -707,6 +717,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
             break;
         if (span->end < span->start) {
             m_request->didCancel();
+            m_request = 0;
             return;
         }
         if (span->attributes_mask & MISSPELLED_WORD_ATTRIB) {
@@ -725,6 +736,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
     free(spannableString);
 
     m_request->didSucceed(results);
+    m_request = 0;
 }
 
 SpellChecker* InputHandler::getSpellChecker()
@@ -1114,12 +1126,24 @@ void InputHandler::setElementFocused(Element* element)
         return;
 
     // Spellcheck the field in its entirety.
-    const VisibleSelection visibleSelection = DOMSupport::visibleSelectionForFocusedBlock(element);
-    m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessBatch);
+    spellCheckTextBlock(element);
 
 #ifdef ENABLE_SPELLING_LOG
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Spellchecking the field increased the total time to focus to %f seconds.", timer.elapsed());
 #endif
+}
+
+void InputHandler::spellCheckTextBlock(Element* element)
+{
+    if (!element) {
+        // Fall back to a valid focused element.
+        if (!m_currentFocusElement)
+            return;
+
+        element = m_currentFocusElement.get();
+    }
+    const VisibleSelection visibleSelection = DOMSupport::visibleSelectionForFocusedBlock(element);
+    m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessBatch);
 }
 
 bool InputHandler::shouldSpellCheckElement(const Element* element) const
@@ -1141,6 +1165,11 @@ bool InputHandler::shouldSpellCheckElement(const Element* element) const
 void InputHandler::stopPendingSpellCheckRequests()
 {
     m_spellingHandler->setSpellCheckActive(false);
+    // Prevent response from propagating through
+    m_processingTransactionId = 0;
+    // Clear the pending queue as well
+    if (m_request)
+        m_request->setCheckerAndSequence(getSpellChecker(), -1);
 }
 
 void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)
