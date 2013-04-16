@@ -1,5 +1,23 @@
 2013-04-15  Andy Estes  <aestes@apple.com>
 
+        Merged r142063.
+
+    2013-02-06  Tom Sepez  <tsepez@chromium.org>
+
+        document.referrer leakage with XSS Auditor page block
+        https://bugs.webkit.org/show_bug.cgi?id=109089
+
+        Reviewed by Adam Barth.
+
+        Pass "about:blank" as referrer instead of "" so that the actual page
+        is not leaked when empty referrers are replaced later on in the
+        request.
+        
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+
+2013-04-15  Andy Estes  <aestes@apple.com>
+
         Merged r139111.
 
     2013-01-08  Tom Sepez  <tsepez@chromium.org>

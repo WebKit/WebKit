@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
 
+ALERT: Referrer is ""
 There should be no content in the iframe below:
 
 

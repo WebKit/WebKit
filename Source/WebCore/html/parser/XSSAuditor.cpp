@@ -269,7 +269,7 @@ void XSSAuditor::filterToken(HTMLToken& token)
         }
 
         if (didBlockEntirePage)
-            m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), String());
+            m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), blankURL());
     }
 }
 

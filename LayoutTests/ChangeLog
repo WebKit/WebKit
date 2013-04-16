@@ -1,5 +1,21 @@
 2013-04-15  Andy Estes  <aestes@apple.com>
 
+        Merged r142063.
+
+    2013-02-06  Tom Sepez  <tsepez@chromium.org>
+
+        document.referrer leakage with XSS Auditor page block
+        https://bugs.webkit.org/show_bug.cgi?id=109089
+
+        Reviewed by Adam Barth.
+
+        Test prints the referrer to show it isn't leaked.
+        
+        * http/tests/security/xssAuditor/full-block-script-tag-expected.txt:
+        * http/tests/security/xssAuditor/full-block-script-tag.html:
+
+2013-04-15  Andy Estes  <aestes@apple.com>
+
         Merged r139111.
 
     2013-01-08  Tom Sepez  <tsepez@chromium.org>
