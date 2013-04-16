@@ -30,11 +30,12 @@ WebKitCommitters = (function() {
     function parseType(key, records, type) {
         for (var name in records) {
             var record = records[name];
-            result.name = name;
-            result.emails = record.emails;
-            result.irc = record.nicks;
-            result.type = type;
-            m_committers.push(result);
+            m_committers.push({
+                name: name,
+                emails: record.emails,
+                irc: record.nicks,
+                type: type,
+            });
         }
     }
 
