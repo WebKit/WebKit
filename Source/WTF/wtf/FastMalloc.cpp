@@ -428,6 +428,7 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 #include "TCPageMap.h"
 #include "TCSpinLock.h"
 #include "TCSystemAlloc.h"
+#include "ThreadSpecific.h"
 #include <algorithm>
 #include <pthread.h>
 #include <stdarg.h>
@@ -2841,10 +2842,7 @@ static bool tsd_inited = false;
 #if USE(PTHREAD_GETSPECIFIC_DIRECT)
 static const pthread_key_t heap_key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
 #else
-static pthread_key_t heap_key;
-#endif
-#if OS(WINDOWS)
-DWORD tlsIndex = TLS_OUT_OF_INDEXES;
+static ThreadSpecificKey heap_key;
 #endif
 
 static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
@@ -2856,12 +2854,12 @@ static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
         CRASH();
 #endif
 
+#if OS(DARWIN)
     // Still do pthread_setspecific even if there's an alternate form
     // of thread-local storage in use, to benefit from the delete callback.
     pthread_setspecific(heap_key, heap);
-
-#if OS(WINDOWS)
-    TlsSetValue(tlsIndex, heap);
+#else
+    threadSpecificSet(heap_key, heap);
 #endif
 }
 
@@ -3407,10 +3405,10 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetThreadHeap() {
     // __thread is faster, but only when the kernel supports it
   if (KernelSupportsTLS())
     return threadlocal_heap;
-#elif OS(WINDOWS)
-    return static_cast<TCMalloc_ThreadCache*>(TlsGetValue(tlsIndex));
-#else
+#elif OS(DARWIN)
     return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
+#else
+    return static_cast<TCMalloc_ThreadCache*>(threadSpecificGet(heap_key));
 #endif
 }
 
@@ -3439,10 +3437,7 @@ void TCMalloc_ThreadCache::InitTSD() {
 #if USE(PTHREAD_GETSPECIFIC_DIRECT)
   pthread_key_init_np(heap_key, DestroyThreadCache);
 #else
-  pthread_key_create(&heap_key, DestroyThreadCache);
-#endif
-#if OS(WINDOWS)
-  tlsIndex = TlsAlloc();
+  threadSpecificKeyCreate(&heap_key, DestroyThreadCache);
 #endif
   tsd_inited = true;
     
