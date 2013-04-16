@@ -1,3 +1,39 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Account class from committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=114671
+
+        Reviewed by Csaba Osztrogonác.
+
+        Account class was added to support watch list email addresses that are not associated with
+        a particular contributor but nobody uses these email address since Chromium port forked.
+
+        Remove it.
+
+        Also removed account_by_login from CommitterList since it was never called except its unittests.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor):
+        (Contributor.matches_glob):
+        (Reviewer.__init__):
+        (CommitterList.__init__):
+        (CommitterList._email_to_account_map):
+        (CommitterList._login_to_account_map):
+        (CommitterList.contributors_by_fuzzy_match):
+        (CommitterList.contributor_by_email):
+        (CommitterList.contributor_by_name):
+        (CommitterList.committer_by_email):
+        (CommitterList.reviewer_by_email):
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest.test_committer_lookup):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._commit_queue_flag):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test_commit_queue_flag):
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py:
+        (WatchListParser._validate):
+
 2013-04-16  Mike West  <mkwst@chromium.org>
 
         Unreviewed update to the watchlist.

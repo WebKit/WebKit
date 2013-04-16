@@ -531,7 +531,7 @@ class Bugzilla(object):
     # FIXME: Use enum instead of two booleans
     def _commit_queue_flag(self, mark_for_landing, mark_for_commit_queue):
         if mark_for_landing:
-            user = self.committers.account_by_email(self.username)
+            user = self.committers.contributor_by_email(self.username)
             mark_for_commit_queue = True
             if not user:
                 _log.warning("Your Bugzilla login is not listed in committers.py. Uploading with cq? instead of cq+")

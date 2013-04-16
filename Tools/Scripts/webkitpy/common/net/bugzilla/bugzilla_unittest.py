@@ -305,8 +305,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
         bugzilla.committers = CommitterList(reviewers=[Reviewer("WebKit Reviewer", "reviewer@webkit.org")],
             committers=[Committer("WebKit Committer", "committer@webkit.org")],
-            contributors=[Contributor("WebKit Contributor", "contributor@webkit.org")],
-            watchers=[])
+            contributors=[Contributor("WebKit Contributor", "contributor@webkit.org")])
 
         def assert_commit_queue_flag(mark_for_landing, mark_for_commit_queue, expected, username=None):
             bugzilla.username = username

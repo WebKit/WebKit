@@ -34,7 +34,6 @@ from StringIO import StringIO
 import textwrap
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.config.committers import Account
 from webkitpy.common.system.filesystem import FileSystem
 import webkitpy.common.config.urls as config_urls
 

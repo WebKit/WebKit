@@ -32,7 +32,8 @@
 from webkitpy.common.editdistance import edit_distance
 import fnmatch
 
-class Account(object):
+
+class Contributor(object):
     def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
         assert(name)
         assert(email_or_emails)
@@ -83,12 +84,6 @@ class Account(object):
         return False
 
 
-class Contributor(Account):
-    def __init__(self, name, email_or_emails, irc_nickname=None):
-        Account.__init__(self, name, email_or_emails, irc_nickname)
-        self.is_contributor = True
-
-
 class Committer(Contributor):
     def __init__(self, name, email_or_emails, irc_nickname=None):
         Contributor.__init__(self, name, email_or_emails, irc_nickname)
@@ -100,16 +95,6 @@ class Reviewer(Committer):
         Committer.__init__(self, name, email_or_emails, irc_nickname)
         self.can_review = True
 
-
-# This is a list of email addresses that have bugzilla accounts but are not
-# used for contributing (such as mailing lists).
-
-
-watchers_who_are_not_contributors = [
-    Account("Chromium Compositor Bugs", ["cc-bugs@chromium.org"], ""),
-    Account("Chromium Media Reviews", ["feature-media-reviews@chromium.org"], ""),
-    Account("Kent Tamura", ["tkent+wkapi@chromium.org"], ""),
-]
 
 
 # This is a list of people (or bots) who are neither committers nor reviewers, but get
@@ -615,18 +600,13 @@ class CommitterList(object):
     def __init__(self,
                  committers=committers_unable_to_review,
                  reviewers=reviewers_list,
-                 contributors=contributors_who_are_not_committers,
-                 watchers=watchers_who_are_not_contributors):
-        self._accounts = watchers + contributors + committers + reviewers
+                 contributors=contributors_who_are_not_committers):
         self._contributors = contributors + committers + reviewers
         self._committers = committers + reviewers
         self._reviewers = reviewers
         self._contributors_by_name = {}
         self._accounts_by_email = {}
         self._accounts_by_login = {}
-
-    def accounts(self):
-        return self._accounts
 
     def contributors(self):
         return self._contributors
@@ -647,7 +627,7 @@ class CommitterList(object):
 
     def _email_to_account_map(self):
         if not len(self._accounts_by_email):
-            for account in self._accounts:
+            for account in self._contributors:
                 for email in account.emails:
                     assert(email not in self._accounts_by_email)  # We should never have duplicate emails.
                     self._accounts_by_email[email] = account
@@ -655,17 +635,12 @@ class CommitterList(object):
 
     def _login_to_account_map(self):
         if not len(self._accounts_by_login):
-            for account in self._accounts:
+            for account in self._contributors:
                 if account.emails:
                     login = account.bugzilla_email()
                     assert(login not in self._accounts_by_login)  # We should never have duplicate emails.
                     self._accounts_by_login[login] = account
         return self._accounts_by_login
-
-    def _contributor_only(self, record):
-        if record and not record.is_contributor:
-            return None
-        return record
 
     def _committer_only(self, record):
         if record and not record.can_commit:
@@ -720,7 +695,7 @@ class CommitterList(object):
         string_in_lowercase = string.lower()
 
         # 1. Exact match for fullname, email and irc_nicknames
-        account = self.contributor_by_name(string_in_lowercase) or self.account_by_email(string_in_lowercase) or self.contributor_by_irc_nickname(string_in_lowercase)
+        account = self.contributor_by_name(string_in_lowercase) or self.contributor_by_email(string_in_lowercase) or self.contributor_by_irc_nickname(string_in_lowercase)
         if account:
             return [account], 0
 
@@ -753,20 +728,14 @@ class CommitterList(object):
             return [], len(string)
         return contributorWithMinDistance, minDistance
 
-    def account_by_login(self, login):
-        return self._login_to_account_map().get(login.lower()) if login else None
-
-    def account_by_email(self, email):
+    def contributor_by_email(self, email):
         return self._email_to_account_map().get(email.lower()) if email else None
 
     def contributor_by_name(self, name):
         return self._name_to_contributor_map().get(name.lower()) if name else None
 
-    def contributor_by_email(self, email):
-        return self._contributor_only(self.account_by_email(email))
-
     def committer_by_email(self, email):
-        return self._committer_only(self.account_by_email(email))
+        return self._committer_only(self.contributor_by_email(email))
 
     def reviewer_by_email(self, email):
-        return self._reviewer_only(self.account_by_email(email))
+        return self._reviewer_only(self.contributor_by_email(email))
