@@ -109,6 +109,11 @@ void FrameLayers::commitOnWebKitThread(double scale)
     m_rootLayer->commitOnWebKitThread(scale);
 }
 
+void FrameLayers::notifyAnimationsStarted(double animationStartTime)
+{
+    m_rootLayer->notifyAnimationsStarted(animationStartTime);
+}
+
 void FrameLayers::calculateRootLayer()
 {
     if (m_frameLayers.size() == 1 && m_frameLayers.begin()->key == m_pagePrivate->m_mainFrame)

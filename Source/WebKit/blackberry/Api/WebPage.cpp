@@ -429,6 +429,8 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     , m_notificationManager(this)
 #endif
+    , m_didStartAnimations(false)
+    , m_animationStartTime(0)
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -5375,9 +5377,15 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRect, const IntRect& d
 
     if (rootLayer)
         rootLayer->commitOnCompositingThread();
-
     if (overlayLayer)
         overlayLayer->commitOnCompositingThread();
+
+    m_animationStartTime = currentTime();
+    m_didStartAnimations = false;
+    if (rootLayer)
+        m_didStartAnimations |= rootLayer->startAnimations(m_animationStartTime);
+    if (overlayLayer)
+        m_didStartAnimations |= overlayLayer->startAnimations(m_animationStartTime);
 
     scheduleCompositingRun();
 }
@@ -5455,6 +5463,15 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
             layoutRect,
             documentRect,
             drawsRootLayer));
+
+    if (m_didStartAnimations) {
+        if (m_frameLayers && m_frameLayers->hasLayer())
+            m_frameLayers->notifyAnimationsStarted(m_animationStartTime);
+        if (m_overlayLayer)
+            m_overlayLayer->platformLayer()->notifyAnimationsStarted(m_animationStartTime);
+
+        m_didStartAnimations = false;
+    }
 
     didComposite();
     return true;

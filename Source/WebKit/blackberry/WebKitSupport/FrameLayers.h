@@ -48,6 +48,7 @@ public:
     bool hasLayer() const { return m_frameLayers.size(); }
 
     void commitOnWebKitThread(double scale);
+    void notifyAnimationsStarted(double animationStartTime);
 
     void calculateRootLayer();
 

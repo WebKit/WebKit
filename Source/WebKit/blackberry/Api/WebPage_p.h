@@ -636,6 +636,9 @@ public:
     NotificationManager m_notificationManager;
 #endif
 
+    bool m_didStartAnimations;
+    double m_animationStartTime;
+
 protected:
     virtual ~WebPagePrivate();
 };

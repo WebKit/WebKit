@@ -1,3 +1,42 @@
+2013-04-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Accelerated animation regression with GL renderer
+        https://bugs.webkit.org/show_bug.cgi?id=114685
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Filip Spacek.
+
+        GL renderer changed the assumption made in accelerated animation
+        code that rendering the contents of AC layer tiles would be the
+        slow operation. By starting animations after the slow operation,
+        the appearance of the animation could be made smooth.
+
+        Rendering tiles may still be slow, but now something else can be
+        slow too: drawing display lists to backing. And it's running on
+        the compositing thread, can happen at any time and will interrupt
+        accelerated animations.
+
+        Improved the situation by calling an API for updating backing to
+        schedule the delay at a convenient time. We try to update backing
+        before starting animations. However, future backing updates can
+        still interrupt the running animation and cause dropped frames.
+
+        Further improvements to animation smoothness will probably require
+        optimizations in the GL renderer.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/FrameLayers.cpp:
+        (BlackBerry::WebKit::FrameLayers::notifyAnimationsStarted):
+        (WebKit):
+        * WebKitSupport/FrameLayers.h:
+        (FrameLayers):
+
 2013-04-15  Liam Quinn  <lquinn@blackberry.com>
 
         [BlackBerry] Crash from null m_webSettings in WebPagePrivate
