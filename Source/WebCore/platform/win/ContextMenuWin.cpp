@@ -32,6 +32,7 @@
 #include "Node.h"
 #include "NotImplemented.h"
 #include <windows.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
