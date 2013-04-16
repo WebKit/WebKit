@@ -83,6 +83,8 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
     , m_isRestartedPlugin(false)
     , m_needsCheckForSizeChange(false)
+    , m_plugInWasCreated(false)
+    , m_deferredPromotionToPrimaryPlugIn(false)
     , m_snapshotDecision(SnapshotNotYetDecided)
 {
     setHasCustomStyleCallbacks();
@@ -507,17 +509,23 @@ void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapsho
         return;
 
     if (isPrimarySnapshottedPlugIn) {
-        LOG(Plugins, "%p Plug-in was detected as the primary element in the page. Restart.", this);
-        restartSnapshottedPlugIn();
-        restartSimilarPlugIns();
+        if (m_plugInWasCreated) {
+            LOG(Plugins, "%p Plug-in was detected as the primary element in the page. Restart.", this);
+            restartSnapshottedPlugIn();
+            restartSimilarPlugIns();
+        } else {
+            LOG(Plugins, "%p Plug-in was detected as the primary element in the page, but is not yet created. Will restart later.", this);
+            m_deferredPromotionToPrimaryPlugIn = true;
+        }
     }
 }
 
 void HTMLPlugInImageElement::restartSnapshottedPlugIn()
 {
-    if (displayState() != RestartingWithPendingMouseClick)
-        setDisplayState(Restarting);
+    if (displayState() >= RestartingWithPendingMouseClick)
+        return;
 
+    setDisplayState(Restarting);
     reattach();
 }
 
@@ -578,6 +586,8 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     LOG(Plugins, "   Loaded URL: %s", url.string().utf8().data());
 
     m_loadedUrl = url;
+    m_plugInWasCreated = false;
+    m_deferredPromotionToPrimaryPlugIn = false;
 
     if (!document()->page() || !document()->page()->settings()->plugInSnapshottingEnabled()) {
         m_snapshotDecision = NeverSnapshot;
@@ -601,7 +611,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         LOG(Plugins, "%p Plug-in is blessed, allow it to start", this);
         return;
     }
-    
+
     bool inMainFrame = document()->frame() == document()->page()->mainFrame();
 
     if (document()->isPluginDocument() && inMainFrame) {
@@ -680,12 +690,20 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 
 void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)
 {
-    if (!widget->isPluginViewBase() || !toPluginViewBase(widget)->shouldAlwaysAutoStart())
-        return;
+    m_plugInWasCreated = true;
 
-    LOG(Plugins, "%p Plug-in should auto-start, set to play", this);
-    m_snapshotDecision = NeverSnapshot;
-    setDisplayState(Playing);
+    if (widget->isPluginViewBase() && toPluginViewBase(widget)->shouldAlwaysAutoStart()) {
+        LOG(Plugins, "%p Plug-in should auto-start, set to play", this);
+        m_snapshotDecision = NeverSnapshot;
+        setDisplayState(Playing);
+        return;
+    }
+
+    if (m_deferredPromotionToPrimaryPlugIn) {
+        LOG(Plugins, "%p Plug-in was created, previously deferred promotion to primary. Will promote", this);
+        setIsPrimarySnapshottedPlugIn(true);
+        m_deferredPromotionToPrimaryPlugIn = false;
+    }
 }
 
 } // namespace WebCore

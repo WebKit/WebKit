@@ -160,6 +160,8 @@ private:
     bool m_createdDuringUserGesture;
     bool m_isRestartedPlugin;
     bool m_needsCheckForSizeChange;
+    bool m_plugInWasCreated;
+    bool m_deferredPromotionToPrimaryPlugIn;
     IntSize m_sizeWhenSnapshotted;
     SnapshotDecision m_snapshotDecision;
 };
