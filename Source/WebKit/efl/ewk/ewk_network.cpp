@@ -34,7 +34,7 @@ void ewk_network_proxy_uri_set(const char* proxy)
 
     if (!proxy) {
         ERR("no proxy uri. remove proxy feature in soup.");
-        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_RESOLVER);
+        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_URI_RESOLVER);
         return;
     }
 
@@ -47,7 +47,7 @@ const char* ewk_network_proxy_uri_get(void)
 {
     SoupURI* uri;
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    SoupProxyURIResolver* resolver = SOUP_PROXY_URI_RESOLVER(soup_session_get_feature(session, SOUP_TYPE_PROXY_RESOLVER));
+    SoupProxyURIResolver* resolver = SOUP_PROXY_URI_RESOLVER(soup_session_get_feature(session, SOUP_TYPE_PROXY_URI_RESOLVER));
     if (!resolver)
         return 0;
 

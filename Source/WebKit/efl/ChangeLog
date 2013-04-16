@@ -1,5 +1,18 @@
 2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        REGRESSION (r148506): Use of deprecated libsoup API
+        https://bugs.webkit.org/show_bug.cgi?id=114679
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove deprecated libsoup API usage.
+
+        * ewk/ewk_network.cpp:
+        (ewk_network_proxy_uri_set):
+        (ewk_network_proxy_uri_get):
+
+2013-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [GTK][EFL] Remove deprecated libsoup API usage
         https://bugs.webkit.org/show_bug.cgi?id=104894
 
