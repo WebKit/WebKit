@@ -3990,16 +3990,15 @@ static ALWAYS_INLINE void do_free(void* ptr) {
   if (ptr == NULL) return;
   ASSERT(pageheap != NULL);  // Should not call free() before malloc()
   const PageID p = reinterpret_cast<uintptr_t>(ptr) >> kPageShift;
-  Span* span = NULL;
-  size_t cl = pageheap->GetSizeClassIfCached(p);
+  Span* span = pageheap->GetDescriptor(p);
+  RELEASE_ASSERT(span->isValid());
+  size_t cl = span->sizeclass;
 
-  if (cl == 0) {
-    span = pageheap->GetDescriptor(p);
-    RELEASE_ASSERT(span->isValid());
-    cl = span->sizeclass;
+  if (cl) {
+    size_t byteSizeForClass = ByteSizeForClass(cl);
+    RELEASE_ASSERT(!((reinterpret_cast<char*>(ptr) - reinterpret_cast<char*>(span->start << kPageShift)) % byteSizeForClass));
     pageheap->CacheSizeClass(p, cl);
-  }
-  if (cl != 0) {
+
 #ifndef NO_TCMALLOC_SAMPLES
     ASSERT(!pageheap->GetDescriptor(p)->sample);
 #endif
@@ -4008,7 +4007,7 @@ static ALWAYS_INLINE void do_free(void* ptr) {
       heap->Deallocate(HardenedSLL::create(ptr), cl);
     } else {
       // Delete directly into central cache
-      POISON_DEALLOCATION(ptr, ByteSizeForClass(cl));
+      POISON_DEALLOCATION(ptr, byteSizeForClass);
       SLL_SetNext(HardenedSLL::create(ptr), HardenedSLL::null(), central_cache[cl].entropy());
       central_cache[cl].InsertRange(HardenedSLL::create(ptr), HardenedSLL::create(ptr), 1);
     }
@@ -4023,7 +4022,7 @@ static ALWAYS_INLINE void do_free(void* ptr) {
       span->objects = NULL;
     }
 #endif
-
+    RELEASE_ASSERT(reinterpret_cast<void*>(span->start << kPageShift) == ptr);
     POISON_DEALLOCATION(ptr, span->length << kPageShift);
     pageheap->Delete(span);
   }

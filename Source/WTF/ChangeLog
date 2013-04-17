@@ -1,3 +1,20 @@
+2013-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Harden FastMalloc against partial pointer overflows
+        https://bugs.webkit.org/show_bug.cgi?id=114716
+
+        Reviewed by Gavin Barraclough.
+
+        Bite the bullet and perform object alignment checks on free.
+        malloc/free micro benchmark shows a regression, but real
+        benchmarks don't.  There's a little code motion in this avoid
+        taking too much of a performance hit.  In addition to the
+        alignment check we also validate the containing span as
+        we've already taken the hit of finding it.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2013-04-16  Sam Weinig  <sam@webkit.org>
 
         Fix fallout after r148545.
