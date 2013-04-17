@@ -16,6 +16,7 @@ PASS RemoveFormat on first two words of "<acronym><tt><mark><samp>hello</samp></
 PASS RemoveFormat on last two words of "<b><div>hello world</div></b><div>WebKit</div>" yields "<div><b>hello </b>world</div><div>WebKit</div>"
 PASS RemoveFormat on last two words of "<q><b><div>hello world</div></b>WebKit</q>" yields "<div><q><b>hello </b></q>world</div>WebKit"
 PASS RemoveFormat on second word of "<q><b><div>hello world</div></b>WebKit</q>" yields "<div><q><b>hello </b></q>world</div><q>WebKit</q>"
+PASS RemoveFormat on first line of "<b><div>hello</div>webkit</b>" yields "<div>hello</div><b>webkit</b>"
 PASS RemoveFormat on all of "<i style="font-weight:bold;">hello</i> <u>world</u>" yields "hello world"
 PASS RemoveFormat on second word of "<font color="red"><b style="font-size: large;"><u>hello</u> world</b> WebKit</font>" yields "<font color="red"><b style="font-size: large;"><u>hello</u> </b></font>world<font color="red"> WebKit</font>"
 PASS RemoveFormat on second word of "<font size="5"><i><u style="font-size: small;">hello</u> world</i><font size="3"> WebKit</font></font>" yields "<font size="5"><i><u style="font-size: small;">hello</u> </i></font>world<font size="5"><font size="3"> WebKit</font></font>"

@@ -51,6 +51,12 @@ function selectLastWord(container) {
     return 'last word';
 }
 
+function selectFirstLine(container) {
+    window.getSelection().setPosition(container, 0);
+    window.getSelection().modify('extend', 'forward', 'line');
+    return 'first line';
+}
+
 testRemoveFormat('hello', selectAll, 'hello');
 testRemoveFormat('<i>hello</i> <u>world</u>', selectAll, 'hello world');
 testRemoveFormat('<b><u>hello</u> world</b> <a href="http://webkit.org/"><em>WebKit</em></a>', selectAll, 'hello world <a href="http://webkit.org/">WebKit</a>');
@@ -66,6 +72,7 @@ testRemoveFormat('<acronym><tt><mark><samp>hello</samp></mark> world <sub>WebKit
 testRemoveFormat('<b><div>hello world</div></b><div>WebKit</div>', selectLastTwoWords, '<div><b>hello </b>world</div><div>WebKit</div>');
 testRemoveFormat('<q><b><div>hello world</div></b>WebKit</q>', selectLastTwoWords, '<div><q><b>hello </b></q>world</div>WebKit');
 testRemoveFormat('<q><b><div>hello world</div></b>WebKit</q>', selectSecondWord, '<div><q><b>hello </b></q>world</div><q>WebKit</q>');
+testRemoveFormat('<b><div>hello</div>webkit</b>', selectFirstLine, '<div>hello</div><b>webkit</b>');
 
 testRemoveFormat('<i style="font-weight:bold;">hello</i> <u>world</u>', selectAll, 'hello world');
 testRemoveFormat('<font color="red"><b style="font-size: large;"><u>hello</u> world</b> WebKit</font>',
