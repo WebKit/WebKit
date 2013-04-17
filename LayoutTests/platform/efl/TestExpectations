@@ -1976,4 +1976,10 @@ webkit.org/b/106732 storage/indexeddb/transaction-complete-workers.html [ Failur
 webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
 
+# Compositing reftests added in r148172 fail on EFL
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ Failure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ Failure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ Failure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ Failure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ Failure ]
 
