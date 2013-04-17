@@ -28,7 +28,6 @@
 #include "Attribute.h"
 #include "CollectionType.h"
 #include "Document.h"
-#include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
 #include "SpaceSplitString.h"
