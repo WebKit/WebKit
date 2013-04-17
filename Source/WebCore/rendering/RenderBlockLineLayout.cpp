@@ -2,6 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -104,6 +105,7 @@ public:
         , m_uncommittedWidth(0)
         , m_committedWidth(0)
         , m_overhangWidth(0)
+        , m_trailingWhitespaceWidth(0)
         , m_left(0)
         , m_right(0)
         , m_availableWidth(0)
@@ -123,12 +125,14 @@ public:
     }
     bool fitsOnLine() const { return currentWidth() <= m_availableWidth; }
     bool fitsOnLine(float extra) const { return currentWidth() + extra <= m_availableWidth; }
+    bool fitsOnLine(float extra, bool excludeWhitespace) const { return currentWidth() - (excludeWhitespace ? trailingWhitespaceWidth() : 0) + extra <= m_availableWidth; }
     float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
 
     // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
     float uncommittedWidth() const { return m_uncommittedWidth; }
     float committedWidth() const { return m_committedWidth; }
     float availableWidth() const { return m_availableWidth; }
+    float trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject*);
@@ -140,6 +144,7 @@ public:
     }
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats();
+    void setTrailingWhitespaceWidth(float width) { m_trailingWhitespaceWidth = width; }
 
     bool shouldIndentText() { return m_shouldIndentText == IndentText; }
 
@@ -154,6 +159,7 @@ private:
     float m_uncommittedWidth;
     float m_committedWidth;
     float m_overhangWidth; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
+    float m_trailingWhitespaceWidth;
     float m_left;
     float m_right;
     float m_availableWidth;
@@ -2816,7 +2822,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // If it does, position it now, otherwise, position
             // it after moving to next line (in newLine() func)
             // FIXME: Bug 110372: Properly position multiple stacked floats with non-rectangular shape outside.
-            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f))) {
+            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f), true)) {
                 m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineInfo, width);
                 if (lBreak.m_obj == current.m_obj) {
                     ASSERT(!lBreak.m_pos);
@@ -3023,15 +3029,19 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     wordMeasurement.endOffset = current.m_pos;
                     wordMeasurement.startOffset = lastSpace;
                     
-                    float additionalTmpW;
+                    float additionalTempWidth;
                     if (wordTrailingSpaceWidth && c == ' ')
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
+                        additionalTempWidth = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
                     else
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
+                        additionalTempWidth = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
 
-                    wordMeasurement.width = additionalTmpW + wordSpacingForWordMeasurement;
-                    additionalTmpW += lastSpaceWordSpacing;
-                    width.addUncommittedWidth(additionalTmpW);
+                    wordMeasurement.width = additionalTempWidth + wordSpacingForWordMeasurement;
+                    additionalTempWidth += lastSpaceWordSpacing;
+                    width.addUncommittedWidth(additionalTempWidth);
+
+                    if (collapseWhiteSpace && previousCharacterIsSpace && currentCharacterIsSpace && additionalTempWidth)
+                        width.setTrailingWhitespaceWidth(additionalTempWidth);
+
                     if (!appliedStartWidth) {
                         width.addUncommittedWidth(inlineLogicalWidth(current.m_obj, true, false));
                         appliedStartWidth = true;
@@ -3061,7 +3071,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                         }
                         if (lineWasTooWide || !width.fitsOnLine()) {
                             if (canHyphenate && !width.fitsOnLine()) {
-                                tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
+                                tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
                                 if (m_hyphenated)
                                     goto end;
                             }
@@ -3085,7 +3095,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                                 goto end;
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
-                                width.addUncommittedWidth(-additionalTmpW);
+                                width.addUncommittedWidth(-additionalTempWidth);
                             if (hyphenWidth) {
                                 // Subtract the width of the soft hyphen out since we fit on a line.
                                 width.addUncommittedWidth(-hyphenWidth);
@@ -3185,17 +3195,23 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             wordMeasurement.renderer = t;
 
             // IMPORTANT: current.m_pos is > length here!
-            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
+            float additionalTempWidth = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
             wordMeasurement.startOffset = lastSpace;
             wordMeasurement.endOffset = current.m_pos;
-            wordMeasurement.width = ignoringSpaces ? 0 : additionalTmpW + wordSpacingForWordMeasurement;
-            additionalTmpW += lastSpaceWordSpacing;
-            width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth));
+            wordMeasurement.width = ignoringSpaces ? 0 : additionalTempWidth + wordSpacingForWordMeasurement;
+            additionalTempWidth += lastSpaceWordSpacing;
+
+            float inlineLogicalTempWidth = inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth);
+            width.addUncommittedWidth(additionalTempWidth + inlineLogicalTempWidth);
+
+            if (collapseWhiteSpace && currentCharacterIsSpace && additionalTempWidth)
+                width.setTrailingWhitespaceWidth(additionalTempWidth + inlineLogicalTempWidth);
+
             includeEndWidth = false;
 
             if (!width.fitsOnLine()) {
                 if (canHyphenate)
-                    tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
+                    tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
 
                 if (!m_hyphenated && lBreak.previousInSameNode() == softHyphen && style->hyphens() != HyphensNone)
                     m_hyphenated = true;

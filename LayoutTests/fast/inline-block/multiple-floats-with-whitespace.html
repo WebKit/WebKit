@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Multiple Floats for a Single Line</title>
+<style>
+    div { width: 100px; height:30px; margin:0; padding:0; border:none; }
+    .container { width:400px; }
+    .left { float:left; background-color:orange; }
+    .a { float:right; background-color:blue; }
+    .b { float:right; background-color:yellow; }
+    .middle { display:inline-block; background-color:green; }
+</style>
+</head>
+<body>
+
+<!-- No whitespace -->
+<div class="container"><div class="left"></div><div class="middle"></div><div class="floater a"></div><div class="floater b"></div></div>
+
+<!-- Some whitespace -->
+<div class="container">
+    <div class="left"></div>
+    <div class="middle"></div>
+    <div class="floater a"></div>
+    <div class="floater b"></div>
+</div>
+
+<!-- Order should not matter -->
+<div class="container">
+    <div class="floater a"></div>
+    <div class="left"></div>
+    <div class="middle"></div>
+    <div class="floater b"></div>
+</div>
+
+</body>
+</html>
