@@ -1,3 +1,11 @@
+2013-04-16  Sam Weinig  <sam@webkit.org>
+
+        Fix fallout after r148545.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        Remove calls to non-existent API functions.
+
 2013-04-13  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Disable WinEWS tests, simply not enough bots.

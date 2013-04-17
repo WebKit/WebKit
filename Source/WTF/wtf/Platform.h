@@ -1016,4 +1016,22 @@
 #define WTF_USE_CONTENT_FILTERING 1
 #endif
 
+
+#define WTF_USE_GRAMMAR_CHECKING 1
+
+#if PLATFORM(MAC) || PLATFORM(BLACKBERRY) || PLATFORM(EFL)
+#define WTF_USE_UNIFIED_TEXT_CHECKING 1
+#endif
+#if PLATFORM(MAC)
+#define WTF_USE_AUTOMATIC_TEXT_REPLACEMENT 1
+#endif
+
+#if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
+// Some platforms provide UI for suggesting autocorrection.
+#define WTF_USE_AUTOCORRECTION_PANEL 1
+// Some platforms use spelling and autocorrection markers to provide visual cue.
+// On such platform, if word with marker is edited, we need to remove the marker.
+#define WTF_USE_MARKER_REMOVAL_UPON_EDITING 1
+#endif // #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
+
 #endif /* WTF_Platform_h */
