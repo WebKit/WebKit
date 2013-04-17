@@ -287,6 +287,7 @@ EXPORTS
     ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVString@WTF@@@Z
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
+    ?fire@Watchdog@JSC@@QAEXXZ
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?foldCase@String@WTF@@QBE?AV12@XZ
     ?format@String@WTF@@SA?AV12@PBDZZ
