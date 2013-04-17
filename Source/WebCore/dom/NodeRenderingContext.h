@@ -74,7 +74,6 @@ private:
     NodeRenderingTraversal::ParentDetails m_parentDetails;
     RefPtr<RenderStyle> m_style;
     RenderNamedFlowThread* m_parentFlowRenderer;
-    AtomicString m_flowThread;
 };
 
 inline Node* NodeRenderingContext::node() const
