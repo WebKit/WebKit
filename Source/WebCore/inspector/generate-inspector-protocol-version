@@ -427,9 +427,9 @@ def main():
         changes = compare_schemas(
             load_json(input_path)["domains"], load_json(baseline_path)["domains"], True)
         if len(changes) > 0:
-            print "  Public changes since %s:" % version
+            sys.stdout.write("  Public changes since %s:\n" % version)
             for change in changes:
-                print "    %s" % change
+                sys.stdout.write("    %s\n" % change)
 
     output_file.write("""
 #ifndef InspectorProtocolVersion_h
