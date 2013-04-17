@@ -38,10 +38,17 @@ namespace WebCore {
 
 class OffsetPolygonEdge : public VertexPair {
 public:
+    enum Basis {
+        Edge,
+        Vertex,
+        LineTop
+    };
+
     OffsetPolygonEdge(const FloatPolygonEdge& edge, const FloatSize& offset)
         : m_vertex1(edge.vertex1() + offset)
         , m_vertex2(edge.vertex2() + offset)
         , m_edgeIndex(edge.edgeIndex())
+        , m_basis(Edge)
     {
     }
 
@@ -49,6 +56,7 @@ public:
         : m_vertex1(reflexVertex + offset1)
         , m_vertex2(reflexVertex + offset2)
         , m_edgeIndex(-1)
+        , m_basis(Vertex)
     {
     }
 
@@ -56,17 +64,20 @@ public:
         : m_vertex1(FloatPoint(polygon.boundingBox().x(), minLogicalIntervalTop) + offset)
         , m_vertex2(FloatPoint(polygon.boundingBox().maxX(), minLogicalIntervalTop) + offset)
         , m_edgeIndex(-1)
+        , m_basis(LineTop)
     {
     }
 
     virtual const FloatPoint& vertex1() const OVERRIDE { return m_vertex1; }
     virtual const FloatPoint& vertex2() const OVERRIDE { return m_vertex2; }
     int edgeIndex() const { return m_edgeIndex; }
+    Basis basis() const { return m_basis; }
 
 private:
     FloatPoint m_vertex1;
     FloatPoint m_vertex2;
     int m_edgeIndex;
+    Basis m_basis;
 };
 
 class ExclusionPolygon : public ExclusionShape {
