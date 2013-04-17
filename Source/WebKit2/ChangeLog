@@ -1,3 +1,22 @@
+2013-04-17  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][AC] m_pendingSurfaceResize needs to be guarded by USE(ACCELERATED_COMPOSITING)
+        https://bugs.webkit.org/show_bug.cgi?id=114770
+
+        AC related code is guarded by USE(ACCELERATED_COMPOSITING) in order to build 
+        WebKitEfl with no-tiled-backing-store(r147792), but m_pendingSurfaceResize is 
+        not included. This patch allows m_pendingSurfaceResize to be guarded by 
+        USE(ACCELERATED_COMPOSITING). 
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::displayTimerFired):
+        (EwkView::handleEvasObjectCalculate):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+
 2013-04-17  Anders Carlsson  <andersca@apple.com>
 
         The storage manager should know the local storage directory

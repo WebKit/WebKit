@@ -160,8 +160,8 @@ public:
     void setWindowGeometry(const WKRect&);
 #if USE(ACCELERATED_COMPOSITING)
     bool createGLSurface();
-#endif
     void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void requestColorPicker(WKColorPickerResultListenerRef listener, const WebCore::Color&);
@@ -249,9 +249,9 @@ private:
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
+    bool m_pendingSurfaceResize;
 #endif
     WebCore::TransformationMatrix m_userViewportTransform;
-    bool m_pendingSurfaceResize;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
     OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
     OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;

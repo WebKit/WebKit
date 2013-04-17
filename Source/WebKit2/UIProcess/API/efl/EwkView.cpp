@@ -250,7 +250,9 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_evasObject(evasObject)
     , m_context(EwkContext::findOrCreateWrapper(WKPageGetContext(wkPage())))
     , m_pageGroup(EwkPageGroup::findOrCreateWrapper(WKPageGetPageGroup(wkPage())))
+#if USE(ACCELERATED_COMPOSITING)
     , m_pendingSurfaceResize(false)
+#endif
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
@@ -542,17 +544,17 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
 {
     Ewk_View_Smart_Data* sd = smartData();
 
-    if (m_pendingSurfaceResize) {
 #if USE(ACCELERATED_COMPOSITING)
+    if (m_pendingSurfaceResize) {
         // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
         if (!createGLSurface())
             return;
-#endif
         // Make Evas objects visible here in order not to paint empty Evas objects with black color.
         showEvasObjectsIfNeeded(sd);
 
         m_pendingSurfaceResize = false;
     }
+#endif
 
     if (!m_isAccelerated) {
         RefPtr<cairo_surface_t> surface = createSurfaceForImage(sd->image);
@@ -1122,9 +1124,9 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
 #if USE(ACCELERATED_COMPOSITING)
         if (WKPageUseFixedLayout(self->wkPage()))
             self->pageViewportController()->didChangeViewportSize(self->size());
-#endif
 
         self->setNeedsSurfaceResize();
+#endif
     }
 }
 
