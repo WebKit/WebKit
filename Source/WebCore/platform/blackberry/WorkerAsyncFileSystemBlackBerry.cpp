@@ -119,7 +119,7 @@ void WorkerAsyncFileSystemBlackBerry::readDirectoryOnMainThread(ScriptExecutionC
     platformFileSystem->readDirectory(fileSystemURLToPath(path).utf8().data(), callbacks);
 }
 
-void WorkerAsyncFileSystemBlackBerry::createWriterOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, AsyncFileWriterClient* client, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
+void WorkerAsyncFileSystemBlackBerry::createWriterOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, AsyncFileWriterClient*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
     WebFileWriter::createWriter(platformFileSystem, fileSystemURLToPath(path).utf8().data(), callbacks);
 }

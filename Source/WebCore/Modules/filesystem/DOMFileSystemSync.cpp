@@ -113,7 +113,7 @@ public:
     {
     }
 
-    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> snapshot)
+    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> /* snapshot */)
     {
         // We can't directly use the snapshot blob data handle because the content type on it hasn't been set.
         // The |snapshot| param is here to provide a a chain of custody thru thread bridging that is held onto until

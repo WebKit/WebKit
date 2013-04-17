@@ -91,7 +91,7 @@ void FileWriterSync::truncate(long long offset, ExceptionCode& ec)
     setLength(offset);
 }
 
-void FileWriterSync::didWrite(long long bytes, bool complete)
+void FileWriterSync::didWrite(long long, bool complete)
 {
     ASSERT(m_error == FileError::OK);
     ASSERT(!m_complete);

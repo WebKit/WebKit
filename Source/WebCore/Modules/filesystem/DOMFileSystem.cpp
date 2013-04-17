@@ -155,7 +155,7 @@ public:
         return adoptPtr(new SnapshotFileCallback(filesystem, name, url, successCallback, errorCallback));
     }
 
-    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> snapshot)
+    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> /* snapshot */)
     {
         ASSERT(!metadata.platformPath.isEmpty());
         if (!m_successCallback)

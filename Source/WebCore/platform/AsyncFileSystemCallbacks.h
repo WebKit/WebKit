@@ -50,22 +50,22 @@ public:
     virtual void didSucceed() { ASSERT_NOT_REACHED(); }
 
     // Called when a requested file system is opened.
-    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>) { ASSERT_NOT_REACHED(); }
+    virtual void didOpenFileSystem(const String& /* name */, const KURL& /* rootURL */, PassOwnPtr<AsyncFileSystem>) { ASSERT_NOT_REACHED(); }
 
     // Called when a file metadata is read successfully.
     virtual void didReadMetadata(const FileMetadata&) { ASSERT_NOT_REACHED(); }
 
     // Called when a snapshot file is created successfully.
-    virtual void didCreateSnapshotFile(const FileMetadata&, PassRefPtr<BlobDataHandle> snapshot) { ASSERT_NOT_REACHED(); }
+    virtual void didCreateSnapshotFile(const FileMetadata&, PassRefPtr<BlobDataHandle> /* snapshot */) { ASSERT_NOT_REACHED(); }
 
     // Called when a directory entry is read.
-    virtual void didReadDirectoryEntry(const String& name, bool isDirectory) { ASSERT_NOT_REACHED(); }
+    virtual void didReadDirectoryEntry(const String& /* name */, bool /* isDirectory */) { ASSERT_NOT_REACHED(); }
 
     // Called after a chunk of directory entries have been read (i.e. indicates it's good time to call back to the application). If hasMore is true there can be more chunks.
-    virtual void didReadDirectoryEntries(bool hasMore) { ASSERT_NOT_REACHED(); }
+    virtual void didReadDirectoryEntries(bool /* hasMore */) { ASSERT_NOT_REACHED(); }
 
     // Called when an AsyncFileWrter has been created successfully.
-    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long length) { ASSERT_NOT_REACHED(); }
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long /* length */) { ASSERT_NOT_REACHED(); }
 
     // Called when there was an error.
     virtual void didFail(int code) = 0;
