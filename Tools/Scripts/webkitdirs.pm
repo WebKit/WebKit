@@ -2111,13 +2111,11 @@ sub buildAutotoolsProject($@)
     my %configurableFeatures = (
         "gamepad" => 1,
         "geolocation" => 1,
-        "media-stream" => 1,
         "svg" => 1,
         "svg-fonts" => 1,
         "video" => 1,
         "webgl" => 1,
         "web-audio" => 1,
-        "xslt" => 1,
     );
 
     # These features are ones which build-webkit cannot control, typically because

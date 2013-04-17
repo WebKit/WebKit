@@ -1,3 +1,17 @@
+2013-04-17  Alberto Garcia  <agarcia@igalia.com>
+
+        media-stream and xslt are no longer configurable options in the GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=114736
+
+        Reviewed by Martin Robinson.
+
+        media-stream support was removed in r145199 and XSLT is a hard
+        requirement since r145859. Attempting to pass those options to the
+        configure script, only results in a warning.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2013-04-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Implement context menu in MiniBrowser
