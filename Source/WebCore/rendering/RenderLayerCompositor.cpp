@@ -379,7 +379,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     if (m_headerLayerAwaitingFirstFlush) {
         m_headerLayerAwaitingFirstFlush = false;
         if (Page* page = this->page()) {
-            if (page->layoutMilestones() & DidFirstFlushForHeaderLayer) {
+            if (page->requestedLayoutMilestones() & DidFirstFlushForHeaderLayer) {
                 if (Frame* frame = page->mainFrame())
                     frame->loader()->didLayout(DidFirstFlushForHeaderLayer);
             }

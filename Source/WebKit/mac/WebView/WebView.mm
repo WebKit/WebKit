@@ -2931,7 +2931,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!page)
         return 0;
 
-    return kitLayoutMilestones(page->layoutMilestones());
+    return kitLayoutMilestones(page->requestedLayoutMilestones());
 }
 
 - (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState

@@ -2697,17 +2697,17 @@ void FrameView::performPostLayoutTasks()
     m_frame->selection()->setCaretRectNeedsUpdate();
     m_frame->selection()->updateAppearance();
 
-    LayoutMilestones milestonesOfInterest = 0;
+    LayoutMilestones requestedMilestones = 0;
     LayoutMilestones milestonesAchieved = 0;
     Page* page = m_frame->page();
     if (page)
-        milestonesOfInterest = page->layoutMilestones();
+        requestedMilestones = page->requestedLayoutMilestones();
 
     if (m_nestedLayoutCount <= 1) {
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
             m_frame->loader()->didFirstLayout();
-            if (milestonesOfInterest & DidFirstLayout)
+            if (requestedMilestones & DidFirstLayout)
                 milestonesAchieved |= DidFirstLayout;
             if (page) {
                 if (page->mainFrame() == m_frame)
@@ -2722,7 +2722,7 @@ void FrameView::performPostLayoutTasks()
         // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
         if (m_isVisuallyNonEmpty && !m_frame->document()->didLayoutWithPendingStylesheets() && m_firstVisuallyNonEmptyLayoutCallbackPending) {
             m_firstVisuallyNonEmptyLayoutCallbackPending = false;
-            if (milestonesOfInterest & DidFirstVisuallyNonEmptyLayout)
+            if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
                 milestonesAchieved |= DidFirstVisuallyNonEmptyLayout;
         }
     }
