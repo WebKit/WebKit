@@ -1,3 +1,13 @@
+2013-04-17  David Farler  <dfarler@apple.com>
+
+        Update expected output for fast/css/variables/deferred-image-load-from-variable.html
+        <rdar://problem/13679357>
+
+        Patch by David Farler.
+
+        * fast/css/image-set-value-not-removed-crash-expected.txt:
+        Added newline.
+
 2013-04-16  David Farler  <dfarler@apple.com>
 
         CSS Variables aren't available on safari-536.30-branch.
