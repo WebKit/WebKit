@@ -111,11 +111,6 @@ function initCurrentBuilderTestResults()
     console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
 }
 
-function shouldShowWebKitRevisionsOnly()
-{
-    return isTipOfTreeWebKitBuilder();
-}
-
 function updateTimelineForBuilder()
 {
     var builder = g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder();
@@ -229,19 +224,12 @@ function updateBuildInspector(results, builder, dygraph, index)
     addRow('', '');
     var master = builderMaster(builder);
     var buildUrl = master.logPath(builder, results[BUILD_NUMBERS_KEY][index]);
-    if (master.name == WEBKIT_BUILDER_MASTER) {
-        var resultsUrl = 'http://build.webkit.org/results/' + builder + '/r' + results[WEBKIT_REVISIONS_KEY][index] +
-            ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
-    } else {
-        var resultsUrl = 'http://build.chromium.org/f/chromium/layout_test_results/' +
-            currentBuilders()[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
-    }
+    var resultsUrl = 'http://build.webkit.org/results/' + builder + '/r' + results[WEBKIT_REVISIONS_KEY][index] +
+        ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
 
     addRow('Build:', '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a> (<a href="' + resultsUrl + '" target="_blank">results</a>)');
 
-    // Revision link(s)
-    if (!shouldShowWebKitRevisionsOnly())
-        addRow('Chromium change:', ui.html.chromiumRevisionLink(results, index));
+    // Revision link
     addRow('WebKit change:', ui.html.webKitRevisionLink(results, index));
 
     // Test status/counts

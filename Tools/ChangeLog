@@ -1,3 +1,17 @@
+2013-04-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Dashboard] Clean up the timeline updating code, removing Chromium-specific cases
+        https://bugs.webkit.org/show_bug.cgi?id=114756
+
+        Reviewed by Ryosuke Niwa.
+
+        Clean up the updating of the timeline in the timeline explorer, defaulting to the webkit.org build master when
+        constructing the results URL and removing the possible row addition containing the Chromium commit range that
+        only applied to Chromium builders in the first place. Also removes the now-redundant shouldShowWebKitRevisionsOnly
+        method.
+
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+
 2013-04-17  Alberto Garcia  <agarcia@igalia.com>
 
         media-stream and xslt are no longer configurable options in the GTK+ port
