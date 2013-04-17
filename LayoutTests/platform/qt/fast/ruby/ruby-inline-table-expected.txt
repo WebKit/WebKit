@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,19) width 39: "same. "
         RenderBR {BR} at (39,34) size 0x0
         RenderBR {BR} at (0,38) size 0x19
-      RenderBlock {DIV} at (3,60) size 778x49 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (3,60) size 778x50 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,21) size 211x19
           text run at (9,21) width 211: "This is some XHTML1.1 text with "
         RenderTable {SPAN} at (220,9) size 40x31
@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 40: "guide text"
         RenderText {#text} at (260,21) size 54x19
           text run at (260,21) width 54: " markup."
-      RenderBlock (anonymous) at (0,112) size 784x19
+      RenderBlock (anonymous) at (0,112) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {DIV} at (3,134) size 778x49 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (3,134) size 778x50 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,21) size 211x19
           text run at (9,21) width 211: "This is some XHTML1.1 text with "
         RenderTable {RUBY} at (220,9) size 40x31

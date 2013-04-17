@@ -76,7 +76,7 @@ layer at (0,0) size 450x500
               chunk 1 text run 1 at (276.00,275.00) startOffset 0 endOffset 9 width 49.00: "overline,"
           RenderSVGInlineText {#text} at (280,0) size 25x18
             chunk 1 text run 1 at (325.00,275.00) startOffset 0 endOffset 4 width 25.00: " and"
-        RenderSVGText {text} at (45,283) size 282x26 contains 1 chunk(s)
+        RenderSVGText {text} at (45,283) size 282x27 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 80x19
             RenderSVGInlineText {#text} at (0,2) size 80x18
               chunk 1 text run 1 at (45.00,300.00) startOffset 0 endOffset 14 width 80.00: "strikethrough."
@@ -93,7 +93,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (157,2) size 125x18
             chunk 1 text run 1 at (202.00,300.00) startOffset 0 endOffset 9 width 47.00: "-scripts "
             chunk 1 text run 1 at (249.00,300.00) startOffset 0 endOffset 14 width 78.00: "are available."
-        RenderSVGText {text} at (45,309) size 322x24 contains 1 chunk(s)
+        RenderSVGText {text} at (45,309) size 322x25 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,1) size 167x18
             chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 29 width 167.00: "Baseline can also be shifted "
           RenderSVGTSpan {tspan} at (0,0) size 11x13
@@ -145,7 +145,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 145x18
             chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 145.00: "filtered and transformed."
         RenderSVGContainer {g} at (171,389) size 279x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
-          RenderSVGText {text} at (0,-37) size 131x46 contains 1 chunk(s)
+          RenderSVGText {text} at (0,-37) size 131x47 contains 1 chunk(s)
             [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
             RenderSVGInlineText {#text} at (0,0) size 131x46
               [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100

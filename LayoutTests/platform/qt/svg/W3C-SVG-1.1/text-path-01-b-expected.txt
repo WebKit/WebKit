@@ -31,7 +31,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (0,50) size 292x162
         RenderSVGContainer {use} at (33,69) size 220x99
           RenderSVGPath {path} at (33,69) size 220x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 33.5 145.8 C 41 123 70.3 69.7 104.5 86.8 C 121 95 133 116 144.5 129.8 C 156.2 144.4 173 155.5 190.5 159.8 C 221.8 167.6 231 146.9 252.5 130.8"]
-        RenderSVGText {text} at (-9,50) size 202x113 contains 1 chunk(s)
+        RenderSVGText {text} at (-9,50) size 203x113 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 202x113
             RenderSVGTSpan {tspan} at (0,0) size 55x56
               RenderSVGInlineText {#text} at (0,39) size 55x55

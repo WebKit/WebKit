@@ -20,7 +20,7 @@ layer at (0,0) size 800x585
                               RenderBlock {CENTER} at (0,0) size 765x1919
                                 RenderBlock (anonymous) at (0,0) size 765x19
                                   RenderBR {BR} at (382,0) size 1x19
-                                RenderTable {TABLE} at (19,19) size 726x1881 [border: (1px solid #000000)]
+                                RenderTable {TABLE} at (19,19) size 727x1881 [border: (1px solid #000000)]
                                   RenderTableSection {TBODY} at (1,1) size 724x1879
                                     RenderTableRow {TR} at (0,0) size 724x21
                                       RenderTableCell {TD} at (0,0) size 724x21 [bgcolor=#3F5694] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]

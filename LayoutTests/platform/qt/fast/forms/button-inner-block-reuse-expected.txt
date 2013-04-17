@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,99) size 784x33
         RenderButton {BUTTON} at (2,2) size 12x29 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,14) size 0x0
+          RenderBlock (anonymous) at (6,14) size 0x1
             RenderBlock (anonymous) at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
             RenderBlock (anonymous) at (0,0) size 0x0

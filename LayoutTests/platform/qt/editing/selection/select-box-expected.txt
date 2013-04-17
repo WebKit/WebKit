@@ -1,3 +1,5 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -63,7 +65,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,4) size 68x19
             text run at (0,4) width 68: "select box: "
           RenderMenuList {SELECT} at (70,2) size 36x24 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,2) size 8x19
+            RenderBlock (anonymous) at (4,2) size 8x20
               RenderText at (0,0) size 8x19
                 text run at (0,0) width 8: "1"
           RenderText {#text} at (108,4) size 64x19

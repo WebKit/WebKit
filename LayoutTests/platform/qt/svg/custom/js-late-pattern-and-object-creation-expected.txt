@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,15) size 682x362
-    RenderSVGContainer {g} at (0,15) size 682x362
+  RenderSVGRoot {svg} at (0,15) size 681x362
+    RenderSVGContainer {g} at (0,15) size 681x362
       RenderSVGResourcePattern {pattern} [id="fillPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]

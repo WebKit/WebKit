@@ -29,22 +29,22 @@ layer at (0,0) size 785x674
               text run at (0,0) width 38: "button"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (3,251) size 62x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 34x19
+          RenderBlock (anonymous) at (4,2) size 34x20
             RenderText at (0,0) size 34x19
               text run at (0,0) width 34: "select"
         RenderMenuList {SELECT} at (3,279) size 62x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 34x19
+          RenderBlock (anonymous) at (4,2) size 34x20
             RenderText at (0,0) size 34x19
               text run at (0,0) width 34: "select"
         RenderText {#text} at (0,0) size 0x0
         RenderListBox {SELECT} at (3,307) size 55x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderListBox {SELECT} at (3,392) size 55x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (4,478) size 13x13
-        RenderBlock {INPUT} at (4,497) size 13x13
+        RenderBlock {INPUT} at (4,478) size 14x13
+        RenderBlock {INPUT} at (4,497) size 14x13
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (4,516) size 12x12
-        RenderBlock {INPUT} at (4,534) size 12x12
+        RenderBlock {INPUT} at (4,516) size 13x12
+        RenderBlock {INPUT} at (4,534) size 13x12
         RenderText {#text} at (0,0) size 0x0
         RenderPartObject {IFRAME} at (1,549) size 27x27 [border: (1px solid #000000)]
           layer at (0,0) size 25x25

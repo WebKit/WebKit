@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 55: "Move to:"
               RenderTableCell {TD} at (658,9) size 124x30 [r=0 c=5 rs=1 cs=1]
                 RenderMenuList {SELECT} at (3,3) size 118x24 [bgcolor=#FFFFFF]
-                  RenderBlock (anonymous) at (4,2) size 90x19
+                  RenderBlock (anonymous) at (4,2) size 90x20
                     RenderText at (0,0) size 90x19
                       text run at (0,0) width 90: "Choose folder "
                 RenderText {#text} at (0,0) size 0x0

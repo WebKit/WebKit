@@ -44,27 +44,27 @@ layer at (0,0) size 800x600
                   text run at (6,253) width 86: "other parts of "
                   text run at (92,253) width 320: "the ground, Alice soon came to the conclusion that it"
                   text run at (57,272) width 69: "was a very "
-                RenderBlock (floating) {SPAN} at (6,275) size 48x64 [bgcolor=#ADD8E6]
+                RenderBlock (floating) {SPAN} at (6,275) size 48x65 [bgcolor=#ADD8E6]
                 RenderText {#text} at (126,272) size 131x19
                   text run at (126,272) width 131: "difficult game indeed. "
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {#text} at (57,291) size 288x19
-                  text run at (57,291) width 288: "The players all played at once without waiting"
-                RenderBlock (floating) {SPAN} at (348,294) size 64x80 [bgcolor=#90EE90]
-                RenderText {#text} at (57,310) size 288x38
-                  text run at (57,310) width 63: "for turns, "
-                  text run at (120,310) width 225: "quarrelling all the while, and fighting"
-                  text run at (57,329) width 161: "for the hedgehogs; and in "
-                  text run at (218,329) width 109: "a very short time "
-                RenderInline {SPAN} at (0,0) size 339x38
-                  RenderText {#text} at (327,329) size 339x38
-                    text run at (327,329) width 18: "the"
+                RenderText {#text} at (57,291) size 287x19
+                  text run at (57,291) width 287: "The players all played at once without waiting"
+                RenderBlock (floating) {SPAN} at (348,294) size 64x81 [bgcolor=#90EE90]
+                RenderText {#text} at (57,310) size 287x38
+                  text run at (57,310) width 62: "for turns, "
+                  text run at (119,310) width 225: "quarrelling all the while, and fighting"
+                  text run at (57,329) width 160: "for the hedgehogs; and in "
+                  text run at (217,329) width 109: "a very short time "
+                RenderInline {SPAN} at (0,0) size 338x38
+                  RenderText {#text} at (326,329) size 338x38
+                    text run at (326,329) width 18: "the"
                     text run at (6,348) width 40: "Queen"
-                RenderText {#text} at (46,348) size 339x57
-                  text run at (46,348) width 246: " was in a furious passion, and went "
-                  text run at (292,348) width 53: "stamping"
-                  text run at (6,367) width 320: "about, and shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
-                  text run at (326,367) width 19: "her"
+                RenderText {#text} at (46,348) size 338x57
+                  text run at (46,348) width 245: " was in a furious passion, and went "
+                  text run at (291,348) width 53: "stamping"
+                  text run at (6,367) width 319: "about, and shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
+                  text run at (325,367) width 19: "her"
                   text run at (6,386) width 186: "head!\x{2019} about once in a minute. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (6,405) size 406x95

@@ -36,7 +36,7 @@ middlebottom
           (bounds 200.00 200.00)
           (children 1
             (GraphicsLayer
-              (position 5.00 145.00)
+              (position 5.00 144.00)
               (bounds 144.00 25.00)
               (drawsContent 1)
             )
@@ -58,7 +58,7 @@ middlebottom
           (bounds 185.00 200.00)
           (children 1
             (GraphicsLayer
-              (position 5.00 145.00)
+              (position 5.00 144.00)
               (bounds 144.00 25.00)
               (drawsContent 1)
             )

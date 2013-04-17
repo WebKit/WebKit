@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
         text run at (0,19) width 355: "rule that determines whether to use a menu list or a list box."
       RenderBR {BR} at (355,34) size 0x0
       RenderMenuList {SELECT} at (2,40) size 49x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 21x19
+        RenderBlock (anonymous) at (4,2) size 21x20
           RenderText at (0,0) size 21x19
             text run at (0,0) width 21: "test"
       RenderText {#text} at (0,0) size 0x0

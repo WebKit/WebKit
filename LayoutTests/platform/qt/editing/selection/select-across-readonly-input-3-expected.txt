@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
             text run at (0,4) width 28: "hello"
         RenderText {#text} at (28,4) size 4x19
           text run at (28,4) width 4: " "
-        RenderTextControl {INPUT} at (32,2) size 51x23
+        RenderTextControl {INPUT} at (32,2) size 52x23
         RenderText {#text} at (0,0) size 0x0
 layer at (42,101) size 47x19
-  RenderBlock {DIV} at (2,2) size 47x19
+  RenderBlock {DIV} at (2,2) size 48x19
     RenderText {#text} at (0,0) size 35x19
       text run at (0,0) width 35: "world"
 selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 5 {DIV} of body

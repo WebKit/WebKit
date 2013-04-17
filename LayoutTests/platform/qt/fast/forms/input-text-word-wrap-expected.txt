@@ -15,6 +15,6 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,0) size 192x48
         RenderText {#text} at (0,0) size 0x0
 layer at (12,58) size 188x19 scrollWidth 288
-  RenderBlock {DIV} at (2,15) size 188x19
+  RenderBlock {DIV} at (2,14) size 188x20
     RenderText {#text} at (0,0) size 287x19
       text run at (0,0) width 287: "This sentence should not wrap into the next line."

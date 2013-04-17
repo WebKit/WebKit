@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,15) size 366x175
-      RenderSVGText {text} at (10,15) size 366x18 contains 1 chunk(s)
+      RenderSVGText {text} at (10,15) size 366x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 366x18
           chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 11.00: "T"
           chunk 1 text run 2 at (19.29,30.00) startOffset 1 endOffset 3 width 19.01: "es"
@@ -60,7 +60,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 8 at (189.05,180.00) startOffset 21 endOffset 26 width 38.35: "Angle"
       RenderSVGResourceMarker {marker} [id="m"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=1.80]
     RenderSVGContainer {g} at (10,314) size 227x33
-      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"

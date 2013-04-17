@@ -4,7 +4,7 @@ layer at (0,0) size 800x128
   RenderBlock {HTML} at (0,0) size 800x128
     RenderBody {BODY} at (8,8) size 784x63
       RenderBlock (floating) {DIV} at (474,10) size 300x100 [bgcolor=#008000]
-      RenderTable {TABLE} at (3,0) size 457x25 [bgcolor=#FFA500]
+      RenderTable {TABLE} at (3,0) size 458x25 [bgcolor=#FFA500]
         RenderTableSection {TBODY} at (0,0) size 457x25
           RenderTableRow {TR} at (0,2) size 457x21
             RenderTableCell {TD} at (2,2) size 453x21 [r=0 c=0 rs=1 cs=1]

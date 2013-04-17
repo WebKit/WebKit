@@ -19,8 +19,8 @@ Flow Threads
           RenderBlock {DIV} at (5,5) size 390x296 [border: (1px solid #0000FF)]
             RenderBlock (floating) {DIV} at (1,1) size 50x50 [bgcolor=#00FF00]
             RenderBlock (floating) {DIV} at (239,1) size 50x50 [bgcolor=#00FF00]
-    layer at (53,56) size 293x244 clip at (54,57) size 291x242 scrollWidth 500
-      RenderBlock {DIV} at (48,51) size 293x244 [border: (1px solid #008000)]
+    layer at (54,56) size 293x244 clip at (55,57) size 291x242 scrollWidth 500
+      RenderBlock {DIV} at (48,51) size 294x244 [border: (1px solid #008000)]
         RenderBlock {DIV} at (1,1) size 500x19
           RenderText {#text} at (-12,0) size 270x19
             text run at (-12,0) width 270: "Clipped line of text that should not be visible."

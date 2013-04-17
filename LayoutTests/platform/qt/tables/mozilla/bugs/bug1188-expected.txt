@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 600x184
             RenderTableRow {TR} at (0,2) size 600x44
               RenderTableCell {TD} at (2,2) size 594x44 [r=0 c=0 rs=1 cs=3]
-                RenderImage {IMG} at (8,1) size 579x42
+                RenderImage {IMG} at (7,1) size 580x42
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,48) size 600x55
               RenderTableCell {TD} at (2,49) size 594x52 [bgcolor=#99CCCC] [r=1 c=0 rs=1 cs=3]
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (142,9) size 4x19
                   text run at (142,9) width 4: " "
                 RenderMenuList {SELECT} at (148,7) size 86x24 [bgcolor=#FFFFFF]
-                  RenderBlock (anonymous) at (4,2) size 58x19
+                  RenderBlock (anonymous) at (4,2) size 58x20
                     RenderText at (0,0) size 58x19
                       text run at (0,0) width 58: "Netscape"
                 RenderTextControl {INPUT} at (238,7) size 282x23

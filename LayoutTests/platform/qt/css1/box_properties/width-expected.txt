@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1364
+layer at (0,0) size 785x1365
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1364
-  RenderBlock {HTML} at (0,0) size 785x1364
-    RenderBody {BODY} at (8,8) size 769x1348 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x1365
+  RenderBlock {HTML} at (0,0) size 785x1365
+    RenderBody {BODY} at (8,8) size 769x1349 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "The style declarations which apply to the text below are:"
@@ -21,13 +21,13 @@ layer at (0,0) size 785x1364
       RenderBlock {P} at (0,169) size 769x19
         RenderText {#text} at (0,0) size 271x19
           text run at (0,0) width 271: "The square above should be fifty pixels wide."
-      RenderBlock (anonymous) at (0,204) size 769x384
-        RenderImage {IMG} at (0,0) size 384x384
+      RenderBlock (anonymous) at (0,204) size 769x385
+        RenderImage {IMG} at (0,0) size 385x385
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,604) size 769x19
+      RenderBlock {P} at (0,605) size 769x19
         RenderText {#text} at (0,0) size 641x19
           text run at (0,0) width 641: "The square above should be half as wide as the image's parent element (either the BODY or the table cell)."
-      RenderBlock {P} at (0,639) size 384x95
+      RenderBlock {P} at (0,640) size 385x95
         RenderText {#text} at (0,0) size 361x76
           text run at (0,0) width 361: "This paragraph should be half the width of its parent element"
           text run at (0,19) width 358: "(either the BODY or the table, which should itself be half as"
@@ -40,7 +40,7 @@ layer at (0,0) size 785x1364
         RenderText {#text} at (273,57) size 377x38
           text run at (273,57) width 104: " property without"
           text run at (0,76) width 304: "the need for the user to resize the viewing window."
-      RenderTable {TABLE} at (0,750) size 384x598 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,751) size 384x598 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 382x596
           RenderTableRow {TR} at (0,0) size 382x27
             RenderTableCell {TD} at (0,0) size 382x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

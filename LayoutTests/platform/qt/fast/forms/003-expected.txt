@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (2,0) size 60x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 32x19
+        RenderBlock (anonymous) at (4,2) size 32x20
           RenderText at (0,0) size 32x19
             text run at (0,0) width 32: "Hello"
       RenderBlock (anonymous) at (0,26) size 784x19

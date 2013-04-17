@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderFlexibleBox {DIV} at (2,2) size 188x26
           RenderBlock {DIV} at (0,13) size 0x0
           RenderBlock {DIV} at (0,0) size 177x26
-          RenderBlock {DIV} at (177,7) size 11x11
+          RenderBlock {DIV} at (177,7) size 11x12
       RenderText {#text} at (0,0) size 0x0
 layer at (12,100) size 177x26 scrollWidth 305
   RenderBlock {DIV} at (0,0) size 177x26

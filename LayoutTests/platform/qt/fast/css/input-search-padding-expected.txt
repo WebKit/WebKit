@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         RenderFlexibleBox {DIV} at (3,3) size 479x46
           RenderBlock {DIV} at (0,23) size 0x0
           RenderBlock {DIV} at (0,0) size 458x46
-          RenderBlock {DIV} at (458,12) size 21x21
+          RenderBlock {DIV} at (458,12) size 21x22
       RenderBR {BR} at (489,41) size 0x0
       RenderTextControl {INPUT} at (2,87) size 483x50
       RenderBR {BR} at (487,125) size 0x0
       RenderTextControl {INPUT} at (2,139) size 234x25
         RenderFlexibleBox {DIV} at (2,1) size 230x23
-          RenderBlock {DIV} at (0,11) size 0x0
+          RenderBlock {DIV} at (0,11) size 0x1
           RenderBlock {DIV} at (0,0) size 216x23
-          RenderBlock {DIV} at (216,4) size 14x14
+          RenderBlock {DIV} at (216,4) size 14x15
 layer at (13,13) size 458x46
   RenderBlock {DIV} at (0,0) size 458x46
     RenderText {#text} at (0,0) size 332x45

@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (315,0) size 75x19
             text run at (315,0) width 75: "here is a link"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H1} at (0,40) size 784x37
+      RenderBlock {H1} at (0,40) size 784x38
         RenderText {#text} at (0,0) size 109x36
           text run at (0,0) width 109: "heading"
-      RenderBlock (anonymous) at (0,98) size 784x95
+      RenderBlock (anonymous) at (0,98) size 784x96
         RenderInline {SPAN} at (0,0) size 29x19
           RenderText {#text} at (0,0) size 29x19
             text run at (0,0) width 29: "issue"
@@ -34,10 +34,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,76) size 27x19
             text run at (0,76) width 27: "pass"
         RenderBR {BR} at (27,91) size 0x0
-      RenderBlock {H1} at (0,214) size 784x37
+      RenderBlock {H1} at (0,215) size 784x38
         RenderText {#text} at (0,0) size 224x36
           text run at (0,0) width 224: "another heading"
-      RenderBlock (anonymous) at (0,272) size 784x19
+      RenderBlock (anonymous) at (0,273) size 784x20
         RenderInline {SPAN} at (0,0) size 18x19
           RenderText {#text} at (0,0) size 18x19
             text run at (0,0) width 18: "n/a"

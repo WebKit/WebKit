@@ -1,8 +1,8 @@
-layer at (0,0) size 785x714
+layer at (0,0) size 785x716
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x714
-  RenderBlock {HTML} at (0,0) size 785x714
-    RenderBody {BODY} at (8,16) size 769x690
+layer at (0,0) size 785x716
+  RenderBlock {HTML} at (0,0) size 785x717
+    RenderBody {BODY} at (8,16) size 769x693
       RenderBlock {P} at (0,0) size 769x38
         RenderText {#text} at (0,0) size 742x38
           text run at (0,0) width 720: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on the left, "
@@ -11,7 +11,7 @@ layer at (0,0) size 785x714
       RenderBlock {H1} at (0,54) size 769x19
         RenderText {#text} at (0,0) size 88x19
           text run at (0,0) width 88: "Left-to-Right"
-      RenderBlock {DIV} at (0,83) size 769x284 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,83) size 769x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (0,6) size 119x19
             text run at (0,6) width 119: "Lorem ipsum dolor "
@@ -27,10 +27,10 @@ layer at (0,0) size 785x714
             text run at (0,134) width 277: "eiusmod tempor incididunt ut labore et dolore "
             text run at (277,134) width 441: "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco"
             text run at (0,166) width 125: "laboris nisi ut aliquip."
-      RenderBlock {H1} at (0,377) size 769x19
+      RenderBlock {H1} at (0,378) size 769x20
         RenderText {#text} at (0,0) size 88x19
           text run at (0,0) width 88: "Right-to-Left"
-      RenderBlock {DIV} at (0,406) size 769x284 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,408) size 769x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (638,6) size 119x19
             text run at (638,6) width 119 RTL override: "Lorem ipsum dolor "
@@ -46,11 +46,11 @@ layer at (0,0) size 785x714
             text run at (39,134) width 441 RTL override: "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco"
             text run at (480,134) width 277 RTL override: "eiusmod tempor incididunt ut labore et dolore "
             text run at (632,166) width 125 RTL override: "laboris nisi ut aliquip."
-layer at (14,121) size 182x21
+layer at (14,122) size 182x21
   RenderInline (relative positioned) {SPAN} at (0,0) size 182x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (164,6) size 127x19
       text run at (164,6) width 127: "sit amet, consectetur "
-layer at (14,169) size 755x85
+layer at (14,170) size 755x85
   RenderInline (relative positioned) {SPAN} at (0,0) size 755x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (404,38) size 755x83
       text run at (404,38) width 351: "laboris nisi ut aliquip ex ea commodo consequat. Duis aute"
@@ -58,11 +58,11 @@ layer at (14,169) size 755x85
       text run at (179,70) width 543: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
       text run at (722,70) width 22: "non"
       text run at (0,102) width 414: "proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
-layer at (14,444) size 182x21
+layer at (14,446) size 182x21
   RenderInline (relative positioned) {SPAN} at (0,0) size 182x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (466,6) size 127x19
       text run at (466,6) width 127 RTL override: "sit amet, consectetur "
-layer at (14,492) size 755x85
+layer at (14,494) size 755x85
   RenderInline (relative positioned) {SPAN} at (0,0) size 755x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (2,38) size 755x83
       text run at (2,38) width 351 RTL override: "laboris nisi ut aliquip ex ea commodo consequat. Duis aute"

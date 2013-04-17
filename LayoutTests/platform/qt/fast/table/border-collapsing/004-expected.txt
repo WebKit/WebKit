@@ -1,12 +1,12 @@
-layer at (0,0) size 785x1464
+layer at (0,0) size 785x1465
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1464
-  RenderBlock {HTML} at (0,0) size 785x1464
-    RenderBody {BODY} at (8,21) size 769x1427
+layer at (0,0) size 785x1465
+  RenderBlock {HTML} at (0,0) size 785x1465
+    RenderBody {BODY} at (8,21) size 769x1428
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 292x36
           text run at (0,0) width 292: "Table Border Models"
-      RenderBlock {P} at (0,58) size 769x19
+      RenderBlock {P} at (0,58) size 769x20
         RenderText {#text} at (0,0) size 113x19
           text run at (0,0) width 113: "This tests tests the "
         RenderInline {A} at (0,0) size 204x19 [color=#0000EE]
@@ -15,7 +15,7 @@ layer at (0,0) size 785x1464
         RenderText {#text} at (317,0) size 172x19
           text run at (317,0) width 8: ". "
           text run at (325,0) width 164: "The styles applied here are:"
-      RenderBlock {PRE} at (0,93) size 769x180
+      RenderBlock {PRE} at (0,93) size 769x181
         RenderText {#text} at (0,0) size 688x180
           text run at (0,0) width 408: "TABLE\x{9}{ margin: 1em; border: medium solid blue; }"
           text run at (408,0) width 0: " "
@@ -41,7 +41,7 @@ layer at (0,0) size 785x1464
           text run at (688,150) width 0: " "
           text run at (0,165) width 296: "\x{9}{ border: medium solid red; }"
           text run at (296,165) width 0: " "
-      RenderTable {TABLE} at (16,289) size 737x173 [border: (1px solid #0000FF)]
+      RenderTable {TABLE} at (16,289) size 737x174 [border: (1px solid #0000FF)]
         RenderTableSection {TBODY} at (1,1) size 734x170
           RenderTableRow {TR} at (0,0) size 734x32
             RenderTableCell {TH} at (0,0) size 247x32 [border: (2px solid #800080)] [r=0 c=0 rs=1 cs=1]
@@ -92,7 +92,7 @@ layer at (0,0) size 785x1464
                   text run at (122,44) width 43: "middle"
               RenderText {#text} at (165,44) size 82x19
                 text run at (165,44) width 82: " of its border."
-      RenderTable {TABLE} at (16,478) size 737x243 [border: (3px solid #0000FF)]
+      RenderTable {TABLE} at (16,478) size 737x244 [border: (3px solid #0000FF)]
         RenderTableSection {TBODY} at (3,3) size 731x237
           RenderTableRow {TR} at (0,16) size 731x35
             RenderTableCell {TH} at (16,16) size 162x35 [border: (3px solid #800080)] [r=0 c=0 rs=1 cs=1]
@@ -142,7 +142,7 @@ layer at (0,0) size 785x1464
                   text run at (6,44) width 30: "edge"
               RenderText {#text} at (36,44) size 82x19
                 text run at (36,44) width 82: " of its border."
-      RenderTable {TABLE} at (16,737) size 737x249 [border: (3px solid #0000FF)]
+      RenderTable {TABLE} at (16,737) size 737x250 [border: (3px solid #0000FF)]
         RenderTableSection {TBODY} at (3,3) size 731x243
           RenderTableRow {TR} at (0,8) size 731x35
             RenderTableCell {TH} at (0,8) size 189x35 [border: (3px solid #800080)] [r=0 c=0 rs=1 cs=1]
@@ -200,7 +200,7 @@ layer at (0,0) size 785x1464
                 text run at (74,44) width 197: "Because of its margins, the width"
                 text run at (6,63) width 38: "of the "
                 text run at (44,63) width 191: "table should be less than 100%."
-      RenderTable {TABLE} at (16,1002) size 737x217 [border: (3px solid #0000FF)]
+      RenderTable {TABLE} at (16,1002) size 737x218 [border: (3px solid #0000FF)]
         RenderTableSection {TBODY} at (3,3) size 731x211
           RenderTableRow {TR} at (0,0) size 731x35
             RenderTableCell {TH} at (8,0) size 201x35 [border: (3px solid #800080)] [r=0 c=0 rs=1 cs=1]
@@ -256,7 +256,7 @@ layer at (0,0) size 785x1464
                 text run at (6,44) width 239: "Because of its margins, the width of the "
                 text run at (245,44) width 29: "table"
                 text run at (6,63) width 158: "should be less than 100%."
-      RenderTable {TABLE} at (16,1235) size 737x192
+      RenderTable {TABLE} at (16,1235) size 737x193
         RenderBlock {CAPTION} at (0,0) size 737x19
           RenderText {#text} at (312,0) size 113x19
             text run at (312,0) width 113: "This is the caption."

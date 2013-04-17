@@ -1,18 +1,18 @@
-layer at (0,0) size 785x754
+layer at (0,0) size 785x760
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x754
-  RenderBlock {HTML} at (0,0) size 785x754
-    RenderBody {BODY} at (8,8) size 769x738
+layer at (0,0) size 785x760
+  RenderBlock {HTML} at (0,0) size 785x760
+    RenderBody {BODY} at (8,8) size 769x744
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 420x36
           text run at (0,0) width 420: "Form Element Geometry Tests"
-      RenderBlock {P} at (0,58) size 769x19
+      RenderBlock {P} at (0,58) size 769x20
         RenderText {#text} at (0,0) size 514x19
           text run at (0,0) width 514: "These tests help us tune the widget classes in KWQ to have all the right fudge factors."
-      RenderBlock {H2} at (0,96) size 769x28
+      RenderBlock {H2} at (0,97) size 769x29
         RenderText {#text} at (0,0) size 165x28
           text run at (0,0) width 165: "Bounding Boxes"
-      RenderTable {TABLE} at (0,143) size 214x50
+      RenderTable {TABLE} at (0,145) size 214x51
         RenderTableSection {TBODY} at (0,0) size 214x50
           RenderTableRow {TR} at (0,2) size 214x46
             RenderTableCell {TD} at (2,2) size 80x46 [r=0 c=0 rs=1 cs=1]
@@ -37,7 +37,7 @@ layer at (0,0) size 785x754
               RenderBlock {DIV} at (1,1) size 17x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 13x28
                   RenderBlock {INPUT} at (2,2) size 13x13
-      RenderTable {TABLE} at (0,193) size 169x41
+      RenderTable {TABLE} at (0,195) size 169x42
         RenderTableSection {TBODY} at (0,0) size 169x41
           RenderTableRow {TR} at (0,2) size 169x37
             RenderTableCell {TD} at (2,2) size 56x37 [r=0 c=0 rs=1 cs=1]
@@ -49,7 +49,7 @@ layer at (0,0) size 785x754
             RenderTableCell {TD} at (60,5) size 66x30 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 64x28 [border: (2px solid #0000FF)]
                 RenderMenuList {SELECT} at (2,2) size 60x24 [bgcolor=#FFFFFF]
-                  RenderBlock (anonymous) at (4,2) size 32x19
+                  RenderBlock (anonymous) at (4,2) size 32x20
                     RenderText at (0,0) size 32x19
                       text run at (0,0) width 32: "menu"
             RenderTableCell {TD} at (128,11) size 18x18 [r=0 c=2 rs=1 cs=1]
@@ -58,7 +58,7 @@ layer at (0,0) size 785x754
             RenderTableCell {TD} at (148,11) size 19x19 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 17x17 [border: (2px solid #0000FF)]
                 RenderBlock {INPUT} at (2,2) size 13x13
-      RenderTable {TABLE} at (0,234) size 147x34
+      RenderTable {TABLE} at (0,236) size 147x35
         RenderTableSection {TBODY} at (0,0) size 147x34
           RenderTableRow {TR} at (0,2) size 147x30
             RenderTableCell {TD} at (2,2) size 44x30 [r=0 c=0 rs=1 cs=1]
@@ -83,7 +83,7 @@ layer at (0,0) size 785x754
               RenderBlock {DIV} at (1,1) size 17x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 13x12
                   RenderBlock {INPUT} at (2,2) size 13x13
-      RenderTable {TABLE} at (0,268) size 648x91
+      RenderTable {TABLE} at (0,270) size 648x92
         RenderTableSection {TBODY} at (0,0) size 648x91
           RenderTableRow {TR} at (0,2) size 648x87
             RenderTableCell {TD} at (2,2) size 108x29 [r=0 c=0 rs=1 cs=1]
@@ -101,11 +101,11 @@ layer at (0,0) size 785x754
                         text run at (0,0) width 73: "Choose File"
             RenderTableCell {TD} at (437,2) size 209x52 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 207x50 [border: (2px solid #0000FF)]
-      RenderBlock {H2} at (0,378) size 769x28
+      RenderBlock {H2} at (0,381) size 769x29
         RenderText {#text} at (0,0) size 199x28
           text run at (0,0) width 199: "Baseline Alignment"
-      RenderBlock {DIV} at (0,425) size 769x44
-        RenderInline {FONT} at (0,0) size 269x28
+      RenderBlock {DIV} at (0,429) size 769x45
+        RenderInline {FONT} at (0,0) size 271x28
           RenderText {#text} at (0,8) size 43x28
             text run at (0,8) width 43: "text "
           RenderButton {INPUT} at (45,2) size 74x40 [bgcolor=#C0C0C0]
@@ -120,12 +120,12 @@ layer at (0,0) size 785x754
                 text run at (0,0) width 53: "menu"
           RenderText {#text} at (212,8) size 6x28
             text run at (212,8) width 6: " "
-          RenderBlock {INPUT} at (223,20) size 12x12
-          RenderText {#text} at (240,8) size 6x28
-            text run at (240,8) width 6: " "
-          RenderBlock {INPUT} at (251,19) size 13x13
+          RenderBlock {INPUT} at (223,20) size 13x12
+          RenderText {#text} at (241,8) size 6x28
+            text run at (241,8) width 6: " "
+          RenderBlock {INPUT} at (252,19) size 14x13
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,469) size 769x35
+      RenderBlock {DIV} at (0,473) size 769x36
         RenderText {#text} at (0,8) size 26x19
           text run at (0,8) width 26: "text "
         RenderButton {INPUT} at (28,2) size 50x31 [bgcolor=#C0C0C0]
@@ -135,18 +135,18 @@ layer at (0,0) size 785x754
         RenderText {#text} at (80,8) size 4x19
           text run at (80,8) width 4: " "
         RenderMenuList {SELECT} at (86,6) size 60x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 32x19
+          RenderBlock (anonymous) at (4,2) size 32x20
             RenderText at (0,0) size 32x19
               text run at (0,0) width 32: "menu"
         RenderText {#text} at (148,8) size 4x19
           text run at (148,8) width 4: " "
-        RenderBlock {INPUT} at (155,13) size 12x12
-        RenderText {#text} at (170,8) size 4x19
-          text run at (170,8) width 4: " "
-        RenderBlock {INPUT} at (177,12) size 13x13
+        RenderBlock {INPUT} at (155,13) size 13x12
+        RenderText {#text} at (171,8) size 5x19
+          text run at (171,8) width 5: " "
+        RenderBlock {INPUT} at (179,12) size 14x13
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,504) size 769x24
-        RenderInline {FONT} at (0,0) size 148x12
+      RenderBlock {DIV} at (0,508) size 769x25
+        RenderInline {FONT} at (0,0) size 150x12
           RenderText {#text} at (0,6) size 18x12
             text run at (0,6) width 18: "text "
           RenderButton {INPUT} at (18,0) size 38x24 [bgcolor=#C0C0C0]
@@ -161,12 +161,12 @@ layer at (0,0) size 785x754
                 text run at (0,0) width 22: "menu"
           RenderText {#text} at (109,6) size 3x12
             text run at (109,6) width 3: " "
-          RenderBlock {INPUT} at (114,5) size 12x12
-          RenderText {#text} at (128,6) size 3x12
-            text run at (128,6) width 3: " "
-          RenderBlock {INPUT} at (133,4) size 13x13
+          RenderBlock {INPUT} at (114,5) size 13x12
+          RenderText {#text} at (128,6) size 4x12
+            text run at (128,6) width 4: " "
+          RenderBlock {INPUT} at (133,4) size 14x13
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,528) size 769x58
+      RenderBlock {DIV} at (0,532) size 769x59
         RenderText {#text} at (0,31) size 26x19
           text run at (0,31) width 26: "text "
         RenderTextControl {INPUT} at (28,29) size 102x23
@@ -180,10 +180,10 @@ layer at (0,0) size 785x754
         RenderText {#text} at (412,31) size 4x19
           text run at (412,31) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H2} at (0,605) size 769x28
+      RenderBlock {H2} at (0,609) size 769x29
         RenderText {#text} at (0,0) size 195x28
           text run at (0,0) width 195: "Pop-up Menu Sizes"
-      RenderBlock {DIV} at (0,652) size 769x38
+      RenderBlock {DIV} at (0,657) size 769x39
         RenderInline {FONT} at (0,0) size 218x28
           RenderText {#text} at (0,0) size 0x0
           RenderMenuList {SELECT} at (2,2) size 35x34 [bgcolor=#FFFFFF]
@@ -202,24 +202,24 @@ layer at (0,0) size 785x754
               RenderText at (0,0) size 96x28
                 text run at (0,0) width 96: "xxxxxxxx"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,690) size 769x28
+      RenderBlock {DIV} at (0,695) size 769x29
         RenderMenuList {SELECT} at (2,2) size 35x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 7x19
+          RenderBlock (anonymous) at (4,2) size 7x20
             RenderBR at (0,0) size 0x19 [bgcolor=#FFFFFF]
         RenderText {#text} at (39,4) size 4x19
           text run at (39,4) width 4: " "
         RenderMenuList {SELECT} at (45,2) size 35x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 7x19
+          RenderBlock (anonymous) at (4,2) size 7x20
             RenderText at (0,0) size 3x19
               text run at (0,0) width 3: "|"
         RenderText {#text} at (82,4) size 4x19
           text run at (82,4) width 4: " "
         RenderMenuList {SELECT} at (88,2) size 84x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 56x19
+          RenderBlock (anonymous) at (4,2) size 56x20
             RenderText at (0,0) size 56x19
               text run at (0,0) width 56: "xxxxxxxx"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,718) size 769x20
+      RenderBlock {DIV} at (0,723) size 769x21
         RenderInline {FONT} at (0,0) size 144x12
           RenderText {#text} at (0,0) size 0x0
           RenderMenuList {SELECT} at (0,0) size 35x20 [bgcolor=#FFFFFF]
@@ -238,20 +238,20 @@ layer at (0,0) size 785x754
               RenderText at (0,0) size 40x12
                 text run at (0,0) width 40: "xxxxxxxx"
           RenderText {#text} at (0,0) size 0x0
-layer at (15,283) size 98x19
+layer at (15,285) size 98x19
   RenderBlock {DIV} at (2,2) size 98x19
     RenderText {#text} at (0,0) size 51x19
       text run at (0,0) width 51: "text field"
-layer at (450,283) size 199x42
+layer at (450,285) size 199x42
   RenderTextControl {TEXTAREA} at (4,4) size 199x42
     RenderBlock {DIV} at (2,2) size 195x19
       RenderText {#text} at (0,0) size 48x19
         text run at (0,0) width 48: "textarea"
-layer at (38,567) size 98x19
+layer at (38,571) size 98x19
   RenderBlock {DIV} at (2,2) size 98x19
     RenderText {#text} at (0,0) size 51x19
       text run at (0,0) width 51: "text field"
-layer at (426,538) size 199x42
+layer at (426,542) size 199x42
   RenderTextControl {TEXTAREA} at (418,2) size 199x42
     RenderBlock {DIV} at (2,2) size 195x19
       RenderText {#text} at (0,0) size 48x19

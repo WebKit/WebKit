@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (491,77) size 102x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=629.00] [y=99.00] [width=130.00] [height=30.00]
         RenderSVGRect {rect} at (492,78) size 103x25 [fill={[type=SOLID] [color=#000080]}] [x=631.00] [y=101.00] [width=130.00] [height=30.00]
         RenderSVGRect {rect} at (492,78) size 102x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=630.00] [y=100.00] [width=130.00] [height=30.00]
-        RenderSVGText {text} at (647,108) size 95x15 contains 1 chunk(s)
+        RenderSVGText {text} at (647,108) size 96x15 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 95x15
             RenderSVGInlineText {#text} at (0,0) size 95x15
               chunk 1 (middle anchor) text run 1 at (647.64,120.40) startOffset 0 endOffset 15 width 94.72: "Remove Button 1"
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (155,233) size 118x48 [fill={[type=SOLID] [color=#FFFFFF]}] [x=199.00] [y=299.00] [width=150.00] [height=60.00]
         RenderSVGRect {rect} at (157,235) size 118x48 [fill={[type=SOLID] [color=#000080]}] [x=201.00] [y=301.00] [width=150.00] [height=60.00]
         RenderSVGRect {rect} at (156,234) size 118x48 [fill={[type=SOLID] [color=#B0C4DE]}] [x=200.00] [y=300.00] [width=150.00] [height=60.00]
-        RenderSVGText {text} at (228,310) size 93x41 contains 1 chunk(s)
+        RenderSVGText {text} at (228,310) size 94x42 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 93x15
             RenderSVGInlineText {#text} at (0,0) size 93x15
               chunk 1 (middle anchor) text run 1 at (228.92,322.20) startOffset 0 endOffset 19 width 92.16: "This is a multiline"

@@ -1,20 +1,20 @@
-layer at (0,0) size 785x1379
+layer at (0,0) size 785x1383
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1379
-  RenderBlock {HTML} at (0,0) size 785x1379
-    RenderBody {BODY} at (8,8) size 769x1363
+layer at (0,0) size 785x1383
+  RenderBlock {HTML} at (0,0) size 785x1384
+    RenderBody {BODY} at (8,8) size 769x1368
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 397x36
           text run at (0,0) width 397: "Example 6: Table Stress Test"
-      RenderBlock {PRE} at (0,58) size 769x15 [color=#FF0000]
+      RenderBlock {PRE} at (0,58) size 769x16 [color=#FF0000]
         RenderText {#text} at (0,0) size 272x15
           text run at (0,0) width 272: "Resize document for maximum effect"
-      RenderBlock (anonymous) at (0,86) size 769x19
+      RenderBlock (anonymous) at (0,86) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {H2} at (0,124) size 769x28
+      RenderBlock {H2} at (0,125) size 769x29
         RenderText {#text} at (0,0) size 500x28
           text run at (0,0) width 500: "Auto-width tables with spans nested 8 levels deep"
-      RenderTable {TABLE} at (0,171) size 769x362 [bgcolor=#FF0000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,173) size 769x363 [bgcolor=#FF0000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x360
           RenderTableRow {TR} at (0,2) size 767x23
             RenderTableCell {TD} at (2,2) size 28x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -196,12 +196,12 @@ layer at (0,0) size 785x1379
             RenderTableCell {TD} at (724,335) size 41x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "Cell"
-      RenderBlock (anonymous) at (0,533) size 769x19
+      RenderBlock (anonymous) at (0,535) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {H2} at (0,571) size 769x28
+      RenderBlock {H2} at (0,574) size 769x29
         RenderText {#text} at (0,0) size 396x28
           text run at (0,0) width 396: "100% width tables nested 6 levels deep"
-      RenderTable {TABLE} at (0,618) size 769x745 [bgcolor=#FFFF00] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,622) size 769x746 [bgcolor=#FFFF00] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x743
           RenderTableRow {TR} at (0,2) size 767x23
             RenderTableCell {TD} at (2,2) size 616x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

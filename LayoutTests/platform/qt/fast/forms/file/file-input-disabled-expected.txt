@@ -5,11 +5,11 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x74
         RenderBlock (anonymous) at (0,0) size 784x74
-          RenderBlock {INPUT} at (3,4) size 13x13
-          RenderInline {B} at (0,0) size 73x19
-            RenderText {#text} at (19,0) size 73x19
-              text run at (19,0) width 73: "Attach File"
-          RenderBR {BR} at (92,15) size 0x0
+          RenderBlock {INPUT} at (3,4) size 14x13
+          RenderInline {B} at (0,0) size 74x19
+            RenderText {#text} at (20,0) size 74x19
+              text run at (20,0) width 74: "Attach File"
+          RenderBR {BR} at (93,15) size 1x0
           RenderBR {BR} at (0,20) size 0x19
           RenderText {#text} at (0,47) size 82x19
             text run at (0,47) width 82: "  Select File:  "

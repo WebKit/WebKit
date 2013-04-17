@@ -160,7 +160,7 @@ layer at (0,0) size 785x2315
                 text run at (66,1) width 21: "xxx"
       RenderBlock (anonymous) at (0,1858) size 769x19
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (10,1877) size 748x422 [bgcolor=#808080]
+      RenderTable {TABLE} at (10,1877) size 749x422 [bgcolor=#808080]
         RenderTableSection {TBODY} at (0,0) size 748x422
           RenderTableRow {TR} at (0,4) size 748x414
             RenderTableCell {TD} at (4,4) size 740x414 [r=0 c=0 rs=1 cs=1]

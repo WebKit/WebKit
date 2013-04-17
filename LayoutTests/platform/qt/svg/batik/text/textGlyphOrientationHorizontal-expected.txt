@@ -16,7 +16,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (224,44) size 176x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,60.00)}]
         RenderSVGContainer {use} at (239,60) size 161x60
           RenderSVGPath {path} at (239,60) size 161x60 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 20 40 C 40 20 60 0 80 20 C 100 40 120 60 140 40 C 160 20 180 20 180 20"]
-        RenderSVGText {text} at (4,-16) size 138x71 contains 1 chunk(s)
+        RenderSVGText {text} at (4,-16) size 139x71 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 138x71
             RenderSVGInlineText {#text} at (0,4) size 71x55
               chunk 1 text run 1 at (25.68,34.36) startOffset 0 endOffset 1 width 16.00: "B"
@@ -56,7 +56,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (37,150) size 333x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,150.00)}]
         RenderSVGContainer {use} at (49,150) size 321x60
           RenderSVGPath {path} at (49,150) size 321x60 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 20 40 C 60 20 100 0 140 20 C 180 40 220 60 260 40 C 300 20 340 20 340 20"]
-        RenderSVGText {text} at (7,0) size 326x51 contains 1 chunk(s)
+        RenderSVGText {text} at (7,0) size 327x51 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 326x51
             RenderSVGInlineText {#text} at (0,0) size 168x43
               chunk 1 text run 1 at (32.54,33.77) startOffset 0 endOffset 1 width 16.00: "B"
@@ -135,7 +135,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (37,338) size 333x62 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,340.00)}]
         RenderSVGContainer {use} at (49,340) size 321x60
           RenderSVGPath {path} at (49,340) size 321x60 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 20 40 C 60 20 100 0 140 20 C 180 40 220 60 260 40 C 300 20 340 20 340 20"]
-        RenderSVGText {text} at (7,-2) size 323x55 contains 1 chunk(s)
+        RenderSVGText {text} at (7,-2) size 324x56 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 323x55
             RenderSVGInlineText {#text} at (0,0) size 159x45
               chunk 1 text run 1 at (32.54,33.77) startOffset 0 endOffset 1 width 16.00: "B"

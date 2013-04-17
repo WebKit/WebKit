@@ -60,14 +60,14 @@ layer at (0,0) size 800x600
                                   text run at (3,3) width 44: "Rohstoffe"
                           RenderTableRow {TR} at (0,22) size 297x18 [bgcolor=#E7E7AD]
                             RenderTableCell {TD} at (1,22) size 204x17 [r=1 c=0 rs=1 cs=1]
-                              RenderImage {IMG} at (97,3) size 11x11
+                              RenderImage {IMG} at (96,3) size 12x11
                             RenderTableCell {TD} at (206,23) size 90x16 [r=1 c=1 rs=1 cs=1]
                               RenderInline {FONT} at (0,0) size 16x13
                                 RenderInline {A} at (0,0) size 16x13 [color=#0000EE]
                                   RenderImage {IMG} at (37,3) size 16x10
                           RenderTableRow {TR} at (0,41) size 297x19 [bgcolor=#E7DEA5]
                             RenderTableCell {TD} at (1,42) size 204x17 [r=2 c=0 rs=1 cs=1]
-                              RenderImage {IMG} at (97,3) size 11x11
+                              RenderImage {IMG} at (96,3) size 12x11
                             RenderTableCell {TD} at (206,42) size 90x16 [r=2 c=1 rs=1 cs=1]
                               RenderInline {FONT} at (0,0) size 16x13
                                 RenderInline {A} at (0,0) size 16x13 [color=#0000EE]

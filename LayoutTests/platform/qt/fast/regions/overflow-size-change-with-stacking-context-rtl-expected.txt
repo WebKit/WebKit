@@ -20,10 +20,10 @@ Flow Threads
     layer at (41,6) size 218x299 clip at (42,7) size 216x297 scrollX 284 scrollWidth 500
       RenderBlock (relative positioned) {DIV} at (36,1) size 218x299 [border: (1px solid #008000)]
         RenderBlock {P} at (1,36) size 216x115
-          RenderText {#text} at (88,0) size 229x115
-            text run at (88,0) width 141: "These lines will not spill"
-            text run at (88,19) width 141: "out of the regions."
-            text run at (88,38) width 141: "These lines will not spill"
+          RenderText {#text} at (88,0) size 228x115
+            text run at (88,0) width 140: "These lines will not spill"
+            text run at (88,19) width 140: "out of the regions."
+            text run at (88,38) width 140: "These lines will not spill"
             text run at (0,58) width 121: "out of the regions. "
             text run at (121,58) width 95: "These lines will"
             text run at (0,77) width 216: "not spill out of the regions. These"

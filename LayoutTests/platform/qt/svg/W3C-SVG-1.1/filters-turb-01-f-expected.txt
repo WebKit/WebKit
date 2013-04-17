@@ -33,7 +33,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (193,108) size 64x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x12
             chunk 1 (middle anchor) text run 1 at (193.00,117.00) startOffset 0 endOffset 15 width 64.00: "type=turbulence"
-        RenderSVGText {text} at (186,120) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (186,120) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (186.50,129.00) startOffset 0 endOffset 17 width 77.00: "baseFrequency=0.1"
         RenderSVGText {text} at (195,132) size 60x12 contains 1 chunk(s)
@@ -52,10 +52,10 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 1 at (345.00,141.00) startOffset 0 endOffset 12 width 60.00: "numOctaves=8"
         RenderSVGRect {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb4"] RenderSVGResourceFilter {filter} at (25,180) size 100x75
-        RenderSVGText {text} at (40,263) size 69x12 contains 1 chunk(s)
+        RenderSVGText {text} at (40,263) size 70x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 69x12
             chunk 1 (middle anchor) text run 1 at (40.50,272.00) startOffset 0 endOffset 17 width 69.00: "type=fractalNoise"
-        RenderSVGText {text} at (36,275) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (36,275) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (36.50,284.00) startOffset 0 endOffset 17 width 77.00: "baseFrequency=0.1"
         RenderSVGText {text} at (45,287) size 60x12 contains 1 chunk(s)
@@ -63,10 +63,10 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 1 at (45.00,296.00) startOffset 0 endOffset 12 width 60.00: "numOctaves=4"
         RenderSVGRect {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb5"] RenderSVGResourceFilter {filter} at (175,180) size 100x75
-        RenderSVGText {text} at (190,263) size 69x12 contains 1 chunk(s)
+        RenderSVGText {text} at (190,263) size 70x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 69x12
             chunk 1 (middle anchor) text run 1 at (190.50,272.00) startOffset 0 endOffset 17 width 69.00: "type=fractalNoise"
-        RenderSVGText {text} at (186,275) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (186,275) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (186.50,284.00) startOffset 0 endOffset 17 width 77.00: "baseFrequency=0.4"
         RenderSVGText {text} at (195,287) size 60x12 contains 1 chunk(s)
@@ -74,10 +74,10 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 1 at (195.00,296.00) startOffset 0 endOffset 12 width 60.00: "numOctaves=4"
         RenderSVGRect {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb6"] RenderSVGResourceFilter {filter} at (325,180) size 100x75
-        RenderSVGText {text} at (340,263) size 69x12 contains 1 chunk(s)
+        RenderSVGText {text} at (340,263) size 70x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 69x12
             chunk 1 (middle anchor) text run 1 at (340.50,272.00) startOffset 0 endOffset 17 width 69.00: "type=fractalNoise"
-        RenderSVGText {text} at (336,275) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (336,275) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (336.50,284.00) startOffset 0 endOffset 17 width 77.00: "baseFrequency=0.1"
         RenderSVGText {text} at (345,287) size 60x12 contains 1 chunk(s)

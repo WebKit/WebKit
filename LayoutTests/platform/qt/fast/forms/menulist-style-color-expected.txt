@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (2,3) size 71x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 43x19
+        RenderBlock (anonymous) at (4,2) size 43x20
           RenderText at (0,0) size 43x19
             text run at (0,0) width 43: "Default"
       RenderText {#text} at (75,5) size 4x19
         text run at (75,5) width 4: " "
       RenderMenuList {SELECT} at (81,3) size 53x24 [color=#FF0000] [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 25x19
+        RenderBlock (anonymous) at (4,2) size 25x20
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "Red"
       RenderText {#text} at (136,5) size 4x19

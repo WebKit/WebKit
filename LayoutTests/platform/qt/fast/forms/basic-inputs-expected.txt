@@ -50,21 +50,21 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (10,407) size 450x22 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 7x19
           text run at (1,1) width 7: "a"
-        RenderBlock {INPUT} at (11,5) size 13x13
-        RenderText {#text} at (27,1) size 63x19
-          text run at (27,1) width 63: "checkbox "
-        RenderBlock {INPUT} at (93,5) size 13x13
-        RenderText {#text} at (109,1) size 8x19
-          text run at (109,1) width 8: "b"
+        RenderBlock {INPUT} at (11,5) size 14x13
+        RenderText {#text} at (28,1) size 64x19
+          text run at (28,1) width 64: "checkbox "
+        RenderBlock {INPUT} at (95,5) size 14x13
+        RenderText {#text} at (111,1) size 9x19
+          text run at (111,1) width 9: "b"
       RenderBlock {DIV} at (10,439) size 450x22 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 7x19
           text run at (1,1) width 7: "a"
-        RenderBlock {INPUT} at (11,6) size 12x12
-        RenderText {#text} at (26,1) size 35x19
-          text run at (26,1) width 35: "radio "
-        RenderBlock {INPUT} at (64,6) size 12x12
-        RenderText {#text} at (79,1) size 8x19
-          text run at (79,1) width 8: "b"
+        RenderBlock {INPUT} at (11,6) size 13x12
+        RenderText {#text} at (27,1) size 36x19
+          text run at (27,1) width 36: "radio "
+        RenderBlock {INPUT} at (66,6) size 13x12
+        RenderText {#text} at (81,1) size 9x19
+          text run at (81,1) width 9: "b"
 layer at (30,327) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19
     RenderText {#text} at (0,0) size 183x19

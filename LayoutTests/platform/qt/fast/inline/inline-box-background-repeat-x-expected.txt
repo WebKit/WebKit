@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x554
-  RenderBlock {HTML} at (0,0) size 800x554
-    RenderBody {BODY} at (8,21) size 784x350
+layer at (0,0) size 800x558
+  RenderBlock {HTML} at (0,0) size 800x558
+    RenderBody {BODY} at (8,21) size 784x353
       RenderBlock {H1} at (0,0) size 784x37 [color=#990000]
         RenderText {#text} at (0,0) size 699x36
           text run at (0,0) width 699: "Webkit background image positioning on RTL text"
-      RenderBlock {H2} at (0,58) size 784x28
+      RenderBlock {H2} at (0,58) size 784x29
         RenderText {#text} at (0,0) size 262x28
           text run at (0,0) width 262: "Behaviour within <p> tag"
-      RenderBlock (floating) {DIV} at (0,105) size 318x196 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (0,106) size 318x197 [bgcolor=#DDDDDD]
         RenderBlock {P} at (6,22) size 306x152
           RenderText {#text} at (22,0) size 275x152
             text run at (22,0) width 242: "Lorem ipsum dolor sit amet, consectetur"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x554
             text run at (22,114) width 275: "nisl. Duis malesuada quam vel augue hendrerit"
             text run at (22,133) width 40: "porta. "
             text run at (62,133) width 179: "Nulla vitae elementum mauris."
-      RenderBlock (floating) {DIV} at (332,105) size 318x196 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (332,106) size 318x197 [bgcolor=#DDDDDD]
         RenderBlock {P} at (6,22) size 306x152
           RenderText {#text} at (40,0) size 264x152
             text run at (40,0) width 244 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
@@ -36,11 +36,11 @@ layer at (0,0) size 800x554
             text run at (20,95) width 264 RTL: "\x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
             text run at (40,114) width 244 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
             text run at (150,133) width 134 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
-      RenderBlock {HR} at (0,301) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,322) size 784x28
+      RenderBlock {HR} at (0,302) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,324) size 784x29
         RenderText {#text} at (0,0) size 261x28
           text run at (0,0) width 261: "Behaviour within <a> tag"
-      RenderBlock (floating) {DIV} at (0,369) size 318x164 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (0,372) size 318x165 [bgcolor=#DDDDDD]
         RenderInline {A} at (0,0) size 304x152 [color=#0000EE]
           RenderText {#text} at (28,6) size 304x152
             text run at (28,6) width 242: "Lorem ipsum dolor sit amet, consectetur"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x554
             text run at (200,120) width 64: "Nulla vitae"
             text run at (6,139) width 111: "elementum mauris."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (floating) {DIV} at (332,369) size 318x145 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (332,372) size 318x146 [bgcolor=#DDDDDD]
         RenderInline {A} at (0,0) size 294x133 [color=#0000EE]
           RenderText {#text} at (46,6) size 294x133
             text run at (46,6) width 244 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"

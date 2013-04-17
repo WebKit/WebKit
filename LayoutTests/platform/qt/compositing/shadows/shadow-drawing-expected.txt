@@ -12,14 +12,14 @@ layer at (0,0) size 800x311
           text run at (302,150) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (59,139) size 200x86
-  RenderBlock {P} at (1,38) size 200x86 [color=#0000FF]
+  RenderBlock {P} at (1,38) size 200x87 [color=#0000FF]
     RenderText {#text} at (24,1) size 152x84
       text run at (24,1) width 152: "Shadowed"
       text run at (73,44) width 54: "text"
 layer at (364,101) size 202x152
   RenderBlock {DIV} at (356,50) size 202x152 [border: (1px solid #000000)]
 layer at (365,139) size 200x86
-  RenderBlock {P} at (1,38) size 200x86 [color=#0000FF]
+  RenderBlock {P} at (1,38) size 200x87 [color=#0000FF]
     RenderText {#text} at (24,1) size 152x84
       text run at (24,1) width 152: "Shadowed"
       text run at (73,44) width 54: "text"

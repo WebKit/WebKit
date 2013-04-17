@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         text run at (0,0) width 444: "This tests that empty select controls and buttons have the correct baseline."
       RenderBR {BR} at (444,15) size 0x0
       RenderMenuList {SELECT} at (2,27) size 35x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 7x19
+        RenderBlock (anonymous) at (4,2) size 7x20
           RenderBR at (0,0) size 0x19 [bgcolor=#FFFFFF]
       RenderText {#text} at (39,29) size 29x19
         text run at (39,29) width 29: " test "
       RenderMenuList {SELECT} at (70,27) size 49x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 21x19
+        RenderBlock (anonymous) at (4,2) size 21x20
           RenderText at (0,0) size 21x19
             text run at (0,0) width 21: "test"
       RenderText {#text} at (121,29) size 4x19
