@@ -1,3 +1,24 @@
+2013-04-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r148584): WebKit nightly builds don't load any page
+        https://bugs.webkit.org/show_bug.cgi?id=114752
+
+        Reviewed by Anders Carlsson.
+
+        We can't use C++ style (//) comments in Platform.h because WebKit2/DerivedSource.make doesn't know
+        how to strip it to be merged with *.sb.in to generate *.sb files. Specifically, we have:
+        
+        # Some versions of clang incorrectly strip out // comments in c89 code.
+        # Use -traditional as a workaround, but only when needed since that causes
+        # other problems with later versions of clang.
+        ifeq ($(shell echo '//x' | $(CC) -E -P -x c -std=c89 - | grep x),)
+        TEXT_PREPROCESSOR_FLAGS=-E -P -x c -traditional -w
+        else
+        TEXT_PREPROCESSOR_FLAGS=-E -P -x c -std=c89 -w
+        endif
+
+        * wtf/Platform.h:
+
 2013-04-17  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Remove Include Settings for Pthreads from WTF

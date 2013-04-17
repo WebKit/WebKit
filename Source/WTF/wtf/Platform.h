@@ -1027,11 +1027,10 @@
 #endif
 
 #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
-// Some platforms provide UI for suggesting autocorrection.
+/* Some platforms provide UI for suggesting autocorrection. */
 #define WTF_USE_AUTOCORRECTION_PANEL 1
-// Some platforms use spelling and autocorrection markers to provide visual cue.
-// On such platform, if word with marker is edited, we need to remove the marker.
+/* Some platforms use spelling and autocorrection markers to provide visual cue. On such platform, if word with marker is edited, we need to remove the marker. */
 #define WTF_USE_MARKER_REMOVAL_UPON_EDITING 1
-#endif // #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
+#endif /* #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070) */
 
 #endif /* WTF_Platform_h */
