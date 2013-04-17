@@ -56,7 +56,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_currentHeight(0)
     , m_context(BlackBerry::Platform::Graphics::createWebGLContext())
     , m_compiler(SH_ESSL_OUTPUT)
-    , m_extensions(adoptPtr(new Extensions3DOpenGLES(this)))
     , m_attrs(attrs)
     , m_texture(0)
     , m_fbo(0)
@@ -109,10 +108,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
     getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
+    Extensions3D* extensions = getExtensions();
     ANGLEResources.MaxDrawBuffers = 1; // Always set to 1 for OpenGL ES.
-    ANGLEResources.OES_standard_derivatives = m_extensions->supports("GL_OES_standard_derivatives");
-    ANGLEResources.OES_EGL_image_external = m_extensions->supports("GL_EGL_image_external");
-    ANGLEResources.ARB_texture_rectangle = m_extensions->supports("GL_ARB_texture_rectangle");
+    ANGLEResources.OES_standard_derivatives = extensions->supports("GL_OES_standard_derivatives");
+    ANGLEResources.OES_EGL_image_external = extensions->supports("GL_EGL_image_external");
+    ANGLEResources.ARB_texture_rectangle = extensions->supports("GL_ARB_texture_rectangle");
 
     GC3Dint range[2], precision;
     getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
