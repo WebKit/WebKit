@@ -53,8 +53,8 @@ class DeprecatedPortTest(unittest.TestCase):
 
     def test_efl_port(self):
         self.assertEqual(EflPort().flag(), "--port=efl")
-        self.assertEqual(EflPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--efl", "--update-efl", DeprecatedPort().makeArgs()])
-        self.assertEqual(EflPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--efl", "--update-efl", DeprecatedPort().makeArgs()])
+        self.assertEqual(EflPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--efl", "--update-efl", "--no-webkit2", DeprecatedPort().makeArgs()])
+        self.assertEqual(EflPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--efl", "--update-efl", "--no-webkit2", DeprecatedPort().makeArgs()])
 
     def test_qt_port(self):
         self.assertEqual(QtPort().flag(), "--port=qt")

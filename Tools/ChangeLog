@@ -1,3 +1,10 @@
+2013-04-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_efl_port): Adjusting the expected outcome of the EFL build-webkit command after r148589.
+
 2013-04-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Enable sub-pixel layout.
