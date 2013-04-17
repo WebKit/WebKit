@@ -6,4 +6,4 @@ set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj/WebKitExportGenerator
 
 echo Generating export definitions
 del /F /Q "%GeneratorDirectory%/DerivedSources/WebKitExportGenerator.cpp"
-bash -c "${WEBKIT_SOURCE}/WebCore/make-export-file-generator ./WebKitExports.def.in '%GeneratorDirectory%/DerivedSources/WebKitExportGenerator.cpp'"
+bash -c "./make-export-file-generator ./WebKitExports.def.in '%GeneratorDirectory%/DerivedSources/WebKitExportGenerator.cpp'"

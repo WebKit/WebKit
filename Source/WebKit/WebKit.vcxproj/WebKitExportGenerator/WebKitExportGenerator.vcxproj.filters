@@ -4,6 +4,7 @@
     <None Include="WebKitExportGeneratorBuildCmd.cmd" />
     <None Include="WebKitExportGeneratorPostBuild.cmd" />
     <None Include="WebKitExportGeneratorPreBuild.cmd" />
+    <None Include="make-export-file-generator" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\WebKitExportGenerator\DerivedSources\WebKitExportGenerator.cpp" />

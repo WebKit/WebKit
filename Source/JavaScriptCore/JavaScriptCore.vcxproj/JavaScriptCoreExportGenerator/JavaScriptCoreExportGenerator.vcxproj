@@ -149,6 +149,7 @@
     <CustomBuild Include="JavaScriptCoreExports.def.in">
       <FileType>Document</FileType>
     </CustomBuild>
+    <None Include="make-export-file-generator" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\JavaScriptCoreExportGenerator\DerivedSources\JavaScriptCoreExportGenerator.cpp" />

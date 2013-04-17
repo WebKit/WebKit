@@ -1,3 +1,13 @@
+2013-04-14  Roger Fong  <roger_fong@apple.com>
+
+        Copy make-file-export-generator script to the the Source folders of the projects that use it.
+        <rdar://problem/13675604>
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj.filters:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/make-export-file-generator: Copied from Source/WebCore/make-export-file-generator.
+
 2013-04-16  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed VS2010 build correction.

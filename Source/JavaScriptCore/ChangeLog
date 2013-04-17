@@ -1,3 +1,13 @@
+2013-04-14  Roger Fong  <roger_fong@apple.com>
+
+        Copy make-file-export-generator script to the the Source folders of the projects that use it.
+        <rdar://problem/13675604>
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorBuildCmd.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/make-export-file-generator: Copied from Source/WebCore/make-export-file-generator.
+
 2013-04-17  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Stop individually building WTF files in JSC.

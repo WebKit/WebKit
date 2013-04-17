@@ -144,6 +144,7 @@
     <CustomBuild Include="WebKitExports.def.in">
       <FileType>Document</FileType>
     </CustomBuild>
+    <None Include="make-export-file-generator" />
     <None Include="WebKitExportGeneratorBuildCmd.cmd" />
     <None Include="WebKitExportGeneratorPostBuild.cmd" />
     <None Include="WebKitExportGeneratorPreBuild.cmd">
