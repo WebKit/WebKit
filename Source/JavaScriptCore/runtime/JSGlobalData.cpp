@@ -487,6 +487,7 @@ void JSGlobalData::releaseExecutableMemory()
     if (dynamicGlobalObject) {
         StackPreservingRecompiler recompiler;
         HashSet<JSCell*> roots;
+        heap.canonicalizeCellLivenessData();
         heap.getConservativeRegisterRoots(roots);
         HashSet<JSCell*>::iterator end = roots.end();
         for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {

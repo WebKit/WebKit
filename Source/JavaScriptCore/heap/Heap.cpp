@@ -405,6 +405,11 @@ inline JSStack& Heap::stack()
     return m_globalData->interpreter->stack();
 }
 
+void Heap::canonicalizeCellLivenessData()
+{
+    m_objectSpace.canonicalizeCellLivenessData();
+}
+
 void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
 {
     ASSERT(isValidThreadState(m_globalData));

@@ -161,6 +161,7 @@ namespace JSC {
         HandleSet* handleSet() { return &m_handleSet; }
         HandleStack* handleStack() { return &m_handleStack; }
 
+        void canonicalizeCellLivenessData();
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
         double lastGCLength() { return m_lastGCLength; }

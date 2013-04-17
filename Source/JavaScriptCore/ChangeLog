@@ -1,3 +1,17 @@
+2013-04-17  Mark Lam  <mark.lam@apple.com>
+
+        releaseExecutableMemory() should canonicalize cell liveness data before
+        it scans the GC roots.
+        https://bugs.webkit.org/show_bug.cgi?id=114733.
+
+        Reviewed by Mark Hahnenberg.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::canonicalizeCellLivenessData):
+        * heap/Heap.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::releaseExecutableMemory):
+
 2013-04-16  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148576.
