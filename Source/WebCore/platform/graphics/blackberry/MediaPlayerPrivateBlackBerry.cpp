@@ -23,13 +23,16 @@
 
 #include "CookieManager.h"
 #include "CredentialStorage.h"
+#include "DOMFileSystemBase.h"
 #include "HostWindow.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamRegistry.h"
+#include "SecurityOrigin.h"
 
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformPrimitives.h>
 #include <BlackBerryPlatformSettings.h>
+#include <BlackBerryPlatformWebFileSystem.h>
 #include <FrameLoaderClientBlackBerry.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -146,7 +149,41 @@ void MediaPlayerPrivate::load(const WTF::String& url)
         kurl.setPath(tempPath);
         modifiedUrl = kurl.string();
     }
-    if (modifiedUrl.startsWith("file://")) {
+    // filesystem: URLs refer to entities in the Web File System (WFS) and are
+    // intended to be useable by HTML 5 media elements directly. Unfortunately
+    // the loader for our media player is implemented in a separate process and
+    // does not have access to WFS, so we translate to a file:// URL. Normally
+    // this would be a security violation, but since the MediaElement has
+    // already done a security check on the filesystem: URL as part of the
+    // media resource selection algorithm, we should be OK here.
+    if (modifiedUrl.startsWith("filesystem:")) {
+        KURL kurl = KURL(KURL(), modifiedUrl);
+        KURL mediaURL;
+        WTF::String fsPath;
+        FileSystemType fsType;
+        WebFileSystem::Type type;
+
+        // Extract the root and file paths from WFS
+        DOMFileSystemBase::crackFileSystemURL(kurl, fsType, fsPath);
+        if (fsType == FileSystemTypeTemporary)
+            type = WebFileSystem::Temporary;
+        else
+            type = WebFileSystem::Persistent;
+        WTF::String fsRoot = BlackBerry::Platform::WebFileSystem::rootPathForWebFileSystem(type);
+
+        // Build a BlackBerry::Platform::SecurityOrigin from the document's 
+        // WebCore::SecurityOrigin and serialize it to build the last
+        // path component
+        WebCore::SecurityOrigin* wkOrigin = m_webCorePlayer->mediaPlayerClient()->mediaPlayerOwningDocument()->securityOrigin();
+        BlackBerry::Platform::SecurityOrigin bbOrigin(wkOrigin->protocol(), wkOrigin->host(), wkOrigin->port());
+        WTF::String secOrigin(bbOrigin.serialize('_'));
+
+        // Build a file:// URL from the path components and extract it to 
+        // a string for further processing
+        mediaURL.setProtocol("file");
+        mediaURL.setPath(fsRoot + "/" + secOrigin + "/" + fsPath);
+        modifiedUrl = mediaURL.string();
+    } else if (modifiedUrl.startsWith("file://")) {
         // The QNX Multimedia Framework cannot handle filenames containing URL escape sequences.
         modifiedUrl = decodeURLEscapeSequences(modifiedUrl);
     }
@@ -576,12 +613,12 @@ void MediaPlayerPrivate::onMediaStatusChanged(PlatformPlayer::MMRPlayState)
     updateStates();
 }
 
-void MediaPlayerPrivate::onError(PlatformPlayer::Error type)
+void MediaPlayerPrivate::onError(PlatformPlayer::Error)
 {
     updateStates();
 }
 
-void MediaPlayerPrivate::onDurationChanged(float duration)
+void MediaPlayerPrivate::onDurationChanged(float)
 {
     updateStates();
     m_webCorePlayer->durationChanged();
@@ -722,7 +759,7 @@ void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
         this, m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient());
 }
 
-void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
+void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const ProtectionSpace&, AuthenticationChallengeResult result, const Credential& credential)
 {
     m_isAuthenticationChallenging = false;
 
