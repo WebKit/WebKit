@@ -42,70 +42,34 @@ editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/smart-paste-004.html
 editing/pasteboard/subframe-dragndrop-1.html
-editing/selection/14971.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
-editing/selection/5057506.html
-editing/selection/5232159.html
-editing/selection/5333725.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
-editing/selection/anchor-focus2.html
-editing/selection/anchor-focus3.html
 editing/selection/button-right-click.html
-editing/selection/click-in-margins-inside-editable-div.html
-editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/contains-boundaries.html
 editing/selection/context-menu-on-text.html
 editing/selection/doubleclick-beside-cr-span.html
-editing/selection/doubleclick-whitespace-crash.html
-editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
-editing/selection/drag-select-1.html
-editing/selection/drag-select-rapidly.html
-editing/selection/drag-start-event-client-x-y.html
 editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/empty-cell-right-click.html
-editing/selection/extend-after-mouse-selection.html
-editing/selection/extend-selection-after-double-click.html
-editing/selection/fake-drag.html
-editing/selection/inline-closest-leaf-child.html
-editing/selection/last-empty-inline.html
 editing/selection/mixed-editability-10.html
-editing/selection/paragraph-granularity.html
-editing/selection/select-from-textfield-outwards.html
 editing/selection/select-out-of-editable.html
-editing/selection/select-out-of-floated-contenteditable.html
-editing/selection/select-out-of-floated-input.html
-editing/selection/select-out-of-floated-textarea.html
-editing/selection/selection-actions.html
-editing/selection/shift-click.html
-editing/selection/user-drag-element-and-user-select-none.html
-editing/selection/word-granularity.html
 editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-paste-continuous-disabled.html
-editing/undo/undo-smart-delete-reversed-selection.html
-fast/block/positioning/hittest-on-relative-positioned-children.html
-fast/css/user-drag-none.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/vertical-scrollbar-in-rtl.html
-fast/dynamic/layer-hit-test-crash.html
-fast/encoding/mailto-always-utf-8.html
 fast/events/5056619.html
 fast/events/autoscroll-in-textfield.html
-fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
-fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/bogus-dropEffect-effectAllowed.html
-fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/context-no-deselect.html
 fast/events/context-onmousedown-event.html
 fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/crash-on-mutate-during-drop.html
-fast/events/dblclick-addEventListener.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
@@ -171,7 +135,6 @@ webkit.org/b/105616 platform/mac/editing/spelling/click-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/delete-into-autocorrected-word.html
-webkit.org/b/105616 platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/autocorrection-with-multi-line-text.html
 
