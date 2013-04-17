@@ -902,8 +902,12 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
             frameSelection->setFocused(true);
     }
 
-    m_spellingHandler->setSpellCheckActive(false);
-    m_processingTransactionId = 0;
+    // Cancel any preexisting spellcheck requests.
+    if (m_request) {
+        stopPendingSpellCheckRequests();
+        m_request->didCancel();
+        m_request = 0;
+    }
 
     // Clear the node details.
     m_currentFocusElement = 0;

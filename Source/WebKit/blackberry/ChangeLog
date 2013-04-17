@@ -1,3 +1,23 @@
+2013-04-17  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        Clean up spellcheck state when changing focus.
+        https://bugs.webkit.org/show_bug.cgi?id=114758
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        PR325941
+        If we lose focus while waiting for a spellcheck request to return, we will
+        never see the reply and continue to queue up future requests. By clearing
+        the queue we ensure that all requests being processed and waiting to fire
+        are valid.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+
 2013-04-17  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Check image node with usemap attribute isLink failed

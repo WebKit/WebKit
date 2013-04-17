@@ -43,6 +43,9 @@ SpellingHandler::~SpellingHandler()
 
 void SpellingHandler::spellCheckTextBlock(const WebCore::VisibleSelection& visibleSelection, WebCore::TextCheckingProcessType textCheckingProcessType)
 {
+    SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckTextBlock received request of type %s",
+        textCheckingProcessType == TextCheckingProcessBatch ? "Batch" : "Incremental");
+
     // Check if this request can be sent off in one message, or if it needs to be broken down.
     RefPtr<Range> rangeForSpellChecking = visibleSelection.toNormalizedRange();
     if (!rangeForSpellChecking || !rangeForSpellChecking->text() || !rangeForSpellChecking->text().length())
