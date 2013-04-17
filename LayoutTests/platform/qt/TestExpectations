@@ -199,10 +199,6 @@ fast/xsl/xslt-xhtml-template.xml
 fast/xpath/xpath-template-element.html
 fast/xsl/xslt-processor-template.html
 
-# Fail until SUBPIXEL_LAYOUT is enabled
-# https://bugs.webkit.org/show_bug.cgi?id=85532
-fast/sub-pixel
-
 # USE(V8)
 
 # v8 i18n extension.
@@ -2395,10 +2391,6 @@ jquery/data.html
 svg/zoom/text/zoom-hixie-mixed-009.xml
 svg/zoom/page/zoom-hixie-mixed-009.xml
 
-# This test depends on subpixel layout.
-# https://bugs.webkit.org/show_bug.cgi?id=92352
-css3/flexbox/flex-rounding.html
-
 # [Qt][GTK] REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey
 # https://bugs.webkit.org/show_bug.cgi?id=93812
 svg/custom/use-instanceRoot-as-event-target.xhtml
@@ -2734,3 +2726,8 @@ webkit.org/b/114338 compositing/overlap-blending/nested-non-overlap-clipping.htm
 
 # REGRESSION(r148378): editing/style/block-style-005.html failing
 webkit.org/b/114612 editing/style/block-style-005.html [ Skip ]
+
+# SUBPIXEL tests with missing baselines
+fast/sub-pixel/sub-pixel-accumulates-to-layers.html [ Missing ]
+fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Missing ]
+fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Missing ]
