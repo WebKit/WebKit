@@ -108,6 +108,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_buffer(0)
     , m_volumeTimerHandler(0)
     , m_muteTimerHandler(0)
+    , m_repaintHandler(0)
+    , m_volumeSignalHandler(0)
+    , m_muteSignalHandler(0)
 {
 }
 
