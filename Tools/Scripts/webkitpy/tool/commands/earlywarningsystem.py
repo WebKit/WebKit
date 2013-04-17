@@ -26,11 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
 from optparse import make_option
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config.ports import DeprecatedPort
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures
@@ -45,10 +47,10 @@ _log = logging.getLogger(__name__)
 class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDelegate):
     _build_style = "release"
     # FIXME: Switch _default_run_tests from opt-in to opt-out once more bots are ready to run tests.
-    _default_run_tests = False
+    run_tests = False
 
     def __init__(self):
-        options = [make_option("--run-tests", action="store_true", dest="run_tests", default=self._default_run_tests, help="Run the Layout tests for each patch")]
+        options = [make_option("--run-tests", action="store_true", dest="run_tests", default=self.run_tests, help="Run the Layout tests for each patch")]
         AbstractReviewQueue.__init__(self, options=options)
 
     def begin_work_queue(self):
@@ -135,67 +137,21 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         # FIXME: Why does this not exit(1) like the superclass does?
         _log.error(script_error.message_with_output())
 
+    @classmethod
+    def load_ews_classes(cls):
+        filesystem = FileSystem()
+        json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'ews.json')
+        try:
+            ewses = json.loads(filesystem.read_text_file(json_path))
+        except ValueError:
+            return None
 
-class GtkEWS(AbstractEarlyWarningSystem):
-    name = "gtk-ews"
-    port_name = "gtk"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "xan.lopez@gmail.com",
-    ]
-
-
-class GtkWK2EWS(AbstractEarlyWarningSystem):
-    name = "gtk-wk2-ews"
-    port_name = "gtk-wk2"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "xan.lopez@gmail.com",
-    ]
-
-
-class EflEWS(AbstractEarlyWarningSystem):
-    name = "efl-ews"
-    port_name = "efl"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "leandro@profusion.mobi",
-        "antognolli@profusion.mobi",
-        "lucas.demarchi@profusion.mobi",
-        "gyuyoung.kim@samsung.com",
-    ]
-
-
-class QtEWS(AbstractEarlyWarningSystem):
-    name = "qt-ews"
-    port_name = "qt"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "webkit-ews@sed.inf.u-szeged.hu",
-    ]
-
-
-class QtWK2EWS(AbstractEarlyWarningSystem):
-    name = "qt-wk2-ews"
-    port_name = "qt"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "webkit-ews@sed.inf.u-szeged.hu",
-    ]
-
-
-class WinEWS(AbstractEarlyWarningSystem):
-    name = "win-ews"
-    port_name = "win"
-
-class MacEWS(AbstractEarlyWarningSystem):
-    name = "mac-ews"
-    port_name = "mac"
-    _default_run_tests = True
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "rniwa@webkit.org",
-    ]
-
-
-class MacWK2EWS(AbstractEarlyWarningSystem):
-    name = "mac-wk2-ews"
-    port_name = "mac-wk2"
-    _default_run_tests = True
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "rniwa@webkit.org",
-    ]
+        classes = []
+        for name, config in ewses.iteritems():
+            classes.append(type(str(name.replace(' ', '')), (AbstractEarlyWarningSystem,), {
+                'name': config['port'] + '-ews',
+                'port_name': config['port'],
+                'watchers': config.get('watchers', []),
+                'run_tests': config.get('runTests', cls.run_tests),
+            }))
+        return classes

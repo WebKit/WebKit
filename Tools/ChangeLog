@@ -1,3 +1,26 @@
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Isolate Early Warning System definitions into a JSON
+        https://bugs.webkit.org/show_bug.cgi?id=114558
+
+        Reviewed by Benjamin Poulain.
+
+        Added ews.json to common/config, and made tool/commands/__init__.py call
+        AbstractEarlyWarningSystem.load_ews_classes to instantiate classes based on ews.json.
+
+        Reland the patch since the EWS failure was a false positive.
+
+        * Scripts/webkitpy/common/config/ews.json: Extracted from earlywarningsystem.py.
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem):
+        (AbstractEarlyWarningSystem.__init__):
+        (AbstractEarlyWarningSystem.load_ews_classes): Added. Loads ews.json.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSystemTest._default_expected_logs):
+        (_test_ews):
+        (test_ewses):
+
 2013-04-16  Sam Weinig  <sam@webkit.org>
 
         Fix fallout after r148545.
