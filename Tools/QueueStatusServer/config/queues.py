@@ -38,4 +38,5 @@ all_queue_names = [
     "mac-wk2-ews",
     "win-ews",
     "efl-ews",
+    "efl-wk2-ews",
 ]

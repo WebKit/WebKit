@@ -14,10 +14,13 @@
     "EFL EWS": {
         "port": "efl",
         "watchers": [
-            "leandro@profusion.mobi",
-            "antognolli@profusion.mobi",
-            "lucas.demarchi@profusion.mobi",
-            "gyuyoung.kim@samsung.com"
+            "gyuyoung.kim@webkit.org"
+        ]
+    },
+    "EFL WK2 EWS": {
+        "port": "efl-wk2",
+        "watchers": [
+            "gyuyoung.kim@webkit.org"
         ]
     },
     "Qt EWS": {
