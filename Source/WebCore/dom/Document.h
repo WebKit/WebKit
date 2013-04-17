@@ -1543,6 +1543,7 @@ private:
     double m_lastHandledUserGestureTimestamp;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
+    void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
 

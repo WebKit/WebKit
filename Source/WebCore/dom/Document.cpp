@@ -695,10 +695,7 @@ void Document::dispose()
     m_cssCanvasElements.clear();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    // FIXME: consider using ActiveDOMObject.
-    if (m_scriptedAnimationController)
-        m_scriptedAnimationController->clearDocumentPointer();
-    m_scriptedAnimationController.clear();
+    clearScriptedAnimationController();
 #endif
 }
 
@@ -2117,10 +2114,7 @@ void Document::detach()
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    // FIXME: consider using ActiveDOMObject.
-    if (m_scriptedAnimationController)
-        m_scriptedAnimationController->clearDocumentPointer();
-    m_scriptedAnimationController.clear();
+    clearScriptedAnimationController();
 #endif
 
     RenderObject* render = renderer();
@@ -5626,6 +5620,14 @@ void Document::serviceScriptedAnimations(double monotonicAnimationStartTime)
     if (!m_scriptedAnimationController)
         return;
     m_scriptedAnimationController->serviceScriptedAnimations(monotonicAnimationStartTime);
+}
+
+void Document::clearScriptedAnimationController()
+{
+    // FIXME: consider using ActiveDOMObject.
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->clearDocumentPointer();
+    m_scriptedAnimationController.clear();
 }
 #endif
 
