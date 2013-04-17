@@ -26,6 +26,7 @@
 #include "GraphicsLayer.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
+#include "Logging.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "RenderVideo.h"
