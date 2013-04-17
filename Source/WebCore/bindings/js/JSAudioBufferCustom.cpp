@@ -24,8 +24,10 @@
  */
 
 #include "config.h"
-#include "JSAudioBuffer.h"
 
+#if ENABLE(WEB_AUDIO)
+
+#include "JSAudioBuffer.h"
 #include "AudioBuffer.h"
 
 using namespace JSC;
@@ -49,3 +51,5 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, AudioBuffer* audi
 }
 
 }
+
+#endif // ENABLE(WEB_AUDIO)
