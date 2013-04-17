@@ -975,11 +975,12 @@ inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool 
     unsigned len = length();
     bool doSlowCheck = shouldIgnoreAttributeCase;
 
+    const AtomicString caseAdjustedName = shouldIgnoreAttributeCase ? name.lower() : name;
     // Optimize for the case where the attribute exists and its name exactly matches.
     for (unsigned i = 0; i < len; ++i) {
         const Attribute* attribute = attributeItem(i);
         if (!attribute->name().hasPrefix()) {
-            if (name == attribute->localName())
+            if (caseAdjustedName == attribute->localName())
                 return i;
         } else
             doSlowCheck = true;
