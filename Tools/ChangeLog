@@ -1,5 +1,17 @@
 2013-04-17  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Dashboard] Remove code for showing 'WebKit roll' annotations in timelines for Chromium builders
+        https://bugs.webkit.org/show_bug.cgi?id=114755
+
+        Reviewed by Ryosuke Niwa.
+
+        The Chromium builders are no longer available to inspect so there's no need for the code that used to show
+        the 'WebKit roll' annotations in the Chromium builders' timeline.
+
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+
+2013-04-17  Zan Dobersek  <zandobersek@gmail.com>
+
         [Dashboard] Clean up the timeline updating code, removing Chromium-specific cases
         https://bugs.webkit.org/show_bug.cgi?id=114756
 

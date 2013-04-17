@@ -130,15 +130,6 @@ function updateTimelineForBuilder()
             failureCount -= g_currentBuilderTestResults.flakyDeltasByBuild[i].total || 0;
 
         graphData.push([buildDate, failureCount]);
-
-        if (!shouldShowWebKitRevisionsOnly() && (results[WEBKIT_REVISIONS_KEY][i] != results[WEBKIT_REVISIONS_KEY][i + 1])) {
-            annotations.push({
-                series: FAILING_TESTS_DATASET_NAME,
-                x: buildDate,
-                shortText: 'R',
-                text: 'WebKit roll: r' + results[WEBKIT_REVISIONS_KEY][i + 1] + ' to ' + results[WEBKIT_REVISIONS_KEY][i]
-            });
-        }
     }
 
     var windowWidth = document.documentElement.clientWidth;
