@@ -1,3 +1,15 @@
+2013-04-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Remove Include Settings for Pthreads from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=114694
+
+        Reviewed by Ryosuke Niwa.
+
+        * WTF.vcproj/WTFCommon.vsprops: Remove pthread search path.
+        * WTF.vcxproj/WTFCommon.props: Remove pthread search path.
+        * wtf/FastMalloc.cpp: Guard pthread.h include for non-pthread
+        builds.
+
 2013-04-16  Oliver Hunt  <oliver@apple.com>
 
         Harden FastMalloc against partial pointer overflows

@@ -430,7 +430,9 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 #include "TCSystemAlloc.h"
 #include "ThreadSpecific.h"
 #include <algorithm>
+#if USE(PTHREADS)
 #include <pthread.h>
+#endif
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
