@@ -370,6 +370,8 @@
     <ClCompile Include="..\runtime\StructureChain.cpp" />
     <ClCompile Include="..\runtime\StructureRareData.cpp" />
     <ClCompile Include="..\runtime\SymbolTable.cpp" />
+    <ClCompile Include="..\runtime\Watchdog.cpp" />
+    <ClCompile Include="..\runtime\WatchdogNone.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
@@ -752,10 +754,10 @@
     <ClInclude Include="..\runtime\StructureRareDataInlines.h" />
     <ClInclude Include="..\runtime\StructureTransitionTable.h" />
     <ClInclude Include="..\runtime\SymbolTable.h" />
-    <ClInclude Include="..\runtime\Terminator.h" />
     <ClInclude Include="..\runtime\Tracing.h" />
     <ClInclude Include="..\runtime\TypedArrayDescriptor.h" />
     <ClInclude Include="..\runtime\Uint16WithFraction.h" />
+    <ClInclude Include="..\runtime\Watchdog.h" />
     <ClInclude Include="..\runtime\WeakGCMap.h" />
     <ClInclude Include="..\runtime\WeakRandom.h" />
     <ClInclude Include="..\runtime\WriteBarrier.h" />

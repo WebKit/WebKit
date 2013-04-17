@@ -767,7 +767,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 
     JSObject* errorObject = asObject(error);
     JSGlobalObject* globalObject = 0;
-    if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
+    if (isTerminatedExecutionException(error))
         globalObject = globalData->dynamicGlobalObject;
     else
         globalObject = errorObject->globalObject();
@@ -788,7 +788,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
-    bool isInterrupt = false;
+    bool isTermination = false;
 
     ASSERT(!exceptionValue.isEmpty());
     ASSERT(!exceptionValue.isCell() || exceptionValue.asCell());
@@ -810,7 +810,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
             addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source());
         }
 
-        isInterrupt = isInterruptedExecutionException(exception) || isTerminatedExecutionException(exception);
+        isTermination = isTerminatedExecutionException(exception);
     } else {
         if (!callFrame->globalData().exceptionStack.size()) {
             Vector<StackFrame> stack;
@@ -827,7 +827,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = 0;
-    while (isInterrupt || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+    while (isTermination || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
         if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
             if (LegacyProfiler* profiler = callFrame->globalData().enabledProfiler())
                 profiler->exceptionUnwind(callFrame);
@@ -1030,15 +1030,17 @@ failedJSONP:
 
     // Execute the code:
     JSValue result;
-    {
+    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
+        Watchdog::Scope watchdogScope(globalData.watchdog);
 
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_program_prologue);
 #elif ENABLE(JIT)
         result = program->generatedJITCode().execute(&m_stack, newCallFrame, &globalData);
 #endif // ENABLE(JIT)
-    }
+    } else
+        result = throwTerminatedExecutionException(newCallFrame);
 
     if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, program->sourceURL(), program->lineNo());
@@ -1100,8 +1102,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         profiler->willExecute(callFrame, function);
 
     JSValue result;
-    {
+    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
+        Watchdog::Scope watchdogScope(globalData.watchdog);
 
         // Execute the code:
         if (isJSCall) {
@@ -1112,7 +1115,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 #endif // ENABLE(JIT)
         } else
             result = JSValue::decode(callData.native.function(newCallFrame));
-    }
+    } else
+        result = throwTerminatedExecutionException(newCallFrame);
 
     if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, function);
@@ -1175,8 +1179,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         profiler->willExecute(callFrame, constructor);
 
     JSValue result;
-    {
+    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
+        Watchdog::Scope watchdogScope(globalData.watchdog);
 
         // Execute the code.
         if (isJSConstruct) {
@@ -1185,10 +1190,10 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 #elif ENABLE(JIT)
             result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_stack, newCallFrame, &globalData);
 #endif // ENABLE(JIT)
-        } else {
+        } else
             result = JSValue::decode(constructData.native.function(newCallFrame));
-        }
-    }
+    } else
+        result = throwTerminatedExecutionException(newCallFrame);
 
     if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, constructor);
@@ -1272,15 +1277,17 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 
     // Execute the code:
     JSValue result;
-    {
+    if (LIKELY(!globalData.watchdog.didFire(closure.newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        
+        Watchdog::Scope watchdogScope(globalData.watchdog);
+
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(closure.newCallFrame, llint_function_for_call_prologue);
 #elif ENABLE(JIT)
         result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_stack, closure.newCallFrame, &globalData);
 #endif // ENABLE(JIT)
-    }
+    } else
+        result = throwTerminatedExecutionException(closure.newCallFrame);
 
     if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(closure.oldCallFrame, closure.function);
@@ -1368,15 +1375,17 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     // Execute the code:
     JSValue result;
-    {
+    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        
+        Watchdog::Scope watchdogScope(globalData.watchdog);
+
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_eval_prologue);
 #elif ENABLE(JIT)
         result = eval->generatedJITCode().execute(&m_stack, newCallFrame, &globalData);
 #endif // ENABLE(JIT)
-    }
+    } else
+        result = throwTerminatedExecutionException(newCallFrame);
 
     if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo());

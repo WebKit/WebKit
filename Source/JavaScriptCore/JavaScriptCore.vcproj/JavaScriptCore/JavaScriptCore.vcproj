@@ -1370,11 +1370,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Terminator.h"
+				RelativePath="..\..\runtime\TypedArrayDescriptor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\TypedArrayDescriptor.h"
+				RelativePath="..\..\runtime\Watchdog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Watchdog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\WatchdogNone.cpp"
 				>
 			</File>
 			<File

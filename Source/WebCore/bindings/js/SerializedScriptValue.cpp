@@ -1902,9 +1902,6 @@ void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* 
     case StackOverflowError:
         throwError(exec, createStackOverflowError(exec));
         break;
-    case InterruptedExecutionError:
-        throwError(exec, createInterruptedExecutionException(&exec->globalData()));
-        break;
     case ValidationError:
         throwError(exec, createTypeError(exec, "Unable to deserialize data."));
         break;

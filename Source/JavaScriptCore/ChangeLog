@@ -1,3 +1,102 @@
+2013-04-17  Mark Lam  <mark.lam@apple.com>
+
+        Add LLINT and baseline JIT support for timing out scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=114577.
+
+        Reviewed by Geoffrey Garen.
+
+        Introduces the new Watchdog class which is used to track script
+        execution time, and initiate script termination if needed.
+
+        * API/JSContextRef.cpp:
+        (internalScriptTimeoutCallback):
+        (JSContextGroupSetExecutionTimeLimit):
+        (JSContextGroupClearExecutionTimeLimit):
+        * API/JSContextRefPrivate.h:
+        - Added new script execution time limit APIs.
+        * API/tests/testapi.c:
+        (currentCPUTime):
+        (shouldTerminateCallback):
+        (cancelTerminateCallback):
+        (extendTerminateCallback):
+        (main):
+        - Added new API tests for script execution time limit.
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoopHint):
+        - loop hints are needed for the llint as well. Hence, it will be
+          emitted unconditionally.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        - Added checks for script termination before entering script code.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitWatchdogTimerCheck):
+        * jit/JIT.h:
+        (JSC::JIT::emit_op_loop_hint):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION(void, handle_watchdog_timer)):
+        * jit/JITStubs.h:
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::doThrow):
+        - Factored out some common code from returnToThrow() and callToThrow().
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL(slow_path_handle_watchdog_timer)):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::throwTerminatedExecutionException):
+        - Also removed the now unused InterruptedExecutionException.
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        - Added watchdog, and removed the now obsolete Terminator.
+        * runtime/Terminator.h: Removed.
+        * runtime/Watchdog.cpp: Added.
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::~Watchdog):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::isEnabled):
+        (JSC::Watchdog::fire):
+        (JSC::Watchdog::arm):
+        (JSC::Watchdog::disarm):
+        (JSC::Watchdog::startCountdownIfNeeded):
+        (JSC::Watchdog::startCountdown):
+        (JSC::Watchdog::stopCountdown):
+        (JSC::Watchdog::Scope::Scope):
+        (JSC::Watchdog::Scope::~Scope):
+        * runtime/Watchdog.h: Added.
+        (Watchdog):
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::timerDidFireAddress):
+        (JSC::Watchdog::isArmed):
+        (Watchdog::Scope):
+        * runtime/WatchdogMac.cpp: Added.
+        (JSC::Watchdog::initTimer):
+        (JSC::Watchdog::destroyTimer):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        * runtime/WatchdogNone.cpp: Added.
+        (JSC::Watchdog::initTimer):
+        (JSC::Watchdog::destroyTimer):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+
 2013-04-14  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. VS2010 Windows build fix.

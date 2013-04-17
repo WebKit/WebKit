@@ -46,9 +46,9 @@
 #include "PrototypeMap.h"
 #include "SmallStrings.h"
 #include "Strong.h"
-#include "Terminator.h"
 #include "ThunkGenerators.h"
 #include "TypedArrayDescriptor.h"
+#include "Watchdog.h"
 #include "WeakRandom.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
@@ -211,6 +211,7 @@ namespace JSC {
         GlobalDataType globalDataType;
         ClientData* clientData;
         ExecState* topCallFrame;
+        Watchdog watchdog;
 
         const HashTable* arrayConstructorTable;
         const HashTable* arrayPrototypeTable;
@@ -233,7 +234,6 @@ namespace JSC {
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;
         Strong<Structure> debuggerActivationStructure;
-        Strong<Structure> interruptedExecutionErrorStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;
@@ -324,8 +324,6 @@ namespace JSC {
         NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
 #endif
         NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
-
-        Terminator terminator;
 
         JSValue exception;
         RefCountedArray<StackFrame> exceptionStack;

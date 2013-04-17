@@ -858,7 +858,8 @@ namespace JSC {
 #else
         void emitOptimizationCheck(OptimizationCheckKind) { }
 #endif
-        
+        void emitWatchdogTimerCheck();
+
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);
 #endif
@@ -945,6 +946,7 @@ namespace JSC {
 
     inline void JIT::emit_op_loop_hint(Instruction*)
     {
+        emitWatchdogTimerCheck();
         emitOptimizationCheck(LoopOptimizationCheck);
     }
 

@@ -717,6 +717,12 @@
     <ClCompile Include="..\runtime\SymbolTable.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\Watchdog.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\WatchdogNone.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\tools\CodeProfile.cpp">
       <Filter>tools</Filter>
     </ClCompile>
@@ -1790,9 +1796,6 @@
     <ClInclude Include="..\runtime\SymbolTable.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\Terminator.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\Tracing.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -1800,6 +1803,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Uint16WithFraction.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Watchdog.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\WeakGCMap.h">

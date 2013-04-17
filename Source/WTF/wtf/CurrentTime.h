@@ -51,10 +51,19 @@ inline double currentTimeMS()
 // On unsupported platforms, this function only guarantees the result will be non-decreasing.
 WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
+// Returns the current CPU time of the current thread in seconds.
+// Precision varies depending on platform but is usually as good or better
+// than a millisecond.
+WTF_EXPORT_PRIVATE double currentCPUTime();
+
+// Returns the current CPU time of the current thread in milliseconds.
+WTF_EXPORT_PRIVATE double currentCPUTimeMS();
+
 } // namespace WTF
 
 using WTF::currentTime;
 using WTF::currentTimeMS;
 using WTF::monotonicallyIncreasingTime;
+using WTF::currentCPUTime;
 
 #endif // CurrentTime_h

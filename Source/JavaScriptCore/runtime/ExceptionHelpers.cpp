@@ -41,33 +41,6 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(InterruptedExecutionError);
-
-const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InterruptedExecutionError) };
-
-JSValue InterruptedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
-{
-    if (hint == PreferString)
-        return jsNontrivialString(exec, String(ASCIILiteral("JavaScript execution exceeded timeout.")));
-    return JSValue(QNaN);
-}
-
-JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
-{
-    return InterruptedExecutionError::create(*globalData);
-}
-
-bool isInterruptedExecutionException(JSObject* object)
-{
-    return object->inherits(&InterruptedExecutionError::s_info);
-}
-
-bool isInterruptedExecutionException(JSValue value)
-{
-    return value.inherits(&InterruptedExecutionError::s_info);
-}
-
-
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(TerminatedExecutionError);
 
 const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(TerminatedExecutionError) };
@@ -166,6 +139,12 @@ JSObject* throwStackOverflowError(ExecState* exec)
 {
     Interpreter::ErrorHandlingMode mode(exec);
     return throwError(exec, createStackOverflowError(exec));
+}
+
+JSObject* throwTerminatedExecutionException(ExecState* exec)
+{
+    Interpreter::ErrorHandlingMode mode(exec);
+    return throwError(exec, createTerminatedExecutionException(&exec->globalData()));
 }
 
 } // namespace JSC

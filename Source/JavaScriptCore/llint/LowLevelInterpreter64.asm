@@ -126,6 +126,16 @@ macro callCallSlowPath(advance, slowPath, action)
     action(t0)
 end
 
+macro callWatchdogTimerHandler()
+    storei PC, ArgumentCount + TagOffset[cfr]
+    prepareStateForCCall()
+    cCall2(_llint_slow_path_handle_watchdog_timer, cfr, PC)
+    move t1, cfr
+    btpnz t0, _llint_throw_from_slow_path_trampoline
+    move t3, PB
+    loadi ArgumentCount + TagOffset[cfr], PC
+end
+
 macro checkSwitchToJITForLoop()
     checkSwitchToJIT(
         1,

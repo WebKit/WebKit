@@ -782,10 +782,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/StructureTransitionTable.h \
 	Source/JavaScriptCore/runtime/SymbolTable.cpp \
 	Source/JavaScriptCore/runtime/SymbolTable.h \
-	Source/JavaScriptCore/runtime/Terminator.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
 	Source/JavaScriptCore/runtime/TypedArrayDescriptor.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
+	Source/JavaScriptCore/runtime/Watchdog.cpp \
+	Source/JavaScriptCore/runtime/Watchdog.h \
+	Source/JavaScriptCore/runtime/WatchdogNone.cpp \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \

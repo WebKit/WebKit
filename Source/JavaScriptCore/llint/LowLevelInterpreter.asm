@@ -1057,9 +1057,15 @@ _llint_op_jngreatereq:
 
 _llint_op_loop_hint:
     traceExecution()
+    loadp JITStackFrame::globalData[sp], t1
+    loadb JSGlobalData::watchdog+Watchdog::m_timerDidFire[t1], t0
+    btbnz t0, .handleWatchdogTimer
+.afterWatchdogTimerCheck:
     checkSwitchToJITForLoop()
     dispatch(1)
-
+.handleWatchdogTimer:
+    callWatchdogTimerHandler()
+    jmp .afterWatchdogTimerCheck
 
 _llint_op_switch_string:
     traceExecution()

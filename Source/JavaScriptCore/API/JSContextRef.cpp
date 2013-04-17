@@ -79,6 +79,30 @@ void JSContextGroupRelease(JSContextGroupRef group)
     wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
 }
 
+static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, void* callbackData)
+{
+    JSShouldTerminateCallback callback = reinterpret_cast<JSShouldTerminateCallback>(callbackPtr);
+    JSContextRef contextRef = toRef(exec);
+    return callback(contextRef, callbackData);
+}
+
+void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, JSShouldTerminateCallback callback, void* callbackData)
+{
+    JSGlobalData& globalData = *toJS(group);
+    APIEntryShim entryShim(&globalData);
+    Watchdog& watchdog = globalData.watchdog;
+    void* callbackPtr = reinterpret_cast<void*>(callback);
+    watchdog.setTimeLimit(globalData, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
+}
+
+void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
+{
+    JSGlobalData& globalData = *toJS(group);
+    APIEntryShim entryShim(&globalData);
+    Watchdog& watchdog = globalData.watchdog;
+    watchdog.setTimeLimit(globalData, std::numeric_limits<double>::infinity());
+}
+
 // From the API's perspective, a global context remains alive iff it has been JSGlobalContextRetained.
 
 JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)

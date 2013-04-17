@@ -305,6 +305,8 @@ set(JavaScriptCore_SOURCES
     runtime/StructureRareData.cpp
     runtime/StructureChain.cpp
     runtime/SymbolTable.cpp
+    runtime/Watchdog.cpp
+    runtime/WatchdogNone.cpp
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp

@@ -1628,6 +1628,14 @@ LLINT_SLOW_PATH_DECL(slow_path_throw_static_error)
         LLINT_THROW(createTypeError(exec, LLINT_OP_C(1).jsValue().toString(exec)->value(exec)));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_handle_watchdog_timer)
+{
+    LLINT_BEGIN_NO_SET_PC();
+    if (UNLIKELY(globalData.watchdog.didFire(exec)))
+        LLINT_THROW(createTerminatedExecutionException(&globalData));
+    LLINT_RETURN_TWO(0, exec);
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_debug)
 {
     LLINT_BEGIN();

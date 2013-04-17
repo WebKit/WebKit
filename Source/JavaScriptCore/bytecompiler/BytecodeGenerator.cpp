@@ -655,9 +655,7 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 
 void BytecodeGenerator::emitLoopHint()
 {
-#if ENABLE(DFG_JIT)
     emitOpcode(op_loop_hint);
-#endif
 }
 
 void BytecodeGenerator::retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index)

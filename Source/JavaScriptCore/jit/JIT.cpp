@@ -118,6 +118,17 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 }
 #endif
 
+void JIT::emitWatchdogTimerCheck()
+{
+    if (!m_globalData->watchdog.isEnabled())
+        return;
+
+    Jump skipCheck = branchTest8(Zero, AbsoluteAddress(m_globalData->watchdog.timerDidFireAddress()));
+    JITStubCall stubCall(this, cti_handle_watchdog_timer);
+    stubCall.call();
+    skipCheck.link(this);
+}
+
 #define NEXT_OPCODE(name) \
     m_bytecodeOffset += OPCODE_LENGTH(name); \
     break;

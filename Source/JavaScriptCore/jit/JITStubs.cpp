@@ -1375,6 +1375,18 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_pre_inc)
     return JSValue::encode(result);
 }
 
+DEFINE_STUB_FUNCTION(void, handle_watchdog_timer)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
+    if (UNLIKELY(globalData->watchdog.didFire(callFrame))) {
+        globalData->exception = createTerminatedExecutionException(globalData);
+        VM_THROW_EXCEPTION_AT_END();
+        return;
+    }
+}
+
 DEFINE_STUB_FUNCTION(void*, stack_check)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

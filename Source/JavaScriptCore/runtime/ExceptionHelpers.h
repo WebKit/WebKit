@@ -33,10 +33,6 @@
 
 namespace JSC {
 
-JS_EXPORT_PRIVATE JSObject* createInterruptedExecutionException(JSGlobalData*);
-bool isInterruptedExecutionException(JSObject*);
-bool isInterruptedExecutionException(JSValue);
-
 JSObject* createTerminatedExecutionException(JSGlobalData*);
 bool isTerminatedExecutionException(JSObject*);
 JS_EXPORT_PRIVATE bool isTerminatedExecutionException(JSValue);
@@ -53,34 +49,8 @@ JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);
 
 JSObject* throwOutOfMemoryError(ExecState*);
 JSObject* throwStackOverflowError(ExecState*);
+JSObject* throwTerminatedExecutionException(ExecState*);
 
-
-class InterruptedExecutionError : public JSNonFinalObject {
-private:
-    InterruptedExecutionError(JSGlobalData& globalData)
-        : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
-    {
-    }
-
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
-
-public:
-    typedef JSNonFinalObject Base;
-
-    static InterruptedExecutionError* create(JSGlobalData& globalData)
-    {
-        InterruptedExecutionError* error = new (NotNull, allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
-        error->finishCreation(globalData);
-        return error;
-    }
-
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
-    }
-
-    static const ClassInfo s_info;
-};
 
 class TerminatedExecutionError : public JSNonFinalObject {
 private:

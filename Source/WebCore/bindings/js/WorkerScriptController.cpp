@@ -137,7 +137,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
     JSValue evaluationException;
     JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
 
-    if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
+    if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerContextWrapper->globalData().watchdog.didFire()) {
         forbidExecution();
         return;
     }
@@ -164,14 +164,14 @@ void WorkerScriptController::scheduleExecutionTermination()
     // termination is scheduled, isExecutionTerminating will
     // accurately reflect that state when called from another thread.
     MutexLocker locker(m_scheduledTerminationMutex);
-    m_globalData->terminator.terminateSoon();
+    m_globalData->watchdog.fire();
 }
 
 bool WorkerScriptController::isExecutionTerminating() const
 {
     // See comments in scheduleExecutionTermination regarding mutex usage.
     MutexLocker locker(m_scheduledTerminationMutex);
-    return m_globalData->terminator.shouldTerminate();
+    return m_globalData->watchdog.didFire();
 }
 
 void WorkerScriptController::forbidExecution()

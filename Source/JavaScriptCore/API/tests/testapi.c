@@ -33,6 +33,12 @@
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+#include <sys/time.h>
+#endif
+
 #if OS(WINDOWS)
 #include <windows.h>
 #endif
@@ -1045,6 +1051,56 @@ static void checkConstnessInJSObjectNames()
     val.name = "something";
 }
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+static double currentCPUTime()
+{
+    mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
+    thread_basic_info_data_t info;
+
+    /* Get thread information */
+    mach_port_t threadPort = mach_thread_self();
+    thread_info(threadPort, THREAD_BASIC_INFO, (thread_info_t)(&info), &infoCount);
+    mach_port_deallocate(mach_task_self(), threadPort);
+    
+    double time = info.user_time.seconds + info.user_time.microseconds / 1000000.;
+    time += info.system_time.seconds + info.system_time.microseconds / 1000000.;
+    
+    return time;
+}
+
+bool shouldTerminateCallbackWasCalled = false;
+static bool shouldTerminateCallback(JSContextRef ctx, void* context)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(context);
+    shouldTerminateCallbackWasCalled = true;
+    return true;
+}
+
+bool cancelTerminateCallbackWasCalled = false;
+static bool cancelTerminateCallback(JSContextRef ctx, void* context)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(context);
+    cancelTerminateCallbackWasCalled = true;
+    return false;
+}
+
+int extendTerminateCallbackCalled = 0;
+static bool extendTerminateCallback(JSContextRef ctx, void* context)
+{
+    UNUSED_PARAM(context);
+    extendTerminateCallbackCalled++;
+    if (extendTerminateCallbackCalled == 1) {
+        JSContextGroupRef contextGroup = JSContextGetGroup(ctx);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, 2, extendTerminateCallback, 0);
+        return false;
+    }
+    return true;
+}
+#endif /* PLATFORM(MAC) || PLATFORM(IOS) */
+
+
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
@@ -1691,6 +1747,95 @@ int main(int argc, char* argv[])
         JSScriptRelease(scriptObject);
         free(scriptUTF8);
     }
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    /* Test script timeout: */
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, shouldTerminateCallback, 0);
+    {
+        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
+        double startTime;
+        double endTime;
+        exception = NULL;
+        startTime = currentCPUTime();
+        v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        endTime = currentCPUTime();
+
+        if (((endTime - startTime) < 2) && shouldTerminateCallbackWasCalled)
+            printf("PASS: script timed out as expected.\n");
+        else {
+            if (!((endTime - startTime) < 2))
+                printf("FAIL: script did not timed out as expected.\n");
+            if (!shouldTerminateCallbackWasCalled)
+                printf("FAIL: script timeout callback was not called.\n");
+            failed = true;
+        }
+
+        if (exception)
+            printf("PASS: TerminationExecutionException was not catchable.\n");
+        else {
+            printf("FAIL: TerminationExecutionException was caught.\n");
+            failed = true;
+        }
+    }
+
+    /* Test script timeout cancellation: */
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, cancelTerminateCallback, 0);
+    {
+        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
+        double startTime;
+        double endTime;
+        exception = NULL;
+        startTime = currentCPUTime();
+        v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        endTime = currentCPUTime();
+
+        if (((endTime - startTime) >= 2) && cancelTerminateCallbackWasCalled && !exception)
+            printf("PASS: script timeout was cancelled as expected.\n");
+        else {
+            if (((endTime - startTime) < 2) || exception)
+                printf("FAIL: script timeout was not cancelled.\n");
+            if (!cancelTerminateCallbackWasCalled)
+                printf("FAIL: script timeout callback was not called.\n");
+            failed = true;
+        }
+    }
+
+    /* Test script timeout extension: */
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, extendTerminateCallback, 0);
+    {
+        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
+        double startTime;
+        double endTime;
+        double deltaTime;
+        exception = NULL;
+        startTime = currentCPUTime();
+        v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        endTime = currentCPUTime();
+        deltaTime = endTime - startTime;
+
+        if ((deltaTime >= 3) && (deltaTime < 5) && (extendTerminateCallbackCalled == 2) && exception)
+            printf("PASS: script timeout was extended as expected.\n");
+        else {
+            if (deltaTime < 2)
+                printf("FAIL: script timeout was not extended as expected.\n");
+            else if (deltaTime >= 5)
+                printf("FAIL: script did not timeout.\n");
+
+            if (extendTerminateCallbackCalled < 1)
+                printf("FAIL: script timeout callback was not called.\n");
+            if (extendTerminateCallbackCalled < 2)
+                printf("FAIL: script timeout callback was not called after timeout extension.\n");
+
+            if (!exception)
+                printf("FAIL: TerminationExecutionException was caught during timeout extension test.\n");
+
+            failed = true;
+        }
+    }
+#endif /* PLATFORM(MAC) || PLATFORM(IOS) */
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;
