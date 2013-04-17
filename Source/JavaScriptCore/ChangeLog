@@ -1,5 +1,11 @@
 2013-04-14  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. VS2010 Windows build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPostBuild.cmd:
+
+2013-04-14  Roger Fong  <roger_fong@apple.com>
+
         Copy make-file-export-generator script to the the Source folders of the projects that use it.
         <rdar://problem/13675604>
 
