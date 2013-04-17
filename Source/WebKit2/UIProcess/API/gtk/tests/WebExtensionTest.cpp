@@ -68,6 +68,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
                 "Invalid page ID: %"G_GUINT64_FORMAT, pageID);
             return;
         }
+        g_assert_cmpuint(webkit_web_page_get_id(page), ==, pageID);
 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         GOwnPtr<char> title(webkit_dom_document_get_title(document));

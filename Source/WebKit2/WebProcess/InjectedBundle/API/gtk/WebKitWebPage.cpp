@@ -252,3 +252,18 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 
     return kit(coreFrame->document());
 }
+
+/**
+ * webkit_web_page_get_id:
+ * @web_page: a #WebKitWebPage
+ *
+ * Get the identifier of the #WebKitWebPage
+ *
+ * Returns: the identifier of @web_page
+ */
+guint64 webkit_web_page_get_id(WebKitWebPage* webPage)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
+
+    return webPage->priv->webPage->pageID();
+}
