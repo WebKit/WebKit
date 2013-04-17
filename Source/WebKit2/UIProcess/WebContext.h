@@ -235,7 +235,7 @@ public:
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
     String iconDatabasePath() const;
-    void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
+    void setLocalStorageDirectory(const String&);
     void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 

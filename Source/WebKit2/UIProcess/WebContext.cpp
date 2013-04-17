@@ -196,6 +196,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #ifndef NDEBUG
     webContextCounter.increment();
 #endif
+
+    m_storageManager->setLocalStorageDirectory(localStorageDirectory());
 }
 
 #if !PLATFORM(MAC)
@@ -1046,6 +1048,12 @@ String WebContext::iconDatabasePath() const
         return m_overrideIconDatabasePath;
 
     return platformDefaultIconDatabasePath();
+}
+
+void WebContext::setLocalStorageDirectory(const String& directory)
+{
+    m_overrideLocalStorageDirectory = directory;
+    m_storageManager->setLocalStorageDirectory(localStorageDirectory());
 }
 
 String WebContext::localStorageDirectory() const

@@ -219,6 +219,11 @@ StorageManager::~StorageManager()
 {
 }
 
+void StorageManager::setLocalStorageDirectory(const String& localStorageDirectory)
+{
+    m_queue->dispatch(bind(&StorageManager::setLocalStorageDirectoryInternal, this, localStorageDirectory.isolatedCopy()));
+}
+
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
     m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection), quotaInBytes));
@@ -339,6 +344,11 @@ void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapI
 
     storageArea->clear(connection, sourceStorageAreaID, urlString);
     connection->send(Messages::StorageAreaMap::DidClear(), storageMapID);
+}
+
+void StorageManager::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
+{
+    m_localStorageDirectory = localStorageDirectory;
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

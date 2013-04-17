@@ -43,6 +43,8 @@ public:
     static PassRefPtr<StorageManager> create();
     ~StorageManager();
 
+    void setLocalStorageDirectory(const String&);
+
     void createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
     void setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
@@ -66,6 +68,8 @@ private:
     void removeItem(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
     void clear(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& urlString);
 
+    void setLocalStorageDirectoryInternal(const String&);
+
     void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
     void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);
     void setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
@@ -77,6 +81,8 @@ private:
     StorageArea* findStorageArea(CoreIPC::Connection*, uint64_t) const;
 
     RefPtr<WorkQueue> m_queue;
+
+    String m_localStorageDirectory;
 
     class SessionStorageNamespace;
     HashMap<uint64_t, RefPtr<SessionStorageNamespace> > m_sessionStorageNamespaces;
