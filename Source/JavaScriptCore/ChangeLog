@@ -1,3 +1,18 @@
+2013-04-16  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r148576.
+        http://trac.webkit.org/changeset/148576
+        https://bugs.webkit.org/show_bug.cgi?id=114714
+
+        WebCore is building some of these same files (Requested by
+        bfulgham on #webkit).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj:
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj.filters:
+
 2013-04-16  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Stop individually building WTF files in JSC.
