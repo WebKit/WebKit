@@ -341,6 +341,12 @@ IntSize ScrollView::scrollOffsetRelativeToDocument() const
     return IntSize(scrollOffset.width(), scrollOffset.height() - headerHeight());
 }
 
+IntPoint ScrollView::scrollPositionRelativeToDocument() const
+{
+    IntPoint scrollPosition = this->scrollPosition();
+    return IntPoint(scrollPosition.x(), scrollPosition.y() - headerHeight());
+}
+
 int ScrollView::scrollSize(ScrollbarOrientation orientation) const
 {
     // If no scrollbars are present, it does not indicate content is not be scrollable.

@@ -190,6 +190,7 @@ public:
     // anchors (0,0) at the top of the Document, which will be beneath any headers, so it is relative
     // to contentsSize().
     IntSize scrollOffsetRelativeToDocument() const;
+    IntPoint scrollPositionRelativeToDocument() const;
 
     virtual IntSize overhangAmount() const OVERRIDE;
 
