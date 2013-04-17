@@ -52,6 +52,7 @@
 #include "WebScriptWorld.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
+#include <WebCore/AnimationController.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/MemoryCache.h>
@@ -60,6 +61,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/DOMWindow.h>
+#include <WebCore/Editor.h>
 #include <WebCore/Event.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
