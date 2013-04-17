@@ -108,6 +108,7 @@ typedef struct _Browser_Window {
     } search;
     int current_zoom_level; 
     Tooltip_Information tooltip;
+    Evas_Object *context_popup;
 } Browser_Window;
 
 typedef struct _File_Selector_Data {
@@ -1104,6 +1105,96 @@ on_window_close(Ewk_View_Smart_Data *smartData)
 }
 
 static void
+context_popup_populate(Browser_Window *window, Ewk_Context_Menu *ewk_menu);
+
+static void
+context_popup_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    if (!data) {
+        info("ERROR: context popup callback data is NULL.\n");
+        return;
+    }
+
+    Ewk_Context_Menu_Item *ewk_item = (Ewk_Context_Menu_Item *)data;
+    info("Selected context popup item: %s.\n", ewk_context_menu_item_title_get(ewk_item));
+    ewk_context_menu_item_select(ewk_context_menu_item_parent_menu_get(ewk_item), ewk_item);
+    ewk_context_menu_hide(ewk_context_menu_item_parent_menu_get(ewk_item));
+}
+
+static void
+context_popup_populate(Browser_Window *window, Ewk_Context_Menu *ewk_menu)
+{
+    const Eina_List *list = ewk_context_menu_items_get(ewk_menu);
+    const Eina_List *l;
+    void *data;
+
+    Ewk_Context_Menu_Item *ewk_item;
+    Elm_Object_Item *elm_popup_item;
+    Evas_Object *elm_check_item;
+
+    EINA_LIST_FOREACH(list, l, data) {
+        ewk_item = (Ewk_Context_Menu_Item *)data;
+        switch (ewk_context_menu_item_type_get(ewk_item)) {
+        case EWK_ACTION_TYPE:
+            elm_popup_item = elm_ctxpopup_item_append(window->context_popup, ewk_context_menu_item_title_get(ewk_item), NULL, context_popup_item_selected_cb, ewk_item);
+            break;
+        case EWK_CHECKABLE_ACTION_TYPE:
+            elm_check_item = elm_check_add(window->context_popup);
+            elm_popup_item = elm_ctxpopup_item_append(window->context_popup, ewk_context_menu_item_title_get(ewk_item), NULL, context_popup_item_selected_cb, ewk_item);
+            elm_object_item_content_set(elm_popup_item, elm_check_item);
+            elm_check_state_set(elm_check_item, ewk_context_menu_item_checked_get(ewk_item));
+            break;
+        default:
+            continue;
+        }
+        elm_object_item_disabled_set(elm_popup_item, !ewk_context_menu_item_enabled_get(ewk_item));
+    }
+}
+
+static Eina_Bool
+on_context_menu_show(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Context_Menu *menu)
+{
+    Browser_Window *window = window_find_with_ewk_view(sd->self);
+
+    if (!window || !menu) {
+        info("ERROR: necessary objects are NULL.\n");
+        return EINA_FALSE;
+    }
+
+    window->context_popup = elm_ctxpopup_add(window->elm_window);
+
+    if (!window->context_popup) {
+        info("ERROR: could not create context popup widget.\n");
+        return EINA_FALSE;
+    }
+
+    context_popup_populate(window, menu);
+
+    info("Showing context popup at (%d, %d).\n", x, y);
+    evas_object_move(window->context_popup, x, y);
+    evas_object_show(window->context_popup);
+
+    return EINA_TRUE;
+}
+
+static Eina_Bool
+on_context_menu_hide(Ewk_View_Smart_Data *sd)
+{
+    Browser_Window *window = window_find_with_ewk_view(sd->self);
+
+    if (!window || !window->context_popup) {
+        info("ERROR: necessary objects are NULL.\n");
+        return EINA_FALSE;
+    }
+
+    elm_ctxpopup_dismiss(window->context_popup);
+    evas_object_del(window->context_popup);
+    window->context_popup = NULL;
+
+    return EINA_TRUE;
+}
+
+static void
 auth_popup_close(Auth_Data *auth_data)
 {
     ewk_object_unref(auth_data->request);
@@ -1423,6 +1514,8 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewkViewClass->window_close = on_window_close;
     ewkViewClass->popup_menu_show = on_popup_menu_show;
     ewkViewClass->popup_menu_hide = on_popup_menu_hide;
+    ewkViewClass->context_menu_show = on_context_menu_show;
+    ewkViewClass->context_menu_hide = on_context_menu_hide;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     if (legacy_behavior_enabled) {
