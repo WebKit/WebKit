@@ -155,10 +155,6 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\AtomicString.cpp" />
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringBuilder.cpp" />
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringImpl.cpp" />
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\WTFString.cpp" />
     <ClCompile Include="..\..\jsc.cpp" />
   </ItemGroup>
   <ItemGroup>

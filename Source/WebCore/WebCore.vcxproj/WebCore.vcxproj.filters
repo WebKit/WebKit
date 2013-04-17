@@ -6342,15 +6342,6 @@
     <ClCompile Include="..\storage\StorageTracker.cpp">
       <Filter>storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp">
-      <Filter>strings</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp">
-      <Filter>strings</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp">
-      <Filter>strings</Filter>
-    </ClCompile>
     <ClCompile Include="..\bridge\jsc\BridgeJSC.cpp">
       <Filter>bridge</Filter>
     </ClCompile>

@@ -27,12 +27,18 @@ EXPORTS
     ??0SHA1@WTF@@QAE@XZ
     ??0SuperRegion@JSC@@QAE@XZ
     ??0SourceProvider@JSC@@QAE@ABVString@WTF@@ABVTextPosition@3@@Z
+    ??0String@WTF@@QAE@PB_W@Z
+    ??0String@WTF@@QAE@PB_WI@Z
+    ??0String@WTF@@QAE@PBD@Z
+    ??0String@WTF@@QAE@PBDI@Z
+    ??0String@WTF@@QAE@PBEI@Z
+    ??0String@WTF@@QAE@VASCIILiteral@1@@Z
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0StringPrintStream@WTF@@QAE@XZ
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EI@Z
     ??0ThreadCondition@WTF@@QAE@XZ
-    ??0WTFThreadData@WTF@@QAE@XZ
     ??0WrapperBase@MemoryInstrumentation@WTF@@QAE@PBDPBX@Z
+    ??0WTFThreadData@WTF@@QAE@XZ
     ??0YarrPattern@Yarr@JSC@@QAE@ABVString@WTF@@_N1PAPBD@Z
     ??1ArrayBufferView@WTF@@UAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
@@ -52,6 +58,7 @@ EXPORTS
     ??1SourceProvider@JSC@@UAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
     ??1StringPrintStream@WTF@@UAE@XZ
+    ??1StringImpl@WTF@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WeakHandleOwner@JSC@@UAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -65,7 +72,12 @@ EXPORTS
     ?abs@WTF@@YA?AVMediaTime@1@ABV21@@Z 
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@II@Z
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PB_W@Z
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PB_WI@Z
     ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBE@Z
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBEI@Z
     ?add@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
@@ -73,15 +85,24 @@ EXPORTS
     ?addBytes@SHA1@WTF@@QAEXPBEI@Z
     ?addCurrentThread@MachineThreads@JSC@@QAEXXZ
     ?addFinalizer@Heap@JSC@@QAEXPAVJSCell@2@P6AX0@Z@Z
+    ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z
     ?addPropertyTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEHAAVJSGlobalData@2@VPropertyName@2@IPAVJSCell@2@@Z
     ?addPrivateBuffer@MemoryClassInfo@WTF@@QAEXIPBD00@Z
     ?addRawBuffer@MemoryClassInfo@WTF@@QAEXPBXIPBD1@Z
+    ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
+    ?adopt@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@AAV?$StringBuffer@_W@2@@Z
+    ?adopt@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@AAV?$StringBuffer@E@2@@Z
     ?allocateSlowCase@MarkedAllocator@JSC@@AAEPAXI@Z
+    ?append@String@WTF@@QAEX_W@Z
+    ?append@String@WTF@@QAEXABV12@@Z
+    ?append@String@WTF@@QAEXE@Z
+    ?append@String@WTF@@QAEXPB_WI@Z
+    ?append@String@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?appendNumber@StringBuilder@WTF@@QAEX_J@Z
@@ -90,6 +111,7 @@ EXPORTS
     ?appendNumber@StringBuilder@WTF@@QAEXI@Z
     ?appendNumber@StringBuilder@WTF@@QAEXJ@Z
     ?appendNumber@StringBuilder@WTF@@QAEXK@Z
+    ?ascii@String@WTF@@QBE?AVCString@2@XZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?base64Decode@WTF@@YA_NABVString@1@AAV?$Vector@D$0A@VCrashOnOverflow@WTF@@@1@W4Base64DecodePolicy@1@@Z
     ?base64Encode@WTF@@YA?AVString@1@PBDIW4Base64EncodePolicy@1@@Z
@@ -111,14 +133,25 @@ EXPORTS
     ?canShrink@StringBuilder@WTF@@QBE_NXZ
     ?capacity@Heap@JSC@@QAEIXZ
     ?changePrototypeTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VJSValue@2@@Z
+    ?characterStartingAt@String@WTF@@QBEHI@Z
+    ?charactersToDouble@WTF@@YANPB_WIPA_N@Z
+    ?charactersToDouble@WTF@@YANPBEIPA_N@Z
+    ?charactersToFloat@WTF@@YAMPB_WIAAI@Z
+    ?charactersToFloat@WTF@@YAMPBEIAAI@Z
+    ?charactersToIntStrict@WTF@@YAHPB_WIPA_NH@Z
+    ?charactersToIntStrict@WTF@@YAHPBEIPA_NH@Z
+    ?charactersToUIntStrict@WTF@@YAIPB_WIPA_NH@Z
+    ?charactersToUIntStrict@WTF@@YAIPBEIPA_NH@Z
+    ?charactersWithNullTermination@String@WTF@@QAEPB_WXZ
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
-    ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@VCrashOnOverflow@WTF@@@2@@Z    
+    ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@VCrashOnOverflow@WTF@@@2@@Z
     ?checkSyntax@JSC@@YA_NPAVExecState@1@ABVSourceCode@1@PAVJSValue@1@@Z
     ?className@JSObject@JSC@@SA?AVString@WTF@@PBV12@@Z
     ?className@JSProxy@JSC@@KA?AVString@WTF@@PBVJSObject@2@@Z
     ?clear@SourceProviderCache@JSC@@QAEXXZ
     ?clearAll@BitVector@WTF@@QAEXXZ
+    ?codePointCompare@WTF@@YAHABVString@1@0@Z
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
     ?column@StackFrame@JSC@@QAEIXZ
@@ -129,6 +162,7 @@ EXPORTS
     ?constructFunctionSkippingEvalEnabledCheck@JSC@@YAPAVJSObject@1@PAVExecState@1@PAVJSGlobalObject@1@ABVArgList@1@ABVIdentifier@1@ABVString@WTF@@ABVTextPosition@8@@Z
     ?constructNumber@JSC@@YAPAVNumberObject@1@PAVExecState@1@PAVJSGlobalObject@1@VJSValue@1@@Z
     ?constructString@JSC@@YAPAVStringObject@1@PAVExecState@1@PAVJSGlobalObject@1@VJSValue@1@@Z
+    ?containsOnlyWhitespace@StringImpl@WTF@@QAE_NXZ
     ?convertDoubleToContiguousWhilePerformingSetIndex@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
     ?convertInt32ToDoubleOrContiguousWhilePerformingSetIndex@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
     ?convertLatin1ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBEPBEPAPADPAD@Z
@@ -139,6 +173,10 @@ EXPORTS
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4HeapType@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVString@3@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVString@WTF@@W4RegExpFlags@2@@Z
+    ?create@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PB_WI@Z
+    ?create@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBE@Z
+    ?create@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBEI@Z
+    ?create8BitIfPossible@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PB_WI@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVString@WTF@@@Z
     ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
@@ -154,6 +192,8 @@ EXPORTS
     ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
     ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
     ?createTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVString@WTF@@@Z
+    ?createUninitialized@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@IAAPA_W@Z
+    ?createUninitialized@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@IAAPAE@Z
     ?createWithDouble@MediaTime@WTF@@SA?AV12@NH@Z 
     ?createWithFloat@MediaTime@WTF@@SA?AV12@MH@Z 
     ?cryptographicallyRandomNumber@WTF@@YAIXZ
@@ -168,6 +208,7 @@ EXPORTS
     ?dayInYear@WTF@@YAHNH@Z
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultValue@JSObject@JSC@@SA?AVJSValue@2@PBV12@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
+    ?defaultWritingDirection@StringImpl@WTF@@QAE?AW4Direction@Unicode@2@PA_N@Z
     ?defineOwnProperty@JSGlobalObject@JSC@@SA_NPAVJSObject@2@PAVExecState@2@VPropertyName@2@AAVPropertyDescriptor@2@_N@Z
     ?defineOwnProperty@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VPropertyName@2@AAVPropertyDescriptor@2@_N@Z
     ?defineOwnProperty@JSProxy@JSC@@KA_NPAVJSObject@2@PAVExecState@2@VPropertyName@2@AAVPropertyDescriptor@2@_N@Z
@@ -200,7 +241,22 @@ EXPORTS
     ?EcmaScriptConverter@DoubleToStringConverter@double_conversion@WTF@@SAABV123@XZ
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?emptyObjectStructureForPrototype@PrototypeMap@JSC@@QAEPAVStructure@2@PAVJSObject@2@I@Z
+    ?emptyString@WTF@@YAABVString@1@XZ
+    ?endsWith@StringImpl@WTF@@QAE_NPAV12@_N@Z
+    ?endsWith@StringImpl@WTF@@QBE_NPBDI_N@Z
+    ?endsWith@StringImpl@WTF@@QBE_N_W@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
+    ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
+    ?equal@WTF@@YA_NPBVStringImpl@1@PB_WI@Z
+    ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
+    ?equal@WTF@@YA_NPBVStringImpl@1@PBEI@Z
+    ?equalIgnoringCase@WTF@@YA_NPB_WPBEI@Z
+    ?equalIgnoringCase@WTF@@YA_NPBE0I@Z
+    ?equalIgnoringCase@WTF@@YA_NPBVStringImpl@1@0@Z
+    ?equalIgnoringCase@WTF@@YA_NPBVStringImpl@1@PBE@Z
+    ?equalIgnoringCaseNonNull@WTF@@YA_NPBVStringImpl@1@0@Z
+    ?equalIgnoringNullity@WTF@@YA_NPAVStringImpl@1@0@Z
+    ?equalNonNull@WTF@@YA_NPBVStringImpl@1@0@Z
     ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVString@WTF@@AAV32@@Z
     ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@ABVSourceCode@1@V21@PAV21@@Z
@@ -218,8 +274,14 @@ EXPORTS
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
+    ?fill@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@_W@Z
     ?fillGetterPropertySlot@JSObject@JSC@@AAEXAAVPropertySlot@2@H@Z
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
+    ?find@AtomicString@WTF@@SAPAVAtomicStringImpl@2@PBVStringImpl@2@@Z
+    ?find@StringImpl@WTF@@QAEIP6A_N_W@ZI@Z
+    ?find@StringImpl@WTF@@QAEIPAV12@@Z
+    ?find@StringImpl@WTF@@QAEIPAV12@I@Z
+    ?findIgnoringCase@StringImpl@WTF@@QAEIPAV12@I@Z
     ?findAllocator@WeakSet@JSC@@AAEPAUFreeCell@WeakBlock@2@XZ
     ?finishCreation@BooleanObject@JSC@@IAEXAAVJSGlobalData@2@@Z
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
@@ -227,15 +289,22 @@ EXPORTS
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
+    ?foldCase@String@WTF@@QBE?AV12@XZ
+    ?format@String@WTF@@SA?AV12@PBDZZ
     ?freeFatEntrySlow@SymbolTableEntry@JSC@@AAEXXZ
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
+    ?fromUTF8@String@WTF@@SA?AV12@PBE@Z
+    ?fromUTF8@String@WTF@@SA?AV12@PBEI@Z
+    ?fromUTF8Internal@AtomicString@WTF@@CA?AV12@PBD0@Z
+    ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?get@Structure@JSC@@QAEHAAVJSGlobalData@2@VPropertyName@2@AAIAAPAVJSCell@2@@Z
     ?getCalculatedDisplayName@JSC@@YA?AVString@WTF@@PAVExecState@1@PAVJSObject@1@@Z
     ?getCallableObjectSlow@JSC@@YAPAVJSCell@1@PAV21@@Z
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
+    ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
     ?getID@SourceProvider@JSC@@AAEXXZ
     ?getStackTrace@Interpreter@JSC@@SAXPAVJSGlobalData@2@AAV?$Vector@UStackFrame@JSC@@$0A@VCrashOnOverflow@WTF@@@WTF@@I@Z
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
@@ -275,6 +344,7 @@ EXPORTS
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ
     ?initializeThreading@WTF@@YAXXZ
+    ?insert@String@WTF@@QAEXABV12@I@Z
     ?interpret@Yarr@JSC@@YAIPAUBytecodePattern@12@ABVString@WTF@@IPAI@Z
     ?invalidTime@MediaTime@WTF@@SAABV12@XZ 
     ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
@@ -282,15 +352,22 @@ EXPORTS
     ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isHostFunctionNonInline@JSFunction@JSC@@ABE_NXZ
     ?isMainThread@WTF@@YA_NXZ
+    ?isolatedCopy@String@WTF@@QBE?AV12@XZ
     ?isReachableFromOpaqueRoots@WeakHandleOwner@JSC@@UAE_NV?$Handle@W4Unknown@JSC@@@2@PAXAAVSlotVisitor@2@@Z
+    ?isSafeToSendToAnotherThread@String@WTF@@QBE_NXZ
     ?isTerminatedExecutionException@JSC@@YA_NVJSValue@1@@Z
     ?isValidAllocation@Heap@JSC@@AAE_NI@Z
     ?isValidCallee@JSValue@JSC@@QAE_NXZ
+    ?latin1@String@WTF@@QBE?AVCString@2@XZ
     ?length@CString@WTF@@QBEIXZ
     ?lock@JSLock@JSC@@QAEXXZ
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
+    ?lower@AtomicString@WTF@@QBE?AV12@XZ
+    ?lower@String@WTF@@QBE?AV12@XZ
+    ?lower@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@XZ
     ?line@StackFrame@JSC@@QAEIXZ
+    ?make8BitFrom16BitSource@String@WTF@@SA?AV12@PB_WI@Z
     ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVString@WTF@@IAAV?$Vector@H$0CA@VCrashOnOverflow@WTF@@@5@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monotonicallyIncreasingTime@WTF@@YANXZ
@@ -303,9 +380,18 @@ EXPORTS
     ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ
     ?notifyWriteSlow@WatchpointSet@JSC@@QAEXXZ
     ?nullptr@@3Vnullptr_t@std@@A
+    ?number@String@WTF@@SA?AV12@_J@Z
+    ?number@String@WTF@@SA?AV12@_K@Z
+    ?number@String@WTF@@SA?AV12@H@Z
+    ?number@String@WTF@@SA?AV12@I@Z
+    ?number@String@WTF@@SA?AV12@J@Z
+    ?number@String@WTF@@SA?AV12@K@Z
+    ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
     ?numberToFixedPrecisionString@WTF@@YAPBDNIQAD_N@Z
     ?numberToFixedWidthString@WTF@@YAPBDNIQAD@Z
     ?numberToString@WTF@@YAPBDNQAD@Z
+    ?numberToStringECMAScript@String@WTF@@SA?AV12@N@Z
+    ?numberToStringFixedWidth@String@WTF@@SA?AV12@NI@Z
     ?objectAtScope@JSScope@JSC@@SAPAVJSObject@2@PAV12@@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
@@ -337,12 +423,20 @@ EXPORTS
     ?reifyString@StringBuilder@WTF@@ABEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseExecutableMemory@JSGlobalData@JSC@@QAEXXZ
+    ?remove@String@WTF@@QAEXIH@Z
     ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
+    ?removeCharacters@String@WTF@@QBE?AV12@P6A_N_W@Z@Z
     ?removeDirect@JSObject@JSC@@QAE_NAAVJSGlobalData@2@VPropertyName@2@@Z
+    ?replace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@_W0@Z
+    ?replace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@_WPAV12@@Z
+    ?replace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@_WPBEI@Z
+    ?replace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@IIPAV12@@Z
+    ?replace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAV12@0@Z
     ?reportAbandonedObjectGraph@Heap@JSC@@QAEXXZ
     ?reportEdge@MemoryInstrumentation@WTF@@AAEXPBXPBDW4MemberType@2@@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reportSuccess@HeapStatistics@JSC@@SAXXZ
+    ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
@@ -353,6 +447,8 @@ EXPORTS
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
+    ?reverseFind@StringImpl@WTF@@QAEIPAV12@I@Z
+    ?reverseFindIgnoringCase@StringImpl@WTF@@QAEIPAV12@I@Z
     ?s_segmentCapacity@MarkStackArray@JSC@@0IB
     ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
@@ -376,18 +472,31 @@ EXPORTS
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?shrinkToFit@StringBuilder@WTF@@QAEXXZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
+    ?simplifyWhiteSpace@String@WTF@@QBE?AV12@P6A_N_W@Z@Z
+    ?simplifyWhiteSpace@String@WTF@@QBE?AV12@XZ
+    ?simplifyWhiteSpace@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@XZ
     ?singleCharacterStringRep@SmallStrings@JSC@@QAEPAVStringImpl@WTF@@E@Z
     ?size@Heap@JSC@@QAEIXZ
+    ?sizeInBytes@StringImpl@WTF@@QBEIXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?slowValidateCell@JSC@@YAXPAVJSCell@1@@Z
     ?slowValidateCell@JSC@@YAXPAVJSGlobalObject@1@@Z
     ?sourceCode@JSFunction@JSC@@QBEPBVSourceCode@2@XZ
+    ?split@String@WTF@@QBEX_W_NAAV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@2@@Z
+    ?split@String@WTF@@QBEXABV12@_NAAV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@2@@Z
     ?startProfiling@LegacyProfiler@JSC@@QAEXPAVExecState@2@ABVString@WTF@@@Z
     ?startSampling@JSGlobalData@JSC@@QAEXXZ
+    ?startsWith@StringImpl@WTF@@QBE_N_W@Z
+    ?startsWith@StringImpl@WTF@@QBE_NPBDI_N@Z
     ?stopProfiling@LegacyProfiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVString@4@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?string@OpaqueJSString@@QBE?AVString@WTF@@XZ
     ?StringToDouble@StringToDoubleConverter@double_conversion@WTF@@SANPBDIPAI@Z
+    ?stripWhiteSpace@String@WTF@@QBE?AV12@XZ
+    ?stripWhiteSpace@String@WTF@@QBE?AV12@P6A_N_W@Z@Z
+    ?substring@String@WTF@@QBE?AV12@II@Z
+	?substring@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@II@Z
+    ?substringSharingImpl@String@WTF@@QBE?AV12@II@Z
     ?suggestedNewOutOfLineStorageCapacity@Structure@JSC@@QAEIXZ
     ?sweeper@Heap@JSC@@QAEPAVIncrementalSweeper@2@XZ
     ?synthesizePrototype@JSValue@JSC@@QBEPAVJSObject@2@PAVExecState@2@@Z
@@ -402,12 +511,19 @@ EXPORTS
     ?tlsKeys@WTF@@YAPAKXZ
     ?toBoolean@JSString@JSC@@QBE_NXZ
     ?toCString@StringPrintStream@WTF@@QAE?AVCString@2@XZ
-    ?toDouble@MediaTime@WTF@@QBENXZ 
+    ?toDouble@MediaTime@WTF@@QBENXZ
+    ?toDouble@String@WTF@@QBENPA_N@Z
     ?ToExponential@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
     ?ToFixed@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
-    ?toFloat@MediaTime@WTF@@QBEMXZ 
+    ?toFloat@MediaTime@WTF@@QBEMXZ
+    ?toFloat@String@WTF@@QBEMPA_N@Z
+    ?toInt@String@WTF@@QBEHPA_N@Z
+    ?toInt@StringImpl@WTF@@QAEHPA_N@Z
     ?toInt32@JSC@@YAHN@Z
+    ?toInt64Strict@String@WTF@@QBE_JPA_NH@Z
     ?toInteger@JSValue@JSC@@QBENPAVExecState@2@@Z
+    ?toIntPtr@String@WTF@@QBEHPA_N@Z
+    ?toIntStrict@String@WTF@@QBEHPA_NH@Z
     ?toNumberSlowCase@JSValue@JSC@@ABENPAVExecState@2@@Z
     ?toObject@JSCell@JSC@@QBEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
     ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
@@ -421,8 +537,12 @@ EXPORTS
     ?toThisObject@JSGlobalObject@JSC@@KAPAVJSObject@2@PAVJSCell@2@PAVExecState@2@@Z
     ?toThisObject@JSObject@JSC@@SAPAV12@PAVJSCell@2@PAVExecState@2@@Z
     ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
+    ?toUInt@String@WTF@@QBEIPA_N@Z
+    ?toUInt64@String@WTF@@QBE_KPA_N@Z
+    ?toUIntStrict@String@WTF@@QBEIPA_NH@Z
     ?toWTFStringSlowCase@JSValue@JSC@@ABE?AVString@WTF@@PAVExecState@2@@Z
     ?transfer@ArrayBuffer@WTF@@QAE_NAAVArrayBufferContents@2@AAV?$Vector@V?$RefPtr@VArrayBufferView@WTF@@@WTF@@$0A@VCrashOnOverflow@2@@2@@Z
+    ?truncate@String@WTF@@QAEXI@Z
     ?tryAllocateSlowCase@CopiedSpace@JSC@@AAE?AVCheckedBoolean@@IPAPAX@Z
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
     ?tryFastMalloc@WTF@@YA?AUTryMallocReturnValue@1@I@Z
@@ -433,7 +553,11 @@ EXPORTS
     ?unlock@Mutex@WTF@@QAEXXZ
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
+    ?upconvertCharacters@StringImpl@WTF@@QBEXII@Z
     ?updateIndexingType@ArrayAllocationProfile@JSC@@QAEXXZ
+    ?upper@String@WTF@@QBE?AV12@XZ
+    ?upper@StringImpl@WTF@@QAE?AV?$PassRefPtr@VStringImpl@WTF@@@2@XZ
+    ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z
     ?validate@SlotVisitor@JSC@@CAXPAVJSCell@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
