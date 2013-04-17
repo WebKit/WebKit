@@ -1926,7 +1926,7 @@ public:
             if (primitiveValue->getIdent() == CSSValueNone)
                 setValue(styleResolver->style(), 0);
             else if (primitiveValue->isShape()) {
-                setValue(styleResolver->style(), ShapeClipPathOperation::create(basicShapeForValue(styleResolver, primitiveValue->getShapeValue())));
+                setValue(styleResolver->style(), ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue())));
             }
 #if ENABLE(SVG)
             else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_URI) {
@@ -1960,7 +1960,7 @@ public:
             else if (primitiveValue->getIdent() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ExclusionShapeValue::createOutsideValue());
             else if (primitiveValue->isShape()) {
-                RefPtr<ExclusionShapeValue> shape = ExclusionShapeValue::createShapeValue(basicShapeForValue(styleResolver, primitiveValue->getShapeValue()));
+                RefPtr<ExclusionShapeValue> shape = ExclusionShapeValue::createShapeValue(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue()));
                 setValue(styleResolver->style(), shape.release());
             }
         }
