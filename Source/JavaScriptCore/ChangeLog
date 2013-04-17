@@ -1,5 +1,16 @@
 2013-04-17  Mark Lam  <mark.lam@apple.com>
 
+        Fix broken build. Replaced a static const with a #define.
+        https://bugs.webkit.org/show_bug.cgi?id=114577.
+
+        Unreviewed.
+
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::isEnabled):
+
+2013-04-17  Mark Lam  <mark.lam@apple.com>
+
         Add LLINT and baseline JIT support for timing out scripts.
         https://bugs.webkit.org/show_bug.cgi?id=114577.
 

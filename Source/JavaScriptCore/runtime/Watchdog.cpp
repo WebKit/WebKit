@@ -32,12 +32,12 @@
 
 namespace JSC {
 
-static const double noLimit = std::numeric_limits<double>::infinity();
+#define NO_LIMIT std::numeric_limits<double>::infinity()
 
 Watchdog::Watchdog()
     : m_timerDidFire(false)
     , m_didFire(false)
-    , m_limit(noLimit)
+    , m_limit(NO_LIMIT)
     , m_startTime(0)
     , m_elapsedTime(0)
     , m_reentryCount(0)
@@ -135,7 +135,7 @@ bool Watchdog::didFire(ExecState* exec)
 
 bool Watchdog::isEnabled()
 {
-    return (m_limit != noLimit);
+    return (m_limit != NO_LIMIT);
 }
 
 void Watchdog::fire()
