@@ -48,27 +48,19 @@ var domainAffiliations = {
     'kde.org': 'KDE'
 };
 
-function parseCommittersPy(text) {
-    var lines = text.split('\n');
+function parseContributorsJSON(text) {
+    var contributorsJSON = JSON.parse(text);
     var contributors = [];
-    for (var i = 0; i < lines.length; i++) {
-        var contributorLine = /^\s+(Reviewer|Committer|Contributor)\((.+)\),?$/;
-        var match = contributorLine.exec(lines[i]);
-        if (!match)
-            continue;
 
-        try {
-            var nameEmailsNicks = JSON.parse('[' + match[2].replace(/^u"/,'"') + ']');
-        } catch (e) {
-            continue;
+    for (var contributorType in contributorsJSON) {
+        for (var contributor in contributorsJSON[contributorType]) {
+            contributors.push({
+                name: contributor,
+                kind: contributorType.replace(/s$/, "").toLowerCase(),
+                emails: contributorsJSON[contributorType][contributor].emails,
+                nicks: contributorsJSON[contributorType][contributor].nicks
+            });
         }
-        contributors.push({
-            name: nameEmailsNicks[0],
-            kind: match[1].toLowerCase(),
-            emails: typeof nameEmailsNicks[1] == 'string' ? [nameEmailsNicks[1]] : nameEmailsNicks[1],
-            nicks: typeof nameEmailsNicks[2] == 'string' ? [nameEmailsNicks[2]] : nameEmailsNicks[2],
-            area: nameEmailsNicks[3]
-        });
     }
     return contributors;
 }
@@ -205,7 +197,7 @@ var xhr = new XMLHttpRequest();
 xhr.onload = function () {
     if (this.status !== 200)
         return this.onerror();
-    var contributors = parseCommittersPy(this.responseText);
+    var contributors = parseContributorsJSON(this.responseText);
 
     populateContributorList(contributors, 'reviewer');
     populateContributorList(contributors, 'committer');
@@ -214,8 +206,8 @@ xhr.onload = function () {
     if (location.search.indexOf('annotate') >= 0)
         annotateWithWikiData();
 };
-xhr.onerror = function () { document.getElementById('container').textContent = 'Could not obtain committers.py'; };
-xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/committers.py');
+xhr.onerror = function () { document.getElementById('container').textContent = 'Could not obtain contributors.json'; };
+xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/contributors.json');
 xhr.send();
 
 </script>

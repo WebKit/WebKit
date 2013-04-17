@@ -1,3 +1,15 @@
+2013-04-16  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Update team.html to use contributors.json instead of committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=114720
+
+        Reviewed by Ryosuke Niwa.
+
+        Updating the team.html to use contributors.json. Also removing the unused field 'area'
+        from the contributors information.
+
+        * team.html:
+
 2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         The list of contributors in committers.py should be a separate JSON
