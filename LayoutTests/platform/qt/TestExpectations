@@ -2300,6 +2300,8 @@ webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-si
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ Skip ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ Skip ]
 webkit.org/b/110447 fast/regions/shape-inside/shape-inside-on-regions.html [ Skip ]
+css3/flexbox/auto-margins.html
+fast/regions/overflow-in-uniform-regions.html
 
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080
