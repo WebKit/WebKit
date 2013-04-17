@@ -2161,7 +2161,8 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
 
     bool nodeAllowSelectionOverride = false;
     Node* linkNode = node->enclosingLinkEventParentOrSelf();
-    if (node->isLink() || (node->isTextNode() && linkNode)) {
+    // Set link url only when the node is linked image, or text inside anchor. Prevent CCM popup when long press non-link element(eg. button) inside an anchor.
+    if ((node == linkNode) || (node->isTextNode() && linkNode)) {
         KURL href;
         if (linkNode->isLink() && linkNode->hasAttributes()) {
             if (const Attribute* attribute = toElement(linkNode)->getAttributeItem(HTMLNames::hrefAttr))

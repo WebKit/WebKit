@@ -1,3 +1,22 @@
+2013-04-17  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Check image node with usemap attribute isLink failed
+        https://bugs.webkit.org/show_bug.cgi?id=114751
+
+        Reviewed by Rob Buis.
+
+        PR 326780
+        Internally Reviewed by Liam Quinn.
+
+        An image node with usemap will crash when call isLink.
+        If the node is linkNode, bring up the CCM(eg. linked image).
+        Also use toElement method as agomes suggested in pr 113957.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+
 2013-04-16  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         Redo spellchecking of a field if the layout has changed

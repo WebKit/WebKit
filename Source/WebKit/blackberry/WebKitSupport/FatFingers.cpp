@@ -170,7 +170,7 @@ const FatFingersResult FatFingers::findBestPoint()
     while (node && !node->isElementNode())
         node = node->parentNode();
 
-    Element* elementUnderPoint = static_cast<Element*>(node);
+    Element* elementUnderPoint = toElement(node);
 
     if (elementUnderPoint) {
         result.m_nodeUnderFatFinger = elementUnderPoint;
