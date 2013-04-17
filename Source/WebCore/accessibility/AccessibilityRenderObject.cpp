@@ -1247,6 +1247,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             // informal standard is to ignore images with zero-length alt strings
             if (!alt.isNull())
                 return true;
+            // If an image has a title attribute on it, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
+            if (!getAttribute(titleAttr).isEmpty())
+                return false;
         }
         
         if (isNativeImage()) {
