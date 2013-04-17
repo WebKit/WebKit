@@ -378,6 +378,7 @@ public:
     void repaint();
 
     MediaPlayerClient* mediaPlayerClient() const { return m_mediaPlayerClient; }
+    void clearMediaPlayerClient() { m_mediaPlayerClient = 0; }
 
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
