@@ -89,10 +89,6 @@ inspector/elements/edit-dom-actions.html
 inspector/extensions/extensions-events.html
 inspector/styles/styles-computed-trace.html
 
-# [WK2][WTR] svg/animations/animate-text-nested-transforms.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=95191
-svg/animations/animate-text-nested-transforms.html
-
 # WebKitTestRunner needs overridePreference for non-boolean values
 # (zero-font-size.html passes because overridePreference does not work)
 webkit.org/b/42197 fast/harness/override-preferences-2.html [ Failure ]
@@ -240,11 +236,6 @@ http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 http/tests/globalhistory/history-delegate-basic-title.html
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
-# These tests crash the WebProcess when run under WebKitTestRunner.
-# <https://bugs.webkit.org/show_bug.cgi?id=44479>
-fast/parser/remove-misnested-iframe-in-beforeload.html
-fast/parser/remove-misnested-iframe-parent-in-beforeload.html
-
 # transitions/default-timing-function.html failing on WebKit2 since it was added
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
@@ -277,15 +268,6 @@ fast/forms/validation-message-on-range.html
 fast/forms/validation-message-on-textarea.html
 
 platform/mac/accessibility/search-predicate.html
-
-# [WK2] CSP reporting doesn't work
-# https://bugs.webkit.org/show_bug.cgi?id=59192
-http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
-
-# WebKitTestRunner needs an implementation of allowRoundingHacks
-# http://webkit.org/b/63477
-platform/mac/fast/text/rounding-hacks.html
-platform/mac/fast/text/rounding-hacks-expansion.html
 
 # Sometimes fails
 # http://webkit.org/b/58990
@@ -324,11 +306,6 @@ webkit.org/b/100324 css3/supports-dom-api.html
 # Text Autosizing is not yet enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=84186
 fast/text-autosizing
-
-# setMockGeolocationPosition not defined in WKTR
-# https://bugs.webkit.org/show_bug.cgi?id=94554
-inspector/geolocation-error.html
-inspector/geolocation-success.html
 
 # WebKitTestRunner needs to implement testRunner.closeIdleLocalStorageDatabases().
 # https://bugs.webkit.org/show_bug.cgi?id=103861
