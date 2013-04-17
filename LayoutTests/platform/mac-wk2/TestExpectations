@@ -85,11 +85,7 @@ fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
 fast/events/only-valid-drop-targets-receive-file-drop.html
-fast/events/open-window-from-another-frame.html
-fast/events/popup-when-select-change.html
 fast/events/right-click-focus.html
-fast/events/scroll-after-click-on-tab-index.html
-fast/events/selectstart-by-drag.html
 fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
@@ -98,35 +94,24 @@ fast/events/wheelevent-direction-inverted-from-device.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/file/input-file-value.html
-fast/forms/input-readonly-autoscroll.html
-fast/forms/input-text-drag-down.html
 fast/forms/listbox-typeahead-cyrillic.html
 fast/forms/listbox-typeahead-greek.html
-fast/forms/range/slider-mouse-events.html
-fast/forms/range/slider-onchange-event.html
 fast/forms/select-type-ahead-non-latin.html
 fast/forms/file/input-file-write-files.html
 fast/history/window-open.html
 fast/lists/drag-into-marker.html
-fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/repaint/japanese-rl-selection-repaint.html
 fast/repaint/repaint-across-writing-mode-boundary.html
-fast/repaint/selection-rl.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
 http/tests/misc/bubble-drag-events.html
-http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 media/controls-right-click-on-timebar.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
-scrollbars/scrollbar-iframe-click-does-not-blur-content.html
-scrollbars/scrollevent-iframe-no-scrolling-wheel.html
-svg/custom/foreignObject-crash-on-hover.xml
-svg/custom/use-events-crash.svg
 
 # [WK2] [Mac] Spellcheck tests don't seem to work
 webkit.org/b/105616 editing/spelling/spelling-changed-text.html
