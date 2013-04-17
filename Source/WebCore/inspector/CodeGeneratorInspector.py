@@ -76,6 +76,7 @@ EXACTLY_INT_SUPPORTED = False
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
+cmdline_parser.add_option("--write_always", action="store_true")
 
 try:
     arg_options, arg_values = cmdline_parser.parse_args()
@@ -84,6 +85,7 @@ try:
     input_json_filename = arg_values[0]
     output_header_dirname = arg_options.output_h_dir
     output_cpp_dirname = arg_options.output_cpp_dir
+    write_always = arg_options.write_always
     if not output_header_dirname:
         raise Exception("Output .h directory must be specified")
     if not output_cpp_dirname:
@@ -92,7 +94,7 @@ except Exception:
     # Work with python 2 and 3 http://docs.python.org/py3k/howto/pyporting.html
     exc = sys.exc_info()[1]
     sys.stderr.write("Failed to parse command-line arguments: %s\n\n" % exc)
-    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir>\n")
+    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir> [--write_always]\n")
     exit(1)
 
 
@@ -2343,7 +2345,7 @@ class SmartOutput:
             # Ignore, just overwrite by default
             pass
 
-        if text_changed:
+        if text_changed or write_always:
             out_file = open(self.file_name_, "w")
             out_file.write(self.output_)
             out_file.close()
