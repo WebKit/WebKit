@@ -4275,7 +4275,7 @@ enum LengthConversion {
     ViewportPercentageConversion = 1 << 6
 };
 
-template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
+template<int supported> Length CSSPrimitiveValue::convertToLength(const RenderStyle* style, const RenderStyle* rootStyle, double multiplier, bool computingFontSize) const
 {
 #if ENABLE(CSS_VARIABLES)
     ASSERT(!hasVariableReference());

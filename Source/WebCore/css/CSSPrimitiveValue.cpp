@@ -481,17 +481,17 @@ double CSSPrimitiveValue::computeDegrees()
     }
 }
 
-template<> int CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> int CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return roundForImpreciseConversion<int>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-template<> unsigned CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> unsigned CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return roundForImpreciseConversion<unsigned>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> Length CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
     return Length(clampTo<float>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize), minValueForCssLength, maxValueForCssLength), Fixed);
@@ -500,27 +500,27 @@ template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderSty
 #endif
 }
 
-template<> short CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> short CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return roundForImpreciseConversion<short>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-template<> unsigned short CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> unsigned short CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return roundForImpreciseConversion<unsigned short>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-template<> float CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> float CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return static_cast<float>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-template<> double CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+template<> double CSSPrimitiveValue::computeLength(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     return computeLengthDouble(style, rootStyle, multiplier, computingFontSize);
 }
 
-double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
+double CSSPrimitiveValue::computeLengthDouble(const RenderStyle* style, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const
 {
     if (m_primitiveUnitType == CSS_CALC)
         // The multiplier and factor is applied to each value in the calc expression individually
@@ -1169,7 +1169,7 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const S
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
 }
 
-Length CSSPrimitiveValue::viewportPercentageLength()
+Length CSSPrimitiveValue::viewportPercentageLength() const
 {
     ASSERT(isViewportPercentageLength());
     Length viewportLength;

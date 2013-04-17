@@ -559,8 +559,8 @@ public:
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
 
-    static Length convertToIntLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, double multiplier = 1);
-    static Length convertToFloatLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, double multiplier = 1);
+    static Length convertToIntLength(const CSSPrimitiveValue*, const RenderStyle*, const RenderStyle* rootStyle, double multiplier = 1);
+    static Length convertToFloatLength(const CSSPrimitiveValue*, const RenderStyle*, const RenderStyle* rootStyle, double multiplier = 1);
 
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
