@@ -227,6 +227,18 @@ extern "C" { extern void (*const __identifier("??_7TestCustomNamedGetter@WebCore
 extern "C" { extern void* _ZTVN7WebCore21TestCustomNamedGetterE[]; }
 #endif
 #endif
+template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+template <typename T> struct ReportMemoryCost<T, true> {
+    static void reportMemoryCost(ExecState* exec, T* impl)
+    {
+        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    }
+};
+template <typename T> struct ReportMemoryCost<T, false> {
+    static void reportMemoryCost(ExecState*, T*)
+    {
+    }
+};
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
 {
     if (!impl)
@@ -251,6 +263,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCus
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    ReportMemoryCost<TestCustomNamedGetter>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestCustomNamedGetter>(exec, globalObject, impl);
 }
 

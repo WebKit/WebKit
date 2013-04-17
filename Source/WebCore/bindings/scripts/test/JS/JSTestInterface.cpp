@@ -499,6 +499,18 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     jsTestInterface->releaseImpl();
 }
 
+template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+template <typename T> struct ReportMemoryCost<T, true> {
+    static void reportMemoryCost(ExecState* exec, T* impl)
+    {
+        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    }
+};
+template <typename T> struct ReportMemoryCost<T, false> {
+    static void reportMemoryCost(ExecState*, T*)
+    {
+    }
+};
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* impl)
 {
     if (!impl)
@@ -511,6 +523,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
     // attribute to TestInterface.
     COMPILE_ASSERT(!__is_polymorphic(TestInterface), TestInterface_is_polymorphic_but_idl_claims_not_to_be);
 #endif
+    ReportMemoryCost<TestInterface>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestInterface>(exec, globalObject, impl);
 }
 

@@ -249,6 +249,18 @@ extern "C" { extern void (*const __identifier("??_7TestOverloadedConstructors@We
 extern "C" { extern void* _ZTVN7WebCore26TestOverloadedConstructorsE[]; }
 #endif
 #endif
+template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+template <typename T> struct ReportMemoryCost<T, true> {
+    static void reportMemoryCost(ExecState* exec, T* impl)
+    {
+        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    }
+};
+template <typename T> struct ReportMemoryCost<T, false> {
+    static void reportMemoryCost(ExecState*, T*)
+    {
+    }
+};
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestOverloadedConstructors* impl)
 {
     if (!impl)
@@ -273,6 +285,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestOve
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    ReportMemoryCost<TestOverloadedConstructors>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestOverloadedConstructors>(exec, globalObject, impl);
 }
 

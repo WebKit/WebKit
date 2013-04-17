@@ -523,6 +523,30 @@ class DOMStringList;
         return 0;
     }
 
+    template<typename T>
+    class HasMemoryCostMemberFunction {
+        typedef char YesType;
+        struct NoType {
+            char padding[8];
+        };
+
+        struct BaseMixin {
+            size_t memoryCost();
+        };
+
+        struct Base : public T, public BaseMixin { };
+
+        template<typename U, U> struct
+        TypeChecker { };
+
+        template<typename U>
+        static NoType dummy(U*, TypeChecker<size_t (BaseMixin::*)(), &U::memoryCost>* = 0);
+        static YesType dummy(...);
+
+    public:
+        static const bool value = sizeof(dummy(static_cast<Base*>(0))) == sizeof(YesType);
+    };
+
 } // namespace WebCore
 
 #endif // JSDOMBinding_h

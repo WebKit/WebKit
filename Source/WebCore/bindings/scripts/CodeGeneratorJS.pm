@@ -2714,6 +2714,21 @@ extern "C" { extern void* ${vtableNameGnu}[]; }
 #endif
 #endif
 END
+push(@implContent, <<END);
+template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+template <typename T> struct ReportMemoryCost<T, true> {
+    static void reportMemoryCost(ExecState* exec, T* impl)
+    {
+        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    }
+};
+template <typename T> struct ReportMemoryCost<T, false> {
+    static void reportMemoryCost(ExecState*, T*)
+    {
+    }
+};
+END
+
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         push(@implContent, <<END);
@@ -2755,6 +2770,9 @@ END
     // attribute to $interfaceName.
     COMPILE_ASSERT(!__is_polymorphic($implType), ${implType}_is_polymorphic_but_idl_claims_not_to_be);
 #endif
+END
+        push(@implContent, <<END);
+    ReportMemoryCost<$implType>::reportMemoryCost(exec, impl);
 END
 
         if ($svgPropertyType) {

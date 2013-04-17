@@ -397,6 +397,18 @@ extern "C" { extern void (*const __identifier("??_7TestSerializedScriptValueInte
 extern "C" { extern void* _ZTVN7WebCore34TestSerializedScriptValueInterfaceE[]; }
 #endif
 #endif
+template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+template <typename T> struct ReportMemoryCost<T, true> {
+    static void reportMemoryCost(ExecState* exec, T* impl)
+    {
+        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    }
+};
+template <typename T> struct ReportMemoryCost<T, false> {
+    static void reportMemoryCost(ExecState*, T*)
+    {
+    }
+};
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSerializedScriptValueInterface* impl)
 {
     if (!impl)
@@ -421,6 +433,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSer
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    ReportMemoryCost<TestSerializedScriptValueInterface>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestSerializedScriptValueInterface>(exec, globalObject, impl);
 }
 

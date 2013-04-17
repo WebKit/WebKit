@@ -34,22 +34,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, AudioBuffer* audioBuffer)
-{
-    if (!audioBuffer)
-        return jsNull();
-
-    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), audioBuffer);
-    if (wrapper)
-        return wrapper;
-
-    wrapper = CREATE_DOM_WRAPPER(exec, globalObject, AudioBuffer, audioBuffer);
-
-    exec->heap()->reportExtraMemoryCost(audioBuffer->memoryCost());
-
-    return wrapper;
-}
-
 }
 
 #endif // ENABLE(WEB_AUDIO)
