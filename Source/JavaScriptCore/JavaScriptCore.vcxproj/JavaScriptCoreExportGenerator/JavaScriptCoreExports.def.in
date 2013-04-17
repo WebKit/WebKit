@@ -27,6 +27,8 @@ EXPORTS
     ??0SHA1@WTF@@QAE@XZ
     ??0SuperRegion@JSC@@QAE@XZ
     ??0SourceProvider@JSC@@QAE@ABVString@WTF@@ABVTextPosition@3@@Z
+    ??0String@WTF@@QAE@PBD@Z
+    ??0String@WTF@@QAE@PBDI@Z
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0StringPrintStream@WTF@@QAE@XZ
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EI@Z
@@ -52,6 +54,7 @@ EXPORTS
     ??1SourceProvider@JSC@@UAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
     ??1StringPrintStream@WTF@@UAE@XZ
+    ??1StringImpl@WTF@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WeakHandleOwner@JSC@@UAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -227,9 +230,11 @@ EXPORTS
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
+    ?format@String@WTF@@SA?AV12@PBDZZ
     ?freeFatEntrySlow@SymbolTableEntry@JSC@@AAEXXZ
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
+    ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?get@Structure@JSC@@QAEHAAVJSGlobalData@2@VPropertyName@2@AAIAAPAVJSCell@2@@Z
     ?getCalculatedDisplayName@JSC@@YA?AVString@WTF@@PAVExecState@1@PAVJSObject@1@@Z
@@ -433,6 +438,7 @@ EXPORTS
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?updateIndexingType@ArrayAllocationProfile@JSC@@QAEXXZ
+    ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z
     ?validate@SlotVisitor@JSC@@CAXPAVJSCell@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
@@ -457,3 +463,5 @@ EXPORTS
     WTFReportError
     WTFReportFatalError
     WTFSetCrashHook
+    ??0WTFThreadData@WTF@@QAE@XZ
+    ??1WTFThreadData@WTF@@QAE@XZ

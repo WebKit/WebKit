@@ -448,23 +448,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\jsc.cpp"
-			>
-		</File>
-		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\StringBuilder.cpp"
-			>
-		</File>
-		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp"
-			>
-		</File>
-		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp"
 			>
 		</File>
 	</Files>
