@@ -1,3 +1,27 @@
+2013-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Clone storage namespaces for window.open
+        https://bugs.webkit.org/show_bug.cgi?id=114703
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::clone):
+        New helper function for cloning a storage area.
+
+        (WebKit::StorageManager::StorageArea::setItem):
+        Correctly handle the copy-on-write feature of StorageMap if it has multiple storage areas pointing to it.
+
+        (WebKit::StorageManager::StorageArea::removeItem):
+        Ditto.
+
+        (WebKit::StorageManager::SessionStorageNamespace::cloneTo):
+        Add cloned storage areas.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::copy):
+        Create a new session storage namespace for the new page.
+
 2013-04-16  Beth Dakin  <bdakin@apple.com>
 
         Need a new layout milestone to notify bundle clients when the header has been 

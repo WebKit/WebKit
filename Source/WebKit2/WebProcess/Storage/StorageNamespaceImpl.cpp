@@ -60,11 +60,11 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOri
     return StorageAreaImpl::create(result.iterator->value);
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return 0;
+    ASSERT(m_storageNamespaceID);
+
+    return createSessionStorageNamespace(WebPage::fromCorePage(newPage));
 }
 
 void StorageNamespaceImpl::close()

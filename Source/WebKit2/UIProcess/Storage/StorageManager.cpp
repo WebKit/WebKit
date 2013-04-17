@@ -46,6 +46,8 @@ public:
     void addListener(CoreIPC::Connection*, uint64_t storageMapID);
     void removeListener(CoreIPC::Connection*, uint64_t storageMapID);
 
+    PassRefPtr<StorageArea> clone() const;
+
     void setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
     void removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
     void clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
@@ -90,12 +92,21 @@ void StorageManager::StorageArea::removeListener(CoreIPC::Connection* connection
     m_eventListeners.remove(std::make_pair(connection, storageMapID));
 }
 
+PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
+{
+    RefPtr<StorageArea> storageArea = StorageArea::create(m_quotaInBytes);
+    storageArea->m_storageMap = m_storageMap;
+
+    return storageArea.release();
+}
+
 void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
-    ASSERT(m_storageMap->hasOneRef());
-
     String oldValue;
-    m_storageMap->setItem(key, value, oldValue, quotaException);
+
+    RefPtr<StorageMap> newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+    if (newStorageMap)
+        m_storageMap = newStorageMap.release();
 
     if (!quotaException)
         dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
@@ -104,7 +115,9 @@ void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection,
 void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
 {
     String oldValue;
-    m_storageMap->removeItem(key, oldValue);
+    RefPtr<StorageMap> newStorageMap = m_storageMap->removeItem(key, oldValue);
+    if (newStorageMap)
+        m_storageMap = newStorageMap.release();
 
     if (oldValue.isNull())
         return;
@@ -188,7 +201,8 @@ void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& n
 {
     ASSERT_UNUSED(newSessionStorageNamespace, newSessionStorageNamespace.isEmpty());
 
-    // FIXME: Implement.
+    for (HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea> >::const_iterator it = m_storageAreaMap.begin(), end = m_storageAreaMap.end(); it != end; ++it)
+        newSessionStorageNamespace.m_storageAreaMap.add(it->key, it->value->clone());
 }
 
 PassRefPtr<StorageManager> StorageManager::create()

@@ -35,42 +35,44 @@
 
 namespace WebCore {
 
-    class StorageAreaImpl;
+class StorageAreaImpl;
 
-    class StorageNamespaceImpl : public StorageNamespace {
-    public:
-        static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);
-        static PassRefPtr<StorageNamespace> sessionStorageNamespace(unsigned quota);
+class StorageNamespaceImpl : public StorageNamespace {
+public:
+    static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);
+    static PassRefPtr<StorageNamespace> sessionStorageNamespace(unsigned quota);
+    virtual ~StorageNamespaceImpl();
 
-        virtual ~StorageNamespaceImpl();
-        virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>);
-        virtual PassRefPtr<StorageNamespace> copy();
-        virtual void close();
+    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  OVERRIDE;
+    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) OVERRIDE;
+    virtual void close() OVERRIDE;
 
-        // Not removing the origin's StorageArea from m_storageAreaMap because
-        // we're just deleting the underlying db file. If an item is added immediately
-        // after file deletion, we want the same StorageArea to eventually trigger
-        // a sync and for StorageAreaSync to recreate the backing db file.
-        virtual void clearOriginForDeletion(SecurityOrigin*);
-        virtual void clearAllOriginsForDeletion();
-        virtual void sync();
-        virtual void closeIdleLocalStorageDatabases();
+    // Not removing the origin's StorageArea from m_storageAreaMap because
+    // we're just deleting the underlying db file. If an item is added immediately
+    // after file deletion, we want the same StorageArea to eventually trigger
+    // a sync and for StorageAreaSync to recreate the backing db file.
+    virtual void clearOriginForDeletion(SecurityOrigin*) OVERRIDE;
+    virtual void clearAllOriginsForDeletion() OVERRIDE;
+    virtual void sync() OVERRIDE;
+    virtual void closeIdleLocalStorageDatabases() OVERRIDE;
 
-    private:
-        StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
+private:
+    StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl> > StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl> > StorageAreaMap;
+    StorageAreaMap m_storageAreaMap;
 
-        StorageType m_storageType;
+    StorageType m_storageType;
 
-        // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
-        String m_path;
-        RefPtr<StorageSyncManager> m_syncManager;
+    // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
+    String m_path;
+    RefPtr<StorageSyncManager> m_syncManager;
 
-        unsigned m_quota;  // The default quota for each new storage area.
-        bool m_isShutdown;
-    };
+    // The default quota for each new storage area.
+    unsigned m_quota;
+
+    bool m_isShutdown;
+};
 
 } // namespace WebCore
 

@@ -190,11 +190,11 @@ void Chrome::focusedFrameChanged(Frame* frame) const
 Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction& action) const
 {
     Page* newPage = m_client->createWindow(frame, request, features, action);
+    if (!newPage)
+        return 0;
 
-    if (newPage) {
-        if (StorageNamespace* oldSessionStorage = m_page->sessionStorage(false))
-            newPage->setSessionStorage(oldSessionStorage->copy());
-    }
+    if (StorageNamespace* oldSessionStorage = m_page->sessionStorage(false))
+        newPage->setSessionStorage(oldSessionStorage->copy(newPage));
 
     return newPage;
 }

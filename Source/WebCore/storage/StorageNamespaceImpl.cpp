@@ -87,7 +87,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         close();
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
