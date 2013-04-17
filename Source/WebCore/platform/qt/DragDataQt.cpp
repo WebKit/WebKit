@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
+#include "Range.h"
 #include "markup.h"
 
 #include <QColor>
