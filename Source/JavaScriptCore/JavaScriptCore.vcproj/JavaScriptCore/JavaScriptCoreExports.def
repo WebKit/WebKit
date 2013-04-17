@@ -179,7 +179,6 @@ EXPORTS
     ?create8BitIfPossible@StringImpl@WTF@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PB_WI@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVString@WTF@@@Z
-    ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4HeapType@2@@Z
     ?createNotEnoughArgumentsError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
     ?createRangeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVString@WTF@@@Z
