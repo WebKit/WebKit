@@ -67,6 +67,7 @@ class DeprecatedPort(object):
             "mac-wk2": MacWK2Port,
             "win": WinPort,
             "qt": QtPort,
+            "qt-wk2": QtWK2Port,
             "efl": EflPort,
             "efl-wk2": EflWK2Port,
         }
@@ -181,7 +182,29 @@ class QtPort(DeprecatedPort):
     def build_webkit_command(self, build_style=None):
         command = super(QtPort, self).build_webkit_command(build_style=build_style)
         command.append("--qt")
+        command.append("--no-webkit2")
         command.append(super(QtPort, self).makeArgs())
+        return command
+
+    def run_webkit_tests_command(self):
+        command = super(QtPort, self).run_webkit_tests_command()
+        command.append("--qt")
+        return command
+
+
+class QtWK2Port(DeprecatedPort):
+    port_flag_name = "qt-wk2"
+
+    def build_webkit_command(self, build_style=None):
+        command = super(QtWK2Port, self).build_webkit_command(build_style=build_style)
+        command.append("--qt")
+        command.append(super(QtWK2Port, self).makeArgs())
+        return command
+
+    def run_webkit_tests_command(self):
+        command = super(QtWK2Port, self).run_webkit_tests_command()
+        command.append("--qt")
+        command.append("-2")
         return command
 
 

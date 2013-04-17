@@ -30,7 +30,7 @@
         ]
     },
     "Qt WK2 EWS": {
-        "port": "qt",
+        "port": "qt-wk2",
         "watchers": [
             "webkit-ews@sed.inf.u-szeged.hu"
         ]
