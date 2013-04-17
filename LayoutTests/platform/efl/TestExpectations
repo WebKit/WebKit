@@ -771,6 +771,19 @@ webkit.org/b/114731 webgl/conformance/textures/texture-size-cube-maps.html [ Cra
 webkit.org/b/114731 webgl/conformance/textures/texture-size.html [ Crash ]
 webkit.org/b/114731 webgl/conformance/textures/texture-transparent-pixels-initialized.html [ Crash ]
 
+webkit.org/b/114731 compositing/images/content-image-change.html [ Crash ]
+webkit.org/b/114731 compositing/masks/direct-image-mask.html [ Crash ]
+webkit.org/b/114731 compositing/webgl/webgl-reflection.html [ Crash ]
+webkit.org/b/114731 fast/canvas/webgl/index-validation-with-resized-buffer.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/extensions/oes-texture-float-with-video.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/renderbuffers/framebuffer-state-restoration.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/rendering/gl-scissor-test.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/rendering/multisample-corruption.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Crash ]
+webkit.org/b/114731 webgl/conformance/textures/texture-size-cube-maps.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
