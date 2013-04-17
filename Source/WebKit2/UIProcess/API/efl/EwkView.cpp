@@ -130,6 +130,15 @@ static inline EwkView* toEwkView(const Ewk_View_Smart_Data* smartData)
     return smartData->priv;
 }
 
+static inline void showEvasObjectsIfNeeded(const Ewk_View_Smart_Data* smartData)
+{
+    ASSERT(smartData);
+
+    if (evas_object_clipees_get(smartData->base.clipper))
+        evas_object_show(smartData->base.clipper);
+    evas_object_show(smartData->image);
+}
+
 // EwkViewEventHandler implementation.
 
 template <Evas_Callback_Type EventType>
@@ -539,6 +548,9 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         if (!createGLSurface())
             return;
 #endif
+        // Make Evas objects visible here in order not to paint empty Evas objects with black color.
+        showEvasObjectsIfNeeded(sd);
+
         m_pendingSurfaceResize = false;
     }
 
@@ -1121,9 +1133,8 @@ void EwkView::handleEvasObjectShow(Evas_Object* evasObject)
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
     ASSERT(smartData);
 
-    if (evas_object_clipees_get(smartData->base.clipper))
-        evas_object_show(smartData->base.clipper);
-    evas_object_show(smartData->image);
+    if (!toEwkView(smartData)->m_isAccelerated)
+        showEvasObjectsIfNeeded(smartData);
 }
 
 void EwkView::handleEvasObjectHide(Evas_Object* evasObject)

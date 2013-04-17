@@ -1,3 +1,19 @@
+2013-04-17  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][AC] MiniBrowser starts with a black empty view before painting a web page
+        https://bugs.webkit.org/show_bug.cgi?id=103745
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Evas paints empty evas objects before rendering a web page, so it shows 
+        a black empty view for a moment. This patch prevents from painting the empty 
+        evas objects until a GL surface is ready for rendering.  
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (showEvasObjectsIfNeeded):
+        (EwkView::displayTimerFired):
+        (EwkView::handleEvasObjectShow):
+
 2013-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_web_page_get_id() to WebKit2 GTK+ API
