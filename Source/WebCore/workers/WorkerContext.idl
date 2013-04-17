@@ -70,9 +70,9 @@
     attribute MessageEventConstructor MessageEvent;
     attribute WorkerLocationConstructor WorkerLocation;
 
-    [Conditional=CHANNEL_MESSAGING, JSCustomGetter] attribute MessageChannelConstructor MessageChannel;
-    [JSCustomGetter] attribute EventSourceConstructor EventSource;
-    [JSCustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
+    [Conditional=CHANNEL_MESSAGING, CustomGetter] attribute MessageChannelConstructor MessageChannel;
+    [CustomGetter] attribute EventSourceConstructor EventSource;
+    [CustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
 #endif
 
 #if defined(ENABLE_BLOB) && ENABLE_BLOB

@@ -27,7 +27,7 @@
 
 [
     Conditional=WORKERS,
-    JSCustomConstructor,
+    CustomConstructor,
     Constructor(in DOMString scriptUrl),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,

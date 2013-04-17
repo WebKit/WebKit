@@ -27,7 +27,7 @@
  */
 
 [
-    JSGenerateIsReachable=Impl,
+    GenerateIsReachable=Impl,
     EventTarget,
     JSNoStaticTables
 ] interface XMLHttpRequestUpload {

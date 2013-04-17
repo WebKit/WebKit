@@ -27,7 +27,7 @@
     Conditional=VIDEO_TRACK,
     EventTarget,
     JSCustomMarkFunction,
-    JSCustomIsReachable,
+    CustomIsReachable,
     SkipVTableValidation
 ] interface TextTrack {
     readonly attribute DOMString kind;

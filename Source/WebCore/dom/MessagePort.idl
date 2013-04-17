@@ -27,7 +27,7 @@
 
 [
     JSCustomMarkFunction,
-    JSGenerateIsReachable=Impl,
+    GenerateIsReachable=Impl,
     ActiveDOMObject,
     EventTarget,
     JSNoStaticTables

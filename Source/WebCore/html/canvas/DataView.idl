@@ -48,10 +48,10 @@
     [StrictTypeChecking] unsigned long getUint32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
         raises (DOMException);
 
-    // Use custom code to handle NaN case for JSC.
-    [JSCustom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+    // Use custom code to handle NaN case.
+    [Custom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
         raises (DOMException);
-    [JSCustom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+    [Custom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
         raises (DOMException);
 
     // We have to use custom code because our code generator does not support uint8_t type.

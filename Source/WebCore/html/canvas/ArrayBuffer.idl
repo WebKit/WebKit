@@ -24,7 +24,7 @@
  */
 
 [
-    JSGenerateIsReachable=Impl,
+    GenerateIsReachable=Impl,
     CustomConstructor,
     ConstructorParameters=1,
     JSNoStaticTables,

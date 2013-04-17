@@ -28,7 +28,7 @@
 
 [
     Conditional=WORKERS,
-    JSGenerateIsReachable=Impl,
+    GenerateIsReachable=Impl,
     JSNoStaticTables,
     OmitConstructor
 ] interface WorkerNavigator {

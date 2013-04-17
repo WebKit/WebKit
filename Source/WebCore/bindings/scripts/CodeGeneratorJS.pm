@@ -370,13 +370,13 @@ sub constructorHashTableAccessor
 sub GetGenerateIsReachable
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{"GenerateIsReachable"} || $interface->extendedAttributes->{"JSGenerateIsReachable"};
+    return $interface->extendedAttributes->{"GenerateIsReachable"};
 }
 
 sub GetCustomIsReachable
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{"CustomIsReachable"} || $interface->extendedAttributes->{"JSCustomIsReachable"};
+    return $interface->extendedAttributes->{"CustomIsReachable"};
 }
 
 sub GenerateGetOwnPropertySlotBody
@@ -606,7 +606,7 @@ sub ShouldGenerateToJSDeclaration
 {
     my ($hasParent, $interface) = @_;
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
-    return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or ($interface->extendedAttributes->{"CustomToJSObject"} or $interface->extendedAttributes->{"JSCustomToJSObject"}));
+    return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
     return 0;
 }
 
@@ -614,7 +614,7 @@ sub ShouldGenerateToJSImplementation
 {
     my ($hasParent, $interface) = @_;
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
-    return 1 if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"}) and !($interface->extendedAttributes->{"CustomToJSObject"} or $interface->extendedAttributes->{"JSCustomToJSObject"}));
+    return 1 if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"}) and !$interface->extendedAttributes->{"CustomToJSObject"});
     return 0;
 }
 
@@ -4247,25 +4247,25 @@ sub HasCustomConstructor
 {
     my $interface = shift;
 
-    return $interface->extendedAttributes->{"CustomConstructor"} || $interface->extendedAttributes->{"JSCustomConstructor"};
+    return $interface->extendedAttributes->{"CustomConstructor"};
 }
 
 sub HasCustomGetter
 {
     my $attrExt = shift;
-    return $attrExt->{"Custom"} || $attrExt->{"JSCustom"} || $attrExt->{"CustomGetter"} || $attrExt->{"JSCustomGetter"};
+    return $attrExt->{"Custom"} || $attrExt->{"CustomGetter"} ;
 }
 
 sub HasCustomSetter
 {
     my $attrExt = shift;
-    return $attrExt->{"Custom"} || $attrExt->{"JSCustom"} || $attrExt->{"CustomSetter"} || $attrExt->{"JSCustomSetter"};
+    return $attrExt->{"Custom"} || $attrExt->{"CustomSetter"};
 }
 
 sub HasCustomMethod
 {
     my $attrExt = shift;
-    return $attrExt->{"Custom"} || $attrExt->{"JSCustom"};
+    return $attrExt->{"Custom"};
 }
 
 sub IsConstructable

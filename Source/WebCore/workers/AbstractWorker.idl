@@ -32,7 +32,7 @@
 [
     Conditional=WORKERS,
     ActiveDOMObject,
-    JSCustomToJSObject,
+    CustomToJSObject,
     EventTarget
 ] interface AbstractWorker {
 

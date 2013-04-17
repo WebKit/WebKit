@@ -22,7 +22,7 @@
 [
     JSCustomHeader,
     JSCustomMarkFunction,
-    JSGenerateIsReachable,
+    GenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
 ] interface CSSRule {

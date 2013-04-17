@@ -25,7 +25,7 @@
 
 // Introduced in DOM Level 2:
 [
-    JSCustomIsReachable,
+    CustomIsReachable,
     IndexedGetter,
     SkipVTableValidation
 ] interface CSSRuleList {

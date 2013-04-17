@@ -25,7 +25,7 @@
 
 [
     NamedGetter,
-    JSGenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomNamedSetter,

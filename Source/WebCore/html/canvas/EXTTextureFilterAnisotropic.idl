@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    JSGenerateIsReachable=ImplContext,
+    GenerateIsReachable=ImplContext,
     OmitConstructor,
     DoNotCheckConstants
 ] interface EXTTextureFilterAnisotropic {

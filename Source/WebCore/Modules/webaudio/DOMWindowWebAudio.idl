@@ -29,7 +29,7 @@
     Supplemental=DOMWindow
 ] interface DOMWindowWebAudio {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    [JSCustomGetter] attribute AudioContextConstructor webkitAudioContext;
+    [CustomGetter] attribute AudioContextConstructor webkitAudioContext;
     attribute OfflineAudioContextConstructor webkitOfflineAudioContext;
     attribute PannerNodeConstructor webkitAudioPannerNode;
     attribute AudioProcessingEventConstructor AudioProcessingEvent;

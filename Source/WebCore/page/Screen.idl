@@ -28,7 +28,7 @@
 
 
 [
-    JSGenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ImplFrame,
     OmitConstructor
 ] interface Screen {
     readonly attribute unsigned long height;

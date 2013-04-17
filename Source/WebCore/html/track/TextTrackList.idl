@@ -28,7 +28,7 @@
     IndexedGetter,
     EventTarget,
     JSCustomMarkFunction,
-    JSCustomIsReachable
+    CustomIsReachable
 ] interface TextTrackList {
     readonly attribute unsigned long length;
     TextTrack item(in unsigned long index);

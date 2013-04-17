@@ -19,7 +19,7 @@
 */
 
 [
-    JSGenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ImplFrame,
     NamedGetter,
     IndexedGetter,
     InterfaceName=MimeTypeArray

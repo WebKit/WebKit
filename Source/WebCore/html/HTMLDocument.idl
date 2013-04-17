@@ -21,7 +21,7 @@
 [
     CustomNamedGetter,
 ] interface HTMLDocument : Document {
-    [JSCustom] void open();
+    [Custom] void open();
     void close();
     [Custom] void write(in [Optional=DefaultIsUndefined] DOMString text);
     [Custom] void writeln(in [Optional=DefaultIsUndefined] DOMString text);
@@ -34,7 +34,7 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: This should eventually be available (if they are wanted) for all languages.
-    [JSCustom, Replaceable, Deletable] attribute HTMLAllCollection all;
+    [Custom, Replaceable, Deletable] attribute HTMLAllCollection all;
 #endif
 
     void clear();

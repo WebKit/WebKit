@@ -30,7 +30,7 @@
 ] interface DOMWindowWebSocket {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute CloseEventConstructor CloseEvent;
-    [JSCustomGetter] attribute WebSocketConstructor WebSocket; // Usable with the new operator
+    [CustomGetter] attribute WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 };
 

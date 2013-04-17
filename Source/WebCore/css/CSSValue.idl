@@ -20,7 +20,7 @@
 
 [
     CustomToJSObject,
-    JSCustomIsReachable,
+    CustomIsReachable,
     JSCustomFinalize,
     ObjCPolymorphic,
     ImplementationLacksVTable

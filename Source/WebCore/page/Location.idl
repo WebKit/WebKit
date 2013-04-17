@@ -29,7 +29,7 @@
 [
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
-    JSGenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
     CustomEnumerateProperty,
     JSCustomDefineOwnProperty,

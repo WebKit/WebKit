@@ -25,7 +25,7 @@
 
 [
     JSCustomMarkFunction,
-    JSGenerateIsReachable,
+    GenerateIsReachable,
     CustomToJSObject
 ] interface CanvasRenderingContext {
     readonly attribute HTMLCanvasElement canvas;

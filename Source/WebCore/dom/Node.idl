@@ -22,7 +22,7 @@
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
-    JSCustomIsReachable,
+    CustomIsReachable,
     JSCustomFinalize,
     CustomToJSObject,
     EventTarget,

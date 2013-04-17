@@ -25,7 +25,7 @@
  */
 
 [
-    JSGenerateIsReachable=ImplFrame
+    GenerateIsReachable=ImplFrame
 ] interface StyleMedia {
     readonly attribute DOMString type;
     boolean matchMedium(in [Optional=DefaultIsUndefined] DOMString mediaquery);

@@ -30,7 +30,7 @@
     CallWith=ScriptExecutionContext,
     EventTarget,
     JSCustomMarkFunction,
-    JSCustomIsReachable,
+    CustomIsReachable,
     SkipVTableValidation
 ] interface TextTrackCue {
     readonly attribute TextTrack track;
