@@ -37,9 +37,9 @@ namespace JSC {
 
         JSValue value() const { return m_value.get(); }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -54,14 +54,14 @@ namespace JSC {
     protected:
         void finishCreation(ExecState* exec, JSValue value)
         {
-            Base::finishCreation(exec->globalData());
-            m_value.set(exec->globalData(), this, value);
+            Base::finishCreation(exec->vm());
+            m_value.set(exec->vm(), this, value);
             ASSERT(!value.isCell());
         }
 
     private:
         JSAPIValueWrapper(ExecState* exec)
-            : JSCell(exec->globalData(), exec->globalData().apiWrapperStructure.get())
+            : JSCell(exec->vm(), exec->vm().apiWrapperStructure.get())
         {
         }
 

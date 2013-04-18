@@ -62,7 +62,7 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 {
     ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
-    m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData, ownerUID, effort);
+    m_executableMemory = m_assembler->m_assembler.executableCopy(*m_vm, ownerUID, effort);
     if (!m_executableMemory)
         return;
     m_code = m_executableMemory->start();
@@ -70,7 +70,7 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
     ASSERT(m_code);
 #else
     m_initialSize = m_assembler->m_assembler.codeSize();
-    m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, m_initialSize, ownerUID, effort);
+    m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, m_initialSize, ownerUID, effort);
     if (!m_executableMemory)
         return;
     m_code = (uint8_t*)m_executableMemory->start();

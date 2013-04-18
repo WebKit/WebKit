@@ -48,7 +48,7 @@ String OpaqueJSString::string() const
     return m_string.isolatedCopy();
 }
 
-Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
+Identifier OpaqueJSString::identifier(VM* vm) const
 {
     if (!this || m_string.isNull())
         return Identifier();
@@ -57,7 +57,7 @@ Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
         return Identifier(Identifier::EmptyIdentifier);
 
     if (m_string.is8Bit())
-        return Identifier(globalData, m_string.characters8(), m_string.length());
+        return Identifier(vm, m_string.characters8(), m_string.length());
 
-    return Identifier(globalData, m_string.characters16(), m_string.length());
+    return Identifier(vm, m_string.characters16(), m_string.length());
 }

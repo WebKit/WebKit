@@ -54,11 +54,11 @@ struct JSCallbackObjectData : WeakHandleOwner {
         return m_privateProperties->getPrivateProperty(propertyName);
     }
     
-    void setPrivateProperty(JSGlobalData& globalData, JSCell* owner, const Identifier& propertyName, JSValue value)
+    void setPrivateProperty(VM& vm, JSCell* owner, const Identifier& propertyName, JSValue value)
     {
         if (!m_privateProperties)
             m_privateProperties = adoptPtr(new JSPrivatePropertyMap);
-        m_privateProperties->setPrivateProperty(globalData, owner, propertyName, value);
+        m_privateProperties->setPrivateProperty(vm, owner, propertyName, value);
     }
     
     void deletePrivateProperty(const Identifier& propertyName)
@@ -86,10 +86,10 @@ struct JSCallbackObjectData : WeakHandleOwner {
             return location->value.get();
         }
         
-        void setPrivateProperty(JSGlobalData& globalData, JSCell* owner, const Identifier& propertyName, JSValue value)
+        void setPrivateProperty(VM& vm, JSCell* owner, const Identifier& propertyName, JSValue value)
         {
             WriteBarrier<Unknown> empty;
-            m_propertyMap.add(propertyName.impl(), empty).iterator->value.set(globalData, owner, value);
+            m_propertyMap.add(propertyName.impl(), empty).iterator->value.set(vm, owner, value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
@@ -118,10 +118,10 @@ template <class Parent>
 class JSCallbackObject : public Parent {
 protected:
     JSCallbackObject(ExecState*, Structure*, JSClassRef, void* data);
-    JSCallbackObject(JSGlobalData&, JSClassRef, Structure*);
+    JSCallbackObject(VM&, JSClassRef, Structure*);
 
     void finishCreation(ExecState*);
-    void finishCreation(JSGlobalData&);
+    void finishCreation(VM&);
 
 public:
     typedef Parent Base;
@@ -133,7 +133,7 @@ public:
         callbackObject->finishCreation(exec);
         return callbackObject;
     }
-    static JSCallbackObject<Parent>* create(JSGlobalData&, JSClassRef, Structure*);
+    static JSCallbackObject<Parent>* create(VM&, JSClassRef, Structure*);
 
     static const bool needsDestruction;
     static void destroy(JSCell* cell)
@@ -149,16 +149,16 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     
     JSValue getPrivateProperty(const Identifier& propertyName) const
     {
         return m_callbackObjectData->getPrivateProperty(propertyName);
     }
     
-    void setPrivateProperty(JSGlobalData& globalData, const Identifier& propertyName, JSValue value)
+    void setPrivateProperty(VM& vm, const Identifier& propertyName, JSValue value)
     {
-        m_callbackObjectData->setPrivateProperty(globalData, this, propertyName, value);
+        m_callbackObjectData->setPrivateProperty(vm, this, propertyName, value);
     }
     
     void deletePrivateProperty(const Identifier& propertyName)

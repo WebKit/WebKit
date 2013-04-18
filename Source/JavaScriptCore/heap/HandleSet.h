@@ -38,7 +38,7 @@ namespace JSC {
 class HandleBlock;
 class HandleSet;
 class HeapRootVisitor;
-class JSGlobalData;
+class VM;
 class JSValue;
 class SlotVisitor;
 
@@ -67,10 +67,10 @@ class HandleSet {
 public:
     static HandleSet* heapFor(HandleSlot);
 
-    HandleSet(JSGlobalData*);
+    HandleSet(VM*);
     ~HandleSet();
 
-    JSGlobalData* globalData();
+    VM* vm();
 
     HandleSlot allocate();
     void deallocate(HandleSlot);
@@ -94,7 +94,7 @@ private:
     bool isLiveNode(Node*);
 #endif
 
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     DoublyLinkedList<HandleBlock> m_blockList;
 
     SentinelLinkedList<Node> m_strongList;
@@ -108,9 +108,9 @@ inline HandleSet* HandleSet::heapFor(HandleSlot handle)
     return toNode(handle)->handleSet();
 }
 
-inline JSGlobalData* HandleSet::globalData()
+inline VM* HandleSet::vm()
 {
-    return m_globalData;
+    return m_vm;
 }
 
 inline HandleSlot HandleSet::toHandle(HandleSet::Node* node)

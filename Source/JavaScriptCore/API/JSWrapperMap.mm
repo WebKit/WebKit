@@ -102,7 +102,7 @@ static JSObjectRef makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrappedO
     JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->objcWrapperObjectStructure(), jsClass, 0);
     object->setWrappedObject(wrappedObject);
     if (JSC::JSObject* prototype = jsClass->prototype(exec))
-        object->setPrototype(exec->globalData(), prototype);
+        object->setPrototype(exec->vm(), prototype);
 
     return toRef(object);
 }

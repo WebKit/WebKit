@@ -57,7 +57,7 @@ static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
 const ClassInfo JSNPObject::s_info = { "NPObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSNPObject) };
 
 JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRuntimeObjectMap* objectMap, NPObject* npObject)
-    : JSDestructibleObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->vm(), structure)
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
@@ -66,7 +66,7 @@ JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRun
 
 void JSNPObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData());
+    Base::finishCreation(globalObject->vm());
     ASSERT(inherits(&s_info));
 
     // We should never have an NPJSObject inside a JSNPObject.
@@ -127,7 +127,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     VOID_TO_NPVARIANT(result);
     
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         returnValue = m_npObject->_class->invoke(m_npObject, methodName, arguments.data(), argumentCount, &result);
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
@@ -167,7 +167,7 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
     VOID_TO_NPVARIANT(result);
 
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         returnValue = m_npObject->_class->invokeDefault(m_npObject, arguments.data(), argumentCount, &result);
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
@@ -207,7 +207,7 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     VOID_TO_NPVARIANT(result);
     
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), argumentCount, &result);
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
@@ -352,7 +352,7 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
 
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         thisObject->m_npObject->_class->setProperty(thisObject->m_npObject, npIdentifier, &variant);
 
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
@@ -392,7 +392,7 @@ bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
     NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
 
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
 
         // FIXME: Should we throw an exception if removeProperty returns false?
         if (!m_npObject->_class->removeProperty(m_npObject, propertyName))
@@ -425,7 +425,7 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
     
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
 
         // FIXME: Should we throw an exception if enumerate returns false?
         if (!thisObject->m_npObject->_class->enumerate(thisObject->m_npObject, &identifiers, &identifierCount))
@@ -473,7 +473,7 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, PropertyNa
     
     bool returnValue;
     {
-        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
         returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
         

@@ -49,18 +49,18 @@ public:
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
     
-    JSSymbolTableObject(JSGlobalData& globalData, Structure* structure, JSScope* scope, SharedSymbolTable* symbolTable = 0)
-        : Base(globalData, structure, scope)
+    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SharedSymbolTable* symbolTable = 0)
+        : Base(vm, structure, scope)
     {
         if (symbolTable)
-            m_symbolTable.set(globalData, this, symbolTable);
+            m_symbolTable.set(vm, this, symbolTable);
     }
 
-    void finishCreation(JSGlobalData& globalData)
+    void finishCreation(VM& vm)
     {
-        Base::finishCreation(globalData);
+        Base::finishCreation(vm);
         if (!m_symbolTable)
-            m_symbolTable.set(globalData, this, SharedSymbolTable::create(globalData));
+            m_symbolTable.set(vm, this, SharedSymbolTable::create(vm));
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -118,7 +118,7 @@ inline bool symbolTablePut(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
     bool shouldThrow)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
     
     SymbolTable& symbolTable = *object->symbolTable();
@@ -135,13 +135,13 @@ inline bool symbolTablePut(
     }
     if (UNLIKELY(wasFat))
         iter->value.notifyWrite();
-    object->registerAt(fastEntry.getIndex()).set(globalData, object, value);
+    object->registerAt(fastEntry.getIndex()).set(vm, object, value);
     return true;
 }
 
 template<typename SymbolTableObjectType>
 inline bool symbolTablePutWithAttributes(
-    SymbolTableObjectType* object, JSGlobalData& globalData, PropertyName propertyName,
+    SymbolTableObjectType* object, VM& vm, PropertyName propertyName,
     JSValue value, unsigned attributes)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
@@ -153,7 +153,7 @@ inline bool symbolTablePutWithAttributes(
     ASSERT(!entry.isNull());
     entry.notifyWrite();
     entry.setAttributes(attributes);
-    object->registerAt(entry.getIndex()).set(globalData, object, value);
+    object->registerAt(entry.getIndex()).set(vm, object, value);
     return true;
 }
 

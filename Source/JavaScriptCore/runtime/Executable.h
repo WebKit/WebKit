@@ -68,16 +68,16 @@ namespace JSC {
         static const int NUM_PARAMETERS_IS_HOST = 0;
         static const int NUM_PARAMETERS_NOT_COMPILED = -1;
 
-        ExecutableBase(JSGlobalData& globalData, Structure* structure, int numParameters)
-            : JSCell(globalData, structure)
+        ExecutableBase(VM& vm, Structure* structure, int numParameters)
+            : JSCell(vm, structure)
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
         }
 
-        void finishCreation(JSGlobalData& globalData)
+        void finishCreation(VM& vm)
         {
-            Base::finishCreation(globalData);
+            Base::finishCreation(vm);
         }
 
     public:
@@ -102,7 +102,7 @@ namespace JSC {
             return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
         
         void clearCode();
 
@@ -271,26 +271,26 @@ namespace JSC {
         typedef ExecutableBase Base;
 
 #if ENABLE(JIT)
-        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
+        static NativeExecutable* create(VM& vm, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
         {
             NativeExecutable* executable;
             if (!callThunk) {
-                executable = new (NotNull, allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
-                executable->finishCreation(globalData, JITCode(), JITCode(), intrinsic);
+                executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+                executable->finishCreation(vm, JITCode(), JITCode(), intrinsic);
             } else {
-                executable = new (NotNull, allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
-                executable->finishCreation(globalData, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk), intrinsic);
+                executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+                executable->finishCreation(vm, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk), intrinsic);
             }
             return executable;
         }
 #endif
 
 #if ENABLE(LLINT_C_LOOP)
-        static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
+        static NativeExecutable* create(VM& vm, NativeFunction function, NativeFunction constructor)
         {
-            ASSERT(!globalData.canUseJIT());
-            NativeExecutable* executable = new (NotNull, allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
-            executable->finishCreation(globalData);
+            ASSERT(!vm.canUseJIT());
+            NativeExecutable* executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+            executable->finishCreation(vm);
             return executable;
         }
 #endif
@@ -320,7 +320,7 @@ namespace JSC {
             return OBJECT_OFFSETOF(NativeExecutable, m_constructor);
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(LeafType, StructureFlags), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(LeafType, StructureFlags), &s_info); }
         
         static const ClassInfo s_info;
 
@@ -328,9 +328,9 @@ namespace JSC {
 
     protected:
 #if ENABLE(JIT)
-        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
+        void finishCreation(VM& vm, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
         {
-            Base::finishCreation(globalData);
+            Base::finishCreation(vm);
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;
             m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
@@ -340,8 +340,8 @@ namespace JSC {
 #endif
 
     private:
-        NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
-            : ExecutableBase(globalData, globalData.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
+        NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor)
+            : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
             , m_function(function)
             , m_constructor(constructor)
         {
@@ -357,15 +357,15 @@ namespace JSC {
     public:
         typedef ExecutableBase Base;
 
-        ScriptExecutable(Structure* structure, JSGlobalData& globalData, const SourceCode& source, bool isInStrictContext)
-            : ExecutableBase(globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
+        ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext)
+            : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
         }
 
         ScriptExecutable(Structure* structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
-            : ExecutableBase(exec->globalData(), structure, NUM_PARAMETERS_NOT_COMPILED)
+            : ExecutableBase(exec->vm(), structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
@@ -403,14 +403,14 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(JSGlobalData& globalData)
+        void finishCreation(VM& vm)
         {
-            Base::finishCreation(globalData);
-            globalData.heap.addCompiledCode(this); // Balanced by Heap::deleteUnmarkedCompiledCode().
+            Base::finishCreation(vm);
+            vm.heap.addCompiledCode(this); // Balanced by Heap::deleteUnmarkedCompiledCode().
 
 #if ENABLE(CODEBLOCK_SAMPLING)
-            if (SamplingTool* sampler = globalData.interpreter->sampler())
-                sampler->notifyOfScope(globalData, this);
+            if (SamplingTool* sampler = vm.interpreter->sampler())
+                sampler->notifyOfScope(vm, this);
 #endif
         }
 
@@ -430,7 +430,7 @@ namespace JSC {
 
         JSObject* compile(ExecState* exec, JSScope* scope)
         {
-            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_evalCodeBlock)
                 error = compileInternal(exec, scope, JITCode::bottomTierJIT());
@@ -441,7 +441,7 @@ namespace JSC {
         JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
-        void jettisonOptimizedCode(JSGlobalData&);
+        void jettisonOptimizedCode(VM&);
         bool jitCompile(ExecState*);
 #endif
 
@@ -454,7 +454,7 @@ namespace JSC {
         static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
         {
             EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
-            executable->finishCreation(exec->globalData());
+            executable->finishCreation(exec->vm());
             return executable;
         }
 
@@ -464,9 +464,9 @@ namespace JSC {
             return generatedJITCodeForCall();
         }
 #endif
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
@@ -496,18 +496,18 @@ namespace JSC {
         static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
         {
             ProgramExecutable* executable = new (NotNull, allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
-            executable->finishCreation(exec->globalData());
+            executable->finishCreation(exec->vm());
             return executable;
         }
 
 
-        JSObject* initializeGlobalProperties(JSGlobalData&, CallFrame*, JSScope*);
+        JSObject* initializeGlobalProperties(VM&, CallFrame*, JSScope*);
 
         static void destroy(JSCell*);
 
         JSObject* compile(ExecState* exec, JSScope* scope)
         {
-            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_programCodeBlock)
                 error = compileInternal(exec, scope, JITCode::bottomTierJIT());
@@ -518,7 +518,7 @@ namespace JSC {
         JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
-        void jettisonOptimizedCode(JSGlobalData&);
+        void jettisonOptimizedCode(VM&);
         bool jitCompile(ExecState*);
 #endif
 
@@ -537,9 +537,9 @@ namespace JSC {
         }
 #endif
         
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(ProgramExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(ProgramExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
@@ -572,10 +572,10 @@ namespace JSC {
     public:
         typedef ScriptExecutable Base;
 
-        static FunctionExecutable* create(JSGlobalData& globalData, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine)
+        static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine)
         {
-            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, source, unlinkedExecutable, firstLine, lastLine);
-            executable->finishCreation(globalData);
+            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine);
+            executable->finishCreation(vm);
             return executable;
         }
         static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
@@ -602,7 +602,7 @@ namespace JSC {
 
         JSObject* compileForCall(ExecState* exec, JSScope* scope)
         {
-            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
                 error = compileForCallInternal(exec, scope, JITCode::bottomTierJIT());
@@ -613,7 +613,7 @@ namespace JSC {
         JSObject* compileOptimizedForCall(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
-        void jettisonOptimizedCodeForCall(JSGlobalData&);
+        void jettisonOptimizedCodeForCall(VM&);
         bool jitCompileForCall(ExecState*);
 #endif
 
@@ -630,7 +630,7 @@ namespace JSC {
 
         JSObject* compileForConstruct(ExecState* exec, JSScope* scope)
         {
-            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
                 error = compileForConstructInternal(exec, scope, JITCode::bottomTierJIT());
@@ -641,7 +641,7 @@ namespace JSC {
         JSObject* compileOptimizedForConstruct(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
-        void jettisonOptimizedCodeForConstruct(JSGlobalData&);
+        void jettisonOptimizedCodeForConstruct(VM&);
         bool jitCompileForConstruct(ExecState*);
 #endif
 
@@ -681,13 +681,13 @@ namespace JSC {
         }
         
 #if ENABLE(JIT)
-        void jettisonOptimizedCodeFor(JSGlobalData& globalData, CodeSpecializationKind kind)
+        void jettisonOptimizedCodeFor(VM& vm, CodeSpecializationKind kind)
         {
             if (kind == CodeForCall) 
-                jettisonOptimizedCodeForCall(globalData);
+                jettisonOptimizedCodeForCall(vm);
             else {
                 ASSERT(kind == CodeForConstruct);
-                jettisonOptimizedCodeForConstruct(globalData);
+                jettisonOptimizedCodeForConstruct(vm);
             }
         }
         
@@ -733,9 +733,9 @@ namespace JSC {
         void clearCodeIfNotCompiling();
         void clearUnlinkedCodeForRecompilationIfNotCompiling();
         static void visitChildren(JSCell*, SlotVisitor&);
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
@@ -745,7 +745,7 @@ namespace JSC {
         void clearCode();
 
     private:
-        FunctionExecutable(JSGlobalData&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine);
+        FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine);
 
         JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
@@ -775,10 +775,10 @@ namespace JSC {
         OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     };
 
-    inline JSFunction::JSFunction(JSGlobalData& globalData, FunctionExecutable* executable, JSScope* scope)
-        : Base(globalData, scope->globalObject()->functionStructure())
-        , m_executable(globalData, this, executable)
-        , m_scope(globalData, this, scope)
+    inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)
+        : Base(vm, scope->globalObject()->functionStructure())
+        , m_executable(vm, this, executable)
+        , m_scope(vm, this, scope)
         , m_allocationProfileWatchpoint(InitializedBlind) // See comment in JSFunction.cpp concerning the reason for using InitializedBlind as opposed to InitializedWatching.
     {
     }

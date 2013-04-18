@@ -183,7 +183,7 @@ JSValue JSHistory::state(ExecState *exec) const
 
     RefPtr<SerializedScriptValue> serialized = history->state();
     JSValue result = serialized ? serialized->deserialize(exec, globalObject(), 0) : jsNull();
-    const_cast<JSHistory*>(this)->m_state.set(exec->globalData(), this, result);
+    const_cast<JSHistory*>(this)->m_state.set(exec->vm(), this, result);
     return result;
 }
 

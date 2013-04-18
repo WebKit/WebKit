@@ -37,14 +37,14 @@ namespace JSC {
             return object;
         }
         
-        static RegExpObject* create(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        static RegExpObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
+            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(vm.heap)) RegExpObject(globalObject, structure, regExp);
             object->finishCreation(globalObject);
             return object;
         }
 
-        void setRegExp(JSGlobalData& globalData, RegExp* r) { m_regExp.set(globalData, this, r); }
+        void setRegExp(VM& vm, RegExp* r) { m_regExp.set(vm, this, r); }
         RegExp* regExp() const { return m_regExp.get(); }
 
         void setLastIndex(ExecState* exec, size_t lastIndex)
@@ -58,7 +58,7 @@ namespace JSC {
         void setLastIndex(ExecState* exec, JSValue lastIndex, bool shouldThrow)
         {
             if (LIKELY(m_lastIndexIsWritable))
-                m_lastIndex.set(exec->globalData(), this, lastIndex);
+                m_lastIndex.set(exec->vm(), this, lastIndex);
             else if (shouldThrow)
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         }
@@ -76,9 +76,9 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:

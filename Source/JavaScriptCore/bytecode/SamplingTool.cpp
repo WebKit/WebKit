@@ -297,13 +297,13 @@ void SamplingTool::sample()
     s_samplingTool->doRun();
 }
 
-void SamplingTool::notifyOfScope(JSGlobalData& globalData, ScriptExecutable* script)
+void SamplingTool::notifyOfScope(VM& vm, ScriptExecutable* script)
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
     MutexLocker locker(m_scriptSampleMapMutex);
-    m_scopeSampleMap->set(script, adoptPtr(new ScriptSampleRecord(globalData, script)));
+    m_scopeSampleMap->set(script, adoptPtr(new ScriptSampleRecord(vm, script)));
 #else
-    UNUSED_PARAM(globalData);
+    UNUSED_PARAM(vm);
     UNUSED_PARAM(script);
 #endif
 }

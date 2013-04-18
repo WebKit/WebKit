@@ -75,7 +75,7 @@ static WebFrame *toWebFrame(JSGlobalObject* globalObject)
 
 WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     : m_callingDelegate(false)
-    , m_globalObject(globalObject->globalData(), globalObject)
+    , m_globalObject(globalObject->vm(), globalObject)
 {
     attach(globalObject);
     initGlobalCallFrame(globalObject->globalExec());

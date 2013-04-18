@@ -27,7 +27,7 @@
 #define Local_h
 
 #include "Handle.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 
 /*
     A strongly referenced handle whose lifetime is temporary, limited to a given
@@ -44,8 +44,8 @@ template <typename T> class Local : public Handle<T> {
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
 
-    Local(JSGlobalData&, ExternalType = ExternalType());
-    Local(JSGlobalData&, Handle<T>);
+    Local(VM&, ExternalType = ExternalType());
+    Local(VM&, Handle<T>);
     Local(const Local<T>&); // Adopting constructor. Used to return a Local to a calling function.
 
     Local& operator=(ExternalType);
@@ -56,14 +56,14 @@ private:
     void set(ExternalType);
 };
 
-template <typename T> inline Local<T>::Local(JSGlobalData& globalData, ExternalType value)
-    : Handle<T>(globalData.heap.handleStack()->push())
+template <typename T> inline Local<T>::Local(VM& vm, ExternalType value)
+    : Handle<T>(vm.heap.handleStack()->push())
 {
     set(value);
 }
 
-template <typename T> inline Local<T>::Local(JSGlobalData& globalData, Handle<T> other)
-    : Handle<T>(globalData.heap.handleStack()->push())
+template <typename T> inline Local<T>::Local(VM& vm, Handle<T> other)
+    : Handle<T>(vm.heap.handleStack()->push())
 {
     set(other.get());
 }
@@ -101,8 +101,8 @@ template <typename T> inline void Local<T>::set(ExternalType externalType)
 template <typename T, unsigned inlineCapacity = 0> class LocalStack {
     typedef typename Handle<T>::ExternalType ExternalType;
 public:
-    LocalStack(JSGlobalData& globalData)
-        : m_globalData(globalData)
+    LocalStack(VM& vm)
+        : m_vm(vm)
         , m_count(0)
     {
     }
@@ -122,7 +122,7 @@ public:
     void push(ExternalType value)
     {
         if (m_count == m_stack.size())
-            m_stack.append(Local<T>(m_globalData, value));
+            m_stack.append(Local<T>(m_vm, value));
         else
             m_stack[m_count] = value;
         m_count++;
@@ -132,7 +132,7 @@ public:
     unsigned size() const { return m_count; }
 
 private:
-    JSGlobalData& m_globalData;
+    VM& m_vm;
     Vector<Local<T>, inlineCapacity> m_stack;
     unsigned m_count;
 };

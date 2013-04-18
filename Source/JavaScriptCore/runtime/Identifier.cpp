@@ -88,14 +88,14 @@ struct IdentifierLCharFromUCharTranslator {
     }
 };
 
-PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
+PassRefPtr<StringImpl> Identifier::add(VM* vm, const char* c)
 {
     ASSERT(c);
     ASSERT(c[0]);
     if (!c[1])
-        return add(globalData, globalData->smallStrings.singleCharacterStringRep(c[0]));
+        return add(vm, vm->smallStrings.singleCharacterStringRep(c[0]));
 
-    IdentifierTable& identifierTable = *globalData->identifierTable;
+    IdentifierTable& identifierTable = *vm->identifierTable;
     LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
 
     const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
@@ -115,29 +115,29 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
 
 PassRefPtr<StringImpl> Identifier::add(ExecState* exec, const char* c)
 {
-    return add(&exec->globalData(), c);
+    return add(&exec->vm(), c);
 }
 
-PassRefPtr<StringImpl> Identifier::add8(JSGlobalData* globalData, const UChar* s, int length)
+PassRefPtr<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];
         ASSERT(c <= 0xff);
         if (canUseSingleCharacterString(c))
-            return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
+            return add(vm, vm->smallStrings.singleCharacterStringRep(c));
     }
     
     if (!length)
         return StringImpl::empty();
     CharBuffer<UChar> buf = { s, static_cast<unsigned>(length) };
-    HashSet<StringImpl*>::AddResult addResult = globalData->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
+    HashSet<StringImpl*>::AddResult addResult = vm->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
     
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
     return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 }
 
-PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringImpl* r)
+PassRefPtr<StringImpl> Identifier::addSlowCase(VM* vm, StringImpl* r)
 {
     ASSERT(!r->isIdentifier());
     // The empty & null strings are static singletons, and static strings are handled
@@ -147,68 +147,68 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringI
     if (r->length() == 1) {
         UChar c = (*r)[0];
         if (c <= maxSingleCharacterString)
-            r = globalData->smallStrings.singleCharacterStringRep(c);
+            r = vm->smallStrings.singleCharacterStringRep(c);
             if (r->isIdentifier())
                 return r;
     }
 
-    return *globalData->identifierTable->add(r).iterator;
+    return *vm->identifierTable->add(r).iterator;
 }
 
 PassRefPtr<StringImpl> Identifier::addSlowCase(ExecState* exec, StringImpl* r)
 {
-    return addSlowCase(&exec->globalData(), r);
+    return addSlowCase(&exec->vm(), r);
 }
 
 Identifier Identifier::from(ExecState* exec, unsigned value)
 {
-    return Identifier(exec, exec->globalData().numericStrings.add(value));
+    return Identifier(exec, exec->vm().numericStrings.add(value));
 }
 
 Identifier Identifier::from(ExecState* exec, int value)
 {
-    return Identifier(exec, exec->globalData().numericStrings.add(value));
+    return Identifier(exec, exec->vm().numericStrings.add(value));
 }
 
 Identifier Identifier::from(ExecState* exec, double value)
 {
-    return Identifier(exec, exec->globalData().numericStrings.add(value));
+    return Identifier(exec, exec->vm().numericStrings.add(value));
 }
 
-Identifier Identifier::from(JSGlobalData* globalData, unsigned value)
+Identifier Identifier::from(VM* vm, unsigned value)
 {
-    return Identifier(globalData, globalData->numericStrings.add(value));
+    return Identifier(vm, vm->numericStrings.add(value));
 }
 
-Identifier Identifier::from(JSGlobalData* globalData, int value)
+Identifier Identifier::from(VM* vm, int value)
 {
-    return Identifier(globalData, globalData->numericStrings.add(value));
+    return Identifier(vm, vm->numericStrings.add(value));
 }
 
-Identifier Identifier::from(JSGlobalData* globalData, double value)
+Identifier Identifier::from(VM* vm, double value)
 {
-    return Identifier(globalData, globalData->numericStrings.add(value));
+    return Identifier(vm, vm->numericStrings.add(value));
 }
 
 #ifndef NDEBUG
 
-void Identifier::checkCurrentIdentifierTable(JSGlobalData* globalData)
+void Identifier::checkCurrentIdentifierTable(VM* vm)
 {
     // Check the identifier table accessible through the threadspecific matches the
-    // globalData's identifier table.
-    ASSERT_UNUSED(globalData, globalData->identifierTable == wtfThreadData().currentIdentifierTable());
+    // vm's identifier table.
+    ASSERT_UNUSED(vm, vm->identifierTable == wtfThreadData().currentIdentifierTable());
 }
 
 void Identifier::checkCurrentIdentifierTable(ExecState* exec)
 {
-    checkCurrentIdentifierTable(&exec->globalData());
+    checkCurrentIdentifierTable(&exec->vm());
 }
 
 #else
 
 // These only exists so that our exports are the same for debug and release builds.
 // This would be an RELEASE_ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(VM*) { CRASH(); }
 NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
 
 #endif

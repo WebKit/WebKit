@@ -48,9 +48,9 @@ void compileOSRExit(ExecState* exec)
     ASSERT(codeBlock);
     ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
     
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
     
-    uint32_t exitIndex = globalData->osrExitIndex;
+    uint32_t exitIndex = vm->osrExitIndex;
     OSRExit& exit = codeBlock->osrExit(exitIndex);
     
     // Make sure all code on our inline stack is JIT compiled. This is necessary since
@@ -90,13 +90,13 @@ void compileOSRExit(ExecState* exec)
 #endif
 
     {
-        CCallHelpers jit(globalData, codeBlock);
+        CCallHelpers jit(vm, codeBlock);
         OSRExitCompiler exitCompiler(jit);
 
         jit.jitAssertHasValidCallFrame();
         
-        if (globalData->m_perBytecodeProfiler && codeBlock->compilation()) {
-            Profiler::Database& database = *globalData->m_perBytecodeProfiler;
+        if (vm->m_perBytecodeProfiler && codeBlock->compilation()) {
+            Profiler::Database& database = *vm->m_perBytecodeProfiler;
             Profiler::Compilation* compilation = codeBlock->compilation();
             
             Profiler::OSRExit* profilerExit = compilation->addOSRExit(
@@ -108,7 +108,7 @@ void compileOSRExit(ExecState* exec)
         
         exitCompiler.compileExit(exit, operands, recovery);
         
-        LinkBuffer patchBuffer(*globalData, &jit, codeBlock);
+        LinkBuffer patchBuffer(*vm, &jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
             shouldShowDisassembly(),
             patchBuffer,
@@ -122,7 +122,7 @@ void compileOSRExit(ExecState* exec)
         repatchBuffer.relink(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     }
     
-    globalData->osrExitJumpDestination = exit.m_code.code().executableAddress();
+    vm->osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
 
 } // extern "C"

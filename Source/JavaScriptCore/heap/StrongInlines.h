@@ -26,29 +26,29 @@
 #ifndef StrongInlines_h
 #define StrongInlines_h
 
-#include "JSGlobalData.h"
+#include "VM.h"
 
 namespace JSC {
 
 template <typename T>
-inline Strong<T>::Strong(JSGlobalData& globalData, ExternalType value)
-    : Handle<T>(globalData.heap.handleSet()->allocate())
+inline Strong<T>::Strong(VM& vm, ExternalType value)
+    : Handle<T>(vm.heap.handleSet()->allocate())
 {
     set(value);
 }
 
 template <typename T>
-inline Strong<T>::Strong(JSGlobalData& globalData, Handle<T> handle)
-    : Handle<T>(globalData.heap.handleSet()->allocate())
+inline Strong<T>::Strong(VM& vm, Handle<T> handle)
+    : Handle<T>(vm.heap.handleSet()->allocate())
 {
     set(handle.get());
 }
 
 template <typename T>
-inline void Strong<T>::set(JSGlobalData& globalData, ExternalType value)
+inline void Strong<T>::set(VM& vm, ExternalType value)
 {
     if (!slot())
-        setSlot(globalData.heap.handleSet()->allocate());
+        setSlot(vm.heap.handleSet()->allocate());
     set(value);
 }
 

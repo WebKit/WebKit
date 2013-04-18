@@ -34,7 +34,7 @@ namespace JSC {
 class JSCallbackFunction : public InternalFunction {
 protected:
     JSCallbackFunction(JSGlobalObject*, Structure*, JSObjectCallAsFunctionCallback);
-    void finishCreation(JSGlobalData&, const String& name);
+    void finishCreation(VM&, const String& name);
 
 public:
     typedef InternalFunction Base;
@@ -45,9 +45,9 @@ public:
     
     // InternalFunction mish-mashes constructor and function behavior -- we should 
     // refactor the code so this override isn't necessary
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     { 
-        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
 
 protected:

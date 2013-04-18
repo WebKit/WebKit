@@ -34,10 +34,10 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        static DebuggerActivation* create(JSGlobalData& globalData, JSObject* object)
+        static DebuggerActivation* create(VM& vm, JSObject* object)
         {
-            DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
-            activation->finishCreation(globalData, object);
+            DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(vm.heap)) DebuggerActivation(vm);
+            activation->finishCreation(vm, object);
             return activation;
         }
 
@@ -53,18 +53,18 @@ namespace JSC {
 
         JS_EXPORTDATA static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
         }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
 
-        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, JSObject* activation);
+        JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
 
     private:
-        JS_EXPORT_PRIVATE DebuggerActivation(JSGlobalData&);
+        JS_EXPORT_PRIVATE DebuggerActivation(VM&);
         WriteBarrier<JSActivation> m_activation;
     };
 

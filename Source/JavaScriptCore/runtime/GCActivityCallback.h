@@ -52,14 +52,14 @@ public:
 
 protected:
 #if USE(CF)
-    GCActivityCallback(JSGlobalData* globalData, CFRunLoopRef runLoop)
-        : HeapTimer(globalData, runLoop)
+    GCActivityCallback(VM* vm, CFRunLoopRef runLoop)
+        : HeapTimer(vm, runLoop)
         , m_enabled(true)
     {
     }
 #else
-    GCActivityCallback(JSGlobalData* globalData)
-        : HeapTimer(globalData)
+    GCActivityCallback(VM* vm)
+        : HeapTimer(vm)
         , m_enabled(true)
     {
     }

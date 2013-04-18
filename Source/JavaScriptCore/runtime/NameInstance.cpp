@@ -33,10 +33,10 @@ namespace JSC {
 
 const ClassInfo NameInstance::s_info = { "Name", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(NameInstance) };
 
-NameInstance::NameInstance(JSGlobalData& globalData, Structure* structure, JSString* nameString)
-    : Base(globalData, structure)
+NameInstance::NameInstance(VM& vm, Structure* structure, JSString* nameString)
+    : Base(vm, structure)
 {
-    m_nameString.set(globalData, this, nameString);
+    m_nameString.set(vm, this, nameString);
 }
 
 void NameInstance::destroy(JSCell* cell)

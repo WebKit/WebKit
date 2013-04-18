@@ -112,12 +112,12 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 
 void PageScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindow::commonVM());
     // If JavaScript stack is not empty postpone recompilation.
-    if (JSDOMWindow::commonJSGlobalData()->dynamicGlobalObject)
+    if (JSDOMWindow::commonVM()->dynamicGlobalObject)
         recompileAllJSFunctionsSoon();
     else
-        Debugger::recompileAllJSFunctions(JSDOMWindow::commonJSGlobalData());
+        Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
 }
 
 ScriptDebugServer::ListenerSet* PageScriptDebugServer::getListenersForGlobalObject(JSGlobalObject* globalObject)

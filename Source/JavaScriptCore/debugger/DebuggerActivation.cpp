@@ -35,17 +35,17 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(DebuggerActivation);
 
 const ClassInfo DebuggerActivation::s_info = { "DebuggerActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(DebuggerActivation) };
 
-DebuggerActivation::DebuggerActivation(JSGlobalData& globalData)
-    : JSNonFinalObject(globalData, globalData.debuggerActivationStructure.get())
+DebuggerActivation::DebuggerActivation(VM& vm)
+    : JSNonFinalObject(vm, vm.debuggerActivationStructure.get())
 {
 }
 
-void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* activation)
+void DebuggerActivation::finishCreation(VM& vm, JSObject* activation)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(activation);
     ASSERT(activation->isActivationObject());
-    m_activation.set(globalData, this, jsCast<JSActivation*>(activation));
+    m_activation.set(vm, this, jsCast<JSActivation*>(activation));
 }
 
 void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -47,8 +47,8 @@ public:
 
     static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     {
-        JSC::Structure* structure = createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype());
-        JSNPObject* object = new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, structure, objectMap, npObject);
+        JSC::Structure* structure = createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype());
+        JSNPObject* object = new (JSC::allocateCell<JSNPObject>(globalObject->vm().heap)) JSNPObject(globalObject, structure, objectMap, npObject);
         object->finishCreation(globalObject);
         return object;
     }
@@ -77,9 +77,9 @@ private:
 
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);

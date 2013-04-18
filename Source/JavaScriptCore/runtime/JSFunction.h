@@ -53,7 +53,7 @@ namespace JSC {
         friend class JIT;
         friend class DFG::SpeculativeJIT;
         friend class DFG::JITCompiler;
-        friend class JSGlobalData;
+        friend class VM;
 
     public:
         typedef JSDestructibleObject Base;
@@ -62,10 +62,10 @@ namespace JSC {
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
         {
-            JSGlobalData& globalData = exec->globalData();
-            JSFunction* function = new (NotNull, allocateCell<JSFunction>(globalData.heap)) JSFunction(globalData, executable, scope);
+            VM& vm = exec->vm();
+            JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
             ASSERT(function->structure()->globalObject());
-            function->finishCreation(globalData);
+            function->finishCreation(vm);
             return function;
         }
         
@@ -89,10 +89,10 @@ namespace JSC {
         {
             return m_scope.get();
         }
-        void setScope(JSGlobalData& globalData, JSScope* scope)
+        void setScope(VM& vm, JSScope* scope)
         {
             ASSERT(!isHostFunctionNonInline());
-            m_scope.set(globalData, this, scope);
+            m_scope.set(vm, this, scope);
         }
 
         ExecutableBase* executable() const { return m_executable.get(); }
@@ -105,10 +105,10 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
         {
             ASSERT(globalObject);
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), &s_info); 
+            return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), &s_info); 
         }
 
         NativeFunction nativeFunction();
@@ -158,7 +158,7 @@ namespace JSC {
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
-        JSFunction(JSGlobalData&, FunctionExecutable*, JSScope*);
+        JSFunction(VM&, FunctionExecutable*, JSScope*);
         
         void finishCreation(ExecState*, NativeExecutable*, int length, const String& name);
         using Base::finishCreation;

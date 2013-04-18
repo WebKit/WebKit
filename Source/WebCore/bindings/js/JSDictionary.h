@@ -56,7 +56,7 @@ public:
         : m_exec(exec)
     {
         if (exec && initializerObject)
-            m_initializerObject = JSC::Strong<JSC::JSObject>(exec->globalData(), initializerObject);
+            m_initializerObject = JSC::Strong<JSC::JSObject>(exec->vm(), initializerObject);
     }
 
     // Returns false if any exceptions were thrown, regardless of whether the property was found.

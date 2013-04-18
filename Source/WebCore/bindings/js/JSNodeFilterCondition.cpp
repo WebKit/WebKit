@@ -31,7 +31,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSNodeFilterCondition::JSNodeFilterCondition(JSGlobalData&, NodeFilter* owner, JSValue filter)
+JSNodeFilterCondition::JSNodeFilterCondition(VM&, NodeFilter* owner, JSValue filter)
     : m_filter(filter.isObject() ? PassWeak<JSObject>(jsCast<JSObject*>(filter), &m_weakOwner, owner) : nullptr)
 {
 }

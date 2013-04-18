@@ -28,7 +28,7 @@
 
 #include "Heap.h"
 
-class JSGlobalData;
+class VM;
 
 namespace JSC {
 

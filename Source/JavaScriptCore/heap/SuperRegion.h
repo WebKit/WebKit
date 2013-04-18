@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 
 class SuperRegion : public WTF::MetaAllocator {
 public:

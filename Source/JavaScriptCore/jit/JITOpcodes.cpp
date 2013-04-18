@@ -43,9 +43,9 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFunction)
+JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction)
 {
-    return globalData->getCTIStub(nativeCallGenerator);
+    return vm->getCTIStub(nativeCallGenerator);
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)
@@ -97,7 +97,7 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
     size_t allocationSize = JSObject::allocationSize(structure->inlineCapacity());
-    MarkedAllocator* allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(allocationSize);
+    MarkedAllocator* allocator = &m_vm->heap.allocatorForObjectWithoutDestructor(allocationSize);
 
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;
@@ -350,7 +350,7 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
     emitGetVirtualRegister(src, regT0);
     
     Jump isImm = emitJumpIfNotJSCell(regT0);
-    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(m_globalData->stringStructure.get())));
+    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
     isImm.link(this);
 
     if (dst != src)
@@ -713,9 +713,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     killLastResultRegister(); // FIXME: Implicitly treat op_catch as a labeled statement, and remove this line of code.
     move(regT0, callFrameRegister);
-    peek(regT3, OBJECT_OFFSETOF(struct JITStackFrame, globalData) / sizeof(void*));
-    load64(Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception)), regT0);
-    store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception)));
+    peek(regT3, OBJECT_OFFSETOF(struct JITStackFrame, vm) / sizeof(void*));
+    load64(Address(regT3, OBJECT_OFFSETOF(VM, exception)), regT0);
+    store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, OBJECT_OFFSETOF(VM, exception)));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -910,7 +910,7 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
         loadPtr(Address(regT1, JSCell::structureOffset()), regT0);
         emitValueProfilingSite();
     }
-    addSlowCase(branchPtr(Equal, Address(regT1, JSCell::structureOffset()), TrustedImmPtr(m_globalData->stringStructure.get())));
+    addSlowCase(branchPtr(Equal, Address(regT1, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
 }
 
 void JIT::emit_op_get_callee(Instruction* currentInstruction)
@@ -981,7 +981,7 @@ void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowC
 
     linkSlowCase(iter);
     if (shouldEmitProfiling())
-        move(TrustedImm64(JSValue::encode(m_globalData->stringStructure.get())), regT0);
+        move(TrustedImm64(JSValue::encode(m_vm->stringStructure.get())), regT0);
     isNotUndefined.link(this);
     emitValueProfilingSite();
     JITStubCall stubCall(this, cti_op_convert_this);

@@ -26,7 +26,7 @@
 #ifndef ObjectAllocationProfile_h
 #define ObjectAllocationProfile_h
 
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
 #include "SlotVisitor.h"
@@ -47,7 +47,7 @@ public:
 
     bool isNull() { return !m_allocator; }
 
-    void initialize(JSGlobalData& globalData, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity)
+    void initialize(VM& vm, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity)
     {
         ASSERT(!m_allocator);
         ASSERT(!m_structure);
@@ -55,7 +55,7 @@ public:
         unsigned inlineCapacity = 0;
         if (inferredInlineCapacity < JSFinalObject::defaultInlineCapacity()) {
             // Try to shrink the object based on static analysis.
-            inferredInlineCapacity += possibleDefaultPropertyCount(globalData, prototype);
+            inferredInlineCapacity += possibleDefaultPropertyCount(vm, prototype);
 
             if (!inferredInlineCapacity) {
                 // Empty objects are rare, so most likely the static analyzer just didn't
@@ -80,7 +80,7 @@ public:
         ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
         size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-        MarkedAllocator* allocator = &globalData.heap.allocatorForObjectWithoutDestructor(allocationSize);
+        MarkedAllocator* allocator = &vm.heap.allocatorForObjectWithoutDestructor(allocationSize);
         ASSERT(allocator->cellSize());
 
         // Take advantage of extra inline capacity available in the size class.
@@ -90,8 +90,8 @@ public:
             inlineCapacity = JSFinalObject::maxInlineCapacity();
 
         m_allocator = allocator;
-        m_structure.set(globalData, owner,
-            globalData.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity));
+        m_structure.set(vm, owner,
+            vm.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity));
     }
 
     Structure* structure() { return m_structure.get(); }
@@ -111,17 +111,17 @@ public:
 
 private:
 
-    unsigned possibleDefaultPropertyCount(JSGlobalData& globalData, JSObject* prototype)
+    unsigned possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
     {
         if (prototype == prototype->globalObject()->objectPrototype())
             return 0;
 
         size_t count = 0;
-        PropertyNameArray propertyNameArray(&globalData);
-        prototype->structure()->getPropertyNamesFromStructure(globalData, propertyNameArray, ExcludeDontEnumProperties);
+        PropertyNameArray propertyNameArray(&vm);
+        prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArray, ExcludeDontEnumProperties);
         PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArray.data()->propertyNameVector();
         for (size_t i = 0; i < propertyNameVector.size(); ++i) {
-            JSValue value = prototype->getDirect(globalData, propertyNameVector[i]);
+            JSValue value = prototype->getDirect(vm, propertyNameVector[i]);
 
             // Functions are common, and are usually class-level objects that are not overridden.
             if (jsDynamicCast<JSFunction*>(value))

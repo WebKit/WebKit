@@ -120,7 +120,7 @@ void ExecutableAllocator::initializeAllocator()
     CodeProfiling::notifyAllocator(allocator);
 }
 
-ExecutableAllocator::ExecutableAllocator(JSGlobalData&)
+ExecutableAllocator::ExecutableAllocator(VM&)
 {
     ASSERT(allocator);
 }
@@ -156,13 +156,13 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     return result;
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData& globalData, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
+PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM& vm, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);
     if (!result) {
         if (effort == JITCompilationCanFail)
             return result;
-        releaseExecutableMemory(globalData);
+        releaseExecutableMemory(vm);
         result = allocator->allocate(sizeInBytes, ownerUID);
         RELEASE_ASSERT(result);
     }

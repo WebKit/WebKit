@@ -30,18 +30,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
-    : m_globalData(globalData)
+DOMWrapperWorld::DOMWrapperWorld(JSC::VM* vm, bool isNormal)
+    : m_vm(vm)
     , m_isNormal(isNormal)
 {
-    JSGlobalData::ClientData* clientData = m_globalData->clientData;
+    VM::ClientData* clientData = m_vm->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
 }
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
-    JSGlobalData::ClientData* clientData = m_globalData->clientData;
+    VM::ClientData* clientData = m_vm->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
 
@@ -60,9 +60,9 @@ void DOMWrapperWorld::clearWrappers()
         (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
-DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
+DOMWrapperWorld* normalWorld(JSC::VM& vm)
 {
-    JSGlobalData::ClientData* clientData = globalData.clientData;
+    VM::ClientData* clientData = vm.clientData;
     ASSERT(clientData);
     return static_cast<WebCoreJSClientData*>(clientData)->normalWorld();
 }
@@ -70,7 +70,7 @@ DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
 DOMWrapperWorld* mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonJSGlobalData());
+    static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonVM());
     return cachedNormalWorld;
 }
 

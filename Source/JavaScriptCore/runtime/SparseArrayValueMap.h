@@ -65,10 +65,10 @@ private:
         LengthIsReadOnly = 2,
     };
 
-    SparseArrayValueMap(JSGlobalData&);
+    SparseArrayValueMap(VM&);
     ~SparseArrayValueMap();
     
-    void finishCreation(JSGlobalData&);
+    void finishCreation(VM&);
 
     static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
 
@@ -79,13 +79,13 @@ public:
     typedef Map::const_iterator const_iterator;
     typedef Map::AddResult AddResult;
 
-    static SparseArrayValueMap* create(JSGlobalData&);
+    static SparseArrayValueMap* create(VM&);
     
     static const bool needsDestruction = true;
     static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
     
-    static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

@@ -81,10 +81,10 @@ SmallStrings::SmallStrings()
         m_singleCharacterStrings[i] = 0;
 }
 
-void SmallStrings::initializeCommonStrings(JSGlobalData& globalData)
+void SmallStrings::initializeCommonStrings(VM& vm)
 {
-    createEmptyString(&globalData);
-#define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&globalData, m_##name, #name);
+    createEmptyString(&vm);
+#define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
 }
@@ -108,18 +108,18 @@ void SmallStrings::finalizeSmallStrings()
         finalize(m_singleCharacterStrings[i]);
 }
 
-void SmallStrings::createEmptyString(JSGlobalData* globalData)
+void SmallStrings::createEmptyString(VM* vm)
 {
     ASSERT(!m_emptyString);
-    m_emptyString = JSString::createHasOtherOwner(*globalData, StringImpl::empty());
+    m_emptyString = JSString::createHasOtherOwner(*vm, StringImpl::empty());
 }
 
-void SmallStrings::createSingleCharacterString(JSGlobalData* globalData, unsigned char character)
+void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
 {
     if (!m_storage)
         m_storage = adoptPtr(new SmallStringsStorage);
     ASSERT(!m_singleCharacterStrings[character]);
-    m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*globalData, PassRefPtr<StringImpl>(m_storage->rep(character)));
+    m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*vm, PassRefPtr<StringImpl>(m_storage->rep(character)));
 }
 
 StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
@@ -129,9 +129,9 @@ StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
     return m_storage->rep(character);
 }
 
-void SmallStrings::initialize(JSGlobalData* globalData, JSString*& string, const char* value) const
+void SmallStrings::initialize(VM* vm, JSString*& string, const char* value) const
 {
-    string = JSString::create(*globalData, StringImpl::create(value));
+    string = JSString::create(*vm, StringImpl::create(value));
 }
 
 } // namespace JSC

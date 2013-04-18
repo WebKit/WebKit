@@ -51,7 +51,7 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSVa
 
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure, JSClassRef jsClass, void* data)
-    : Parent(exec->globalData(), structure)
+    : Parent(exec->vm(), structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
 {
 }
@@ -59,8 +59,8 @@ JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure
 // Global object constructor.
 // FIXME: Move this into a separate JSGlobalCallbackObject class derived from this one.
 template <class Parent>
-JSCallbackObject<Parent>::JSCallbackObject(JSGlobalData& globalData, JSClassRef jsClass, Structure* structure)
-    : Parent(globalData, structure)
+JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure* structure)
+    : Parent(vm, structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(0, jsClass)))
 {
 }
@@ -68,18 +68,18 @@ JSCallbackObject<Parent>::JSCallbackObject(JSGlobalData& globalData, JSClassRef 
 template <class Parent>
 void JSCallbackObject<Parent>::finishCreation(ExecState* exec)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(Parent::inherits(&s_info));
     init(exec);
 }
 
 // This is just for Global object, so we can assume that Base::finishCreation is JSGlobalObject::finishCreation.
 template <class Parent>
-void JSCallbackObject<Parent>::finishCreation(JSGlobalData& globalData)
+void JSCallbackObject<Parent>::finishCreation(VM& vm)
 {
     ASSERT(Parent::inherits(&s_info));
     ASSERT(Parent::isGlobalObject());
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     init(jsCast<JSGlobalObject*>(this)->globalExec());
 }
 
@@ -283,7 +283,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                 if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
                     if (entry->attributes & kJSPropertyAttributeReadOnly)
                         return;
-                    thisObject->JSCallbackObject<Parent>::putDirect(exec->globalData(), propertyName, value); // put as override property
+                    thisObject->JSCallbackObject<Parent>::putDirect(exec->vm(), propertyName, value); // put as override property
                     return;
                 }
             }
@@ -627,7 +627,7 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
                     if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
                         
                         JSObject* o = JSCallbackFunction::create(exec, thisObj->globalObject(), callAsFunction, name);
-                        thisObj->putDirect(exec->globalData(), propertyName, o, entry->attributes);
+                        thisObj->putDirect(exec->vm(), propertyName, o, entry->attributes);
                         return o;
                     }
                 }

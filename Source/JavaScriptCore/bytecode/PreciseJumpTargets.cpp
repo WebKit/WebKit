@@ -46,7 +46,7 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
     for (unsigned i = codeBlock->numberOfExceptionHandlers(); i--;)
         out.append(codeBlock->exceptionHandler(i).target);
     
-    Interpreter* interpreter = codeBlock->globalData()->interpreter;
+    Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
     unsigned instructionCount = codeBlock->instructions().size();
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount;) {

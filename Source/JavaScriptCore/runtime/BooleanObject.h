@@ -27,24 +27,24 @@ namespace JSC {
 
 class BooleanObject : public JSWrapperObject {
 protected:
-    JS_EXPORT_PRIVATE BooleanObject(JSGlobalData&, Structure*);
-    JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&);
+    JS_EXPORT_PRIVATE BooleanObject(VM&, Structure*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
 
 public:
     typedef JSWrapperObject Base;
 
-    static BooleanObject* create(JSGlobalData& globalData, Structure* structure)
+    static BooleanObject* create(VM& vm, Structure* structure)
     {
-        BooleanObject* boolean = new (NotNull, allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
-        boolean->finishCreation(globalData);
+        BooleanObject* boolean = new (NotNull, allocateCell<BooleanObject>(vm.heap)) BooleanObject(vm, structure);
+        boolean->finishCreation(vm);
         return boolean;
     }
         
     static JS_EXPORTDATA const ClassInfo s_info;
         
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 };
 

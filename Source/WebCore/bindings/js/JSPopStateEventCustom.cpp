@@ -41,7 +41,7 @@ namespace WebCore {
 // Save the state value to the m_state member of a JSPopStateEvent, and return it, for convenience.
 static const JSValue& cacheState(ExecState* exec, JSPopStateEvent* event, const JSValue& state)
 {
-    event->m_state.set(exec->globalData(), event, state);
+    event->m_state.set(exec->vm(), event, state);
     return state;
 }
 

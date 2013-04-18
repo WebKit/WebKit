@@ -50,15 +50,15 @@ const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, E
 */
 
 ErrorPrototype::ErrorPrototype(ExecState* exec, Structure* structure)
-    : ErrorInstance(exec->globalData(), structure)
+    : ErrorInstance(exec->vm(), structure)
 {
 }
 
 void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
-    Base::finishCreation(exec->globalData(), "");
+    Base::finishCreation(exec->vm(), "");
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, String(ASCIILiteral("Error"))), DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().name, jsNontrivialString(exec, String(ASCIILiteral("Error"))), DontEnum);
 }
 
 bool ErrorPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

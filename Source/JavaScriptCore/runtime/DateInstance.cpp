@@ -35,22 +35,22 @@ namespace JSC {
 const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(DateInstance)};
 
 DateInstance::DateInstance(ExecState* exec, Structure* structure)
-    : JSWrapperObject(exec->globalData(), structure)
+    : JSWrapperObject(exec->vm(), structure)
 {
 }
 
-void DateInstance::finishCreation(JSGlobalData& globalData)
+void DateInstance::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
-    setInternalValue(globalData, jsNaN());
+    setInternalValue(vm, jsNaN());
 }
 
-void DateInstance::finishCreation(JSGlobalData& globalData, double time)
+void DateInstance::finishCreation(VM& vm, double time)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
-    setInternalValue(globalData, jsNumber(timeClip(time)));
+    setInternalValue(vm, jsNumber(timeClip(time)));
 }
 
 void DateInstance::destroy(JSCell* cell)
@@ -65,7 +65,7 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exe
         return 0;
 
     if (!m_data)
-        m_data = exec->globalData().dateInstanceCache.add(milli);
+        m_data = exec->vm().dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeCachedForMS != milli) {
         msToGregorianDateTime(exec, milli, false, m_data->m_cachedGregorianDateTime);
@@ -81,7 +81,7 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(ExecState* 
         return 0;
 
     if (!m_data)
-        m_data = exec->globalData().dateInstanceCache.add(milli);
+        m_data = exec->vm().dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeUTCCachedForMS != milli) {
         msToGregorianDateTime(exec, milli, true, m_data->m_cachedGregorianDateTimeUTC);

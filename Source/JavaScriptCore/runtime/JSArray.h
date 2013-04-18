@@ -39,19 +39,19 @@ public:
     typedef JSNonFinalObject Base;
 
 protected:
-    explicit JSArray(JSGlobalData& globalData, Structure* structure, Butterfly* butterfly)
-        : JSNonFinalObject(globalData, structure, butterfly)
+    explicit JSArray(VM& vm, Structure* structure, Butterfly* butterfly)
+        : JSNonFinalObject(vm, structure, butterfly)
     {
     }
 
 public:
-    static JSArray* create(JSGlobalData&, Structure*, unsigned initialLength = 0);
+    static JSArray* create(VM&, Structure*, unsigned initialLength = 0);
 
     // tryCreateUninitialized is used for fast construction of arrays whose size and
     // contents are known at time of creation. Clients of this interface must:
     //   - null-check the result (indicating out of memory, or otherwise unable to allocate vector).
     //   - call 'initializeIndex' for all properties in sequence, for 0 <= i < initialLength.
-    static JSArray* tryCreateUninitialized(JSGlobalData&, Structure*, unsigned initialLength);
+    static JSArray* tryCreateUninitialized(VM&, Structure*, unsigned initialLength);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool throwException);
 
@@ -84,7 +84,7 @@ public:
 
     bool shiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
     {
-        return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->globalData()));
+        return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
     }
     bool shiftCountForSplice(ExecState* exec, unsigned startIndex, unsigned count)
     {
@@ -106,7 +106,7 @@ public:
         
     bool unshiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
     {
-        return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->globalData()));
+        return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
     }
     bool unshiftCountForSplice(ExecState* exec, unsigned startIndex, unsigned count)
     {
@@ -129,9 +129,9 @@ public:
     void fillArgList(ExecState*, MarkedArgumentBuffer&);
     void copyToArguments(ExecState*, CallFrame*, uint32_t length);
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, indexingType);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, indexingType);
     }
         
 protected:
@@ -156,7 +156,7 @@ private:
 
     bool unshiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
     bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);
-    bool unshiftCountSlowCase(JSGlobalData&, bool, unsigned);
+    bool unshiftCountSlowCase(VM&, bool, unsigned);
 
     template<IndexingType indexingType>
     void sortNumericVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
@@ -174,21 +174,21 @@ private:
     void compactForSorting(unsigned& numDefined, unsigned& newRelevantLength);
 };
 
-inline Butterfly* createContiguousArrayButterfly(JSGlobalData& globalData, unsigned length, unsigned& vectorLength)
+inline Butterfly* createContiguousArrayButterfly(VM& vm, unsigned length, unsigned& vectorLength)
 {
     IndexingHeader header;
     vectorLength = std::max(length, BASE_VECTOR_LEN);
     header.setVectorLength(vectorLength);
     header.setPublicLength(length);
     Butterfly* result = Butterfly::create(
-        globalData, 0, 0, true, header, vectorLength * sizeof(EncodedJSValue));
+        vm, 0, 0, true, header, vectorLength * sizeof(EncodedJSValue));
     return result;
 }
 
-inline Butterfly* createArrayButterfly(JSGlobalData& globalData, unsigned initialLength)
+inline Butterfly* createArrayButterfly(VM& vm, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::create(
-        globalData, 0, 0, true, baseIndexingHeaderForArray(initialLength), ArrayStorage::sizeFor(BASE_VECTOR_LEN));
+        vm, 0, 0, true, baseIndexingHeaderForArray(initialLength), ArrayStorage::sizeFor(BASE_VECTOR_LEN));
     ArrayStorage* storage = butterfly->arrayStorage();
     storage->m_indexBias = 0;
     storage->m_sparseMap.clear();
@@ -196,9 +196,9 @@ inline Butterfly* createArrayButterfly(JSGlobalData& globalData, unsigned initia
     return butterfly;
 }
 
-Butterfly* createArrayButterflyInDictionaryIndexingMode(JSGlobalData&, unsigned initialLength);
+Butterfly* createArrayButterflyInDictionaryIndexingMode(VM&, unsigned initialLength);
 
-inline JSArray* JSArray::create(JSGlobalData& globalData, Structure* structure, unsigned initialLength)
+inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLength)
 {
     Butterfly* butterfly;
     if (LIKELY(!hasArrayStorage(structure->indexingType()))) {
@@ -208,7 +208,7 @@ inline JSArray* JSArray::create(JSGlobalData& globalData, Structure* structure, 
             || hasDouble(structure->indexingType())
             || hasContiguous(structure->indexingType()));
         unsigned vectorLength;
-        butterfly = createContiguousArrayButterfly(globalData, initialLength, vectorLength);
+        butterfly = createContiguousArrayButterfly(vm, initialLength, vectorLength);
         ASSERT(initialLength < MIN_SPARSE_ARRAY_INDEX);
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = 0; i < vectorLength; ++i)
@@ -218,14 +218,14 @@ inline JSArray* JSArray::create(JSGlobalData& globalData, Structure* structure, 
         ASSERT(
             structure->indexingType() == ArrayWithSlowPutArrayStorage
             || structure->indexingType() == ArrayWithArrayStorage);
-        butterfly = createArrayButterfly(globalData, initialLength);
+        butterfly = createArrayButterfly(vm, initialLength);
     }
-    JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, butterfly);
-    array->finishCreation(globalData);
+    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
+    array->finishCreation(vm);
     return array;
 }
 
-inline JSArray* JSArray::tryCreateUninitialized(JSGlobalData& globalData, Structure* structure, unsigned initialLength)
+inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
 {
     unsigned vectorLength = std::max(BASE_VECTOR_LEN, initialLength);
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
@@ -240,7 +240,7 @@ inline JSArray* JSArray::tryCreateUninitialized(JSGlobalData& globalData, Struct
             || hasContiguous(structure->indexingType()));
 
         void* temp;
-        if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
+        if (!vm.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
             return 0;
         butterfly = Butterfly::fromBase(temp, 0, 0);
         butterfly->setVectorLength(vectorLength);
@@ -251,7 +251,7 @@ inline JSArray* JSArray::tryCreateUninitialized(JSGlobalData& globalData, Struct
         }
     } else {
         void* temp;
-        if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
+        if (!vm.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
             return 0;
         butterfly = Butterfly::fromBase(temp, 0, 0);
         *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);
@@ -261,8 +261,8 @@ inline JSArray* JSArray::tryCreateUninitialized(JSGlobalData& globalData, Struct
         storage->m_numValuesInVector = initialLength;
     }
         
-    JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, butterfly);
-    array->finishCreation(globalData);
+    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
+    array->finishCreation(vm);
     return array;
 }
 
@@ -284,9 +284,9 @@ inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 
 inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const ArgList& values)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     unsigned length = values.size();
-    JSArray* array = JSArray::tryCreateUninitialized(globalData, arrayStructure, length);
+    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
@@ -294,14 +294,14 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
-        array->initializeIndex(globalData, i, values.at(i));
+        array->initializeIndex(vm, i, values.at(i));
     return array;
 }
     
 inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
 {
-    JSGlobalData& globalData = exec->globalData();
-    JSArray* array = JSArray::tryCreateUninitialized(globalData, arrayStructure, length);
+    VM& vm = exec->vm();
+    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
@@ -309,7 +309,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
-        array->initializeIndex(globalData, i, values[i]);
+        array->initializeIndex(vm, i, values[i]);
     return array;
 }
 

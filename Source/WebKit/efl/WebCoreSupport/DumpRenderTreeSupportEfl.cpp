@@ -394,7 +394,7 @@ void DumpRenderTreeSupportEfl::garbageCollectorCollectOnAlternateThread(bool wai
 
 size_t DumpRenderTreeSupportEfl::javaScriptObjectsCount()
 {
-    return WebCore::JSDOMWindow::commonJSGlobalData()->heap.objectCount();
+    return WebCore::JSDOMWindow::commonVM()->heap.objectCount();
 }
 
 void DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(double interval)

@@ -64,9 +64,9 @@ JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure,
 
 void JSTestEventTargetConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestEventTargetPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestEventTargetPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
 bool JSTestEventTargetConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -118,15 +118,15 @@ JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject* gl
 {
 }
 
-void JSTestEventTarget::finishCreation(JSGlobalData& globalData)
+void JSTestEventTarget::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestEventTarget::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestEventTargetPrototype::create(exec->globalData(), globalObject, JSTestEventTargetPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestEventTargetPrototype::create(exec->vm(), globalObject, JSTestEventTargetPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestEventTarget::destroy(JSC::JSCell* cell)

@@ -89,7 +89,7 @@ enum AddSpeculationMode {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph {
 public:
-    Graph(JSGlobalData&, CodeBlock*, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues);
+    Graph(VM&, CodeBlock*, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues);
     ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)
@@ -687,7 +687,7 @@ public:
         }
     }
     
-    JSGlobalData& m_globalData;
+    VM& m_vm;
     CodeBlock* m_codeBlock;
     RefPtr<Profiler::Compilation> m_compilation;
     CodeBlock* m_profiledBlock;

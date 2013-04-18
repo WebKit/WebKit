@@ -85,7 +85,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
 JSValue JSHTMLDocument::all(ExecState* exec) const
 {
     // If "all" has been overwritten, return the overwritten value
-    JSValue v = getDirect(exec->globalData(), Identifier(exec, "all"));
+    JSValue v = getDirect(exec->vm(), Identifier(exec, "all"));
     if (v)
         return v;
 
@@ -95,7 +95,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)
 {
     // Add "all" to the property map.
-    putDirect(exec->globalData(), Identifier(exec, "all"), value);
+    putDirect(exec->vm(), Identifier(exec, "all"), value);
 }
 
 // Custom functions

@@ -34,16 +34,16 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 
 namespace LLInt {
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef evalEntryThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef programEntryThunkGenerator(JSGlobalData*);
+MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
 
 } } // namespace JSC::LLInt
 

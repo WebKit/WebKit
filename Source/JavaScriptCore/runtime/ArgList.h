@@ -33,7 +33,7 @@ class SlotVisitor;
 
 class MarkedArgumentBuffer {
     WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
-    friend class JSGlobalData;
+    friend class VM;
     friend class ArgList;
 
 private:

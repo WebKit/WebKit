@@ -47,9 +47,9 @@ const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock",
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
 
-static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& globalData, JSScope* scope, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, JSScope* scope, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&globalData, source, executable->parameters(), executable->name(), executable->isInStrictContext() ? JSParseStrict : JSParseNormal, JSParseFunctionCode, error);
+    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&vm, source, executable->parameters(), executable->name(), executable->isInStrictContext() ? JSParseStrict : JSParseNormal, JSParseFunctionCode, error);
 
     if (!body) {
         ASSERT(error.m_type != ParserError::ErrorNone);
@@ -61,8 +61,8 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& global
     body->finishParsing(executable->parameters(), executable->name(), executable->functionNameIsInScopeToggle());
     executable->recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
     
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&globalData, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(globalData, scope, body.get(), result, debuggerMode, profilerMode)));
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, scope, body.get(), result, debuggerMode, profilerMode)));
     error = generator->generate();
     body->destroyData();
     if (error.m_type != ParserError::ErrorNone)
@@ -80,8 +80,8 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
     return addConstant(v);
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(JSGlobalData* globalData, Structure* structure, const SourceCode& source, FunctionBodyNode* node)
-    : Base(*globalData, structure)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node)
+    : Base(*vm, structure)
     , m_numCapturedVariables(node->capturedVariableCount())
     , m_forceUsesArguments(node->usesArguments())
     , m_isInStrictContext(node->isStrictMode())
@@ -118,19 +118,19 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(JSGlobalData& globalData, const SourceCode& source, size_t lineOffset, size_t sourceOffset)
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& source, size_t lineOffset, size_t sourceOffset)
 {
     unsigned firstLine = lineOffset + m_firstLineOffset;
     unsigned startOffset = sourceOffset + m_startOffset;
     SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine);
-    return FunctionExecutable::create(globalData, code, this, firstLine, firstLine + m_lineCount);
+    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount);
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger*, const SourceCode& source, JSObject** exception)
 {
     ParserError error;
-    CodeCache* codeCache = exec->globalData().codeCache();
-    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(exec->globalData(), name, source, error);
+    CodeCache* codeCache = exec->vm().codeCache();
+    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(exec->vm(), name, source, error);
     if (error.m_type != ParserError::ErrorNone) {
         *exception = error.toErrorObject(exec->lexicalGlobalObject(), source);
         return 0;
@@ -139,7 +139,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Ide
     return executable;
 }
 
-UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData& globalData, JSScope* scope, const SourceCode& source, CodeSpecializationKind specializationKind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(VM& vm, JSScope* scope, const SourceCode& source, CodeSpecializationKind specializationKind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
     switch (specializationKind) {
     case CodeForCall:
@@ -152,19 +152,19 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData
         break;
     }
 
-    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(globalData, scope, this, source, specializationKind, debuggerMode, profilerMode, error);
+    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(vm, scope, this, source, specializationKind, debuggerMode, profilerMode, error);
     
     if (error.m_type != ParserError::ErrorNone)
         return 0;
 
     switch (specializationKind) {
     case CodeForCall:
-        m_codeBlockForCall.set(globalData, this, result);
-        m_symbolTableForCall.set(globalData, this, result->symbolTable());
+        m_codeBlockForCall.set(vm, this, result);
+        m_symbolTableForCall.set(vm, this, result->symbolTable());
         break;
     case CodeForConstruct:
-        m_codeBlockForConstruct.set(globalData, this, result);
-        m_symbolTableForConstruct.set(globalData, this, result->symbolTable());
+        m_codeBlockForConstruct.set(vm, this, result);
+        m_symbolTableForConstruct.set(vm, this, result->symbolTable());
         break;
     }
     return result;
@@ -182,12 +182,12 @@ String UnlinkedFunctionExecutable::paramString() const
     return builder.toString();
 }
 
-UnlinkedCodeBlock::UnlinkedCodeBlock(JSGlobalData* globalData, Structure* structure, CodeType codeType, const ExecutableInfo& info)
-    : Base(*globalData, structure)
+UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info)
+    : Base(*vm, structure)
     , m_numVars(0)
     , m_numCalleeRegisters(0)
     , m_numParameters(0)
-    , m_globalData(globalData)
+    , m_vm(vm)
     , m_argumentsRegister(-1)
     , m_globalObjectRegister(-1)
     , m_needsFullScopeChain(info.m_needsActivation)

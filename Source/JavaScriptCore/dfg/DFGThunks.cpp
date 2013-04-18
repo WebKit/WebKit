@@ -36,12 +36,12 @@
 
 namespace JSC { namespace DFG {
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     MacroAssembler jit;
     
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
-    ScratchBuffer* scratchBuffer = globalData->scratchBufferForSize(scratchSize);
+    ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(scratchSize);
     EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
     
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
@@ -84,9 +84,9 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
 #endif
     }
     
-    jit.jump(MacroAssembler::AbsoluteAddress(&globalData->osrExitJumpDestination));
+    jit.jump(MacroAssembler::AbsoluteAddress(&vm->osrExitJumpDestination));
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     
     patchBuffer.link(functionCall, compileOSRExit);
     
@@ -108,9 +108,9 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR)
 #endif
 }
 
-MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
 {
-    CCallHelpers jit(globalData);
+    CCallHelpers jit(vm);
     
     // We will jump to here if the JIT code thinks it's making a call, but the
     // linking helper (C++ code) decided to throw an exception instead. We will
@@ -137,12 +137,12 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(JSGlobalData* glob
     emitPointerValidation(jit, GPRInfo::returnValueGPR2);
     jit.jump(GPRInfo::returnValueGPR2);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("DFG throw exception from call slow path thunk"));
 }
 
 static void slowPathFor(
-    CCallHelpers& jit, JSGlobalData* globalData, P_DFGOperation_E slowPathFunction)
+    CCallHelpers& jit, VM* vm, P_DFGOperation_E slowPathFunction)
 {
     jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR2);
     emitPointerValidation(jit, GPRInfo::nonArgGPR2);
@@ -151,7 +151,7 @@ static void slowPathFor(
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
             static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC));
-    jit.storePtr(GPRInfo::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
 #if USE(JSVALUE64)
     jit.poke64(GPRInfo::nonPreservedNonReturnGPR, JITSTACKFRAME_ARGS_INDEX);
 #else
@@ -183,7 +183,7 @@ static void slowPathFor(
 }
 
 static MacroAssemblerCodeRef linkForThunkGenerator(
-    JSGlobalData* globalData, CodeSpecializationKind kind)
+    VM* vm, CodeSpecializationKind kind)
 {
     // The return address is on the stack or in the link register. We will hence
     // save the return address to the call frame while we make a C++ function call
@@ -193,46 +193,46 @@ static MacroAssemblerCodeRef linkForThunkGenerator(
     // and all other registers to be available for use. We use JITStackFrame::args
     // to save important information across calls.
     
-    CCallHelpers jit(globalData);
+    CCallHelpers jit(vm);
     
-    slowPathFor(jit, globalData, kind == CodeForCall ? operationLinkCall : operationLinkConstruct);
+    slowPathFor(jit, vm, kind == CodeForCall ? operationLinkCall : operationLinkConstruct);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
         ("DFG link %s slow path thunk", kind == CodeForCall ? "call" : "construct"));
 }
 
-MacroAssemblerCodeRef linkCallThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkCallThunkGenerator(VM* vm)
 {
-    return linkForThunkGenerator(globalData, CodeForCall);
+    return linkForThunkGenerator(vm, CodeForCall);
 }
 
-MacroAssemblerCodeRef linkConstructThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkConstructThunkGenerator(VM* vm)
 {
-    return linkForThunkGenerator(globalData, CodeForConstruct);
+    return linkForThunkGenerator(vm, CodeForConstruct);
 }
 
 // For closure optimizations, we only include calls, since if you're using closures for
 // object construction then you're going to lose big time anyway.
-MacroAssemblerCodeRef linkClosureCallThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkClosureCallThunkGenerator(VM* vm)
 {
-    CCallHelpers jit(globalData);
+    CCallHelpers jit(vm);
     
-    slowPathFor(jit, globalData, operationLinkClosureCall);
+    slowPathFor(jit, vm, operationLinkClosureCall);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("DFG link closure call slow path thunk"));
 }
 
 static MacroAssemblerCodeRef virtualForThunkGenerator(
-    JSGlobalData* globalData, CodeSpecializationKind kind)
+    VM* vm, CodeSpecializationKind kind)
 {
     // The return address is on the stack, or in the link register. We will hence
     // jump to the callee, or save the return address to the call frame while we
     // make a C++ function call to the appropriate DFG operation.
 
-    CCallHelpers jit(globalData);
+    CCallHelpers jit(vm);
     
     CCallHelpers::JumpList slowCase;
 
@@ -307,22 +307,22 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     
     // Here we don't know anything, so revert to the full slow path.
     
-    slowPathFor(jit, globalData, kind == CodeForCall ? operationVirtualCall : operationVirtualConstruct);
+    slowPathFor(jit, vm, kind == CodeForCall ? operationVirtualCall : operationVirtualConstruct);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
         ("DFG virtual %s slow path thunk", kind == CodeForCall ? "call" : "construct"));
 }
 
-MacroAssemblerCodeRef virtualCallThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef virtualCallThunkGenerator(VM* vm)
 {
-    return virtualForThunkGenerator(globalData, CodeForCall);
+    return virtualForThunkGenerator(vm, CodeForCall);
 }
 
-MacroAssemblerCodeRef virtualConstructThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef virtualConstructThunkGenerator(VM* vm)
 {
-    return virtualForThunkGenerator(globalData, CodeForConstruct);
+    return virtualForThunkGenerator(vm, CodeForConstruct);
 }
 
 } } // namespace JSC::DFG

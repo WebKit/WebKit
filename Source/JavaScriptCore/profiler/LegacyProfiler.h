@@ -37,7 +37,7 @@
 namespace JSC {
 
 class ExecState;
-class JSGlobalData;
+class VM;
 class JSGlobalObject;
 class JSObject;
 class JSValue;

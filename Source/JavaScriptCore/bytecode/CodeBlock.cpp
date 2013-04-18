@@ -302,7 +302,7 @@ static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, S
     
     out.printf("%s = %p", name, structure);
     
-    PropertyOffset offset = structure->get(exec->globalData(), ident);
+    PropertyOffset offset = structure->get(exec->vm(), ident);
     if (offset != invalidOffset)
         out.printf(" (offset = %d)", offset);
 }
@@ -486,7 +486,7 @@ void CodeBlock::printStructure(PrintStream& out, const char* name, const Instruc
 
 void CodeBlock::printStructures(PrintStream& out, const Instruction* vPC)
 {
-    Interpreter* interpreter = m_globalData->interpreter;
+    Interpreter* interpreter = m_vm->interpreter;
     unsigned instructionOffset = vPC - instructions().begin();
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id)) {
@@ -1607,9 +1607,9 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
     , m_numVars(other.m_numVars)
     , m_isConstructor(other.m_isConstructor)
-    , m_unlinkedCode(*other.m_globalData, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
-    , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
-    , m_globalData(other.m_globalData)
+    , m_unlinkedCode(*other.m_vm, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
+    , m_ownerExecutable(*other.m_vm, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
+    , m_vm(other.m_vm)
     , m_instructions(other.m_instructions)
     , m_thisRegister(other.m_thisRegister)
     , m_argumentsRegister(other.m_argumentsRegister)
@@ -1648,14 +1648,14 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
 }
 
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
-    : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
-    , m_heap(&m_globalObject->globalData().heap)
+    : m_globalObject(globalObject->vm(), ownerExecutable, globalObject)
+    , m_heap(&m_globalObject->vm().heap)
     , m_numCalleeRegisters(unlinkedCodeBlock->m_numCalleeRegisters)
     , m_numVars(unlinkedCodeBlock->m_numVars)
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
-    , m_unlinkedCode(globalObject->globalData(), ownerExecutable, unlinkedCodeBlock)
-    , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
-    , m_globalData(unlinkedCodeBlock->globalData())
+    , m_unlinkedCode(globalObject->vm(), ownerExecutable, unlinkedCodeBlock)
+    , m_ownerExecutable(globalObject->vm(), ownerExecutable, ownerExecutable)
+    , m_vm(unlinkedCodeBlock->vm())
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
     , m_argumentsRegister(unlinkedCodeBlock->argumentsRegister())
     , m_activationRegister(unlinkedCodeBlock->activationRegister())
@@ -1669,7 +1669,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
 {
-    m_globalData->startedCompiling(this);
+    m_vm->startedCompiling(this);
 
     ASSERT(m_source);
     setNumParameters(unlinkedCodeBlock->numParameters());
@@ -1680,7 +1680,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     setIdentifiers(unlinkedCodeBlock->identifiers());
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
-        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister()].set(*m_globalData, ownerExecutable, globalObject);
+        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister()].set(*m_vm, ownerExecutable, globalObject);
     m_functionDecls.grow(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
@@ -1689,8 +1689,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
         SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_globalData, code, unlinkedExecutable, firstLine, firstLine + lineCount);
-        m_functionDecls[i].set(*m_globalData, ownerExecutable, executable);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        m_functionDecls[i].set(*m_vm, ownerExecutable, executable);
     }
 
     m_functionExprs.grow(unlinkedCodeBlock->numberOfFunctionExprs());
@@ -1701,8 +1701,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
         SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_globalData, code, unlinkedExecutable, firstLine, firstLine + lineCount);
-        m_functionExprs[i].set(*m_globalData, ownerExecutable, executable);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        m_functionExprs[i].set(*m_vm, ownerExecutable, executable);
     }
 
     if (unlinkedCodeBlock->hasRareData()) {
@@ -1791,7 +1791,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     Vector<Instruction, 0, UnsafeVectorOverflow> instructions(instructionCount);
     for (size_t i = 0; i < unlinkedCodeBlock->instructions().size(); ) {
         unsigned opLength = opcodeLength(pc[i].u.opcode);
-        instructions[i] = globalData()->interpreter->getOpcode(pc[i].u.opcode);
+        instructions[i] = vm()->interpreter->getOpcode(pc[i].u.opcode);
         for (size_t j = 1; j < opLength; ++j) {
             if (sizeof(int32_t) != sizeof(intptr_t))
                 instructions[i + j].u.pointer = 0;
@@ -1891,7 +1891,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             int inferredInlineCapacity = pc[i + opLength - 2].u.operand;
 
             instructions[i + opLength - 1] = objectAllocationProfile;
-            objectAllocationProfile->initialize(*globalData(),
+            objectAllocationProfile->initialize(*vm(),
                 m_ownerExecutable.get(), m_globalObject->objectPrototype(), inferredInlineCapacity);
             break;
         }
@@ -1946,13 +1946,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 break;
 
             if (entry.couldBeWatched()) {
-                instructions[i + 0] = globalData()->interpreter->getOpcode(op_init_global_const_check);
+                instructions[i + 0] = vm()->interpreter->getOpcode(op_init_global_const_check);
                 instructions[i + 1] = &globalObject->registerAt(entry.getIndex());
                 instructions[i + 3] = entry.addressOfIsWatched();
                 break;
             }
 
-            instructions[i + 0] = globalData()->interpreter->getOpcode(op_init_global_const);
+            instructions[i + 0] = vm()->interpreter->getOpcode(op_init_global_const);
             instructions[i + 1] = &globalObject->registerAt(entry.getIndex());
             break;
         }
@@ -1980,18 +1980,18 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
-    m_globalData->finishedCompiling(this);
+    m_vm->finishedCompiling(this);
 }
 
 CodeBlock::~CodeBlock()
 {
-    if (m_globalData->m_perBytecodeProfiler)
-        m_globalData->m_perBytecodeProfiler->notifyDestruction(this);
+    if (m_vm->m_perBytecodeProfiler)
+        m_vm->m_perBytecodeProfiler->notifyDestruction(this);
     
 #if ENABLE(DFG_JIT)
     // Remove myself from the set of DFG code blocks. Note that I may not be in this set
     // (because I'm not a DFG code block), in which case this is a no-op anyway.
-    m_globalData->heap.m_dfgCodeBlocks.m_set.remove(this);
+    m_vm->heap.m_dfgCodeBlocks.m_set.remove(this);
 #endif
     
 #if ENABLE(VERBOSE_VALUE_PROFILE)
@@ -2036,7 +2036,7 @@ void CodeBlock::setNumParameters(int newValue)
 
 void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
 {
-    Interpreter* interpreter = m_globalData->interpreter;
+    Interpreter* interpreter = m_vm->interpreter;
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) && vPC[4].u.structure) {
         visitor.append(&vPC[4].u.structure);
@@ -2230,7 +2230,7 @@ static const bool verboseUnlinking = false;
 void CodeBlock::finalizeUnconditionally()
 {
 #if ENABLE(LLINT)
-    Interpreter* interpreter = m_globalData->interpreter;
+    Interpreter* interpreter = m_vm->interpreter;
     if (!!numberOfInstructions()) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
         for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
@@ -2352,7 +2352,7 @@ void CodeBlock::finalizeUnconditionally()
                                 stub->executable()->hashFor(callLinkInfo(i).specializationKind()),
                                 ", stub routine ", RawPointer(stub), ".\n");
                         }
-                        callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
+                        callLinkInfo(i).unlink(*m_vm, repatchBuffer);
                     }
                 } else if (!Heap::isMarked(callLinkInfo(i).callee.get())) {
                     if (verboseUnlinking) {
@@ -2363,7 +2363,7 @@ void CodeBlock::finalizeUnconditionally()
                                 callLinkInfo(i).specializationKind()),
                             ").\n");
                     }
-                    callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
+                    callLinkInfo(i).unlink(*m_vm, repatchBuffer);
                 }
             }
             if (!!callLinkInfo(i).lastSeenCallee
@@ -2545,7 +2545,7 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     ASSERT(codeType() == FunctionCode);
     ASSERT(needsFullScopeChain());
     ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
-    JSActivation* activation = JSActivation::create(callFrame->globalData(), callFrame, this);
+    JSActivation* activation = JSActivation::create(callFrame->vm(), callFrame, this);
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScope(activation);
 }
@@ -2573,13 +2573,13 @@ void CodeBlock::unlinkCalls()
 #endif
     if (!m_callLinkInfos.size())
         return;
-    if (!m_globalData->canUseJIT())
+    if (!m_vm->canUseJIT())
         return;
     RepatchBuffer repatchBuffer(this);
     for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
         if (!m_callLinkInfos[i].isLinked())
             continue;
-        m_callLinkInfos[i].unlink(*m_globalData, repatchBuffer);
+        m_callLinkInfos[i].unlink(*m_vm, repatchBuffer);
     }
 }
 
@@ -2593,7 +2593,7 @@ void CodeBlock::unlinkIncomingCalls()
         return;
     RepatchBuffer repatchBuffer(this);
     while (m_incomingCalls.begin() != m_incomingCalls.end())
-        m_incomingCalls.begin()->unlink(*m_globalData, repatchBuffer);
+        m_incomingCalls.begin()->unlink(*m_vm, repatchBuffer);
 }
 #endif // ENABLE(JIT)
 
@@ -2666,7 +2666,7 @@ ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr r
     }
     
     // The stub routine may have been jettisoned. This is rare, but we have to handle it.
-    const JITStubRoutineSet& set = m_globalData->heap.jitStubRoutines();
+    const JITStubRoutineSet& set = m_vm->heap.jitStubRoutines();
     for (unsigned i = set.size(); i--;) {
         GCAwareJITStubRoutine* genericStub = set.at(i);
         if (!genericStub->isClosureCall())
@@ -2885,17 +2885,17 @@ void CodeBlock::jettison()
 
 void ProgramCodeBlock::jettisonImpl()
 {
-    static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
+    static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(*vm());
 }
 
 void EvalCodeBlock::jettisonImpl()
 {
-    static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
+    static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*vm());
 }
 
 void FunctionCodeBlock::jettisonImpl()
 {
-    static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
+    static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*vm(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
 bool ProgramCodeBlock::jitCompileImpl(ExecState* exec)
@@ -3280,18 +3280,18 @@ void CodeBlock::dumpValueProfiles()
 
 size_t CodeBlock::predictedMachineCodeSize()
 {
-    // This will be called from CodeBlock::CodeBlock before either m_globalData or the
+    // This will be called from CodeBlock::CodeBlock before either m_vm or the
     // instructions have been initialized. It's OK to return 0 because what will really
     // matter is the recomputation of this value when the slow path is triggered.
-    if (!m_globalData)
+    if (!m_vm)
         return 0;
     
-    if (!m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT)
+    if (!m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT)
         return 0; // It's as good of a prediction as we'll get.
     
     // Be conservative: return a size that will be an overestimation 84% of the time.
-    double multiplier = m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.mean() +
-        m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.standardDeviation();
+    double multiplier = m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.mean() +
+        m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.standardDeviation();
     
     // Be paranoid: silently reject bogus multipiers. Silently doing the "wrong" thing
     // here is OK, since this whole method is just a heuristic.
@@ -3312,7 +3312,7 @@ size_t CodeBlock::predictedMachineCodeSize()
 
 bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 {
-    Interpreter* interpreter = globalData()->interpreter;
+    Interpreter* interpreter = vm()->interpreter;
     Instruction* instructionsBegin = instructions().begin();
     unsigned instructionCount = instructions().size();
     

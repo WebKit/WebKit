@@ -48,14 +48,14 @@ static void fixupPCforExceptionIfNeeded(ExecState* exec)
 
 void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 {
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
 #if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception ", globalData->exception, ".\n");
+    dataLog("Throwing exception ", vm->exception, ".\n");
 #endif
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(
-        globalData, exec, globalData->exception,
+        vm, exec, vm->exception,
         exec->codeBlock()->bytecodeOffset(exec, pc));
 }
 
@@ -67,17 +67,17 @@ Instruction* returnToThrowForThrownException(ExecState* exec)
 
 static void doThrow(ExecState* exec, Instruction* pc)
 {
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
     fixupPCforExceptionIfNeeded(exec);
-    genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
+    genericThrow(vm, exec, vm->exception, pc - exec->codeBlock()->instructions().begin());
 }
 
 Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 {
 #if LLINT_SLOW_PATH_TRACING
-    JSGlobalData* globalData = &exec->globalData();
-    dataLog("Throwing exception ", globalData->exception, " (returnToThrow).\n");
+    VM* vm = &exec->vm();
+    dataLog("Throwing exception ", vm->exception, " (returnToThrow).\n");
 #endif
     doThrow(exec, pc);
     return LLInt::exceptionInstructions();
@@ -86,8 +86,8 @@ Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 void* callToThrow(ExecState* exec, Instruction* pc)
 {
 #if LLINT_SLOW_PATH_TRACING
-    JSGlobalData* globalData = &exec->globalData();
-    dataLog("Throwing exception ", globalData->exception, " (callToThrow).\n");
+    VM* vm = &exec->vm();
+    dataLog("Throwing exception ", vm->exception, " (callToThrow).\n");
 #endif
     doThrow(exec, pc);
     return LLInt::getCodePtr(llint_throw_during_call_trampoline);

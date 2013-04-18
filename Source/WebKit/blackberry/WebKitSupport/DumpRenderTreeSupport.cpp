@@ -64,7 +64,7 @@ Page* DumpRenderTreeSupport::corePage(WebPage* webPage)
 
 int DumpRenderTreeSupport::javaScriptObjectsCount()
 {
-    return JSDOMWindowBase::commonJSGlobalData()->heap.globalObjectCount();
+    return JSDOMWindowBase::commonVM()->heap.globalObjectCount();
 }
 
 void DumpRenderTreeSupport::garbageCollectorCollect()

@@ -86,15 +86,15 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 
 
 // ECMA 15.5.4
 StringPrototype::StringPrototype(ExecState* exec, Structure* structure)
-    : StringObject(exec->globalData(), structure)
+    : StringObject(exec->vm(), structure)
 {
 }
 
 void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSString* nameAndMessage)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     
-    Base::finishCreation(globalData, nameAndMessage);
+    Base::finishCreation(vm, nameAndMessage);
     ASSERT(inherits(&s_info));
 
     JSC_NATIVE_INTRINSIC_FUNCTION("toString", stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
@@ -134,7 +134,7 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     JSC_NATIVE_FUNCTION("trimRight", stringProtoFuncTrimRight, DontEnum, 0);
 
     // The constructor will be added later, after StringConstructor has been built
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
 StringPrototype* StringPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
@@ -405,12 +405,12 @@ static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSSt
     unsigned startPosition = 0;
 
     Vector<StringRange, 16> sourceRanges;
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     unsigned sourceLen = source.length();
 
     while (true) {
-        MatchResult result = regExpConstructor->performMatch(*globalData, regExp, string, source, startPosition);
+        MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, source, startPosition);
         if (!result)
             break;
 
@@ -480,11 +480,11 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
         CachedCall cachedCall(exec, func, argCount);
         if (exec->hadException())
             return JSValue::encode(jsNull());
-        JSGlobalData* globalData = &exec->globalData();
+        VM* vm = &exec->vm();
         if (source.is8Bit()) {
             while (true) {
                 int* ovector;
-                MatchResult result = regExpConstructor->performMatch(*globalData, regExp, string, source, startPosition, &ovector);
+                MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, source, startPosition, &ovector);
                 if (!result)
                     break;
 
@@ -498,7 +498,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                     if (matchStart < 0)
                         cachedCall.setArgument(i, jsUndefined());
                     else
-                        cachedCall.setArgument(i, jsSubstring8(globalData, source, matchStart, matchLen));
+                        cachedCall.setArgument(i, jsSubstring8(vm, source, matchStart, matchLen));
                 }
 
                 cachedCall.setArgument(i++, jsNumber(result.start));
@@ -523,7 +523,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
         } else {
             while (true) {
                 int* ovector;
-                MatchResult result = regExpConstructor->performMatch(*globalData, regExp, string, source, startPosition, &ovector);
+                MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, source, startPosition, &ovector);
                 if (!result)
                     break;
 
@@ -537,7 +537,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                     if (matchStart < 0)
                         cachedCall.setArgument(i, jsUndefined());
                     else
-                        cachedCall.setArgument(i, jsSubstring(globalData, source, matchStart, matchLen));
+                        cachedCall.setArgument(i, jsSubstring(vm, source, matchStart, matchLen));
                 }
 
                 cachedCall.setArgument(i++, jsNumber(result.start));
@@ -561,10 +561,10 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
             }
         }
     } else {
-        JSGlobalData* globalData = &exec->globalData();
+        VM* vm = &exec->vm();
         do {
             int* ovector;
-            MatchResult result = regExpConstructor->performMatch(*globalData, regExp, string, source, startPosition, &ovector);
+            MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, source, startPosition, &ovector);
             if (!result)
                 break;
 
@@ -810,7 +810,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* string = thisValue.toString(exec);
     String s = string->value(exec);
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
 
     JSValue a0 = exec->argument(0);
 
@@ -832,12 +832,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  replaced with the result of the expression new RegExp(regexp).
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        regExp = RegExp::create(exec->globalData(), a0.isUndefined() ? String("") : a0.toString(exec)->value(exec), NoFlags);
+        regExp = RegExp::create(exec->vm(), a0.isUndefined() ? String("") : a0.toString(exec)->value(exec), NoFlags);
         if (!regExp->isValid())
             return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(*globalData, regExp, string, s, 0);
+    MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, 0);
     // case without 'g' flag is handled like RegExp.prototype.exec
     if (!global)
         return JSValue::encode(result ? RegExpMatchesArray::create(exec, string, regExp, result) : jsNull());
@@ -850,7 +850,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         list.append(jsSubstring(exec, s, result.start, length));
         if (!length)
             ++end;
-        result = regExpConstructor->performMatch(*globalData, regExp, string, s, end);
+        result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
     }
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
@@ -869,7 +869,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* string = thisValue.toString(exec);
     String s = string->value(exec);
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
 
     JSValue a0 = exec->argument(0);
 
@@ -883,12 +883,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
          *  replaced with the result of the expression new RegExp(regexp).
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        reg = RegExp::create(exec->globalData(), a0.isUndefined() ? String("") : a0.toString(exec)->value(exec), NoFlags);
+        reg = RegExp::create(exec->vm(), a0.isUndefined() ? String("") : a0.toString(exec)->value(exec), NoFlags);
         if (!reg->isValid())
             return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(*globalData, reg, string, s, 0);
+    MatchResult result = regExpConstructor->performMatch(*vm, reg, string, s, 0);
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }
 
@@ -978,7 +978,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     //    otherwise let R = ToString(separator).
     JSValue separatorValue = exec->argument(0);
     if (separatorValue.inherits(&RegExpObject::s_info)) {
-        JSGlobalData* globalData = &exec->globalData();
+        VM* vm = &exec->vm();
         RegExp* reg = asRegExpObject(separatorValue)->regExp();
 
         // 9. If lim == 0, return A.
@@ -1001,7 +1001,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             // c. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
             //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             // d. Return A.
-            if (!reg->match(*globalData, input, 0))
+            if (!reg->match(*vm, input, 0))
                 result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             return JSValue::encode(result);
         }
@@ -1012,7 +1012,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         while (matchPosition < input.length()) {
             // a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
             Vector<int, 32> ovector;
-            int mpos = reg->match(*globalData, input, matchPosition, ovector);
+            int mpos = reg->match(*vm, input, matchPosition, ovector);
             // b. If z is failure, then let q = q + 1.
             if (mpos < 0)
                 break;

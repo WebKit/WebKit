@@ -46,13 +46,13 @@ void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.addOpaqueRoot(thisObject->impl());
 }
 
-PassRefPtr<NodeFilter> toNodeFilter(JSGlobalData& globalData, JSValue value)
+PassRefPtr<NodeFilter> toNodeFilter(VM& vm, JSValue value)
 {
     if (value.inherits(&JSNodeFilter::s_info))
         return jsCast<JSNodeFilter*>(asObject(value))->impl();
 
     RefPtr<NodeFilter> result = NodeFilter::create();
-    result->setCondition(JSNodeFilterCondition::create(globalData, result.get(), value));
+    result->setCondition(JSNodeFilterCondition::create(vm, result.get(), value));
     return result.release();
 }
 

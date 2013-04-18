@@ -184,16 +184,16 @@ public:
     static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // exec-globalData() is also likely wrong.
+        // exec-vm() is also likely wrong.
         Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec);
         ProxyRuntimeMethod* runtimeMethod = new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(globalObject, domStructure, method);
-        runtimeMethod->finishCreation(exec->globalData(), name);
+        runtimeMethod->finishCreation(exec->vm(), name);
         return runtimeMethod;
     }
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
     static const ClassInfo s_info;
@@ -204,9 +204,9 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const String& name)
+    void finishCreation(VM& vm, const String& name)
     {
-        Base::finishCreation(globalData, name);
+        Base::finishCreation(vm, name);
         ASSERT(inherits(&s_info));
     }
 };
@@ -337,7 +337,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
         if (identifier->isString()) {
             const char* str = identifier->string();
-            nameArray.add(Identifier(JSDOMWindow::commonJSGlobalData(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
+            nameArray.add(Identifier(JSDOMWindow::commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
         } else
             nameArray.add(Identifier::from(exec, identifier->number()));
     }

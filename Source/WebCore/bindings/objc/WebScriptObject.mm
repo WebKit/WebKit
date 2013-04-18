@@ -532,7 +532,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 {
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        JSLockHolder lock(rootObject->globalObject()->globalData());
+        JSLockHolder lock(rootObject->globalObject()->vm());
 
         if (object->inherits(&JSHTMLElement::s_info)) {
             // Plugin elements cache the instance internally.

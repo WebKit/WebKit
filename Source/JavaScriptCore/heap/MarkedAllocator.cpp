@@ -4,7 +4,7 @@
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include <wtf/CurrentTime.h>
 
 namespace JSC {
@@ -70,7 +70,7 @@ inline void* MarkedAllocator::tryAllocate(size_t bytes)
     
 void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
-    ASSERT(m_heap->globalData()->apiLock().currentThreadIsHoldingLock());
+    ASSERT(m_heap->vm()->apiLock().currentThreadIsHoldingLock());
 #if COLLECT_ON_EVERY_ALLOCATION
     m_heap->collectAllGarbage();
     ASSERT(m_heap->m_operationInProgress == NoOperation);

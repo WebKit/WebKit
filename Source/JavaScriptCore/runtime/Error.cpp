@@ -47,37 +47,37 @@ static const char* sourceURLPropertyName = "sourceURL";
 JSObject* createError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->errorStructure(), message);
 }
 
 JSObject* createEvalError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->evalErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->evalErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createRangeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->rangeErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->rangeErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createReferenceError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->referenceErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->referenceErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createSyntaxError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->syntaxErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->syntaxErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createTypeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->typeErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->typeErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
@@ -88,7 +88,7 @@ JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
 JSObject* createURIError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject->globalData(), globalObject->URIErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->vm(), globalObject->URIErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createError(ExecState* exec, const String& message)
@@ -133,15 +133,15 @@ JSObject* createURIError(ExecState* exec, const String& message)
 
 JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const SourceCode& source)
 {
-    JSGlobalData* globalData = &callFrame->globalData();
+    VM* vm = &callFrame->vm();
     const String& sourceURL = source.provider()->url();
 
     if (line != -1)
-        error->putDirect(*globalData, Identifier(globalData, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier(vm, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
-        error->putDirect(*globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier(vm, sourceURLPropertyName), jsString(vm, sourceURL), ReadOnly | DontDelete);
 
-    globalData->interpreter->addStackTraceIfNecessary(callFrame, error);
+    vm->interpreter->addStackTraceIfNecessary(callFrame, error);
 
     return error;
 }
@@ -156,14 +156,14 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
 JSValue throwError(ExecState* exec, JSValue error)
 {
     Interpreter::addStackTraceIfNecessary(exec, error);
-    exec->globalData().exception = error;
+    exec->vm().exception = error;
     return error;
 }
 
 JSObject* throwError(ExecState* exec, JSObject* error)
 {
     Interpreter::addStackTraceIfNecessary(exec, error);
-    exec->globalData().exception = error;
+    exec->vm().exception = error;
     return error;
 }
 

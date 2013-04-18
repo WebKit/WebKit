@@ -18,8 +18,8 @@ public:
     static ptrdiff_t classInfoOffset() { return OBJECT_OFFSETOF(JSDestructibleObject, m_classInfo); }
 
 protected:
-    JSDestructibleObject(JSGlobalData& globalData, Structure* structure, Butterfly* butterfly = 0)
-        : JSNonFinalObject(globalData, structure, butterfly)
+    JSDestructibleObject(VM& vm, Structure* structure, Butterfly* butterfly = 0)
+        : JSNonFinalObject(vm, structure, butterfly)
         , m_classInfo(structure->classInfo())
     {
         ASSERT(m_classInfo);

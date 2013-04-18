@@ -127,7 +127,7 @@ inline JSC::JSObject* NetscapePluginInstanceProxy::LocalObjectMap::get(uint32_t 
     return m_idToJSObjectMap.get(objectID).get();
 }
 
-uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& globalData, JSObject* object)
+uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(VM& vm, JSObject* object)
 {
     // This method creates objects with refcount of 1, but doesn't increase refcount when returning
     // found objects. This extra count accounts for the main "reference" kept by plugin process.
@@ -151,7 +151,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& 
         objectID = ++m_objectIDCounter;
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
 
-    m_idToJSObjectMap.set(objectID, Strong<JSObject>(globalData, object));
+    m_idToJSObjectMap.set(objectID, Strong<JSObject>(vm, object));
     m_jsObjectToIDMap.set(object, make_pair(objectID, 1));
 
     return objectID;
@@ -829,7 +829,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         objectID = 0;
     else
-        objectID = m_localObjects.idForObject(*pluginWorld()->globalData(), frame->script()->windowShell(pluginWorld())->window());
+        objectID = m_localObjects.idForObject(*pluginWorld()->vm(), frame->script()->windowShell(pluginWorld())->window());
         
     return true;
 }
@@ -841,7 +841,7 @@ bool NetscapePluginInstanceProxy::getPluginElementNPObject(uint32_t& objectID)
         return false;
     
     if (JSObject* object = frame->script()->jsObjectForPluginElement([m_pluginView element]))
-        objectID = m_localObjects.idForObject(*pluginWorld()->globalData(), object);
+        objectID = m_localObjects.idForObject(*pluginWorld()->vm(), object);
     else
         objectID = 0;
     
@@ -870,8 +870,8 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     if (!frame)
         return false;
 
-    JSLockHolder lock(pluginWorld()->globalData());
-    Strong<JSGlobalObject> globalObject(*pluginWorld()->globalData(), frame->script()->globalObject(pluginWorld()));
+    JSLockHolder lock(pluginWorld()->vm());
+    Strong<JSGlobalObject> globalObject(*pluginWorld()->vm(), frame->script()->globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
@@ -1281,7 +1281,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
             [array addObject:[NSNumber numberWithInt:objectID]];
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(exec->globalData(), object)]];
+            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(exec->vm(), object)]];
         }
     } else
         [array addObject:[NSNumber numberWithInt:VoidValueType]];

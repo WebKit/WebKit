@@ -134,7 +134,7 @@ static inline int msToWeekDay(double ms)
 // If this function is called with NaN it returns NaN.
 static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
 {
-    DSTOffsetCache& cache = exec->globalData().dstOffsetCache;
+    DSTOffsetCache& cache = exec->vm().dstOffsetCache;
     double start = cache.start;
     double end = cache.end;
 
@@ -195,11 +195,11 @@ static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
  */
 double getUTCOffset(ExecState* exec)
 {
-    double utcOffset = exec->globalData().cachedUTCOffset;
+    double utcOffset = exec->vm().cachedUTCOffset;
     if (!std::isnan(utcOffset))
         return utcOffset;
-    exec->globalData().cachedUTCOffset = calculateUTCOffset();
-    return exec->globalData().cachedUTCOffset;
+    exec->vm().cachedUTCOffset = calculateUTCOffset();
+    return exec->vm().cachedUTCOffset;
 }
 
 double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
@@ -261,13 +261,13 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
 
 double parseDate(ExecState* exec, const String& date)
 {
-    if (date == exec->globalData().cachedDateString)
-        return exec->globalData().cachedDateStringValue;
+    if (date == exec->vm().cachedDateString)
+        return exec->vm().cachedDateStringValue;
     double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
     if (std::isnan(value))
         value = parseDateFromNullTerminatedCharacters(exec, date.utf8().data());
-    exec->globalData().cachedDateString = date;
-    exec->globalData().cachedDateStringValue = value;
+    exec->vm().cachedDateString = date;
+    exec->vm().cachedDateStringValue = value;
     return value;
 }
 

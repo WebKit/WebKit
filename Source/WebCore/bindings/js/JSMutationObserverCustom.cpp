@@ -57,7 +57,7 @@ EncodedJSValue JSC_HOST_CALL JSMutationObserverConstructor::constructJSMutationO
     RefPtr<JSMutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
     JSObject* jsObserver = asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(callback.release())));
     PrivateName propertyName;
-    jsObserver->putDirect(jsConstructor->globalObject()->globalData(), propertyName, object);
+    jsObserver->putDirect(jsConstructor->globalObject()->vm(), propertyName, object);
     return JSValue::encode(jsObserver);
 }
 

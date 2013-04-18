@@ -63,12 +63,12 @@ JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, in
 #if !ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
 #else
-    if (intrinsic != NoIntrinsic && exec->globalData().canUseJIT()) {
+    if (intrinsic != NoIntrinsic && exec->vm().canUseJIT()) {
         ASSERT(nativeConstructor == callHostFunctionAsConstructor);
-        executable = exec->globalData().getHostFunction(nativeFunction, intrinsic);
+        executable = exec->vm().getHostFunction(nativeFunction, intrinsic);
     } else
 #endif
-        executable = exec->globalData().getHostFunction(nativeFunction, nativeConstructor);
+        executable = exec->vm().getHostFunction(nativeFunction, nativeConstructor);
 
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
     // Can't do this during initialization because getHostFunction might do a GC allocation.
@@ -82,9 +82,9 @@ void JSFunction::destroy(JSCell* cell)
 }
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-    : Base(exec->globalData(), structure)
+    : Base(exec->vm(), structure)
     , m_executable()
-    , m_scope(exec->globalData(), this, globalObject)
+    , m_scope(exec->vm(), this, globalObject)
     // We initialize blind so that changes to the prototype after function creation but before
     // the optimizer kicks in don't disable optimizations. Once the optimizer kicks in, the
     // watchpoint will start watching and any changes will both force deoptimization and disable
@@ -100,31 +100,31 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
 
 void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    m_executable.set(exec->globalData(), this, executable);
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    m_executable.set(exec->vm(), this, executable);
+    putDirect(exec->vm(), exec->vm().propertyNames->name, jsString(exec, name), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
 ObjectAllocationProfile* JSFunction::createAllocationProfile(ExecState* exec, size_t inlineCapacity)
 {
-    JSGlobalData& globalData = exec->globalData();
-    JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, globalData.propertyNames->prototype));
+    VM& vm = exec->vm();
+    JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
     if (!prototype)
         prototype = globalObject()->objectPrototype();
-    m_allocationProfile.initialize(globalObject()->globalData(), this, prototype, inlineCapacity);
+    m_allocationProfile.initialize(globalObject()->vm(), this, prototype, inlineCapacity);
     return &m_allocationProfile;
 }
 
 String JSFunction::name(ExecState* exec)
 {
-    return get(exec, exec->globalData().propertyNames->name).toWTFString(exec);
+    return get(exec, exec->vm().propertyNames->name).toWTFString(exec);
 }
 
 String JSFunction::displayName(ExecState* exec)
 {
-    JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
+    JSValue displayName = getDirect(exec->vm(), exec->vm().propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
@@ -221,13 +221,13 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName 
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
     if (propertyName == exec->propertyNames().prototype) {
-        JSGlobalData& globalData = exec->globalData();
-        PropertyOffset offset = thisObject->getDirectOffset(globalData, propertyName);
+        VM& vm = exec->vm();
+        PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName);
         if (!isValidOffset(offset)) {
             JSObject* prototype = constructEmptyObject(exec);
-            prototype->putDirect(globalData, exec->propertyNames().constructor, thisObject, DontEnum);
-            thisObject->putDirect(globalData, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
-            offset = thisObject->getDirectOffset(globalData, exec->propertyNames().prototype);
+            prototype->putDirect(vm, exec->propertyNames().constructor, thisObject, DontEnum);
+            thisObject->putDirect(vm, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
+            offset = thisObject->getDirectOffset(vm, exec->propertyNames().prototype);
             ASSERT(isValidOffset(offset));
         }
 
@@ -382,7 +382,7 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
-    if (!thisObject->isHostFunction() && !exec->globalData().isInDefineOwnProperty()
+    if (!thisObject->isHostFunction() && !exec->vm().isInDefineOwnProperty()
         && (propertyName == exec->propertyNames().arguments
             || propertyName == exec->propertyNames().length
             || propertyName == exec->propertyNames().name

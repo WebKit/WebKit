@@ -266,7 +266,7 @@ SOURCES += \
     runtime/JSDateMath.cpp \
     runtime/JSFunction.cpp \
     runtime/JSBoundFunction.cpp \
-    runtime/JSGlobalData.cpp \
+    runtime/VM.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
     runtime/JSProxy.cpp \

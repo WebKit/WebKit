@@ -53,16 +53,16 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info
 
 const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
 
-JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(globalData, structure, shell->world(), &s_globalObjectMethodTable)
+JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
+    : JSDOMGlobalObject(vm, structure, shell->world(), &s_globalObjectMethodTable)
     , m_impl(window)
     , m_shell(shell)
 {
 }
 
-void JSDOMWindowBase::finishCreation(JSGlobalData& globalData, JSDOMWindowShell* shell)
+void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
 {
-    Base::finishCreation(globalData, shell);
+    Base::finishCreation(vm, shell);
     ASSERT(inherits(&s_info));
 
     GlobalPropertyInfo staticGlobals[] = {
@@ -82,7 +82,7 @@ void JSDOMWindowBase::updateDocument()
 {
     ASSERT(m_impl->document());
     ExecState* exec = globalExec();
-    symbolTablePutWithAttributes(this, exec->globalData(), Identifier(exec, "document"), toJS(exec, this, m_impl->document()), DontDelete | ReadOnly);
+    symbolTablePutWithAttributes(this, exec->vm(), Identifier(exec, "document"), toJS(exec, this, m_impl->document()), DontDelete | ReadOnly);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
@@ -177,21 +177,21 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
     return m_shell;
 }
 
-JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
+VM* JSDOMWindowBase::commonVM()
 {
     ASSERT(isMainThread());
 
-    static JSGlobalData* globalData = 0;
-    if (!globalData) {
+    static VM* vm = 0;
+    if (!vm) {
         ScriptController::initializeThreading();
-        globalData = JSGlobalData::createLeaked(LargeHeap).leakRef();
+        vm = VM::createLeaked(LargeHeap).leakRef();
 #ifndef NDEBUG
-        globalData->exclusiveThread = currentThread();
+        vm->exclusiveThread = currentThread();
 #endif
-        initNormalWorldClientData(globalData);
+        initNormalWorldClientData(vm);
     }
 
-    return globalData;
+    return vm;
 }
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will

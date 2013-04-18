@@ -41,18 +41,18 @@ RegExp* RegExpCache::lookupOrCreate(const String& patternString, RegExpFlags fla
     if (RegExp* regExp = m_weakCache.get(key))
         return regExp;
 
-    RegExp* regExp = RegExp::createWithoutCaching(*m_globalData, patternString, flags);
+    RegExp* regExp = RegExp::createWithoutCaching(*m_vm, patternString, flags);
 #if ENABLE(REGEXP_TRACING)
-    m_globalData->addRegExpToTrace(regExp);
+    m_vm->addRegExpToTrace(regExp);
 #endif
 
     weakAdd(m_weakCache, key, PassWeak<RegExp>(regExp, this));
     return regExp;
 }
 
-RegExpCache::RegExpCache(JSGlobalData* globalData)
+RegExpCache::RegExpCache(VM* vm)
     : m_nextEntryInStrongCache(0)
-    , m_globalData(globalData)
+    , m_vm(vm)
 {
 }
 
@@ -68,7 +68,7 @@ void RegExpCache::addToStrongCache(RegExp* regExp)
     String pattern = regExp->pattern();
     if (pattern.length() > maxStrongCacheablePatternLength)
         return;
-    m_strongCache[m_nextEntryInStrongCache].set(*m_globalData, regExp);
+    m_strongCache[m_nextEntryInStrongCache].set(*m_vm, regExp);
     m_nextEntryInStrongCache++;
     if (m_nextEntryInStrongCache == maxStrongCacheableEntries)
         m_nextEntryInStrongCache = 0;

@@ -70,7 +70,7 @@ public:
     JSGlobalObject* globalObject() const;
     void updateGlobalObject(JSGlobalObject*);
 
-    void addRuntimeObject(JSGlobalData&, RuntimeObject*);
+    void addRuntimeObject(VM&, RuntimeObject*);
     void removeRuntimeObject(RuntimeObject*);
 
     struct InvalidationCallback {

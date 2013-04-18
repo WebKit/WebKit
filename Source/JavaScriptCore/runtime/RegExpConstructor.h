@@ -43,9 +43,9 @@ namespace JSC {
             return constructor;
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -55,8 +55,8 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
-        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const String&, int startOffset);
+        MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
+        MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset);
 
         void setMultiline(bool multiline) { m_multiline = multiline; }
         bool multiline() const { return m_multiline; }
@@ -101,9 +101,9 @@ namespace JSC {
       expression matching through the performMatch function. We use cached results to calculate, 
       e.g., RegExp.lastMatch and RegExp.leftParen.
     */
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
     {
-        int position = regExp->match(globalData, input, startOffset, m_ovector);
+        int position = regExp->match(vm, input, startOffset, m_ovector);
 
         if (ovector)
             *ovector = m_ovector.data();
@@ -116,15 +116,15 @@ namespace JSC {
         ASSERT(m_ovector[1] >= position);
         size_t end = m_ovector[1];
 
-        m_cachedResult.record(globalData, this, regExp, string, MatchResult(position, end));
+        m_cachedResult.record(vm, this, regExp, string, MatchResult(position, end));
 
         return MatchResult(position, end);
     }
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const String& input, int startOffset)
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset)
     {
-        MatchResult result = regExp->match(globalData, input, startOffset);
+        MatchResult result = regExp->match(vm, input, startOffset);
         if (result)
-            m_cachedResult.record(globalData, this, regExp, string, result);
+            m_cachedResult.record(vm, this, regExp, string, result);
         return result;
     }
 

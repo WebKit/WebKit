@@ -60,29 +60,29 @@ public:
             u.proto.clear();
         }
 
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool isDirect)
         {
             stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
+            base.set(vm, owner, _base);
             u.proto.clear();
             isChain = false;
             this->isDirect = isDirect;
         }
             
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
         {
             stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
-            u.proto.set(globalData, owner, _proto);
+            base.set(vm, owner, _base);
+            u.proto.set(vm, owner, _proto);
             isChain = false;
             this->isDirect = isDirect;
         }
             
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
         {
             stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
-            u.chain.set(globalData, owner, _chain);
+            base.set(vm, owner, _base);
+            u.chain.set(vm, owner, _chain);
             isChain = true;
             this->isDirect = isDirect;
         }
@@ -92,19 +92,19 @@ public:
     {
     }
         
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, bool isDirect)
+    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, bool isDirect)
     {
-        list[0].set(globalData, owner, stubRoutine, firstBase, isDirect);
+        list[0].set(vm, owner, stubRoutine, firstBase, isDirect);
     }
 
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
+    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
     {
-        list[0].set(globalData, owner, stubRoutine, firstBase, firstProto, isDirect);
+        list[0].set(vm, owner, stubRoutine, firstBase, firstProto, isDirect);
     }
 
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
+    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
     {
-        list[0].set(globalData, owner, stubRoutine, firstBase, firstChain, isDirect);
+        list[0].set(vm, owner, stubRoutine, firstBase, firstChain, isDirect);
     }
 
     bool visitWeak(int count)

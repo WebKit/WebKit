@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 class JSGlobalObject;
 class JSObject;
 
@@ -48,7 +48,7 @@ class NPRuntimeObjectMap;
 class NPJSObject : public NPObject {
     WTF_MAKE_NONCOPYABLE(NPJSObject);
 public:
-    static NPJSObject* create(JSC::JSGlobalData&, NPRuntimeObjectMap*, JSC::JSObject*);
+    static NPJSObject* create(JSC::VM&, NPRuntimeObjectMap*, JSC::JSObject*);
 
     JSC::JSObject* jsObject() const { return m_jsObject.get(); }
 
@@ -64,7 +64,7 @@ private:
     NPJSObject();
     ~NPJSObject();
 
-    void initialize(JSC::JSGlobalData&, NPRuntimeObjectMap*, JSC::JSObject*);
+    void initialize(JSC::VM&, NPRuntimeObjectMap*, JSC::JSObject*);
 
     bool hasMethod(NPIdentifier methodName);
     bool invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);

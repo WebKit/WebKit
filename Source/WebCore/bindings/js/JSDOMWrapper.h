@@ -38,7 +38,7 @@ public:
 
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
-        : JSDestructibleObject(globalObject->globalData(), structure)
+        : JSDestructibleObject(globalObject->vm(), structure)
     {
         ASSERT(scriptExecutionContext());
     }

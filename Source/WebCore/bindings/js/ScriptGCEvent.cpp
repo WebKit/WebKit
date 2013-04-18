@@ -36,7 +36,7 @@
 
 #include "JSDOMWindow.h"
 #include <heap/Heap.h>
-#include <runtime/JSGlobalData.h>
+#include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -45,9 +45,9 @@ using namespace JSC;
 
 void ScriptGCEvent::getHeapSize(HeapInfo& info)
 {
-    JSGlobalData* globalData = JSDOMWindow::commonJSGlobalData();
-    info.totalJSHeapSize = globalData->heap.capacity();
-    info.usedJSHeapSize = globalData->heap.size();
+    VM* vm = JSDOMWindow::commonVM();
+    info.totalJSHeapSize = vm->heap.capacity();
+    info.usedJSHeapSize = vm->heap.size();
     info.jsHeapSizeLimit = 0;
 }
 

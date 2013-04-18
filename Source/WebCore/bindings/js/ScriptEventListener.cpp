@@ -99,7 +99,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     ASSERT(jsListener);
     if (!jsListener)
         return "";
-    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSLockHolder lock(jsListener->isolatedWorld()->vm());
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
@@ -113,11 +113,11 @@ ScriptValue eventListenerHandler(Document* document, EventListener* eventListene
     ASSERT(jsListener);
     if (!jsListener)
         return ScriptValue();
-    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSLockHolder lock(jsListener->isolatedWorld()->vm());
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return ScriptValue();
-    return ScriptValue(*jsListener->isolatedWorld()->globalData(), jsFunction);
+    return ScriptValue(*jsListener->isolatedWorld()->vm(), jsFunction);
 }
 
 ScriptState* eventListenerHandlerScriptState(Frame* frame, EventListener* eventListener)
@@ -138,7 +138,7 @@ bool eventListenerHandlerLocation(Document* document, EventListener* eventListen
     ASSERT(jsListener);
     if (!jsListener)
         return false;
-    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSLockHolder lock(jsListener->isolatedWorld()->vm());
     JSC::JSObject* jsObject = jsListener->jsFunction(document);
     if (!jsObject)
         return false;

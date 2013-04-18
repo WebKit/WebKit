@@ -64,7 +64,7 @@ public:
         SyntaxChecker* m_context;
     };
     
-    SyntaxChecker(JSGlobalData* , void*)
+    SyntaxChecker(VM* , void*)
     {
     }
 
@@ -163,11 +163,11 @@ public:
         ASSERT(name);
         return Property(name, type);
     }
-    template <bool complete> Property createProperty(JSGlobalData* globalData, double name, int, PropertyNode::Type type)
+    template <bool complete> Property createProperty(VM* vm, double name, int, PropertyNode::Type type)
     {
         if (!complete)
             return Property(type);
-        return Property(&globalData->parserArena->identifierArena().makeNumericIdentifier(globalData, name), type);
+        return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
     }
     int createPropertyList(const JSTokenLocation&, Property) { return 1; }
     int createPropertyList(const JSTokenLocation&, Property, int) { return 1; }
@@ -211,11 +211,11 @@ public:
             return Property(type);
         return Property(name, type);
     }
-    template <bool strict> Property createGetterOrSetterProperty(JSGlobalData* globalData, const JSTokenLocation&, PropertyNode::Type type, double name, int, int, int, int, int, int)
+    template <bool strict> Property createGetterOrSetterProperty(VM* vm, const JSTokenLocation&, PropertyNode::Type type, double name, int, int, int, int, int, int)
     {
         if (!strict)
             return Property(type);
-        return Property(&globalData->parserArena->identifierArena().makeNumericIdentifier(globalData, name), type);
+        return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
     }
 
     void appendStatement(int, int) { }

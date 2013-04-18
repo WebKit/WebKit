@@ -57,7 +57,7 @@ void JSMutationCallback::call(const Vector<RefPtr<MutationRecord> >& mutations, 
 
     RefPtr<JSMutationCallback> protect(this);
 
-    JSLockHolder lock(m_isolatedWorld->globalData());
+    JSLockHolder lock(m_isolatedWorld->vm());
 
     if (!m_callback)
         return;

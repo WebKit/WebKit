@@ -29,7 +29,7 @@
 #include "APIShims.h"
 #include "Completion.h"
 #include "JSBasePrivate.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSScriptRefPrivate.h"
 #include "OpaqueJSString.h"
 #include "Operations.h"
@@ -41,9 +41,9 @@ using namespace JSC;
 
 struct OpaqueJSScript : public SourceProvider {
 public:
-    static WTF::PassRefPtr<OpaqueJSScript> create(JSGlobalData* globalData, const String& url, int startingLineNumber, const String& source)
+    static WTF::PassRefPtr<OpaqueJSScript> create(VM* vm, const String& url, int startingLineNumber, const String& source)
     {
-        return WTF::adoptRef(new OpaqueJSScript(globalData, url, startingLineNumber, source));
+        return WTF::adoptRef(new OpaqueJSScript(vm, url, startingLineNumber, source));
     }
 
     const String& source() const OVERRIDE
@@ -51,42 +51,42 @@ public:
         return m_source;
     }
 
-    JSGlobalData* globalData() const { return m_globalData; }
+    VM* vm() const { return m_vm; }
 
 private:
-    OpaqueJSScript(JSGlobalData* globalData, const String& url, int startingLineNumber, const String& source)
+    OpaqueJSScript(VM* vm, const String& url, int startingLineNumber, const String& source)
         : SourceProvider(url, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()))
-        , m_globalData(globalData)
+        , m_vm(vm)
         , m_source(source)
     {
     }
 
     ~OpaqueJSScript() { }
 
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     String m_source;
 };
 
-static bool parseScript(JSGlobalData* globalData, const SourceCode& source, ParserError& error)
+static bool parseScript(VM* vm, const SourceCode& source, ParserError& error)
 {
-    return JSC::parse<JSC::ProgramNode>(globalData, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    return JSC::parse<JSC::ProgramNode>(vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
 }
 
 extern "C" {
 
 JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSStringRef* errorMessage, int* errorLine)
 {
-    JSGlobalData* globalData = toJS(contextGroup);
-    APIEntryShim entryShim(globalData);
+    VM* vm = toJS(contextGroup);
+    APIEntryShim entryShim(vm);
     for (size_t i = 0; i < length; i++) {
         if (!isASCII(source[i]))
             return 0;
     }
 
-    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(globalData, url->string(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
+    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url->string(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
 
     ParserError error;
-    if (!parseScript(globalData, SourceCode(result), error)) {
+    if (!parseScript(vm, SourceCode(result), error)) {
         if (errorMessage)
             *errorMessage = OpaqueJSString::create(error.m_message).leakRef();
         if (errorLine)
@@ -99,13 +99,13 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
 
 JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine)
 {
-    JSGlobalData* globalData = toJS(contextGroup);
-    APIEntryShim entryShim(globalData);
+    VM* vm = toJS(contextGroup);
+    APIEntryShim entryShim(vm);
 
-    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(globalData, url->string(), startingLineNumber, source->string());
+    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url->string(), startingLineNumber, source->string());
 
     ParserError error;
-    if (!parseScript(globalData, SourceCode(result), error)) {
+    if (!parseScript(vm, SourceCode(result), error)) {
         if (errorMessage)
             *errorMessage = OpaqueJSString::create(error.m_message).leakRef();
         if (errorLine)
@@ -118,13 +118,13 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
 
 void JSScriptRetain(JSScriptRef script)
 {
-    APIEntryShim entryShim(script->globalData());
+    APIEntryShim entryShim(script->vm());
     script->ref();
 }
 
 void JSScriptRelease(JSScriptRef script)
 {
-    APIEntryShim entryShim(script->globalData());
+    APIEntryShim entryShim(script->vm());
     script->deref();
 }
 
@@ -132,7 +132,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
 {
     ExecState* exec = toJS(context);
     APIEntryShim entryShim(exec);
-    if (script->globalData() != &exec->globalData()) {
+    if (script->vm() != &exec->vm()) {
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }

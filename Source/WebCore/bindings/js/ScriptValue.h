@@ -48,7 +48,7 @@ class SerializedScriptValue;
 class ScriptValue {
 public:
     ScriptValue() { }
-    ScriptValue(JSC::JSGlobalData& globalData, JSC::JSValue value) : m_value(globalData, value) {}
+    ScriptValue(JSC::VM& vm, JSC::JSValue value) : m_value(vm, value) {}
     virtual ~ScriptValue() {}
 
     JSC::JSValue jsValue() const { return m_value.get(); }

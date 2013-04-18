@@ -161,8 +161,8 @@ namespace JSC {
     class CommonIdentifiers {
         WTF_MAKE_NONCOPYABLE(CommonIdentifiers); WTF_MAKE_FAST_ALLOCATED;
     private:
-        CommonIdentifiers(JSGlobalData*);
-        friend class JSGlobalData;
+        CommonIdentifiers(VM*);
+        friend class VM;
 
     public:
         const Identifier nullIdentifier;

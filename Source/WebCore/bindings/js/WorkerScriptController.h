@@ -35,7 +35,7 @@
 #include <wtf/Threading.h>
 
 namespace JSC {
-    class JSGlobalData;
+    class VM;
 }
 
 namespace WebCore {
@@ -77,7 +77,7 @@ namespace WebCore {
 
         void disableEval(const String& errorMessage);
 
-        JSC::JSGlobalData* globalData() { return m_globalData.get(); }
+        JSC::VM* vm() { return m_vm.get(); }
 
         void attachDebugger(JSC::Debugger*);
         void detachDebugger(JSC::Debugger*);
@@ -90,7 +90,7 @@ namespace WebCore {
         }
         void initScript();
 
-        RefPtr<JSC::JSGlobalData> m_globalData;
+        RefPtr<JSC::VM> m_vm;
         WorkerContext* m_workerContext;
         JSC::Strong<JSWorkerContext> m_workerContextWrapper;
         bool m_executionForbidden;

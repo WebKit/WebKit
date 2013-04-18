@@ -35,8 +35,8 @@
 
 namespace JSC {
 
-HandleSet::HandleSet(JSGlobalData* globalData)
-    : m_globalData(globalData)
+HandleSet::HandleSet(VM* vm)
+    : m_vm(vm)
     , m_nextToFinalize(0)
 {
     grow();
@@ -45,12 +45,12 @@ HandleSet::HandleSet(JSGlobalData* globalData)
 HandleSet::~HandleSet()
 {
     while (!m_blockList.isEmpty())
-        m_globalData->heap.blockAllocator().deallocate(HandleBlock::destroy(m_blockList.removeHead()));
+        m_vm->heap.blockAllocator().deallocate(HandleBlock::destroy(m_blockList.removeHead()));
 }
 
 void HandleSet::grow()
 {
-    HandleBlock* newBlock = HandleBlock::create(m_globalData->heap.blockAllocator().allocate<HandleBlock>(), this);
+    HandleBlock* newBlock = HandleBlock::create(m_vm->heap.blockAllocator().allocate<HandleBlock>(), this);
     m_blockList.append(newBlock);
 
     for (int i = newBlock->nodeCapacity() - 1; i >= 0; --i) {

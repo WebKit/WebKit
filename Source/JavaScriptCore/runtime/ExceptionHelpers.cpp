@@ -52,9 +52,9 @@ JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec,
     return JSValue(QNaN);
 }
 
-JSObject* createTerminatedExecutionException(JSGlobalData* globalData)
+JSObject* createTerminatedExecutionException(VM* vm)
 {
-    return TerminatedExecutionError::create(*globalData);
+    return TerminatedExecutionError::create(*vm);
 }
 
 bool isTerminatedExecutionException(JSObject* object)
@@ -144,7 +144,7 @@ JSObject* throwStackOverflowError(ExecState* exec)
 JSObject* throwTerminatedExecutionException(ExecState* exec)
 {
     Interpreter::ErrorHandlingMode mode(exec);
-    return throwError(exec, createTerminatedExecutionException(&exec->globalData()));
+    return throwError(exec, createTerminatedExecutionException(&exec->vm()));
 }
 
 } // namespace JSC

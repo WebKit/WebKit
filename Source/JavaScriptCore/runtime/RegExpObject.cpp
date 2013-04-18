@@ -64,8 +64,8 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, 0, ExecState::
 */
 
 RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-    : JSNonFinalObject(globalObject->globalData(), structure)
-    , m_regExp(globalObject->globalData(), this, regExp)
+    : JSNonFinalObject(globalObject->vm(), structure)
+    , m_regExp(globalObject->vm(), this, regExp)
     , m_lastIndexIsWritable(true)
 {
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
@@ -73,7 +73,7 @@ RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, R
 
 void RegExpObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData());
+    Base::finishCreation(globalObject->vm());
     ASSERT(inherits(&s_info));
 }
 
@@ -315,9 +315,9 @@ MatchResult RegExpObject::match(ExecState* exec, JSString* string)
     RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     String input = string->value(exec);
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     if (!regExp->global())
-        return regExpConstructor->performMatch(globalData, regExp, string, input, 0);
+        return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 
     JSValue jsLastIndex = getLastIndex();
     unsigned lastIndex;
@@ -336,7 +336,7 @@ MatchResult RegExpObject::match(ExecState* exec, JSString* string)
         lastIndex = static_cast<unsigned>(doubleLastIndex);
     }
 
-    MatchResult result = regExpConstructor->performMatch(globalData, regExp, string, input, lastIndex);
+    MatchResult result = regExpConstructor->performMatch(vm, regExp, string, input, lastIndex);
     setLastIndex(exec, result.end);
     return result;
 }

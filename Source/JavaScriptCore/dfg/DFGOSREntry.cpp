@@ -48,7 +48,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     dataLog("OSR in ", *codeBlock->alternative(), " -> ", *codeBlock, " from bc#", bytecodeIndex, "\n");
 #endif
     
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
     OSREntryData* entry = codeBlock->dfgOSREntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
@@ -133,7 +133,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    it seems silly: you'd be diverting the program to error handling when it
     //    would have otherwise just kept running albeit less quickly.
     
-    if (!globalData->interpreter->stack().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
+    if (!vm->interpreter->stack().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLogF("    OSR failed because stack growth failed.\n");
 #endif

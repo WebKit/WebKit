@@ -555,7 +555,7 @@
     <ClCompile Include="..\runtime\JSFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSGlobalData.cpp">
+    <ClCompile Include="..\runtime\VM.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSGlobalObject.cpp">
@@ -1586,7 +1586,7 @@
     <ClInclude Include="..\runtime\JSFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSGlobalData.h">
+    <ClInclude Include="..\runtime\VM.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSGlobalObject.h">

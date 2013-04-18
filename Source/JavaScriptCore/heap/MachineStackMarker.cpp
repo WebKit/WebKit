@@ -25,7 +25,7 @@
 #include "ConservativeRoots.h"
 #include "Heap.h"
 #include "JSArray.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include <setjmp.h>
 #include <stdlib.h>
 #include <wtf/StdLibExtras.h>
@@ -188,7 +188,7 @@ void MachineThreads::makeUsableFromMultipleThreads()
 
 void MachineThreads::addCurrentThread()
 {
-    ASSERT(!m_heap->globalData()->exclusiveThread || m_heap->globalData()->exclusiveThread == currentThread());
+    ASSERT(!m_heap->vm()->exclusiveThread || m_heap->vm()->exclusiveThread == currentThread());
 
     if (!m_threadSpecific || threadSpecificGet(m_threadSpecific))
         return;

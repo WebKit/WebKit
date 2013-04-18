@@ -56,7 +56,7 @@ Watchdog::~Watchdog()
     destroyTimer();
 }
 
-void Watchdog::setTimeLimit(JSGlobalData& globalData, double limit,
+void Watchdog::setTimeLimit(VM& vm, double limit,
     ShouldTerminateCallback callback, void* data1, void* data2)
 {
     bool wasEnabled = isEnabled();
@@ -84,7 +84,7 @@ void Watchdog::setTimeLimit(JSGlobalData& globalData, double limit,
 
         // And if we've previously compiled any functions, we need to deopt
         // them because they don't habe the needed polling checks yet.
-        globalData.releaseExecutableMemory();
+        vm.releaseExecutableMemory();
     }
 
     startCountdownIfNeeded();

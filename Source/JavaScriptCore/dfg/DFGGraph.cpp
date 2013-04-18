@@ -44,12 +44,12 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
-Graph::Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
-    : m_globalData(globalData)
+Graph::Graph(VM& vm, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
+    : m_vm(vm)
     , m_codeBlock(codeBlock)
-    , m_compilation(globalData.m_perBytecodeProfiler ? globalData.m_perBytecodeProfiler->newCompilation(codeBlock, Profiler::DFG) : 0)
+    , m_compilation(vm.m_perBytecodeProfiler ? vm.m_perBytecodeProfiler->newCompilation(codeBlock, Profiler::DFG) : 0)
     , m_profiledBlock(codeBlock->alternative())
-    , m_allocator(globalData.m_dfgState->m_allocator)
+    , m_allocator(vm.m_dfgState->m_allocator)
     , m_hasArguments(false)
     , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , m_mustHandleValues(mustHandleValues)

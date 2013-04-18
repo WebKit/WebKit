@@ -88,10 +88,10 @@ JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInte
 
 void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestSerializedScriptValueInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(3), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestSerializedScriptValueInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(3), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -147,15 +147,15 @@ JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Struc
 {
 }
 
-void JSTestSerializedScriptValueInterface::finishCreation(JSGlobalData& globalData)
+void JSTestSerializedScriptValueInterface::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestSerializedScriptValueInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestSerializedScriptValueInterfacePrototype::create(exec->globalData(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestSerializedScriptValueInterfacePrototype::create(exec->vm(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
@@ -211,7 +211,7 @@ JSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSValue
         return cachedValue;
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
     JSValue result = impl->cachedValue() ? impl->cachedValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    castedThis->m_cachedValue.set(exec->globalData(), castedThis, result);
+    castedThis->m_cachedValue.set(exec->vm(), castedThis, result);
     return result;
 }
 
@@ -234,7 +234,7 @@ JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* exec,
         return cachedValue;
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
     JSValue result = impl->cachedReadonlyValue() ? impl->cachedReadonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    castedThis->m_cachedReadonlyValue.set(exec->globalData(), castedThis, result);
+    castedThis->m_cachedReadonlyValue.set(exec->vm(), castedThis, result);
     return result;
 }
 

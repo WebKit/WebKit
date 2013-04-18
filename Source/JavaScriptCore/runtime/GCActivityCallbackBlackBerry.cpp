@@ -20,20 +20,20 @@
 #include "GCActivityCallback.h"
 
 #include "Heap.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include <BlackBerryPlatformMemory.h>
 
 namespace JSC {
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap->globalData())
+    : GCActivityCallback(heap->vm())
 {
 }
 
 void DefaultGCActivityCallback::doWork()
 {
-    JSLockHolder lock(m_globalData);
-    m_globalData->heap.collect(Heap::DoNotSweep);
+    JSLockHolder lock(m_vm);
+    m_vm->heap.collect(Heap::DoNotSweep);
 }
 
 void DefaultGCActivityCallback::didAllocate(size_t)
@@ -42,7 +42,7 @@ void DefaultGCActivityCallback::didAllocate(size_t)
         return;
 
     // Try using ~5% CPU time.
-    m_timer.start(m_globalData->heap.lastGCLength() * 20);
+    m_timer.start(m_vm->heap.lastGCLength() * 20);
 }
 
 void DefaultGCActivityCallback::willCollect()

@@ -42,7 +42,7 @@ namespace JSC { namespace Profiler {
 class Database {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(Database);
 public:
-    JS_EXPORT_PRIVATE Database(JSGlobalData&);
+    JS_EXPORT_PRIVATE Database(VM&);
     JS_EXPORT_PRIVATE ~Database();
     
     int databaseID() const { return m_databaseID; }
@@ -78,7 +78,7 @@ private:
     static void atExitCallback();
     
     int m_databaseID;
-    JSGlobalData& m_globalData;
+    VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
     HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
     Vector<RefPtr<Compilation> > m_compilations;

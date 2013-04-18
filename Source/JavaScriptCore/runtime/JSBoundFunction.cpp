@@ -80,7 +80,7 @@ JSBoundFunction* JSBoundFunction::create(ExecState* exec, JSGlobalObject* global
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
     bool canConstruct = constructType != ConstructTypeNone;
 
-    NativeExecutable* executable = exec->globalData().getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor);
+    NativeExecutable* executable = exec->vm().getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor);
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(*exec->heap())) JSBoundFunction(exec, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgs);
 
     function->finishCreation(exec, executable, length, name);
@@ -99,9 +99,9 @@ bool JSBoundFunction::customHasInstance(JSObject* object, ExecState* exec, JSVal
 
 JSBoundFunction::JSBoundFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs)
     : Base(exec, globalObject, structure)
-    , m_targetFunction(exec->globalData(), this, targetFunction)
-    , m_boundThis(exec->globalData(), this, boundThis)
-    , m_boundArgs(exec->globalData(), this, boundArgs)
+    , m_targetFunction(exec->vm(), this, targetFunction)
+    , m_boundThis(exec->vm(), this, boundThis)
+    , m_boundArgs(exec->vm(), this, boundArgs)
 {
 }
 

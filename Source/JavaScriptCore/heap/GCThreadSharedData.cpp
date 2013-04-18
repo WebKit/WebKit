@@ -29,7 +29,7 @@
 #include "CopyVisitor.h"
 #include "CopyVisitorInlines.h"
 #include "GCThread.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "MarkStack.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
@@ -52,11 +52,11 @@ size_t GCThreadSharedData::childVisitCount()
 }
 #endif
 
-GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
-    : m_globalData(globalData)
-    , m_copiedSpace(&globalData->heap.m_storageSpace)
+GCThreadSharedData::GCThreadSharedData(VM* vm)
+    : m_vm(vm)
+    , m_copiedSpace(&vm->heap.m_storageSpace)
     , m_shouldHashCons(false)
-    , m_sharedMarkStack(globalData->heap.blockAllocator())
+    , m_sharedMarkStack(vm->heap.blockAllocator())
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
     , m_copyIndex(0)
@@ -116,7 +116,7 @@ void GCThreadSharedData::reset()
     m_weakReferenceHarvesters.removeAll();
 
     if (m_shouldHashCons) {
-        m_globalData->resetNewStringsSinceLastHashCons();
+        m_vm->resetNewStringsSinceLastHashCons();
         m_shouldHashCons = false;
     }
 }

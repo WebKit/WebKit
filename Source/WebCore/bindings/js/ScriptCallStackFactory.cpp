@@ -44,7 +44,7 @@
 #include <runtime/ArgList.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSFunction.h>
-#include <runtime/JSGlobalData.h>
+#include <runtime/VM.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
@@ -58,7 +58,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     Vector<ScriptCallFrame> frames;
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
         Vector<StackFrame> stackTrace;
-        Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize);
+        Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize);
         for (size_t i = 0; i < stackTrace.size(); i++)
             frames.append(ScriptCallFrame(stackTrace[i].friendlyFunctionName(exec), stackTrace[i].friendlySourceURL(), stackTrace[i].line(), stackTrace[i].column()));
     }
@@ -75,7 +75,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
 {
     Vector<ScriptCallFrame> frames;
     Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize + 1);
+    Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize + 1);
     for (size_t i = stackTrace.size() == 1 ? 0 : 1; i < stackTrace.size(); i++) {
         // This early exit is necessary to maintain our old behaviour
         // but the stack trace we produce now is complete and handles all
@@ -106,7 +106,7 @@ PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned
     Vector<ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append(ScriptValue(exec->globalData(), exec->argument(i)));
+        arguments.append(ScriptValue(exec->vm(), exec->argument(i)));
     return ScriptArguments::create(exec, arguments);
 }
 

@@ -35,8 +35,8 @@ namespace JSC {
     
 ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0, CREATE_METHOD_TABLE(StructureChain) };
 
-StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure)
-    : JSCell(globalData, structure)
+StructureChain::StructureChain(VM& vm, Structure* structure)
+    : JSCell(vm, structure)
 {
 }
 

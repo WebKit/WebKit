@@ -33,7 +33,7 @@
 namespace JSC {
 
 class ExecState;
-class JSGlobalData;
+class VM;
 
 class Watchdog {
 public:
@@ -43,7 +43,7 @@ public:
     ~Watchdog();
 
     typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
-    void setTimeLimit(JSGlobalData&, double seconds, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    void setTimeLimit(VM&, double seconds, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
 
     // This version of didFire() will check the elapsed CPU time and call the
     // callback (if needed) to determine if the watchdog should fire.

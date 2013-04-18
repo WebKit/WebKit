@@ -36,7 +36,7 @@ namespace JSC {
 const ClassInfo JSPropertyNameIterator::s_info = { "JSPropertyNameIterator", 0, 0, 0, CREATE_METHOD_TABLE(JSPropertyNameIterator) };
 
 inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
-    : JSCell(exec->globalData(), exec->globalData().propertyNameIteratorStructure.get())
+    : JSCell(exec->vm(), exec->vm().propertyNameIteratorStructure.get())
     , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
     , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
@@ -76,9 +76,9 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
             return jsPropertyNameIterator;
     }
 
-    jsPropertyNameIterator->setCachedPrototypeChain(exec->globalData(), structureChain);
-    jsPropertyNameIterator->setCachedStructure(exec->globalData(), o->structure());
-    o->structure()->setEnumerationCache(exec->globalData(), jsPropertyNameIterator);
+    jsPropertyNameIterator->setCachedPrototypeChain(exec->vm(), structureChain);
+    jsPropertyNameIterator->setCachedStructure(exec->vm(), o->structure());
+    o->structure()->setEnumerationCache(exec->vm(), jsPropertyNameIterator);
     return jsPropertyNameIterator;
 }
 

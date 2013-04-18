@@ -122,7 +122,7 @@ namespace JSC { namespace DFG {
 class ByteCodeParser {
 public:
     ByteCodeParser(Graph& graph)
-        : m_globalData(&graph.m_globalData)
+        : m_vm(&graph.m_vm)
         , m_codeBlock(graph.m_codeBlock)
         , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
@@ -942,7 +942,7 @@ private:
     
     void buildOperandMapsIfNecessary();
     
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
     Graph& m_graph;
@@ -1635,7 +1635,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         Node* result;
         
         if (argumentCountIncludingThis <= 1)
-            result = cellConstant(m_globalData->smallStrings.emptyString());
+            result = cellConstant(m_vm->smallStrings.emptyString());
         else
             result = addToGraph(ToString, get(registerOffset + argumentToOperand(1)));
         
@@ -1924,7 +1924,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 {
     bool shouldContinueParsing = true;
 
-    Interpreter* interpreter = m_globalData->interpreter;
+    Interpreter* interpreter = m_vm->interpreter;
     Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
     unsigned blockBegin = m_currentIndex;
     
@@ -1974,7 +1974,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         
         if (m_graph.m_compilation && opcodeID != op_call_put_result) {
             addToGraph(CountExecution, OpInfo(m_graph.m_compilation->executionCounterFor(
-                Profiler::OriginStack(*m_globalData->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
+                Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
         }
         
         switch (opcodeID) {
@@ -3479,10 +3479,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(callsiteBlockHead != NoBlock);
         
         InlineCallFrame inlineCallFrame;
-        inlineCallFrame.executable.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
+        inlineCallFrame.executable.set(*byteCodeParser->m_vm, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
         inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
         if (callee)
-            inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
+            inlineCallFrame.callee.set(*byteCodeParser->m_vm, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
@@ -3524,7 +3524,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             StringImpl* rep = codeBlock->identifier(i).impl();
             IdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_codeBlock->numberOfIdentifiers());
             if (result.isNewEntry)
-                byteCodeParser->m_codeBlock->addIdentifier(Identifier(byteCodeParser->m_globalData, rep));
+                byteCodeParser->m_codeBlock->addIdentifier(Identifier(byteCodeParser->m_vm, rep));
             m_identifierRemap[i] = result.iterator->value;
         }
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {
@@ -3594,7 +3594,7 @@ void ByteCodeParser::parseCodeBlock()
     
     if (m_graph.m_compilation) {
         m_graph.m_compilation->addProfiledBytecodes(
-            *m_globalData->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
+            *m_vm->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
     
     bool shouldDumpBytecode = Options::dumpBytecodeAtDFGTime();

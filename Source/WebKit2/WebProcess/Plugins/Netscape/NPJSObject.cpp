@@ -46,13 +46,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NPJSObject* NPJSObject::create(JSGlobalData& globalData, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
+NPJSObject* NPJSObject::create(VM& vm, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {
     // We should never have a JSNPObject inside an NPJSObject.
     ASSERT(!jsObject->inherits(&JSNPObject::s_info));
 
     NPJSObject* npJSObject = toNPJSObject(createNPObject(0, npClass()));
-    npJSObject->initialize(globalData, objectMap, jsObject);
+    npJSObject->initialize(vm, objectMap, jsObject);
 
     return npJSObject;
 }
@@ -72,13 +72,13 @@ bool NPJSObject::isNPJSObject(NPObject* npObject)
     return npObject->_class == npClass();
 }
 
-void NPJSObject::initialize(JSGlobalData& globalData, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
+void NPJSObject::initialize(VM& vm, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {
     ASSERT(!m_objectMap);
     ASSERT(!m_jsObject);
 
     m_objectMap = objectMap;
-    m_jsObject.set(globalData, jsObject);
+    m_jsObject.set(vm, jsObject);
 }
 
 static Identifier identifierFromIdentifierRep(ExecState* exec, IdentifierRep* identifierRep)

@@ -302,83 +302,83 @@ namespace JSC {
         static const int patchPutByIdDefaultOffset = 256;
 
     public:
-        static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCompilationEffort effort, CodePtr* functionEntryArityCheck = 0)
+        static JITCode compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort, CodePtr* functionEntryArityCheck = 0)
         {
-            return JIT(globalData, codeBlock).privateCompile(functionEntryArityCheck, effort);
+            return JIT(vm, codeBlock).privateCompile(functionEntryArityCheck, effort);
         }
         
-        static void compileClosureCall(JSGlobalData* globalData, CallLinkInfo* callLinkInfo, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
+        static void compileClosureCall(VM* vm, CallLinkInfo* callLinkInfo, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
         {
-            JIT jit(globalData, callerCodeBlock);
+            JIT jit(vm, callerCodeBlock);
             jit.m_bytecodeOffset = callLinkInfo->codeOrigin.bytecodeIndex;
             jit.privateCompileClosureCall(callLinkInfo, calleeCodeBlock, expectedStructure, expectedExecutable, codePtr);
         }
 
-        static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
+        static void compileGetByIdProto(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompileGetByIdProto(stubInfo, structure, prototypeStructure, ident, slot, cachedOffset, returnAddress, callFrame);
         }
 
-        static void compileGetByIdSelfList(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
+        static void compileGetByIdSelfList(VM* vm, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompileGetByIdSelfList(stubInfo, polymorphicStructures, currentIndex, structure, ident, slot, cachedOffset);
         }
-        static void compileGetByIdProtoList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
+        static void compileGetByIdProtoList(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompileGetByIdProtoList(stubInfo, prototypeStructureList, currentIndex, structure, prototypeStructure, ident, slot, cachedOffset, callFrame);
         }
-        static void compileGetByIdChainList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
+        static void compileGetByIdChainList(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompileGetByIdChainList(stubInfo, prototypeStructureList, currentIndex, structure, chain, count, ident, slot, cachedOffset, callFrame);
         }
 
-        static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
+        static void compileGetByIdChain(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompileGetByIdChain(stubInfo, structure, chain, count, ident, slot, cachedOffset, returnAddress, callFrame);
         }
         
-        static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, PropertyOffset cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
+        static void compilePutByIdTransition(VM* vm, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, PropertyOffset cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress, direct);
         }
         
-        static void compileGetByVal(JSGlobalData* globalData, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        static void compileGetByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
             jit.privateCompileGetByVal(byValInfo, returnAddress, arrayMode);
         }
 
-        static void compilePutByVal(JSGlobalData* globalData, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        static void compilePutByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
             jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
         }
 
-        static CodeRef compileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
+        static CodeRef compileCTINativeCall(VM* vm, NativeFunction func)
         {
-            if (!globalData->canUseJIT()) {
+            if (!vm->canUseJIT()) {
 #if ENABLE(LLINT)
                 return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
 #else
                 return CodeRef();
 #endif
             }
-            JIT jit(globalData, 0);
-            return jit.privateCompileCTINativeCall(globalData, func);
+            JIT jit(vm, 0);
+            return jit.privateCompileCTINativeCall(vm, func);
         }
 
         static void resetPatchGetById(RepatchBuffer&, StructureStubInfo*);
@@ -386,9 +386,9 @@ namespace JSC {
         static void patchGetByIdSelf(CodeBlock*, StructureStubInfo*, Structure*, PropertyOffset cachedOffset, ReturnAddressPtr);
         static void patchPutByIdReplace(CodeBlock*, StructureStubInfo*, Structure*, PropertyOffset cachedOffset, ReturnAddressPtr, bool direct);
 
-        static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
+        static void compilePatchGetArrayLength(VM* vm, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
         {
-            JIT jit(globalData, codeBlock);
+            JIT jit(vm, codeBlock);
 #if ENABLE(DFG_JIT)
             // Force profiling to be enabled during stub generation.
             jit.m_canBeOptimized = true;
@@ -398,11 +398,11 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, JSGlobalData*, CodeSpecializationKind);
+        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, VM*, CodeSpecializationKind);
         static void linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo*);
 
     private:
-        JIT(JSGlobalData*, CodeBlock* = 0);
+        JIT(VM*, CodeBlock* = 0);
 
         void privateCompileMainPass();
         void privateCompileLinkPass();
@@ -421,8 +421,8 @@ namespace JSC {
         void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
         void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
-        Label privateCompileCTINativeCall(JSGlobalData*, bool isConstruct = false);
-        CodeRef privateCompileCTINativeCall(JSGlobalData*, NativeFunction);
+        Label privateCompileCTINativeCall(VM*, bool isConstruct = false);
+        CodeRef privateCompileCTINativeCall(VM*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         static bool isDirectPutById(StructureStubInfo*);
@@ -896,7 +896,7 @@ namespace JSC {
 #endif
 
         Interpreter* m_interpreter;
-        JSGlobalData* m_globalData;
+        VM* m_vm;
         CodeBlock* m_codeBlock;
 
         Vector<CallRecord> m_calls;
@@ -935,7 +935,7 @@ namespace JSC {
         OwnPtr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;
         WeakRandom m_randomGenerator;
-        static CodeRef stringGetByValStubGenerator(JSGlobalData*);
+        static CodeRef stringGetByValStubGenerator(VM*);
 
 #if ENABLE(VALUE_PROFILER)
         bool m_canBeOptimized;

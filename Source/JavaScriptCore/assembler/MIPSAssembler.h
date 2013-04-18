@@ -676,9 +676,9 @@ public:
         return m_buffer.codeSize();
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
     {
-        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData, ownerUID, effort);
+        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(vm, ownerUID, effort);
         if (!result)
             return 0;
 

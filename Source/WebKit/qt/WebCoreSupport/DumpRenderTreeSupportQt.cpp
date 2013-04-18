@@ -284,7 +284,7 @@ void DumpRenderTreeSupportQt::clearFrameName(QWebFrameAdapter *adapter)
 
 int DumpRenderTreeSupportQt::javaScriptObjectsCount()
 {
-    return JSDOMWindowBase::commonJSGlobalData()->heap.globalObjectCount();
+    return JSDOMWindowBase::commonVM()->heap.globalObjectCount();
 }
 
 void DumpRenderTreeSupportQt::garbageCollectorCollect()

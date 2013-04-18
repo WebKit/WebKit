@@ -40,12 +40,12 @@ namespace JSC {
 template<typename CodeBlockType>
 inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     
     if (jitType == codeBlock->getJITType())
         return true;
     
-    if (!globalData.canUseJIT())
+    if (!vm.canUseJIT())
         return true;
     
     codeBlock->unlinkIncomingCalls();
@@ -64,7 +64,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
             jitCode = oldJITCode;
             return false;
         }
-        jitCode = JIT::compile(&globalData, codeBlock.get(), effort);
+        jitCode = JIT::compile(&vm, codeBlock.get(), effort);
         if (!jitCode) {
             jitCode = oldJITCode;
             return false;
@@ -77,12 +77,12 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
 
 inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     
     if (jitType == codeBlock->getJITType())
         return true;
     
-    if (!globalData.canUseJIT())
+    if (!vm.canUseJIT())
         return true;
     
     codeBlock->unlinkIncomingCalls();
@@ -103,7 +103,7 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
             jitCodeWithArityCheck = oldJITCodeWithArityCheck;
             return false;
         }
-        jitCode = JIT::compile(&globalData, codeBlock.get(), effort, &jitCodeWithArityCheck);
+        jitCode = JIT::compile(&vm, codeBlock.get(), effort, &jitCodeWithArityCheck);
         if (!jitCode) {
             jitCode = oldJITCode;
             jitCodeWithArityCheck = oldJITCodeWithArityCheck;

@@ -101,28 +101,28 @@ struct StructureStubInfo {
     {
     }
 
-    void initGetByIdSelf(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+    void initGetByIdSelf(VM& vm, JSCell* owner, Structure* baseObjectStructure)
     {
         accessType = access_get_by_id_self;
 
-        u.getByIdSelf.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+        u.getByIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
     }
 
-    void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
+    void initGetByIdProto(VM& vm, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
     {
         accessType = access_get_by_id_proto;
 
-        u.getByIdProto.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-        u.getByIdProto.prototypeStructure.set(globalData, owner, prototypeStructure);
+        u.getByIdProto.baseObjectStructure.set(vm, owner, baseObjectStructure);
+        u.getByIdProto.prototypeStructure.set(vm, owner, prototypeStructure);
         u.getByIdProto.isDirect = isDirect;
     }
 
-    void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
+    void initGetByIdChain(VM& vm, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
     {
         accessType = access_get_by_id_chain;
 
-        u.getByIdChain.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-        u.getByIdChain.chain.set(globalData, owner, chain);
+        u.getByIdChain.baseObjectStructure.set(vm, owner, baseObjectStructure);
+        u.getByIdChain.chain.set(vm, owner, chain);
         u.getByIdChain.count = count;
         u.getByIdChain.isDirect = isDirect;
     }
@@ -145,23 +145,23 @@ struct StructureStubInfo {
 
     // PutById*
 
-    void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
+    void initPutByIdTransition(VM& vm, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
     {
         if (isDirect)
             accessType = access_put_by_id_transition_direct;
         else
             accessType = access_put_by_id_transition_normal;
 
-        u.putByIdTransition.previousStructure.set(globalData, owner, previousStructure);
-        u.putByIdTransition.structure.set(globalData, owner, structure);
-        u.putByIdTransition.chain.set(globalData, owner, chain);
+        u.putByIdTransition.previousStructure.set(vm, owner, previousStructure);
+        u.putByIdTransition.structure.set(vm, owner, structure);
+        u.putByIdTransition.chain.set(vm, owner, chain);
     }
 
-    void initPutByIdReplace(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+    void initPutByIdReplace(VM& vm, JSCell* owner, Structure* baseObjectStructure)
     {
         accessType = access_put_by_id_replace;
     
-        u.putByIdReplace.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+        u.putByIdReplace.baseObjectStructure.set(vm, owner, baseObjectStructure);
     }
         
     void initPutByIdList(PolymorphicPutByIdList* list)

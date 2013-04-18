@@ -38,7 +38,7 @@ class JSAPIWrapperObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     
-    void finishCreation(JSGlobalData&);
+    void finishCreation(VM&);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
     
     void* wrappedObject() { return m_wrappedObject; }
@@ -47,7 +47,7 @@ public:
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
     
-    JSAPIWrapperObject(JSGlobalData&, Structure*);
+    JSAPIWrapperObject(VM&, Structure*);
 
 private:
     void* m_wrappedObject;

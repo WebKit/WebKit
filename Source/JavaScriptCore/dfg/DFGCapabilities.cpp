@@ -97,7 +97,7 @@ static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, Capability
 template<typename ReturnType, ReturnType (*canHandleOpcode)(OpcodeID, CodeBlock*, Instruction*)>
 ReturnType canHandleOpcodes(CodeBlock* codeBlock, ReturnType initialValue)
 {
-    Interpreter* interpreter = codeBlock->globalData()->interpreter;
+    Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
     unsigned instructionCount = codeBlock->instructions().size();
     ReturnType result = initialValue;

@@ -39,7 +39,7 @@
 namespace JSC {
 
 class GCThread;
-class JSGlobalData;
+class VM;
 class CopiedSpace;
 class CopyVisitor;
 
@@ -52,7 +52,7 @@ enum GCPhase {
 
 class GCThreadSharedData {
 public:
-    GCThreadSharedData(JSGlobalData*);
+    GCThreadSharedData(VM*);
     ~GCThreadSharedData();
     
     void reset();
@@ -77,7 +77,7 @@ private:
     void startNextPhase(GCPhase);
     void endCurrentPhase();
 
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     CopiedSpace* m_copiedSpace;
     
     bool m_shouldHashCons;

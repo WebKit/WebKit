@@ -33,28 +33,28 @@ namespace JSC {
 
 const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RegExpMatchesArray)};
 
-RegExpMatchesArray::RegExpMatchesArray(JSGlobalData& globalData, Butterfly* butterfly, JSGlobalObject* globalObject, JSString* input, RegExp* regExp, MatchResult result)
-    : JSArray(globalData, globalObject->regExpMatchesArrayStructure(), butterfly)
+RegExpMatchesArray::RegExpMatchesArray(VM& vm, Butterfly* butterfly, JSGlobalObject* globalObject, JSString* input, RegExp* regExp, MatchResult result)
+    : JSArray(vm, globalObject->regExpMatchesArrayStructure(), butterfly)
     , m_result(result)
     , m_state(ReifiedNone)
 {
-    m_input.set(globalData, this, input);
-    m_regExp.set(globalData, this, regExp);
+    m_input.set(vm, this, input);
+    m_regExp.set(vm, this, regExp);
 }
 
 RegExpMatchesArray* RegExpMatchesArray::create(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
 {
     ASSERT(result);
-    JSGlobalData& globalData = exec->globalData();
-    Butterfly* butterfly = createArrayButterfly(globalData, regExp->numSubpatterns() + 1);
-    RegExpMatchesArray* array = new (NotNull, allocateCell<RegExpMatchesArray>(globalData.heap)) RegExpMatchesArray(globalData, butterfly, exec->lexicalGlobalObject(), input, regExp, result);
-    array->finishCreation(globalData);
+    VM& vm = exec->vm();
+    Butterfly* butterfly = createArrayButterfly(vm, regExp->numSubpatterns() + 1);
+    RegExpMatchesArray* array = new (NotNull, allocateCell<RegExpMatchesArray>(vm.heap)) RegExpMatchesArray(vm, butterfly, exec->lexicalGlobalObject(), input, regExp, result);
+    array->finishCreation(vm);
     return array;
 }
 
-void RegExpMatchesArray::finishCreation(JSGlobalData& globalData)
+void RegExpMatchesArray::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
 }
 
 void RegExpMatchesArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -78,7 +78,7 @@ void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
 
     if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {
         Vector<int, 32> subpatternResults;
-        int position = m_regExp->match(exec->globalData(), m_input->value(exec), m_result.start, subpatternResults);
+        int position = m_regExp->match(exec->vm(), m_input->value(exec), m_result.start, subpatternResults);
         ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == m_result.start);
         ASSERT(m_result.start == static_cast<size_t>(subpatternResults[0]));
         ASSERT(m_result.end == static_cast<size_t>(subpatternResults[1]));

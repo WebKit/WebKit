@@ -134,7 +134,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.globalData(), m_pattern.string(), regExpFlags(m_flags.string())));
+    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.vm(), m_pattern.string(), regExpFlags(m_flags.string())));
 }
 
 // ------------------------------ ThisNode -------------------------------------
@@ -210,7 +210,7 @@ bool ArrayNode::isSimpleArray() const
     return true;
 }
 
-ArgumentListNode* ArrayNode::toArgumentList(JSGlobalData* globalData, int lineNumber, int charPosition) const
+ArgumentListNode* ArrayNode::toArgumentList(VM* vm, int lineNumber, int charPosition) const
 {
     ASSERT(!m_elision && !m_optional);
     ElementNode* ptr = m_element;
@@ -219,12 +219,12 @@ ArgumentListNode* ArrayNode::toArgumentList(JSGlobalData* globalData, int lineNu
     JSTokenLocation location;
     location.line = lineNumber;
     location.charPosition = charPosition;
-    ArgumentListNode* head = new (globalData) ArgumentListNode(location, ptr->value());
+    ArgumentListNode* head = new (vm) ArgumentListNode(location, ptr->value());
     ArgumentListNode* tail = head;
     ptr = ptr->next();
     for (; ptr; ptr = ptr->next()) {
         ASSERT(!ptr->elision());
-        tail = new (globalData) ArgumentListNode(location, tail, ptr->value());
+        tail = new (vm) ArgumentListNode(location, tail, ptr->value());
     }
     return head;
 }
@@ -556,7 +556,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                 if (m_args->m_listNode->m_next) {
                     ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                     ASSERT(!m_args->m_listNode->m_next->m_next);
-                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.globalData(), 0, 0);
+                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.vm(), 0, 0);
                     RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
                     CallArguments callArguments(generator, m_args);
                     generator.emitNode(callArguments.thisRegister(), oldList->m_expr);
@@ -1130,7 +1130,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     generator.emitCheckHasInstance(dstReg.get(), src1.get(), src2.get(), target.get());
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitGetById(prototype.get(), src2.get(), generator.globalData()->propertyNames->prototype);
+    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototype);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), prototype.get());

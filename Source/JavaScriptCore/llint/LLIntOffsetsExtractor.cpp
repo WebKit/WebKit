@@ -34,7 +34,7 @@
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSFunction.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"

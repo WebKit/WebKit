@@ -24,7 +24,7 @@
 #define CallFrame_h
 
 #include "AbstractPC.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
@@ -60,46 +60,46 @@ namespace JSC  {
         // the actual DOM window, which can't be "this" for security reasons.
         JSObject* globalThisValue() const;
 
-        JSGlobalData& globalData() const;
+        VM& vm() const;
 
         // Convenience functions for access to global data.
         // It takes a few memory references to get from a call frame to the global data
         // pointer, so these are inefficient, and should be used sparingly in new code.
         // But they're used in many places in legacy code, so they're not going away any time soon.
 
-        void clearException() { globalData().exception = JSValue(); }
+        void clearException() { vm().exception = JSValue(); }
         void clearSupplementaryExceptionInfo()
         {
-            globalData().exceptionStack = RefCountedArray<StackFrame>();
+            vm().exceptionStack = RefCountedArray<StackFrame>();
         }
 
-        JSValue exception() const { return globalData().exception; }
-        bool hadException() const { return globalData().exception; }
+        JSValue exception() const { return vm().exception; }
+        bool hadException() const { return vm().exception; }
 
-        const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }
-        const MarkedArgumentBuffer& emptyList() const { return *globalData().emptyList; }
-        Interpreter* interpreter() { return globalData().interpreter; }
-        Heap* heap() { return &globalData().heap; }
+        const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
+        const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }
+        Interpreter* interpreter() { return vm().interpreter; }
+        Heap* heap() { return &vm().heap; }
 #ifndef NDEBUG
         void dumpCaller();
 #endif
-        static const HashTable* arrayConstructorTable(CallFrame* callFrame) { return callFrame->globalData().arrayConstructorTable; }
-        static const HashTable* arrayPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().arrayPrototypeTable; }
-        static const HashTable* booleanPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().booleanPrototypeTable; }
-        static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->globalData().dateTable; }
-        static const HashTable* dateConstructorTable(CallFrame* callFrame) { return callFrame->globalData().dateConstructorTable; }
-        static const HashTable* errorPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().errorPrototypeTable; }
-        static const HashTable* globalObjectTable(CallFrame* callFrame) { return callFrame->globalData().globalObjectTable; }
-        static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->globalData().jsonTable; }
-        static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }
-        static const HashTable* numberConstructorTable(CallFrame* callFrame) { return callFrame->globalData().numberConstructorTable; }
-        static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().numberPrototypeTable; }
-        static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->globalData().objectConstructorTable; }
-        static const HashTable* privateNamePrototypeTable(CallFrame* callFrame) { return callFrame->globalData().privateNamePrototypeTable; }
-        static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
-        static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
-        static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().regExpPrototypeTable; }
-        static const HashTable* stringConstructorTable(CallFrame* callFrame) { return callFrame->globalData().stringConstructorTable; }
+        static const HashTable* arrayConstructorTable(CallFrame* callFrame) { return callFrame->vm().arrayConstructorTable; }
+        static const HashTable* arrayPrototypeTable(CallFrame* callFrame) { return callFrame->vm().arrayPrototypeTable; }
+        static const HashTable* booleanPrototypeTable(CallFrame* callFrame) { return callFrame->vm().booleanPrototypeTable; }
+        static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->vm().dateTable; }
+        static const HashTable* dateConstructorTable(CallFrame* callFrame) { return callFrame->vm().dateConstructorTable; }
+        static const HashTable* errorPrototypeTable(CallFrame* callFrame) { return callFrame->vm().errorPrototypeTable; }
+        static const HashTable* globalObjectTable(CallFrame* callFrame) { return callFrame->vm().globalObjectTable; }
+        static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->vm().jsonTable; }
+        static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->vm().mathTable; }
+        static const HashTable* numberConstructorTable(CallFrame* callFrame) { return callFrame->vm().numberConstructorTable; }
+        static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->vm().numberPrototypeTable; }
+        static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->vm().objectConstructorTable; }
+        static const HashTable* privateNamePrototypeTable(CallFrame* callFrame) { return callFrame->vm().privateNamePrototypeTable; }
+        static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->vm().regExpTable; }
+        static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->vm().regExpConstructorTable; }
+        static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->vm().regExpPrototypeTable; }
+        static const HashTable* stringConstructorTable(CallFrame* callFrame) { return callFrame->vm().stringConstructorTable; }
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }
@@ -112,7 +112,7 @@ namespace JSC  {
         bool hasReturnPC() const { return !!this[JSStack::ReturnPC].vPC(); }
         void clearReturnPC() { registers()[JSStack::ReturnPC] = static_cast<Instruction*>(0); }
 #endif
-        AbstractPC abstractReturnPC(JSGlobalData& globalData) { return AbstractPC(globalData, this); }
+        AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 #if USE(JSVALUE32_64)
         unsigned bytecodeOffsetForNonDFGCode() const;
         void setBytecodeOffsetForNonDFGCode(unsigned offset);

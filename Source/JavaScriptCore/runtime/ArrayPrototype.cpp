@@ -124,16 +124,16 @@ ArrayPrototype* ArrayPrototype::create(ExecState* exec, JSGlobalObject* globalOb
 
 // ECMA 15.4.4
 ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure)
-    : JSArray(globalObject->globalData(), structure, 0)
+    : JSArray(globalObject->vm(), structure, 0)
 {
 }
 
 void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
 {
-    JSGlobalData& globalData = globalObject->globalData();
-    Base::finishCreation(globalData);
+    VM& vm = globalObject->vm();
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
-    globalData.prototypeMap.addPrototype(this);
+    vm.prototypeMap.addPrototype(this);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -739,7 +739,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
         return performSlowSort(exec, thisObj, length, function, callData, callType) ? JSValue::encode(thisObj) : JSValue::encode(jsUndefined());
     
     JSGlobalObject* globalObject = JSGlobalObject::create(
-        exec->globalData(), JSGlobalObject::createStructure(exec->globalData(), jsNull()));
+        exec->vm(), JSGlobalObject::createStructure(exec->vm(), jsNull()));
     JSArray* flatArray = constructEmptyArray(globalObject->globalExec(), 0);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -818,17 +818,17 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = JSArray::tryCreateUninitialized(exec->globalData(), exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
+    JSArray* resObj = JSArray::tryCreateUninitialized(exec->vm(), exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
     if (!resObj)
         return JSValue::encode(throwOutOfMemoryError(exec));
 
     JSValue result = resObj;
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     for (unsigned k = 0; k < deleteCount; k++) {
         JSValue v = getProperty(exec, thisObj, k + begin);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        resObj->initializeIndex(globalData, k, v);
+        resObj->initializeIndex(vm, k, v);
     }
 
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);

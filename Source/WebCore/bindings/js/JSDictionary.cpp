@@ -141,7 +141,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& 
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
 {
-    result = ScriptValue(exec->globalData(), value);
+    result = ScriptValue(exec->vm(), value);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)

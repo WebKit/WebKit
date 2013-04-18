@@ -1,3 +1,15 @@
+2013-04-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed JSGlobalData to VM
+        https://bugs.webkit.org/show_bug.cgi?id=114777
+
+        Reviewed by Phil Pizlo.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::javaScriptObjectsCount):
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::addToJavaScriptWindowObject):
+
 2013-04-15  Sam Weinig  <sam@webkit.org>
 
         Remove more #includes from Frame.h

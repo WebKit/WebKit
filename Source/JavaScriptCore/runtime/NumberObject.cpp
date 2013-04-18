@@ -32,21 +32,21 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberObject);
 
 const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(NumberObject) };
 
-NumberObject::NumberObject(JSGlobalData& globalData, Structure* structure)
-    : JSWrapperObject(globalData, structure)
+NumberObject::NumberObject(VM& vm, Structure* structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 
-void NumberObject::finishCreation(JSGlobalData& globalData)
+void NumberObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)
 {
-    NumberObject* object = NumberObject::create(exec->globalData(), globalObject->numberObjectStructure());
-    object->setInternalValue(exec->globalData(), number);
+    NumberObject* object = NumberObject::create(exec->vm(), globalObject->numberObjectStructure());
+    object->setInternalValue(exec->vm(), number);
     return object;
 }
 

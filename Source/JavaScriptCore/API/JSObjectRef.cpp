@@ -88,7 +88,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 
     JSCallbackObject<JSDestructibleObject>* object = JSCallbackObject<JSDestructibleObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))
-        object->setPrototype(exec->globalData(), prototype);
+        object->setPrototype(exec->vm(), prototype);
 
     return toRef(object);
 }
@@ -110,7 +110,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
     JSCallbackConstructor* constructor = JSCallbackConstructor::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
-    constructor->putDirect(exec->globalData(), exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
+    constructor->putDirect(exec->vm(), exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
     return toRef(constructor);
 }
 
@@ -119,7 +119,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    Identifier nameID = name ? name->identifier(&exec->globalData()) : Identifier(exec, "anonymous");
+    Identifier nameID = name ? name->identifier(&exec->vm()) : Identifier(exec, "anonymous");
     
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)
@@ -237,7 +237,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
 
-    jsObject->setPrototypeWithCycleCheck(exec->globalData(), jsValue.isObject() ? jsValue : jsNull());
+    jsObject->setPrototypeWithCycleCheck(exec->vm(), jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
@@ -247,7 +247,7 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
     JSObject* jsObject = toJS(object);
     
-    return jsObject->hasProperty(exec, propertyName->identifier(&exec->globalData()));
+    return jsObject->hasProperty(exec, propertyName->identifier(&exec->vm()));
 }
 
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
@@ -257,7 +257,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
     JSObject* jsObject = toJS(object);
 
-    JSValue jsValue = jsObject->get(exec, propertyName->identifier(&exec->globalData()));
+    JSValue jsValue = jsObject->get(exec, propertyName->identifier(&exec->vm()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -272,7 +272,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     APIEntryShim entryShim(exec);
 
     JSObject* jsObject = toJS(object);
-    Identifier name(propertyName->identifier(&exec->globalData()));
+    Identifier name(propertyName->identifier(&exec->vm()));
     JSValue jsValue = toJS(exec, value);
 
     if (attributes && !jsObject->hasProperty(exec, name))
@@ -329,7 +329,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
     JSObject* jsObject = toJS(object);
 
-    bool result = jsObject->methodTable()->deleteProperty(jsObject, exec, propertyName->identifier(&exec->globalData()));
+    bool result = jsObject->methodTable()->deleteProperty(jsObject, exec, propertyName->identifier(&exec->vm()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -382,7 +382,7 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
     APIEntryShim entryShim(exec);
     JSObject* jsObject = toJS(object);
     JSValue result;
-    Identifier name(propertyName->identifier(&exec->globalData()));
+    Identifier name(propertyName->identifier(&exec->vm()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
         result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
     else if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
@@ -400,18 +400,18 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
     APIEntryShim entryShim(exec);
     JSObject* jsObject = toJS(object);
     JSValue jsValue = value ? toJS(exec, value) : JSValue();
-    Identifier name(propertyName->identifier(&exec->globalData()));
+    Identifier name(propertyName->identifier(&exec->vm()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
-        jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
+        jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
     if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
+        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
     if (jsObject->inherits(&JSCallbackObject<JSAPIWrapperObject>::s_info)) {
-        jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
+        jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
 #endif
@@ -423,7 +423,7 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     JSObject* jsObject = toJS(object);
-    Identifier name(propertyName->identifier(&exec->globalData()));
+    Identifier name(propertyName->identifier(&exec->vm()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
@@ -525,14 +525,14 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 struct OpaqueJSPropertyNameArray {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OpaqueJSPropertyNameArray(JSGlobalData* globalData)
+    OpaqueJSPropertyNameArray(VM* vm)
         : refCount(0)
-        , globalData(globalData)
+        , vm(vm)
     {
     }
     
     unsigned refCount;
-    JSGlobalData* globalData;
+    VM* vm;
     Vector<JSRetainPtr<JSStringRef> > array;
 };
 
@@ -542,10 +542,10 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    JSGlobalData* globalData = &exec->globalData();
+    VM* vm = &exec->vm();
 
-    JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(globalData);
-    PropertyNameArray array(globalData);
+    JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(vm);
+    PropertyNameArray array(vm);
     jsObject->methodTable()->getPropertyNames(jsObject, exec, array, ExcludeDontEnumProperties);
 
     size_t size = array.size();
@@ -565,7 +565,7 @@ JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array)
 void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array)
 {
     if (--array->refCount == 0) {
-        APIEntryShim entryShim(array->globalData, false);
+        APIEntryShim entryShim(array->vm, false);
         delete array;
     }
 }
@@ -583,6 +583,6 @@ JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)
 {
     PropertyNameArray* propertyNames = toJS(array);
-    APIEntryShim entryShim(propertyNames->globalData());
-    propertyNames->add(propertyName->identifier(propertyNames->globalData()));
+    APIEntryShim entryShim(propertyNames->vm());
+    propertyNames->add(propertyName->identifier(propertyNames->vm()));
 }

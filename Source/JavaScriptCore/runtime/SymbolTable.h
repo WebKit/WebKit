@@ -346,19 +346,19 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        static SharedSymbolTable* create(JSGlobalData& globalData)
+        static SharedSymbolTable* create(VM& vm)
         {
-            SharedSymbolTable* sharedSymbolTable = new (NotNull, allocateCell<SharedSymbolTable>(globalData.heap)) SharedSymbolTable(globalData);
-            sharedSymbolTable->finishCreation(globalData);
+            SharedSymbolTable* sharedSymbolTable = new (NotNull, allocateCell<SharedSymbolTable>(vm.heap)) SharedSymbolTable(vm);
+            sharedSymbolTable->finishCreation(vm);
             return sharedSymbolTable;
         }
         static const bool needsDestruction = true;
         static const bool hasImmortalStructure = true;
         static void destroy(JSCell*);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(LeafType, StructureFlags), &s_info);
         }
 
         bool usesNonStrictEval() { return m_usesNonStrictEval; }
@@ -383,8 +383,8 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
-        SharedSymbolTable(JSGlobalData& globalData)
-            : JSCell(globalData, globalData.sharedSymbolTableStructure.get())
+        SharedSymbolTable(VM& vm)
+            : JSCell(vm, vm.sharedSymbolTableStructure.get())
             , m_parameterCountIncludingThis(0)
             , m_usesNonStrictEval(false)
             , m_captureStart(0)

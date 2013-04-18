@@ -528,7 +528,7 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
         shouldPop = true;
     }
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     setCallingPlugin(true);
     bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &npEvent);
     setCallingPlugin(false);
@@ -687,7 +687,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     } else
         return;
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
@@ -757,7 +757,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     } else
         return;
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     // FIXME: Consider back porting the http://webkit.org/b/58108 fix here.
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
@@ -851,7 +851,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     m_npWindow.clipRect.top = 0;
 
     if (m_plugin->pluginFuncs()->setwindow) {
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);

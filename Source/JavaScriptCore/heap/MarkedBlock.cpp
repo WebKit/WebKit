@@ -47,7 +47,7 @@ MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cell
     , m_destructorType(destructorType)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.
-    , m_weakSet(allocator->heap()->globalData())
+    , m_weakSet(allocator->heap()->vm())
 {
     ASSERT(allocator);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);

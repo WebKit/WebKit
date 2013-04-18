@@ -41,7 +41,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 
 // LinkBuffer:
 //
@@ -76,14 +76,14 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
+    LinkBuffer(VM& vm, MacroAssembler* masm, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
 #endif
         , m_code(0)
         , m_assembler(masm)
-        , m_globalData(&globalData)
+        , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
         , m_effort(effort)
@@ -256,7 +256,7 @@ private:
 #endif
     void* m_code;
     MacroAssembler* m_assembler;
-    JSGlobalData* m_globalData;
+    VM* m_vm;
 #ifndef NDEBUG
     bool m_completed;
     JITCompilationEffort m_effort;

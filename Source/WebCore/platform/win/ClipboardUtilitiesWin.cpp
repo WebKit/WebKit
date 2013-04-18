@@ -190,26 +190,26 @@ HGLOBAL createGlobalData(const KURL& url, const String& title)
 
 HGLOBAL createGlobalData(const String& str)
 {
-    HGLOBAL globalData = ::GlobalAlloc(GPTR, (str.length() + 1) * sizeof(UChar));
-    if (!globalData)
+    HGLOBAL vm = ::GlobalAlloc(GPTR, (str.length() + 1) * sizeof(UChar));
+    if (!vm)
         return 0;
-    UChar* buffer = static_cast<UChar*>(GlobalLock(globalData));
+    UChar* buffer = static_cast<UChar*>(GlobalLock(vm));
     memcpy(buffer, str.characters(), str.length() * sizeof(UChar));
     buffer[str.length()] = 0;
-    GlobalUnlock(globalData);
-    return globalData;
+    GlobalUnlock(vm);
+    return vm;
 }
 
 HGLOBAL createGlobalData(const Vector<char>& vector)
 {
-    HGLOBAL globalData = ::GlobalAlloc(GPTR, vector.size() + 1);
-    if (!globalData)
+    HGLOBAL vm = ::GlobalAlloc(GPTR, vector.size() + 1);
+    if (!vm)
         return 0;
-    char* buffer = static_cast<char*>(GlobalLock(globalData));
+    char* buffer = static_cast<char*>(GlobalLock(vm));
     memcpy(buffer, vector.data(), vector.size());
     buffer[vector.size()] = 0;
-    GlobalUnlock(globalData);
-    return globalData;
+    GlobalUnlock(vm);
+    return vm;
 }
 
 static String getFullCFHTML(IDataObject* data)

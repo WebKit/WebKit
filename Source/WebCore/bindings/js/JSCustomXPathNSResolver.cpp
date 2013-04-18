@@ -55,8 +55,8 @@ PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(ExecState* e
 }
 
 JSCustomXPathNSResolver::JSCustomXPathNSResolver(ExecState* exec, JSObject* customResolver, JSDOMWindow* globalObject)
-    : m_customResolver(exec->globalData(), customResolver)
-    , m_globalObject(exec->globalData(), globalObject)
+    : m_customResolver(exec->vm(), customResolver)
+    , m_globalObject(exec->vm(), globalObject)
 {
 }
 
@@ -68,7 +68,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
     ASSERT(m_customResolver);
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     ExecState* exec = m_globalObject->globalExec();
         

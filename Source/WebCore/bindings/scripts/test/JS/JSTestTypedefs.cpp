@@ -90,10 +90,10 @@ JSTestTypedefsConstructor::JSTestTypedefsConstructor(Structure* structure, JSDOM
 
 void JSTestTypedefsConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestTypedefsPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestTypedefsPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestTypedefsConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -157,15 +157,15 @@ JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject* globalOb
 {
 }
 
-void JSTestTypedefs::finishCreation(JSGlobalData& globalData)
+void JSTestTypedefs::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestTypedefs::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestTypedefsPrototype::create(exec->globalData(), globalObject, JSTestTypedefsPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestTypedefsPrototype::create(exec->vm(), globalObject, JSTestTypedefsPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestTypedefs::destroy(JSC::JSCell* cell)

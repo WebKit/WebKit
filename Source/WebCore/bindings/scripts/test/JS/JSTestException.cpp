@@ -57,9 +57,9 @@ JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSD
 
 void JSTestExceptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestExceptionPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestExceptionPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
 bool JSTestExceptionConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -95,15 +95,15 @@ JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject* global
 {
 }
 
-void JSTestException::finishCreation(JSGlobalData& globalData)
+void JSTestException::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestException::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestExceptionPrototype::create(exec->globalData(), globalObject, JSTestExceptionPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->errorPrototype()));
+    return JSTestExceptionPrototype::create(exec->vm(), globalObject, JSTestExceptionPrototype::createStructure(globalObject->vm(), globalObject, globalObject->errorPrototype()));
 }
 
 void JSTestException::destroy(JSC::JSCell* cell)

@@ -30,14 +30,14 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanObject);
 
 const ClassInfo BooleanObject::s_info = { "Boolean", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(BooleanObject) };
 
-BooleanObject::BooleanObject(JSGlobalData& globalData, Structure* structure)
-    : JSWrapperObject(globalData, structure)
+BooleanObject::BooleanObject(VM& vm, Structure* structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 
-void BooleanObject::finishCreation(JSGlobalData& globalData)
+void BooleanObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 

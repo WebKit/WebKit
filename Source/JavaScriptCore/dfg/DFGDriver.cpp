@@ -103,7 +103,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
             mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    Graph dfg(exec->globalData(), codeBlock, osrEntryBytecodeIndex, mustHandleValues);
+    Graph dfg(exec->vm(), codeBlock, osrEntryBytecodeIndex, mustHandleValues);
     if (!parse(exec, dfg))
         return false;
     

@@ -79,7 +79,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!scriptExecutionContext || scriptExecutionContext->isJSExecutionForbidden())
         return;
 
-    JSLockHolder lock(scriptExecutionContext->globalData());
+    JSLockHolder lock(scriptExecutionContext->vm());
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
@@ -119,8 +119,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
 
-        JSGlobalData& globalData = globalObject->globalData();
-        DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
+        VM& vm = globalObject->vm();
+        DynamicGlobalObjectScope globalObjectScope(vm, vm.dynamicGlobalObject ? vm.dynamicGlobalObject : globalObject);
 
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
 
@@ -136,7 +136,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 #if ENABLE(WORKERS)
         if (scriptExecutionContext->isWorkerContext()) {
             bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
-            if (terminatorCausedException || globalData.watchdog.didFire())
+            if (terminatorCausedException || vm.watchdog.didFire())
                 static_cast<WorkerContext*>(scriptExecutionContext)->script()->forbidExecution();
         }
 #endif

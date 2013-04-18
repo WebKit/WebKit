@@ -125,10 +125,10 @@ JSTestOverloadedConstructorsConstructor::JSTestOverloadedConstructorsConstructor
 
 void JSTestOverloadedConstructorsConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestOverloadedConstructorsPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestOverloadedConstructorsPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestOverloadedConstructorsConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -170,15 +170,15 @@ JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure,
 {
 }
 
-void JSTestOverloadedConstructors::finishCreation(JSGlobalData& globalData)
+void JSTestOverloadedConstructors::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestOverloadedConstructors::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestOverloadedConstructorsPrototype::create(exec->globalData(), globalObject, JSTestOverloadedConstructorsPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestOverloadedConstructorsPrototype::create(exec->vm(), globalObject, JSTestOverloadedConstructorsPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)

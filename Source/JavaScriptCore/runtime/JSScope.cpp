@@ -187,7 +187,7 @@ static bool executeResolveOperations(CallFrame* callFrame, JSScope* scope, const
                 return true;
             }
 
-            pc->m_structure.set(callFrame->globalData(), callFrame->codeBlock()->ownerExecutable(), structure);
+            pc->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), structure);
             pc->m_offset = slot.cachedOffset();
             result.setValue(value);
             return true;
@@ -303,7 +303,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                         if (putToBaseOperation) {
                             putToBaseOperation->m_isDynamic = requiresDynamicChecks;
                             putToBaseOperation->m_kind = PutToBaseOperation::GlobalPropertyPut;
-                            putToBaseOperation->m_structure.set(callFrame->globalData(), callFrame->codeBlock()->ownerExecutable(), globalObject->structure());
+                            putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), globalObject->structure());
                             setPutPropertyAccessOffset(putToBaseOperation, slot.cachedOffset());
                         }
                         switch (returnValues) {
@@ -346,7 +346,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
 
                     if (putToBaseOperation) {
                         putToBaseOperation->m_kind = entry.isReadOnly() ? PutToBaseOperation::Readonly : PutToBaseOperation::VariablePut;
-                        putToBaseOperation->m_structure.set(callFrame->globalData(), callFrame->codeBlock()->ownerExecutable(), callFrame->lexicalGlobalObject()->activationStructure());
+                        putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), callFrame->lexicalGlobalObject()->activationStructure());
                         putToBaseOperation->m_offset = entry.getIndex();
                         putToBaseOperation->m_scopeDepth = (skipTopScopeNode ? 1 : 0) + scopeCount;
                     }
@@ -499,7 +499,7 @@ JSValue JSScope::resolveWithBase(CallFrame* callFrame, const Identifier& identif
     if (JSObject* propertyBase = JSScope::resolveContainingScope<ReturnBaseAndValue>(callFrame, identifier, slot, operations, putToBaseOperations, false)) {
         ASSERT(operations->size());
         JSValue value = slot.getValue(callFrame, identifier);
-        if (callFrame->globalData().exception)
+        if (callFrame->vm().exception)
             return JSValue();
 
         *base = propertyBase;
@@ -529,7 +529,7 @@ JSValue JSScope::resolveWithThis(CallFrame* callFrame, const Identifier& identif
     if (JSObject* propertyBase = JSScope::resolveContainingScope<ReturnThisAndValue>(callFrame, identifier, slot, operations, 0, false)) {
         ASSERT(operations->size());
         JSValue value = slot.getValue(callFrame, identifier);
-        if (callFrame->globalData().exception)
+        if (callFrame->vm().exception)
             return JSValue();
         ASSERT(value);
         *base = propertyBase->structure()->typeInfo().isEnvironmentRecord() ? jsUndefined() : JSValue(propertyBase);
@@ -564,7 +564,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
                 goto genericHandler;
             }
         }
-        operation->m_registerAddress->set(callFrame->globalData(), base.asCell(), value);
+        operation->m_registerAddress->set(callFrame->vm(), base.asCell(), value);
         return;
 
     case PutToBaseOperation::VariablePut: {
@@ -574,7 +574,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
                 goto genericHandler;
         }
         JSVariableObject* variableObject = jsCast<JSVariableObject*>(base);
-        variableObject->registerAt(operation->m_offset).set(callFrame->globalData(), variableObject, value);
+        variableObject->registerAt(operation->m_offset).set(callFrame->vm(), variableObject, value);
         return;
     }
 
@@ -582,7 +582,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
         JSObject* object = jsCast<JSObject*>(base);
         if (operation->m_structure.get() != object->structure())
             break;
-        object->putDirect(callFrame->globalData(), operation->m_offset, value);
+        object->putDirect(callFrame->vm(), operation->m_offset, value);
         return;
     }
 
@@ -607,7 +607,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
     if (slot.base() != baseObject)
         return;
     ASSERT(!baseObject->hasInlineStorage());
-    operation->m_structure.set(callFrame->globalData(), callFrame->codeBlock()->ownerExecutable(), baseObject->structure());
+    operation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), baseObject->structure());
     setPutPropertyAccessOffset(operation, slot.cachedOffset());
     return;
 }

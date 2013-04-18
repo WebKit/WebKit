@@ -48,9 +48,9 @@ public:
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo s_info;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     {
-        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
 protected:

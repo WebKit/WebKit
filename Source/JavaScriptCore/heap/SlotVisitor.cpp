@@ -8,7 +8,7 @@
 #include "GCThread.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSObject.h"
 #include "JSString.h"
 #include "Operations.h"
@@ -17,7 +17,7 @@
 namespace JSC {
 
 SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
-    : m_stack(shared.m_globalData->heap.blockAllocator())
+    : m_stack(shared.m_vm->heap.blockAllocator())
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_shared(shared)
@@ -36,7 +36,7 @@ SlotVisitor::~SlotVisitor()
 
 void SlotVisitor::setup()
 {
-    m_shared.m_shouldHashCons = m_shared.m_globalData->haveEnoughNewStringsToHashCons();
+    m_shared.m_shouldHashCons = m_shared.m_vm->haveEnoughNewStringsToHashCons();
     m_shouldHashCons = m_shared.m_shouldHashCons;
 #if ENABLE(PARALLEL_GC)
     for (unsigned i = 0; i < m_shared.m_gcThreads.size(); ++i)

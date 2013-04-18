@@ -60,9 +60,9 @@ public:
     
     static const ClassInfo s_info;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType,  StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType,  StructureFlags), &s_info);
     }
 
 protected:
@@ -91,7 +91,7 @@ QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwner
 
 QtInstance::~QtInstance()
 {
-    JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(WebCore::JSDOMWindowBase::commonVM());
 
     cachedInstances.remove(m_hashkey);
 
@@ -118,7 +118,7 @@ QtInstance::~QtInstance()
 
 PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwnership ownership)
 {
-    JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(WebCore::JSDOMWindowBase::commonVM());
 
     foreach (QtInstance* instance, cachedInstances.values(o))
         if (instance->rootObject() == rootObject) {

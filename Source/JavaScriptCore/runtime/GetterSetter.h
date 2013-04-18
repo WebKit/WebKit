@@ -39,7 +39,7 @@ namespace JSC {
 
     private:        
         GetterSetter(ExecState* exec)
-            : JSCell(exec->globalData(), exec->globalData().getterSetterStructure.get())
+            : JSCell(exec->vm(), exec->vm().getterSetterStructure.get())
         {
         }
 
@@ -49,19 +49,19 @@ namespace JSC {
         static GetterSetter* create(ExecState* exec)
         {
             GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
-            getterSetter->finishCreation(exec->globalData());
+            getterSetter->finishCreation(exec->vm());
             return getterSetter;
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }
-        void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.setMayBeNull(globalData, this, getter); }
+        void setGetter(VM& vm, JSObject* getter) { m_getter.setMayBeNull(vm, this, getter); }
         JSObject* setter() const { return m_setter.get(); }
-        void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.setMayBeNull(globalData, this, setter); }
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        void setSetter(VM& vm, JSObject* setter) { m_setter.setMayBeNull(vm, this, setter); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), &s_info);
         }
         
         static const ClassInfo s_info;

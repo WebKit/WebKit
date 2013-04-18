@@ -28,7 +28,7 @@
 #include "WebJavaScriptCollector.h"
 
 #include <JavaScriptCore/Heap.h>
-#include <JavaScriptCore/JSGlobalData.h>
+#include <JavaScriptCore/VM.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <runtime/JSLock.h>
@@ -111,7 +111,7 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::objectCount(
         return E_POINTER;
     }
 
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.objectCount();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    *count = (UINT)JSDOMWindow::commonVM()->heap.objectCount();
     return S_OK;
 }

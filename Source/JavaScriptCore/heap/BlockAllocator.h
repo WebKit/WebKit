@@ -40,7 +40,7 @@ class BlockAllocator;
 class CopiedBlock;
 class CopyWorkListSegment;
 class HandleBlock;
-class JSGlobalData;
+class VM;
 class MarkStackSegment;
 class MarkedBlock;
 class WeakBlock;

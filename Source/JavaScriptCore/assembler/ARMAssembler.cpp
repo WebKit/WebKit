@@ -391,14 +391,14 @@ void ARMAssembler::baseIndexTransferFloat(DataTransferTypeFloat transferType, FP
     dataTransferFloat(transferType, srcDst, ARMRegisters::S1, offset);
 }
 
-PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
+PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (!m_buffer.isAligned(8))
         bkpt(0);
 
-    RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData, ownerUID, effort);
+    RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(vm, ownerUID, effort);
     char* data = reinterpret_cast<char*>(result->start());
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {

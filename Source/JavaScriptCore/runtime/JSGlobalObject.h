@@ -25,7 +25,7 @@
 #include "ArrayAllocationProfile.h"
 #include "JSArray.h"
 #include "JSClassRef.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
@@ -195,11 +195,11 @@ protected:
 public:
     typedef JSSegmentedVariableObject Base;
 
-    static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
+    static JSGlobalObject* create(VM& vm, Structure* structure)
     {
-        JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
-        globalObject->finishCreation(globalData);
-        globalData.heap.addFinalizer(globalObject, destroy);
+        JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
+        globalObject->finishCreation(vm);
+        vm.heap.addFinalizer(globalObject, destroy);
         return globalObject;
     }
 
@@ -209,20 +209,20 @@ public:
     bool hasProfiler() const { return globalObjectMethodTable()->supportsProfiling(this); }
 
 protected:
-    JS_EXPORT_PRIVATE explicit JSGlobalObject(JSGlobalData&, Structure*, const GlobalObjectMethodTable* = 0);
+    JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = 0);
 
-    void finishCreation(JSGlobalData& globalData)
+    void finishCreation(VM& vm)
     {
-        Base::finishCreation(globalData);
-        structure()->setGlobalObject(globalData, this);
+        Base::finishCreation(vm);
+        structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
         init(this);
     }
 
-    void finishCreation(JSGlobalData& globalData, JSObject* thisValue)
+    void finishCreation(VM& vm, JSObject* thisValue)
     {
-        Base::finishCreation(globalData);
-        structure()->setGlobalObject(globalData, this);
+        Base::finishCreation(vm);
+        structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
         init(thisValue);
     }
@@ -344,7 +344,7 @@ public:
         return m_havingABadTimeWatchpoint->hasBeenInvalidated();
     }
         
-    void haveABadTime(JSGlobalData&);
+    void haveABadTime(VM&);
         
     bool arrayPrototypeChainIsSane();
 
@@ -380,14 +380,14 @@ public:
         m_evalDisabledErrorMessage = errorMessage;
     }
 
-    void resetPrototype(JSGlobalData&, JSValue prototype);
+    void resetPrototype(VM&, JSValue prototype);
 
-    JSGlobalData& globalData() const { return *Heap::heap(this)->globalData(); }
+    VM& vm() const { return *Heap::heap(this)->vm(); }
     JSObject* globalThis() const;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        return Structure::create(globalData, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
     }
 
     void registerWeakMap(OpaqueJSWeakObjectMap* map)
@@ -434,7 +434,7 @@ protected:
 
     JS_EXPORT_PRIVATE static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
 
-    JS_EXPORT_PRIVATE void setGlobalThis(JSGlobalData&, JSObject* globalThis);
+    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -478,13 +478,13 @@ inline JSGlobalObject* ExecState::dynamicGlobalObject()
 
     // For any ExecState that's not a globalExec, the 
     // dynamic global object must be set since code is running
-    ASSERT(globalData().dynamicGlobalObject);
-    return globalData().dynamicGlobalObject;
+    ASSERT(vm().dynamicGlobalObject);
+    return vm().dynamicGlobalObject;
 }
 
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0)
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->globalData(), initialLength >= MIN_SPARSE_ARRAY_INDEX ? globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage) : globalObject->arrayStructureForProfileDuringAllocation(profile), initialLength));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->vm(), initialLength >= MIN_SPARSE_ARRAY_INDEX ? globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage) : globalObject->arrayStructureForProfileDuringAllocation(profile), initialLength));
 }
 
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, unsigned initialLength = 0)
@@ -515,7 +515,7 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 class DynamicGlobalObjectScope {
     WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
 public:
-    JS_EXPORT_PRIVATE DynamicGlobalObjectScope(JSGlobalData&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE DynamicGlobalObjectScope(VM&, JSGlobalObject*);
 
     ~DynamicGlobalObjectScope()
     {

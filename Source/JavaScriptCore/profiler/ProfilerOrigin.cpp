@@ -48,8 +48,8 @@ void Origin::dump(PrintStream& out) const
 JSValue Origin::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->globalData(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(exec->globalData(), exec->propertyNames().bytecodeIndex, jsNumber(m_bytecodeIndex));
+    result->putDirect(exec->vm(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(exec->vm(), exec->propertyNames().bytecodeIndex, jsNumber(m_bytecodeIndex));
     return result;
 }
 

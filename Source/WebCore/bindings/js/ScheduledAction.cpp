@@ -65,13 +65,13 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
 }
 
 ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld* isolatedWorld)
-    : m_function(exec->globalData(), function)
+    : m_function(exec->vm(), function)
     , m_isolatedWorld(isolatedWorld)
 {
     // setTimeout(function, interval, arg0, arg1...).
     // Start at 2 to skip function and interval.
     for (size_t i = 2; i < exec->argumentCount(); ++i)
-        m_args.append(Strong<JSC::Unknown>(exec->globalData(), exec->argument(i)));
+        m_args.append(Strong<JSC::Unknown>(exec->vm(), exec->argument(i)));
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
@@ -91,7 +91,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)
 {
     ASSERT(m_function);
-    JSLockHolder lock(context->globalData());
+    JSLockHolder lock(context->vm());
 
     CallData callData;
     CallType callType = getCallData(m_function.get(), callData);

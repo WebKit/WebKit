@@ -41,24 +41,24 @@ template<> const bool JSCallbackObject<JSDestructibleObject>::needsDestruction =
 template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = false;
 
 template<>
-JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
+JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)
 {
-    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject> >(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
-    callbackObject->finishCreation(globalData);
-    globalData.heap.addFinalizer(callbackObject, destroy);
+    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject> >(vm.heap)) JSCallbackObject(vm, classRef, structure);
+    callbackObject->finishCreation(vm);
+    vm.heap.addFinalizer(callbackObject, destroy);
     return callbackObject;
 }
 
 template <>
-Structure* JSCallbackObject<JSDestructibleObject>::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+Structure* JSCallbackObject<JSDestructibleObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
-    return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
 }
     
 template <>
-Structure* JSCallbackObject<JSGlobalObject>::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+Structure* JSCallbackObject<JSGlobalObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
-    return Structure::create(globalData, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), &s_info); 
+    return Structure::create(vm, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), &s_info); 
 }
 
 void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)

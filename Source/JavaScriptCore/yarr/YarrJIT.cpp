@@ -40,7 +40,7 @@ namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>
 class YarrGenerator : private MacroAssembler {
-    friend void jitCompile(JSGlobalData*, YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+    friend void jitCompile(VM*, YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;
@@ -2608,7 +2608,7 @@ public:
     {
     }
 
-    void compile(JSGlobalData* globalData, YarrCodeBlock& jitObject)
+    void compile(VM* vm, YarrCodeBlock& jitObject)
     {
         generateEnter();
 
@@ -2642,7 +2642,7 @@ public:
         backtrack();
 
         // Link & finalize the code.
-        LinkBuffer linkBuffer(*globalData, this, REGEXP_CODE_ID);
+        LinkBuffer linkBuffer(*vm, this, REGEXP_CODE_ID);
         m_backtrackingState.linkDataLabels(linkBuffer);
 
         if (compileMode == MatchOnly) {
@@ -2689,12 +2689,12 @@ private:
     BacktrackingState m_backtrackingState;
 };
 
-void jitCompile(YarrPattern& pattern, YarrCharSize charSize, JSGlobalData* globalData, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
+void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
-        YarrGenerator<MatchOnly>(pattern, charSize).compile(globalData, jitObject);
+        YarrGenerator<MatchOnly>(pattern, charSize).compile(vm, jitObject);
     else
-        YarrGenerator<IncludeSubpatterns>(pattern, charSize).compile(globalData, jitObject);
+        YarrGenerator<IncludeSubpatterns>(pattern, charSize).compile(vm, jitObject);
 }
 
 }}

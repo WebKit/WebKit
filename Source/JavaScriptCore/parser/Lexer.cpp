@@ -46,8 +46,8 @@ using namespace Unicode;
 
 namespace JSC {
 
-Keywords::Keywords(JSGlobalData* globalData)
-    : m_globalData(globalData)
+Keywords::Keywords(VM* vm)
+    : m_vm(vm)
     , m_keywordTable(JSC::mainTable)
 {
 }
@@ -489,9 +489,9 @@ static const LChar singleCharacterEscapeValuesForASCII[128] = {
 };
 
 template <typename T>
-Lexer<T>::Lexer(JSGlobalData* globalData)
+Lexer<T>::Lexer(VM* vm)
     : m_isReparsing(false)
-    , m_globalData(globalData)
+    , m_vm(vm)
 {
 }
 
@@ -789,7 +789,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
-            const HashEntry* entry = m_globalData->keywords->getKeyword(*ident);
+            const HashEntry* entry = m_vm->keywords->getKeyword(*ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
                 return IDENT;
@@ -849,7 +849,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
-            const HashEntry* entry = m_globalData->keywords->getKeyword(*ident);
+            const HashEntry* entry = m_vm->keywords->getKeyword(*ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
                 return IDENT;
@@ -916,7 +916,7 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
         ASSERT(shouldCreateIdentifier);
         // Keywords must not be recognized if there was an \uXXXX in the identifier.
         if (remaining < maxTokenLength) {
-            const HashEntry* entry = m_globalData->keywords->getKeyword(*ident);
+            const HashEntry* entry = m_vm->keywords->getKeyword(*ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
                 return IDENT;

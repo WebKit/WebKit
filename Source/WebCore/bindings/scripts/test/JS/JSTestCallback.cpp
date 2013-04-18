@@ -65,7 +65,7 @@ bool JSTestCallback::callbackWithNoParam()
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     MarkedArgumentBuffer args;
 
@@ -81,7 +81,7 @@ bool JSTestCallback::callbackWithClass1Param(Class1* class1Param)
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
@@ -99,7 +99,7 @@ bool JSTestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
@@ -118,7 +118,7 @@ bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
@@ -136,7 +136,7 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
@@ -156,7 +156,7 @@ bool JSTestCallback::callbackRequiresThisToPass(Class8* class8Param, ThisClass* 
 
     RefPtr<JSTestCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;

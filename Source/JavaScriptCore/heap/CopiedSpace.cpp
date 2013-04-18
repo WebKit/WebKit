@@ -69,7 +69,7 @@ CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
     if (isOversize(bytes))
         return tryAllocateOversize(bytes, outPtr);
     
-    ASSERT(m_heap->globalData()->apiLock().currentThreadIsHoldingLock());
+    ASSERT(m_heap->vm()->apiLock().currentThreadIsHoldingLock());
     m_heap->didAllocate(m_allocator.currentCapacity());
 
     allocateBlock();
@@ -103,7 +103,7 @@ CheckedBoolean CopiedSpace::tryReallocate(void** ptr, size_t oldSize, size_t new
         return true;
     
     void* oldPtr = *ptr;
-    ASSERT(!m_heap->globalData()->isInitializingObject());
+    ASSERT(!m_heap->vm()->isInitializingObject());
     
     if (CopiedSpace::blockFor(oldPtr)->isOversize() || isOversize(newSize))
         return tryReallocateOversize(ptr, oldSize, newSize);

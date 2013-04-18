@@ -48,7 +48,7 @@ namespace JSC {
     class EvalExecutable;
     class ExecutableBase;
     class FunctionExecutable;
-    class JSGlobalData;
+    class VM;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
@@ -132,8 +132,8 @@ namespace JSC {
 
     class TopCallFrameSetter {
     public:
-        TopCallFrameSetter(JSGlobalData& global, CallFrame* callFrame)
-            : globalData(global)
+        TopCallFrameSetter(VM& global, CallFrame* callFrame)
+            : vm(global)
             , oldCallFrame(global.topCallFrame) 
         {
             global.topCallFrame = callFrame;
@@ -141,16 +141,16 @@ namespace JSC {
         
         ~TopCallFrameSetter() 
         {
-            globalData.topCallFrame = oldCallFrame;
+            vm.topCallFrame = oldCallFrame;
         }
     private:
-        JSGlobalData& globalData;
+        VM& vm;
         CallFrame* oldCallFrame;
     };
     
     class NativeCallFrameTracer {
     public:
-        ALWAYS_INLINE NativeCallFrameTracer(JSGlobalData* global, CallFrame* callFrame)
+        ALWAYS_INLINE NativeCallFrameTracer(VM* global, CallFrame* callFrame)
         {
             ASSERT(global);
             ASSERT(callFrame);
@@ -173,7 +173,7 @@ namespace JSC {
             Interpreter& m_interpreter;
         };
 
-        Interpreter(JSGlobalData &);
+        Interpreter(VM &);
         ~Interpreter();
         
         void initialize(bool canUseJIT);
@@ -219,7 +219,7 @@ namespace JSC {
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
         static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
-        JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
+        JS_EXPORT_PRIVATE static void getStackTrace(VM*, Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
         static void addStackTraceIfNecessary(CallFrame*, JSValue error);
 
         void dumpSampleData(ExecState* exec);

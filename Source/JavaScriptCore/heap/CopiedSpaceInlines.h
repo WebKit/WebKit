@@ -30,7 +30,7 @@
 #include "CopiedSpace.h"
 #include "Heap.h"
 #include "HeapBlock.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include <wtf/CheckedBoolean.h>
 
 namespace JSC {
@@ -150,7 +150,7 @@ inline void CopiedSpace::allocateBlock()
 
 inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
 {
-    ASSERT(!m_heap->globalData()->isInitializingObject());
+    ASSERT(!m_heap->vm()->isInitializingObject());
 
     if (!m_allocator.tryAllocate(bytes, outPtr))
         return tryAllocateSlowCase(bytes, outPtr);

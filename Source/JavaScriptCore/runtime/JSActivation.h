@@ -41,22 +41,22 @@ namespace JSC {
     
     class JSActivation : public JSVariableObject {
     private:
-        JSActivation(JSGlobalData& globalData, CallFrame*, SharedSymbolTable*);
+        JSActivation(VM& vm, CallFrame*, SharedSymbolTable*);
     
     public:
         typedef JSVariableObject Base;
 
-        static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, CodeBlock* codeBlock)
+        static JSActivation* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
         {
             SharedSymbolTable* symbolTable = codeBlock->symbolTable();
             JSActivation* activation = new (
                 NotNull,
                 allocateCell<JSActivation>(
-                    globalData.heap,
+                    vm.heap,
                     allocationSize(symbolTable)
                 )
-            ) JSActivation(globalData, callFrame, symbolTable);
-            activation->finishCreation(globalData);
+            ) JSActivation(vm, callFrame, symbolTable);
+            activation->finishCreation(vm);
             return activation;
         }
 
@@ -75,11 +75,11 @@ namespace JSC {
 
         static JSObject* toThisObject(JSCell*, ExecState*);
 
-        void tearOff(JSGlobalData&);
+        void tearOff(VM&);
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ActivationObjectType, StructureFlags), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(ActivationObjectType, StructureFlags), &s_info); }
 
         WriteBarrierBase<Unknown>& registerAt(int) const;
         bool isValidIndex(int) const;
@@ -96,7 +96,7 @@ namespace JSC {
         bool symbolTableGet(PropertyName, PropertyDescriptor&);
         bool symbolTableGet(PropertyName, PropertySlot&, bool& slotIsWriteable);
         bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
-        bool symbolTablePutWithAttributes(JSGlobalData&, PropertyName, JSValue, unsigned attributes);
+        bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
 
         static JSValue argumentsGetter(ExecState*, JSValue, PropertyName);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
@@ -110,9 +110,9 @@ namespace JSC {
     extern int activationCount;
     extern int allTheThingsCount;
 
-    inline JSActivation::JSActivation(JSGlobalData& globalData, CallFrame* callFrame, SharedSymbolTable* symbolTable)
+    inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, SharedSymbolTable* symbolTable)
         : Base(
-            globalData,
+            vm,
             callFrame->lexicalGlobalObject()->activationStructure(),
             callFrame->registers(),
             callFrame->scope(),
@@ -149,7 +149,7 @@ namespace JSC {
         return storageOffset() - (symbolTable->captureStart() * sizeof(WriteBarrier<Unknown>));
     }
 
-    inline void JSActivation::tearOff(JSGlobalData& globalData)
+    inline void JSActivation::tearOff(VM& vm)
     {
         ASSERT(!isTornOff());
 
@@ -159,7 +159,7 @@ namespace JSC {
 
         int captureEnd = symbolTable()->captureEnd();
         for (int i = symbolTable()->captureStart(); i < captureEnd; ++i)
-            dst[i].set(globalData, this, src[i].get());
+            dst[i].set(vm, this, src[i].get());
 
         m_registers = dst;
         ASSERT(isTornOff());

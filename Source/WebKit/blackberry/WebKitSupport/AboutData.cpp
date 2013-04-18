@@ -34,7 +34,7 @@
 #include <BuildInformation.h>
 #include <heap/Heap.h>
 #include <process.h>
-#include <runtime/JSGlobalData.h>
+#include <runtime/VM.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <wtf/text/CString.h>
@@ -245,7 +245,7 @@ static String memoryPage()
 
     // JS engine memory usage.
     JSC::GlobalMemoryStatistics jscMemoryStat = JSC::globalMemoryStatistics();
-    JSC::Heap& mainHeap = JSDOMWindow::commonJSGlobalData()->heap;
+    JSC::Heap& mainHeap = JSDOMWindow::commonVM()->heap;
     OwnPtr<JSC::TypeCountSet> objectTypeCounts = mainHeap.objectTypeCounts();
     OwnPtr<JSC::TypeCountSet> protectedObjectTypeCounts = mainHeap.protectedObjectTypeCounts();
 
@@ -373,7 +373,7 @@ void MemoryTracker::updateMemoryPeaks(Timer<MemoryTracker>*)
 {
     // JS engine memory usage.
     JSC::GlobalMemoryStatistics jscMemoryStat = JSC::globalMemoryStatistics();
-    JSC::Heap& mainHeap = JSDOMWindow::commonJSGlobalData()->heap;
+    JSC::Heap& mainHeap = JSDOMWindow::commonVM()->heap;
 
     // Malloc info.
     struct mallinfo mallocInfo = mallinfo();

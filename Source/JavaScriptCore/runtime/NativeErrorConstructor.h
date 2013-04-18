@@ -43,9 +43,9 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         Structure* errorStructure() { return m_errorStructure.get(); }
@@ -53,14 +53,14 @@ namespace JSC {
     protected:
         void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const String& name)
         {
-            Base::finishCreation(exec->globalData(), name);
+            Base::finishCreation(exec->vm(), name);
             ASSERT(inherits(&s_info));
 
             NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);
 
-            putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
-            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
-            m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), globalObject, prototype));
+            putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+            putDirect(exec->vm(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
+            m_errorStructure.set(exec->vm(), this, ErrorInstance::createStructure(exec->vm(), globalObject, prototype));
             ASSERT(m_errorStructure);
             ASSERT(m_errorStructure->isObject());
         }

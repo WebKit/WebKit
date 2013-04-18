@@ -88,7 +88,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         addPtr(callFrameRegister, regT1);
         // regT1: newCallFrame
 
-        slowCase.append(branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->stack().addressOfEnd()), regT1));
+        slowCase.append(branchPtr(Below, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), regT1));
 
         // Initialize ArgumentCount.
         store32(regT0, Address(regT1, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
@@ -139,7 +139,7 @@ void JIT::compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator& iter)
     linkSlowCase(iter);
 
     emitGetFromCallFrameHeader64(JSStack::Callee, regT0);
-    emitNakedCall(m_globalData->getCTIStub(virtualCallGenerator).code());
+    emitNakedCall(m_vm->getCTIStub(virtualCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -220,7 +220,7 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction*, Vector<SlowCase
 
     linkSlowCase(iter);
     
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->getCTIStub(linkConstructGenerator).code() : m_globalData->getCTIStub(linkCallGenerator).code());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(linkConstructGenerator).code() : m_vm->getCTIStub(linkCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -244,11 +244,11 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     restoreReturnAddressBeforeReturn(regT2);
     Jump slow = jump();
     
-    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
+    LinkBuffer patchBuffer(*m_vm, this, m_codeBlock);
     
     patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(m_globalData->getCTIStub(virtualCallGenerator).code()));
+    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(virtualCallGenerator).code()));
     
     RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
         FINALIZE_CODE(
@@ -258,7 +258,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
                 callLinkInfo->hotPathOther.labelAtOffset(0).executableAddress(),
                 codePtr.executableAddress(),
                 toCString(pointerDump(calleeCodeBlock)).data())),
-        *m_globalData, m_codeBlock->ownerExecutable(), expectedStructure, expectedExecutable,
+        *m_vm, m_codeBlock->ownerExecutable(), expectedStructure, expectedExecutable,
         callLinkInfo->codeOrigin));
     
     RepatchBuffer repatchBuffer(m_codeBlock);
@@ -266,7 +266,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     repatchBuffer.replaceWithJump(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo->hotPathBegin),
         CodeLocationLabel(stubRoutine->code().code()));
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_globalData->getCTIStub(virtualCallGenerator).code());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(virtualCallGenerator).code());
     
     callLinkInfo->stub = stubRoutine.release();
 }

@@ -104,8 +104,8 @@ void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
 JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
-    Structure* structure = JSDOMWindowShell::createStructure(*world->globalData(), jsNull());
-    Strong<JSDOMWindowShell> windowShell(*world->globalData(), JSDOMWindowShell::create(m_frame->document()->domWindow(), structure, world));
+    Structure* structure = JSDOMWindowShell::createStructure(*world->vm(), jsNull());
+    Strong<JSDOMWindowShell> windowShell(*world->vm(), JSDOMWindowShell::create(m_frame->document()->domWindow(), structure, world));
     Strong<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(world, windowShell);
     world->didCreateWindowShell(this);
@@ -148,7 +148,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     }
 
     m_sourceURL = savedSourceURL;
-    return ScriptValue(exec->globalData(), returnValue);
+    return ScriptValue(exec->vm(), returnValue);
 }
 
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
@@ -158,12 +158,12 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
 PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
 {
-    return DOMWrapperWorld::create(JSDOMWindow::commonJSGlobalData());
+    return DOMWrapperWorld::create(JSDOMWindow::commonVM());
 }
 
 void ScriptController::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
 {
-    static_cast<WebCoreJSClientData*>(JSDOMWindow::commonJSGlobalData()->clientData)->getAllWorlds(worlds);
+    static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM()->clientData)->getAllWorlds(worlds);
 }
 
 void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)
@@ -171,7 +171,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
     if (m_windowShells.isEmpty())
         return;
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSDOMWindowShell* windowShell = iter->value.get();
@@ -206,7 +206,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
 
-    JSLockHolder lock(world->globalData());
+    JSLockHolder lock(world->vm());
 
     JSDOMWindowShell* windowShell = createWindowShell(world);
 
@@ -285,7 +285,7 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
 void ScriptController::updateDocument()
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSLockHolder lock(iter->key->globalData());
+        JSLockHolder lock(iter->key->vm());
         iter->value->window()->updateDocument();
     }
 }
@@ -301,7 +301,7 @@ Bindings::RootObject* ScriptController::cacheableBindingRootObject()
         return 0;
 
     if (!m_cacheableBindingRootObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+        JSLockHolder lock(JSDOMWindowBase::commonVM());
         m_cacheableBindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_cacheableBindingRootObject.get();
@@ -313,7 +313,7 @@ Bindings::RootObject* ScriptController::bindingRootObject()
         return 0;
 
     if (!m_bindingRootObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+        JSLockHolder lock(JSDOMWindowBase::commonVM());
         m_bindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_bindingRootObject.get();
@@ -434,7 +434,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
 
 void ScriptController::clearScriptObjects()
 {
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     RootObjectMap::const_iterator end = m_rootObjects.end();
     for (RootObjectMap::const_iterator it = m_rootObjects.begin(); it != end; ++it)
@@ -471,7 +471,7 @@ ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const
 
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
-    CallFrame* callFrame = JSDOMWindow::commonJSGlobalData()->topCallFrame;
+    CallFrame* callFrame = JSDOMWindow::commonVM()->topCallFrame;
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return false;
     DOMWrapperWorld* domWrapperWorld = currentWorld(callFrame);

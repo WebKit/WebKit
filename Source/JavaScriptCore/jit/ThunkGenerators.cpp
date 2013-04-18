@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-static JSInterfaceJIT::Call generateSlowCaseFor(JSGlobalData* globalData, JSInterfaceJIT& jit)
+static JSInterfaceJIT::Call generateSlowCaseFor(VM* vm, JSInterfaceJIT& jit)
 {
     jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT2);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT2, JSInterfaceJIT::regT2);
@@ -48,7 +48,7 @@ static JSInterfaceJIT::Call generateSlowCaseFor(JSGlobalData* globalData, JSInte
     jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT3, JSStack::ReturnPC);
     jit.emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
 
-    jit.storePtr(JSInterfaceJIT::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
     jit.restoreArgumentReference();
     JSInterfaceJIT::Call callNotJSFunction = jit.call();
     jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::callFrameRegister);
@@ -58,7 +58,7 @@ static JSInterfaceJIT::Call generateSlowCaseFor(JSGlobalData* globalData, JSInte
     return callNotJSFunction;
 }
 
-static MacroAssemblerCodeRef linkForGenerator(JSGlobalData* globalData, FunctionPtr lazyLink, FunctionPtr notJSFunction, const char* name)
+static MacroAssemblerCodeRef linkForGenerator(VM* vm, FunctionPtr lazyLink, FunctionPtr notJSFunction, const char* name)
 {
     JSInterfaceJIT jit;
     
@@ -80,38 +80,38 @@ static MacroAssemblerCodeRef linkForGenerator(JSGlobalData* globalData, Function
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3);
     jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT3, JSStack::ReturnPC);
     
-    jit.storePtr(JSInterfaceJIT::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
     jit.restoreArgumentReference();
     JSInterfaceJIT::Call callLazyLink = jit.call();
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
     jit.jump(JSInterfaceJIT::regT0);
     
     slowCase.link(&jit);
-    JSInterfaceJIT::Call callNotJSFunction = generateSlowCaseFor(globalData, jit);
+    JSInterfaceJIT::Call callNotJSFunction = generateSlowCaseFor(vm, jit);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     patchBuffer.link(callLazyLink, lazyLink);
     patchBuffer.link(callNotJSFunction, notJSFunction);
     
     return FINALIZE_CODE(patchBuffer, ("link %s trampoline", name));
 }
 
-MacroAssemblerCodeRef linkCallGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkCallGenerator(VM* vm)
 {
-    return linkForGenerator(globalData, FunctionPtr(cti_vm_lazyLinkCall), FunctionPtr(cti_op_call_NotJSFunction), "call");
+    return linkForGenerator(vm, FunctionPtr(cti_vm_lazyLinkCall), FunctionPtr(cti_op_call_NotJSFunction), "call");
 }
 
-MacroAssemblerCodeRef linkConstructGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkConstructGenerator(VM* vm)
 {
-    return linkForGenerator(globalData, FunctionPtr(cti_vm_lazyLinkConstruct), FunctionPtr(cti_op_construct_NotJSConstruct), "construct");
+    return linkForGenerator(vm, FunctionPtr(cti_vm_lazyLinkConstruct), FunctionPtr(cti_op_construct_NotJSConstruct), "construct");
 }
 
-MacroAssemblerCodeRef linkClosureCallGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef linkClosureCallGenerator(VM* vm)
 {
-    return linkForGenerator(globalData, FunctionPtr(cti_vm_lazyLinkClosureCall), FunctionPtr(cti_op_call_NotJSFunction), "closure call");
+    return linkForGenerator(vm, FunctionPtr(cti_vm_lazyLinkClosureCall), FunctionPtr(cti_op_call_NotJSFunction), "closure call");
 }
 
-static MacroAssemblerCodeRef virtualForGenerator(JSGlobalData* globalData, FunctionPtr compile, FunctionPtr notJSFunction, const char* name, CodeSpecializationKind kind)
+static MacroAssemblerCodeRef virtualForGenerator(VM* vm, FunctionPtr compile, FunctionPtr notJSFunction, const char* name, CodeSpecializationKind kind)
 {
     JSInterfaceJIT jit;
     
@@ -131,7 +131,7 @@ static MacroAssemblerCodeRef virtualForGenerator(JSGlobalData* globalData, Funct
     jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT0, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
     JSInterfaceJIT::Jump hasCodeBlock1 = jit.branch32(JSInterfaceJIT::GreaterThanOrEqual, JSInterfaceJIT::Address(JSInterfaceJIT::regT2, FunctionExecutable::offsetOfNumParametersFor(kind)), JSInterfaceJIT::TrustedImm32(0));
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3);
-    jit.storePtr(JSInterfaceJIT::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
     jit.restoreArgumentReference();
     JSInterfaceJIT::Call callCompile = jit.call();
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
@@ -142,26 +142,26 @@ static MacroAssemblerCodeRef virtualForGenerator(JSGlobalData* globalData, Funct
     jit.jump(JSInterfaceJIT::regT0);
     
     slowCase.link(&jit);
-    JSInterfaceJIT::Call callNotJSFunction = generateSlowCaseFor(globalData, jit);
+    JSInterfaceJIT::Call callNotJSFunction = generateSlowCaseFor(vm, jit);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     patchBuffer.link(callCompile, compile);
     patchBuffer.link(callNotJSFunction, notJSFunction);
     
     return FINALIZE_CODE(patchBuffer, ("virtual %s trampoline", name));
 }
 
-MacroAssemblerCodeRef virtualCallGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef virtualCallGenerator(VM* vm)
 {
-    return virtualForGenerator(globalData, FunctionPtr(cti_op_call_jitCompile), FunctionPtr(cti_op_call_NotJSFunction), "call", CodeForCall);
+    return virtualForGenerator(vm, FunctionPtr(cti_op_call_jitCompile), FunctionPtr(cti_op_call_NotJSFunction), "call", CodeForCall);
 }
 
-MacroAssemblerCodeRef virtualConstructGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef virtualConstructGenerator(VM* vm)
 {
-    return virtualForGenerator(globalData, FunctionPtr(cti_op_construct_jitCompile), FunctionPtr(cti_op_construct_NotJSConstruct), "construct", CodeForConstruct);
+    return virtualForGenerator(vm, FunctionPtr(cti_op_construct_jitCompile), FunctionPtr(cti_op_construct_NotJSConstruct), "construct", CodeForConstruct);
 }
 
-MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef stringLengthTrampolineGenerator(VM* vm)
 {
     JSInterfaceJIT jit;
     
@@ -171,7 +171,7 @@ MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData* globalData)
     JSInterfaceJIT::Jump failureCases2 = jit.branchPtr(
         JSInterfaceJIT::NotEqual, JSInterfaceJIT::Address(
             JSInterfaceJIT::regT0, JSCell::structureOffset()),
-        JSInterfaceJIT::TrustedImmPtr(globalData->stringStructure.get()));
+        JSInterfaceJIT::TrustedImmPtr(vm->stringStructure.get()));
 
     // Checks out okay! - get the length from the Ustring.
     jit.load32(
@@ -193,7 +193,7 @@ MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData* globalData)
     JSInterfaceJIT::Jump failureCases2 = jit.branchPtr(
         JSInterfaceJIT::NotEqual,
         JSInterfaceJIT::Address(JSInterfaceJIT::regT0, JSCell::structureOffset()),
-        JSInterfaceJIT::TrustedImmPtr(globalData->stringStructure.get()));
+        JSInterfaceJIT::TrustedImmPtr(vm->stringStructure.get()));
 
     // Checks out okay! - get the length from the Ustring.
     jit.load32(
@@ -212,7 +212,7 @@ MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData* globalData)
     JSInterfaceJIT::Call failureCases2Call = jit.makeTailRecursiveCall(failureCases2);
     JSInterfaceJIT::Call failureCases3Call = jit.makeTailRecursiveCall(failureCases3);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     
     patchBuffer.link(failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -221,14 +221,14 @@ MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData* globalData)
     return FINALIZE_CODE(patchBuffer, ("string length trampoline"));
 }
 
-static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSpecializationKind kind)
+static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind kind)
 {
     int executableOffsetToFunction = NativeExecutable::offsetOfNativeFunctionFor(kind);
     
     JSInterfaceJIT jit;
     
     jit.emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
-    jit.storePtr(JSInterfaceJIT::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
@@ -373,12 +373,12 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
 
     // Check for an exception
 #if USE(JSVALUE64)
-    jit.load64(&(globalData->exception), JSInterfaceJIT::regT2);
+    jit.load64(&(vm->exception), JSInterfaceJIT::regT2);
     JSInterfaceJIT::Jump exceptionHandler = jit.branchTest64(JSInterfaceJIT::NonZero, JSInterfaceJIT::regT2);
 #else
     JSInterfaceJIT::Jump exceptionHandler = jit.branch32(
         JSInterfaceJIT::NotEqual,
-        JSInterfaceJIT::AbsoluteAddress(reinterpret_cast<char*>(&globalData->exception) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+        JSInterfaceJIT::AbsoluteAddress(reinterpret_cast<char*>(&vm->exception) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
         JSInterfaceJIT::TrustedImm32(JSValue::EmptyValueTag));
 #endif
 
@@ -391,35 +391,35 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
     // Grab the return address.
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT1);
 
-    jit.move(JSInterfaceJIT::TrustedImmPtr(&globalData->exceptionLocation), JSInterfaceJIT::regT2);
+    jit.move(JSInterfaceJIT::TrustedImmPtr(&vm->exceptionLocation), JSInterfaceJIT::regT2);
     jit.storePtr(JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
     jit.poke(JSInterfaceJIT::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
-    jit.storePtr(JSInterfaceJIT::callFrameRegister, &globalData->topCallFrame);
+    jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
     // Set the return address.
     jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), JSInterfaceJIT::regT1);
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT1);
 
     jit.ret();
 
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("native %s trampoline", toCString(kind).data()));
 }
 
-MacroAssemblerCodeRef nativeCallGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef nativeCallGenerator(VM* vm)
 {
-    return nativeForGenerator(globalData, CodeForCall);
+    return nativeForGenerator(vm, CodeForCall);
 }
 
-MacroAssemblerCodeRef nativeConstructGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef nativeConstructGenerator(VM* vm)
 {
-    return nativeForGenerator(globalData, CodeForConstruct);
+    return nativeForGenerator(vm, CodeForConstruct);
 }
 
-static void stringCharLoad(SpecializedThunkJIT& jit, JSGlobalData* globalData)
+static void stringCharLoad(SpecializedThunkJIT& jit, VM* vm)
 {
     // load string
-    jit.loadJSStringArgument(*globalData, SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
+    jit.loadJSStringArgument(*vm, SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
     jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, ThunkHelpers::jsStringLengthOffset()), SpecializedThunkJIT::regT2);
@@ -446,51 +446,51 @@ static void stringCharLoad(SpecializedThunkJIT& jit, JSGlobalData* globalData)
     cont8Bit.link(&jit);
 }
 
-static void charToString(SpecializedThunkJIT& jit, JSGlobalData* globalData, MacroAssembler::RegisterID src, MacroAssembler::RegisterID dst, MacroAssembler::RegisterID scratch)
+static void charToString(SpecializedThunkJIT& jit, VM* vm, MacroAssembler::RegisterID src, MacroAssembler::RegisterID dst, MacroAssembler::RegisterID scratch)
 {
     jit.appendFailure(jit.branch32(MacroAssembler::AboveOrEqual, src, MacroAssembler::TrustedImm32(0x100)));
-    jit.move(MacroAssembler::TrustedImmPtr(globalData->smallStrings.singleCharacterStrings()), scratch);
+    jit.move(MacroAssembler::TrustedImmPtr(vm->smallStrings.singleCharacterStrings()), scratch);
     jit.loadPtr(MacroAssembler::BaseIndex(scratch, src, MacroAssembler::ScalePtr, 0), dst);
     jit.appendFailure(jit.branchTestPtr(MacroAssembler::Zero, dst));
 }
 
-MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef charCodeAtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
-    stringCharLoad(jit, globalData);
+    stringCharLoad(jit, vm);
     jit.returnInt32(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "charCodeAt");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "charCodeAt");
 }
 
-MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef charAtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
-    stringCharLoad(jit, globalData);
-    charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
+    stringCharLoad(jit, vm);
+    charToString(jit, vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "charAt");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "charAt");
 }
 
-MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef fromCharCodeThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     // load char code
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
-    charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
+    charToString(jit, vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "fromCharCode");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "fromCharCode");
 }
 
-MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef sqrtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPointSqrt())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
 
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "sqrt");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "sqrt");
 }
 
 
@@ -561,12 +561,12 @@ static const double negativeHalfConstant = -0.5;
 static const double zeroConstant = 0.0;
 static const double halfConstant = 0.5;
     
-MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     MacroAssembler::Jump nonIntJump;
     if (!UnaryDoubleOpWrapper(floor) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
@@ -590,14 +590,14 @@ MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "floor");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "floor");
 }
 
-MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef ceilThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     if (!UnaryDoubleOpWrapper(ceil) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -609,14 +609,14 @@ MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "ceil");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "ceil");
 }
 
-MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef roundThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     if (!UnaryDoubleOpWrapper(jsRound) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -643,40 +643,40 @@ MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "round");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "round");
 }
 
-MacroAssemblerCodeRef expThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef expThunkGenerator(VM* vm)
 {
     if (!UnaryDoubleOpWrapper(exp))
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDouble(UnaryDoubleOpWrapper(exp));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "exp");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "exp");
 }
 
-MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef logThunkGenerator(VM* vm)
 {
     if (!UnaryDoubleOpWrapper(log))
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDouble(UnaryDoubleOpWrapper(log));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "log");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "log");
 }
 
-MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef absThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPointAbs())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.rshift32(SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(31), SpecializedThunkJIT::regT1);
@@ -689,14 +689,14 @@ MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.absDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "abs");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "abs");
 }
 
-MacroAssemblerCodeRef powThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef powThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(2);
     if (!jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall(globalData));
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
 
     jit.loadDouble(&oneConstant, SpecializedThunkJIT::fpRegT1);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
@@ -741,7 +741,7 @@ MacroAssemblerCodeRef powThunkGenerator(JSGlobalData* globalData)
     } else
         jit.appendFailure(nonIntExponent);
 
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(globalData), "pow");
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "pow");
 }
 
 }

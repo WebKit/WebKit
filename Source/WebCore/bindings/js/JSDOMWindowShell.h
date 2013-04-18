@@ -44,7 +44,7 @@ namespace WebCore {
         static void destroy(JSCell*);
 
         JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
-        void setWindow(JSC::JSGlobalData&, JSDOMWindow*);
+        void setWindow(JSC::VM&, JSDOMWindow*);
         void setWindow(PassRefPtr<DOMWindow>);
 
         static const JSC::ClassInfo s_info;
@@ -53,22 +53,22 @@ namespace WebCore {
 
         static JSDOMWindowShell* create(PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld* world) 
         {
-            JSC::Heap& heap = JSDOMWindow::commonJSGlobalData()->heap;
+            JSC::Heap& heap = JSDOMWindow::commonVM()->heap;
             JSDOMWindowShell* shell = new (NotNull, JSC::allocateCell<JSDOMWindowShell>(heap)) JSDOMWindowShell(structure, world);
-            shell->finishCreation(*world->globalData(), window);
+            shell->finishCreation(*world->vm(), window);
             return shell; 
         }
 
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
+        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), &s_info);
         }
 
         DOMWrapperWorld* world() { return m_world.get(); }
 
     protected:
         JSDOMWindowShell(JSC::Structure*, DOMWrapperWorld*);
-        void finishCreation(JSC::JSGlobalData&, PassRefPtr<DOMWindow>);
+        void finishCreation(JSC::VM&, PassRefPtr<DOMWindow>);
 
         RefPtr<DOMWrapperWorld> m_world;
     };

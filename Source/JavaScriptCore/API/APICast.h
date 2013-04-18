@@ -34,7 +34,7 @@
 namespace JSC {
     class ExecState;
     class PropertyNameArray;
-    class JSGlobalData;
+    class VM;
     class JSObject;
     class JSValue;
 }
@@ -117,9 +117,9 @@ inline JSC::PropertyNameArray* toJS(JSPropertyNameAccumulatorRef a)
     return reinterpret_cast<JSC::PropertyNameArray*>(a);
 }
 
-inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
+inline JSC::VM* toJS(JSContextGroupRef g)
 {
-    return reinterpret_cast<JSC::JSGlobalData*>(const_cast<OpaqueJSContextGroup*>(g));
+    return reinterpret_cast<JSC::VM*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
 inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
@@ -162,7 +162,7 @@ inline JSPropertyNameAccumulatorRef toRef(JSC::PropertyNameArray* l)
     return reinterpret_cast<JSPropertyNameAccumulatorRef>(l);
 }
 
-inline JSContextGroupRef toRef(JSC::JSGlobalData* g)
+inline JSContextGroupRef toRef(JSC::VM* g)
 {
     return reinterpret_cast<JSContextGroupRef>(g);
 }

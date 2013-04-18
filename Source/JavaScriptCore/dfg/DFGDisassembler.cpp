@@ -59,7 +59,7 @@ void Disassembler::reportToProfiler(Profiler::Compilation* compilation, LinkBuff
         Profiler::OriginStack stack;
         
         if (ops[i].codeOrigin.isSet())
-            stack = Profiler::OriginStack(*m_graph.m_globalData.m_perBytecodeProfiler, m_graph.m_codeBlock, ops[i].codeOrigin);
+            stack = Profiler::OriginStack(*m_graph.m_vm.m_perBytecodeProfiler, m_graph.m_codeBlock, ops[i].codeOrigin);
         
         compilation->addDescription(Profiler::CompiledBytecode(stack, ops[i].text));
     }

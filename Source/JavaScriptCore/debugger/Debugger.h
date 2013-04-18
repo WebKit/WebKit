@@ -28,7 +28,7 @@ namespace JSC {
 
     class DebuggerCallFrame;
     class ExecState;
-    class JSGlobalData;
+    class VM;
     class JSGlobalObject;
     class JSValue;
     class SourceProvider;
@@ -52,7 +52,7 @@ namespace JSC {
         virtual void didReachBreakpoint(const DebuggerCallFrame&, intptr_t, int, int) = 0;
 
 
-        void recompileAllJSFunctions(JSGlobalData*);
+        void recompileAllJSFunctions(VM*);
 
     private:
         HashSet<JSGlobalObject*> m_globalObjects;

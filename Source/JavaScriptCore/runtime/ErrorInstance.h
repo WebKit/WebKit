@@ -31,21 +31,21 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), &s_info);
         }
 
-        static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const String& message)
+        static ErrorInstance* create(VM& vm, Structure* structure, const String& message)
         {
-            ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure);
-            instance->finishCreation(globalData, message);
+            ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
+            instance->finishCreation(vm, message);
             return instance;
         }
 
         static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message)
         {
-            return create(exec->globalData(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec));
+            return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec));
         }
 
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
@@ -53,14 +53,14 @@ namespace JSC {
         void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
 
     protected:
-        explicit ErrorInstance(JSGlobalData&, Structure*);
+        explicit ErrorInstance(VM&, Structure*);
 
-        void finishCreation(JSGlobalData& globalData, const String& message)
+        void finishCreation(VM& vm, const String& message)
         {
-            Base::finishCreation(globalData);
+            Base::finishCreation(vm);
             ASSERT(inherits(&s_info));
             if (!message.isNull())
-                putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, message), DontEnum);
+                putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
         }
 
         bool m_appendSourceToMessage;

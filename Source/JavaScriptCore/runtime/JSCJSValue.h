@@ -43,7 +43,7 @@ namespace JSC {
 
 class ExecState;
 class JSCell;
-class JSGlobalData;
+class VM;
 class JSGlobalObject;
 class JSObject;
 class JSString;

@@ -38,31 +38,31 @@ class Structure;
 class StructureRareData : public JSCell {
     friend class Structure;
 public:
-    static StructureRareData* create(JSGlobalData&, Structure*);
-    static StructureRareData* clone(JSGlobalData&, const StructureRareData* other);
+    static StructureRareData* create(VM&, Structure*);
+    static StructureRareData* clone(VM&, const StructureRareData* other);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
     // Returns true if this StructureRareData should also be cloned when cloning the owner Structure.
     bool needsCloning() const { return false; }
 
     Structure* previousID() const;
-    void setPreviousID(JSGlobalData&, Structure* transition, Structure*);
+    void setPreviousID(VM&, Structure* transition, Structure*);
     void clearPreviousID();
 
     JSString* objectToStringValue() const;
-    void setObjectToStringValue(JSGlobalData&, const JSCell* owner, JSString* value);
+    void setObjectToStringValue(VM&, const JSCell* owner, JSString* value);
 
     JSPropertyNameIterator* enumerationCache();
-    void setEnumerationCache(JSGlobalData&, const Structure* owner, JSPropertyNameIterator* value);
+    void setEnumerationCache(VM&, const Structure* owner, JSPropertyNameIterator* value);
 
     static JS_EXPORTDATA const ClassInfo s_info;
 
 private:
-    StructureRareData(JSGlobalData&, Structure*);
-    StructureRareData(JSGlobalData&, const StructureRareData*);
+    StructureRareData(VM&, Structure*);
+    StructureRareData(VM&, const StructureRareData*);
 
     static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
 

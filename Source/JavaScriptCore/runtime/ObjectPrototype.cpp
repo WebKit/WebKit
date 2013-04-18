@@ -45,17 +45,17 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(ObjectPrototype);
 const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjectPrototype) };
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, Structure* stucture)
-    : JSNonFinalObject(exec->globalData(), stucture)
+    : JSNonFinalObject(exec->vm(), stucture)
 {
 }
 
 void ObjectPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
-    globalData.prototypeMap.addPrototype(this);
+    vm.prototypeMap.addPrototype(this);
     
     JSC_NATIVE_FUNCTION("toString", objectProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_FUNCTION("toLocaleString", objectProtoFuncToLocaleString, DontEnum, 0);
@@ -218,7 +218,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
         result = jsNontrivialString(exec, newString.release());
-        thisObject->structure()->setObjectToStringValue(exec->globalData(), thisObject, result);
+        thisObject->structure()->setObjectToStringValue(exec->vm(), thisObject, result);
     }
     return JSValue::encode(result);
 }

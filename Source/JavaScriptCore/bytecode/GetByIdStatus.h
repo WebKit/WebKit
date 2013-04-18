@@ -72,7 +72,7 @@ public:
     }
     
     static GetByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
-    static GetByIdStatus computeFor(JSGlobalData&, Structure*, Identifier&);
+    static GetByIdStatus computeFor(VM&, Structure*, Identifier&);
     
     State state() const { return m_state; }
     

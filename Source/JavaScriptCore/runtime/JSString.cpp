@@ -40,7 +40,7 @@ void JSRopeString::RopeBuilder::expand()
 {
     ASSERT(m_index == JSRopeString::s_maxInternalRopeLength);
     JSString* jsString = m_jsString;
-    m_jsString = jsStringBuilder(&m_globalData);
+    m_jsString = jsStringBuilder(&m_vm);
     m_index = 0;
     append(jsString);
 }
@@ -261,8 +261,8 @@ double JSString::toNumber(ExecState* exec) const
 
 inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), globalObject->stringObjectStructure());
-    object->finishCreation(exec->globalData(), string);
+    StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->vm(), globalObject->stringObjectStructure());
+    object->finishCreation(exec->vm(), string);
     return object;
 }
 

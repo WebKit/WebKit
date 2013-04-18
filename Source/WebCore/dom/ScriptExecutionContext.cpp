@@ -404,14 +404,14 @@ ScriptExecutionContext::Task::~Task()
 {
 }
 
-JSC::JSGlobalData* ScriptExecutionContext::globalData()
+JSC::VM* ScriptExecutionContext::vm()
 {
      if (isDocument())
-        return JSDOMWindow::commonJSGlobalData();
+        return JSDOMWindow::commonVM();
 
 #if ENABLE(WORKERS)
     if (isWorkerContext())
-        return static_cast<WorkerContext*>(this)->script()->globalData();
+        return static_cast<WorkerContext*>(this)->script()->vm();
 #endif
 
     ASSERT_NOT_REACHED();

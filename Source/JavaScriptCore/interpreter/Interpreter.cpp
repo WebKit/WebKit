@@ -199,7 +199,7 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
 }
 
 
-static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, unsigned& bytecodeOffset, CodeBlock*& callerOut);
+static CallFrame* getCallerInfo(VM*, CallFrame*, unsigned& bytecodeOffset, CodeBlock*& callerOut);
 
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, JSScope* sc)
@@ -218,7 +218,7 @@ JSValue eval(CallFrame* callFrame)
     if (!program.isString())
         return program;
     
-    TopCallFrameSetter topCallFrame(callFrame->globalData(), callFrame);
+    TopCallFrameSetter topCallFrame(callFrame->vm(), callFrame);
     String programSource = asString(program)->value(callFrame);
     if (callFrame->hadException())
         return JSValue();
@@ -244,7 +244,7 @@ JSValue eval(CallFrame* callFrame)
         }
         
         // If the literal parser bailed, it should not have thrown exceptions.
-        ASSERT(!callFrame->globalData().exception);
+        ASSERT(!callFrame->vm().exception);
 
         JSValue exceptionValue;
         eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain, exceptionValue);
@@ -256,7 +256,7 @@ JSValue eval(CallFrame* callFrame)
 
     JSValue thisValue = callerFrame->thisValue();
     ASSERT(isValidThisObject(thisValue, callFrame));
-    Interpreter* interpreter = callFrame->globalData().interpreter;
+    Interpreter* interpreter = callFrame->vm().interpreter;
     return interpreter->execute(eval, callFrame, thisValue, callerScopeChain);
 }
 
@@ -266,7 +266,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
         unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + argumentCountIncludingThis + JSStack::CallFrameHeaderSize);
         if (argumentCountIncludingThis > Arguments::MaxArguments + 1 || !stack->grow(newCallFrame->registers())) {
-            callFrame->globalData().exception = createStackOverflowError(callFrame);
+            callFrame->vm().exception = createStackOverflowError(callFrame);
             return 0;
         }
 
@@ -280,7 +280,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
     if (arguments.isUndefinedOrNull()) {
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + 1 + JSStack::CallFrameHeaderSize);
         if (!stack->grow(newCallFrame->registers())) {
-            callFrame->globalData().exception = createStackOverflowError(callFrame);
+            callFrame->vm().exception = createStackOverflowError(callFrame);
             return 0;
         }
         newCallFrame->setArgumentCountIncludingThis(1);
@@ -289,7 +289,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
     }
 
     if (!arguments.isObject()) {
-        callFrame->globalData().exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
+        callFrame->vm().exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
         return 0;
     }
 
@@ -298,7 +298,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
         unsigned argCount = argsObject->length(callFrame);
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         if (argCount > Arguments::MaxArguments || !stack->grow(newCallFrame->registers())) {
-            callFrame->globalData().exception = createStackOverflowError(callFrame);
+            callFrame->vm().exception = createStackOverflowError(callFrame);
             return 0;
         }
         newCallFrame->setArgumentCountIncludingThis(argCount + 1);
@@ -312,7 +312,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
         unsigned argCount = array->length();
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         if (argCount > Arguments::MaxArguments || !stack->grow(newCallFrame->registers())) {
-            callFrame->globalData().exception = createStackOverflowError(callFrame);
+            callFrame->vm().exception = createStackOverflowError(callFrame);
             return 0;
         }
         newCallFrame->setArgumentCountIncludingThis(argCount + 1);
@@ -325,22 +325,22 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
     unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
     CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
     if (argCount > Arguments::MaxArguments || !stack->grow(newCallFrame->registers())) {
-        callFrame->globalData().exception = createStackOverflowError(callFrame);
+        callFrame->vm().exception = createStackOverflowError(callFrame);
         return 0;
     }
     newCallFrame->setArgumentCountIncludingThis(argCount + 1);
     newCallFrame->setThisValue(thisValue);
     for (size_t i = 0; i < argCount; ++i) {
         newCallFrame->setArgument(i, asObject(arguments)->get(callFrame, i));
-        if (UNLIKELY(callFrame->globalData().exception))
+        if (UNLIKELY(callFrame->vm().exception))
             return 0;
     }
     return newCallFrame;
 }
 
-Interpreter::Interpreter(JSGlobalData& globalData)
+Interpreter::Interpreter(VM& vm)
     : m_sampleEntryDepth(0)
-    , m_stack(globalData)
+    , m_stack(vm)
     , m_errorHandlingModeReentry(0)
 #if !ASSERT_DISABLED
     , m_initialized(false)
@@ -416,14 +416,14 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     dataLogF("[ScopeChain]               | %10p | %p \n", it, callFrame->scope());
     ++it;
 #if ENABLE(JIT)
-    AbstractPC pc = callFrame->abstractReturnPC(callFrame->globalData());
+    AbstractPC pc = callFrame->abstractReturnPC(callFrame->vm());
     if (pc.hasJITReturnAddress())
         dataLogF("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
 #endif
     unsigned bytecodeOffset = 0;
     int line = 0;
     CodeBlock* callerCodeBlock = 0;
-    getCallerInfo(&callFrame->globalData(), callFrame, bytecodeOffset, callerCodeBlock);
+    getCallerInfo(&callFrame->vm(), callFrame, bytecodeOffset, callerCodeBlock);
     line = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
     dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
     ++it;
@@ -492,7 +492,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsActivation()) {
         activation = callFrame->uncheckedR(oldCodeBlock->activationRegister()).jsValue();
         if (activation)
-            jsCast<JSActivation*>(activation)->tearOff(*scope->globalData());
+            jsCast<JSActivation*>(activation)->tearOff(*scope->vm());
     }
 
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->usesArguments()) {
@@ -505,10 +505,10 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
-    callFrame->globalData().topCallFrame = callerFrame;
+    callFrame->vm().topCallFrame = callerFrame;
     if (callerFrame->hasHostCallFrameFlag())
         return false;
-    callFrame = getCallerInfo(&callFrame->globalData(), callFrame, bytecodeOffset, codeBlock);
+    callFrame = getCallerInfo(&callFrame->vm(), callFrame, bytecodeOffset, codeBlock);
     return true;
 }
 
@@ -533,8 +533,8 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
         return;
 
-    JSGlobalData* globalData = &callFrame->globalData();
-    JSValue jsMessage = exception->getDirect(*globalData, globalData->propertyNames->message);
+    VM* vm = &callFrame->vm();
+    JSValue jsMessage = exception->getDirect(*vm, vm->propertyNames->message);
     if (!jsMessage || !jsMessage.isString())
         return;
 
@@ -561,7 +561,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
         message = makeString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
     }
 
-    exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
+    exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
 }
 
 static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
@@ -581,9 +581,9 @@ static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
 #endif
 }
 
-static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)
+static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)
 {
-    ASSERT_UNUSED(globalData, globalData);
+    ASSERT_UNUSED(vm, vm);
     bytecodeOffset = 0;
     ASSERT(!callFrame->hasHostCallFrameFlag());
     CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : callFrame->callerFrame()->removeHostCallFrameFlag();
@@ -719,9 +719,9 @@ String StackFrame::toString(CallFrame* callFrame)
     return traceBuild.toString().impl();
 }
 
-void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& results, size_t maxStackSize)
+void Interpreter::getStackTrace(VM* vm, Vector<StackFrame>& results, size_t maxStackSize)
 {
-    CallFrame* callFrame = globalData->topCallFrame->removeHostCallFrameFlag();
+    CallFrame* callFrame = vm->topCallFrame->removeHostCallFrameFlag();
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return;
     unsigned bytecodeOffset = getBytecodeOffsetForCallFrame(callFrame);
@@ -735,10 +735,10 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
         if (callerCodeBlock) {
             sourceURL = getSourceURLFromCallFrame(callFrame);
             StackFrame s = {
-                Strong<JSObject>(*globalData, callFrame->callee()),
+                Strong<JSObject>(*vm, callFrame->callee()),
                 getStackFrameCodeType(callFrame),
-                Strong<ExecutableBase>(*globalData, callerCodeBlock->ownerExecutable()),
-                Strong<UnlinkedCodeBlock>(*globalData, callerCodeBlock->unlinkedCodeBlock()),
+                Strong<ExecutableBase>(*vm, callerCodeBlock->ownerExecutable()),
+                Strong<UnlinkedCodeBlock>(*vm, callerCodeBlock->unlinkedCodeBlock()),
                 callerCodeBlock->source(),
                 callerCodeBlock->ownerExecutable()->lineNo(),
                 callerCodeBlock->sourceOffset(),
@@ -747,28 +747,28 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
             };
             results.append(s);
         } else {
-            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, String()};
+            StackFrame s = { Strong<JSObject>(*vm, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, String()};
             results.append(s);
         }
-        callFrame = getCallerInfo(globalData, callFrame, bytecodeOffset, callerCodeBlock);
+        callFrame = getCallerInfo(vm, callFrame, bytecodeOffset, callerCodeBlock);
     }
 }
 
 void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 {
-    JSGlobalData* globalData = &callFrame->globalData();
-    ASSERT(callFrame == globalData->topCallFrame || callFrame == callFrame->lexicalGlobalObject()->globalExec() || callFrame == callFrame->dynamicGlobalObject()->globalExec());
+    VM* vm = &callFrame->vm();
+    ASSERT(callFrame == vm->topCallFrame || callFrame == callFrame->lexicalGlobalObject()->globalExec() || callFrame == callFrame->dynamicGlobalObject()->globalExec());
 
     Vector<StackFrame> stackTrace;
-    getStackTrace(&callFrame->globalData(), stackTrace);
-    globalData->exceptionStack = RefCountedArray<StackFrame>(stackTrace);
+    getStackTrace(&callFrame->vm(), stackTrace);
+    vm->exceptionStack = RefCountedArray<StackFrame>(stackTrace);
     if (stackTrace.isEmpty() || !error.isObject())
         return;
 
     JSObject* errorObject = asObject(error);
     JSGlobalObject* globalObject = 0;
     if (isTerminatedExecutionException(error))
-        globalObject = globalData->dynamicGlobalObject;
+        globalObject = vm->dynamicGlobalObject;
     else
         globalObject = errorObject->globalObject();
 
@@ -780,9 +780,9 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
             builder.append('\n');
     }
 
-    if (errorObject->hasProperty(callFrame, globalData->propertyNames->stack))
+    if (errorObject->hasProperty(callFrame, vm->propertyNames->stack))
         return;
-    errorObject->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, builder.toString()), ReadOnly | DontDelete);
+    errorObject->putDirect(*vm, vm->propertyNames->stack, jsString(vm, builder.toString()), ReadOnly | DontDelete);
 }
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
@@ -812,10 +812,10 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
         isTermination = isTerminatedExecutionException(exception);
     } else {
-        if (!callFrame->globalData().exceptionStack.size()) {
+        if (!callFrame->vm().exceptionStack.size()) {
             Vector<StackFrame> stack;
-            Interpreter::getStackTrace(&callFrame->globalData(), stack);
-            callFrame->globalData().exceptionStack = RefCountedArray<StackFrame>(stack);
+            Interpreter::getStackTrace(&callFrame->vm(), stack);
+            callFrame->vm().exceptionStack = RefCountedArray<StackFrame>(stack);
         }
     }
 
@@ -829,13 +829,13 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     HandlerInfo* handler = 0;
     while (isTermination || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
         if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
-            if (LegacyProfiler* profiler = callFrame->globalData().enabledProfiler())
+            if (LegacyProfiler* profiler = callFrame->vm().enabledProfiler())
                 profiler->exceptionUnwind(callFrame);
             return 0;
         }
     }
 
-    if (LegacyProfiler* profiler = callFrame->globalData().enabledProfiler())
+    if (LegacyProfiler* profiler = callFrame->vm().enabledProfiler())
         profiler->exceptionUnwind(callFrame);
 
     // Unwind the scope chain within the exception handler's call frame.
@@ -887,12 +887,12 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     SamplingScope samplingScope(this);
     
     JSScope* scope = callFrame->scope();
-    JSGlobalData& globalData = *scope->globalData();
+    VM& vm = *scope->vm();
 
     ASSERT(isValidThisObject(thisObj, callFrame));
-    ASSERT(!globalData.exception);
-    ASSERT(!globalData.isCollectorBusy());
-    if (globalData.isCollectorBusy())
+    ASSERT(!vm.exception);
+    ASSERT(!vm.isCollectorBusy());
+    if (vm.isCollectorBusy())
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
@@ -904,7 +904,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     // First check if the "program" is actually just a JSON object. If so,
     // we'll handle the JSON object here. Else, we'll handle real JS code
     // below at failedJSONP.
-    DynamicGlobalObjectScope globalObjectScope(globalData, scope->globalObject());
+    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
     Vector<JSONPData> JSONPData;
     bool parseResult;
     const String programSource = program->source().toString();
@@ -1008,7 +1008,7 @@ failedJSONP:
     // object.
 
     // Compile source to bytecode if necessary:
-    if (JSObject* error = program->initializeGlobalProperties(globalData, callFrame, scope))
+    if (JSObject* error = program->initializeGlobalProperties(vm, callFrame, scope))
         return checkedReturn(throwError(callFrame, error));
 
     if (JSObject* error = program->compile(callFrame, scope))
@@ -1025,24 +1025,24 @@ failedJSONP:
     // Set the arguments for the callee:
     newCallFrame->setThisValue(thisObj);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, program->sourceURL(), program->lineNo());
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
+    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(globalData.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog);
 
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_program_prologue);
 #elif ENABLE(JIT)
-        result = program->generatedJITCode().execute(&m_stack, newCallFrame, &globalData);
+        result = program->generatedJITCode().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
     } else
         result = throwTerminatedExecutionException(newCallFrame);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, program->sourceURL(), program->lineNo());
 
     m_stack.popFrame(newCallFrame);
@@ -1052,11 +1052,11 @@ failedJSONP:
 
 JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
-    JSGlobalData& globalData = callFrame->globalData();
+    VM& vm = callFrame->vm();
     ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!callFrame->hadException());
-    ASSERT(!globalData.isCollectorBusy());
-    if (globalData.isCollectorBusy())
+    ASSERT(!vm.isCollectorBusy());
+    if (vm.isCollectorBusy())
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
@@ -1076,7 +1076,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         ASSERT(callType == CallTypeHost);
         scope = callFrame->scope();
     }
-    DynamicGlobalObjectScope globalObjectScope(globalData, scope->globalObject());
+    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
 
     if (isJSCall) {
         // Compile the callee:
@@ -1098,27 +1098,27 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     for (size_t i = 0; i < args.size(); ++i)
         newCallFrame->setArgument(i, args.at(i));
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, function);
 
     JSValue result;
-    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
+    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
-        Watchdog::Scope watchdogScope(globalData.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog);
 
         // Execute the code:
         if (isJSCall) {
 #if ENABLE(LLINT_C_LOOP)
             result = LLInt::CLoop::execute(newCallFrame, llint_function_for_call_prologue);
 #elif ENABLE(JIT)
-            result = callData.js.functionExecutable->generatedJITCodeForCall().execute(&m_stack, newCallFrame, &globalData);
+            result = callData.js.functionExecutable->generatedJITCodeForCall().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
         } else
             result = JSValue::decode(callData.native.function(newCallFrame));
     } else
         result = throwTerminatedExecutionException(newCallFrame);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, function);
 
     m_stack.popFrame(newCallFrame);
@@ -1127,12 +1127,12 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
 JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* constructor, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
-    JSGlobalData& globalData = callFrame->globalData();
+    VM& vm = callFrame->vm();
     ASSERT(!callFrame->hadException());
-    ASSERT(!globalData.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusy());
     // We throw in this case because we have to return something "valid" but we're
     // already in an invalid state.
-    if (globalData.isCollectorBusy())
+    if (vm.isCollectorBusy())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     StackStats::CheckPoint stackCheckPoint;
@@ -1153,7 +1153,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         scope = callFrame->scope();
     }
 
-    DynamicGlobalObjectScope globalObjectScope(globalData, scope->globalObject());
+    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
 
     if (isJSConstruct) {
         // Compile the callee:
@@ -1175,27 +1175,27 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     for (size_t i = 0; i < args.size(); ++i)
         newCallFrame->setArgument(i, args.at(i));
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, constructor);
 
     JSValue result;
-    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
+    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
-        Watchdog::Scope watchdogScope(globalData.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog);
 
         // Execute the code.
         if (isJSConstruct) {
 #if ENABLE(LLINT_C_LOOP)
             result = LLInt::CLoop::execute(newCallFrame, llint_function_for_construct_prologue);
 #elif ENABLE(JIT)
-            result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_stack, newCallFrame, &globalData);
+            result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
         } else
             result = JSValue::decode(constructData.native.function(newCallFrame));
     } else
         result = throwTerminatedExecutionException(newCallFrame);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, constructor);
 
     m_stack.popFrame(newCallFrame);
@@ -1208,10 +1208,10 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
 CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionExecutable, CallFrame* callFrame, JSFunction* function, int argumentCountIncludingThis, JSScope* scope)
 {
-    JSGlobalData& globalData = *scope->globalData();
-    ASSERT(!globalData.exception);
+    VM& vm = *scope->vm();
+    ASSERT(!vm.exception);
     
-    if (globalData.isCollectorBusy())
+    if (vm.isCollectorBusy())
         return CallFrameClosure();
 
     StackStats::CheckPoint stackCheckPoint;
@@ -1244,17 +1244,17 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     }
 
     // Return the successful closure:
-    CallFrameClosure result = { callFrame, newCallFrame, function, functionExecutable, &globalData, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
+    CallFrameClosure result = { callFrame, newCallFrame, function, functionExecutable, &vm, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
     return result;
 }
 
 JSValue Interpreter::execute(CallFrameClosure& closure) 
 {
-    JSGlobalData& globalData = *closure.globalData;
+    VM& vm = *closure.vm;
     SamplingScope samplingScope(this);
     
-    ASSERT(!globalData.isCollectorBusy());
-    if (globalData.isCollectorBusy())
+    ASSERT(!vm.isCollectorBusy());
+    if (vm.isCollectorBusy())
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
@@ -1262,7 +1262,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     closure.resetCallFrame();
     m_stack.validateFence(closure.newCallFrame, "STEP 1");
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(closure.oldCallFrame, closure.function);
 
     // The code execution below may push more frames and point the topCallFrame
@@ -1273,23 +1273,23 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     // Hence, we need to preserve the topCallFrame here ourselves before
     // repeating this call on a second callback function.
 
-    TopCallFrameSetter topCallFrame(globalData, closure.newCallFrame);
+    TopCallFrameSetter topCallFrame(vm, closure.newCallFrame);
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!globalData.watchdog.didFire(closure.newCallFrame))) {
+    if (LIKELY(!vm.watchdog.didFire(closure.newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(globalData.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog);
 
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(closure.newCallFrame, llint_function_for_call_prologue);
 #elif ENABLE(JIT)
-        result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_stack, closure.newCallFrame, &globalData);
+        result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_stack, closure.newCallFrame, &vm);
 #endif // ENABLE(JIT)
     } else
         result = throwTerminatedExecutionException(closure.newCallFrame);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(closure.oldCallFrame, closure.function);
 
     m_stack.validateFence(closure.newCallFrame, "AFTER");
@@ -1303,17 +1303,17 @@ void Interpreter::endRepeatCall(CallFrameClosure& closure)
 
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
 {
-    JSGlobalData& globalData = *scope->globalData();
+    VM& vm = *scope->vm();
     SamplingScope samplingScope(this);
     
-    ASSERT(scope->globalData() == &callFrame->globalData());
+    ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(isValidThisObject(thisValue, callFrame));
-    ASSERT(!globalData.exception);
-    ASSERT(!globalData.isCollectorBusy());
-    if (globalData.isCollectorBusy())
+    ASSERT(!vm.exception);
+    ASSERT(!vm.isCollectorBusy());
+    if (vm.isCollectorBusy())
         return jsNull();
 
-    DynamicGlobalObjectScope globalObjectScope(globalData, scope->globalObject());
+    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
 
     StackStats::CheckPoint stackCheckPoint;
     const StackBounds& nativeStack = wtfThreadData().stack();
@@ -1344,7 +1344,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             variableObject = scope;
         }
         // Scope for BatchedTransitionOptimizer
-        BatchedTransitionOptimizer optimizer(globalData, variableObject);
+        BatchedTransitionOptimizer optimizer(vm, variableObject);
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);
@@ -1370,24 +1370,24 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     // Set the arguments for the callee:
     newCallFrame->setThisValue(thisValue);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!globalData.watchdog.didFire(newCallFrame))) {
+    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(globalData.watchdog);
+        Watchdog::Scope watchdogScope(vm.watchdog);
 
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_eval_prologue);
 #elif ENABLE(JIT)
-        result = eval->generatedJITCode().execute(&m_stack, newCallFrame, &globalData);
+        result = eval->generatedJITCode().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
     } else
         result = throwTerminatedExecutionException(newCallFrame);
 
-    if (LegacyProfiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     m_stack.popFrame(newCallFrame);
@@ -1428,7 +1428,7 @@ JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunctio
     if (!functionCallFrame)
         return jsNull();
 
-    Arguments* arguments = Arguments::create(functionCallFrame->globalData(), functionCallFrame);
+    Arguments* arguments = Arguments::create(functionCallFrame->vm(), functionCallFrame);
     arguments->tearOff(functionCallFrame);
     return JSValue(arguments);
 }
@@ -1442,7 +1442,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     
     unsigned bytecodeOffset;
     CodeBlock* unusedCallerCodeBlock = 0;
-    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, bytecodeOffset, unusedCallerCodeBlock);
+    CallFrame* callerFrame = getCallerInfo(&callFrame->vm(), functionCallFrame, bytecodeOffset, unusedCallerCodeBlock);
     if (!callerFrame)
         return jsNull();
     JSValue caller = callerFrame->callee();
@@ -1452,7 +1452,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     // Skip over function bindings.
     ASSERT(caller.isObject());
     while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
-        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, bytecodeOffset, unusedCallerCodeBlock);
+        callerFrame = getCallerInfo(&callFrame->vm(), callerFrame, bytecodeOffset, unusedCallerCodeBlock);
         if (!callerFrame)
             return jsNull();
         caller = callerFrame->callee();

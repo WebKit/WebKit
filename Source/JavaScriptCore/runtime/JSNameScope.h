@@ -56,15 +56,15 @@ public:
     static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(NameScopeObjectType, StructureFlags), &s_info); }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(NameScopeObjectType, StructureFlags), &s_info); }
 
     static const ClassInfo s_info;
 
 protected:
     void finishCreation(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
     {
-        Base::finishCreation(exec->globalData());
-        m_registerStore.set(exec->globalData(), this, value);
+        Base::finishCreation(exec->vm());
+        m_registerStore.set(exec->vm(), this, value);
         symbolTable()->add(identifier.impl(), SymbolTableEntry(-1, attributes));
     }
 
@@ -73,7 +73,7 @@ protected:
 private:
     JSNameScope(ExecState* exec, JSScope* next)
         : Base(
-            exec->globalData(),
+            exec->vm(),
             exec->lexicalGlobalObject()->nameScopeStructure(),
             reinterpret_cast<Register*>(&m_registerStore + 1),
             next

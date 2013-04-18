@@ -477,7 +477,7 @@ ObjCCallbackFunction::ObjCCallbackFunction(JSC::JSGlobalObject* globalObject, JS
 ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
 {
     ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(*exec->heap())) ObjCCallbackFunction(globalObject, objCCallbackFunctionCallAsFunction, impl);
-    function->finishCreation(exec->globalData(), name);
+    function->finishCreation(exec->vm(), name);
     return function;
 }
 

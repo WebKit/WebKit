@@ -45,7 +45,7 @@ namespace JSC {
 
 class AbstractSamplingCounter;
 class CodeBlock;
-class JSGlobalData;
+class VM;
 
 namespace DFG {
 

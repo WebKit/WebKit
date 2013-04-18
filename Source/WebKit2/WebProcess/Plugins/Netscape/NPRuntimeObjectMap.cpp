@@ -66,7 +66,7 @@ NPRuntimeObjectMap::PluginProtector::~PluginProtector()
 {
 }
 
-NPObject* NPRuntimeObjectMap::getOrCreateNPObject(JSGlobalData& globalData, JSObject* jsObject)
+NPObject* NPRuntimeObjectMap::getOrCreateNPObject(VM& vm, JSObject* jsObject)
 {
     // If this is a JSNPObject, we can just get its underlying NPObject.
     if (jsObject->classInfo() == &JSNPObject::s_info) {
@@ -83,7 +83,7 @@ NPObject* NPRuntimeObjectMap::getOrCreateNPObject(JSGlobalData& globalData, JSOb
         return npJSObject;
     }
 
-    NPJSObject* npJSObject = NPJSObject::create(globalData, this, jsObject);
+    NPJSObject* npJSObject = NPJSObject::create(vm, this, jsObject);
     m_npJSObjects.set(jsObject, npJSObject);
 
     return npJSObject;
@@ -172,7 +172,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     if (value.isObject()) {
-        NPObject* npObject = getOrCreateNPObject(exec->globalData(), asObject(value));
+        NPObject* npObject = getOrCreateNPObject(exec->vm(), asObject(value));
         OBJECT_TO_NPVARIANT(npObject, variant);
         return;
     }
@@ -182,7 +182,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
 
 bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
-    Strong<JSGlobalObject> globalObject(this->globalObject()->globalData(), this->globalObject());
+    Strong<JSGlobalObject> globalObject(this->globalObject()->vm(), this->globalObject());
     if (!globalObject)
         return false;
 

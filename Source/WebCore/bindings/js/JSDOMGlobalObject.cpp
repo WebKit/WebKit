@@ -42,8 +42,8 @@ namespace WebCore {
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
 
-JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWrapperWorld> world, const GlobalObjectMethodTable* globalObjectMethodTable)
-    : JSGlobalObject(globalData, structure, globalObjectMethodTable)
+JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, PassRefPtr<DOMWrapperWorld> world, const GlobalObjectMethodTable* globalObjectMethodTable)
+    : JSGlobalObject(vm, structure, globalObjectMethodTable)
     , m_currentEvent(0)
     , m_world(world)
 {
@@ -54,15 +54,15 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
     static_cast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
-void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData)
+void JSDOMGlobalObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
-void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSObject* thisValue)
+void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
-    Base::finishCreation(globalData, thisValue);
+    Base::finishCreation(vm, thisValue);
     ASSERT(inherits(&s_info));
 }
 

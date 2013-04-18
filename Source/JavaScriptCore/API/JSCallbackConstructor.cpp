@@ -40,7 +40,7 @@ namespace JSC {
 const ClassInfo JSCallbackConstructor::s_info = { "CallbackConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackConstructor) };
 
 JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, Structure* structure, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
-    : JSDestructibleObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->vm(), structure)
     , m_class(jsClass)
     , m_callback(callback)
 {
@@ -48,7 +48,7 @@ JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, Struc
 
 void JSCallbackConstructor::finishCreation(JSGlobalObject* globalObject, JSClassRef jsClass)
 {
-    Base::finishCreation(globalObject->globalData());
+    Base::finishCreation(globalObject->vm());
     ASSERT(inherits(&s_info));
     if (m_class)
         JSClassRetain(jsClass);

@@ -58,7 +58,7 @@ static int memoryUsageKB()
 
     // Extract memory statistics from JavaScriptCore:
     JSC::GlobalMemoryStatistics jscStats = JSC::globalMemoryStatistics();
-    size_t jscHeapUsage = JSDOMWindow::commonJSGlobalData()->heap.capacity();
+    size_t jscHeapUsage = JSDOMWindow::commonVM()->heap.capacity();
     return (mallocUsage + fmStats.committedVMBytes + jscStats.stackBytes + jscStats.JITBytes + jscHeapUsage) >> 10;
 }
 
@@ -70,7 +70,7 @@ static int actualMemoryUsageKB()
 
     // Extract memory statistics from JavaScriptCore:
     JSC::GlobalMemoryStatistics jscStats = JSC::globalMemoryStatistics();
-    size_t jscHeapUsage = JSDOMWindow::commonJSGlobalData()->heap.size();
+    size_t jscHeapUsage = JSDOMWindow::commonVM()->heap.size();
     return (mallocUsage + fmStats.committedVMBytes - fmStats.freeListBytes + jscStats.stackBytes + jscStats.JITBytes + jscHeapUsage) >> 10;
 }
 

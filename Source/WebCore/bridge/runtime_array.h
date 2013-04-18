@@ -42,8 +42,8 @@ public:
         // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
         RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure);
-        runtimeArray->finishCreation(exec->globalData(), array);
-        exec->globalData().heap.addFinalizer(runtimeArray, destroy);
+        runtimeArray->finishCreation(exec->vm(), array);
+        exec->vm().heap.addFinalizer(runtimeArray, destroy);
         return runtimeArray;
     }
 
@@ -73,13 +73,13 @@ public:
         return globalObject->arrayPrototype();
     }
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayClass);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayClass);
     }
 
 protected:
-    void finishCreation(JSGlobalData&, Bindings::Array*);
+    void finishCreation(VM&, Bindings::Array*);
 
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSArray::StructureFlags;
 

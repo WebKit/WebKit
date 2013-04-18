@@ -244,14 +244,14 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        BytecodeGenerator(JSGlobalData&, JSScope*, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
-        BytecodeGenerator(JSGlobalData&, JSScope*, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
-        BytecodeGenerator(JSGlobalData&, JSScope*, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(VM&, JSScope*, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(VM&, JSScope*, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(VM&, JSScope*, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
 
         ~BytecodeGenerator();
         
-        JSGlobalData* globalData() const { return m_globalData; }
-        const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
+        VM* vm() const { return m_vm; }
+        const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
 
         bool isConstructor() { return m_codeBlock->isConstructor(); }
 
@@ -643,7 +643,7 @@ namespace JSC {
         
         UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
         {
-            return UnlinkedFunctionExecutable::create(m_globalData, m_scopeNode->source(), body);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body);
         }
 
         JSString* addStringConstant(const Identifier&);
@@ -819,7 +819,7 @@ namespace JSC {
 
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
-        JSGlobalData* m_globalData;
+        VM* m_vm;
 
         OpcodeID m_lastOpcodeID;
 #ifndef NDEBUG

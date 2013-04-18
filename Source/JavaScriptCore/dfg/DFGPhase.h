@@ -57,7 +57,7 @@ protected:
     // Things you need to have a DFG compiler phase.
     Graph& m_graph;
     
-    JSGlobalData& globalData() { return m_graph.m_globalData; }
+    VM& vm() { return m_graph.m_vm; }
     CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
     CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
     

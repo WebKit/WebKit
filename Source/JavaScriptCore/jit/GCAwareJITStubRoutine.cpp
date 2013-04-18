@@ -29,7 +29,7 @@
 #if ENABLE(JIT)
 
 #include "Heap.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "Operations.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
@@ -37,13 +37,13 @@
 namespace JSC {
 
 GCAwareJITStubRoutine::GCAwareJITStubRoutine(
-    const MacroAssemblerCodeRef& code, JSGlobalData& globalData, bool isClosureCall)
+    const MacroAssemblerCodeRef& code, VM& vm, bool isClosureCall)
     : JITStubRoutine(code)
     , m_mayBeExecuting(false)
     , m_isJettisoned(false)
     , m_isClosureCall(isClosureCall)
 {
-    globalData.heap.m_jitStubRoutines.add(this);
+    vm.heap.m_jitStubRoutines.add(this);
 }
     
 GCAwareJITStubRoutine::~GCAwareJITStubRoutine() { }
@@ -79,10 +79,10 @@ void GCAwareJITStubRoutine::markRequiredObjectsInternal(SlotVisitor&)
 }
 
 MarkingGCAwareJITStubRoutineWithOneObject::MarkingGCAwareJITStubRoutineWithOneObject(
-    const MacroAssemblerCodeRef& code, JSGlobalData& globalData, const JSCell* owner,
+    const MacroAssemblerCodeRef& code, VM& vm, const JSCell* owner,
     JSCell* object)
-    : GCAwareJITStubRoutine(code, globalData)
-    , m_object(globalData, owner, object)
+    : GCAwareJITStubRoutine(code, vm)
+    , m_object(vm, owner, object)
 {
 }
 
@@ -97,7 +97,7 @@ void MarkingGCAwareJITStubRoutineWithOneObject::markRequiredObjectsInternal(Slot
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef& code,
-    JSGlobalData& globalData,
+    VM& vm,
     const JSCell*,
     bool makesCalls)
 {
@@ -105,12 +105,12 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
         return adoptRef(new JITStubRoutine(code));
 
     return static_pointer_cast<JITStubRoutine>(
-        adoptRef(new GCAwareJITStubRoutine(code, globalData)));
+        adoptRef(new GCAwareJITStubRoutine(code, vm)));
 }
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef& code,
-    JSGlobalData& globalData,
+    VM& vm,
     const JSCell* owner,
     bool makesCalls,
     JSCell* object)
@@ -119,7 +119,7 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
         return adoptRef(new JITStubRoutine(code));
     
     return static_pointer_cast<JITStubRoutine>(
-        adoptRef(new MarkingGCAwareJITStubRoutineWithOneObject(code, globalData, owner, object)));
+        adoptRef(new MarkingGCAwareJITStubRoutineWithOneObject(code, vm, owner, object)));
 }
 
 } // namespace JSC

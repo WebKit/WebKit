@@ -50,7 +50,7 @@ class StringImpl;
 namespace JSC {
 
     class HeapRootVisitor;
-    class JSGlobalData;
+    class VM;
     class JSString;
     class SmallStringsStorage;
     class SlotVisitor;
@@ -68,10 +68,10 @@ namespace JSC {
             return m_emptyString;
         }
 
-        JSString* singleCharacterString(JSGlobalData* globalData, unsigned char character)
+        JSString* singleCharacterString(VM* vm, unsigned char character)
         {
             if (!m_singleCharacterStrings[character])
-                createSingleCharacterString(globalData, character);
+                createSingleCharacterString(vm, character);
             return m_singleCharacterStrings[character];
         }
 
@@ -81,7 +81,7 @@ namespace JSC {
 
         JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 
-        void initializeCommonStrings(JSGlobalData&);
+        void initializeCommonStrings(VM&);
         void visitStrongReferences(SlotVisitor&);
 
 #define JSC_COMMON_STRINGS_ACCESSOR_DEFINITION(name) \
@@ -95,10 +95,10 @@ namespace JSC {
     private:
         static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
-        JS_EXPORT_PRIVATE void createEmptyString(JSGlobalData*);
-        JS_EXPORT_PRIVATE void createSingleCharacterString(JSGlobalData*, unsigned char);
+        JS_EXPORT_PRIVATE void createEmptyString(VM*);
+        JS_EXPORT_PRIVATE void createSingleCharacterString(VM*, unsigned char);
 
-        void initialize(JSGlobalData* globalData, JSString*& string, const char* value) const;
+        void initialize(VM* vm, JSString*& string, const char* value) const;
 
         JSString* m_emptyString;
 #define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name;

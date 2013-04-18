@@ -46,7 +46,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     
     wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ImageData, imageData);
     Identifier dataName(exec, "data");
-    wrapper->putDirect(exec->globalData(), dataName, toJS(exec, globalObject, imageData->data()), DontDelete | ReadOnly);
+    wrapper->putDirect(exec->vm(), dataName, toJS(exec, globalObject, imageData->data()), DontDelete | ReadOnly);
     exec->heap()->reportExtraMemoryCost(imageData->data()->length());
     
     return wrapper;

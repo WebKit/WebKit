@@ -36,25 +36,25 @@ namespace JSC {
 
 class EvalCodeBlock;
 class JITCode;
-class JSGlobalData;
+class VM;
 class MacroAssemblerCodePtr;
 class MacroAssemblerCodeRef;
 class ProgramCodeBlock;
 
 namespace LLInt {
 
-void getFunctionEntrypoint(JSGlobalData&, CodeSpecializationKind, JITCode&, MacroAssemblerCodePtr& arityCheck);
-void getEvalEntrypoint(JSGlobalData&, JITCode&);
-void getProgramEntrypoint(JSGlobalData&, JITCode&);
+void getFunctionEntrypoint(VM&, CodeSpecializationKind, JITCode&, MacroAssemblerCodePtr& arityCheck);
+void getEvalEntrypoint(VM&, JITCode&);
+void getProgramEntrypoint(VM&, JITCode&);
 
-inline void getEntrypoint(JSGlobalData& globalData, EvalCodeBlock*, JITCode& jitCode)
+inline void getEntrypoint(VM& vm, EvalCodeBlock*, JITCode& jitCode)
 {
-    getEvalEntrypoint(globalData, jitCode);
+    getEvalEntrypoint(vm, jitCode);
 }
 
-inline void getEntrypoint(JSGlobalData& globalData, ProgramCodeBlock*, JITCode& jitCode)
+inline void getEntrypoint(VM& vm, ProgramCodeBlock*, JITCode& jitCode)
 {
-    getProgramEntrypoint(globalData, jitCode);
+    getProgramEntrypoint(vm, jitCode);
 }
 
 } } // namespace JSC::LLInt

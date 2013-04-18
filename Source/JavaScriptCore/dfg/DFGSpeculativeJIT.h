@@ -1761,7 +1761,7 @@ public:
         // anyway since it was not being updated by JIT'ed code by design.
 
         for (unsigned i = 0; i < sizeof(void*) / 4; i++)
-            m_jit.store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&m_jit.globalData()->topCallFrame) + i * 4);
+            m_jit.store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&m_jit.vm()->topCallFrame) + i * 4);
     }
 #else
     void prepareForExternalCall() { }
@@ -2154,7 +2154,7 @@ public:
     template<typename SizeType>
     MacroAssembler::Jump emitAllocateBasicStorage(SizeType size, GPRReg resultGPR)
     {
-        CopiedAllocator* copiedAllocator = &m_jit.globalData()->heap.storageAllocator();
+        CopiedAllocator* copiedAllocator = &m_jit.vm()->heap.storageAllocator();
         
         m_jit.loadPtr(&copiedAllocator->m_currentRemaining, resultGPR);
         MacroAssembler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, size, resultGPR);
@@ -2201,11 +2201,11 @@ public:
         MarkedAllocator* allocator = 0;
         size_t size = ClassType::allocationSize(0);
         if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithImmortalStructureDestructor(size);
+            allocator = &m_jit.vm()->heap.allocatorForObjectWithImmortalStructureDestructor(size);
         else if (ClassType::needsDestruction)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithNormalDestructor(size);
+            allocator = &m_jit.vm()->heap.allocatorForObjectWithNormalDestructor(size);
         else
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(size);
+            allocator = &m_jit.vm()->heap.allocatorForObjectWithoutDestructor(size);
         m_jit.move(TrustedImmPtr(allocator), scratchGPR1);
         emitAllocateJSObject(resultGPR, scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }

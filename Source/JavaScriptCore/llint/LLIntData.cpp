@@ -62,9 +62,9 @@ void initialize()
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #endif
-void Data::performAssertions(JSGlobalData& globalData)
+void Data::performAssertions(VM& vm)
 {
-    UNUSED_PARAM(globalData);
+    UNUSED_PARAM(vm);
     
     // Assertions to match LowLevelInterpreter.asm.  If you change any of this code, be
     // prepared to change LowLevelInterpreter.asm as well!!

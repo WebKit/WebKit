@@ -42,7 +42,7 @@ public:
     static ProxyRuntimeObject* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, PassRefPtr<ProxyInstance> instance)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
-        // exec->globalData() is also likely wrong.
+        // exec->vm() is also likely wrong.
         JSC::Structure* structure = WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec);
         ProxyRuntimeObject* object = new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, structure, instance);
         object->finishCreation(globalObject);
@@ -51,9 +51,9 @@ public:
 
     ProxyInstance* getInternalProxyInstance() const;
 
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 
     static const JSC::ClassInfo s_info;

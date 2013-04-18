@@ -87,7 +87,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     CodeOrigin codeOrigin;
 
     bool isLinked() { return stub || callee; }
-    void unlink(JSGlobalData&, RepatchBuffer&);
+    void unlink(VM&, RepatchBuffer&);
 
     bool seenOnce()
     {

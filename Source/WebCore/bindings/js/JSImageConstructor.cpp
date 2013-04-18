@@ -43,7 +43,7 @@ void JSImageConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* glob
 {
     Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)

@@ -48,9 +48,9 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 {
 }
 
-void RuntimeMethod::finishCreation(JSGlobalData& globalData, const String& ident)
+void RuntimeMethod::finishCreation(VM& vm, const String& ident)
 {
-    Base::finishCreation(globalData, ident);
+    Base::finishCreation(vm, ident);
     ASSERT(inherits(&s_info));
 }
 

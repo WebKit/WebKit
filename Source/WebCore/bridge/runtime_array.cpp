@@ -38,14 +38,14 @@ namespace JSC {
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
 RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
-    : JSArray(exec->globalData(), structure, 0)
+    : JSArray(exec->vm(), structure, 0)
     , m_array(0)
 {
 }
 
-void RuntimeArray::finishCreation(JSGlobalData& globalData, Bindings::Array* array)
+void RuntimeArray::finishCreation(VM& vm, Bindings::Array* array)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
     m_array = array;
 }

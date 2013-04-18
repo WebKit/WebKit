@@ -46,9 +46,9 @@ namespace WebCore {
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(DOMConstructorObject);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(DOMConstructorWithDocument);
 
-const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const JSC::HashTable* staticTable)
+const JSC::HashTable* getHashTableForGlobalData(VM& vm, const JSC::HashTable* staticTable)
 {
-    return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
+    return DOMObjectHashTableMap::mapFor(vm).get(staticTable);
 }
 
 JSValue jsStringOrNull(ExecState* exec, const String& s)
@@ -150,7 +150,7 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
     int lineNumber = 0;
     String exceptionSourceURL;
 
-    RefCountedArray<StackFrame> stackTrace = exec->globalData().exceptionStack;
+    RefCountedArray<StackFrame> stackTrace = exec->vm().exceptionStack;
     exec->clearException();
     exec->clearSupplementaryExceptionInfo();
 
@@ -268,7 +268,7 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
 {
     JSDOMStructureMap& structures = globalObject->structures();
     ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->value.get();
+    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->vm(), globalObject, structure)).iterator->value.get();
 }
 
 static const int32_t kMaxInt32 = 0x7fffffff;

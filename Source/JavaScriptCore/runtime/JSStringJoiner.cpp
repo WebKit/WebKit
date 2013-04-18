@@ -124,7 +124,7 @@ JSValue JSStringJoiner::build(ExecState* exec)
     if (!outputStringImpl)
         return throwOutOfMemoryError(exec);
 
-    return JSString::create(exec->globalData(), outputStringImpl.release());
+    return JSString::create(exec->vm(), outputStringImpl.release());
 }
 
 }

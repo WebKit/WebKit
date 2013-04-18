@@ -38,7 +38,7 @@
 namespace JSC {
 
     struct RegExpRepresentation;
-    class JSGlobalData;
+    class VM;
 
     JS_EXPORT_PRIVATE RegExpFlags regExpFlags(const String&);
 
@@ -46,7 +46,7 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        JS_EXPORT_PRIVATE static RegExp* create(JSGlobalData&, const String& pattern, RegExpFlags);
+        JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, RegExpFlags);
         static const bool needsDestruction = true;
         static const bool hasImmortalStructure = true;
         static void destroy(JSCell*);
@@ -60,8 +60,8 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        JS_EXPORT_PRIVATE int match(JSGlobalData&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
-        MatchResult match(JSGlobalData&, const String&, unsigned startOffset);
+        JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
+        MatchResult match(VM&, const String&, unsigned startOffset);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
         bool hasCode()
@@ -75,9 +75,9 @@ namespace JSC {
         void printTraceData();
 #endif
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, 0), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(LeafType, 0), &s_info);
         }
         
         static const ClassInfo s_info;
@@ -85,13 +85,13 @@ namespace JSC {
         RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 
     protected:
-        void finishCreation(JSGlobalData&);
+        void finishCreation(VM&);
 
     private:
         friend class RegExpCache;
-        RegExp(JSGlobalData&, const String&, RegExpFlags);
+        RegExp(VM&, const String&, RegExpFlags);
 
-        static RegExp* createWithoutCaching(JSGlobalData&, const String&, RegExpFlags);
+        static RegExp* createWithoutCaching(VM&, const String&, RegExpFlags);
 
         enum RegExpState {
             ParseError,
@@ -100,11 +100,11 @@ namespace JSC {
             NotCompiled
         } m_state;
 
-        void compile(JSGlobalData*, Yarr::YarrCharSize);
-        void compileIfNecessary(JSGlobalData&, Yarr::YarrCharSize);
+        void compile(VM*, Yarr::YarrCharSize);
+        void compileIfNecessary(VM&, Yarr::YarrCharSize);
 
-        void compileMatchOnly(JSGlobalData*, Yarr::YarrCharSize);
-        void compileIfNecessaryMatchOnly(JSGlobalData&, Yarr::YarrCharSize);
+        void compileMatchOnly(VM*, Yarr::YarrCharSize);
+        void compileIfNecessaryMatchOnly(VM&, Yarr::YarrCharSize);
 
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);

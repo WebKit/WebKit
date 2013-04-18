@@ -496,7 +496,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
         if (Settings* settings = activeFrame->settings()) {
             if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
                 if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, impl()))
-                    putDirect(exec->globalData(), Identifier(exec, "location"), value);
+                    putDirect(exec->vm(), Identifier(exec, "location"), value);
                 return;
             }
         }
@@ -587,14 +587,14 @@ inline void DialogHandler::dialogCreated(DOMWindow* dialog)
     m_frame = dialog->frame();
     // FIXME: This looks like a leak between the normal world and an isolated
     //        world if dialogArguments comes from an isolated world.
-    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->globalData()));
+    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->vm()));
     if (JSValue dialogArguments = m_exec->argument(1))
-        globalObject->putDirect(m_exec->globalData(), Identifier(m_exec, "dialogArguments"), dialogArguments);
+        globalObject->putDirect(m_exec->vm(), Identifier(m_exec, "dialogArguments"), dialogArguments);
 }
 
 inline JSValue DialogHandler::returnValue() const
 {
-    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->globalData()));
+    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->vm()));
     if (!globalObject)
         return jsUndefined();
     Identifier identifier(m_exec, "returnValue");

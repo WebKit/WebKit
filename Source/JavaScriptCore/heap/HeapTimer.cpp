@@ -57,12 +57,12 @@ static void releaseAPILock(const void* info)
     static_cast<JSLock*>(const_cast<void*>(info))->deref();
 }
 
-HeapTimer::HeapTimer(JSGlobalData* globalData, CFRunLoopRef runLoop)
-    : m_globalData(globalData)
+HeapTimer::HeapTimer(VM* vm, CFRunLoopRef runLoop)
+    : m_vm(vm)
     , m_runLoop(runLoop)
 {
     memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
-    m_context.info = &globalData->apiLock();
+    m_context.info = &vm->apiLock();
     m_context.retain = retainAPILock;
     m_context.release = releaseAPILock;
     m_timer.adoptCF(CFRunLoopTimerCreate(0, s_decade, s_decade, 0, 0, HeapTimer::timerDidFire, &m_context));
@@ -89,23 +89,23 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
     JSLock* apiLock = static_cast<JSLock*>(context);
     apiLock->lock();
 
-    JSGlobalData* globalData = apiLock->globalData();
-    // The JSGlobalData has been destroyed, so we should just give up.
-    if (!globalData) {
+    VM* vm = apiLock->vm();
+    // The VM has been destroyed, so we should just give up.
+    if (!vm) {
         apiLock->unlock();
         return;
     }
 
     HeapTimer* heapTimer = 0;
-    if (globalData->heap.activityCallback()->m_timer.get() == timer)
-        heapTimer = globalData->heap.activityCallback();
-    else if (globalData->heap.sweeper()->m_timer.get() == timer)
-        heapTimer = globalData->heap.sweeper();
+    if (vm->heap.activityCallback()->m_timer.get() == timer)
+        heapTimer = vm->heap.activityCallback();
+    else if (vm->heap.sweeper()->m_timer.get() == timer)
+        heapTimer = vm->heap.sweeper();
     else
         RELEASE_ASSERT_NOT_REACHED();
 
     {
-        APIEntryShim shim(globalData);
+        APIEntryShim shim(vm);
         heapTimer->doWork();
     }
 
@@ -114,8 +114,8 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
 
 #elif PLATFORM(BLACKBERRY)
 
-HeapTimer::HeapTimer(JSGlobalData* globalData)
-    : m_globalData(globalData)
+HeapTimer::HeapTimer(VM* vm)
+    : m_vm(vm)
     , m_timer(this, &HeapTimer::timerDidFire)
 {
     // FIXME: Implement HeapTimer for other threads.
@@ -142,8 +142,8 @@ void HeapTimer::invalidate()
 
 #elif PLATFORM(QT)
 
-HeapTimer::HeapTimer(JSGlobalData* globalData)
-    : m_globalData(globalData)
+HeapTimer::HeapTimer(VM* vm)
+    : m_vm(vm)
     , m_newThread(0)
     , m_mutex(QMutex::NonRecursive)
 {
@@ -166,7 +166,7 @@ void HeapTimer::timerEvent(QTimerEvent*)
         return;
     }
 
-    APIEntryShim shim(m_globalData);
+    APIEntryShim shim(m_vm);
     doWork();
 }
 
@@ -191,8 +191,8 @@ void HeapTimer::synchronize()
 }
 
 #else
-HeapTimer::HeapTimer(JSGlobalData* globalData)
-    : m_globalData(globalData)
+HeapTimer::HeapTimer(VM* vm)
+    : m_vm(vm)
 {
 }
 

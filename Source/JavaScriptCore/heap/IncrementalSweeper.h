@@ -61,7 +61,7 @@ private:
     Vector<MarkedBlock*>& m_blocksToSweep;
 #else
     
-    IncrementalSweeper(JSGlobalData*);
+    IncrementalSweeper(VM*);
     
 #endif
 };

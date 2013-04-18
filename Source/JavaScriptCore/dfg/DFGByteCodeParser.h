@@ -33,7 +33,7 @@
 namespace JSC {
 
 class CodeBlock;
-class JSGlobalData;
+class VM;
 
 namespace DFG {
 

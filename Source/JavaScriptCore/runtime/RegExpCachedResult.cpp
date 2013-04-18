@@ -42,8 +42,8 @@ void RegExpCachedResult::visitChildren(SlotVisitor& visitor)
 RegExpMatchesArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 {
     if (m_result) {
-        m_reifiedInput.set(exec->globalData(), owner, m_lastInput.get());
-        m_reifiedResult.set(exec->globalData(), owner, RegExpMatchesArray::create(exec, m_lastInput.get(), m_lastRegExp.get(), m_result));
+        m_reifiedInput.set(exec->vm(), owner, m_lastInput.get());
+        m_reifiedResult.set(exec->vm(), owner, RegExpMatchesArray::create(exec, m_lastInput.get(), m_lastRegExp.get(), m_result));
         m_result = MatchResult::failed();
     }
     return m_reifiedResult.get();
@@ -54,7 +54,7 @@ void RegExpCachedResult::setInput(ExecState* exec, JSObject* owner, JSString* in
     // Make sure we're reified, otherwise m_reifiedInput will be ignored.
     lastResult(exec, owner);
     ASSERT(!m_result);
-    m_reifiedInput.set(exec->globalData(), owner, input);
+    m_reifiedInput.set(exec->vm(), owner, input);
 }
 
 } // namespace JSC

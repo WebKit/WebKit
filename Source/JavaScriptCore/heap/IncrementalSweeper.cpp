@@ -46,7 +46,7 @@ static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 #if USE(CF)
     
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
-    : HeapTimer(heap->globalData(), runLoop)
+    : HeapTimer(heap->vm(), runLoop)
     , m_currentBlockToSweepIndex(0)
     , m_blocksToSweep(heap->m_blockSnapshot)
 {
@@ -70,7 +70,7 @@ void IncrementalSweeper::cancelTimer()
 #elif PLATFORM(BLACKBERRY) || PLATFORM(QT)
    
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
-    : HeapTimer(heap->globalData())
+    : HeapTimer(heap->vm())
     , m_currentBlockToSweepIndex(0)
     , m_blocksToSweep(heap->m_blockSnapshot)
 {
@@ -128,7 +128,7 @@ void IncrementalSweeper::sweepNextBlock()
             continue;
 
         block->sweep();
-        m_globalData->heap.objectSpace().freeOrShrinkBlock(block);
+        m_vm->heap.objectSpace().freeOrShrinkBlock(block);
         return;
     }
 }
@@ -144,14 +144,14 @@ void IncrementalSweeper::willFinishSweeping()
 {
     m_currentBlockToSweepIndex = 0;
     m_blocksToSweep.clear();
-    if (m_globalData)
+    if (m_vm)
         cancelTimer();
 }
 
 #else
 
-IncrementalSweeper::IncrementalSweeper(JSGlobalData* globalData)
-    : HeapTimer(globalData)
+IncrementalSweeper::IncrementalSweeper(VM* vm)
+    : HeapTimer(vm)
 {
 }
 
@@ -161,7 +161,7 @@ void IncrementalSweeper::doWork()
 
 PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 {
-    return adoptPtr(new IncrementalSweeper(heap->globalData()));
+    return adoptPtr(new IncrementalSweeper(heap->vm()));
 }
 
 void IncrementalSweeper::startSweeping(Vector<MarkedBlock*>&)

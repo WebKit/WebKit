@@ -47,7 +47,7 @@ class ScriptExecutionContext;
 class WorkerContext;
 
 // The idea is to expose "state-like" methods (hadException, and any other
-// methods where ExecState just dips into globalData) of JSC::ExecState as a
+// methods where ExecState just dips into vm) of JSC::ExecState as a
 // separate abstraction.
 // For now, the separation is purely by convention.
 typedef JSC::ExecState ScriptState;

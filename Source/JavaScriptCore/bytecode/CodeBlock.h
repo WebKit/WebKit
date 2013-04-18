@@ -377,14 +377,14 @@ namespace JSC {
         void appendWeakReference(JSCell* target)
         {
             createDFGDataIfNecessary();
-            m_dfgData->weakReferences.append(WriteBarrier<JSCell>(*globalData(), ownerExecutable(), target));
+            m_dfgData->weakReferences.append(WriteBarrier<JSCell>(*vm(), ownerExecutable(), target));
         }
         
         void appendWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
         {
             createDFGDataIfNecessary();
             m_dfgData->transitions.append(
-                WeakReferenceTransition(*globalData(), ownerExecutable(), codeOrigin, from, to));
+                WeakReferenceTransition(*vm(), ownerExecutable(), codeOrigin, from, to));
         }
         
         DFG::MinifiedGraph& minifiedDFG()
@@ -428,7 +428,7 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
             if (m_jitCode.jitType() == JITCode::DFGJIT) {
                 createDFGDataIfNecessary();
-                m_globalData->heap.m_dfgCodeBlocks.m_set.add(this);
+                m_vm->heap.m_dfgCodeBlocks.m_set.add(this);
             }
 #endif
         }
@@ -485,8 +485,8 @@ namespace JSC {
 
         ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
-        void setGlobalData(JSGlobalData* globalData) { m_globalData = globalData; }
-        JSGlobalData* globalData() { return m_globalData; }
+        void setVM(VM* vm) { m_vm = vm; }
+        VM* vm() { return m_vm; }
 
         void setThisRegister(int thisRegister) { m_thisRegister = thisRegister; }
         int thisRegister() const { return m_thisRegister; }
@@ -613,7 +613,7 @@ namespace JSC {
                 getValueProfileBytecodeOffset<ValueProfile>);
             ASSERT(result->m_bytecodeOffset != -1);
             ASSERT(instructions()[bytecodeOffset + opcodeLength(
-                       m_globalData->interpreter->getOpcodeID(
+                       m_vm->interpreter->getOpcodeID(
                            instructions()[
                                bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
@@ -816,7 +816,7 @@ namespace JSC {
         {
             unsigned result = m_constantRegisters.size();
             m_constantRegisters.append(WriteBarrier<Unknown>());
-            m_constantRegisters.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), v);
+            m_constantRegisters.last().set(m_globalObject->vm(), m_ownerExecutable.get(), v);
             return result;
         }
 
@@ -1093,7 +1093,7 @@ namespace JSC {
             size_t count = constants.size();
             m_constantRegisters.resize(count);
             for (size_t i = 0; i < count; i++)
-                m_constantRegisters[i].set(*m_globalData, ownerExecutable(), constants[i].get());
+                m_constantRegisters[i].set(*m_vm, ownerExecutable(), constants[i].get());
         }
 
         void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&);
@@ -1159,7 +1159,7 @@ namespace JSC {
         WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
         int m_numParameters;
         WriteBarrier<ScriptExecutable> m_ownerExecutable;
-        JSGlobalData* m_globalData;
+        VM* m_vm;
 
         RefCountedArray<Instruction> m_instructions;
         int m_thisRegister;
@@ -1192,12 +1192,12 @@ namespace JSC {
         struct WeakReferenceTransition {
             WeakReferenceTransition() { }
             
-            WeakReferenceTransition(JSGlobalData& globalData, JSCell* owner, JSCell* codeOrigin, JSCell* from, JSCell* to)
-                : m_from(globalData, owner, from)
-                , m_to(globalData, owner, to)
+            WeakReferenceTransition(VM& vm, JSCell* owner, JSCell* codeOrigin, JSCell* from, JSCell* to)
+                : m_from(vm, owner, from)
+                , m_to(vm, owner, to)
             {
                 if (!!codeOrigin)
-                    m_codeOrigin.set(globalData, owner, codeOrigin);
+                    m_codeOrigin.set(vm, owner, codeOrigin);
             }
 
             WriteBarrier<JSCell> m_codeOrigin;

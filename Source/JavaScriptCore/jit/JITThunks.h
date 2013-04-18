@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 class NativeExecutable;
 
 class JITThunks {
@@ -51,13 +51,13 @@ public:
     JITThunks();
     ~JITThunks();
 
-    MacroAssemblerCodePtr ctiNativeCall(JSGlobalData*);
-    MacroAssemblerCodePtr ctiNativeConstruct(JSGlobalData*);
+    MacroAssemblerCodePtr ctiNativeCall(VM*);
+    MacroAssemblerCodePtr ctiNativeConstruct(VM*);
 
-    MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
+    MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
 
-    NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, NativeFunction constructor);
-    NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, Intrinsic);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, ThunkGenerator, Intrinsic);
 
     void clearHostFunctionStubs();
 

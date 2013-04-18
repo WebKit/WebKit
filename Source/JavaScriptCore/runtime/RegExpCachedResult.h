@@ -44,17 +44,17 @@ namespace JSC {
     // m_reifiedResult and m_reifiedInput hold the cached results.
     class RegExpCachedResult {
     public:
-        RegExpCachedResult(JSGlobalData& globalData, JSObject* owner, RegExp* emptyRegExp)
+        RegExpCachedResult(VM& vm, JSObject* owner, RegExp* emptyRegExp)
             : m_result(0, 0)
         {
-            m_lastInput.set(globalData, owner, jsEmptyString(&globalData));
-            m_lastRegExp.set(globalData, owner, emptyRegExp);
+            m_lastInput.set(vm, owner, jsEmptyString(&vm));
+            m_lastRegExp.set(vm, owner, emptyRegExp);
         }
 
-        ALWAYS_INLINE void record(JSGlobalData& globalData, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
+        ALWAYS_INLINE void record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
         {
-            m_lastRegExp.set(globalData, owner, regExp);
-            m_lastInput.set(globalData, owner, input);
+            m_lastRegExp.set(vm, owner, regExp);
+            m_lastInput.set(vm, owner, input);
             m_result = result;
         }
 

@@ -59,11 +59,11 @@ public:
     int localDepth();
 
     JSGlobalObject* globalObject();
-    JSGlobalData* globalData();
+    VM* vm();
     JSObject* globalThis();
 
 protected:
-    JSScope(JSGlobalData&, Structure*, JSScope* next);
+    JSScope(VM&, Structure*, JSScope* next);
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
@@ -80,9 +80,9 @@ private:
     template <ReturnValues> static JSObject* resolveContainingScope(CallFrame*, const Identifier&, PropertySlot&, ResolveOperations*, PutToBaseOperation*, bool isStrict);
 };
 
-inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSScope* next)
-    : Base(globalData, structure)
-    , m_next(globalData, this, next, WriteBarrier<JSScope>::MayBeNull)
+inline JSScope::JSScope(VM& vm, Structure* structure, JSScope* next)
+    : Base(vm, structure)
+    , m_next(vm, this, next, WriteBarrier<JSScope>::MayBeNull)
 {
 }
 
@@ -127,9 +127,9 @@ inline JSGlobalObject* JSScope::globalObject()
     return structure()->globalObject();
 }
 
-inline JSGlobalData* JSScope::globalData()
+inline VM* JSScope::vm()
 { 
-    return Heap::heap(this)->globalData();
+    return Heap::heap(this)->vm();
 }
 
 inline Register& Register::operator=(JSScope* scope)
@@ -143,10 +143,10 @@ inline JSScope* Register::scope() const
     return jsCast<JSScope*>(jsValue());
 }
 
-inline JSGlobalData& ExecState::globalData() const
+inline VM& ExecState::vm() const
 {
-    ASSERT(scope()->globalData());
-    return *scope()->globalData();
+    ASSERT(scope()->vm());
+    return *scope()->vm();
 }
 
 inline JSGlobalObject* ExecState::lexicalGlobalObject() const

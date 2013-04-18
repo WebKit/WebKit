@@ -132,7 +132,7 @@ public:
         WeakSet::deallocate(impl);
     }
 
-    inline void add(JSGlobalData&, Structure*);
+    inline void add(VM&, Structure*);
     inline bool contains(StringImpl* rep, unsigned attributes) const;
     inline Structure* get(StringImpl* rep, unsigned attributes) const;
 
@@ -177,7 +177,7 @@ private:
         return 0;
     }
     
-    void setSingleTransition(JSGlobalData&, Structure* structure)
+    void setSingleTransition(VM&, Structure* structure)
     {
         ASSERT(isUsingSingleSlot());
         if (WeakImpl* impl = this->weakImpl())

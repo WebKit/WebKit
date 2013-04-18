@@ -50,7 +50,7 @@ static bool get(ExecState* exec, JSValue object, const String& keyPathElement, J
     }
     if (!object.isObject())
         return false;
-    Identifier identifier(&exec->globalData(), keyPathElement.utf8().data());
+    Identifier identifier(&exec->vm(), keyPathElement.utf8().data());
     if (!asObject(object)->hasProperty(exec, identifier))
         return false;
     result = asObject(object)->get(exec, identifier);
@@ -67,8 +67,8 @@ static bool set(ExecState* exec, JSValue& object, const String& keyPathElement, 
 {
     if (!canSet(object, keyPathElement))
         return false;
-    Identifier identifier(&exec->globalData(), keyPathElement.utf8().data());
-    asObject(object)->putDirect(exec->globalData(), identifier, jsValue);
+    Identifier identifier(&exec->vm(), keyPathElement.utf8().data());
+    asObject(object)->putDirect(exec->vm(), identifier, jsValue);
     return true;
 }
 
@@ -300,7 +300,7 @@ ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassRefPtr<Serial
     RefPtr<SerializedScriptValue> serializedValue = prpValue;
     if (serializedValue)
         return ScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
-    return ScriptValue(exec->globalData(), jsNull());
+    return ScriptValue(exec->vm(), jsNull());
 }
 
 ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer)
@@ -314,13 +314,13 @@ ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<
         RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(value);
         return ScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
     }
-    return ScriptValue(exec->globalData(), jsNull());
+    return ScriptValue(exec->vm(), jsNull());
 }
 
 ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key)
 {
     ExecState* exec = requestState->exec();
-    return ScriptValue(exec->globalData(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
+    return ScriptValue(exec->vm(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
 }
 
 PassRefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState* requestState, const ScriptValue& scriptValue)

@@ -552,8 +552,8 @@ void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebuggin
 
 size_t InjectedBundle::javaScriptObjectsCount()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    return JSDOMWindow::commonVM()->heap.objectCount();
 }
 
 void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)

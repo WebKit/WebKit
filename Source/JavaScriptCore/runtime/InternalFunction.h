@@ -41,9 +41,9 @@ namespace JSC {
         const String displayName(ExecState*);
         const String calculatedDisplayName(ExecState*);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
         { 
-            return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
+            return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
         }
 
     protected:
@@ -51,7 +51,7 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE InternalFunction(JSGlobalObject*, Structure*);
 
-        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, const String& name);
+        JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
 
         static CallType getCallData(JSCell*, CallData&);
     };

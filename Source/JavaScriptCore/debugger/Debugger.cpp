@@ -111,34 +111,34 @@ void Debugger::detach(JSGlobalObject* globalObject)
     globalObject->setDebugger(0);
 }
 
-void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
+void Debugger::recompileAllJSFunctions(VM* vm)
 {
     // If JavaScript is running, it's not safe to recompile, since we'll end
     // up throwing away code that is live on the stack.
-    ASSERT(!globalData->dynamicGlobalObject);
-    if (globalData->dynamicGlobalObject)
+    ASSERT(!vm->dynamicGlobalObject);
+    if (vm->dynamicGlobalObject)
         return;
 
     Recompiler recompiler(this);
-    globalData->heap.objectSpace().forEachLiveCell(recompiler);
+    vm->heap.objectSpace().forEachLiveCell(recompiler);
 }
 
 JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGlobalObject* globalObject)
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
-    JSGlobalData& globalData = globalObject->globalData();
+    VM& vm = globalObject->vm();
 
     EvalExecutable* eval = EvalExecutable::create(globalCallFrame, makeSource(script), false);
     if (!eval) {
-        exception = globalData.exception;
-        globalData.exception = JSValue();
+        exception = vm.exception;
+        vm.exception = JSValue();
         return exception;
     }
 
-    JSValue result = globalData.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scope());
-    if (globalData.exception) {
-        exception = globalData.exception;
-        globalData.exception = JSValue();
+    JSValue result = vm.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scope());
+    if (vm.exception) {
+        exception = vm.exception;
+        vm.exception = JSValue();
     }
     ASSERT(result);
     return result;

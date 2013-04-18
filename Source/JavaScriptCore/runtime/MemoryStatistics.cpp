@@ -27,7 +27,7 @@
 #include "MemoryStatistics.h"
 
 #include "ExecutableAllocator.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "JSStack.h"
 
 namespace JSC {

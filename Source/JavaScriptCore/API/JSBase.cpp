@@ -101,14 +101,14 @@ void JSGarbageCollect(JSContextRef ctx)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec, false);
 
-    exec->globalData().heap.reportAbandonedObjectGraph();
+    exec->vm().heap.reportAbandonedObjectGraph();
 }
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    exec->globalData().heap.reportExtraMemoryCost(size);
+    exec->vm().heap.reportExtraMemoryCost(size);
 }
 
 extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -120,5 +120,5 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
 
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    exec->globalData().heap.collectAllGarbage();
+    exec->vm().heap.collectAllGarbage();
 }

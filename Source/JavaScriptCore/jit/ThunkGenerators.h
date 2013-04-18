@@ -31,26 +31,26 @@
 #if ENABLE(JIT)
 namespace JSC {
 
-MacroAssemblerCodeRef linkCallGenerator(JSGlobalData*);
-MacroAssemblerCodeRef linkConstructGenerator(JSGlobalData*);
-MacroAssemblerCodeRef linkClosureCallGenerator(JSGlobalData*);
-MacroAssemblerCodeRef virtualCallGenerator(JSGlobalData*);
-MacroAssemblerCodeRef virtualConstructGenerator(JSGlobalData*);
-MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData*);
-MacroAssemblerCodeRef nativeCallGenerator(JSGlobalData*);
-MacroAssemblerCodeRef nativeConstructGenerator(JSGlobalData*);
+MacroAssemblerCodeRef linkCallGenerator(VM*);
+MacroAssemblerCodeRef linkConstructGenerator(VM*);
+MacroAssemblerCodeRef linkClosureCallGenerator(VM*);
+MacroAssemblerCodeRef virtualCallGenerator(VM*);
+MacroAssemblerCodeRef virtualConstructGenerator(VM*);
+MacroAssemblerCodeRef stringLengthTrampolineGenerator(VM*);
+MacroAssemblerCodeRef nativeCallGenerator(VM*);
+MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 
-MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef absThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef expThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef logThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef powThunkGenerator(JSGlobalData*);
+MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
+MacroAssemblerCodeRef charAtThunkGenerator(VM*);
+MacroAssemblerCodeRef fromCharCodeThunkGenerator(VM*);
+MacroAssemblerCodeRef absThunkGenerator(VM*);
+MacroAssemblerCodeRef ceilThunkGenerator(VM*);
+MacroAssemblerCodeRef expThunkGenerator(VM*);
+MacroAssemblerCodeRef floorThunkGenerator(VM*);
+MacroAssemblerCodeRef logThunkGenerator(VM*);
+MacroAssemblerCodeRef roundThunkGenerator(VM*);
+MacroAssemblerCodeRef sqrtThunkGenerator(VM*);
+MacroAssemblerCodeRef powThunkGenerator(VM*);
 
 }
 #endif // ENABLE(JIT)

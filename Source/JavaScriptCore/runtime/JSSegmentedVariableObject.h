@@ -82,14 +82,14 @@ public:
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | JSSymbolTableObject::StructureFlags;
 
-    JSSegmentedVariableObject(JSGlobalData& globalData, Structure* structure, JSScope* scope)
-        : JSSymbolTableObject(globalData, structure, scope)
+    JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)
+        : JSSymbolTableObject(vm, structure, scope)
     {
     }
 
-    void finishCreation(JSGlobalData& globalData)
+    void finishCreation(VM& vm)
     {
-        Base::finishCreation(globalData);
+        Base::finishCreation(vm);
     }
 
     SegmentedVector<WriteBarrier<Unknown>, 16> m_registers;

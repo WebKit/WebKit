@@ -83,7 +83,7 @@ JSObject* Instance::createRuntimeObject(ExecState* exec)
     JSLockHolder lock(exec);
     RuntimeObject* newObject = newRuntimeObject(exec);
     m_runtimeObject = PassWeak<RuntimeObject>(newObject);
-    m_rootObject->addRuntimeObject(exec->globalData(), newObject);
+    m_rootObject->addRuntimeObject(exec->vm(), newObject);
     return newObject;
 }
 

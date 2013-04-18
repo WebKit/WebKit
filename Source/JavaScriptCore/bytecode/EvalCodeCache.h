@@ -57,7 +57,7 @@ namespace JSC {
                 return 0;
             
             if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scope->begin()->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
-                m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->globalData(), owner, evalExecutable));
+                m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
             
             return evalExecutable;
         }

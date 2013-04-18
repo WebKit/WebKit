@@ -40,16 +40,16 @@ class Arguments : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
+    static Arguments* create(VM& vm, CallFrame* callFrame)
     {
-        Arguments* arguments = new (NotNull, allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
         arguments->finishCreation(callFrame);
         return arguments;
     }
         
-    static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+    static Arguments* create(VM& vm, CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     {
-        Arguments* arguments = new (NotNull, allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
         arguments->finishCreation(callFrame, inlineCallFrame);
         return arguments;
     }
@@ -62,7 +62,7 @@ private:
     Arguments(CallFrame*);
     Arguments(CallFrame*, NoParametersType);
         
-    void tearOffForInlineCallFrame(JSGlobalData& globalData, Register*, InlineCallFrame*);
+    void tearOffForInlineCallFrame(VM& vm, Register*, InlineCallFrame*);
 
 public:
     static const ClassInfo s_info;
@@ -84,9 +84,9 @@ public:
     bool isTornOff() const { return m_registerArray; }
     void didTearOffActivation(ExecState*, JSActivation*);
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
         
 protected:
@@ -110,7 +110,7 @@ private:
     void createStrictModeCalleeIfNecessary(ExecState*);
 
     bool isArgument(size_t);
-    bool trySetArgument(JSGlobalData&, size_t argument, JSValue);
+    bool trySetArgument(VM&, size_t argument, JSValue);
     JSValue tryGetArgument(size_t argument);
     bool isDeletedArgument(size_t);
     bool tryDeleteArgument(size_t);
@@ -148,12 +148,12 @@ inline Arguments* asArguments(JSValue value)
 }
 
 inline Arguments::Arguments(CallFrame* callFrame)
-    : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+    : JSDestructibleObject(callFrame->vm(), callFrame->lexicalGlobalObject()->argumentsStructure())
 {
 }
 
 inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
-    : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+    : JSDestructibleObject(callFrame->vm(), callFrame->lexicalGlobalObject()->argumentsStructure())
 {
 }
 
@@ -177,11 +177,11 @@ inline bool Arguments::tryDeleteArgument(size_t argument)
     return true;
 }
 
-inline bool Arguments::trySetArgument(JSGlobalData& globalData, size_t argument, JSValue value)
+inline bool Arguments::trySetArgument(VM& vm, size_t argument, JSValue value)
 {
     if (!isArgument(argument))
         return false;
-    this->argument(argument).set(globalData, this, value);
+    this->argument(argument).set(vm, this, value);
     return true;
 }
 
@@ -227,13 +227,13 @@ inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
 
 inline void Arguments::finishCreation(CallFrame* callFrame)
 {
-    Base::finishCreation(callFrame->globalData());
+    Base::finishCreation(callFrame->vm());
     ASSERT(inherits(&s_info));
 
     JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
     m_numArguments = callFrame->argumentCount();
     m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers());
-    m_callee.set(callFrame->globalData(), this, callee);
+    m_callee.set(callFrame->vm(), this, callee);
     m_overrodeLength = false;
     m_overrodeCallee = false;
     m_overrodeCaller = false;
@@ -256,13 +256,13 @@ inline void Arguments::finishCreation(CallFrame* callFrame)
 
 inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
 {
-    Base::finishCreation(callFrame->globalData());
+    Base::finishCreation(callFrame->vm());
     ASSERT(inherits(&s_info));
 
     JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
     m_numArguments = inlineCallFrame->arguments.size() - 1;
     m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + inlineCallFrame->stackOffset;
-    m_callee.set(callFrame->globalData(), this, callee);
+    m_callee.set(callFrame->vm(), this, callee);
     m_overrodeLength = false;
     m_overrodeCallee = false;
     m_overrodeCaller = false;

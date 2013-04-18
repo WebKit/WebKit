@@ -31,7 +31,7 @@
 #if JSC_OBJC_API_ENABLED
 
 namespace JSC {
-class JSGlobalData;
+class VM;
 class SlotVisitor;
 }
 
@@ -50,7 +50,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 @end
 #endif // defined(__OBJC__)
 
-void scanExternalObjectGraph(JSC::JSGlobalData&, JSC::SlotVisitor&, void* root);
+void scanExternalObjectGraph(JSC::VM&, JSC::SlotVisitor&, void* root);
 
 #endif
 

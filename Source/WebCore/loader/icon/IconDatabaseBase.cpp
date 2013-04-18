@@ -47,13 +47,13 @@ bool IconDatabaseBase::open(const String&, const String&)
     return false;
 }
 
-static IconDatabaseBase* globalDatabase = 0;
+static IconDatabaseBase* vmbase = 0;
 
 // Functions to get/set the global icon database.
 IconDatabaseBase& iconDatabase()
 {
-    if (globalDatabase)
-        return *globalDatabase;
+    if (vmbase)
+        return *vmbase;
 
     static IconDatabaseBase* defaultDatabase = 0;        
     if (!defaultDatabase)
@@ -64,7 +64,7 @@ IconDatabaseBase& iconDatabase()
 
 void setGlobalIconDatabase(IconDatabaseBase* newGlobalDatabase)
 {
-    globalDatabase = newGlobalDatabase;
+    vmbase = newGlobalDatabase;
 }
 
 bool documentCanHaveIcon(const String& documentURL)

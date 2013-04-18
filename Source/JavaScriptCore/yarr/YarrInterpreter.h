@@ -359,7 +359,7 @@ public:
     bool m_ignoreCase;
     bool m_multiline;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
-    // with a JSGlobalData.  Cache a pointer to out JSGlobalData's m_regExpAllocator.
+    // with a VM.  Cache a pointer to out VM's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;
 
     CharacterClass* newlineCharacterClass;

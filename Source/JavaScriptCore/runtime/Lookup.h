@@ -121,24 +121,24 @@ namespace JSC {
             return result;
         }
 
-        ALWAYS_INLINE void initializeIfNeeded(JSGlobalData* globalData) const
+        ALWAYS_INLINE void initializeIfNeeded(VM* vm) const
         {
             if (!table)
-                createTable(globalData);
+                createTable(vm);
         }
 
         ALWAYS_INLINE void initializeIfNeeded(ExecState* exec) const
         {
             if (!table)
-                createTable(&exec->globalData());
+                createTable(&exec->vm());
         }
 
         JS_EXPORT_PRIVATE void deleteTable() const;
 
         // Find an entry in the table, and return the entry.
-        ALWAYS_INLINE const HashEntry* entry(JSGlobalData* globalData, PropertyName identifier) const
+        ALWAYS_INLINE const HashEntry* entry(VM* vm, PropertyName identifier) const
         {
-            initializeIfNeeded(globalData);
+            initializeIfNeeded(vm);
             return entry(identifier);
         }
 
@@ -194,14 +194,14 @@ namespace JSC {
             int m_position;
         };
 
-        ConstIterator begin(JSGlobalData& globalData) const
+        ConstIterator begin(VM& vm) const
         {
-            initializeIfNeeded(&globalData);
+            initializeIfNeeded(&vm);
             return ConstIterator(this, 0);
         }
-        ConstIterator end(JSGlobalData& globalData) const
+        ConstIterator end(VM& vm) const
         {
-            initializeIfNeeded(&globalData);
+            initializeIfNeeded(&vm);
             return ConstIterator(this, compactSize);
         }
 
@@ -229,7 +229,7 @@ namespace JSC {
         }
 
         // Convert the hash table keys to identifiers.
-        JS_EXPORT_PRIVATE void createTable(JSGlobalData*) const;
+        JS_EXPORT_PRIVATE void createTable(VM*) const;
     };
 
     JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, PropertyName, PropertySlot&);
@@ -368,7 +368,7 @@ namespace JSC {
 
         // If this is a function put it as an override property.
         if (entry->attributes() & Function)
-            thisObj->putDirect(exec->globalData(), propertyName, value);
+            thisObj->putDirect(exec->vm(), propertyName, value);
         else if (!(entry->attributes() & ReadOnly))
             entry->propertyPutter()(exec, thisObj, value);
         else if (shouldThrow)

@@ -675,7 +675,7 @@ private:
             setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
             if (!isInt32Speculation(node->prediction()))
                 break;
-            if (codeBlock()->identifier(node->identifierNumber()) != globalData().propertyNames->length)
+            if (codeBlock()->identifier(node->identifierNumber()) != vm().propertyNames->length)
                 break;
             ArrayProfile* arrayProfile = 
                 m_graph.baselineCodeBlockFor(node->codeOrigin)->getArrayProfile(
@@ -1046,7 +1046,7 @@ private:
         unsigned attributesUnused;
         JSCell* specificValue;
         PropertyOffset offset = stringPrototypeStructure->get(
-            globalData(), ident, attributesUnused, specificValue);
+            vm(), ident, attributesUnused, specificValue);
         if (!isValidOffset(offset))
             return false;
         
@@ -1085,9 +1085,9 @@ private:
         // (that would call toString()). We don't want the DFG to have to distinguish
         // between the two, just because that seems like it would get confusing. So we
         // just require both methods to be sane.
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, globalData().propertyNames->valueOf))
+        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->valueOf))
             return false;
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, globalData().propertyNames->toString))
+        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->toString))
             return false;
         
         return true;

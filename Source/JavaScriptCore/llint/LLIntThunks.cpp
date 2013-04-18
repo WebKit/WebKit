@@ -38,7 +38,7 @@ namespace JSC { namespace LLInt {
 
 #if !ENABLE(LLINT_C_LOOP)
 
-static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, void (*target)(), const char *thunkKind)
+static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
 {
     JSInterfaceJIT jit;
     
@@ -46,38 +46,38 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, v
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
     jit.jump(JSInterfaceJIT::regT0);
     
-    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("LLInt %s prologue thunk", thunkKind));
 }
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_call_prologue, "function for call");
+    return generateThunkWithJumpTo(vm, llint_function_for_call_prologue, "function for call");
 }
 
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_construct_prologue, "function for construct");
+    return generateThunkWithJumpTo(vm, llint_function_for_construct_prologue, "function for construct");
 }
 
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_call_arity_check, "function for call with arity check");
+    return generateThunkWithJumpTo(vm, llint_function_for_call_arity_check, "function for call with arity check");
 }
 
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_construct_arity_check, "function for construct with arity check");
+    return generateThunkWithJumpTo(vm, llint_function_for_construct_arity_check, "function for construct with arity check");
 }
 
-MacroAssemblerCodeRef evalEntryThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef evalEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_eval_prologue, "eval");
+    return generateThunkWithJumpTo(vm, llint_eval_prologue, "eval");
 }
 
-MacroAssemblerCodeRef programEntryThunkGenerator(JSGlobalData* globalData)
+MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(globalData, llint_program_prologue, "program");
+    return generateThunkWithJumpTo(vm, llint_program_prologue, "program");
 }
 
 #endif // !ENABLE(LLINT_C_LOOP)

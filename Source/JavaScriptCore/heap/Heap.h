@@ -55,7 +55,7 @@ namespace JSC {
     class IncrementalSweeper;
     class JITStubRoutine;
     class JSCell;
-    class JSGlobalData;
+    class VM;
     class JSStack;
     class JSValue;
     class LiveObjectIterator;
@@ -96,11 +96,11 @@ namespace JSC {
         static void writeBarrier(const JSCell*, JSCell*);
         static uint8_t* addressOfCardFor(JSCell*);
 
-        Heap(JSGlobalData*, HeapType);
+        Heap(VM*, HeapType);
         ~Heap();
         JS_EXPORT_PRIVATE void lastChanceToFinalize();
 
-        JSGlobalData* globalData() const { return m_globalData; }
+        VM* vm() const { return m_vm; }
         MarkedSpace& objectSpace() { return m_objectSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
@@ -259,7 +259,7 @@ namespace JSC {
         
         bool m_isSafeToCollect;
 
-        JSGlobalData* m_globalData;
+        VM* m_vm;
         double m_lastGCLength;
         double m_lastCodeDiscardTime;
 

@@ -32,16 +32,16 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(StringObject);
 
 const ClassInfo StringObject::s_info = { "String", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(StringObject) };
 
-StringObject::StringObject(JSGlobalData& globalData, Structure* structure)
-    : JSWrapperObject(globalData, structure)
+StringObject::StringObject(VM& vm, Structure* structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 
-void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
+void StringObject::finishCreation(VM& vm, JSString* string)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
-    setInternalValue(globalData, string);
+    setInternalValue(vm, string);
 }
 
 bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -166,7 +166,7 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
 StringObject* constructString(ExecState* exec, JSGlobalObject* globalObject, JSValue string)
 {
     StringObject* object = StringObject::create(exec, globalObject->stringObjectStructure());
-    object->setInternalValue(exec->globalData(), string);
+    object->setInternalValue(exec->vm(), string);
     return object;
 }
 

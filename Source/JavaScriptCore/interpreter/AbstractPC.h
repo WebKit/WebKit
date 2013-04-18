@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 class ExecState;
 struct Instruction;
 
@@ -43,7 +43,7 @@ public:
     {
     }
     
-    AbstractPC(JSGlobalData&, ExecState*);
+    AbstractPC(VM&, ExecState*);
     
 #if ENABLE(JIT)
     AbstractPC(ReturnAddressPtr ptr)

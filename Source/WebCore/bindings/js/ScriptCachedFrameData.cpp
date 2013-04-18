@@ -46,7 +46,7 @@ namespace WebCore {
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
 {
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     ScriptController* scriptController = frame->script();
     ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
@@ -54,7 +54,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
         JSDOMWindow* window = iter->value->window();
-        m_windows.add(iter->key.get(), Strong<JSDOMWindow>(window->globalData(), window));
+        m_windows.add(iter->key.get(), Strong<JSDOMWindow>(window->vm(), window));
     }
 
     scriptController->attachDebugger(0);
@@ -67,7 +67,7 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
 
 void ScriptCachedFrameData::restore(Frame* frame)
 {
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     ScriptController* scriptController = frame->script();
     ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
@@ -78,7 +78,7 @@ void ScriptCachedFrameData::restore(Frame* frame)
         JSDOMWindowShell* windowShell = iter->value.get();
 
         if (JSDOMWindow* window = m_windows.get(world).get())
-            windowShell->setWindow(window->globalData(), window);
+            windowShell->setWindow(window->vm(), window);
         else {
             DOMWindow* domWindow = frame->document()->domWindow();
             if (windowShell->window()->impl() == domWindow)
@@ -99,7 +99,7 @@ void ScriptCachedFrameData::clear()
     if (m_windows.isEmpty())
         return;
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
     m_windows.clear();
     gcController().garbageCollectSoon();
 }

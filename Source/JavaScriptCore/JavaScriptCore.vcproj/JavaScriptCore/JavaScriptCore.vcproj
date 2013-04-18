@@ -854,11 +854,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSGlobalData.cpp"
+				RelativePath="..\..\runtime\VM.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSGlobalData.h"
+				RelativePath="..\..\runtime\VM.h"
 				>
 			</File>
 			<File

@@ -33,39 +33,39 @@ namespace JSC {
 
 const ClassInfo StructureRareData::s_info = { "StructureRareData", 0, 0, 0, CREATE_METHOD_TABLE(StructureRareData) };
 
-Structure* StructureRareData::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+Structure* StructureRareData::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), &s_info);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), &s_info);
 }
 
-StructureRareData* StructureRareData::create(JSGlobalData& globalData, Structure* previous)
+StructureRareData* StructureRareData::create(VM& vm, Structure* previous)
 {
-    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(globalData.heap)) StructureRareData(globalData, previous);
-    rareData->finishCreation(globalData);
+    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(vm.heap)) StructureRareData(vm, previous);
+    rareData->finishCreation(vm);
     return rareData;
 }
 
-StructureRareData* StructureRareData::clone(JSGlobalData& globalData, const StructureRareData* other)
+StructureRareData* StructureRareData::clone(VM& vm, const StructureRareData* other)
 {
-    StructureRareData* newRareData = new (NotNull, allocateCell<StructureRareData>(globalData.heap)) StructureRareData(globalData, other);
-    newRareData->finishCreation(globalData);
+    StructureRareData* newRareData = new (NotNull, allocateCell<StructureRareData>(vm.heap)) StructureRareData(vm, other);
+    newRareData->finishCreation(vm);
     return newRareData;
 }
 
-StructureRareData::StructureRareData(JSGlobalData& globalData, Structure* previous)
-    : JSCell(globalData, globalData.structureRareDataStructure.get())
+StructureRareData::StructureRareData(VM& vm, Structure* previous)
+    : JSCell(vm, vm.structureRareDataStructure.get())
 {
     if (previous)
-        m_previous.set(globalData, this, previous);
+        m_previous.set(vm, this, previous);
 }
 
-StructureRareData::StructureRareData(JSGlobalData& globalData, const StructureRareData* other)
-    : JSCell(globalData, other->structure())
+StructureRareData::StructureRareData(VM& vm, const StructureRareData* other)
+    : JSCell(vm, other->structure())
 {
     if (other->previousID())
-        m_previous.set(globalData, this, other->previousID());
+        m_previous.set(vm, this, other->previousID());
     if (other->objectToStringValue())
-        m_objectToStringValue.set(globalData, this, other->objectToStringValue());
+        m_objectToStringValue.set(vm, this, other->objectToStringValue());
 }
 
 void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)

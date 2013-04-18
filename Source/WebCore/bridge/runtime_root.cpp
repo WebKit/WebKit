@@ -86,7 +86,7 @@ PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObje
 RootObject::RootObject(const void* nativeHandle, JSGlobalObject* globalObject)
     : m_isValid(true)
     , m_nativeHandle(nativeHandle)
-    , m_globalObject(globalObject->globalData(), globalObject)
+    , m_globalObject(globalObject->vm(), globalObject)
 {
     ASSERT(globalObject);
     rootObjectSet()->add(this);
@@ -141,7 +141,7 @@ void RootObject::gcProtect(JSObject* jsObject)
     ASSERT(m_isValid);
     
     if (!m_protectCountSet.contains(jsObject)) {
-        JSC::JSLockHolder holder(&globalObject()->globalData());
+        JSC::JSLockHolder holder(&globalObject()->vm());
         JSC::gcProtect(jsObject);
     }
     m_protectCountSet.add(jsObject);
@@ -155,7 +155,7 @@ void RootObject::gcUnprotect(JSObject* jsObject)
         return;
 
     if (m_protectCountSet.count(jsObject) == 1) {
-        JSC::JSLockHolder holder(&globalObject()->globalData());
+        JSC::JSLockHolder holder(&globalObject()->vm());
         JSC::gcUnprotect(jsObject);
     }
     m_protectCountSet.remove(jsObject);
@@ -181,10 +181,10 @@ JSGlobalObject* RootObject::globalObject() const
 
 void RootObject::updateGlobalObject(JSGlobalObject* globalObject)
 {
-    m_globalObject.set(globalObject->globalData(), globalObject);
+    m_globalObject.set(globalObject->vm(), globalObject);
 }
 
-void RootObject::addRuntimeObject(JSGlobalData&, RuntimeObject* object)
+void RootObject::addRuntimeObject(VM&, RuntimeObject* object)
 {
     ASSERT(m_isValid);
     weakAdd(m_runtimeObjects, object, JSC::PassWeak<RuntimeObject>(object, this));

@@ -84,21 +84,21 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 
 RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(globalObject, structure)
-    , m_cachedResult(globalObject->globalData(), this, regExpPrototype->regExp())
+    , m_cachedResult(globalObject->vm(), this, regExpPrototype->regExp())
     , m_multiline(false)
 {
 }
 
 void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, "RegExp").string());
+    Base::finishCreation(exec->vm(), Identifier(exec, "RegExp").string());
     ASSERT(inherits(&s_info));
 
     // ECMA 15.10.5.1 RegExp.prototype
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 void RegExpConstructor::destroy(JSCell* cell)
@@ -283,7 +283,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
             return throwError(exec, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
     }
 
-    RegExp* regExp = RegExp::create(exec->globalData(), pattern, flags);
+    RegExp* regExp = RegExp::create(exec->vm(), pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
     return RegExpObject::create(exec, exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp);

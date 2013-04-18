@@ -41,7 +41,7 @@
 #include <wtf/text/AtomicString.h>
 
 namespace JSC {
-    class JSGlobalData;
+    class VM;
     class SlotVisitor;
 }
 

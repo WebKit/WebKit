@@ -27,9 +27,9 @@ using namespace JSC;
 
 namespace WebCore{
 
-DOMObjectHashTableMap& DOMObjectHashTableMap::mapFor(JSGlobalData& globalData)
+DOMObjectHashTableMap& DOMObjectHashTableMap::mapFor(VM& vm)
 {
-    JSGlobalData::ClientData* clientData = globalData.clientData;
+    VM::ClientData* clientData = vm.clientData;
     ASSERT(clientData);
     return static_cast<WebCoreJSClientData*>(clientData)->hashTableMap;
 }

@@ -37,8 +37,8 @@ namespace WebCore {
     class JSDOMWindowBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     protected:
-        JSDOMWindowBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
-        void finishCreation(JSC::JSGlobalData&, JSDOMWindowShell*);
+        JSDOMWindowBase(JSC::VM&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
+        void finishCreation(JSC::VM&, JSDOMWindowShell*);
 
         static void destroy(JSCell*);
 
@@ -53,9 +53,9 @@ namespace WebCore {
 
         static const JSC::ClassInfo s_info;
 
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
         }
 
         static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
@@ -68,7 +68,7 @@ namespace WebCore {
 
         JSDOMWindowShell* shell() const;
 
-        static JSC::JSGlobalData* commonJSGlobalData();
+        static JSC::VM* commonVM();
 
     private:
         RefPtr<DOMWindow> m_impl;

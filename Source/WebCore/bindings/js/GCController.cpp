@@ -27,7 +27,7 @@
 #include "GCController.h"
 
 #include "JSDOMWindow.h"
-#include <runtime/JSGlobalData.h>
+#include <runtime/VM.h>
 #include <runtime/JSLock.h>
 #include <heap/Heap.h>
 #include <wtf/StdLibExtras.h>
@@ -38,8 +38,8 @@ namespace WebCore {
 
 static void collect(void*)
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSDOMWindow::commonVM()->heap.collectAllGarbage();
 }
 
 GCController& gcController()
@@ -63,8 +63,8 @@ void GCController::garbageCollectSoon()
     // down into WTF so that more platforms can take advantage of it, we will be 
     // able to use reportAbandonedObjectGraph on more platforms.
 #if USE(CF) || PLATFORM(BLACKBERRY) || PLATFORM(QT)
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    JSDOMWindow::commonJSGlobalData()->heap.reportAbandonedObjectGraph();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSDOMWindow::commonVM()->heap.reportAbandonedObjectGraph();
 #else
     if (!m_GCTimer.isActive())
         m_GCTimer.startOneShot(0);
@@ -80,9 +80,9 @@ void GCController::gcTimerFired(Timer<GCController>*)
 
 void GCController::garbageCollectNow()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    if (!JSDOMWindow::commonJSGlobalData()->heap.isBusy())
-        JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    if (!JSDOMWindow::commonVM()->heap.isBusy())
+        JSDOMWindow::commonVM()->heap.collectAllGarbage();
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
@@ -99,13 +99,13 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {
-    JSDOMWindow::commonJSGlobalData()->heap.setGarbageCollectionTimerEnabled(enable);
+    JSDOMWindow::commonVM()->heap.setGarbageCollectionTimerEnabled(enable);
 }
 
 void GCController::discardAllCompiledCode()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    JSDOMWindow::commonJSGlobalData()->discardAllCode();
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSDOMWindow::commonVM()->discardAllCode();
 }
 
 } // namespace WebCore

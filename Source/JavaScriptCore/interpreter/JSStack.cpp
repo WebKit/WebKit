@@ -43,9 +43,9 @@ static Mutex& stackStatisticsMutex()
     return staticMutex;
 }    
 
-JSStack::JSStack(JSGlobalData& globalData, size_t capacity)
+JSStack::JSStack(VM& vm, size_t capacity)
     : m_end(0)
-    , m_topCallFrame(globalData.topCallFrame)
+    , m_topCallFrame(vm.topCallFrame)
 {
     ASSERT(capacity && isPageAligned(capacity));
 

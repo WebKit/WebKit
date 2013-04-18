@@ -64,10 +64,10 @@ JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalOb
 
 void JSTestNodeConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestNodePrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestNodePrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestNodeConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -108,15 +108,15 @@ JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, Pa
 {
 }
 
-void JSTestNode::finishCreation(JSGlobalData& globalData)
+void JSTestNode::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestNode::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestNodePrototype::create(exec->globalData(), globalObject, JSTestNodePrototype::createStructure(exec->globalData(), globalObject, JSNodePrototype::self(exec, globalObject)));
+    return JSTestNodePrototype::create(exec->vm(), globalObject, JSTestNodePrototype::createStructure(exec->vm(), globalObject, JSNodePrototype::self(exec, globalObject)));
 }
 
 bool JSTestNode::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

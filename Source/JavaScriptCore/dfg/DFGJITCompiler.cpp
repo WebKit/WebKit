@@ -36,17 +36,17 @@
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
 #include "JSCJSValueInlines.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {
 
 JITCompiler::JITCompiler(Graph& dfg)
-    : CCallHelpers(&dfg.m_globalData, dfg.m_codeBlock)
+    : CCallHelpers(&dfg.m_vm, dfg.m_codeBlock)
     , m_graph(dfg)
     , m_currentCodeOriginIndex(0)
 {
-    if (shouldShowDisassembly() || m_graph.m_globalData.m_perBytecodeProfiler)
+    if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new Disassembler(dfg));
 }
 
@@ -76,7 +76,7 @@ void JITCompiler::linkOSRExits()
         else
             codeBlock()->watchpoint(exit.m_watchpointIndex).setDestination(label());
         jitAssertHasValidCallFrame();
-        store32(TrustedImm32(i), &globalData()->osrExitIndex);
+        store32(TrustedImm32(i), &vm()->osrExitIndex);
         exit.setPatchableCodeOffset(patchableJump());
     }
 }
@@ -206,14 +206,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.callType = m_jsCalls[i].m_callType;
         info.isDFG = true;
         info.codeOrigin = m_jsCalls[i].m_codeOrigin;
-        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr((m_globalData->getCTIStub(info.callType == CallLinkInfo::Construct ? linkConstructThunkGenerator : linkCallThunkGenerator)).code().executableAddress()));
+        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr((m_vm->getCTIStub(info.callType == CallLinkInfo::Construct ? linkConstructThunkGenerator : linkCallThunkGenerator)).code().executableAddress()));
         info.callReturnLocation = linkBuffer.locationOfNearCall(m_jsCalls[i].m_slowCall);
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
         info.calleeGPR = static_cast<unsigned>(m_jsCalls[i].m_callee);
     }
     
-    MacroAssemblerCodeRef osrExitThunk = globalData()->getCTIStub(osrExitGenerationThunkGenerator);
+    MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
     CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
@@ -260,7 +260,7 @@ bool JITCompiler::compile(JITCode& entry)
     speculative.createOSREntries();
     setEndOfCode();
 
-    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate())
         return false;
     link(linkBuffer);
@@ -292,7 +292,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // Plant a check that sufficient space is available in the JSStack.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
     addPtr(TrustedImm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
-    Jump stackCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->stack().addressOfEnd()), GPRInfo::regT1);
+    Jump stackCheck = branchPtr(Below, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), GPRInfo::regT1);
     // Return here after stack check.
     Label fromStackCheck = label();
 
@@ -349,7 +349,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     setEndOfCode();
 
     // === Link ===
-    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate())
         return false;
     link(linkBuffer);

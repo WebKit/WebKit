@@ -45,7 +45,7 @@ namespace JSC {
     class DFGCodeBlocks;
     class ExecState;
     class JITStubRoutineSet;
-    class JSGlobalData;
+    class VM;
     class LLIntOffsetsExtractor;
 
     class JSStack {
@@ -67,7 +67,7 @@ namespace JSC {
         // Allow 8k of excess registers before we start trying to reap the stack
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        JSStack(JSGlobalData&, size_t capacity = defaultCapacity);
+        JSStack(VM&, size_t capacity = defaultCapacity);
         ~JSStack();
         
         void gatherConservativeRoots(ConservativeRoots&);

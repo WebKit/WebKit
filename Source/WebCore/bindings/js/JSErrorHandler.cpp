@@ -63,7 +63,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
 
     ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
-    JSLockHolder lock(scriptExecutionContext->globalData());
+    JSLockHolder lock(scriptExecutionContext->vm());
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
@@ -89,8 +89,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         args.append(jsStringWithCache(exec, errorEvent->filename()));
         args.append(jsNumber(errorEvent->lineno()));
 
-        JSGlobalData& globalData = globalObject->globalData();
-        DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
+        VM& vm = globalObject->vm();
+        DynamicGlobalObjectScope globalObjectScope(vm, vm.dynamicGlobalObject ? vm.dynamicGlobalObject : globalObject);
 
         JSValue thisValue = globalObject->methodTable()->toThisObject(globalObject, exec);
 

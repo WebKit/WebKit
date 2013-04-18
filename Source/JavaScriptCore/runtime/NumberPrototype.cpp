@@ -71,14 +71,14 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberPrototype);
 
 NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)
-    : NumberObject(exec->globalData(), structure)
+    : NumberObject(exec->vm(), structure)
 {
 }
 
 void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
-    Base::finishCreation(exec->globalData());
-    setInternalValue(exec->globalData(), jsNumber(0));
+    Base::finishCreation(exec->vm());
+    setInternalValue(exec->vm(), jsNumber(0));
 
     ASSERT(inherits(&s_info));
 }
@@ -475,13 +475,13 @@ static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix
     if (static_cast<unsigned>(value) < static_cast<unsigned>(radix)) {
         ASSERT(value <= 36);
         ASSERT(value >= 0);
-        JSGlobalData* globalData = &exec->globalData();
-        return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[value]));
+        VM* vm = &exec->vm();
+        return JSValue::encode(vm->smallStrings.singleCharacterString(vm, radixDigits[value]));
     }
 
     if (radix == 10) {
-        JSGlobalData* globalData = &exec->globalData();
-        return JSValue::encode(jsString(globalData, globalData->numericStrings.add(value)));
+        VM* vm = &exec->vm();
+        return JSValue::encode(jsString(vm, vm->numericStrings.add(value)));
     }
 
     return JSValue::encode(jsString(exec, toStringWithRadix(value, radix)));
@@ -503,8 +503,8 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         return integerValueToString(exec, radix, integerValue);
 
     if (radix == 10) {
-        JSGlobalData* globalData = &exec->globalData();
-        return JSValue::encode(jsString(globalData, globalData->numericStrings.add(doubleValue)));
+        VM* vm = &exec->vm();
+        return JSValue::encode(jsString(vm, vm->numericStrings.add(doubleValue)));
     }
 
     if (!std::isfinite(doubleValue))

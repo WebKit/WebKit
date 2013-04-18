@@ -37,8 +37,8 @@ namespace JSC { namespace DFG {
 
 class CCallHelpers : public AssemblyHelpers {
 public:
-    CCallHelpers(JSGlobalData* globalData, CodeBlock* codeBlock = 0)
-        : AssemblyHelpers(globalData, codeBlock)
+    CCallHelpers(VM* vm, CodeBlock* codeBlock = 0)
+        : AssemblyHelpers(vm, codeBlock)
     {
     }
 

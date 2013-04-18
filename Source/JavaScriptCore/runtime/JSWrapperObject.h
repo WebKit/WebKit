@@ -39,11 +39,11 @@ namespace JSC {
         }
 
         JSValue internalValue() const;
-        void setInternalValue(JSGlobalData&, JSValue);
+        void setInternalValue(VM&, JSValue);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
         { 
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
         
         static ptrdiff_t internalValueOffset() { return OBJECT_OFFSETOF(JSWrapperObject, m_internalValue); }
@@ -57,7 +57,7 @@ namespace JSC {
         }
 
     protected:
-        explicit JSWrapperObject(JSGlobalData&, Structure*);
+        explicit JSWrapperObject(VM&, Structure*);
         static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
         static void visitChildren(JSCell*, SlotVisitor&);
@@ -66,8 +66,8 @@ namespace JSC {
         WriteBarrier<Unknown> m_internalValue;
     };
 
-    inline JSWrapperObject::JSWrapperObject(JSGlobalData& globalData, Structure* structure)
-        : JSDestructibleObject(globalData, structure)
+    inline JSWrapperObject::JSWrapperObject(VM& vm, Structure* structure)
+        : JSDestructibleObject(vm, structure)
     {
     }
 
@@ -76,11 +76,11 @@ namespace JSC {
         return m_internalValue.get();
     }
 
-    inline void JSWrapperObject::setInternalValue(JSGlobalData& globalData, JSValue value)
+    inline void JSWrapperObject::setInternalValue(VM& vm, JSValue value)
     {
         ASSERT(value);
         ASSERT(!value.isObject());
-        m_internalValue.set(globalData, this, value);
+        m_internalValue.set(vm, this, value);
     }
 
 } // namespace JSC

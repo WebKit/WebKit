@@ -31,7 +31,7 @@
 namespace JSC {
 
     class ExecState;
-    class JSGlobalData;
+    class VM;
     class JSGlobalObject;
     class JSObject;
     class SourceCode;
@@ -89,7 +89,7 @@ namespace JSC {
         static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& message)
         {
             StrictModeTypeErrorFunction* function = new (NotNull, allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(globalObject, structure, message);
-            function->finishCreation(exec->globalData(), String());
+            function->finishCreation(exec->vm(), String());
             return function;
         }
     
@@ -119,9 +119,9 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
         { 
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
         }
 
     private:

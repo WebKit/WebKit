@@ -41,7 +41,7 @@ PassRefPtr<ScriptArguments> ScriptArguments::create(ScriptState* scriptState, Ve
 }
 
 ScriptArguments::ScriptArguments(ScriptState* scriptState, Vector<ScriptValue>& arguments)
-    : m_globalObject(scriptState->globalData(), scriptState->lexicalGlobalObject())
+    : m_globalObject(scriptState->vm(), scriptState->lexicalGlobalObject())
 {
     m_arguments.swap(arguments);
 }

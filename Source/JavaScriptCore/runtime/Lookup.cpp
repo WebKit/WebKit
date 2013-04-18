@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-void HashTable::createTable(JSGlobalData* globalData) const
+void HashTable::createTable(VM* vm) const
 {
     ASSERT(!table);
     int linkIndex = compactHashSizeMask + 1;
@@ -34,7 +34,7 @@ void HashTable::createTable(JSGlobalData* globalData) const
     for (int i = 0; i < compactSize; ++i)
         entries[i].setKey(0);
     for (int i = 0; values[i].key; ++i) {
-        StringImpl* identifier = Identifier::add(globalData, values[i].key).leakRef();
+        StringImpl* identifier = Identifier::add(vm, values[i].key).leakRef();
         int hashIndex = identifier->existingHash() & compactHashSizeMask;
         HashEntry* entry = &entries[hashIndex];
 
@@ -69,7 +69,7 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
 {
     ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & Function);
-    PropertyOffset offset = thisObj->getDirectOffset(exec->globalData(), propertyName);
+    PropertyOffset offset = thisObj->getDirectOffset(exec->vm(), propertyName);
 
     if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
@@ -80,7 +80,7 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         thisObj->putDirectNativeFunction(
             exec, thisObj->globalObject(), propertyName, entry->functionLength(),
             entry->function(), entry->intrinsic(), entry->attributes());
-        offset = thisObj->getDirectOffset(exec->globalData(), propertyName);
+        offset = thisObj->getDirectOffset(exec->vm(), propertyName);
         ASSERT(isValidOffset(offset));
     }
 

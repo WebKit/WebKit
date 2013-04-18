@@ -48,11 +48,11 @@ OSRExit::~OSRExit()
 JSValue OSRExit::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->globalData(), exec->propertyNames().id, jsNumber(m_id));
-    result->putDirect(exec->globalData(), exec->propertyNames().origin, m_origin.toJS(exec));
-    result->putDirect(exec->globalData(), exec->propertyNames().exitKind, jsString(exec, exitKindToString(m_exitKind)));
-    result->putDirect(exec->globalData(), exec->propertyNames().isWatchpoint, jsBoolean(m_isWatchpoint));
-    result->putDirect(exec->globalData(), exec->propertyNames().count, jsNumber(m_counter));
+    result->putDirect(exec->vm(), exec->propertyNames().id, jsNumber(m_id));
+    result->putDirect(exec->vm(), exec->propertyNames().origin, m_origin.toJS(exec));
+    result->putDirect(exec->vm(), exec->propertyNames().exitKind, jsString(exec, exitKindToString(m_exitKind)));
+    result->putDirect(exec->vm(), exec->propertyNames().isWatchpoint, jsBoolean(m_isWatchpoint));
+    result->putDirect(exec->vm(), exec->propertyNames().count, jsNumber(m_counter));
     return result;
 }
 

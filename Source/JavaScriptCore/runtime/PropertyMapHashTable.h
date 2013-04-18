@@ -77,11 +77,11 @@ struct PropertyMapEntry {
     unsigned attributes;
     WriteBarrier<JSCell> specificValue;
 
-    PropertyMapEntry(JSGlobalData& globalData, JSCell* owner, StringImpl* key, PropertyOffset offset, unsigned attributes, JSCell* specificValue)
+    PropertyMapEntry(VM& vm, JSCell* owner, StringImpl* key, PropertyOffset offset, unsigned attributes, JSCell* specificValue)
         : key(key)
         , offset(offset)
         , attributes(attributes)
-        , specificValue(globalData, owner, specificValue, WriteBarrier<JSCell>::MayBeNull)
+        , specificValue(vm, owner, specificValue, WriteBarrier<JSCell>::MayBeNull)
     {
     }
 };
@@ -135,9 +135,9 @@ public:
 
     static JS_EXPORTDATA const ClassInfo s_info;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -155,9 +155,9 @@ public:
     typedef std::pair<ValueType*, unsigned> find_iterator;
 
     // Constructor is passed an initial capacity, a PropertyTable to copy, or both.
-    static PropertyTable* create(JSGlobalData&, unsigned initialCapacity);
-    static PropertyTable* clone(JSGlobalData&, JSCell* owner, const PropertyTable&);
-    static PropertyTable* clone(JSGlobalData&, JSCell* owner, unsigned initialCapacity, const PropertyTable&);
+    static PropertyTable* create(VM&, unsigned initialCapacity);
+    static PropertyTable* clone(VM&, JSCell* owner, const PropertyTable&);
+    static PropertyTable* clone(VM&, JSCell* owner, unsigned initialCapacity, const PropertyTable&);
     ~PropertyTable();
 
     // Ordered iteration methods.
@@ -194,7 +194,7 @@ public:
     PropertyOffset nextOffset(PropertyOffset inlineCapacity);
 
     // Copy this PropertyTable, ensuring the copy has at least the capacity provided.
-    PropertyTable* copy(JSGlobalData&, JSCell* owner, unsigned newCapacity);
+    PropertyTable* copy(VM&, JSCell* owner, unsigned newCapacity);
 
 #ifndef NDEBUG
     size_t sizeInMemory();
@@ -202,9 +202,9 @@ public:
 #endif
 
 private:
-    PropertyTable(JSGlobalData&, unsigned initialCapacity);
-    PropertyTable(JSGlobalData&, JSCell*, const PropertyTable&);
-    PropertyTable(JSGlobalData&, JSCell*, unsigned initialCapacity, const PropertyTable&);
+    PropertyTable(VM&, unsigned initialCapacity);
+    PropertyTable(VM&, JSCell*, const PropertyTable&);
+    PropertyTable(VM&, JSCell*, unsigned initialCapacity, const PropertyTable&);
 
     PropertyTable(const PropertyTable&);
     // Used to insert a value known not to be in the table, and where we know capacity to be available.
@@ -453,15 +453,15 @@ inline PropertyOffset PropertyTable::nextOffset(PropertyOffset inlineCapacity)
     return offsetForPropertyNumber(size(), inlineCapacity);
 }
 
-inline PropertyTable* PropertyTable::copy(JSGlobalData& globalData, JSCell* owner, unsigned newCapacity)
+inline PropertyTable* PropertyTable::copy(VM& vm, JSCell* owner, unsigned newCapacity)
 {
     ASSERT(newCapacity >= m_keyCount);
 
     // Fast case; if the new table will be the same m_indexSize as this one, we can memcpy it,
     // save rehashing all keys.
     if (sizeForCapacity(newCapacity) == m_indexSize)
-        return PropertyTable::clone(globalData, owner, *this);
-    return PropertyTable::clone(globalData, owner, newCapacity, *this);
+        return PropertyTable::clone(vm, owner, *this);
+    return PropertyTable::clone(vm, owner, newCapacity, *this);
 }
 
 #ifndef NDEBUG

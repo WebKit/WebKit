@@ -41,10 +41,10 @@ inline bool prepareForExecution(ExecState* exec, OwnPtr<CodeBlockType>& codeBloc
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
-        LLInt::getEntrypoint(exec->globalData(), codeBlock.get(), jitCode);
+        LLInt::getEntrypoint(exec->vm(), codeBlock.get(), jitCode);
         codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
-        if (exec->globalData().m_perBytecodeProfiler)
-            exec->globalData().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
+        if (exec->vm().m_perBytecodeProfiler)
+            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
         return true;
     }
 #endif // ENABLE(LLINT)
@@ -56,10 +56,10 @@ inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBloc
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
-        LLInt::getFunctionEntrypoint(exec->globalData(), kind, jitCode, jitCodeWithArityCheck);
+        LLInt::getFunctionEntrypoint(exec->vm(), kind, jitCode, jitCodeWithArityCheck);
         codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
-        if (exec->globalData().m_perBytecodeProfiler)
-            exec->globalData().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
+        if (exec->vm().m_perBytecodeProfiler)
+            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
         return true;
     }
 #else

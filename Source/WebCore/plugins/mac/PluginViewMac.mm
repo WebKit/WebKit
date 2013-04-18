@@ -495,7 +495,7 @@ void PluginView::setNPWindowIfNeeded()
             m_npWindow.clipRect.right - m_npWindow.clipRect.left, m_npWindow.clipRect.bottom - m_npWindow.clipRect.top);
 
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     setCallingPlugin(true);
     m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
     setCallingPlugin(false);
@@ -1060,7 +1060,7 @@ Point PluginView::mousePosForPlugin(MouseEvent* event) const
 bool PluginView::dispatchNPEvent(NPEvent& event)
 {
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     setCallingPlugin(true);
 
     bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
@@ -1075,7 +1075,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
 int16_t PluginView::dispatchNPCocoaEvent(NPCocoaEvent& cocoaEvent)
 {
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
     setCallingPlugin(true);
 
     int16_t response = m_plugin->pluginFuncs()->event(m_instance, &cocoaEvent);

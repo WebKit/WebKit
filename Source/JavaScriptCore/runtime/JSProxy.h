@@ -34,16 +34,16 @@ class JSProxy : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSProxy* create(JSGlobalData& globalData, Structure* structure, JSObject* target)
+    static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
     {
-        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(globalData.heap)) JSProxy(globalData, structure);
-        proxy->finishCreation(globalData, target);
+        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm.heap)) JSProxy(vm, structure);
+        proxy->finishCreation(vm, target);
         return proxy;
     }
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ProxyType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ProxyType, StructureFlags), &s_info);
     }
 
     static JS_EXPORTDATA const ClassInfo s_info;
@@ -51,27 +51,27 @@ public:
     JSObject* target() const { return m_target.get(); }
 
 protected:
-    JSProxy(JSGlobalData& globalData, Structure* structure)
-        : JSDestructibleObject(globalData, structure)
+    JSProxy(VM& vm, Structure* structure)
+        : JSDestructibleObject(vm, structure)
     {
     }
 
-    void finishCreation(JSGlobalData& globalData)
+    void finishCreation(VM& vm)
     {
-        Base::finishCreation(globalData);
+        Base::finishCreation(vm);
     }
 
-    void finishCreation(JSGlobalData& globalData, JSObject* target)
+    void finishCreation(VM& vm, JSObject* target)
     {
-        Base::finishCreation(globalData);
-        m_target.set(globalData, this, target);
+        Base::finishCreation(vm);
+        m_target.set(vm, this, target);
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-    JS_EXPORT_PRIVATE void setTarget(JSGlobalData&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);

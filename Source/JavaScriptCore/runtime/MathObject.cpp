@@ -85,23 +85,23 @@ const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, ExecState::math
 */
 
 MathObject::MathObject(JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalObject->globalData(), structure)
+    : JSNonFinalObject(globalObject->vm(), structure)
 {
 }
 
 void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData());
+    Base::finishCreation(globalObject->vm());
     ASSERT(inherits(&s_info));
 
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly); // See ECMA-262 15.8.1.5
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly); // See ECMA-262 15.8.1.5
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 }
 
 bool MathObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -265,7 +265,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState* exec)
 {
-    return JSValue::encode(exec->globalData().cachedSin(exec->argument(0).toNumber(exec)));
+    return JSValue::encode(exec->vm().cachedSin(exec->argument(0).toNumber(exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState* exec)

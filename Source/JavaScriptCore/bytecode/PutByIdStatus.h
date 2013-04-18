@@ -33,7 +33,7 @@ namespace JSC {
 
 class CodeBlock;
 class Identifier;
-class JSGlobalData;
+class VM;
 class JSGlobalObject;
 class Structure;
 class StructureChain;
@@ -91,7 +91,7 @@ public:
     }
     
     static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
-    static PutByIdStatus computeFor(JSGlobalData&, JSGlobalObject*, Structure*, Identifier&, bool isDirect);
+    static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, Identifier&, bool isDirect);
     
     State state() const { return m_state; }
     

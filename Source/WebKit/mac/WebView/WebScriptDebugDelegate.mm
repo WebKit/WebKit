@@ -176,7 +176,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 
     JSScope* scope = _private->debuggerCallFrame->scope();
-    JSLockHolder lock(scope->globalData());
+    JSLockHolder lock(scope->vm());
     if (!scope->next())  // global frame
         return [NSArray arrayWithObject:_private->globalObject];
 
@@ -186,7 +186,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     for (ScopeChainIterator it = scope->begin(); it != end; ++it) {
         JSObject* object = it.get();
         if (object->isActivationObject())
-            object = DebuggerActivation::create(*scope->globalData(), object);
+            object = DebuggerActivation::create(*scope->vm(), object);
         [scopes addObject:[self _convertValueToObjcValue:object]];
     }
 
@@ -234,12 +234,12 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     // WebScriptCallFrame. Instead, we need to set the dynamic global object
     // and evaluate the JS in the global object's global call frame.
     JSGlobalObject* globalObject = _private->debugger->globalObject();
-    JSLockHolder lock(globalObject->globalData());
+    JSLockHolder lock(globalObject->vm());
 
-    if (self == _private->debugger->globalCallFrame() && !globalObject->globalData().dynamicGlobalObject) {
+    if (self == _private->debugger->globalCallFrame() && !globalObject->vm().dynamicGlobalObject) {
         JSGlobalObject* globalObject = _private->debugger->globalObject();
 
-        DynamicGlobalObjectScope globalObjectScope(globalObject->globalData(), globalObject);
+        DynamicGlobalObjectScope globalObjectScope(globalObject->vm(), globalObject);
 
         JSC::JSValue exception;
         JSC::JSValue result = evaluateInGlobalCallFrame(script, exception, globalObject);

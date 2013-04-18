@@ -36,7 +36,7 @@
 namespace JSC {
 
 class JSCell;
-class JSGlobalData;
+class VM;
 
 // Needs to be even to appease some of the backends.
 #define JITWriteBarrierFlag ((void*)2)
@@ -77,7 +77,7 @@ protected:
     {
     }
 
-    void set(JSGlobalData&, CodeLocationDataLabelPtr location, JSCell* owner, JSCell* value)
+    void set(VM&, CodeLocationDataLabelPtr location, JSCell* owner, JSCell* value)
     {
         Heap::writeBarrier(owner, value);
         m_location = location;
@@ -116,15 +116,15 @@ public:
     {
     }
 
-    void set(JSGlobalData& globalData, CodeLocationDataLabelPtr location, JSCell* owner, T* value)
+    void set(VM& vm, CodeLocationDataLabelPtr location, JSCell* owner, T* value)
     {
         validateCell(owner);
         validateCell(value);
-        JITWriteBarrierBase::set(globalData, location, owner, value);
+        JITWriteBarrierBase::set(vm, location, owner, value);
     }
-    void set(JSGlobalData& globalData, JSCell* owner, T* value)
+    void set(VM& vm, JSCell* owner, T* value)
     {
-        set(globalData, location(), owner, value);
+        set(vm, location(), owner, value);
     }
     T* get() const
     {

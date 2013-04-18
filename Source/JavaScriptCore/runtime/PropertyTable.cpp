@@ -35,29 +35,29 @@ namespace JSC {
 
 const ClassInfo PropertyTable::s_info = { "PropertyTable", 0, 0, 0, CREATE_METHOD_TABLE(PropertyTable) };
 
-PropertyTable* PropertyTable::create(JSGlobalData& globalData, unsigned initialCapacity)
+PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(globalData.heap)) PropertyTable(globalData, initialCapacity);
-    table->finishCreation(globalData);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, initialCapacity);
+    table->finishCreation(vm);
     return table;
 }
 
-PropertyTable* PropertyTable::clone(JSGlobalData& globalData, JSCell* owner, const PropertyTable& other)
+PropertyTable* PropertyTable::clone(VM& vm, JSCell* owner, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(globalData.heap)) PropertyTable(globalData, owner, other);
-    table->finishCreation(globalData);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, owner, other);
+    table->finishCreation(vm);
     return table;
 }
 
-PropertyTable* PropertyTable::clone(JSGlobalData& globalData, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
+PropertyTable* PropertyTable::clone(VM& vm, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(globalData.heap)) PropertyTable(globalData, owner, initialCapacity, other);
-    table->finishCreation(globalData);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, owner, initialCapacity, other);
+    table->finishCreation(vm);
     return table;
 }
 
-PropertyTable::PropertyTable(JSGlobalData& globalData, unsigned initialCapacity)
-    : JSCell(globalData, globalData.propertyTableStructure.get())
+PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
+    : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
     , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
@@ -67,8 +67,8 @@ PropertyTable::PropertyTable(JSGlobalData& globalData, unsigned initialCapacity)
     ASSERT(isPowerOf2(m_indexSize));
 }
 
-PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, const PropertyTable& other)
-    : JSCell(globalData, globalData.propertyTableStructure.get())
+PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
+    : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(other.m_indexSize)
     , m_indexMask(other.m_indexMask)
     , m_index(static_cast<unsigned*>(fastMalloc(dataSize())))
@@ -91,8 +91,8 @@ PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, const Prop
         m_deletedOffsets = adoptPtr(new Vector<PropertyOffset>(*otherDeletedOffsets));
 }
 
-PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
-    : JSCell(globalData, globalData.propertyTableStructure.get())
+PropertyTable::PropertyTable(VM& vm, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
+    : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
     , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))

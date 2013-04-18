@@ -62,14 +62,14 @@ NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* st
 
 void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(exec->globalData(), numberPrototype->s_info.className);
+    Base::finishCreation(exec->vm(), numberPrototype->s_info.className);
     ASSERT(inherits(&s_info));
 
     // Number.Prototype
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool NumberConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -115,9 +115,9 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName)
 // ECMA 15.7.1
 static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
-    NumberObject* object = NumberObject::create(exec->globalData(), asInternalFunction(exec->callee())->globalObject()->numberObjectStructure());
+    NumberObject* object = NumberObject::create(exec->vm(), asInternalFunction(exec->callee())->globalObject()->numberObjectStructure());
     double n = exec->argumentCount() ? exec->argument(0).toNumber(exec) : 0;
-    object->setInternalValue(exec->globalData(), jsNumber(n));
+    object->setInternalValue(exec->vm(), jsNumber(n));
     return JSValue::encode(object);
 }
 

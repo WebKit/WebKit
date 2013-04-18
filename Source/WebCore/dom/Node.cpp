@@ -132,7 +132,7 @@
 #include "InspectorController.h"
 #endif
 
-#include <runtime/JSGlobalData.h>
+#include <runtime/VM.h>
 #include <runtime/Operations.h>
 
 #if ENABLE(MICRODATA)

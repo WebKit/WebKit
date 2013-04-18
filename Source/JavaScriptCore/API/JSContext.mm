@@ -103,7 +103,7 @@
 - (void)setException:(JSValue *)value
 {
     if (value)
-        m_exception.set(toJS(m_context)->globalData(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
+        m_exception.set(toJS(m_context)->vm(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
     else
         m_exception.clear();
 }
@@ -190,7 +190,7 @@
         return nil;
 
     JSC::JSGlobalObject* globalObject = toJS(context)->lexicalGlobalObject();
-    m_virtualMachine = [[JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->globalData())] retain];
+    m_virtualMachine = [[JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())] retain];
     ASSERT(m_virtualMachine);
     m_context = JSGlobalContextRetain(context);
     m_wrapperMap = [[JSWrapperMap alloc] initWithContext:self];
@@ -257,7 +257,7 @@
 
 + (JSContext *)contextWithGlobalContextRef:(JSGlobalContextRef)globalContext
 {
-    JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->globalData())];
+    JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->vm())];
     JSContext *context = [virtualMachine contextForGlobalContextRef:globalContext];
     if (!context)
         context = [[[JSContext alloc] initWithGlobalContextRef:globalContext] autorelease];

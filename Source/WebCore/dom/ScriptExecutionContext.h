@@ -37,7 +37,7 @@
 
 namespace JSC {
 class ExecState;
-class JSGlobalData;
+class VM;
 }
 
 namespace WebCore {
@@ -143,7 +143,7 @@ public:
     void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
-    JSC::JSGlobalData* globalData();
+    JSC::VM* vm();
 
     // Interval is in seconds.
     void adjustMinimumTimerInterval(double oldMinimumTimerInterval);

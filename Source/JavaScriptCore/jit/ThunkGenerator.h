@@ -31,10 +31,10 @@
 #if ENABLE(JIT)
 
 namespace JSC {
-class JSGlobalData;
+class VM;
 class MacroAssemblerCodeRef;
 
-typedef MacroAssemblerCodeRef (*ThunkGenerator)(JSGlobalData*);
+typedef MacroAssemblerCodeRef (*ThunkGenerator)(VM*);
 
 } // namespace JSC
 

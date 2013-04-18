@@ -191,7 +191,7 @@ unsigned int ObjcArray::getLength() const
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const String& propertyName)
-    : JSDestructibleObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->vm(), structure)
     , _instance(i)
     , m_item(propertyName)
 {
@@ -204,7 +204,7 @@ void ObjcFallbackObjectImp::destroy(JSCell* cell)
 
 void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData());
+    Base::finishCreation(globalObject->vm());
     ASSERT(inherits(&s_info));
 }
 

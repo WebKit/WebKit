@@ -74,8 +74,8 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 
 namespace JSC {
 
-class JSGlobalData;
-void releaseExecutableMemory(JSGlobalData&);
+class VM;
+void releaseExecutableMemory(VM&);
 
 static const unsigned jitAllocationGranule = 32;
 
@@ -118,7 +118,7 @@ class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
 
 public:
-    ExecutableAllocator(JSGlobalData&);
+    ExecutableAllocator(VM&);
     ~ExecutableAllocator();
     
     static void initializeAllocator();
@@ -135,7 +135,7 @@ public:
     static void dumpProfile() { }
 #endif
 
-    PassRefPtr<ExecutableMemoryHandle> allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
+    PassRefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     static void makeWritable(void* start, size_t size)

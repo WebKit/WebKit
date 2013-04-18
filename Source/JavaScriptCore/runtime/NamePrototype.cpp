@@ -48,13 +48,13 @@ const ClassInfo NamePrototype::s_info = { "Name", &Base::s_info, 0, ExecState::p
 */
 
 NamePrototype::NamePrototype(ExecState* exec, Structure* structure)
-    : Base(exec->globalData(), structure, jsEmptyString(exec))
+    : Base(exec->vm(), structure, jsEmptyString(exec))
 {
 }
 
 void NamePrototype::finishCreation(ExecState* exec)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
 }
 

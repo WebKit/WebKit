@@ -35,26 +35,26 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(InternalFunction);
 const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* structure)
-    : JSDestructibleObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->vm(), structure)
 {
 }
 
-void InternalFunction::finishCreation(JSGlobalData& globalData, const String& name)
+void InternalFunction::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
     ASSERT(methodTable()->getCallData != InternalFunction::s_info.methodTable.getCallData);
-    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
 }
 
 const String& InternalFunction::name(ExecState* exec)
 {
-    return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
+    return asString(getDirect(exec->vm(), exec->vm().propertyNames->name))->tryGetValue();
 }
 
 const String InternalFunction::displayName(ExecState* exec)
 {
-    JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
+    JSValue displayName = getDirect(exec->vm(), exec->vm().propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();

@@ -224,10 +224,10 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 @end
 
-void scanExternalObjectGraph(JSC::JSGlobalData& globalData, JSC::SlotVisitor& visitor, void* root)
+void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void* root)
 {
     @autoreleasepool {
-        JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalData)];
+        JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&vm)];
         NSMapTable *externalObjectGraph = [virtualMachine externalObjectGraph];
         Vector<void*> stack;
         stack.append(root);

@@ -48,14 +48,14 @@ namespace WebCore {
         WorkerContext* impl() const { return m_impl.get(); }
         ScriptExecutionContext* scriptExecutionContext() const;
 
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
         }
 
     protected:
-        JSWorkerContextBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<WorkerContext>);
-        void finishCreation(JSC::JSGlobalData&);
+        JSWorkerContextBase(JSC::VM&, JSC::Structure*, PassRefPtr<WorkerContext>);
+        void finishCreation(JSC::VM&);
 
     private:
         RefPtr<WorkerContext> m_impl;

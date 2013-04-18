@@ -30,7 +30,7 @@
 
 #include "Executable.h"
 #include "Heap.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "Operations.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
@@ -38,11 +38,11 @@
 namespace JSC {
 
 ClosureCallStubRoutine::ClosureCallStubRoutine(
-    const MacroAssemblerCodeRef& code, JSGlobalData& globalData, const JSCell* owner,
+    const MacroAssemblerCodeRef& code, VM& vm, const JSCell* owner,
     Structure* structure, ExecutableBase* executable, const CodeOrigin& codeOrigin)
-    : GCAwareJITStubRoutine(code, globalData, true)
-    , m_structure(globalData, owner, structure)
-    , m_executable(globalData, owner, executable)
+    : GCAwareJITStubRoutine(code, vm, true)
+    , m_structure(vm, owner, structure)
+    , m_executable(vm, owner, executable)
     , m_codeOrigin(codeOrigin)
 {
 }

@@ -1383,14 +1383,14 @@ private:
         case TrueTag:
             return jsBoolean(true);
         case FalseObjectTag: {
-            BooleanObject* obj = BooleanObject::create(m_exec->globalData(), m_globalObject->booleanObjectStructure());
-            obj->setInternalValue(m_exec->globalData(), jsBoolean(false));
+            BooleanObject* obj = BooleanObject::create(m_exec->vm(), m_globalObject->booleanObjectStructure());
+            obj->setInternalValue(m_exec->vm(), jsBoolean(false));
             m_gcBuffer.append(obj);
             return obj;
         }
         case TrueObjectTag: {
-            BooleanObject* obj = BooleanObject::create(m_exec->globalData(), m_globalObject->booleanObjectStructure());
-            obj->setInternalValue(m_exec->globalData(), jsBoolean(true));
+            BooleanObject* obj = BooleanObject::create(m_exec->vm(), m_globalObject->booleanObjectStructure());
+            obj->setInternalValue(m_exec->vm(), jsBoolean(true));
              m_gcBuffer.append(obj);
             return obj;
         }
@@ -1482,7 +1482,7 @@ private:
             return cachedString->jsString(m_exec);
         }
         case EmptyStringTag:
-            return jsEmptyString(&m_exec->globalData());
+            return jsEmptyString(&m_exec->vm());
         case StringObjectTag: {
             CachedStringRef cachedString;
             if (!readStringData(cachedString))
@@ -1492,7 +1492,7 @@ private:
             return obj;
         }
         case EmptyStringObjectTag: {
-            StringObject* obj = constructString(m_exec, m_globalObject, jsEmptyString(&m_exec->globalData()));
+            StringObject* obj = constructString(m_exec, m_globalObject, jsEmptyString(&m_exec->vm()));
             m_gcBuffer.append(obj);
             return obj;
         }
@@ -1505,7 +1505,7 @@ private:
                 return JSValue();
             RegExpFlags reFlags = regExpFlags(flags->string());
             ASSERT(reFlags != InvalidFlags);
-            RegExp* regExp = RegExp::create(m_exec->globalData(), pattern->string(), reFlags);
+            RegExp* regExp = RegExp::create(m_exec->vm(), pattern->string(), reFlags);
             return RegExpObject::create(m_exec, m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
         case ObjectReferenceTag: {
@@ -1849,7 +1849,7 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
 ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
 {
     JSValue value = deserialize(scriptState, scriptState->lexicalGlobalObject(), 0);
-    return ScriptValue(scriptState->globalData(), value);
+    return ScriptValue(scriptState->vm(), value);
 }
 #endif
 

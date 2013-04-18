@@ -43,7 +43,7 @@ friend class RegExp;
 typedef HashMap<RegExpKey, Weak<RegExp> > RegExpCacheMap;
 
 public:
-    RegExpCache(JSGlobalData* globalData);
+    RegExpCache(VM* vm);
     void invalidateCode();
 
 private:
@@ -59,7 +59,7 @@ private:
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
     int m_nextEntryInStrongCache;
     WTF::FixedArray<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
-    JSGlobalData* m_globalData;
+    VM* m_vm;
 };
 
 } // namespace JSC

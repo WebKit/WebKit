@@ -112,7 +112,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 // ECMA 8.7.2
 void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
 
     unsigned index = propertyName.asIndex();
     if (index != PropertyName::NotAnIndex) {
@@ -137,7 +137,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     for (; ; obj = asObject(prototype)) {
         unsigned attributes;
         JSCell* specificValue;
-        PropertyOffset offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
+        PropertyOffset offset = obj->structure()->get(vm, propertyName, attributes, specificValue);
         if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
@@ -295,20 +295,20 @@ bool JSValue::isValidCallee()
 
 JSString* JSValue::toStringSlowCase(ExecState* exec) const
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     ASSERT(!isString());
     if (isInt32())
-        return jsString(&globalData, globalData.numericStrings.add(asInt32()));
+        return jsString(&vm, vm.numericStrings.add(asInt32()));
     if (isDouble())
-        return jsString(&globalData, globalData.numericStrings.add(asDouble()));
+        return jsString(&vm, vm.numericStrings.add(asDouble()));
     if (isTrue())
-        return globalData.smallStrings.trueString();
+        return vm.smallStrings.trueString();
     if (isFalse())
-        return globalData.smallStrings.falseString();
+        return vm.smallStrings.falseString();
     if (isNull())
-        return globalData.smallStrings.nullString();
+        return vm.smallStrings.nullString();
     if (isUndefined())
-        return globalData.smallStrings.undefinedString();
+        return vm.smallStrings.undefinedString();
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);

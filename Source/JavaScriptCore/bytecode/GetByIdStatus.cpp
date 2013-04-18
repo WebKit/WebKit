@@ -52,7 +52,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     unsigned attributesIgnored;
     JSCell* specificValue;
     PropertyOffset offset = structure->get(
-        *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+        *profiledBlock->vm(), ident, attributesIgnored, specificValue);
     if (structure->isDictionary())
         specificValue = 0;
     if (!isValidOffset(offset))
@@ -93,7 +93,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     JSCell* specificValue;
         
     result.m_offset = currentStructure->get(
-        *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+        *profiledBlock->vm(), ident, attributesIgnored, specificValue);
     if (currentStructure->isDictionary())
         specificValue = 0;
     if (!isValidOffset(result.m_offset))
@@ -165,7 +165,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         unsigned attributesIgnored;
         JSCell* specificValue;
         result.m_offset = structure->get(
-            *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+            *profiledBlock->vm(), ident, attributesIgnored, specificValue);
         if (structure->isDictionary())
             specificValue = 0;
         
@@ -190,7 +190,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
             unsigned attributesIgnored;
             JSCell* specificValue;
             PropertyOffset myOffset = structure->get(
-                *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+                *profiledBlock->vm(), ident, attributesIgnored, specificValue);
             if (structure->isDictionary())
                 specificValue = 0;
             
@@ -256,7 +256,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
 #endif // ENABLE(JIT)
 }
 
-GetByIdStatus GetByIdStatus::computeFor(JSGlobalData& globalData, Structure* structure, Identifier& ident)
+GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, Identifier& ident)
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
@@ -271,10 +271,10 @@ GetByIdStatus GetByIdStatus::computeFor(JSGlobalData& globalData, Structure* str
         return GetByIdStatus(TakesSlowPath);
     
     GetByIdStatus result;
-    result.m_wasSeenInJIT = false; // To my knowledge nobody that uses computeFor(JSGlobalData&, Structure*, Identifier&) reads this field, but I might as well be honest: no, it wasn't seen in the JIT, since I computed it statically.
+    result.m_wasSeenInJIT = false; // To my knowledge nobody that uses computeFor(VM&, Structure*, Identifier&) reads this field, but I might as well be honest: no, it wasn't seen in the JIT, since I computed it statically.
     unsigned attributes;
     JSCell* specificValue;
-    result.m_offset = structure->get(globalData, ident, attributes, specificValue);
+    result.m_offset = structure->get(vm, ident, attributes, specificValue);
     if (!isValidOffset(result.m_offset))
         return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
     if (attributes & Accessor)

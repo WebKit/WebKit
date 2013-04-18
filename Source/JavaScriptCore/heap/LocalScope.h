@@ -37,11 +37,11 @@ namespace JSC {
     LocalScope is similar in concept to NSAutoreleasePool.
 */
 
-class JSGlobalData;
+class VM;
 
 class LocalScope {
 public:
-    explicit LocalScope(JSGlobalData&);
+    explicit LocalScope(VM&);
     ~LocalScope();
     
     template <typename T> Local<T> release(Local<T>); // Destroys all other locals in the scope.
@@ -51,8 +51,8 @@ private:
     HandleStack::Frame m_lastFrame;
 };
 
-inline LocalScope::LocalScope(JSGlobalData& globalData)
-    : m_handleStack(globalData.heap.handleStack())
+inline LocalScope::LocalScope(VM& vm)
+    : m_handleStack(vm.heap.handleStack())
 {
     m_handleStack->enterScope(m_lastFrame);
 }

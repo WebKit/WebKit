@@ -31,35 +31,35 @@
 
 namespace JSC {
 
-inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
+inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
 {
-    ASSERT(globalData.structureStructure);
+    ASSERT(vm.structureStructure);
     ASSERT(classInfo);
-    Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
-    structure->finishCreation(globalData);
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
+    structure->finishCreation(vm);
     return structure;
 }
 
-inline Structure* Structure::createStructure(JSGlobalData& globalData)
+inline Structure* Structure::createStructure(VM& vm)
 {
-    ASSERT(!globalData.structureStructure);
-    Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData);
-    structure->finishCreation(globalData, CreatingEarlyCell);
+    ASSERT(!vm.structureStructure);
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm);
+    structure->finishCreation(vm, CreatingEarlyCell);
     return structure;
 }
 
-inline Structure* Structure::create(JSGlobalData& globalData, const Structure* structure)
+inline Structure* Structure::create(VM& vm, const Structure* structure)
 {
-    ASSERT(globalData.structureStructure);
-    Structure* newStructure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
-    newStructure->finishCreation(globalData);
+    ASSERT(vm.structureStructure);
+    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, structure);
+    newStructure->finishCreation(vm);
     return newStructure;
 }
 
-inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName propertyName)
+inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(structure()->classInfo() == &s_info);
-    materializePropertyMapIfNecessary(globalData);
+    materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
         return invalidOffset;
 
@@ -67,10 +67,10 @@ inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName prop
     return entry ? entry->offset : invalidOffset;
 }
 
-inline PropertyOffset Structure::get(JSGlobalData& globalData, const WTF::String& name)
+inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
     ASSERT(structure()->classInfo() == &s_info);
-    materializePropertyMapIfNecessary(globalData);
+    materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
         return invalidOffset;
 
@@ -113,12 +113,12 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
-inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
+inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enumerationCache)
 {
     ASSERT(!isDictionary());
     if (!typeInfo().structureHasRareData())
-        allocateRareData(globalData);
-    rareData()->setEnumerationCache(globalData, this, enumerationCache);
+        allocateRareData(vm);
+    rareData()->setEnumerationCache(vm, this, enumerationCache);
 }
 
 inline JSPropertyNameIterator* Structure::enumerationCache()
@@ -142,19 +142,19 @@ inline JSValue Structure::prototypeForLookup(ExecState* exec) const
     return prototypeForLookup(exec->lexicalGlobalObject());
 }
 
-inline StructureChain* Structure::prototypeChain(JSGlobalData& globalData, JSGlobalObject* globalObject) const
+inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject) const
 {
     // We cache our prototype chain so our clients can share it.
     if (!isValid(globalObject, m_cachedPrototypeChain.get())) {
         JSValue prototype = prototypeForLookup(globalObject);
-        m_cachedPrototypeChain.set(globalData, this, StructureChain::create(globalData, prototype.isNull() ? 0 : asObject(prototype)->structure()));
+        m_cachedPrototypeChain.set(vm, this, StructureChain::create(vm, prototype.isNull() ? 0 : asObject(prototype)->structure()));
     }
     return m_cachedPrototypeChain.get();
 }
 
 inline StructureChain* Structure::prototypeChain(ExecState* exec) const
 {
-    return prototypeChain(exec->globalData(), exec->lexicalGlobalObject());
+    return prototypeChain(exec->vm(), exec->lexicalGlobalObject());
 }
 
 inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cachedPrototypeChain) const
@@ -200,7 +200,7 @@ inline bool Structure::putWillGrowOutOfLineStorage()
 
 ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
 {
-    ASSERT(!globalObject() || !globalObject()->globalData().heap.isBusy());
+    ASSERT(!globalObject() || !globalObject()->vm().heap.isBusy());
     return m_propertyTableUnsafe;
 }
 

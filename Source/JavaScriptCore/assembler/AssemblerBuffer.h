@@ -30,7 +30,7 @@
 
 #include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "stdint.h"
 #include <string.h>
 #include <wtf/Assertions.h>
@@ -130,12 +130,12 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
         {
             if (!m_index)
                 return 0;
 
-            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index, ownerUID, effort);
+            RefPtr<ExecutableMemoryHandle> result = vm.executableAllocator.allocate(vm, m_index, ownerUID, effort);
 
             if (!result)
                 return 0;

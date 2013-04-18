@@ -28,8 +28,8 @@ namespace JSC {
     class DateInstance : public JSWrapperObject {
     protected:
         JS_EXPORT_PRIVATE DateInstance(ExecState*, Structure*);
-        void finishCreation(JSGlobalData&);
-        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, double);
+        void finishCreation(VM&);
+        JS_EXPORT_PRIVATE void finishCreation(VM&, double);
 
         static void destroy(JSCell*);
  
@@ -39,14 +39,14 @@ namespace JSC {
         static DateInstance* create(ExecState* exec, Structure* structure, double date)
         {
             DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->globalData(), date);
+            instance->finishCreation(exec->vm(), date);
             return instance;
         }
 
         static DateInstance* create(ExecState* exec, Structure* structure)
         {
             DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->globalData());
+            instance->finishCreation(exec->vm());
             return instance;
         }
 
@@ -68,9 +68,9 @@ namespace JSC {
             return calculateGregorianDateTimeUTC(exec);
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     private:

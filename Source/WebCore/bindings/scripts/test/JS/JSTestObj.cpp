@@ -228,10 +228,10 @@ JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObje
 
 void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->globalData());
+    Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -361,15 +361,15 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Pass
 {
 }
 
-void JSTestObj::finishCreation(JSGlobalData& globalData)
+void JSTestObj::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestObjPrototype::create(exec->globalData(), globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestObjPrototype::create(exec->vm(), globalObject, JSTestObjPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestObj::destroy(JSC::JSCell* cell)
@@ -865,7 +865,7 @@ JSValue jsTestObjCachedAttribute1(ExecState* exec, JSValue slotBase, PropertyNam
         return cachedValue;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = (impl->cachedAttribute1().hasNoValue() ? jsNull() : impl->cachedAttribute1().jsValue());
-    castedThis->m_cachedAttribute1.set(exec->globalData(), castedThis, result);
+    castedThis->m_cachedAttribute1.set(exec->vm(), castedThis, result);
     return result;
 }
 
@@ -878,7 +878,7 @@ JSValue jsTestObjCachedAttribute2(ExecState* exec, JSValue slotBase, PropertyNam
         return cachedValue;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = (impl->cachedAttribute2().hasNoValue() ? jsNull() : impl->cachedAttribute2().jsValue());
-    castedThis->m_cachedAttribute2.set(exec->globalData(), castedThis, result);
+    castedThis->m_cachedAttribute2.set(exec->vm(), castedThis, result);
     return result;
 }
 
@@ -1542,7 +1542,7 @@ void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* thisObje
 {
     UNUSED_PARAM(exec);
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr4"), value);
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr4"), value);
 }
 
 #endif
@@ -1552,7 +1552,7 @@ void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* thisObje
 {
     UNUSED_PARAM(exec);
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr5"), value);
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr5"), value);
 }
 
 #endif
@@ -1562,7 +1562,7 @@ void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* thisObje
 {
     UNUSED_PARAM(exec);
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr6"), value);
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr6"), value);
 }
 
 #endif
@@ -1572,7 +1572,7 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    ScriptValue nativeValue(exec->globalData(), value);
+    ScriptValue nativeValue(exec->vm(), value);
     if (exec->hadException())
         return;
     impl->setAnyAttribute(nativeValue);
@@ -1643,7 +1643,7 @@ void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* thisObject, JSV
 {
     UNUSED_PARAM(exec);
     // Shadowing a built-in object
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "replaceableAttribute"), value);
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "replaceableAttribute"), value);
 }
 
 

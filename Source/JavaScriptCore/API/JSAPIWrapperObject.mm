@@ -74,20 +74,20 @@ template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JS
 template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
 
 template <>
-Structure* JSCallbackObject<JSAPIWrapperObject>::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
+Structure* JSCallbackObject<JSAPIWrapperObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {
-    return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
 }
 
-JSAPIWrapperObject::JSAPIWrapperObject(JSGlobalData& globalData, Structure* structure)
-    : Base(globalData, structure)
+JSAPIWrapperObject::JSAPIWrapperObject(VM& vm, Structure* structure)
+    : Base(vm, structure)
     , m_wrappedObject(0)
 {
 }
 
-void JSAPIWrapperObject::finishCreation(JSGlobalData& globalData)
+void JSAPIWrapperObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
 }
     
@@ -104,7 +104,7 @@ void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
     Base::visitChildren(cell, visitor);
 
     if (thisObject->wrappedObject())
-        scanExternalObjectGraph(cell->structure()->globalObject()->globalData(), visitor, thisObject->wrappedObject());
+        scanExternalObjectGraph(cell->structure()->globalObject()->vm(), visitor, thisObject->wrappedObject());
 }
 
 } // namespace JSC

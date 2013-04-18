@@ -27,24 +27,24 @@ namespace JSC {
 
     class NumberObject : public JSWrapperObject {
     protected:
-        NumberObject(JSGlobalData&, Structure*);
-        void finishCreation(JSGlobalData&);
+        NumberObject(VM&, Structure*);
+        void finishCreation(VM&);
 
     public:
         typedef JSWrapperObject Base;
 
-        static NumberObject* create(JSGlobalData& globalData, Structure* structure)
+        static NumberObject* create(VM& vm, Structure* structure)
         {
-            NumberObject* number = new (NotNull, allocateCell<NumberObject>(globalData.heap)) NumberObject(globalData, structure);
-            number->finishCreation(globalData);
+            NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm.heap)) NumberObject(vm, structure);
+            number->finishCreation(vm);
             return number;
         }
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), &s_info);
         }
     };
 

@@ -273,7 +273,7 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
         } else
             jsCallFrame = jsUndefined();
     }
-    listener->didPause(state, ScriptValue(state->globalData(), jsCallFrame), ScriptValue());
+    listener->didPause(state, ScriptValue(state->vm(), jsCallFrame), ScriptValue());
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)

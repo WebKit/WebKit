@@ -144,7 +144,7 @@ class Trie:
             print(str + "if (!isIdentPart(code[%d])) {" % (len(self.fullPrefix)))
             print(str + "    internalShift<%d>();" % len(self.fullPrefix))
             print(str + "    if (shouldCreateIdentifier)")
-            print(str + ("        data->ident = &m_globalData->propertyNames->%sKeyword;" % self.fullPrefix))
+            print(str + ("        data->ident = &m_vm->propertyNames->%sKeyword;" % self.fullPrefix))
             print(str + "    return " + self.value + ";")
             print(str + "}")
         rootIndex = len(self.fullPrefix)

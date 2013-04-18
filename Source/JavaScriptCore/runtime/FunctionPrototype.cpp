@@ -49,23 +49,23 @@ FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* st
 
 void FunctionPrototype::finishCreation(ExecState* exec, const String& name)
 {
-    Base::finishCreation(exec->globalData(), name);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    Base::finishCreation(exec->vm(), name);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction)
 {
     JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString.string(), functionProtoFuncToString);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().toString, toStringFunction, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().toString, toStringFunction, DontEnum);
 
     *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply.string(), functionProtoFuncApply);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().apply, *applyFunction, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().apply, *applyFunction, DontEnum);
 
     *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call.string(), functionProtoFuncCall);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().call, *callFunction, DontEnum);
 
     JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind.string(), functionProtoFuncBind);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().bind, bindFunction, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().bind, bindFunction, DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)
@@ -187,12 +187,12 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
 
     // Let A be a new (possibly empty) internal list of all of the argument values provided after thisArg (arg1, arg2 etc), in order.
     size_t numBoundArgs = exec->argumentCount() > 1 ? exec->argumentCount() - 1 : 0;
-    JSArray* boundArgs = JSArray::tryCreateUninitialized(exec->globalData(), globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), numBoundArgs);
+    JSArray* boundArgs = JSArray::tryCreateUninitialized(exec->vm(), globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), numBoundArgs);
     if (!boundArgs)
         return JSValue::encode(throwOutOfMemoryError(exec));
 
     for (size_t i = 0; i < numBoundArgs; ++i)
-        boundArgs->initializeIndex(exec->globalData(), i, exec->argument(i + 1));
+        boundArgs->initializeIndex(exec->vm(), i, exec->argument(i + 1));
 
     // If the [[Class]] internal property of Target is "Function", then ...
     // Else set the length own property of F to 0.

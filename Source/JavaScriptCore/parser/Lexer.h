@@ -39,12 +39,12 @@ class Keywords {
 public:
     bool isKeyword(const Identifier& ident) const
     {
-        return m_keywordTable.entry(m_globalData, ident);
+        return m_keywordTable.entry(m_vm, ident);
     }
     
     const HashEntry* getKeyword(const Identifier& ident) const
     {
-        return m_keywordTable.entry(m_globalData, ident);
+        return m_keywordTable.entry(m_vm, ident);
     }
     
     ~Keywords()
@@ -53,11 +53,11 @@ public:
     }
     
 private:
-    friend class JSGlobalData;
+    friend class VM;
     
-    Keywords(JSGlobalData*);
+    Keywords(VM*);
     
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     const HashTable m_keywordTable;
 };
 
@@ -73,7 +73,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(JSGlobalData*);
+    Lexer(VM*);
     ~Lexer();
 
     // Character manipulation functions.
@@ -190,7 +190,7 @@ private:
 
     IdentifierArena* m_arena;
 
-    JSGlobalData* m_globalData;
+    VM* m_vm;
 };
 
 template <>
@@ -232,28 +232,28 @@ inline UChar Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const LChar* characters, size_t length)
 {
-    return &m_arena->makeIdentifier(m_globalData, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters, length);
 }
 
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const UChar* characters, size_t length)
 {
-    return &m_arena->makeIdentifier(m_globalData, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters, length);
 }
 
 template <>
 ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 }
 
 template <>
 ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars)
 {
     if (!(orAllChars & ~0xff))
-        return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+        return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 
-    return &m_arena->makeIdentifier(m_globalData, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters, length);
 }
 
 template <>
@@ -273,19 +273,19 @@ ALWAYS_INLINE void Lexer<UChar>::setCodeStart(const StringImpl* sourceString)
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(const UChar* characters, size_t length)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 }
 
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const LChar* characters, size_t length)
 {
-    return &m_arena->makeIdentifier(m_globalData, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters, length);
 }
 
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* characters, size_t length)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 }
 
 template <typename T>

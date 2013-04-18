@@ -43,10 +43,10 @@ namespace JSC {
         }
 
         template <typename T>
-        ALWAYS_INLINE const Identifier& makeIdentifier(JSGlobalData*, const T* characters, size_t length);
-        ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(JSGlobalData*, const UChar* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeIdentifier(VM*, const T* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM*, const UChar* characters, size_t length);
 
-        const Identifier& makeNumericIdentifier(JSGlobalData*, double number);
+        const Identifier& makeNumericIdentifier(VM*, double number);
 
         bool isEmpty() const { return m_identifiers.isEmpty(); }
 
@@ -69,51 +69,51 @@ namespace JSC {
     };
 
     template <typename T>
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(JSGlobalData* globalData, const T* characters, size_t length)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM* vm, const T* characters, size_t length)
     {
         if (characters[0] >= MaximumCachableCharacter) {
-            m_identifiers.append(Identifier(globalData, characters, length));
+            m_identifiers.append(Identifier(vm, characters, length));
             return m_identifiers.last();
         }
         if (length == 1) {
             if (Identifier* ident = m_shortIdentifiers[characters[0]])
                 return *ident;
-            m_identifiers.append(Identifier(globalData, characters, length));
+            m_identifiers.append(Identifier(vm, characters, length));
             m_shortIdentifiers[characters[0]] = &m_identifiers.last();
             return m_identifiers.last();
         }
         Identifier* ident = m_recentIdentifiers[characters[0]];
         if (ident && Identifier::equal(ident->impl(), characters, length))
             return *ident;
-        m_identifiers.append(Identifier(globalData, characters, length));
+        m_identifiers.append(Identifier(vm, characters, length));
         m_recentIdentifiers[characters[0]] = &m_identifiers.last();
         return m_identifiers.last();
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(JSGlobalData* globalData, const UChar* characters, size_t length)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(VM* vm, const UChar* characters, size_t length)
     {
         if (characters[0] >= MaximumCachableCharacter) {
-            m_identifiers.append(Identifier::createLCharFromUChar(globalData, characters, length));
+            m_identifiers.append(Identifier::createLCharFromUChar(vm, characters, length));
             return m_identifiers.last();
         }
         if (length == 1) {
             if (Identifier* ident = m_shortIdentifiers[characters[0]])
                 return *ident;
-            m_identifiers.append(Identifier(globalData, characters, length));
+            m_identifiers.append(Identifier(vm, characters, length));
             m_shortIdentifiers[characters[0]] = &m_identifiers.last();
             return m_identifiers.last();
         }
         Identifier* ident = m_recentIdentifiers[characters[0]];
         if (ident && Identifier::equal(ident->impl(), characters, length))
             return *ident;
-        m_identifiers.append(Identifier::createLCharFromUChar(globalData, characters, length));
+        m_identifiers.append(Identifier::createLCharFromUChar(vm, characters, length));
         m_recentIdentifiers[characters[0]] = &m_identifiers.last();
         return m_identifiers.last();
     }
     
-    inline const Identifier& IdentifierArena::makeNumericIdentifier(JSGlobalData* globalData, double number)
+    inline const Identifier& IdentifierArena::makeNumericIdentifier(VM* vm, double number)
     {
-        m_identifiers.append(Identifier(globalData, String::numberToStringECMAScript(number)));
+        m_identifiers.append(Identifier(vm, String::numberToStringECMAScript(number)));
         return m_identifiers.last();
     }
 

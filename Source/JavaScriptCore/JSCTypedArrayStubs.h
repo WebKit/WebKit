@@ -48,8 +48,8 @@ public: \
     typedef JSDestructibleObject Base; \
     static JS##name##Array* create(JSC::Structure* structure, JSGlobalObject* globalObject, PassRefPtr<name##Array> impl) \
     { \
-        JS##name##Array* ptr = new (NotNull, JSC::allocateCell<JS##name##Array>(globalObject->globalData().heap)) JS##name##Array(structure, globalObject, impl); \
-        ptr->finishCreation(globalObject->globalData()); \
+        JS##name##Array* ptr = new (NotNull, JSC::allocateCell<JS##name##Array>(globalObject->vm().heap)) JS##name##Array(structure, globalObject, impl); \
+        ptr->finishCreation(globalObject->vm()); \
         return ptr; \
     }\
 \
@@ -60,9 +60,9 @@ public: \
     static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool);\
     static const JSC::ClassInfo s_info;\
 \
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\
     {\
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\
     }\
 \
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\
@@ -74,7 +74,7 @@ public: \
     RefPtr<name##Array> m_impl;\
 protected:\
     JS##name##Array(JSC::Structure*, JSGlobalObject*, PassRefPtr<name##Array>);\
-    void finishCreation(JSC::JSGlobalData&);\
+    void finishCreation(JSC::VM&);\
     static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags; \
     JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\
     void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\
@@ -83,19 +83,19 @@ protected:\
 const ClassInfo JS##name##Array::s_info = { #name "Array" , &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JS##name##Array) };\
 \
 JS##name##Array::JS##name##Array(Structure* structure, JSGlobalObject* globalObject, PassRefPtr<name##Array> impl)\
-    : Base(globalObject->globalData(), structure)\
+    : Base(globalObject->vm(), structure)\
     , m_impl(impl)\
 {\
 }\
 \
-void JS##name##Array::finishCreation(JSGlobalData& globalData)\
+void JS##name##Array::finishCreation(VM& vm)\
 {\
-    Base::finishCreation(globalData);\
+    Base::finishCreation(vm);\
     TypedArrayDescriptor descriptor(&JS##name##Array::s_info, OBJECT_OFFSETOF(JS##name##Array, m_storage), OBJECT_OFFSETOF(JS##name##Array, m_storageLength));\
-    globalData.registerTypedArrayDescriptor(m_impl.get(), descriptor);\
+    vm.registerTypedArrayDescriptor(m_impl.get(), descriptor);\
     m_storage = m_impl->data();\
     m_storageLength = m_impl->length();\
-    putDirect(globalData, globalData.propertyNames->length, jsNumber(m_storageLength), DontDelete | ReadOnly | DontEnum); \
+    putDirect(vm, vm.propertyNames->length, jsNumber(m_storageLength), DontDelete | ReadOnly | DontEnum); \
     ASSERT(inherits(&s_info));\
 }\
 \
@@ -184,7 +184,7 @@ static EncodedJSValue JSC_HOST_CALL constructJS##name##Array(ExecState* callFram
     int32_t length = callFrame->argument(0).toInt32(callFrame); \
     if (length < 0) \
         return JSValue::encode(jsUndefined()); \
-    Structure* structure = JS##name##Array::createStructure(callFrame->globalData(), callFrame->lexicalGlobalObject(), callFrame->lexicalGlobalObject()->objectPrototype()); \
+    Structure* structure = JS##name##Array::createStructure(callFrame->vm(), callFrame->lexicalGlobalObject(), callFrame->lexicalGlobalObject()->objectPrototype()); \
     RefPtr<name##Array> buffer = name##Array::create(length); \
     if (!buffer) \
         return throwVMError(callFrame, createRangeError(callFrame, "ArrayBuffer size is not a small enough positive integer.")); \

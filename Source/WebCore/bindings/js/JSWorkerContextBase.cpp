@@ -46,15 +46,15 @@ namespace WebCore {
 
 const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSWorkerContextBase) };
 
-JSWorkerContextBase::JSWorkerContextBase(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<WorkerContext> impl)
-    : JSDOMGlobalObject(globalData, structure, normalWorld(globalData))
+JSWorkerContextBase::JSWorkerContextBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerContext> impl)
+    : JSDOMGlobalObject(vm, structure, normalWorld(vm))
     , m_impl(impl)
 {
 }
 
-void JSWorkerContextBase::finishCreation(JSGlobalData& globalData)
+void JSWorkerContextBase::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 

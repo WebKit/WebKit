@@ -55,7 +55,7 @@ class ExecState;
 class FunctionBodyNode;
 class FunctionParameters;
 class Identifier;
-class JSGlobalData;
+class VM;
 class ProgramNode;
 class SourceCode;
 
@@ -110,8 +110,8 @@ struct ScopeLabelInfo {
 };
 
 struct Scope {
-    Scope(const JSGlobalData* globalData, bool isFunction, bool strictMode)
-        : m_globalData(globalData)
+    Scope(const VM* vm, bool isFunction, bool strictMode)
+        : m_vm(vm)
         , m_shadowsArguments(false)
         , m_usesEval(false)
         , m_needsFullActivation(false)
@@ -126,7 +126,7 @@ struct Scope {
     }
 
     Scope(const Scope& rhs)
-        : m_globalData(rhs.m_globalData)
+        : m_vm(rhs.m_vm)
         , m_shadowsArguments(rhs.m_shadowsArguments)
         , m_usesEval(rhs.m_usesEval)
         , m_needsFullActivation(rhs.m_needsFullActivation)
@@ -196,7 +196,7 @@ struct Scope {
 
     bool declareVariable(const Identifier* ident)
     {
-        bool isValidStrictMode = m_globalData->propertyNames->eval != *ident && m_globalData->propertyNames->arguments != *ident;
+        bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         m_declaredVariables.add(ident->string().impl());
         return isValidStrictMode;
@@ -213,8 +213,8 @@ struct Scope {
 
     bool declareParameter(const Identifier* ident)
     {
-        bool isArguments = m_globalData->propertyNames->arguments == *ident;
-        bool isValidStrictMode = m_declaredVariables.add(ident->string().impl()).isNewEntry && m_globalData->propertyNames->eval != *ident && !isArguments;
+        bool isArguments = m_vm->propertyNames->arguments == *ident;
+        bool isValidStrictMode = m_declaredVariables.add(ident->string().impl()).isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         if (isArguments)
             m_shadowsArguments = true;
@@ -312,7 +312,7 @@ struct Scope {
     }
 
 private:
-    const JSGlobalData* m_globalData;
+    const VM* m_vm;
     bool m_shadowsArguments : 1;
     bool m_usesEval : 1;
     bool m_needsFullActivation : 1;
@@ -365,7 +365,7 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(JSGlobalData*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
+    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
     ~Parser();
 
     template <class ParsedNode>
@@ -422,7 +422,7 @@ private:
             isStrict = m_scopeStack.last().strictMode();
             isFunction = m_scopeStack.last().isFunction();
         }
-        m_scopeStack.append(Scope(m_globalData, isFunction, isStrict));
+        m_scopeStack.append(Scope(m_vm, isFunction, isStrict));
         return currentScope();
     }
     
@@ -894,7 +894,7 @@ private:
         return !m_errorMessage.isNull();
     }
 
-    JSGlobalData* m_globalData;
+    VM* m_vm;
     const SourceCode* m_source;
     ParserArena* m_arena;
     OwnPtr<LexerType> m_lexer;
@@ -975,7 +975,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
         JSTokenLocation endLocation;
         endLocation.line = m_lexer->lastLineNumber();
         endLocation.charPosition = m_lexer->currentCharPosition();
-        result = ParsedNode::create(m_globalData,
+        result = ParsedNode::create(m_vm,
                                     startLocation,
                                     endLocation,
                                     m_sourceElements,
@@ -1007,16 +1007,16 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error)
+PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser< Lexer<LChar> > parser(globalData, source, parameters, name, strictness, parserMode);
+        Parser< Lexer<LChar> > parser(vm, source, parameters, name, strictness, parserMode);
         return parser.parse<ParsedNode>(error);
     }
-    Parser< Lexer<UChar> > parser(globalData, source, parameters, name, strictness, parserMode);
+    Parser< Lexer<UChar> > parser(vm, source, parameters, name, strictness, parserMode);
     return parser.parse<ParsedNode>(error);
 }
 

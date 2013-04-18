@@ -28,7 +28,7 @@
 
 #if ENABLE(YARR_JIT)
 
-#include "JSGlobalData.h"
+#include "VM.h"
 #include "MacroAssemblerCodeRef.h"
 #include "MatchResult.h"
 #include "Yarr.h"
@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-class JSGlobalData;
+class VM;
 class ExecutablePool;
 
 namespace Yarr {
@@ -132,7 +132,7 @@ enum YarrJITCompileMode {
     MatchOnly,
     IncludeSubpatterns
 };
-void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
+void jitCompile(YarrPattern&, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
 
 } } // namespace JSC::Yarr
 

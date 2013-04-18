@@ -86,7 +86,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertyDesc
 
 inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyName, JSValue value, bool shouldThrow)
 {
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
     SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.publicName());
@@ -102,7 +102,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     if (isTornOff() && !isValid(entry))
         return false;
 
-    registerAt(entry.getIndex()).set(globalData, this, value);
+    registerAt(entry.getIndex()).set(vm, this, value);
     return true;
 }
 
@@ -125,7 +125,7 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)
+inline bool JSActivation::symbolTablePutWithAttributes(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
@@ -138,7 +138,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
         return false;
 
     entry.setAttributes(attributes);
-    registerAt(entry.getIndex()).set(globalData, this, value);
+    registerAt(entry.getIndex()).set(vm, this, value);
     return true;
 }
 
@@ -157,7 +157,7 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyNam
     if (thisObject->symbolTableGet(propertyName, slot))
         return true;
 
-    if (JSValue value = thisObject->getDirect(exec->globalData(), propertyName)) {
+    if (JSValue value = thisObject->getDirect(exec->vm(), propertyName)) {
         slot.setValue(value);
         return true;
     }
@@ -201,7 +201,7 @@ void JSActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
     ASSERT(!thisObject->hasGetterSetterProperties());
-    thisObject->putOwnDataProperty(exec->globalData(), propertyName, value, slot);
+    thisObject->putOwnDataProperty(exec->vm(), propertyName, value, slot);
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum
@@ -210,7 +210,7 @@ void JSActivation::putDirectVirtual(JSObject* object, ExecState* exec, PropertyN
     JSActivation* thisObject = jsCast<JSActivation*>(object);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
+    if (thisObject->symbolTablePutWithAttributes(exec->vm(), propertyName, value, attributes))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
@@ -245,7 +245,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName
         return arguments;
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
 
-    JSValue arguments = JSValue(Arguments::create(callFrame->globalData(), callFrame));
+    JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame));
     callFrame->uncheckedR(argumentsRegister) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     

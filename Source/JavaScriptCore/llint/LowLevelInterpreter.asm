@@ -362,8 +362,8 @@ macro functionInitialization(profileArgSkip)
         
     # Check stack height.
     loadi CodeBlock::m_numCalleeRegisters[t1], t0
-    loadp CodeBlock::m_globalData[t1], t2
-    loadp JSGlobalData::interpreter[t2], t2   # FIXME: Can get to the JSStack from the JITStackFrame
+    loadp CodeBlock::m_vm[t1], t2
+    loadp VM::interpreter[t2], t2   # FIXME: Can get to the JSStack from the JITStackFrame
     lshifti 3, t0
     addp t0, cfr, t0
     bpaeq Interpreter::m_stack + JSStack::m_end[t2], t0, .stackHeightOK
@@ -1057,8 +1057,8 @@ _llint_op_jngreatereq:
 
 _llint_op_loop_hint:
     traceExecution()
-    loadp JITStackFrame::globalData[sp], t1
-    loadb JSGlobalData::watchdog+Watchdog::m_timerDidFire[t1], t0
+    loadp JITStackFrame::vm[sp], t1
+    loadb VM::watchdog+Watchdog::m_timerDidFire[t1], t0
     btbnz t0, .handleWatchdogTimer
 .afterWatchdogTimerCheck:
     checkSwitchToJITForLoop()

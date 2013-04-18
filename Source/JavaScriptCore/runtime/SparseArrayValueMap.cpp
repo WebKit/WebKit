@@ -39,8 +39,8 @@ namespace JSC {
 
 const ClassInfo SparseArrayValueMap::s_info = { "SparseArrayValueMap", 0, 0, 0, CREATE_METHOD_TABLE(SparseArrayValueMap) };
 
-SparseArrayValueMap::SparseArrayValueMap(JSGlobalData& globalData)
-    : Base(globalData, globalData.sparseArrayValueMapStructure.get())
+SparseArrayValueMap::SparseArrayValueMap(VM& vm)
+    : Base(vm, vm.sparseArrayValueMapStructure.get())
     , m_flags(Normal)
     , m_reportedCapacity(0)
 {
@@ -50,15 +50,15 @@ SparseArrayValueMap::~SparseArrayValueMap()
 {
 }
 
-void SparseArrayValueMap::finishCreation(JSGlobalData& globalData)
+void SparseArrayValueMap::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalData);
+    Base::finishCreation(vm);
 }
 
-SparseArrayValueMap* SparseArrayValueMap::create(JSGlobalData& globalData)
+SparseArrayValueMap* SparseArrayValueMap::create(VM& vm)
 {
-    SparseArrayValueMap* result = new (NotNull, allocateCell<SparseArrayValueMap>(globalData.heap)) SparseArrayValueMap(globalData);
-    result->finishCreation(globalData);
+    SparseArrayValueMap* result = new (NotNull, allocateCell<SparseArrayValueMap>(vm.heap)) SparseArrayValueMap(vm);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -67,9 +67,9 @@ void SparseArrayValueMap::destroy(JSCell* cell)
     static_cast<SparseArrayValueMap*>(cell)->SparseArrayValueMap::~SparseArrayValueMap();
 }
 
-Structure* SparseArrayValueMap::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+Structure* SparseArrayValueMap::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), &s_info);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), &s_info);
 }
 
 SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigned i)
@@ -118,7 +118,7 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     }
 
     entry.attributes = attributes;
-    entry.set(exec->globalData(), this, value);
+    entry.set(exec->vm(), this, value);
     return true;
 }
 
@@ -172,7 +172,7 @@ void SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
             return;
         }
 
-        set(exec->globalData(), map, value);
+        set(exec->vm(), map, value);
         return;
     }
 

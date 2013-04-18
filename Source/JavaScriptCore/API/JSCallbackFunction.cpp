@@ -50,16 +50,16 @@ JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, Structure* 
 {
 }
 
-void JSCallbackFunction::finishCreation(JSGlobalData& globalData, const String& name)
+void JSCallbackFunction::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(globalData, name);
+    Base::finishCreation(vm, name);
     ASSERT(inherits(&s_info));
 }
 
 JSCallbackFunction* JSCallbackFunction::create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
 {
     JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, globalObject->callbackFunctionStructure(), callback);
-    function->finishCreation(exec->globalData(), name);
+    function->finishCreation(exec->vm(), name);
     return function;
 }
 

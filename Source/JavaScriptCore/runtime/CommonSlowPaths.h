@@ -78,7 +78,7 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, JSStack* stack, CodeSpec
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 {
     if (!baseVal.isObject()) {
-        exec->globalData().exception = createInvalidParamError(exec, "in", baseVal);
+        exec->vm().exception = createInvalidParamError(exec, "in", baseVal);
         return false;
     }
 
@@ -92,7 +92,7 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
         return baseObj->hasProperty(exec, jsCast<NameInstance*>(propName.asCell())->privateName());
 
     Identifier property(exec, propName.toString(exec)->value(exec));
-    if (exec->globalData().exception)
+    if (exec->vm().exception)
         return false;
     return baseObj->hasProperty(exec, property);
 }

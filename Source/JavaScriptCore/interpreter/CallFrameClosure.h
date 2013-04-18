@@ -33,7 +33,7 @@ struct CallFrameClosure {
     CallFrame* newCallFrame;
     JSFunction* function;
     FunctionExecutable* functionExecutable;
-    JSGlobalData* globalData;
+    VM* vm;
     JSScope* scope;
     int parameterCountIncludingThis;
     int argumentCountIncludingThis;

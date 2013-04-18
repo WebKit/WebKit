@@ -39,32 +39,32 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 {
 }
 
-inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
-    : m_structure(globalData, this, structure)
+inline JSCell::JSCell(VM& vm, Structure* structure)
+    : m_structure(vm, this, structure)
 {
 }
 
-inline void JSCell::finishCreation(JSGlobalData& globalData)
+inline void JSCell::finishCreation(VM& vm)
 {
 #if ENABLE(GC_VALIDATION)
-    ASSERT(globalData.isInitializingObject());
-    globalData.setInitializingObjectClass(0);
+    ASSERT(vm.isInitializingObject());
+    vm.setInitializingObjectClass(0);
 #else
-    UNUSED_PARAM(globalData);
+    UNUSED_PARAM(vm);
 #endif
     ASSERT(m_structure);
 }
 
-inline void JSCell::finishCreation(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCellTag)
 {
 #if ENABLE(GC_VALIDATION)
-    ASSERT(globalData.isInitializingObject());
-    globalData.setInitializingObjectClass(0);
+    ASSERT(vm.isInitializingObject());
+    vm.setInitializingObjectClass(0);
     if (structure)
 #endif
-        m_structure.setEarlyValue(globalData, this, structure);
+        m_structure.setEarlyValue(vm, this, structure);
     // Very first set of allocations won't have a real structure.
-    ASSERT(m_structure || !globalData.structureStructure);
+    ASSERT(m_structure || !vm.structureStructure);
 }
 
 inline Structure* JSCell::structure() const
@@ -84,8 +84,8 @@ void* allocateCell(Heap& heap, size_t size)
 {
     ASSERT(size >= sizeof(T));
 #if ENABLE(GC_VALIDATION)
-    ASSERT(!heap.globalData()->isInitializingObject());
-    heap.globalData()->setInitializingObjectClass(&T::s_info);
+    ASSERT(!heap.vm()->isInitializingObject());
+    heap.vm()->setInitializingObjectClass(&T::s_info);
 #endif
     JSCell* result = 0;
     if (T::needsDestruction && T::hasImmortalStructure)
@@ -134,14 +134,14 @@ inline bool JSCell::isAPIValueWrapper() const
     return m_structure->typeInfo().type() == APIValueWrapperType;
 }
 
-inline void JSCell::setStructure(JSGlobalData& globalData, Structure* structure)
+inline void JSCell::setStructure(VM& vm, Structure* structure)
 {
     ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
     ASSERT(structure->classInfo() == m_structure->classInfo());
     ASSERT(!m_structure
         || m_structure->transitionWatchpointSetHasBeenInvalidated()
         || m_structure.get() == structure);
-    m_structure.set(globalData, this, structure);
+    m_structure.set(vm, this, structure);
 }
 
 inline const MethodTable* JSCell::methodTableForDestruction() const
@@ -177,8 +177,8 @@ ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const String& 
 {
     if (!structure()->typeInfo().overridesGetOwnPropertySlot() && !structure()->hasGetterSetterProperties()) {
         PropertyOffset offset = name.impl()->hasHash()
-            ? structure()->get(exec->globalData(), Identifier(exec, name))
-            : structure()->get(exec->globalData(), name);
+            ? structure()->get(exec->vm(), Identifier(exec, name))
+            : structure()->get(exec->vm(), name);
         if (offset != invalidOffset)
             return asObject(this)->locationForOffset(offset)->get();
     }

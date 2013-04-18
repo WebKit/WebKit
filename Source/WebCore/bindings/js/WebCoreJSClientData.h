@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-class WebCoreJSClientData : public JSC::JSGlobalData::ClientData {
+class WebCoreJSClientData : public JSC::VM::ClientData {
     WTF_MAKE_NONCOPYABLE(WebCoreJSClientData); WTF_MAKE_FAST_ALLOCATED;
-    friend class JSGlobalDataWorldIterator;
-    friend void initNormalWorldClientData(JSC::JSGlobalData*);
+    friend class VMWorldIterator;
+    friend void initNormalWorldClientData(JSC::VM*);
 
 public:
     WebCoreJSClientData() { }
@@ -70,11 +70,11 @@ private:
     RefPtr<DOMWrapperWorld> m_normalWorld;
 };
 
-inline void initNormalWorldClientData(JSC::JSGlobalData* globalData)
+inline void initNormalWorldClientData(JSC::VM* vm)
 {
     WebCoreJSClientData* webCoreJSClientData = new WebCoreJSClientData;
-    globalData->clientData = webCoreJSClientData; // ~JSGlobalData deletes this pointer.
-    webCoreJSClientData->m_normalWorld = DOMWrapperWorld::create(globalData, true);
+    vm->clientData = webCoreJSClientData; // ~VM deletes this pointer.
+    webCoreJSClientData->m_normalWorld = DOMWrapperWorld::create(vm, true);
 }
 
 } // namespace WebCore

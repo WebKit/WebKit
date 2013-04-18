@@ -56,7 +56,7 @@ using namespace JSC;
 JSContextGroupRef JSContextGroupCreate()
 {
     initializeThreading();
-    return toRef(JSGlobalData::createContextGroup().leakRef());
+    return toRef(VM::createContextGroup().leakRef());
 }
 
 JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)
@@ -68,12 +68,12 @@ JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)
 void JSContextGroupRelease(JSContextGroupRef group)
 {
     IdentifierTable* savedIdentifierTable;
-    JSGlobalData& globalData = *toJS(group);
+    VM& vm = *toJS(group);
 
     {
-        JSLockHolder lock(globalData);
-        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(globalData.identifierTable);
-        globalData.deref();
+        JSLockHolder lock(vm);
+        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
+        vm.deref();
     }
 
     wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
@@ -88,19 +88,19 @@ static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, vo
 
 void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, JSShouldTerminateCallback callback, void* callbackData)
 {
-    JSGlobalData& globalData = *toJS(group);
-    APIEntryShim entryShim(&globalData);
-    Watchdog& watchdog = globalData.watchdog;
+    VM& vm = *toJS(group);
+    APIEntryShim entryShim(&vm);
+    Watchdog& watchdog = vm.watchdog;
     void* callbackPtr = reinterpret_cast<void*>(callback);
-    watchdog.setTimeLimit(globalData, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
+    watchdog.setTimeLimit(vm, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
 }
 
 void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 {
-    JSGlobalData& globalData = *toJS(group);
-    APIEntryShim entryShim(&globalData);
-    Watchdog& watchdog = globalData.watchdog;
-    watchdog.setTimeLimit(globalData, std::numeric_limits<double>::infinity());
+    VM& vm = *toJS(group);
+    APIEntryShim entryShim(&vm);
+    Watchdog& watchdog = vm.watchdog;
+    watchdog.setTimeLimit(vm, std::numeric_limits<double>::infinity());
 }
 
 // From the API's perspective, a global context remains alive iff it has been JSGlobalContextRetained.
@@ -110,10 +110,10 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     initializeThreading();
 
 #if OS(DARWIN)
-    // If the application was linked before JSGlobalContextCreate was changed to use a unique JSGlobalData,
+    // If the application was linked before JSGlobalContextCreate was changed to use a unique VM,
     // we use a shared one for backwards compatibility.
     if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
-        return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
+        return JSGlobalContextCreateInGroup(toRef(&VM::sharedInstance()), globalObjectClass);
     }
 #endif // OS(DARWIN)
 
@@ -124,22 +124,22 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 {
     initializeThreading();
 
-    RefPtr<JSGlobalData> globalData = group ? PassRefPtr<JSGlobalData>(toJS(group)) : JSGlobalData::createContextGroup();
+    RefPtr<VM> vm = group ? PassRefPtr<VM>(toJS(group)) : VM::createContextGroup();
 
-    APIEntryShim entryShim(globalData.get(), false);
-    globalData->makeUsableFromMultipleThreads();
+    APIEntryShim entryShim(vm.get(), false);
+    vm->makeUsableFromMultipleThreads();
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = JSGlobalObject::create(*globalData, JSGlobalObject::createStructure(*globalData, jsNull()));
+        JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(*globalData, globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*globalData, 0, jsNull()));
+    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(*vm, globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*vm, 0, jsNull()));
     ExecState* exec = globalObject->globalExec();
     JSValue prototype = globalObjectClass->prototype(exec);
     if (!prototype)
         prototype = jsNull();
-    globalObject->resetPrototype(*globalData, prototype);
+    globalObject->resetPrototype(*vm, prototype);
     return JSGlobalContextRetain(toGlobalRef(exec));
 }
 
@@ -148,9 +148,9 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    JSGlobalData& globalData = exec->globalData();
+    VM& vm = exec->vm();
     gcProtect(exec->dynamicGlobalObject());
-    globalData.ref();
+    vm.ref();
     return ctx;
 }
 
@@ -161,13 +161,13 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     {
         JSLockHolder lock(exec);
 
-        JSGlobalData& globalData = exec->globalData();
-        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(globalData.identifierTable);
+        VM& vm = exec->vm();
+        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
 
         bool protectCountIsZero = Heap::heap(exec->dynamicGlobalObject())->unprotect(exec->dynamicGlobalObject());
         if (protectCountIsZero)
-            globalData.heap.reportAbandonedObjectGraph();
-        globalData.deref();
+            vm.heap.reportAbandonedObjectGraph();
+        vm.deref();
     }
 
     wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
@@ -185,7 +185,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    return toRef(&exec->globalData());
+    return toRef(&exec->vm());
 }
 
 JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
@@ -202,7 +202,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
     JSLockHolder lock(exec);
     StringBuilder builder;
     Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize);
+    Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize);
 
     for (size_t i = 0; i < stackTrace.size(); i++) {
         String urlString;

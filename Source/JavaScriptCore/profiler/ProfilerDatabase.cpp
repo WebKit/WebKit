@@ -42,9 +42,9 @@ static SpinLock registrationLock = SPINLOCK_INITIALIZER;
 static int didRegisterAtExit;
 static Database* firstDatabase;
 
-Database::Database(JSGlobalData& globalData)
+Database::Database(VM& vm)
     : m_databaseID(atomicIncrement(&databaseCounter))
-    , m_globalData(globalData)
+    , m_vm(vm)
     , m_shouldSaveAtExit(false)
     , m_nextRegisteredDatabase(0)
 {
@@ -98,12 +98,12 @@ JSValue Database::toJS(ExecState* exec) const
     JSArray* bytecodes = constructEmptyArray(exec, 0);
     for (unsigned i = 0; i < m_bytecodes.size(); ++i)
         bytecodes->putDirectIndex(exec, i, m_bytecodes[i].toJS(exec));
-    result->putDirect(exec->globalData(), exec->propertyNames().bytecodes, bytecodes);
+    result->putDirect(exec->vm(), exec->propertyNames().bytecodes, bytecodes);
     
     JSArray* compilations = constructEmptyArray(exec, 0);
     for (unsigned i = 0; i < m_compilations.size(); ++i)
         compilations->putDirectIndex(exec, i, m_compilations[i]->toJS(exec));
-    result->putDirect(exec->globalData(), exec->propertyNames().compilations, compilations);
+    result->putDirect(exec->vm(), exec->propertyNames().compilations, compilations);
     
     return result;
 }
@@ -111,7 +111,7 @@ JSValue Database::toJS(ExecState* exec) const
 String Database::toJSON() const
 {
     JSGlobalObject* globalObject = JSGlobalObject::create(
-        m_globalData, JSGlobalObject::createStructure(m_globalData, jsNull()));
+        m_vm, JSGlobalObject::createStructure(m_vm, jsNull()));
     
     return JSONStringify(globalObject->globalExec(), toJS(globalObject->globalExec()), 0);
 }
