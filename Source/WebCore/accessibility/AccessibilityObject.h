@@ -480,7 +480,7 @@ public:
     virtual bool hasSameFont(RenderObject*) const { return false; }
     virtual bool hasSameFontColor(RenderObject*) const { return false; }
     virtual bool hasSameStyle(RenderObject*) const { return false; }
-    bool hasStaticText() const { return roleValue() == StaticTextRole; }
+    bool isStaticText() const { return roleValue() == StaticTextRole; }
     virtual bool hasUnderline() const { return false; }
     bool hasHighlighting() const;
 

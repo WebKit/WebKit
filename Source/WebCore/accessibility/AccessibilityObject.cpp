@@ -210,7 +210,7 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
             && axObject->roleValue() == criteria->startObject->roleValue();
         
     case StaticTextSearchKey:
-        return axObject->hasStaticText();
+        return axObject->isStaticText();
         
     case StyleChangeSearchKey:
         return criteria->startObject

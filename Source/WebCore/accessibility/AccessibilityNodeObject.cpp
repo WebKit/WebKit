@@ -949,7 +949,12 @@ Element* AccessibilityNodeObject::mouseButtonListener() const
 
     // FIXME: Do the continuation search like anchorElement does
     for (Element* element = toElement(node); element; element = element->parentElement()) {
-        if (element->getAttributeEventListener(eventNames().clickEvent) || element->getAttributeEventListener(eventNames().mousedownEvent) || element->getAttributeEventListener(eventNames().mouseupEvent))
+        // If we've reached the body and this is not a control element, do not expose press action for this element.
+        // It can cause false positives, where every piece of text is labeled as accepting press actions. 
+        if (element->hasTagName(bodyTag) && isStaticText())
+            break;
+        
+        if (element->hasEventListeners(eventNames().clickEvent) || element->hasEventListeners(eventNames().mousedownEvent) || element->hasEventListeners(eventNames().mouseupEvent))
             return element;
     }
 
