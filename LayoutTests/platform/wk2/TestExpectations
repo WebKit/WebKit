@@ -249,24 +249,6 @@ plugins/open-and-close-window-with-plugin.html
 # http://webkit.org/b/56530
 http/tests/inspector/resource-har-conversion.html
 
-# WebKitTestRunner needs support for interactive validation tests
-# http://webkit.org/b/57450
-fast/forms/interactive-validation-assertion-by-validate-twice.html
-fast/forms/interactive-validation-crash-by-style-override.html
-fast/forms/interactive-validation-prevented.html
-fast/forms/interactive-validation-select-crash.html
-
-# WebKitTestRunner needs support for validation message bubble tests
-# http://webkit.org/b/57455
-fast/forms/validation-message-appearance.html
-fast/forms/validation-message-clone.html
-fast/forms/validation-message-on-checkbox.html
-fast/forms/validation-message-on-listbox.html
-fast/forms/validation-message-on-menulist.html
-fast/forms/validation-message-on-radio.html
-fast/forms/validation-message-on-range.html
-fast/forms/validation-message-on-textarea.html
-
 platform/mac/accessibility/search-predicate.html
 
 # Sometimes fails
@@ -310,6 +292,10 @@ fast/text-autosizing
 # WebKitTestRunner needs to implement testRunner.closeIdleLocalStorageDatabases().
 # https://bugs.webkit.org/show_bug.cgi?id=103861
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
+
+# WKTR needs a implementation of setStorageDatabaseIdleInterval
+# https://bugs.webkit.org/show_bug.cgi?id=91778
+storage/domstorage/storage-close-database-on-idle.html
 
 # [WK2] The new npruntime/embed-property-iframe-equality.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=105266
@@ -839,6 +825,7 @@ fast/forms/file/get-file-upload.html
 fast/forms/file/input-file-re-render.html
 fast/forms/file/input-file-entries.html
 fast/forms/file/recover-file-input-in-unposted-form.html
+fast/forms/file/selected-files-from-history-state.html
 http/tests/local/fileapi/file-last-modified-after-delete.html
 http/tests/local/fileapi/file-last-modified.html
 http/tests/local/fileapi/send-dragged-file.html
