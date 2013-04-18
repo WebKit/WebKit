@@ -716,8 +716,11 @@ int AccessibilityNodeObject::headingLevel() const
     if (!node)
         return false;
 
-    if (ariaRoleAttribute() == HeadingRole)
-        return getAttribute(aria_levelAttr).toInt();
+    if (isHeading()) {
+        int ariaLevel = getAttribute(aria_levelAttr).toInt();
+        if (ariaLevel > 0)
+            return ariaLevel;
+    }
 
     if (node->hasTagName(h1Tag))
         return 1;

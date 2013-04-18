@@ -11,16 +11,13 @@
 <h5 class="ex" data-expected="5">X</h5>
 <h6 class="ex" data-expected="6">X</h6>
 
-<!-- explicit aria-level overrides on h1-h6 (withOUT explicit heading role declaration) does not work in current WebKit. -->
-<!-- Waiting on thread resolution to determine if it's a bug: http://lists.w3.org/Archives/Public/wai-xtech/2013Jan/0019.html -->
-<!-- 
+<!-- explicit aria-level overrides on h1-h6 (withOUT explicit heading role declaration) -->
 <h6 class="ex" data-expected="1" aria-level="1">X</h6>
 <h5 class="ex" data-expected="2" aria-level="2">X</h5>
 <h4 class="ex" data-expected="3" aria-level="3">X</h4>
 <h3 class="ex" data-expected="4" aria-level="4">X</h3>
 <h2 class="ex" data-expected="5" aria-level="5">X</h2>
 <h1 class="ex" data-expected="6" aria-level="6">X</h1>
--->
 
 <!-- explicit aria-level overrides on h1-h6 (with explicit heading role declaration) -->
 <h6 class="ex" role="heading" data-expected="1" aria-level="1">X</h6>
