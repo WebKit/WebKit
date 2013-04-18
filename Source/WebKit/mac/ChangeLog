@@ -1,3 +1,25 @@
+2013-04-18  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r116645): Versions app's UI is munged in HiDPI due to background-size being reset to 'auto' when background short-hand is also specified
+        https://bugs.webkit.org/show_bug.cgi?id=114833
+
+        Reviewed by David Kilzer.
+
+        The Versions app specifies both a background-size and a background
+        shorthand CSS property, and its UI is broken after r116645 which resets
+        background-size to 'auto' if the background shorthand property is
+        specified.
+
+        This patch enables the useLegacyBackgroundSizeShorthandBehavior setting
+        added in r147034 to restore the expected behavior if the embedder is
+        Versions.app and it was linked against a version of WebKit that had the
+        legacy behavior.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (shouldUseLegacyBackgroundSizeShorthandBehavior):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2013-04-18  Sam Weinig  <sam@webkit.org>
 
         Network Process crashing trying to read in IDNScriptWhiteList.txt

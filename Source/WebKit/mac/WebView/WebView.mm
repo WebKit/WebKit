@@ -673,6 +673,13 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
     return isIAdProducerNeedingAttributeSetterQuirk;
 }
 
+static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
+{
+    static bool shouldUseLegacyBackgroundSizeShorthandBehavior = applicationIsVersions()
+        && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LEGACY_BACKGROUNDSIZE_SHORTHAND_BEHAVIOR);
+    return shouldUseLegacyBackgroundSizeShorthandBehavior;
+}
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -743,6 +750,7 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+    _private->page->settings()->setUseLegacyBackgroundSizeShorthandBehavior(shouldUseLegacyBackgroundSizeShorthandBehavior());
 
     if (needsOutlookQuirksScript()) {
         _private->page->settings()->setShouldInjectUserScriptsInInitialEmptyDocument(true);

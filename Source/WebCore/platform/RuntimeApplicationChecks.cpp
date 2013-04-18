@@ -102,4 +102,10 @@ bool applicationIsAperture()
     return isAperture;
 }
 
+bool applicationIsVersions()
+{
+    static bool isVersions = mainBundleIsEqualTo("com.blackpixel.versions");
+    return isVersions;
+}
+
 } // namespace WebCore
