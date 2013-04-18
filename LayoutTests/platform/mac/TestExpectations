@@ -773,7 +773,6 @@ inspector/debugger/linkifier.html
 # Failing subpixel reference tests
 # https://bugs.webkit.org/show_bug.cgi?id=85532
 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
-fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 
 # Needs rebaseline
@@ -1499,3 +1498,6 @@ webkit.org/b/106186 [ MountainLion Lion ] compositing/patterns/direct-pattern-co
 webkit.org/b/106186 [ MountainLion Lion ] compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106186 [ MountainLion Lion ] compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106186 [ MountainLion Lion ] compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Pass ]
+
+# Reference test fast/sub-pixel/float-wrap-zoom.html fails
+webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]

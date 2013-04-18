@@ -2732,3 +2732,6 @@ webkit.org/b/114612 editing/style/block-style-005.html [ Skip ]
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html [ Missing ]
 fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Missing ]
 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Missing ]
+
+# Reference test fast/sub-pixel/float-wrap-zoom.html fails
+webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
