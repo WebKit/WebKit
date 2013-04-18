@@ -456,7 +456,7 @@ void RenderQueue::visibleContentChanged(const Platform::IntRect& visibleContent)
     ASSERT(!isEmpty());
 }
 
-void RenderQueue::backingStoreRectChanging(const Platform::IntRect& oldRect, const Platform::IntRect& newRect)
+void RenderQueue::backingStoreRectChanging(const Platform::IntRect&, const Platform::IntRect&)
 {
     // We could empty them here instead of in BackingStorePrivate::setBackingStoreRect(),
     // but it seems cleaner to do it there and still avoid code to manually move them.
@@ -879,7 +879,7 @@ void RenderQueue::renderScrollZoomJobs(TileIndexList* outstandingJobs, TileIndex
         scrollZoomJobsCompleted(*outstandingJobs, completedJobs, shouldBlitWhenCompleted);
 }
 
-void RenderQueue::scrollZoomJobsCompleted(const TileIndexList& outstandingJobs, TileIndexList* completedJobs, bool shouldBlit)
+void RenderQueue::scrollZoomJobsCompleted(const TileIndexList&, TileIndexList* completedJobs, bool shouldBlit)
 {
     // Get rid of the completed list!
     ASSERT(outstandingJobs.isEmpty());

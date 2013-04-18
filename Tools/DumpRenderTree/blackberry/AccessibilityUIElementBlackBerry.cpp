@@ -561,12 +561,12 @@ void AccessibilityUIElement::scrollToMakeVisible()
     notImplemented();
 }
 
-void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int, int, int, int)
 {
     notImplemented();
 }
 
-void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
+void AccessibilityUIElement::scrollToGlobalPoint(int, int)
 {
     notImplemented();
 }

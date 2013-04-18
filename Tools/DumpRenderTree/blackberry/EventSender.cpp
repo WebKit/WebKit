@@ -47,25 +47,25 @@ void sendTouchEvent(BlackBerry::Platform::TouchEvent::Type);
 
 // Callbacks
 
-static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef, JSStringRef, JSValueRef* exception)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static bool setDragModeCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+static bool setDragModeCallback(JSContextRef context, JSObjectRef, JSStringRef, JSValueRef, JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef mouseWheelToCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef*    exception)
+static JSValueRef mouseWheelToCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef*    exception)
+static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
@@ -80,7 +80,7 @@ void setMouseEventDocumentPos(BlackBerry::Platform::MouseEvent &event, const Bla
     event.populateDocumentPosition(documentViewportMousePos, documentContentPos);
 }
 
-static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     BlackBerry::WebKit::WebPage* page = BlackBerry::WebKit::DumpRenderTree::currentInstance()->page();
     BlackBerry::Platform::MouseEvent event(BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, 0, lastMousePosition, IntPoint::zero(), 0, 0, 0);
@@ -91,7 +91,7 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     BlackBerry::WebKit::WebPage* page = BlackBerry::WebKit::DumpRenderTree::currentInstance()->page();
     BlackBerry::Platform::MouseEvent event(0, BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, lastMousePosition, IntPoint::zero(), 0, 0, 0);
@@ -102,7 +102,7 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
@@ -123,19 +123,19 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
@@ -208,31 +208,31 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef zoomPageInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef zoomPageInCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef zoomPageOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef zoomPageOutCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef addTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef addTouchPointCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
@@ -258,7 +258,7 @@ static JSValueRef addTouchPointCallback(JSContextRef context, JSObjectRef functi
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef updateTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef updateTouchPointCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
@@ -287,13 +287,13 @@ static JSValueRef updateTouchPointCallback(JSContextRef context, JSObjectRef fun
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setTouchModifierCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef setTouchModifierCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef touchStartCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef touchStartCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     if (!touchActive) {
         sendTouchEvent(BlackBerry::Platform::TouchEvent::TouchStart);
@@ -303,19 +303,19 @@ static JSValueRef touchStartCallback(JSContextRef context, JSObjectRef function,
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef touchCancelCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef touchCancelCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef touchMoveCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef touchMoveCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     sendTouchEvent(BlackBerry::Platform::TouchEvent::TouchMove);
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef touchEndCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef touchEndCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     for (unsigned i = 0; i < touches.size(); ++i)
         if (touches[i].state() != BlackBerry::Platform::TouchPoint::TouchReleased) {
@@ -327,20 +327,20 @@ static JSValueRef touchEndCallback(JSContextRef context, JSObjectRef function, J
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef clearTouchPointsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef clearTouchPointsCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     touches.clear();
     touchActive = false;
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef cancelTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef cancelTouchPointCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef releaseTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef releaseTouchPointCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
@@ -372,7 +372,7 @@ void sendTouchEvent(BlackBerry::Platform::TouchEvent::Type type)
     touches = t;
 }
 
-static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
@@ -422,7 +422,7 @@ static JSStaticValue staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
-static JSClassRef getClass(JSContextRef context)
+static JSClassRef getClass(JSContextRef)
 {
     static JSClassRef eventSenderClass = 0;
 

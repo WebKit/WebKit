@@ -705,7 +705,7 @@ void DumpRenderTree::didReceiveTitleForFrame(const String& title, WebCore::Frame
 }
 
 // ChromeClient delegates.
-void DumpRenderTree::addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID)
+void DumpRenderTree::addMessageToConsole(const String& message, unsigned lineNumber, const String&)
 {
     printf("CONSOLE MESSAGE: ");
     if (lineNumber)
@@ -929,7 +929,7 @@ void DumpRenderTree::didHandleOnloadEventsForFrame(WebCore::Frame* frame)
         printf("%s - didHandleOnloadEventsForFrame\n", drtFrameDescription(frame).utf8().data());
 }
 
-void DumpRenderTree::didReceiveResponseForFrame(WebCore::Frame* frame, const WebCore::ResourceResponse& response)
+void DumpRenderTree::didReceiveResponseForFrame(WebCore::Frame*, const WebCore::ResourceResponse& response)
 {
     if (!testDone && gTestRunner->dumpResourceResponseMIMETypes())
         printf("%s has MIME type %s\n", response.url().lastPathComponent().utf8().data(), response.mimeType().utf8().data());

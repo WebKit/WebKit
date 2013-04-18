@@ -664,7 +664,7 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
     m_request = spellCheckRequest;
 }
 
-void InputHandler::spellCheckingRequestCancelled(int32_t transactionId)
+void InputHandler::spellCheckingRequestCancelled(int32_t)
 {
     SpellingLog(Platform::LogLevelWarn,
         "InputHandler::spellCheckingRequestCancelled Expected transaction id %d, received %d. %s",
@@ -679,7 +679,7 @@ void InputHandler::spellCheckingRequestCancelled(int32_t transactionId)
     m_processingTransactionId = -1;
 }
 
-void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
+void InputHandler::spellCheckingRequestProcessed(int32_t, spannable_string_t* spannableString)
 {
     SpellingLog(Platform::LogLevelWarn,
         "InputHandler::spellCheckingRequestProcessed Expected transaction id %d, received %d. %s",
@@ -2151,7 +2151,7 @@ bool InputHandler::deleteText(int start, int end)
     return deleteSelection();
 }
 
-spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32_t flags)
+spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32_t)
 {
     if (!isActiveTextEdit())
         return 0;

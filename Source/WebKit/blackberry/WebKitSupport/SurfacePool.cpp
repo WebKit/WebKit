@@ -123,7 +123,7 @@ PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(Platform::Gr
     return drawable;
 }
 
-void SurfacePool::destroyPlatformGraphicsContext(PlatformGraphicsContext* platformGraphicsContext) const
+void SurfacePool::destroyPlatformGraphicsContext(PlatformGraphicsContext*) const
 {
 }
 
@@ -196,19 +196,19 @@ void SurfacePool::releaseBuffers()
         Platform::createFunctionCallMessage(&Platform::Graphics::collectThreadSpecificGarbage));
 }
 
-void SurfacePool::waitForBuffer(TileBuffer* tileBuffer)
+void SurfacePool::waitForBuffer(TileBuffer*)
 {
     if (!m_hasFenceExtension)
         return;
 }
 
-void SurfacePool::notifyBuffersComposited(const TileBufferList& tileBuffers)
+void SurfacePool::notifyBuffersComposited(const TileBufferList&)
 {
     if (!m_hasFenceExtension)
         return;
 }
 
-void SurfacePool::destroyPlatformSync(void* platformSync)
+void SurfacePool::destroyPlatformSync(void*)
 {
 }
 

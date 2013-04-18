@@ -424,7 +424,7 @@ void TestRunner::setWebViewEditable(bool)
     notImplemented();
 }
 
-void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
+void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
     notImplemented();
 }
@@ -435,7 +435,7 @@ bool TestRunner::callShouldCloseOnWebView()
     return false;
 }
 
-void TestRunner::setSpatialNavigationEnabled(bool enable)
+void TestRunner::setSpatialNavigationEnabled(bool)
 {
     notImplemented();
 }
@@ -472,7 +472,7 @@ void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
     mainFrame->page()->settings()->setAllowUniversalAccessFromFileURLs(enabled);
 }
 
-void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef, JSStringRef)
 {
     notImplemented();
 }
@@ -487,7 +487,7 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->setJavaScriptCanAccessClipboard(flag);
 }
 
-void TestRunner::setPluginsEnabled(bool flag)
+void TestRunner::setPluginsEnabled(bool)
 {
     notImplemented();
 }
@@ -502,7 +502,7 @@ void TestRunner::clearAllApplicationCaches()
     notImplemented();
 }
 
-void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long)
 {
     notImplemented();
 }
@@ -512,7 +512,7 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
     DumpRenderTreeSupport::setMockDeviceOrientation(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
-void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+void TestRunner::addMockSpeechInputResult(JSStringRef, double, JSStringRef)
 {
     notImplemented();
 }
@@ -523,7 +523,7 @@ void TestRunner::setGeolocationPermission(bool allow)
     DumpRenderTreeSupport::setMockGeolocationPermission(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), allow);
 }
 
-void TestRunner::setViewModeMediaFeature(const JSStringRef mode)
+void TestRunner::setViewModeMediaFeature(const JSStringRef)
 {
     notImplemented();
 }
@@ -623,7 +623,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
     return mainFrame->page()->findString(nameStr, options);
 }
 
-void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef)
 {
     // FIXME: Implement.
 }
@@ -641,7 +641,7 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JS
     inputElement->setValueForUser(jsStringRefToWebCoreString(value));
 }
 
-long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef)
 {
     // FIXME: Implement to support getting disk usage by all application caches for an origin.
     return 0;
@@ -667,11 +667,11 @@ void TestRunner::setMockSpeechInputDumpRect(bool)
 {
 }
 
-void TestRunner::grantWebNotificationPermission(JSStringRef origin)
+void TestRunner::grantWebNotificationPermission(JSStringRef)
 {
 }
 
-void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
+void TestRunner::denyWebNotificationPermission(JSStringRef)
 {
 }
 
@@ -679,11 +679,11 @@ void TestRunner::removeAllWebNotificationPermissions()
 {
 }
 
-void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
+void TestRunner::simulateWebNotificationClick(JSValueRef)
 {
 }
 
-void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
+void TestRunner::simulateLegacyWebNotificationClick(JSStringRef)
 {
 }
 

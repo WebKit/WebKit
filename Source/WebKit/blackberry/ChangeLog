@@ -5,6 +5,29 @@
 
         Reviewed by Rob Buis.
 
+        remove builde warning (unused parameter) in
+        Source/WebKit/blackberry 
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::backingStoreRectChanging):
+        (BlackBerry::WebKit::RenderQueue::scrollZoomJobsCompleted):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::destroyPlatformGraphicsContext):
+        (BlackBerry::WebKit::SurfacePool::waitForBuffer):
+        (BlackBerry::WebKit::SurfacePool::notifyBuffersComposited):
+        (BlackBerry::WebKit::SurfacePool::destroyPlatformSync):
+
+2013-04-18  Xuefei Ren  <xren@blackberry.com>
+
+        remove build warning(unused parameter)
+        https://bugs.webkit.org/show_bug.cgi?id=114670
+
+        Reviewed by Rob Buis.
+
         remove build warning in Source/WebKit/blackberry/Api
 
         * Api/BackingStore.cpp:
