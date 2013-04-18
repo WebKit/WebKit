@@ -56,7 +56,7 @@
 #define info(format, args...)       \
     do {                            \
         if (verbose)                \
-            printf(format, ##args); \
+            printf(format"\n", ##args); \
     } while (0)
 
 #define MIN_ZOOM_LEVEL 0
@@ -323,16 +323,16 @@ on_load_finished(void *user_data, Evas_Object *webview, void *event_info)
     const Ewk_Frame_Load_Error *err = (const Ewk_Frame_Load_Error *)event_info;
 
     if (!err)
-        info("Succeeded loading page.\n");
+        info("Succeeded loading page.");
     else if (err->is_cancellation)
-        info("Load was cancelled.\n");
+        info("Load was cancelled.");
     else
-        info("Failed loading page: %d %s \"%s\", url=%s\n",
+        info("Failed loading page: %d %s \"%s\", url=%s",
              err->code, err->domain, err->description, err->failing_url);
 
     currentZoom = ewk_view_zoom_get(webview);
     currentZoomLevel = nearest_zoom_level_get(currentZoom);
-    info("WebCore Zoom=%f, currentZoomLevel=%d\n", currentZoom, currentZoomLevel);
+    info("WebCore Zoom=%f, currentZoomLevel=%d", currentZoom, currentZoomLevel);
 }
 
 static void
@@ -429,13 +429,13 @@ static void
 on_tooltip_text_set(void* user_data, Evas_Object* webview, void* event_info)
 {
     const char *text = (const char *)event_info;
-    info("Tooltip is set: %s\n", text);
+    info("Tooltip is set: %s", text);
 }
 
 static void
 on_tooltip_text_unset(void* user_data, Evas_Object* webview, void* event_info)
 {
-    info("Tooltip is unset\n");
+    info("Tooltip is unset");
 }
 
 static void
@@ -443,13 +443,13 @@ on_inputmethod_changed(void* user_data, Evas_Object* webview, void* event_info)
 {
     Eina_Bool active = (Eina_Bool)(long)event_info;
     unsigned int imh;
-    info("Keyboard changed: %d\n", active);
+    info("Keyboard changed: %d", active);
 
     if (!active)
         return;
 
     imh = ewk_view_imh_get(webview);
-    info("    Keyboard flags: %#.2x\n", imh);
+    info("    Keyboard flags: %#.2x", imh);
 
 }
 
@@ -474,13 +474,13 @@ on_mouse_down(void* data, Evas* e, Evas_Object* webview, void* event_info)
 static void
 on_focus_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    info("the webview lost keyboard focus\n");
+    info("the webview lost keyboard focus");
 }
 
 static void
 on_focus_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    info("the webview gained keyboard focus\n");
+    info("the webview gained keyboard focus");
 }
 
 static void
@@ -499,7 +499,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     if (!strcmp(ev->key, "Escape")) {
         closeWindow(app->ee);
     } else if (!strcmp(ev->key, "F1")) {
-        info("Back (F1) was pressed\n");
+        info("Back (F1) was pressed");
         if (ewk_view_back_possible(obj)) {
             Ewk_History *history = ewk_view_history_get(obj);
             Eina_List *list = ewk_history_back_list_get(history);
@@ -507,9 +507,9 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
             ewk_history_item_list_free(list);
             ewk_view_back(obj);
         } else
-            info("Back ignored: No back history\n");
+            info("Back ignored: No back history");
     } else if (!strcmp(ev->key, "F2")) {
-        info("Forward (F2) was pressed\n");
+        info("Forward (F2) was pressed");
         if (ewk_view_forward_possible(obj)) {
             Ewk_History *history = ewk_view_history_get(obj);
             Eina_List *list = ewk_history_forward_list_get(history);
@@ -517,7 +517,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
             ewk_history_item_list_free(list);
             ewk_view_forward(obj);
         } else
-            info("Forward ignored: No forward history\n");
+            info("Forward ignored: No forward history");
     } else if (!strcmp(ev->key, "F3")) {
         currentEncoding++;
         currentEncoding %= (sizeof(encodings) / sizeof(encodings[0]));
@@ -570,29 +570,29 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         }
 
     } else if (!strcmp(ev->key, "F5")) {
-        info("Reload (F5) was pressed, reloading.\n");
+        info("Reload (F5) was pressed, reloading.");
         ewk_view_reload(obj);
     } else if (!strcmp(ev->key, "F6")) {
-        info("Stop (F6) was pressed, stop loading.\n");
+        info("Stop (F6) was pressed, stop loading.");
         ewk_view_stop(obj);
     } else if (!strcmp(ev->key, "F12")) {
         Eina_Bool status = ewk_view_setting_spatial_navigation_get(obj);
         ewk_view_setting_spatial_navigation_set(obj, !status);
-        info("Command::keyboard navigation toggle\n");
+        info("Command::keyboard navigation toggle");
     } else if ((!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract")) && ctrlPressed) {
         if (currentZoomLevel > MIN_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel - 1))
             currentZoomLevel--;
-        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
+        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f", zoomLevels[currentZoomLevel] / 100.0);
     } else if ((!strcmp(ev->key, "equal") || !strcmp(ev->key, "KP_Add")) && ctrlPressed) {
         if (currentZoomLevel < MAX_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel + 1))
             currentZoomLevel++;
-        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
+        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f", zoomLevels[currentZoomLevel] / 100.0);
     } else if (!strcmp(ev->key, "0") && ctrlPressed) {
         if (zoom_level_set(obj, DEFAULT_ZOOM_LEVEL))
             currentZoomLevel = DEFAULT_ZOOM_LEVEL;
-        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
+        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f", zoomLevels[currentZoomLevel] / 100.0);
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
-        info("Create new window (Ctrl+n) was pressed.\n");
+        info("Create new window (Ctrl+n) was pressed.");
         browserCreate("http://www.google.com", app->userArgs);
     } else if (!strcmp(ev->key, "g") && ctrlPressed ) {
         Evas_Coord x, y, w, h;
@@ -604,7 +604,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         y -= h;
         w *= 4;
         h *= 4;
-        info("Pre-render %d,%d + %dx%d\n", x, y, w, h);
+        info("Pre-render %d,%d + %dx%d", x, y, w, h);
         ewk_view_pre_render_region(obj, x, y, w, h, zoom);
     } else if (!strcmp(ev->key, "r") && ctrlPressed) {
         info("Pre-render 1 extra column/row with current zoom");
@@ -652,10 +652,10 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
         Evas_Object *inspector_view = ewk_view_inspector_view_get(obj);
         if (inspector_view) {
-            info("Web Inspector close\n");
+            info("Web Inspector close");
             ewk_view_inspector_close(obj);
         } else {
-            info("Web Inspector show\n");
+            info("Web Inspector show");
             ewk_view_inspector_show(obj);
         }
     }
@@ -846,10 +846,10 @@ windowCreate(User_Arguments *userArgs)
 
     if (userArgs->backingStore && !strcasecmp(userArgs->backingStore, "tiled")) {
         app->browser = ewk_view_tiled_add(app->evas);
-        info("backing store: tiled\n");
+        info("backing store: tiled");
     } else {
         app->browser = ewk_view_single_add(app->evas);
-        info("backing store: single\n");
+        info("backing store: single");
 
         ewk_view_setting_tiled_backing_store_enabled_set(app->browser, userArgs->enableTiledBackingStore);
     }

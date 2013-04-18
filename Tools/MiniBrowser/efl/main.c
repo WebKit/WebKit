@@ -39,7 +39,7 @@ static const double TOOLTIP_DELAY_SECONDS = 1.0;
 #define info(format, args...)       \
     do {                            \
         if (verbose)                \
-            printf(format, ##args); \
+            printf(format"\n", ##args); \
     } while (0)
 
 static int verbose = 1;
@@ -326,47 +326,47 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(e), "Control");
 
     if (!strcmp(ev->key, "F1")) {
-        info("Back (F1) was pressed\n");
+        info("Back (F1) was pressed");
         if (!ewk_view_back(ewk_view))
-            info("Back ignored: No back history\n");
+            info("Back ignored: No back history");
     } else if (!strcmp(ev->key, "F2")) {
-        info("Forward (F2) was pressed\n");
+        info("Forward (F2) was pressed");
         if (!ewk_view_forward(ewk_view))
-            info("Forward ignored: No forward history\n");
+            info("Forward ignored: No forward history");
     } else if (!strcmp(ev->key, "F3")) {
         currentEncoding = (currentEncoding + 1) % (sizeof(encodings) / sizeof(encodings[0]));
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
         ewk_view_custom_encoding_set(ewk_view, encodings[currentEncoding]);
     } else if (!strcmp(ev->key, "F5")) {
-        info("Reload (F5) was pressed, reloading.\n");
+        info("Reload (F5) was pressed, reloading.");
         ewk_view_reload(ewk_view);
     } else if (!strcmp(ev->key, "F6")) {
-        info("Stop (F6) was pressed, stop loading.\n");
+        info("Stop (F6) was pressed, stop loading.");
         ewk_view_stop(ewk_view);
     } else if (!strcmp(ev->key, "F7")) {
         Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
         mode = (++mode) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
         if (ewk_view_pagination_mode_set(ewk_view, mode))
-            info("Change Pagination Mode (F7) was pressed, changed to: %d\n", mode);
+            info("Change Pagination Mode (F7) was pressed, changed to: %d", mode);
         else
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "F8")) {
-        info("Create souce code window (F8) was pressed.\n");
+        info("Create souce code window (F8) was pressed.");
         Browser_Window *window = window_create(ewk_view, ewk_view_url_get(ewk_view), 0, 0, EINA_TRUE);
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "F11")) {
-        info("Fullscreen (F11) was pressed, toggling window/fullscreen.\n");
+        info("Fullscreen (F11) was pressed, toggling window/fullscreen.");
         elm_win_fullscreen_set(window->elm_window, !elm_win_fullscreen_get(window->elm_window));
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
-        info("Create new window (Ctrl+n) was pressed.\n");
+        info("Create new window (Ctrl+n) was pressed.");
         Browser_Window *window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);
         // 0 equals default width and height.
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
-        info("Show Inspector (Ctrl+i) was pressed.\n");
+        info("Show Inspector (Ctrl+i) was pressed.");
         ewk_view_inspector_show(ewk_view);
     } else if (!strcmp(ev->key, "f") && ctrlPressed) {
-        info("Show Search Box (Ctrl+f) was pressed.\n");
+        info("Show Search Box (Ctrl+f) was pressed.");
         search_box_show(window);
     } else if (!strcmp(ev->key, "Escape")) {
         if (evas_object_visible_get(window->search.search_bar))
@@ -376,15 +376,15 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (ctrlPressed && (!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract"))) {
         if (zoom_level_set(ewk_view, window->current_zoom_level - 1))
             window->current_zoom_level--;
-        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
     } else if (ctrlPressed && (!strcmp(ev->key, "equal") || !strcmp(ev->key, "KP_Add"))) {
         if (zoom_level_set(ewk_view, window->current_zoom_level + 1))
             window->current_zoom_level++;
-        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
     } else if (ctrlPressed && !strcmp(ev->key, "0")) {
         if (zoom_level_set(ewk_view, DEFAULT_ZOOM_LEVEL))
             window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
-        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
     }
 }
 
@@ -510,7 +510,7 @@ on_download_request(void *user_data, Evas_Object *ewk_view, void *event_info)
     }
 
     ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
-    info("Downloading: %s\n", eina_strbuf_string_get(destination_path));
+    info("Downloading: %s", eina_strbuf_string_get(destination_path));
     eina_strbuf_free(destination_path);
 }
 
@@ -585,13 +585,13 @@ static void
 on_download_finished(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
     Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
-    info("Download finished: %s\n",  ewk_download_job_destination_get(download));
+    info("Download finished: %s",  ewk_download_job_destination_get(download));
 }
 
 static void
 on_download_failed(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    info("Download failed!\n");
+    info("Download failed!");
 }
 
 static void
@@ -753,10 +753,10 @@ on_refresh_button_clicked(void *user_data, Evas_Object *refresh_button, void *ev
     Evas *evas = evas_object_evas_get(refresh_button);
     Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(evas), "Control");
     if (ctrlPressed) {
-        info("Reloading and bypassing cache...\n");
+        info("Reloading and bypassing cache...");
         ewk_view_reload_bypass_cache(window->ewk_view);
     } else {
-        info("Reloading...\n");
+        info("Reloading...");
         ewk_view_reload(window->ewk_view);
     }
 }
@@ -896,7 +896,7 @@ static void
 on_popup_menu_discarded(void *user_data, Evas_Object *obj, void *event_info)
 {
     // The user clicked outside the menu to discard it.
-    info("Popup menu was discarded.\n");
+    info("Popup menu was discarded.");
     Browser_Window *window = (Browser_Window *)user_data;
     ewk_popup_menu_close(window->popup.ewk_menu);
 }
@@ -907,7 +907,7 @@ on_popup_menu_item_clicked(void *user_data, Evas_Object *obj, void *event_info)
     Browser_Window *window = (Browser_Window *)user_data;
     Elm_Object_Item *item = (Elm_Object_Item *)event_info;
 
-    info("Selected popup menu index: %u\n", elm_menu_item_index_get(item));
+    info("Selected popup menu index: %u", elm_menu_item_index_get(item));
     ewk_popup_menu_selected_index_set(window->popup.ewk_menu, elm_menu_item_index_get(item));
 
     // Close popup menu.
@@ -941,7 +941,7 @@ popup_menu_populate(Evas_Object *elm_menu, Ewk_Popup_Menu *ewk_menu, void *user_
             }
             break;
         default:
-            info("Unrecognized popup menu item type!\n");
+            info("Unrecognized popup menu item type!");
             break;
         }
     }
@@ -961,7 +961,7 @@ on_popup_menu_show(Ewk_View_Smart_Data *smartData, Eina_Rectangle rect, Ewk_Text
 
     popup_menu_populate(window->popup.elm_menu, ewk_menu, window);
 
-    info("Showing popup menu at (%d, %d)\n", rect.x, rect.y);
+    info("Showing popup menu at (%d, %d)", rect.x, rect.y);
     elm_menu_move(window->popup.elm_menu, rect.x, rect.y);
     evas_object_show(window->popup.elm_menu);
 
@@ -1092,7 +1092,7 @@ on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Wind
 
     windows = eina_list_append(windows, window);
 
-    info("minibrowser: location(%d,%d) size=(%d,%d) url=%s\n", x, y, width, height, url);
+    info("minibrowser: location(%d,%d) size=(%d,%d) url=%s", x, y, width, height, url);
 
     return new_view;
 }
@@ -1111,12 +1111,12 @@ static void
 context_popup_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
     if (!data) {
-        info("ERROR: context popup callback data is NULL.\n");
+        info("ERROR: context popup callback data is NULL.");
         return;
     }
 
     Ewk_Context_Menu_Item *ewk_item = (Ewk_Context_Menu_Item *)data;
-    info("Selected context popup item: %s.\n", ewk_context_menu_item_title_get(ewk_item));
+    info("Selected context popup item: %s.", ewk_context_menu_item_title_get(ewk_item));
     ewk_context_menu_item_select(ewk_context_menu_item_parent_menu_get(ewk_item), ewk_item);
     ewk_context_menu_hide(ewk_context_menu_item_parent_menu_get(ewk_item));
 }
@@ -1157,20 +1157,20 @@ on_context_menu_show(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Co
     Browser_Window *window = window_find_with_ewk_view(sd->self);
 
     if (!window || !menu) {
-        info("ERROR: necessary objects are NULL.\n");
+        info("ERROR: necessary objects are NULL.");
         return EINA_FALSE;
     }
 
     window->context_popup = elm_ctxpopup_add(window->elm_window);
 
     if (!window->context_popup) {
-        info("ERROR: could not create context popup widget.\n");
+        info("ERROR: could not create context popup widget.");
         return EINA_FALSE;
     }
 
     context_popup_populate(window, menu);
 
-    info("Showing context popup at (%d, %d).\n", x, y);
+    info("Showing context popup at (%d, %d).", x, y);
     evas_object_move(window->context_popup, x, y);
     evas_object_show(window->context_popup);
 
@@ -1183,7 +1183,7 @@ on_context_menu_hide(Ewk_View_Smart_Data *sd)
     Browser_Window *window = window_find_with_ewk_view(sd->self);
 
     if (!window || !window->context_popup) {
-        info("ERROR: necessary objects are NULL.\n");
+        info("ERROR: necessary objects are NULL.");
         return EINA_FALSE;
     }
 
@@ -1376,7 +1376,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
 {
     Browser_Window *window = calloc(1, sizeof(Browser_Window));
     if (!window) {
-        info("ERROR: could not create browser window.\n");
+        info("ERROR: could not create browser window.");
         return NULL;
     }
 
@@ -1540,7 +1540,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
     ewk_settings_local_storage_enabled_set(settings, local_storage_enabled);
-    info("HTML5 local storage is %s for this view.\n", local_storage_enabled ? "enabled" : "disabled");
+    info("HTML5 local storage is %s for this view.", local_storage_enabled ? "enabled" : "disabled");
     elm_win_fullscreen_set(window->elm_window, fullscreen_enabled);
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
