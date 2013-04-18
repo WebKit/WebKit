@@ -3264,7 +3264,7 @@ void WebPagePrivate::updateDelegatedOverlays(bool dispatched)
     }
 }
 
-void WebPage::setCaretHighlightStyle(Platform::CaretHighlightStyle style)
+void WebPage::setCaretHighlightStyle(Platform::CaretHighlightStyle)
 {
 }
 

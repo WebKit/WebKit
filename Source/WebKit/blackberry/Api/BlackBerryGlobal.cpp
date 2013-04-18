@@ -137,12 +137,12 @@ void clearMemoryCaches()
     fontCache()->invalidate();
 }
 
-void clearAppCache(const BlackBerry::Platform::String& pageGroupName)
+void clearAppCache(const BlackBerry::Platform::String&)
 {
     cacheStorage().empty();
 }
 
-void clearDatabase(const BlackBerry::Platform::String& pageGroupName)
+void clearDatabase(const BlackBerry::Platform::String&)
 {
 }
 

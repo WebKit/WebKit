@@ -1,5 +1,33 @@
 2013-04-18  Xuefei Ren  <xren@blackberry.com>
 
+        remove build warning(unused parameter)
+        https://bugs.webkit.org/show_bug.cgi?id=114670
+
+        Reviewed by Rob Buis.
+
+        remove build warning in Source/WebKit/blackberry/Api
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::scroll):
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        (BlackBerry::WebKit::BackingStorePrivate::blitTileRect):
+        (BlackBerry::WebKit::BackingStorePrivate::actualVisibleSizeChanged):
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::clearAppCache):
+        (BlackBerry::WebKit::clearDatabase):
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::layerVisibilityChanged):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::drawTextures):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToImage):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setCaretHighlightStyle):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::cleanup):
+
+2013-04-18  Xuefei Ren  <xren@blackberry.com>
+
         removei build  warning (unused parameter )
         https://bugs.webkit.org/show_bug.cgi?id=114670
 

@@ -493,9 +493,7 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
 #endif
 }
 
-void BackingStorePrivate::scroll(const Platform::IntSize& delta,
-                                 const Platform::IntRect& scrollViewRect,
-                                 const Platform::IntRect& clipRect)
+void BackingStorePrivate::scroll(const Platform::IntSize& delta, const Platform::IntRect&, const Platform::IntRect&)
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
@@ -885,9 +883,9 @@ TileIndex BackingStorePrivate::indexOfTile(const Platform::IntPoint& origin,
     return TileIndex(offsetX, offsetY);
 }
 
-void BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion(const TileIndex& index, TileBuffer* tileBuffer,
+void BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion(const TileIndex&, TileBuffer* tileBuffer,
                                                                 const Platform::IntRectRegion& tileNotRenderedRegion,
-                                                                BackingStoreGeometry* geometry,
+                                                                BackingStoreGeometry*,
                                                                 bool update)
 {
     if (tileNotRenderedRegion.isEmpty())
@@ -1123,7 +1121,7 @@ void BackingStorePrivate::renderAndBlitImmediately(const Platform::IntRect& rect
     renderJob();
 }
 
-void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& dstRect, Platform::ViewportAccessor* viewportAccessor, bool flush)
+void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& dstRect, Platform::ViewportAccessor* viewportAccessor, bool)
 {
     Platform::IntRect clippedDstRect = dstRect;
 
@@ -1479,7 +1477,7 @@ Platform::IntRect BackingStorePrivate::blitTileRect(TileBuffer* tileBuffer,
     const Platform::IntRect& tilePixelContentsRect,
     const Platform::IntPoint& origin,
     const WebCore::TransformationMatrix& matrix,
-    BackingStoreGeometry* geometry)
+    BackingStoreGeometry*)
 {
     if (!m_webPage->isVisible() || !isActive() || !tileBuffer)
         return Platform::IntRect();
@@ -1732,7 +1730,7 @@ void BackingStorePrivate::orientationChanged()
     updateTileMatrixIfNeeded();
 }
 
-void BackingStorePrivate::actualVisibleSizeChanged(const Platform::IntSize& size)
+void BackingStorePrivate::actualVisibleSizeChanged(const Platform::IntSize&)
 {
 }
 

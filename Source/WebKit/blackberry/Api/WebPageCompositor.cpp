@@ -334,7 +334,7 @@ void WebPageCompositor::render(Platform::Graphics::GLES2Context* context, const 
     d->render(targetRect, clipRect, TransformationMatrix(reinterpret_cast<const TransformationMatrix&>(transform)), documentContents, viewport);
 }
 
-void WebPageCompositor::cleanup(Platform::Graphics::GLES2Context* context)
+void WebPageCompositor::cleanup(Platform::Graphics::GLES2Context*)
 {
     d->setContext(0);
 }

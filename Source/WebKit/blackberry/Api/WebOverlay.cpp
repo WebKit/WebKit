@@ -340,7 +340,7 @@ void WebOverlayPrivateWebKitThread::removeFromParent()
     m_layer->removeFromParent();
 }
 
-void WebOverlayPrivateWebKitThread::setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize, WebOverlay::ImageDataAdoptionType adoptionType)
+void WebOverlayPrivateWebKitThread::setContentsToImage(const unsigned char*, const WebCore::IntSize&, WebOverlay::ImageDataAdoptionType)
 {
     notImplemented();
 }
@@ -429,7 +429,7 @@ void WebOverlayLayerCompositingThreadClient::layerCompositingThreadDestroyed(Web
     delete this;
 }
 
-void WebOverlayLayerCompositingThreadClient::layerVisibilityChanged(LayerCompositingThread*, bool visible)
+void WebOverlayLayerCompositingThreadClient::layerVisibilityChanged(LayerCompositingThread*, bool)
 {
 }
 
@@ -501,7 +501,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
     m_texture->updateContents(textureContents);
 }
 
-void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program& program)
+void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program&)
 {
     if (!m_texture || !m_texture->buffer())
         return;
@@ -653,7 +653,7 @@ void WebOverlayPrivateCompositingThread::removeFromParent()
     scheduleCompositingRun();
 }
 
-void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char* data, const IntSize& imageSize, WebOverlay::ImageDataAdoptionType adoptionType)
+void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char* data, const IntSize& imageSize, WebOverlay::ImageDataAdoptionType)
 {
     if (!m_layerCompositingThreadClient)
         return;
