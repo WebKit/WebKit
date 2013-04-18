@@ -1,5 +1,12 @@
 2013-04-18  Sam Weinig  <sam@webkit.org>
 
+        Fix spelling I thought I had fixed.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup initWithIdentifier:]):
+
+2013-04-18  Sam Weinig  <sam@webkit.org>
+
         WebKit should not write WKPreferences to app user defaults when using the ObjC API
         <rdar://problem/13593578>
         https://bugs.webkit.org/show_bug.cgi?id=114821

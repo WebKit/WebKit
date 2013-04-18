@@ -57,7 +57,7 @@
     _data->_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
 
     // Give the WKBrowsingContextGroup a identifier-less preferences, so that they
-    // don't get automatically written to the disk. The automattic writting has proven
+    // don't get automatically written to the disk. The automatic writing has proven
     // confusing to users of the API.
     WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPageGroupSetPreferences(_data->_pageGroupRef.get(), preferences.get());
