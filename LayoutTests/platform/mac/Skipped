@@ -29,7 +29,7 @@
 # gc() not callable in svg files
 # https://bugs.webkit.org/show_bug.cgi?id=104054
 # <rdar://problem/13679357>
-svg/custom/use-href-update-crash.svg [ Failure Pass ]
+svg/custom/use-href-update-crash.svg
 
 #  Geolocation test support doesn't exist on the 536.30 branch
 #  <rdar://problem/13668125>

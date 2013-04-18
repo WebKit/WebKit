@@ -1,4 +1,12 @@
 2013-04-18  David Farler  <dfarler@apple.com>
+        Fix skip format on svg/custom/use-href-update-crash.svg
+        https://bugs.webkit.org/show_bug.cgi?id=104054
+        <rdar://problem/13680081>
+
+        * platform/mac/Skipped:
+        Remove [ Failure Pass ] for svg/custom/use-href-update-crash.svg
+
+2013-04-18  David Farler  <dfarler@apple.com>
 
         svg/custom/use-href-update-crash.svg is skipped on trunk
         https://bugs.webkit.org/show_bug.cgi?id=104054
