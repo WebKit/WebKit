@@ -1,3 +1,22 @@
+2013-04-18 Nima Ghanavatian <nghanavatian@blackberry.com>
+
+        [BlackBerry] Invalidate spell checking requests in platform code
+        https://bugs.webkit.org/show_bug.cgi?id=114830
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        Cache the value of the last requested sequence id at focus change.
+        All requests prior to this point will be rejected upon processing.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::stopPendingSpellCheckRequests):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed JSGlobalData to VM

@@ -264,6 +264,7 @@ private:
     SpellingHandler* m_spellingHandler;
     bool m_spellCheckStatusConfirmed;
     bool m_globalSpellCheckStatus;
+    int m_minimumSpellCheckingRequestSequence;
 
     OwnPtr<WebCore::SuggestionBoxHandler> m_suggestionDropdownBoxHandler;
 

@@ -154,6 +154,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_spellingHandler(new SpellingHandler(this))
     , m_spellCheckStatusConfirmed(false)
     , m_globalSpellCheckStatus(false)
+    , m_minimumSpellCheckingRequestSequence(-1)
 {
 }
 
@@ -605,6 +606,13 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
 
     if (!spellCheckRequest) {
         SpellingLog(Platform::LogLevelWarn, "InputHandler::requestCheckingOfString did not receive a valid request.");
+        return;
+    }
+
+    if (spellCheckRequest->data().sequence() <= m_minimumSpellCheckingRequestSequence) {
+        SpellingLog(Platform::LogLevelWarn, "InputHandler::requestCheckingOfString rejecting stale request with sequenceId=%d. Sentinal currently at %d."
+            , spellCheckRequest->data().sequence(), m_minimumSpellCheckingRequestSequence);
+        spellCheckRequest->didCancel();
         return;
     }
 
@@ -1171,9 +1179,9 @@ void InputHandler::stopPendingSpellCheckRequests()
     m_spellingHandler->setSpellCheckActive(false);
     // Prevent response from propagating through
     m_processingTransactionId = 0;
-    // Clear the pending queue as well
-    if (m_request)
-        m_request->setCheckerAndSequence(getSpellChecker(), -1);
+    // Reject requests until lastRequestSequence. This helps us clear the queue of stale requests.
+    if (SpellChecker* spellChecker = getSpellChecker())
+        m_minimumSpellCheckingRequestSequence = spellChecker->lastRequestSequence();
 }
 
 void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)
