@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011-2012 Samsung Electronics
+ * Copyright (C) 2011-2013 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 
 #if ENABLE(SPELLCHECK)
 #include "TextBreakIterator.h"
+#include "TextCheckerClientEfl.h"
 #include "WebTextChecker.h"
 #endif
 
@@ -44,17 +45,15 @@ static TextCheckerState textCheckerState;
 
 const TextCheckerState& TextChecker::state()
 {
-#if ENABLE(SPELLCHECK)
     static bool didInitializeState = false;
     if (didInitializeState)
         return textCheckerState;
 
-    WebTextCheckerClient& client = WebTextChecker::shared()->client();
-    textCheckerState.isContinuousSpellCheckingEnabled = client.continuousSpellCheckingEnabled();
-    textCheckerState.isGrammarCheckingEnabled = client.grammarCheckingEnabled();
+    textCheckerState.isContinuousSpellCheckingEnabled = false;
+    textCheckerState.isGrammarCheckingEnabled = false;
 
     didInitializeState = true;
-#endif
+
     return textCheckerState;
 }
 
@@ -71,6 +70,11 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
         return;
 
     textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
+
+    if (isContinuousSpellCheckingEnabled)
+        TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
+
+    // Notify the client about the setting change.
     WebTextChecker::shared()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
 #else
     UNUSED_PARAM(isContinuousSpellCheckingEnabled);
@@ -84,7 +88,17 @@ void TextChecker::setGrammarCheckingEnabled(bool)
 
 void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
 {
-    TextChecker::setContinuousSpellCheckingEnabled(enabled);
+#if ENABLE(SPELLCHECK)
+    if (state().isContinuousSpellCheckingEnabled == enabled)
+        return;
+
+    textCheckerState.isContinuousSpellCheckingEnabled = enabled;
+
+    if (enabled)
+        TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 void TextChecker::grammarCheckingEnabledStateChanged(bool)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012-2013 Samsung Electronics
  * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,191 +28,31 @@
 #include "ewk_text_checker.h"
 
 #if ENABLE(SPELLCHECK)
+#include "TextCheckerClientEfl.h"
+#else
+#include <wtf/UnusedParam.h>
+#endif // ENABLE(SPELLCHECK)
 
-#include "EwkView.h"
-#include "TextCheckerEnchant.h"
-#include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKMutableArray.h"
-#include "WKRetainPtr.h"
-#include "WKString.h"
-#include "WKTextChecker.h"
-#include "WebPageProxy.h"
-#include "ewk_settings.h"
-#include "ewk_text_checker_private.h"
-#include <Eina.h>
-#include <wtf/OwnPtr.h>
+#if ENABLE(SPELLCHECK)
 
 using namespace WebCore;
 using namespace WebKit;
 
-/**
- * @brief Structure to store client callback functions.
- *
- * @internal
- */
-struct ClientCallbacks {
-    Ewk_Text_Checker_Unique_Spell_Document_Tag_Get_Cb unique_spell_document_tag_get;
-    Ewk_Text_Checker_Unique_Spell_Document_Tag_Close_Cb unique_spell_document_tag_close;
-    Ewk_Text_Checker_String_Spelling_Check_Cb string_spelling_check;
-    Ewk_Text_Checker_Word_Guesses_Get_Cb word_guesses_get;
-    Ewk_Text_Checker_Word_Learn_Cb word_learn;
-    Ewk_Text_Checker_Word_Ignore_Cb word_ignore;
-};
-
-static inline TextCheckerEnchant* textCheckerEnchant()
+static Eina_List* convertLanguagesToEinaList(const Vector<String>& languages)
 {
-    static OwnPtr<TextCheckerEnchant> textCheckerEnchant = TextCheckerEnchant::create();
-    return textCheckerEnchant.get();
+    Eina_List* listOflanguages = 0;
+    size_t numberOfLanguages = languages.size();
+
+    for (size_t i = 0; i < numberOfLanguages; ++i)
+        listOflanguages = eina_list_append(listOflanguages, eina_stringshare_add(languages[i].utf8().data()));
+
+    return listOflanguages;
 }
 
-static inline ClientCallbacks& clientCallbacks()
-{
-    DEFINE_STATIC_LOCAL(ClientCallbacks, clientCallbacks, ());
-    return clientCallbacks;
-}
-
-static bool isContinuousSpellCheckingEnabled(const void*)
-{
-    return ewk_settings_continuous_spell_checking_enabled_get();
-}
-
-static void setContinuousSpellCheckingEnabled(bool enabled, const void*)
-{
-    ewk_settings_continuous_spell_checking_enabled_set(enabled);
-}
-
-static uint64_t uniqueSpellDocumentTag(WKPageRef page, const void*)
-{
-    if (clientCallbacks().unique_spell_document_tag_get)
-        return clientCallbacks().unique_spell_document_tag_get(EwkView::toEvasObject(page));
-
-    return 0;
-}
-
-static void closeSpellDocumentWithTag(uint64_t tag, const void*)
-{
-    if (clientCallbacks().unique_spell_document_tag_close)
-        clientCallbacks().unique_spell_document_tag_close(tag);
-}
-
-static void checkSpellingOfString(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void*)
-{
-    if (clientCallbacks().string_spelling_check)
-        clientCallbacks().string_spelling_check(tag, WKEinaSharedString(text), misspellingLocation, misspellingLength);
-    else
-        textCheckerEnchant()->checkSpellingOfString(toWTFString(text), *misspellingLocation, *misspellingLength);
-}
-
-static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
-{
-    WKMutableArrayRef suggestionsForWord = WKMutableArrayCreate();
-
-    if (clientCallbacks().word_guesses_get) {
-        Eina_List* list = clientCallbacks().word_guesses_get(tag, WKEinaSharedString(word));
-        void* item;
-
-        EINA_LIST_FREE(list, item) {
-            WKRetainPtr<WKStringRef> suggestion(AdoptWK, WKStringCreateWithUTF8CString(static_cast<const char*>(item)));
-            WKArrayAppendItem(suggestionsForWord, suggestion.get());
-            free(item);
-        }
-    } else {
-        const Vector<String>& guesses = textCheckerEnchant()->getGuessesForWord(toWTFString(word));
-        size_t numberOfGuesses = guesses.size();
-        for (size_t i = 0; i < numberOfGuesses; ++i) {
-            WKRetainPtr<WKStringRef> suggestion(AdoptWK, WKStringCreateWithUTF8CString(guesses[i].utf8().data()));
-            WKArrayAppendItem(suggestionsForWord, suggestion.get());
-        }
-    }
-
-    return suggestionsForWord;
-}
-
-static void learnWord(uint64_t tag, WKStringRef word, const void*)
-{
-    if (clientCallbacks().word_learn)
-        clientCallbacks().word_learn(tag, WKEinaSharedString(word));
-    else
-        textCheckerEnchant()->learnWord(toWTFString(word));
-}
-
-static void ignoreWord(uint64_t tag, WKStringRef word, const void*)
-{
-    if (clientCallbacks().word_ignore)
-        clientCallbacks().word_ignore(tag, WKEinaSharedString(word));
-    else
-        textCheckerEnchant()->ignoreWord(toWTFString(word));
-}
-
-namespace Ewk_Text_Checker {
-
-Vector<String> availableSpellCheckingLanguages()
-{
-    return textCheckerEnchant()->availableSpellCheckingLanguages();
-}
-
-void updateSpellCheckingLanguages(const Vector<String>& languages)
-{
-    textCheckerEnchant()->updateSpellCheckingLanguages(languages);
-}
-
-Vector<String> loadedSpellCheckingLanguages()
-{
-    return textCheckerEnchant()->loadedSpellCheckingLanguages();
-}
-
-bool hasDictionary()
-{
-    return textCheckerEnchant()->hasDictionary();
-}
-
-/**
- * Initializes spellcheck feature.
- *
- * @internal
- *
- * The default spellcheck feature is based on Enchant library.
- * Client may use own spellcheck implementation previously set
- * through the callback functions.
- */
-void initialize()
-{
-    static bool didInitializeTextCheckerClient = false;
-    if (didInitializeTextCheckerClient)
-        return;
-
-    WKTextCheckerClient textCheckerClient = {
-        kWKTextCheckerClientCurrentVersion,
-        0, // clientInfo
-        0, // isContinuousSpellCheckingAllowed
-        isContinuousSpellCheckingEnabled,
-        setContinuousSpellCheckingEnabled,
-        0, // isGrammarCheckingEnabled
-        0, // setGrammarCheckingEnabled
-        uniqueSpellDocumentTag,
-        closeSpellDocumentWithTag,
-        checkSpellingOfString,
-        0, // checkGrammarOfString
-        0, // spellingUIIsShowing
-        0, // toggleSpellingUIIsShowing
-        0, // updateSpellingUIWithMisspelledWord
-        0, // updateSpellingUIWithGrammarString
-        guessesForWord,
-        learnWord,
-        ignoreWord
-    };
-    WKTextCheckerSetClient(&textCheckerClient);
-
-    didInitializeTextCheckerClient = true;
-}
-
-} // namespace Ewk_Text_Checker
-
-#define EWK_TEXT_CHECKER_CALLBACK_SET(TYPE_NAME, NAME)  \
-void ewk_text_checker_##NAME##_cb_set(TYPE_NAME cb)     \
-{                                                       \
-    clientCallbacks().NAME = cb;      \
+#define EWK_TEXT_CHECKER_CALLBACK_SET(TYPE_NAME, NAME)            \
+void ewk_text_checker_##NAME##_cb_set(TYPE_NAME cb)               \
+{                                                                 \
+    TextCheckerClientEfl::instance().clientCallbacks().NAME = cb; \
 }
 
 #else
@@ -224,6 +64,58 @@ void ewk_text_checker_##NAME##_cb_set(TYPE_NAME)        \
 }
 #endif // ENABLE(SPELLCHECK)
 
+Eina_Bool ewk_text_checker_continuous_spell_checking_enabled_get()
+{
+#if ENABLE(SPELLCHECK)
+    return TextCheckerClientEfl::instance().isContinuousSpellCheckingEnabled();
+#else
+    return false;
+#endif
+}
+
+void ewk_text_checker_continuous_spell_checking_enabled_set(Eina_Bool enable)
+{
+#if ENABLE(SPELLCHECK)
+    WKTextCheckerContinuousSpellCheckingEnabledStateChanged(!!enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+Eina_List* ewk_text_checker_spell_checking_available_languages_get()
+{
+    Eina_List* listOflanguages = 0;
+#if ENABLE(SPELLCHECK)
+    // FIXME: Expose WK2 C API to get available spell checking languages.
+    listOflanguages = convertLanguagesToEinaList(TextCheckerClientEfl::instance().availableSpellCheckingLanguages());
+#endif
+    return listOflanguages;
+}
+
+void ewk_text_checker_spell_checking_languages_set(const char* languages)
+{
+#if ENABLE(SPELLCHECK)
+    Vector<String> newLanguages;
+    String::fromUTF8(languages).split(',', newLanguages);
+
+    // FIXME: Expose WK2 C API to set spell checking languages.
+    TextCheckerClientEfl::instance().updateSpellCheckingLanguages(newLanguages);
+#else
+    UNUSED_PARAM(languages);
+#endif
+}
+
+Eina_List* ewk_text_checker_spell_checking_languages_get()
+{
+    Eina_List* listOflanguages = 0;
+#if ENABLE(SPELLCHECK)
+    // FIXME: Expose WK2 C API to get loaded spell checking languages.
+    listOflanguages = convertLanguagesToEinaList(TextCheckerClientEfl::instance().loadedSpellCheckingLanguages());
+#endif
+    return listOflanguages;
+}
+
+EWK_TEXT_CHECKER_CALLBACK_SET(Ewk_Text_Checker_Continuous_Spell_Checking_Change_Cb, continuous_spell_checking_change)
 EWK_TEXT_CHECKER_CALLBACK_SET(Ewk_Text_Checker_Unique_Spell_Document_Tag_Get_Cb, unique_spell_document_tag_get)
 EWK_TEXT_CHECKER_CALLBACK_SET(Ewk_Text_Checker_Unique_Spell_Document_Tag_Close_Cb, unique_spell_document_tag_close)
 EWK_TEXT_CHECKER_CALLBACK_SET(Ewk_Text_Checker_String_Spelling_Check_Cb, string_spelling_check)

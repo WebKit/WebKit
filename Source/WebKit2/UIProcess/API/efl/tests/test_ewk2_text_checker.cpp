@@ -213,22 +213,22 @@ static void onWordIgnore(uint64_t tag, const char* word)
 }
 
 /**
- * Test setter/getter for the continous spell checking:
- *  - ewk_settings_continuous_spell_checking_enabled_get
- *  - ewk_settings_continuous_spell_checking_enabled_set
+ * Test setter/getter for the continuous spell checking:
+ *  - ewk_text_checker_continuous_spell_checking_enabled_get
+ *  - ewk_text_checker_continuous_spell_checking_enabled_set
  */
-TEST_F(EWK2UnitTestBase, ewk_settings_continuous_spell_checking_enabled)
+TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_enabled)
 {
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 #if ENABLE(SPELLCHECK)
-    EXPECT_TRUE(ewk_settings_continuous_spell_checking_enabled_get());
+    EXPECT_TRUE(ewk_text_checker_continuous_spell_checking_enabled_get());
 
     // When the spell checking has been enabled, the default language is set (if the user
     // didn't set any). The languages are being loaded on the idler, wait for them.
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
     ecore_main_loop_begin();
 
-    Eina_List* loadedLanguages = ewk_settings_spell_checking_languages_get();
+    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
     // No dictionary is available/installed.
     if (!loadedLanguages)
         return;
@@ -239,23 +239,27 @@ TEST_F(EWK2UnitTestBase, ewk_settings_continuous_spell_checking_enabled)
     EINA_LIST_FREE(loadedLanguages, data)
         eina_stringshare_del(static_cast<const char*>(data));
 #else
-    EXPECT_FALSE(ewk_settings_continuous_spell_checking_enabled_get());
+    EXPECT_FALSE(ewk_text_checker_continuous_spell_checking_enabled_get());
 #endif
 
-    ewk_settings_continuous_spell_checking_enabled_set(false);
-    EXPECT_FALSE(ewk_settings_continuous_spell_checking_enabled_get());
+    ewk_text_checker_continuous_spell_checking_enabled_set(false);
+    EXPECT_FALSE(ewk_text_checker_continuous_spell_checking_enabled_get());
 }
 
 /**
- * Test whether the callback is called when the spell checking setting has been changed.
+ * Test whether the callback is called when the spell checking setting was changed by WebKit.
+ * Changing of this setting at the WebKit level can be made as a result of modifying
+ * options in a Context Menu by a user.
  */
-TEST_F(EWK2UnitTestBase, ewk_settings_continuous_spell_checking_change_cb_set)
+TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_change_cb_set)
 {
-    ewk_settings_continuous_spell_checking_change_cb_set(onSettingChange);
+    ewk_text_checker_continuous_spell_checking_change_cb_set(onSettingChange);
 
-    isSettingEnabled = ewk_settings_continuous_spell_checking_enabled_get();
+    isSettingEnabled = ewk_text_checker_continuous_spell_checking_enabled_get();
     isSettingEnabled = !isSettingEnabled;
-    ewk_settings_continuous_spell_checking_enabled_set(isSettingEnabled);
+    // The notifications about the setting change shouldn't be sent if the change was made
+    // on the client's request (public API).
+    ewk_text_checker_continuous_spell_checking_enabled_set(isSettingEnabled);
 
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
 
@@ -264,33 +268,24 @@ TEST_F(EWK2UnitTestBase, ewk_settings_continuous_spell_checking_change_cb_set)
     // We can't call ecore_main_loop_iterate because it doesn't process the idlers.
     ecore_main_loop_begin();
 
-#if ENABLE(SPELLCHECK)
-    EXPECT_FALSE(timeoutTimer);
-#else
-    EXPECT_TRUE(timeoutTimer);
-#endif
-
-    // The callback shouldn't be called if the setting option is already set.
-    isSettingEnabled = ewk_settings_continuous_spell_checking_enabled_get();
-    ewk_settings_continuous_spell_checking_enabled_set(isSettingEnabled);
-
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
-
-    // When the SPELLCHECK macro is disabled the callback won't be called too.
     EXPECT_TRUE(timeoutTimer);
 
-    // The callback shouldn't be called if the user has invalidated it.
-    ewk_settings_continuous_spell_checking_change_cb_set(0);
-    isSettingEnabled = ewk_settings_continuous_spell_checking_enabled_get();
-    isSettingEnabled = !isSettingEnabled;
-    ewk_settings_continuous_spell_checking_enabled_set(isSettingEnabled);
+    /* The callback should be called if the context menu "Check Spelling While Typing" option
+       was toggled by the user.
+    FIXME:
+    1) Invoke the context menu on the input field.
+    2) Choose the sub menu "Spelling and Grammar" option (not implemented for WK2).
+    3) Toggle "Check Spelling While Typing" option.
+    4) Check whether the callback is called. */
 
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
-
-    // If the SPELLCHECK macro is disabled, the callback is not set.
-    EXPECT_TRUE(timeoutTimer);
+    /* The callback shouldn't be called if the user has invalidated it.
+    FIXME:
+    1) Call ewk_text_checker_continuous_spell_checking_change_cb_set(0) to notify the WebKit that
+       the client is not interested in the setting change.
+    2) Invoke the context menu on the input field.
+    3) Choose the sub menu "Spelling and Grammar" option (not implemented for WK2).
+    4) Toggle "Check Spelling While Typing" option.
+    5) Check whether the callback was called. */
 }
 
 /**
@@ -298,9 +293,9 @@ TEST_F(EWK2UnitTestBase, ewk_settings_continuous_spell_checking_change_cb_set)
  * if they are in use.
  * All the dictionaries from the list can be set to perform spellchecking.
  */
-TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_available_languages_get)
+TEST_F(EWK2UnitTestBase, ewk_text_checker_spell_checking_available_languages_get)
 {
-    Eina_List* availableLanguages = ewk_settings_spell_checking_available_languages_get();
+    Eina_List* availableLanguages = ewk_text_checker_spell_checking_available_languages_get();
     // No dictionary is available/installed or the SPELLCHECK macro is disabled.
     if (!availableLanguages)
         return;
@@ -319,14 +314,14 @@ TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_available_languages_get)
     }
 
     // Set all available languages.
-    ewk_settings_spell_checking_languages_set(languages.toString().utf8().data());
+    ewk_text_checker_spell_checking_languages_set(languages.toString().utf8().data());
 
     // Languages are being loaded on the idler, wait for them.
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
     ecore_main_loop_begin();
 
     // Get the languages in use.
-    Eina_List* loadedLanguages = ewk_settings_spell_checking_languages_get();
+    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
     ASSERT_EQ(eina_list_count(loadedLanguages), eina_list_count(availableLanguages));
 
     i = 0;
@@ -350,16 +345,16 @@ TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_available_languages_get)
  *  - setting the default language,
  *  - if two arbitrarily selected dictionaries are set correctly.
  */
-TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_languages)
+TEST_F(EWK2UnitTestBase, ewk_text_checker_spell_checking_languages)
 {
     // Set the default language.
-    ewk_settings_spell_checking_languages_set(0);
+    ewk_text_checker_spell_checking_languages_set(0);
 
     // Languages are being loaded on the idler, wait for them.
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
     ecore_main_loop_begin();
 
-    Eina_List* loadedLanguages = ewk_settings_spell_checking_languages_get();
+    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
     // No dictionary is available/installed or the SPELLCHECK macro is disabled.
     if (!loadedLanguages)
         return;
@@ -372,7 +367,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_languages)
         eina_stringshare_del(static_cast<const char*>(actual));
 
     // Get the first and last language from installed dictionaries.
-    Eina_List* availableLanguages = ewk_settings_spell_checking_available_languages_get();
+    Eina_List* availableLanguages = ewk_text_checker_spell_checking_available_languages_get();
     unsigned numberOfAvailableLanguages = eina_list_count(availableLanguages);
     // We assume that user has installed at lest two dictionaries.
     if (numberOfAvailableLanguages < 2)
@@ -389,12 +384,12 @@ TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_languages)
     languages.append(String(lastExpected).lower());
 
     // Set both languages (the first and the last) from the list.
-    ewk_settings_spell_checking_languages_set(languages.toString().utf8().data());
+    ewk_text_checker_spell_checking_languages_set(languages.toString().utf8().data());
 
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
     ecore_main_loop_begin();
 
-    loadedLanguages = ewk_settings_spell_checking_languages_get();
+    loadedLanguages = ewk_text_checker_spell_checking_languages_get();
     ASSERT_EQ(2, eina_list_count(loadedLanguages));
 
     EXPECT_STREQ(firstExpected, static_cast<const char*>(eina_list_nth(loadedLanguages, 0)));
@@ -414,7 +409,7 @@ TEST_F(EWK2UnitTestBase, ewk_settings_spell_checking_languages)
 TEST_F(EWK2UnitTestBase, ewk_text_checker)
 {
     resetCallbacksExecutionStats();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
 
@@ -436,7 +431,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_unique_spell_document_tag)
 {
     resetCallbacksExecutionStats();
     defaultView = webView();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ewk_text_checker_unique_spell_document_tag_get_cb_set(onSpellDocumentTag);
     ewk_text_checker_unique_spell_document_tag_close_cb_set(onSpellDocumentTagClose);
@@ -458,7 +453,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_string_spelling_check_cb_set)
 {
     resetCallbacksExecutionStats();
     defaultView = webView();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ewk_text_checker_string_spelling_check_cb_set(onSpellingCheck);
 
@@ -476,7 +471,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_word_guesses_get_cb_set)
 {
     resetCallbacksExecutionStats();
     defaultView = webView();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ewk_text_checker_word_guesses_get_cb_set(onWordGuesses);
 
@@ -498,7 +493,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_word_learn_cb_set)
 {
     resetCallbacksExecutionStats();
     defaultView = webView();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ewk_text_checker_word_learn_cb_set(onWordLearn);
 
@@ -518,7 +513,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_word_ignore_cb_set)
 {
     resetCallbacksExecutionStats();
     defaultView = webView();
-    ewk_settings_continuous_spell_checking_enabled_set(true);
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
 
     ewk_text_checker_word_ignore_cb_set(onWordIgnore);
 

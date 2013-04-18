@@ -1,3 +1,120 @@
+2013-04-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Text Checker's settings refactor
+        https://bugs.webkit.org/show_bug.cgi?id=111713
+
+        Reviewed by Andreas Kling.
+
+        Use WK2's TextCheckerState object as the store for the text checker settings.
+        It's shared between the client (Ewk API part) and WebProcess (read only).
+        Thanks to it, we don't have to keep any additional structure with
+        the settings on ewk side.
+
+        In the consistency with WKTextChecker C API, move the Ewk's text checker settings APIs
+        to the ewk_text_checker.h/cpp. They're not connected to Ewk_View/Ewk_Settings object to
+        keep them in ewk_setting.h/cpp.
+
+        Introduce a new class to implement WKTextCheckerClient callbacks to call spelling
+        methods through WK2 C API.
+        The main purpose of this change is to detach text checker initialization from ewk_context.
+
+        * PlatformEfl.cmake:
+        Add a new files to the build.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        Detach the text checker initialization from context.
+        There might be more than default context.
+        There is one text checker object per application.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        * UIProcess/API/efl/ewk_settings.h:
+        Remove the text checker settings.
+
+        * UIProcess/API/efl/ewk_text_checker.cpp:
+        Add the text checker settings to the ewk_text_checker.h/cpp
+
+        (convertLanguagesToEinaList):
+        Add helper function to convert Vector's values to Eina_List.
+
+        (clientCallbacks):
+        Add the client callback responsible for the continuous spell checking
+        setting change to the struct.
+
+        (ewk_text_checker_continuous_spell_checking_enabled_set):
+        Do not call the client's callback responsible for the setting
+        change unless WebKit changes the setting (trough the context
+        'Check Spelling While Typing' option).
+
+        * UIProcess/API/efl/ewk_text_checker.h:
+        Adjust APIs name to the ewk_text_checker syntax.
+        Update the documentation according to the changes.
+
+        * UIProcess/API/efl/ewk_text_checker_private.h:
+        (ClientCallbacks):
+        Move ClientCallbacks structure to TextCheckerClientEfl.
+        The client callbacks (Ewk API) have to be accessible in WKTextCheckerClient callbacks
+        to choose what implementation will be used - the client's (if definied) or Enchant impl.
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        Update the unit tests according to the APIs change.
+        Update the test responsible for the notification about the setting change
+        according to changes in 'ewk_text_checker_continuous_spell_checking_enabled_set'.
+
+        * UIProcess/efl/TextCheckerClientEfl.cpp: Added.
+        Implement WKTextCheckerClient callbacks.
+
+        (TextCheckerClientEfl::TextCheckerClientEfl):
+        (TextCheckerClientEfl::instance):
+        Allow to get and create TextCheckerClientEfl object.
+
+        (TextCheckerClientEfl::isContinuousSpellCheckingEnabled):
+        Get the setting value based on WK2 C API.
+
+        (TextCheckerClientEfl::ensureSpellCheckingLanguage):
+        Load the default languages if user didn't specify any.
+
+        (TextCheckerClientEfl::updateSpellCheckingLanguages):
+        (TextCheckerClientEfl::languagesUpdateTimerFired):
+        (TextCheckerClientEfl::availableSpellCheckingLanguages):
+        (TextCheckerClientEfl::loadedSpellCheckingLanguages):
+        (TextCheckerClientEfl::availableSpellCheckingLanguages):
+        (TextCheckerClientEfl::loadedSpellCheckingLanguages):
+        Provide support for languages.
+
+        (TextCheckerClientEfl::spellCheckingSettingChangeTimerFired):
+        (TextCheckerClientEfl::callContinuousSpellCheckingChangeCallbackAsync):
+        Notify the client about the setting change.
+
+        (TextCheckerClientEfl::isContinuousSpellCheckingEnabledCallback):
+        (TextCheckerClientEfl::setContinuousSpellCheckingEnabledCallback):
+        (TextCheckerClientEfl::uniqueSpellDocumentTagCallback):
+        (TextCheckerClientEfl::closeSpellDocumentWithTagCallback):
+        (TextCheckerClientEfl::checkSpellingOfStringCallback):
+        (TextCheckerClientEfl::guessesForWordCallback):
+        (TextCheckerClientEfl::learnWordCallback):
+        (TextCheckerClientEfl::ignoreWordCallback):
+        WKTextCheckerClient callbacks implementation.
+
+        * UIProcess/efl/TextCheckerClientEfl.h: Added.
+        (TextCheckerClientEfl):
+        (TextCheckerClientEfl::clientCallbacks):
+        Return the client callbacks to be used in ewk_text_checker.cpp.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::state):
+        Initialize the TextCheckerState's members to false.
+
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        Set the default language if user didn't specify any.
+        Notify the client about the setting change.
+        This method is called when context menu 'Check Spelling While Typing'
+        option has been toggled.
+
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        Set the default language if user didn't specify any.
+        Called by WKTextChecker's API.
+
 2013-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] Add WebKitWebPage::webkit_web_page_get_uri to WebKit2 GTK+ API

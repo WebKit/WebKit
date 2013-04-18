@@ -1,3 +1,14 @@
+2013-04-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Text Checker's settings refactor
+        https://bugs.webkit.org/show_bug.cgi?id=111713
+
+        Reviewed by Andreas Kling.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        Use a new text checker API to enable spell checking.
+
 2013-04-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Add a newline to the end of log message

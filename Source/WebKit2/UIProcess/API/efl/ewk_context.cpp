@@ -44,11 +44,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(SPELLCHECK)
-#include "ewk_settings.h"
-#include "ewk_text_checker_private.h"
-#endif
-
 using namespace WebCore;
 using namespace WebKit;
 
@@ -84,14 +79,6 @@ EwkContext::EwkContext(WKContextRef context)
     if (!initializeMemorySampler && getenv(environmentVariable)) {
         WKContextStartMemorySampler(context, adoptWK(WKDoubleCreate(0.0)).get());
         initializeMemorySampler = true;
-    }
-#endif
-
-#if ENABLE(SPELLCHECK)
-    Ewk_Text_Checker::initialize();
-    if (ewk_settings_continuous_spell_checking_enabled_get()) {
-        // Load the default language.
-        ewk_settings_spell_checking_languages_set(0);
     }
 #endif
 }

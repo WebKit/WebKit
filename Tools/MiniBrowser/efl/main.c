@@ -1544,7 +1544,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     elm_win_fullscreen_set(window->elm_window, fullscreen_enabled);
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
-    ewk_settings_continuous_spell_checking_enabled_set(spell_checking_enabled);
+    ewk_text_checker_continuous_spell_checking_enabled_set(spell_checking_enabled);
 
     evas_object_smart_callback_add(window->ewk_view, "authentication,request", on_authentication_request, window);
     evas_object_smart_callback_add(window->ewk_view, "download,failed", on_download_failed, window);

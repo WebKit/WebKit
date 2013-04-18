@@ -107,6 +107,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/PageUIClientEfl.cpp
     UIProcess/efl/PageViewportControllerClientEfl.cpp
     UIProcess/efl/RequestManagerClientEfl.cpp
+    UIProcess/efl/TextCheckerClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/ViewClientEfl.cpp
