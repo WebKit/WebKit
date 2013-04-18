@@ -154,12 +154,28 @@ static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, con
         cairo_fill(cr);
 }
 
-void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext* context)
+void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, GraphicsContext* context)
 {
-    // If we're drawing a sub portion of the image or scaling then create
-    // a pattern transformation on the image and draw the transformed pattern.
-    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(surface));
+    FloatRect srcRect = originalSrcRect;
+
+    // We need to account for negative source dimensions by flipping the rectangle.
+    if (originalSrcRect.width() < 0) {
+        srcRect.setX(originalSrcRect.x() + originalSrcRect.width());
+        srcRect.setWidth(std::fabs(originalSrcRect.width()));
+    }
+    if (originalSrcRect.height() < 0) {
+        srcRect.setY(originalSrcRect.y() + originalSrcRect.height());
+        srcRect.setHeight(std::fabs(originalSrcRect.height()));
+    }
+
+    // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
+    IntRect expandedSrcRect(enclosingIntRect(srcRect));
+
+    // We use a subsurface here so that we don't end up sampling outside the originalSrcRect rectangle.
+    // See https://bugs.webkit.org/show_bug.cgi?id=58309
+    RefPtr<cairo_surface_t> subsurface = adoptRef(cairo_surface_create_for_rectangle(
+        surface, expandedSrcRect.x(), expandedSrcRect.y(), expandedSrcRect.width(), expandedSrcRect.height()));
+    RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(subsurface.get()));
 
     ASSERT(m_state);
     switch (m_state->m_imageInterpolationQuality) {
@@ -177,9 +193,15 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     }
     cairo_pattern_set_extend(pattern.get(), CAIRO_EXTEND_PAD);
 
-    float scaleX = srcRect.width() / destRect.width();
-    float scaleY = srcRect.height() / destRect.height();
-    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
+    // The pattern transformation properly scales the pattern for when the source rectangle is a
+    // different size than the destination rectangle. We also account for any offset we introduced
+    // by expanding floating point source rectangle sizes. It's important to take the absolute value
+    // of the scale since the original width and height might be negative.
+    float scaleX = std::fabs(srcRect.width() / destRect.width());
+    float scaleY = std::fabs(srcRect.height() / destRect.height());
+    float leftPadding = static_cast<float>(expandedSrcRect.x()) - floorf(srcRect.x());
+    float topPadding = static_cast<float>(expandedSrcRect.y()) - floorf(srcRect.y());
+    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, leftPadding, topPadding };
     cairo_pattern_set_matrix(pattern.get(), &matrix);
 
     ShadowBlur& shadow = context->platformContext()->shadowBlur();
