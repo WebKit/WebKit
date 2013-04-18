@@ -34,7 +34,7 @@
 #include "config.h"
 #include "CurrentTime.h"
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <sys/time.h>

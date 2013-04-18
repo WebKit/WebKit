@@ -1,3 +1,12 @@
+2013-04-18  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Speculative build fix for Qt Mountain Lion Release after r148639.
+        https://bugs.webkit.org/show_bug.cgi?id=114793
+
+        Reviewed by Michael Saboff.
+
+        * wtf/CurrentTime.cpp:
+
 2013-04-17  Mark Lam  <mark.lam@apple.com>
 
         Added currentCPUTime() and currentCPUTimeMS().
