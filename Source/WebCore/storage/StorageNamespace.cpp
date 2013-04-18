@@ -35,22 +35,22 @@
 
 namespace WebCore {
 
-PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const String& path, unsigned quota)
+PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(PageGroup* pageGroup)
 {
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->storageStrategy()->localStorageNamespace(path, quota);
+    return platformStrategies()->storageStrategy()->localStorageNamespace(pageGroup);
 #else
-    return StorageNamespaceImpl::localStorageNamespace(path, quota);
+    return StorageNamespaceImpl::localStorageNamespace(pageGroup);
 #endif
 }
 
-PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* page, unsigned quota)
+PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* page)
 {
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->storageStrategy()->sessionStorageNamespace(page, quota);
+    return platformStrategies()->storageStrategy()->sessionStorageNamespace(page);
 #else
     UNUSED_PARAM(page);
-    return StorageNamespaceImpl::sessionStorageNamespace(quota);
+    return StorageNamespaceImpl::sessionStorageNamespace(page);
 #endif
 }
 

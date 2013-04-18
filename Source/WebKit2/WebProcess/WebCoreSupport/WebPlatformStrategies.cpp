@@ -298,17 +298,17 @@ void WebPlatformStrategies::populatePluginCache()
 
 // StorageStrategy
 
-PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(const String& path, unsigned quota)
+PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGroup* pageGroup)
 {
-    return StorageStrategy::localStorageNamespace(path, quota);
+    return StorageStrategy::localStorageNamespace(pageGroup);
 }
 
-PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page, unsigned quota)
+PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page)
 {
 #if ENABLE(UI_PROCESS_STORAGE)
     return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(page));
 #else
-    return StorageStrategy::sessionStorageNamespace(page, quota);
+    return StorageStrategy::sessionStorageNamespace(page);
 #endif
 }
 

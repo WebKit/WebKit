@@ -39,8 +39,8 @@ class StorageAreaImpl;
 
 class StorageNamespaceImpl : public StorageNamespace {
 public:
-    static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);
-    static PassRefPtr<StorageNamespace> sessionStorageNamespace(unsigned quota);
+    static PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
+    static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
     virtual ~StorageNamespaceImpl();
 
     virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  OVERRIDE;

@@ -1,3 +1,18 @@
+2013-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Change storage factory functions to take a PageGroup and Page respectively
+        https://bugs.webkit.org/show_bug.cgi?id=114776
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::localStorageNamespace):
+        (WebKit::WebPlatformStrategies::sessionStorageNamespace):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2013-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Remove an ASSERT that is causing flakeyness in Debug builds.
