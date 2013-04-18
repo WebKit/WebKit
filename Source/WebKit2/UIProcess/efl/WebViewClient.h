@@ -51,6 +51,7 @@ public:
     void didRenderFrame(WebView*, const WebCore::IntSize&, const WebCore::IntRect&);
     void didCompletePageTransition(WebView*);
     void didChangeViewportAttributes(WebView*, const WebCore::ViewportAttributes&);
+    void didChangeTooltip(WebView*, const String& tooltip);
 };
 
 } // namespace WebKit

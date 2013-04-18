@@ -145,6 +145,14 @@ void ViewClientEfl::didChangeViewportAttributes(WKViewRef, WKViewportAttributesR
     ewkView->scheduleUpdateDisplay();
 }
 
+void ViewClientEfl::didChangeTooltip(WKViewRef, WKStringRef tooltip, const void* clientInfo)
+{
+    if (WKStringIsEmpty(tooltip))
+        toEwkView(clientInfo)->smartCallback<TooltipTextUnset>().call();
+    else
+        toEwkView(clientInfo)->smartCallback<TooltipTextSet>().call(WKEinaSharedString(tooltip));
+}
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {

@@ -100,4 +100,12 @@ void WebViewClient::didChangeViewportAttributes(WebView* view, const ViewportAtt
     m_client.didChangeViewportAttributes(toAPI(view), wkAttributes.get(), m_client.clientInfo);
 }
 
+void WebViewClient::didChangeTooltip(WebView* view, const String& tooltip)
+{
+    if (!m_client.didChangeTooltip)
+        return;
+
+    m_client.didChangeTooltip(toAPI(view), adoptWK(toCopiedAPI(tooltip)).get(), m_client.clientInfo);
+}
+
 } // namespace WebKit

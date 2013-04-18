@@ -37,6 +37,7 @@ typedef void (*WKViewWebProcessCrashedCallback)(WKViewRef view, WKURLRef url, co
 typedef void (*WKViewPageDidChangeContentsPositionCallback)(WKViewRef view, WKPoint position, const void* clientInfo);
 typedef void (*WKViewPageDidRenderFrameCallback)(WKViewRef view, WKSize contentsSize, WKRect coveredRect, const void* clientInfo);
 typedef void (*WKViewPageDidChangeViewportAttributesCallback)(WKViewRef view, WKViewportAttributesRef, const void* clientInfo);
+typedef void (*WKViewPageDidChangeTooltipCallback)(WKViewRef view, WKStringRef newTooltip, const void* clientInfo);
 
 struct WKViewClient {
     int                                              version;
@@ -51,6 +52,7 @@ struct WKViewClient {
     WKViewPageDidRenderFrameCallback                 didRenderFrame;
     WKViewCallback                                   didCompletePageTransition;
     WKViewPageDidChangeViewportAttributesCallback    didChangeViewportAttributes;
+    WKViewPageDidChangeTooltipCallback               didChangeTooltip;
 };
 typedef struct WKViewClient WKViewClient;
 

@@ -352,10 +352,7 @@ void WebView::pageClosed()
 
 void WebView::toolTipChanged(const String&, const String& newToolTip)
 {
-    if (newToolTip.isEmpty())
-        m_ewkView->smartCallback<TooltipTextUnset>().call();
-    else
-        m_ewkView->smartCallback<TooltipTextSet>().call(newToolTip);
+    m_client.didChangeTooltip(this, newToolTip);
 }
 
 void WebView::setCursor(const Cursor& cursor)
