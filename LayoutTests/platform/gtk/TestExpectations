@@ -399,6 +399,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 # No support for exposing in-band text tracks
+webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
@@ -645,8 +646,9 @@ webkit.org/b/114254 css2.1/t09-c5526c-display-00-e.html [ Timeout Pass ]
 
 webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Pass ]
 
-webkit.org/b/114735 fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
-webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure ]
+webkit.org/b/114735 fast/dynamic/window-resize-scrollbars-test.html [ Failure Pass ]
+webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
+webkit.org/b/114735 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -759,6 +761,8 @@ webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Time
 webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeout ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
+
+webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
