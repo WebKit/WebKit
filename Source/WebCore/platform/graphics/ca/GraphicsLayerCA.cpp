@@ -913,10 +913,13 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
     
     // This may be called at times when layout has not been updated, so we want to avoid calling out to the client
     // for animating transforms.
-    FloatRect visibleRect = computeVisibleRect(localState, 0);
-    if (visibleRect != m_visibleRect) {
+    FloatRect newVisibleRect = computeVisibleRect(localState, 0);
+    if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
+        newVisibleRect = adjustTiledLayerVisibleRect(tiledBacking(), m_visibleRect, newVisibleRect, m_sizeAtLastVisibleRectUpdate, m_size);
+
+    if (newVisibleRect != m_visibleRect) {
         if (TiledBacking* tiledBacking = this->tiledBacking()) {
-            if (tiledBacking->tilesWouldChangeForVisibleRect(visibleRect))
+            if (tiledBacking->tilesWouldChangeForVisibleRect(newVisibleRect))
                 return true;
         }
     }
@@ -994,7 +997,10 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
     
     bool mapWasClamped;
     FloatRect clipRectForChildren = state.mappedQuad(&mapWasClamped).boundingBox();
-    FloatRect clipRectForSelf(0, 0, m_size.width(), m_size.height());
+    FloatPoint boundsOrigin = m_boundsOrigin;
+    clipRectForChildren.move(boundsOrigin.x(), boundsOrigin.y());
+    
+    FloatRect clipRectForSelf(boundsOrigin, m_size);
     if (!applyWasClamped && !mapWasClamped)
         clipRectForSelf.intersect(clipRectForChildren);
     
@@ -1592,24 +1598,24 @@ void GraphicsLayerCA::updateDebugBorder()
         m_layer->setBorderWidth(0);
 }
 
-FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBacking, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const
+FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBacking, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize)
 {
     // If the old visible rect is empty, we have no information about how the visible area is changing
     // (maybe the layer was just created), so don't attempt to expand. Also don't attempt to expand
     // if the size changed.
-    if (oldVisibleRect.isEmpty() || m_size != oldSize)
-        return m_visibleRect;
+    if (oldVisibleRect.isEmpty() || newSize != oldSize)
+        return newVisibleRect;
 
     const float paddingMultiplier = 2;
 
-    float leftEdgeDelta = paddingMultiplier * (m_visibleRect.x() - oldVisibleRect.x());
-    float rightEdgeDelta = paddingMultiplier * (m_visibleRect.maxX() - oldVisibleRect.maxX());
+    float leftEdgeDelta = paddingMultiplier * (newVisibleRect.x() - oldVisibleRect.x());
+    float rightEdgeDelta = paddingMultiplier * (newVisibleRect.maxX() - oldVisibleRect.maxX());
 
-    float topEdgeDelta = paddingMultiplier * (m_visibleRect.y() - oldVisibleRect.y());
-    float bottomEdgeDelta = paddingMultiplier * (m_visibleRect.maxY() - oldVisibleRect.maxY());
+    float topEdgeDelta = paddingMultiplier * (newVisibleRect.y() - oldVisibleRect.y());
+    float bottomEdgeDelta = paddingMultiplier * (newVisibleRect.maxY() - oldVisibleRect.maxY());
     
     FloatRect existingTileBackingRect = tiledBacking->visibleRect();
-    FloatRect expandedRect = m_visibleRect;
+    FloatRect expandedRect = newVisibleRect;
 
     // More exposed on left side.
     if (leftEdgeDelta < 0) {
@@ -1659,7 +1665,7 @@ void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
 
     FloatRect tileArea = m_visibleRect;
     if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, m_sizeAtLastVisibleRectUpdate);
+        tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, tileArea, m_sizeAtLastVisibleRectUpdate, m_size);
 
     tiledBacking()->setVisibleRect(tileArea);
 
