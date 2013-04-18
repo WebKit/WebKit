@@ -30,6 +30,7 @@
 #include "ContextMenuClientWinCE.h"
 #include "DragClientWinCE.h"
 #include "EditorClientWinCE.h"
+#include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
