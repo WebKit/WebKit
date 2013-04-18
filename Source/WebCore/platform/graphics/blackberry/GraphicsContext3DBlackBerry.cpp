@@ -108,12 +108,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
     getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
-    Extensions3D* extensions = getExtensions();
-    ANGLEResources.MaxDrawBuffers = 1; // Always set to 1 for OpenGL ES.
-    ANGLEResources.OES_standard_derivatives = extensions->supports("GL_OES_standard_derivatives");
-    ANGLEResources.OES_EGL_image_external = extensions->supports("GL_EGL_image_external");
-    ANGLEResources.ARB_texture_rectangle = extensions->supports("GL_ARB_texture_rectangle");
-
     GC3Dint range[2], precision;
     getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
