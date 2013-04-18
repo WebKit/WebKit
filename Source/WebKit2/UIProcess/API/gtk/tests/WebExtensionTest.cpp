@@ -20,6 +20,8 @@
 #include "config.h"
 
 #include <gio/gio.h>
+#include <stdlib.h>
+
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/gobject/GOwnPtr.h>
 
@@ -29,6 +31,8 @@ static const char introspectionXML[] =
     "  <method name='GetTitle'>"
     "   <arg type='t' name='pageID' direction='in'/>"
     "   <arg type='s' name='title' direction='out'/>"
+    "  </method>"
+    "  <method name='AbortProcess'>"
     "  </method>"
     "  <signal name='DocumentLoaded'/>"
     " </interface>"
@@ -73,6 +77,8 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         GOwnPtr<char> title(webkit_dom_document_get_title(document));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
+    } else if (!g_strcmp0(methodName, "AbortProcess")) {
+        abort();
     }
 }
 

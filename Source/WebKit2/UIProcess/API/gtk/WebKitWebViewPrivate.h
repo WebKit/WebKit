@@ -59,5 +59,6 @@ void webkitWebViewPopulateContextMenu(WebKitWebView*, WebKit::ImmutableArray* pr
 void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*);
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
 void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);
+void webkitWebViewWebProcessCrashed(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

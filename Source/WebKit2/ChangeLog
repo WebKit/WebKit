@@ -1,3 +1,29 @@
+2013-04-18  Xan Lopez  <xan@igalia.com>
+
+        [GTK] When the WebProcess crashes, a signal should be emitted
+        https://bugs.webkit.org/show_bug.cgi?id=105180
+
+        Emit a "web-process-crashed" signal when the WebProcess crashes. This
+        is useful, for example, to show an error page in a web browser
+        like Chrome does.
+
+        Reviewed Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (processDidCrash):
+        (attachLoaderClientToView):
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewWebProcessCrashed):
+        * UIProcess/API/gtk/tests/TestWebExtensions.cpp:
+        (testWebExtensionGetTitle):
+        (webProcessCrashedCallback):
+        (testWebKitWebViewProcessCrashed):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (methodCallCallback):
+
 2013-04-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Add tooltip API to the WKView client

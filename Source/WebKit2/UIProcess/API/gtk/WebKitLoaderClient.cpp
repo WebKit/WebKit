@@ -133,6 +133,11 @@ static void didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef 
     webkitWebViewHandleAuthenticationChallenge(WEBKIT_WEB_VIEW(clientInfo), toImpl(authenticationChallenge));
 }
 
+static void processDidCrash(WKPageRef page, const void* clientInfo)
+{
+    webkitWebViewWebProcessCrashed(WEBKIT_WEB_VIEW(clientInfo));
+}
+
 void attachLoaderClientToView(WebKitWebView* webView)
 {
     WKPageLoaderClient wkLoaderClient = {
@@ -159,7 +164,7 @@ void attachLoaderClientToView(WebKitWebView* webView)
         didChangeProgress, // didFinishProgress
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
-        0, // processDidCrash
+        processDidCrash,
         didChangeBackForwardList,
         0, // shouldGoToBackForwardListItem
         0, // didFailToInitializePlugin

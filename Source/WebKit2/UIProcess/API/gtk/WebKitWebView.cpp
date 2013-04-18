@@ -117,6 +117,8 @@ enum {
 
     INSECURE_CONTENT_DETECTED,
 
+    WEB_PROCESS_CRASHED,
+
     LAST_SIGNAL
 };
 
@@ -1298,6 +1300,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_cclosure_marshal_VOID__ENUM,
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_INSECURE_CONTENT_EVENT);
+
+    /**
+     * WebKitWebView::web-process-crashed:
+     * @web_view: the #WebKitWebView
+     *
+     * This signal is emitted when the web process crashes.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
+     */
+    signals[WEB_PROCESS_CRASHED] = g_signal_new(
+        "web-process-crashed",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, web_process_crashed),
+        g_signal_accumulator_true_handled,
+        0,
+        webkit_marshal_BOOLEAN__VOID,
+        G_TYPE_BOOLEAN, 0);
 }
 
 static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
@@ -3027,3 +3048,10 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 
     return cairo_surface_reference(static_cast<GetSnapshotAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple))->snapshot.get());
 }
+
+void webkitWebViewWebProcessCrashed(WebKitWebView* webView)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
+}
+

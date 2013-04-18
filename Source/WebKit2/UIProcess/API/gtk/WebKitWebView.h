@@ -238,6 +238,7 @@ struct _WebKitWebViewClass {
                                               WebKitFormSubmissionRequest *request);
     void       (* insecure_content_detected) (WebKitWebView               *web_view,
                                               WebKitInsecureContentEvent   event);
+    gboolean   (* web_process_crashed)       (WebKitWebView               *web_view);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
