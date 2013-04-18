@@ -995,16 +995,20 @@ void RenderBlock::updateLogicalWidthForAlignment(const ETextAlign& textAlign, Bi
 
 static IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, RenderStyle* style)
 {
+    IndentTextOrNot shouldIndentText = DoNotIndentText;
     if (isFirstLine)
-        return IndentText;
+        shouldIndentText = IndentText;
 #if ENABLE(CSS3_TEXT)
-    if (isAfterHardLineBreak && style->textIndentLine() == TextIndentEachLine) 
-        return IndentText;
+    else if (isAfterHardLineBreak && style->textIndentLine() == TextIndentEachLine) 
+        shouldIndentText = IndentText;
+
+    if (style->textIndentType() == TextIndentHanging)
+        shouldIndentText = shouldIndentText == IndentText ? DoNotIndentText : IndentText;
 #else
     UNUSED_PARAM(isAfterHardLineBreak);
     UNUSED_PARAM(style);
 #endif
-    return DoNotIndentText;
+    return shouldIndentText;
 }
 
 static void updateLogicalInlinePositions(RenderBlock* block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine, IndentTextOrNot shouldIndentText, LayoutUnit boxLogicalHeight)
