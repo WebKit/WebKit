@@ -103,7 +103,7 @@ bool InspectorClientBlackBerry::supportsFrameInstrumentation()
     return true;
 }
 
-void InspectorClientBlackBerry::updateInspectorStateCookie(const String& cookie)
+void InspectorClientBlackBerry::updateInspectorStateCookie(const String&)
 {
     // If this is implemented, we should override and return true in InspectorStateClient::supportsInspectorStateUpdates().
     notImplemented();

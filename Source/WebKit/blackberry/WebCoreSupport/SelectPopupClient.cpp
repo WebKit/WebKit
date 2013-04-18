@@ -64,7 +64,7 @@ void SelectPopupClient::update(bool multiple, int size, const ScopeArray<BlackBe
     generateHTML(multiple, size, labels, enableds, itemType, selecteds);
 }
 
-void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
+void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds)
 {
     StringBuilder source;

@@ -264,7 +264,7 @@ void FrameLoaderClientBlackBerry::doPendingFragmentScroll()
     delayPolicyCheckUntilFragmentExists(fragment, function);
 }
 
-void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& request, PassRefPtr<FormState>, const String& frameName)
+void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& request, PassRefPtr<FormState>, const String&)
 {
     if (ScriptController::processingUserGesture() && !m_webPagePrivate->m_pluginMayOpenNewTab) {
         (m_frame->loader()->policyChecker()->*function)(PolicyIgnore);
@@ -503,7 +503,7 @@ void FrameLoaderClientBlackBerry::dispatchDidStartProvisionalLoad()
     m_wasProvisionalLoadTriggeredByUserGesture = ScriptController::processingUserGesture();
 }
 
-void FrameLoaderClientBlackBerry::dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse& response)
+void FrameLoaderClientBlackBerry::dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse& response)
 {
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->didReceiveResponseForFrame(m_frame, response);
@@ -1009,7 +1009,7 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
     }
 }
 
-bool FrameLoaderClientBlackBerry::shouldUseCredentialStorage(DocumentLoader* loader, long unsigned identifier)
+bool FrameLoaderClientBlackBerry::shouldUseCredentialStorage(DocumentLoader*, long unsigned)
 {
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     if (m_frame->page()->settings()->privateBrowsingEnabled())

@@ -99,7 +99,7 @@ bool NetworkInfoClientBlackBerry::metered() const
     return false;
 }
 
-void NetworkInfoClientBlackBerry::onCurrentNetworkTypeChange(BlackBerry::Platform::InternalNetworkConnectionType newInternalNetworkType)
+void NetworkInfoClientBlackBerry::onCurrentNetworkTypeChange(BlackBerry::Platform::InternalNetworkConnectionType)
 {
     if (m_isActive) {
         RefPtr<NetworkInfo> newNetworkInfo = NetworkInfo::create(bandwidth(), metered());
@@ -107,7 +107,7 @@ void NetworkInfoClientBlackBerry::onCurrentNetworkTypeChange(BlackBerry::Platfor
     }
 }
 
-void NetworkInfoClientBlackBerry::onCurrentCellularTypeChange(BlackBerry::Platform::InternalCellularConnectionType newCellularType)
+void NetworkInfoClientBlackBerry::onCurrentCellularTypeChange(BlackBerry::Platform::InternalCellularConnectionType)
 {
     // Only dispatch to listeners if the current type is cellular.
     if (BlackBerry::Platform::NetworkInfo::instance()->getCurrentNetworkType() == BlackBerry::Platform::NetworkTypeCellular && m_isActive) {

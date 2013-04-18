@@ -445,7 +445,7 @@ IntRect ChromeClientBlackBerry::rootViewToScreen(const IntRect& windowRect) cons
     return windowPoint;
 }
 
-void ChromeClientBlackBerry::mouseDidMoveOverElement(const HitTestResult& result, unsigned int modifierFlags)
+void ChromeClientBlackBerry::mouseDidMoveOverElement(const HitTestResult&, unsigned)
 {
     notImplemented();
 }
@@ -667,12 +667,12 @@ PlatformPageClient ChromeClientBlackBerry::platformPageClient() const
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void ChromeClientBlackBerry::needTouchEvents(bool value)
+void ChromeClientBlackBerry::needTouchEvents(bool)
 {
 }
 #endif
 
-void ChromeClientBlackBerry::reachedMaxAppCacheSize(int64_t spaceNeeded)
+void ChromeClientBlackBerry::reachedMaxAppCacheSize(int64_t)
 {
     notImplemented();
 }

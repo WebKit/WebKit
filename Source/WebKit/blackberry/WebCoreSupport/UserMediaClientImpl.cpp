@@ -113,7 +113,7 @@ void UserMediaClientImpl::pageDestroyed()
     delete this;
 }
 
-void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpRequest, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpRequest, const MediaStreamSourceVector&, const MediaStreamSourceVector&)
 {
     UserMediaRequest* request = prpRequest.get();
     OwnPtr<WebUserMediaRequestClientImpl> requestClient = adoptPtr(new WebUserMediaRequestClientImpl(prpRequest));

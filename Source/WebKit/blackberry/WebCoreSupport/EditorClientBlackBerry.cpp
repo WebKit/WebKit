@@ -563,12 +563,12 @@ void EditorClientBlackBerry::learnWord(const WTF::String&)
     notImplemented();
 }
 
-void EditorClientBlackBerry::checkSpellingOfString(const UChar* text, int textLength, int* misspellLocation, int* misspellLength)
+void EditorClientBlackBerry::checkSpellingOfString(const UChar*, int, int*, int*)
 {
     notImplemented();
 }
 
-WTF::String EditorClientBlackBerry::getAutoCorrectSuggestionForMisspelledWord(const WTF::String& misspelledWord)
+WTF::String EditorClientBlackBerry::getAutoCorrectSuggestionForMisspelledWord(const WTF::String&)
 {
     notImplemented();
     return WTF::String();
