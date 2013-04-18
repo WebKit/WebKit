@@ -36,7 +36,7 @@ void DefaultGCActivityCallback::doWork()
     m_globalData->heap.collect(Heap::DoNotSweep);
 }
 
-void DefaultGCActivityCallback::didAllocate(size_t bytesAllocated)
+void DefaultGCActivityCallback::didAllocate(size_t)
 {
     if (m_timer.started())
         return;

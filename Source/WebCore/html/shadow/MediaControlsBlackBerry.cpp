@@ -444,7 +444,7 @@ const AtomicString& MediaControlFullscreenFullscreenButtonElement::shadowPseudoI
     return id;
 }
 
-void MediaControlFullscreenFullscreenButtonElement::setIsFullscreen(bool isFullscreen)
+void MediaControlFullscreenFullscreenButtonElement::setIsFullscreen(bool)
 {
     setDisplayType(MediaExitFullscreenButton);
 }

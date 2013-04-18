@@ -57,7 +57,7 @@ bool cookiesEnabled(const Document* document)
     return document && document->settings() && document->settings()->cookieEnabled();
 }
 
-bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 {
     // Note: this method is called by inspector only. No need to check if cookie is enabled.
     Vector<RefPtr<ParsedCookie> > result;
@@ -67,7 +67,7 @@ bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& ra
     return true;
 }
 
-void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
+void deleteCookie(const Document*, const KURL& url, const String& cookieName)
 {
     // Cookies are not bound to the document. Therefore, we don't need to pass
     // in the document object to find the targeted cookies in cookie manager.

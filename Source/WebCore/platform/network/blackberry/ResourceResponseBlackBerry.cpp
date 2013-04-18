@@ -26,7 +26,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
     return data;
 }
 
-void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData> data)
+void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>)
 {
 }
 

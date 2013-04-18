@@ -214,7 +214,7 @@ static RefPtr<Image> loadImage(const char* filename)
     return resource;
 }
 
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
     static RenderTheme* theme = RenderThemeBlackBerry::create().leakRef();
     return theme;

@@ -1046,7 +1046,7 @@ void PluginView::invalidateRect(NPRect* rect)
     invalidateRect(IntRect(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top));
 }
 
-void PluginView::invalidateRegion(NPRegion region)
+void PluginView::invalidateRegion(NPRegion)
 {
     invalidate();
 }
