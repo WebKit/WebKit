@@ -106,7 +106,7 @@ public:
 
     bool isDone() const { return m_done; }
 
-    bool setDone()
+    void setDone()
     {
         if (m_timer) {
             ecore_timer_del(m_timer);

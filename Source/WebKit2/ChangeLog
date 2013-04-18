@@ -1,3 +1,16 @@
+2013-04-18  Krzysztof Wolanski  <k.wolanski@samsung.com>:
+
+        [EFL][WK2] Change inadequate return value in method setDone().
+        https://bugs.webkit.org/show_bug.cgi?id=114806
+
+        Reviewed by Andreas Kling.
+
+        Fix possible warning in EFL port: no return statement in function returning non-void.
+        Change return value from bool to void in method setDone().
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::CallbackDataTimer::setDone):
+
 2013-04-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Text Checker's settings refactor
