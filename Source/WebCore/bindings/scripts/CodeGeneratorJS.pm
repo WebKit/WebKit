@@ -2639,6 +2639,10 @@ sub GenerateImplementation
             push(@implContent, "    if (js${interfaceName}->impl()->hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
+        if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
+            push(@implContent, "    if (js${interfaceName}->impl()->isFiringEventListeners())\n");
+            push(@implContent, "        return true;\n");
+        }
         if ($codeGenerator->InheritsInterface($interface, "Node")) {
             push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
             push(@implContent, "        return true;\n");
