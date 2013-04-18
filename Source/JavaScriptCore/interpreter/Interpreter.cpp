@@ -1016,6 +1016,9 @@ failedJSONP:
 
     ProgramCodeBlock* codeBlock = &program->generatedBytecode();
 
+    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+        return throwTerminatedExecutionException(callFrame);
+
     // Push the call frame for this invocation:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     CallFrame* newCallFrame = m_stack.pushFrame(callFrame, codeBlock, scope, 1, 0);
@@ -1030,7 +1033,7 @@ failedJSONP:
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
+    {
         SamplingTool::CallRecord callRecord(m_sampler.get());
         Watchdog::Scope watchdogScope(vm.watchdog);
 
@@ -1039,8 +1042,7 @@ failedJSONP:
 #elif ENABLE(JIT)
         result = program->generatedJITCode().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
-    } else
-        result = throwTerminatedExecutionException(newCallFrame);
+    }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, program->sourceURL(), program->lineNo());
@@ -1089,6 +1091,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     } else
         newCodeBlock = 0;
 
+    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+        return throwTerminatedExecutionException(callFrame);
+
     CallFrame* newCallFrame = m_stack.pushFrame(callFrame, newCodeBlock, scope, argsCount, function);
     if (UNLIKELY(!newCallFrame))
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -1102,7 +1107,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         profiler->willExecute(callFrame, function);
 
     JSValue result;
-    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
+    {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
         Watchdog::Scope watchdogScope(vm.watchdog);
 
@@ -1115,8 +1120,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 #endif // ENABLE(JIT)
         } else
             result = JSValue::decode(callData.native.function(newCallFrame));
-    } else
-        result = throwTerminatedExecutionException(newCallFrame);
+    }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, function);
@@ -1166,6 +1170,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     } else
         newCodeBlock = 0;
 
+    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+        return throwTerminatedExecutionException(callFrame);
+
     CallFrame* newCallFrame = m_stack.pushFrame(callFrame, newCodeBlock, scope, argsCount, constructor);
     if (UNLIKELY(!newCallFrame))
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -1179,7 +1186,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         profiler->willExecute(callFrame, constructor);
 
     JSValue result;
-    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
+    {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
         Watchdog::Scope watchdogScope(vm.watchdog);
 
@@ -1192,8 +1199,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 #endif // ENABLE(JIT)
         } else
             result = JSValue::decode(constructData.native.function(newCallFrame));
-    } else
-        result = throwTerminatedExecutionException(newCallFrame);
+    }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, constructor);
@@ -1265,6 +1271,9 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(closure.oldCallFrame, closure.function);
 
+    if (UNLIKELY(vm.watchdog.didFire(closure.oldCallFrame)))
+        return throwTerminatedExecutionException(closure.oldCallFrame);
+
     // The code execution below may push more frames and point the topCallFrame
     // to those newer frames, or it may pop to the top frame to the caller of
     // the current repeat frame, or it may leave the top frame pointing to the
@@ -1277,7 +1286,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!vm.watchdog.didFire(closure.newCallFrame))) {
+    {
         SamplingTool::CallRecord callRecord(m_sampler.get());
         Watchdog::Scope watchdogScope(vm.watchdog);
 
@@ -1286,8 +1295,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 #elif ENABLE(JIT)
         result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_stack, closure.newCallFrame, &vm);
 #endif // ENABLE(JIT)
-    } else
-        result = throwTerminatedExecutionException(closure.newCallFrame);
+    }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(closure.oldCallFrame, closure.function);
@@ -1361,6 +1369,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
+    if (UNLIKELY(vm.watchdog.didFire(callFrame)))
+        return throwTerminatedExecutionException(callFrame);
+
     // Push the frame:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     CallFrame* newCallFrame = m_stack.pushFrame(callFrame, codeBlock, scope, 1, 0);
@@ -1375,7 +1386,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     // Execute the code:
     JSValue result;
-    if (LIKELY(!vm.watchdog.didFire(newCallFrame))) {
+    {
         SamplingTool::CallRecord callRecord(m_sampler.get());
         Watchdog::Scope watchdogScope(vm.watchdog);
 
@@ -1384,8 +1395,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 #elif ENABLE(JIT)
         result = eval->generatedJITCode().execute(&m_stack, newCallFrame, &vm);
 #endif // ENABLE(JIT)
-    } else
-        result = throwTerminatedExecutionException(newCallFrame);
+    }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
