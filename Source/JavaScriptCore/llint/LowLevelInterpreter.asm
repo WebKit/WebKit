@@ -1064,8 +1064,10 @@ _llint_op_loop_hint:
     checkSwitchToJITForLoop()
     dispatch(1)
 .handleWatchdogTimer:
-    callWatchdogTimerHandler()
+    callWatchdogTimerHandler(.throwHandler)
     jmp .afterWatchdogTimerCheck
+.throwHandler:
+    jmp _llint_throw_from_slow_path_trampoline
 
 _llint_op_switch_string:
     traceExecution()

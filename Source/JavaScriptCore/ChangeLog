@@ -1,3 +1,14 @@
+2013-04-17  Mark Lam  <mark.lam@apple.com>
+
+        Avoid using a branch range that is too far for some CPU architectures.
+        https://bugs.webkit.org/show_bug.cgi?id=114782.
+
+        Reviewed by David Kilzer.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2013-04-17  Julien Brianceau  <jbrianceau@nds.com>
 
         Fix SH4 build (broken since r148639).
