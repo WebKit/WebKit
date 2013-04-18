@@ -48,13 +48,16 @@
                 video.src = findMediaFile("video", "../content/test");
                 video.play();
                 // Wait for end of first cue (no events should fire while track is disabled).
-                setTimeout(testHiddenAndShowing, 400);
+                setTimeout(testHiddenAndShowing, 100);
                 consoleWrite("++ 0 events expected while mode = disabled");
                 consoleWrite("");
             }
             
             function testHiddenAndShowing()
             {
+                video.pause();
+                video.currentTime = 0;
+
                 consoleWrite("<b>++ 'hidden'</b>");
                 setMode("hidden");
 
@@ -62,6 +65,7 @@
                 setMode("showing");
 
                 consoleWrite("++ at least " + textTrack.cues.length + " events expected while mode = showing");
+                video.play();
             }
             
             waitForEvent('cuechange',
@@ -78,7 +82,7 @@
     </head>
     <body>
         <p>Tests that the TextTrack mode attribute is appropriately set.</p>
-        <video>
+        <video controls>
             <track id=track_1 src="captions-webvtt/captions-fast.vtt" onload="start()" default>
         </video>
     </body>
