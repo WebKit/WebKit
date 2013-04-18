@@ -1,3 +1,14 @@
+2013-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Remove an ASSERT that is causing flakeyness in Debug builds.
+
+        https://webkit.org/b/113020
+
+        Reviewed by Jessie Berlin.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::open): Removed ASSERT(m_createdInspectorPage).
+
 2013-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebPage::send-request signal to WebKit2 GTK+ API

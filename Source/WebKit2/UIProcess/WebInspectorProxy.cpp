@@ -427,8 +427,6 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
 
 void WebInspectorProxy::open()
 {
-    ASSERT(m_createdInspectorPage);
-
     m_isVisible = true;
 
     platformOpen();
