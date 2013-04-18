@@ -439,7 +439,7 @@ void TextTrack::invalidateTrackIndex()
 
 bool TextTrack::isRendered()
 {
-    if (kind() != captionsKeyword() && kind() != subtitlesKeyword())
+    if (kind() != captionsKeyword() && kind() != subtitlesKeyword() && kind() != forcedKeyword())
         return false;
 
     if (m_mode != showingKeyword())

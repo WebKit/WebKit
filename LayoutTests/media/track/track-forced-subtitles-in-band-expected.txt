@@ -48,5 +48,10 @@ EXPECTED (video.textTracks[8].language == 'en') OK
 EXPECTED (video.textTracks[8].kind == 'captions') OK
 EXPECTED (video.textTracks[8].mode == 'disabled') OK
 
+RUN(video.currentTime = 9.5)
+EVENT(seeked)
+EXPECTED (video.textTracks[3].activeCues.length == '1') OK
+EXPECTED (textTrackDisplayElement(video, 'cue') != 'null') OK
+
 END OF TEST
 

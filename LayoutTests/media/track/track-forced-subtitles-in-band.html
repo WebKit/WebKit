@@ -9,6 +9,15 @@
         <script>
             var test = 0;
 
+            function seeked()
+            {
+                testExpected("video.textTracks[3].activeCues.length", 1);
+                testExpected("textTrackDisplayElement(video, 'cue')", null, "!=");
+                consoleWrite("");
+
+                endTest();
+            }
+
             function testForced()
             {
                 consoleWrite("<br><i>** Forced tracks should be in .textTracks, but not in the menu<" + "/i>");
@@ -68,7 +77,8 @@
                 testExpected("video.textTracks[8].mode", "disabled");
                 consoleWrite("");
 
-                endTest();
+                waitForEvent('seeked', seeked);
+                run("video.currentTime = 9.5");
             }
 
             function setup()
