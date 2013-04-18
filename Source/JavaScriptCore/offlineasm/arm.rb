@@ -65,7 +65,7 @@ end
 
 ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r8"), SpecialRegister.new("r3")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
-ARM_SCRATCH_FPR = SpecialRegister.new("d8")
+ARM_SCRATCH_FPR = SpecialRegister.new("d6")
 
 def armMoveImmediate(value, register)
     # Currently we only handle the simple cases, and fall back to mov/movt for the complex ones.
