@@ -38,14 +38,16 @@ class WebPage;
 
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
+    static PassRefPtr<StorageNamespaceImpl> createLocalStorageNamespace(WebCore::PageGroup*);
     static PassRefPtr<StorageNamespaceImpl> createSessionStorageNamespace(WebPage*);
     virtual ~StorageNamespaceImpl();
 
+    WebCore::StorageType storageType() const { return m_storageType; }
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
 
 private:
-    explicit StorageNamespaceImpl(uint64_t storageNamespaceID, unsigned quotaInBytes);
+    explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, unsigned quotaInBytes);
 
     virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) OVERRIDE;
     virtual PassRefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) OVERRIDE;
@@ -55,6 +57,7 @@ private:
     virtual void sync() OVERRIDE;
     virtual void closeIdleLocalStorageDatabases() OVERRIDE;
 
+    WebCore::StorageType m_storageType;
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
 

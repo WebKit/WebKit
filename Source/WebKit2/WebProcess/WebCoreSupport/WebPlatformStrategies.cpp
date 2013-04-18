@@ -300,7 +300,11 @@ void WebPlatformStrategies::populatePluginCache()
 
 PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGroup* pageGroup)
 {
+#if ENABLE(UI_PROCESS_STORAGE)
+    return StorageNamespaceImpl::createLocalStorageNamespace(pageGroup);
+#else
     return StorageStrategy::localStorageNamespace(pageGroup);
+#endif
 }
 
 PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page)
