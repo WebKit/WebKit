@@ -242,18 +242,6 @@ extern "C" { extern void (*const __identifier("??_7TestEventConstructor@WebCore@
 extern "C" { extern void* _ZTVN7WebCore20TestEventConstructorE[]; }
 #endif
 #endif
-template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
-template <typename T> struct ReportMemoryCost<T, true> {
-    static void reportMemoryCost(ExecState* exec, T* impl)
-    {
-        exec->heap()->reportExtraMemoryCost(impl->memoryCost());
-    }
-};
-template <typename T> struct ReportMemoryCost<T, false> {
-    static void reportMemoryCost(ExecState*, T*)
-    {
-    }
-};
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventConstructor* impl)
 {
     if (!impl)

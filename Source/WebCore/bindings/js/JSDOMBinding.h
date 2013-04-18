@@ -546,6 +546,18 @@ class DOMStringList;
     public:
         static const bool value = sizeof(dummy(static_cast<Base*>(0))) == sizeof(YesType);
     };
+    template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
+    template <typename T> struct ReportMemoryCost<T, true> {
+        static void reportMemoryCost(JSC::ExecState* exec, T* impl)
+        {
+            exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+        }
+    };
+    template <typename T> struct ReportMemoryCost<T, false> {
+        static void reportMemoryCost(JSC::ExecState*, T*)
+        {
+        }
+    };
 
 } // namespace WebCore
 
