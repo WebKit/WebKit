@@ -1,3 +1,16 @@
+2013-04-18  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [WK2] CoordinatedGraphicsLayerState is a struct, not a class
+        https://bugs.webkit.org/show_bug.cgi?id=108855
+
+        Reviewed by Andreas Kling.
+
+        Fixes the forward declaration which takes CoordinatedGraphicsLayerState
+        as a class.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (WebCore):
+
 2013-04-18  Krzysztof Wolanski  <k.wolanski@samsung.com>:
 
         [EFL][WK2] Change inadequate return value in method setDone().

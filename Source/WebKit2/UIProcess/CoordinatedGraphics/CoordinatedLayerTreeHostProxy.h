@@ -41,7 +41,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class CoordinatedGraphicsLayerState;
+struct CoordinatedGraphicsLayerState;
 class CoordinatedGraphicsState;
 class SurfaceUpdateInfo;
 }
