@@ -228,8 +228,6 @@ private:
 
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
 
-    FloatSize constrainedSize() const;
-
     bool requiresTiledLayer(float pageScaleFactor) const;
     void swapFromOrToTiledLayer(bool useTiledLayer);
 

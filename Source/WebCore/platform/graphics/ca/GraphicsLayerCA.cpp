@@ -1305,12 +1305,11 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatSize pixelAlignmentOffset;
     computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
-    FloatSize usedSize = m_usingTiledBacking ? constrainedSize() : scaledSize;
-    FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, usedSize);
+    FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, scaledSize);
 
     // Update position.
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * usedSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * usedSize.height());
+    FloatPoint adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * scaledSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * scaledSize.height());
 
     if (m_structuralLayer) {
         FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(), m_position.y() + m_anchorPoint.y() * m_size.height());
@@ -1340,7 +1339,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
         // If we have a structural layer, we just use 0.5, 0.5 for the anchor point of the main layer.
         scaledAnchorPoint = FloatPoint(0.5f, 0.5f);
-        adjustedPosition = FloatPoint(scaledAnchorPoint.x() * usedSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * usedSize.height() - pixelAlignmentOffset.height());
+        adjustedPosition = FloatPoint(scaledAnchorPoint.x() * scaledSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * scaledSize.height() - pixelAlignmentOffset.height());
     }
     
     m_layer->setPosition(adjustedPosition);
@@ -2647,30 +2646,6 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
         m_layer->setBorderColor(Color::transparent);
         m_layer->setBorderWidth(0);
     }
-}
-
-FloatSize GraphicsLayerCA::constrainedSize() const
-{
-    FloatSize constrainedSize = m_size;
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    float tileColumns = ceilf(m_size.width() / kTiledLayerTileSize);
-    float tileRows = ceilf(m_size.height() / kTiledLayerTileSize);
-    double numTiles = tileColumns * tileRows;
-    
-    const unsigned cMaxTileCount = 512;
-    while (numTiles > cMaxTileCount) {
-        // Constrain the wider dimension.
-        if (constrainedSize.width() >= constrainedSize.height()) {
-            tileColumns = max(floorf(cMaxTileCount / tileRows), 1.0f);
-            constrainedSize.setWidth(tileColumns * kTiledLayerTileSize);
-        } else {
-            tileRows = max(floorf(cMaxTileCount / tileColumns), 1.0f);
-            constrainedSize.setHeight(tileRows * kTiledLayerTileSize);
-        }
-        numTiles = tileColumns * tileRows;
-    }
-#endif
-    return constrainedSize;
 }
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
