@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
-#error "Only <webkit2/webkit-web-extension.h> can be included directly."
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error "Only <webkit2/webkit2.h> can be included directly."
 #endif
 
-#ifndef WebKitWebExtensionDefines_h
-#define WebKitWebExtensionDefines_h
+#ifndef WebKitForward_h
+#define WebKitForward_h
 
-#include <glib.h>
+typedef struct _WebKitPrintOperation  WebKitPrintOperation;
+typedef struct _WebKitFindController  WebKitFindController;
+typedef struct _WebKitWebView         WebKitWebView;
+typedef struct _WebKitContextMenu     WebKitContextMenu;
+typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
 
-#ifdef G_OS_WIN32
-#    ifdef BUILDING_WEBKIT
-#        define WEBKIT_API __declspec(dllexport)
-#    else
-#        define WEBKIT_API __declspec(dllimport)
-#    endif
-#    define WEBKIT_OBSOLETE_API WEBKIT_API
-#else
-#    define WEBKIT_API __attribute__((visibility("default")))
-#    define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
-#endif
-
-#endif // WebKitWebExtensionDefines_h
+#endif // WebKitForward_h

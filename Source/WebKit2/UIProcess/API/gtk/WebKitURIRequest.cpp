@@ -70,7 +70,7 @@ static void webkitURIRequestSetProperty(GObject* object, guint propId, const GVa
 
     switch (propId) {
     case PROP_URI:
-        request->priv->resourceRequest.setURL(KURL(KURL(), g_value_get_string(value)));
+        webkit_uri_request_set_uri(request, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -92,8 +92,8 @@ static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
                                     g_param_spec_string("uri",
                                                         _("URI"),
                                                         _("The URI to which the request will be made."),
-                                                        0,
-                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+                                                        "about:blank",
+                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
 }
 
 /**
@@ -123,6 +123,26 @@ const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
 
     request->priv->uri = request->priv->resourceRequest.url().string().utf8();
     return request->priv->uri.data();
+}
+
+/**
+ * webkit_uri_request_set_uri:
+ * @request: a #WebKitURIRequest
+ * @uri: an URI
+ *
+ * Set the URI of @request
+ */
+void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
+{
+    g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
+    g_return_if_fail(uri);
+
+    KURL url(KURL(), uri);
+    if (url == request->priv->resourceRequest.url())
+        return;
+
+    request->priv->resourceRequest.setURL(url);
+    g_object_notify(G_OBJECT(request), "uri");
 }
 
 WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest& resourceRequest)

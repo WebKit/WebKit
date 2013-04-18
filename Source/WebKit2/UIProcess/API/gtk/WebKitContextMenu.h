@@ -27,6 +27,7 @@
 #include <glib-object.h>
 #include <webkit2/WebKitContextMenuItem.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitForwardDeclarations.h>
 
 G_BEGIN_DECLS
 

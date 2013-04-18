@@ -28,6 +28,7 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitContextMenu.h>
 #include <webkit2/WebKitContextMenuActions.h>
+#include <webkit2/WebKitForwardDeclarations.h>
 
 G_BEGIN_DECLS
 

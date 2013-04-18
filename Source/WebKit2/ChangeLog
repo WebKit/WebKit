@@ -1,3 +1,66 @@
+2013-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebPage::send-request signal to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=83681
+
+        Reviewed by Anders Carlsson.
+
+        Add WebKitWebPage::send-request signal emitted in willSendRequest
+        callback to allow web process extensions to modify requests before
+        they are sent or cancel the resource load.
+        This patch makes WebKitURIRequest and WebKitURIResponse objects
+        shareable between UI process and web extensions APIs. Since both
+        APIs force single header includes, the WebKitDefines.h header has
+        been split moving the forward declarations specific to the UI
+        process API to a new file WebKitForwardDeclarations.h. This way we
+        can also  share the WebKitDefines.h header and remove the
+        WebKitWebExtensionDefines.h header used in the web extensions API.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitContextMenu.h: Include WebKitForward.h.
+        * UIProcess/API/gtk/WebKitContextMenuItem.h: Ditto.
+        * UIProcess/API/gtk/WebKitDefines.h: Remove forward declarations.
+        * UIProcess/API/gtk/WebKitDownload.h: Include WebKitForward.h.
+        * UIProcess/API/gtk/WebKitFindController.h: Ditto.
+        * UIProcess/API/gtk/WebKitForwardDeclarations.h: Added. Contains
+        the forward declarations moved from WebKitDefines.h.
+        * UIProcess/API/gtk/WebKitPrintOperation.h: Include WebKitForward.h.
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (webkitURIRequestSetProperty): Use webkit_uri_request_set_uri() to
+        set the new URI.
+        (webkit_uri_request_class_init): Make URI property construct
+        instead of construct-only, since it can be updated once
+        constructed. It should never be NULL, so set default value to
+        about:blank instad of NULL.
+        (webkit_uri_request_set_uri): New public method to set the URI of
+        the WebKitURIRequest.
+        * UIProcess/API/gtk/WebKitURIRequest.h: Allow to include this file
+        from webkit-web-extension.h.
+        * UIProcess/API/gtk/WebKitURIResponse.h: Ditto.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h: Include
+        WebKitForward.h.
+        * UIProcess/API/gtk/WebKitWebView.h: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add
+        webkit_uri_request_set_uri.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebResourceSendRequest):
+        (serverCallback):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (sendRequestCallback):
+        (pageCreatedCallback):
+        * UIProcess/API/gtk/webkit2marshal.list:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h: Include
+        WebKitDefines.h instead of WebKitWebExtensionDefines.h.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame): Emit WebKitWebPage::send-request and
+        return early if the load is cancelled.
+        (webkit_web_page_class_init): Add WebKitWebPage::send-request
+        signal.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h: Include
+        WebKitDefines.h instead of WebKitWebExtensionDefines.h.
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+
 2013-04-18  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [WK2] CoordinatedGraphicsLayerState is a struct, not a class

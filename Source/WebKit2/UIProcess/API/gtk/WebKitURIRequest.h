@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
 #error "Only <webkit2/webkit2.h> can be included directly."
 #endif
 
@@ -60,6 +60,10 @@ webkit_uri_request_new      (const gchar      *uri);
 
 WEBKIT_API const gchar *
 webkit_uri_request_get_uri  (WebKitURIRequest *request);
+
+WEBKIT_API void
+webkit_uri_request_set_uri  (WebKitURIRequest *request,
+                             const gchar      *uri);
 
 G_END_DECLS
 

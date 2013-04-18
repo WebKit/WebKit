@@ -558,6 +558,75 @@ static void testWebViewResourcesHistoryCache(SingleResourceLoadTest* test, gcons
     g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.data());
 }
 
+class SendRequestTest: public SingleResourceLoadTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(SendRequestTest);
+
+    void resourceSentRequest(WebKitWebResource* resource, WebKitURIRequest* request, WebKitURIResponse* redirectResponse)
+    {
+        if (resource != m_resource)
+            return;
+
+        g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURI.data());
+        g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, webkit_web_resource_get_uri(resource));
+
+        SingleResourceLoadTest::resourceSentRequest(resource, request, redirectResponse);
+    }
+
+    void resourceFailed(WebKitWebResource* resource, GError* error)
+    {
+        if (resource != m_resource)
+            return;
+
+        g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, m_expectedCancelledResourceURI.data());
+        g_assert_error(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
+
+        SingleResourceLoadTest::resourceFailed(resource, error);
+    }
+
+    void setExpectedNewResourceURI(const CString& uri)
+    {
+        m_expectedNewResourceURI = uri;
+    }
+
+    void setExpectedCancelledResourceURI(const CString& uri)
+    {
+        m_expectedCancelledResourceURI = uri;
+    }
+
+    CString m_expectedNewResourceURI;
+    CString m_expectedCancelledResourceURI;
+};
+
+static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
+{
+    test->setExpectedNewResourceURI(kServer->getURIForPath("/javascript.js"));
+    test->loadURI(kServer->getURIForPath("relative-javascript.html").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(test->m_resource);
+
+    Vector<SingleResourceLoadTest::LoadEvents>& events = test->m_loadEvents;
+    g_assert_cmpint(events.size(), ==, 5);
+    g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
+    g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
+    g_assert_cmpint(events[2], ==, SingleResourceLoadTest::ReceivedResponse);
+    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedData);
+    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
+    events.clear();
+
+    // Cancel request.
+    test->setExpectedCancelledResourceURI(kServer->getURIForPath("/cancel-this.js"));
+    test->loadURI(kServer->getURIForPath("/resource-to-cancel.html").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(test->m_resource);
+
+    g_assert_cmpint(events.size(), ==, 3);
+    g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
+    g_assert_cmpint(events[1], ==, SingleResourceLoadTest::Failed);
+    g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Finished);
+    events.clear();
+}
+
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
     // The actual date doesn't really matter.
@@ -611,6 +680,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
         soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
         soup_message_headers_append(message->response_headers, "Content-Disposition", "filename=JavaScript.js");
+    } else if (g_str_equal(path, "/relative-javascript.html")) {
+        static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='remove-this/javascript.js'></script></head><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
+    } else if (g_str_equal(path, "/resource-to-cancel.html")) {
+        static const char* resourceToCancelHTML = "<html><head><script language='javascript' src='cancel-this.js'></script></head><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, resourceToCancelHTML, strlen(resourceToCancelHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
         GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
@@ -641,6 +716,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+
     ResourcesTest::add("WebKitWebView", "resources", testWebViewResources);
     SingleResourceLoadTest::add("WebKitWebResource", "loading", testWebResourceLoading);
     SingleResourceLoadTest::add("WebKitWebResource", "response", testWebResourceResponse);
@@ -649,6 +726,7 @@ void beforeAll()
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
+    SendRequestTest::add("WebKitWebPage", "send-request", testWebResourceSendRequest);
 }
 
 void afterAll()
