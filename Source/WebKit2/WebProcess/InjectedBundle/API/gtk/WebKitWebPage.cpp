@@ -31,8 +31,12 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
+#include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <glib/gi18n-lib.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -43,13 +47,63 @@ enum {
     LAST_SIGNAL
 };
 
+enum {
+    PROP_0,
+
+    PROP_URI
+};
+
 struct _WebKitWebPagePrivate {
     WebPage* webPage;
+
+    CString uri;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
+
+static CString getProvisionalURLForFrame(WebFrame* webFrame)
+{
+    DocumentLoader* documentLoader = webFrame->coreFrame()->loader()->provisionalDocumentLoader();
+    if (!documentLoader->unreachableURL().isEmpty())
+        return documentLoader->unreachableURL().string().utf8();
+
+    return documentLoader->url().string().utf8();
+}
+
+static void webkitWebPageSetURI(WebKitWebPage* webPage, const CString& uri)
+{
+    if (webPage->priv->uri == uri)
+        return;
+
+    webPage->priv->uri = uri;
+    g_object_notify(G_OBJECT(webPage), "uri");
+}
+
+static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
+}
+
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
+}
+
+static void didSameDocumentNavigationForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef* userData, const void *clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), toImpl(frame)->coreFrame()->document()->url().string().utf8());
+}
 
 static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
 {
@@ -118,8 +172,40 @@ static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint6
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), ImmutableDictionary::adopt(message).get());
 }
 
+static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
+{
+    WebKitWebPage* webPage = WEBKIT_WEB_PAGE(object);
+
+    switch (propId) {
+    case PROP_URI:
+        g_value_set_string(value, webkit_web_page_get_uri(webPage));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
+    }
+}
+
 static void webkit_web_page_class_init(WebKitWebPageClass* klass)
 {
+    GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
+
+    gObjectClass->get_property = webkitWebPageGetProperty;
+
+    /**
+     * WebKitWebPage:uri:
+     *
+     * The current active URI of the #WebKitWebPage.
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_URI,
+        g_param_spec_string(
+            "uri",
+            _("URI"),
+            _("The current active URI of the web page"),
+            0,
+            WEBKIT_PARAM_READABLE));
+
     /**
      * WebKitWebPage::document-loaded:
      * @web_page: the #WebKitWebPage on which the signal is emitted
@@ -147,14 +233,14 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WKBundlePageLoaderClient loaderClient = {
         kWKBundlePageResourceLoadClientCurrentVersion,
         page,
-        0, // didStartProvisionalLoadForFrame
-        0, // didReceiveServerRedirectForProvisionalLoadForFrame
+        didStartProvisionalLoadForFrame,
+        didReceiveServerRedirectForProvisionalLoadForFrame,
         0, // didFailProvisionalLoadWithErrorForFrame
         0, // didCommitLoadForFrame
         didFinishDocumentLoadForFrame,
         0, // didFinishLoadForFrame
         0, // didFailLoadWithErrorForFrame
-        0, // didSameDocumentNavigationForFrame
+        didSameDocumentNavigationForFrame,
         0, // didReceiveTitleForFrame
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
@@ -266,4 +352,23 @@ guint64 webkit_web_page_get_id(WebKitWebPage* webPage)
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
     return webPage->priv->webPage->pageID();
+}
+
+/**
+ * webkit_web_page_get_uri:
+ * @web_page: a #WebKitWebPage
+ *
+ * Returns the current active URI of @web_page.
+ *
+ * You can monitor the active URI by connecting to the notify::uri
+ * signal of @web_page.
+ *
+ * Returns: the current active URI of @web_view or %NULL if nothing has been
+ *    loaded yet.
+ */
+const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
+
+    return webPage->priv->uri.data();
 }

@@ -962,6 +962,7 @@ webkit_web_extension_get_type
 WebKitWebPage
 webkit_web_page_get_dom_document
 webkit_web_page_get_id
+webkit_web_page_get_uri
 
 <SUBSECTION Standard>
 WebKitWebPageClass

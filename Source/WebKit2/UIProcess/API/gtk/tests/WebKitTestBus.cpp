@@ -69,7 +69,7 @@ WebKitTestBus::~WebKitTestBus()
         kill(m_pid, SIGTERM);
 }
 
-GDBusConnection* WebKitTestBus::connection()
+GDBusConnection* WebKitTestBus::getOrCreateConnection()
 {
     if (m_connection)
         return m_connection.get();
@@ -88,7 +88,7 @@ static void onNameAppeared(GDBusConnection*, const char*, const char*, gpointer 
 
 GDBusProxy* WebKitTestBus::createProxy(const char* serviceName, const char* objectPath, const char* interfaceName, GMainLoop* mainLoop)
 {
-    unsigned watcherID = g_bus_watch_name_on_connection(connection(), serviceName, G_BUS_NAME_WATCHER_FLAGS_NONE, onNameAppeared, 0, mainLoop, 0);
+    unsigned watcherID = g_bus_watch_name_on_connection(getOrCreateConnection(), serviceName, G_BUS_NAME_WATCHER_FLAGS_NONE, onNameAppeared, 0, mainLoop, 0);
     g_main_loop_run(mainLoop);
     g_bus_unwatch_name(watcherID);
 
