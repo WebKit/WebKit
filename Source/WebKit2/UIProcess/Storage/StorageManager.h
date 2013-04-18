@@ -81,9 +81,14 @@ private:
     class StorageArea;
     StorageArea* findStorageArea(CoreIPC::Connection*, uint64_t) const;
 
+    class LocalStorageNamespace;
+    LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
+
     RefPtr<WorkQueue> m_queue;
 
     String m_localStorageDirectory;
+
+    HashMap<uint64_t, RefPtr<LocalStorageNamespace> > m_localStorageNamespaces;
 
     class SessionStorageNamespace;
     HashMap<uint64_t, RefPtr<SessionStorageNamespace> > m_sessionStorageNamespaces;

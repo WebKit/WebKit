@@ -1,3 +1,37 @@
+2013-04-18  Anders Carlsson  <andersca@apple.com>
+
+        StorageManager should keep track of local storage namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=114831
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        Add the local storage namespace, and security origin as member variables.
+
+        (StorageManager::LocalStorageNamespace):
+        New class that represents a local storage namespace.
+
+        (WebKit::StorageManager::StorageArea::~StorageArea):
+        If this storage area belongs to a local storage namespace, notify it that we've been destroyed.
+
+        (WebKit::StorageManager::StorageArea::clone):
+        Assert that we don't have a local storage namespace.
+
+        (WebKit::StorageManager::LocalStorageNamespace::getOrCreateStorageArea):
+        If we already have a storage area for the given security origin, return it. Otherwise, create a new storage area.
+        Note that LocalStorageNamespace does not hold strong references to its StorageArea objects; they are being kept alive
+        by a mapping inside the StorageManager.
+
+        (WebKit::StorageManager::LocalStorageNamespace::didDestroyStorageArea):
+        Remove the storage area from the map. If there are no more areas, remove the namespace from the manager.
+
+        (WebKit::StorageManager::SessionStorageNamespace::getOrCreateStorageArea):
+        StorageArea::create now takes the security origin.
+
+        (WebKit::StorageManager::createLocalStorageMap):
+        Get (or create) the right local storage namespace and then create a storage area.
+
 2013-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed JSGlobalData to VM
