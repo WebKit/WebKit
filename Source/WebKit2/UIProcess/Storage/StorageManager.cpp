@@ -256,7 +256,12 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<CoreIPC::Connection>(webProcessProxy->connection())));
 }
 
-void StorageManager::createStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
+void StorageManager::createLocalStorageMap(CoreIPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&)
+{
+    // FIXME: Implement.
+}
+
+void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
@@ -267,11 +272,6 @@ void StorageManager::createStorageMap(CoreIPC::Connection* connection, uint64_t 
 
     // FIXME: This should be a message check.
     ASSERT(result.isNewEntry);
-
-    if (!storageNamespaceID) {
-        // FIXME: This is a local storage namespace. Do something.
-        ASSERT_NOT_REACHED();
-    }
 
     ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace> >::isValidKey(storageNamespaceID)));
     SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID).get();

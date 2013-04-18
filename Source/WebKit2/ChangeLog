@@ -1,5 +1,20 @@
 2013-04-18  Anders Carlsson  <andersca@apple.com>
 
+        Differentiate between creating local storage maps and session storage maps
+        https://bugs.webkit.org/show_bug.cgi?id=114823
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/Storage/StorageManager.messages.in:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+
+2013-04-18  Anders Carlsson  <andersca@apple.com>
+
         StorageAreaMaps should not assume that a zero storage namespace ID is used for local storage
         https://bugs.webkit.org/show_bug.cgi?id=114822
 

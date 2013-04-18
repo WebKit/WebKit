@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageManager {
-    CreateStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
+    CreateLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
+    CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 
     GetValues(uint64_t storageMapID) -> (WTF::HashMap<WTF::String, WTF::String> values) WantsConnection
