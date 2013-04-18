@@ -901,8 +901,7 @@ void FrameLoaderClientBlackBerry::postProgressFinishedNotification()
     // we may need to call readyToRender now.
     readyToRender(false);
 
-    // FIXME: Send up a real status code.
-    m_webPagePrivate->m_client->notifyLoadFinished(m_loadError.isNull() ? 0 : -1);
+    m_webPagePrivate->m_client->notifyLoadFinished(m_loadError.isNull() ? 0 : m_loadError.errorCode());
 
     // Notify plugins that are waiting for the page to fully load before starting that
     // the load has completed.
