@@ -281,7 +281,6 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
     return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopNode);
 }
 
-#if ENABLE(GESTURE_EVENTS)
 static inline bool shouldGesturesTriggerActive()
 {
     // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
@@ -289,7 +288,6 @@ static inline bool shouldGesturesTriggerActive()
     // know in advance what event types are supported.
     return false;
 }
-#endif
 
 #if !PLATFORM(MAC)
 
@@ -3932,10 +3930,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             break;
         }
 
-#if ENABLE(GESTURE_EVENTS)
         if (shouldGesturesTriggerActive())
             hitType |= HitTestRequest::ReadOnly;
-#endif
 
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;
@@ -3975,14 +3971,12 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             m_originatingTouchPointTargets.set(touchPointTargetKey, node);
             touchTarget = node;
         } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
-            // We only perform a hittest on release or cancel to unset :active or :hover state.
-            if (touchPointTargetKey == m_originatingTouchPointTargetKey) {
-                hitTestResultAtPoint(pagePoint, hitType);
+            // No need to perform a hit-test since we only need to unset :hover and :active states.
+            if (!shouldGesturesTriggerActive() && allTouchReleased)
+                m_frame->document()->updateHoverActiveState(hitType, 0);
+            if (touchPointTargetKey == m_originatingTouchPointTargetKey)
                 m_originatingTouchPointTargetKey = 0;
-            } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
-                LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(m_originatingTouchPointDocument->frame(), point.pos());
-                hitTestResultInFrame(m_originatingTouchPointDocument->frame(), pagePointInOriginatingDocument, hitType);
-            }
+
             // The target should be the original target for this touch, so get it from the hashmap. As it's a release or cancel
             // we also remove it from the map.
             touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey);

@@ -5981,6 +5981,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
                 nodesToRemoveFromChain.append(curr->node());
         }
+        // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
+        if (oldHoverNode && oldHoverNode->isFrameOwnerElement()) {
+            if (Document* contentDocument = toFrameOwnerElement(oldHoverNode.get())->contentDocument())
+                contentDocument->updateHoverActiveState(request, 0);
+        }
     }
 
     // Now set the hover state for our new object up to the root.
