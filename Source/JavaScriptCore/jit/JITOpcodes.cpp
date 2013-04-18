@@ -1597,6 +1597,8 @@ void JIT::emitSlow_op_put_to_base(Instruction* currentInstruction, Vector<SlowCa
     case PutToBaseOperation::VariablePut:
         return;
 
+    case PutToBaseOperation::GlobalVariablePutChecked:
+        linkSlowCase(iter);
     case PutToBaseOperation::GlobalVariablePut:
         if (!putToBaseOperation->m_isDynamic)
             return;
@@ -1608,7 +1610,6 @@ void JIT::emitSlow_op_put_to_base(Instruction* currentInstruction, Vector<SlowCa
     case PutToBaseOperation::Generic:
         return;
 
-    case PutToBaseOperation::GlobalVariablePutChecked:
     case PutToBaseOperation::GlobalPropertyPut:
         linkSlowCase(iter);
         break;
