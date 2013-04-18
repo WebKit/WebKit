@@ -1,3 +1,55 @@
+2013-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        Add a synchronous version of WKView endDeferringViewInWindowChanges
+        https://bugs.webkit.org/show_bug.cgi?id=114780
+        <rdar://problem/12821901>
+
+        Reviewed by Simon Fraser.
+
+        Add new WKView SPI, endDeferringViewInWindowChangesSync, which synchronously
+        (though with a 250 ms timeout) does the work required to reparent a WKView
+        without flashing white.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView beginDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChanges]):
+        Make begin/endDeferringViewInWindowChanges not allow nested deferrals,
+        as we don't need them, and they complicate synchronous-end a lot.
+
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        Add a sync version of endDeferringViewInWindowChanges which waits
+        for DidUpdateInWindowState.
+
+        (-[WKView isDeferringViewInWindowChanges]):
+
+        * UIProcess/API/mac/WKViewPrivate.h: Add endDeferringViewInWindowChangesSync.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::waitForDidUpdateInWindowState):
+        Add waitForDidUpdateInWindowState(), which blocks for
+        250ms or until the WebProcess reparents all of its layers and spins
+        the runloop once, to prevent flashing when parenting a WKView.
+        If we've already timed out waiting for the WebProcess, don't block, as
+        it's probably quite busy and is likely to time out again.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow): Added.
+        (WebKit::WebPageProxy::waitForDidUpdateInWindowState): Added.
+        (WebKit::WebPageProxy::didUpdateInWindowState): Added.
+
+        * UIProcess/WebPageProxy.messages.in: Add DidUpdateInWindowState()
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didUpdateInWindowStateTimerFired): Send DidUpdateInWindowState to WebPageProxy.
+        (WebKit::WebPage::setIsInWindow): When setIsInWindow completes, TileController
+        tiles have been reparented, and the TiledCoreAnimationDrawingArea has
+        reconnected the layer tree to the context, start a 0-delay runloop timer
+        to allow painting and layer flushing to finish; when the timer fires,
+        we'll send the UIProcess a DidUpdateInWindowState so it can stop blocking.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add didUpdateInWindowStateTimerFired and m_sendDidUpdateInWindowStateTimer.
+
 2013-04-18  Anders Carlsson  <andersca@apple.com>
 
         StorageManager should keep track of local storage namespaces

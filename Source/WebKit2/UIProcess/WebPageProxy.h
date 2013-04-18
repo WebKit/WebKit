@@ -341,6 +341,8 @@ public:
     };
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
+    bool isInWindow() const { return m_isInWindow; }
+    void waitForDidUpdateInWindowState();
 
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_isVisible; }
@@ -492,6 +494,7 @@ public:
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
     void setVisibilityState(WebCore::PageVisibilityState, bool isInitialState);
+    void didUpdateInWindowState() { m_waitingForDidUpdateInWindowState = false; }
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1259,6 +1262,8 @@ private:
 
     float m_mediaVolume;
     bool m_mayStartMediaWhenInWindow;
+
+    bool m_waitingForDidUpdateInWindowState;
 
 #if PLATFORM(QT)
     WTF::HashSet<RefPtr<QtRefCountedNetworkRequestData> > m_applicationSchemeRequests;

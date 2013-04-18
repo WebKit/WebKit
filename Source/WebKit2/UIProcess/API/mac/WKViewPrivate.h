@@ -67,6 +67,7 @@ typedef enum {
 
 - (void)beginDeferringViewInWindowChanges;
 - (void)endDeferringViewInWindowChanges;
+- (void)endDeferringViewInWindowChangesSync;
 - (BOOL)isDeferringViewInWindowChanges;
 
 - (BOOL)windowOcclusionDetectionEnabled;

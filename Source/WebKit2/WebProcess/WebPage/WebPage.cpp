@@ -253,6 +253,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_accessibilityObject(0)
 #endif
     , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
+    , m_sendDidUpdateInWindowStateTimer(RunLoop::main(), this, &WebPage::didUpdateInWindowStateTimerFired)
     , m_findController(this)
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(QT)
@@ -1977,6 +1978,11 @@ void WebPage::setCanStartMediaTimerFired()
         m_page->setCanStartMedia(true);
 }
 
+void WebPage::didUpdateInWindowStateTimerFired()
+{
+    send(Messages::WebPageProxy::DidUpdateInWindowState());
+}
+
 inline bool WebPage::canHandleUserEvents() const
 {
 #if USE(TILED_BACKING_STORE)
@@ -2011,6 +2017,7 @@ void WebPage::setIsInWindow(bool isInWindow)
     }
 
     m_page->setIsInWindow(isInWindow);
+    m_sendDidUpdateInWindowStateTimer.startOneShot(0);
 }
 
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)

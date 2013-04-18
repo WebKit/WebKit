@@ -819,6 +819,7 @@ private:
 
     void changeSelectedIndex(int32_t index);
     void setCanStartMediaTimerFired();
+    void didUpdateInWindowStateTimerFired();
 
     bool canHandleUserEvents() const;
 
@@ -915,6 +916,7 @@ private:
 #endif
     
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
+    WebCore::RunLoop::Timer<WebPage> m_sendDidUpdateInWindowStateTimer;
     bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep> > m_undoStepMap;

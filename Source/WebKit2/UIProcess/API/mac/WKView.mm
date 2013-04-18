@@ -218,7 +218,7 @@ struct WKViewInterpretKeyEventsParameters {
     NSRect _windowBottomCornerIntersectionRect;
     
     unsigned _frameSizeUpdatesDisabledCount;
-    unsigned _viewInWindowChangesDeferredCount;
+    BOOL _shouldDeferViewInWindowChanges;
 
     BOOL _viewInWindowChangeWasDeferred;
 
@@ -3392,27 +3392,48 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)beginDeferringViewInWindowChanges
 {
-    _data->_viewInWindowChangesDeferredCount++;
+    if (_data->_shouldDeferViewInWindowChanges) {
+        NSLog(@"beginDeferringViewInWindowChanges was called while already deferring view-in-window changes!");
+        return;
+    }
+
+    _data->_shouldDeferViewInWindowChanges = YES;
 }
 
 - (void)endDeferringViewInWindowChanges
 {
-    if (!_data->_viewInWindowChangesDeferredCount) {
-        NSLog(@"endDeferringViewInWindowChanges was called without a matching beginDeferringViewInWindowChanges!");
+    if (!_data->_shouldDeferViewInWindowChanges) {
+        NSLog(@"endDeferringViewInWindowChanges was called without beginDeferringViewInWindowChanges!");
         return;
     }
 
-    --_data->_viewInWindowChangesDeferredCount;
+    _data->_shouldDeferViewInWindowChanges = NO;
 
-    if (!_data->_viewInWindowChangesDeferredCount && _data->_viewInWindowChangeWasDeferred) {
+    if (_data->_viewInWindowChangeWasDeferred) {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 }
 
+- (void)endDeferringViewInWindowChangesSync
+{
+    if (!_data->_shouldDeferViewInWindowChanges) {
+        NSLog(@"endDeferringViewInWindowChangesSync was called without beginDeferringViewInWindowChanges!");
+        return;
+    }
+
+    PageClient* pageClient = _data->_pageClient.get();
+    bool hasPendingViewInWindowChange = _data->_viewInWindowChangeWasDeferred && _data->_page->isInWindow() != pageClient->isViewInWindow();
+
+    [self endDeferringViewInWindowChanges];
+
+    if (hasPendingViewInWindowChange)
+        _data->_page->waitForDidUpdateInWindowState();
+}
+
 - (BOOL)isDeferringViewInWindowChanges
 {
-    return _data->_viewInWindowChangesDeferredCount;
+    return _data->_shouldDeferViewInWindowChanges;
 }
 
 - (BOOL)windowOcclusionDetectionEnabled

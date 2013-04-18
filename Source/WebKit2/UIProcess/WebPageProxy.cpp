@@ -308,6 +308,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_minimumLayoutWidth(0)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
+    , m_waitingForDidUpdateInWindowState(false)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
@@ -1038,6 +1039,20 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 #endif
 
     updateBackingStoreDiscardableState();
+}
+
+void WebPageProxy::waitForDidUpdateInWindowState()
+{
+    // If we have previously timed out with no response from the WebProcess, don't block the UIProcess again until it starts responding.
+    if (m_waitingForDidUpdateInWindowState)
+        return;
+
+    m_waitingForDidUpdateInWindowState = true;
+
+    if (!m_process->isLaunching()) {
+        const double inWindowStateUpdateTimeout = 0.25;
+        m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateInWindowState>(m_pageID, inWindowStateUpdateTimeout);
+    }
 }
 
 IntSize WebPageProxy::viewSize() const
