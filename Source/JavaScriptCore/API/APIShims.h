@@ -42,8 +42,6 @@ protected:
     {
         if (registerThread)
             vm->heap.machineThreads().addCurrentThread();
-        m_vm->heap.activityCallback()->synchronize();
-        m_vm->heap.sweeper()->synchronize();
     }
 
     ~APIEntryShimWithoutLock()

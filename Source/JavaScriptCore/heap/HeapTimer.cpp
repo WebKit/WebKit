@@ -75,15 +75,6 @@ HeapTimer::~HeapTimer()
     CFRunLoopTimerInvalidate(m_timer.get());
 }
 
-void HeapTimer::synchronize()
-{
-    if (CFRunLoopGetCurrent() == m_runLoop.get())
-        return;
-    CFRunLoopRemoveTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
-    m_runLoop = CFRunLoopGetCurrent();
-    CFRunLoopAddTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
-}
-
 void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
 {
     JSLock* apiLock = static_cast<JSLock*>(context);
@@ -132,10 +123,6 @@ void HeapTimer::timerDidFire()
     doWork();
 }
 
-void HeapTimer::synchronize()
-{
-}
-
 void HeapTimer::invalidate()
 {
 }
@@ -178,18 +165,6 @@ void HeapTimer::customEvent(QEvent*)
     m_newThread = 0;
 }
 
-void HeapTimer::synchronize()
-{
-    if (thread() != QThread::currentThread()) {
-        // We can only move from the objects own thread to another, so we fire an
-        // event into the owning thread to trigger the move.
-        // This must be processed before any timerEvents so giving it high priority.
-        QMutexLocker lock(&m_mutex);
-        m_newThread = QThread::currentThread();
-        QCoreApplication::postEvent(this, new QEvent(QEvent::User), Qt::HighEventPriority);
-    }
-}
-
 #else
 HeapTimer::HeapTimer(VM* vm)
     : m_vm(vm)
@@ -197,10 +172,6 @@ HeapTimer::HeapTimer(VM* vm)
 }
 
 HeapTimer::~HeapTimer()
-{
-}
-
-void HeapTimer::synchronize()
 {
 }
 

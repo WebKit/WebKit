@@ -58,8 +58,6 @@ public:
 #endif
     
     virtual ~HeapTimer();
-
-    virtual void synchronize();
     virtual void doWork() = 0;
     
 protected:

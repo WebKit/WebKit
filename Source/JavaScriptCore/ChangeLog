@@ -1,3 +1,24 @@
+2013-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed HeapTimer::synchronize
+        https://bugs.webkit.org/show_bug.cgi?id=114832
+
+        Reviewed by Mark Hahnenberg.
+
+        HeapTimer::synchronize was a flawed attempt to make HeapTimer thread-safe.
+        Instead, we use proper locking now.
+
+        This is a slight API change, since the GC timer will now only fire in the
+        run loop that created the JS VM, even if another run loop later executes
+        some JS.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        * heap/HeapTimer.cpp:
+        (JSC):
+        * heap/HeapTimer.h:
+        (HeapTimer):
+
 2013-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed JSGlobalData to VM
