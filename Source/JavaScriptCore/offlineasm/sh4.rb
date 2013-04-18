@@ -457,8 +457,21 @@ def emitSH4ShiftImm(val, operand, direction)
 end
 
 def emitSH4BranchIfT(label, neg)
-    sh4opcode = neg ? "bf" : "bt"
-    $asm.puts "#{sh4opcode} #{label.asmLabel}"
+    outlabel = LocalLabel.unique("branchIfT")
+    sh4opcode = neg ? "bt" : "bf"
+    $asm.puts "#{sh4opcode} #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
+    if label.is_a? LocalLabelReference
+        $asm.puts "bra #{label.asmLabel}"
+        $asm.puts "nop"
+    else
+        $asm.puts ".balign 4"
+        $asm.puts "mov.l @(8, PC), #{SH4_TMP_GPRS[0].sh4Operand}"
+        $asm.puts "jmp @#{SH4_TMP_GPRS[0].sh4Operand}"
+        $asm.puts "nop"
+        $asm.puts "nop"
+        $asm.puts ".long #{label.asmLabel}"
+    end
+    outlabel.lower("SH4")
 end
 
 def emitSH4IntCompare(cmpOpcode, operands)

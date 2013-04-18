@@ -1,3 +1,14 @@
+2013-04-17  Julien Brianceau  <jbrianceau@nds.com>
+
+        Fix SH4 build (broken since r148639).
+        https://bugs.webkit.org/show_bug.cgi?id=114773.
+
+        Allow longer displacements for specific branches in SH4 LLINT.
+
+        Reviewed by Oliver Hunt.
+
+        * offlineasm/sh4.rb:
+
 2013-04-14  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. More Windows build fix.
