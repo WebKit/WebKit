@@ -1,3 +1,17 @@
+2013-04-18  Sam Weinig  <sam@webkit.org>
+
+        WebKit should not write WKPreferences to app user defaults when using the ObjC API
+        <rdar://problem/13593578>
+        https://bugs.webkit.org/show_bug.cgi?id=114821
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup initWithIdentifier:]):
+        Use a identifier-less preferences for the ObjC-API. I think we will probably want this
+        to be the default for the C-API at some point as well, but Safari currently uses this
+        behavior.
+
 2013-04-17  Anders Carlsson  <andersca@apple.com>
 
         Change storage factory functions to take a PageGroup and Page respectively
