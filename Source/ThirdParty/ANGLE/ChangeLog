@@ -1,3 +1,14 @@
+2013-04-18  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        Add checking whether the compiler allows to use #pragma directive.
+        https://bugs.webkit.org/show_bug.cgi?id=114740
+
+        Reviewed by Andreas Kling.
+
+        Some compilers may complain that #pragma warning is an undefined macro.
+
+        * src/compiler/depgraph/DependencyGraph.cpp:
+
 2013-04-11  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][Mac] Linking fails with Qt 5.1
