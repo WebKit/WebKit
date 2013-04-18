@@ -1,3 +1,15 @@
+2013-04-18  Sam Weinig  <sam@webkit.org>
+
+        Network Process crashing trying to read in IDNScriptWhiteList.txt
+        https://bugs.webkit.org/show_bug.cgi?id=114827
+
+        Reviewed by Anders Carlsson.
+
+        Move IDNScriptWhiteList.txt from WebKit to WebCore, so that the NetworkProcess does not have to link against
+        WebKit. It was a layering violation for WebCore to be trying to access WebKit resources anyway.
+
+        * Resources/IDNScriptWhiteList.txt: Removed.
+
 2013-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed JSGlobalData to VM

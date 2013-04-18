@@ -162,7 +162,7 @@ static void readIDNScriptWhiteList(void)
     }
     
     // Fall back on white list inside bundle.
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
     
     if (!readIDNScriptWhiteListFile([bundle pathForResource:@"IDNScriptWhiteList" ofType:@"txt"]))
         CRASH();
