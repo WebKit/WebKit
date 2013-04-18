@@ -49,7 +49,7 @@ public:
     static PassRefPtr<StorageAreaMap> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
     ~StorageAreaMap();
 
-    WebCore::StorageType storageType() const;
+    WebCore::StorageType storageType() const { return m_storageType; }
 
     unsigned length();
     String key(unsigned index);
@@ -78,6 +78,8 @@ private:
     void dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     uint64_t m_storageMapID;
+
+    WebCore::StorageType m_storageType;
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;

@@ -57,6 +57,7 @@ PassRefPtr<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl* storageN
 
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
     : m_storageMapID(generateStorageMapID())
+    , m_storageType(storageNamespace->storageType())
     , m_storageNamespaceID(storageNamespace->storageNamespaceID())
     , m_quotaInBytes(storageNamespace->quotaInBytes())
     , m_securityOrigin(securityOrigin)
@@ -69,15 +70,6 @@ StorageAreaMap::~StorageAreaMap()
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageMap(m_storageMapID), 0);
     WebProcess::shared().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID);
-}
-
-StorageType StorageAreaMap::storageType() const
-{
-    // A zero storage namespace ID is used for local storage.
-    if (!m_storageNamespaceID)
-        return LocalStorage;
-
-    return SessionStorage;
 }
 
 unsigned StorageAreaMap::length()

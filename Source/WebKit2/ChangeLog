@@ -1,5 +1,19 @@
 2013-04-18  Anders Carlsson  <andersca@apple.com>
 
+        StorageAreaMaps should not assume that a zero storage namespace ID is used for local storage
+        https://bugs.webkit.org/show_bug.cgi?id=114822
+
+        Reviewed by Beth Dakin.
+
+        Store the storage type directly in the storage area map.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        * WebProcess/Storage/StorageAreaMap.h:
+        (WebKit::StorageAreaMap::storageType):
+
+2013-04-18  Anders Carlsson  <andersca@apple.com>
+
         Begin fleshing out UI side local storage
         https://bugs.webkit.org/show_bug.cgi?id=114820
 
