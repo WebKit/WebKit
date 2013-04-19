@@ -309,38 +309,6 @@ inspector/elements/edit-dom-actions.html
 http/tests/cookies/simple-cookies-max-age.html
 fast/workers/worker-cloneport.html
 
-# All additional tests that failed more than once on the Lion WebKit2 Release bot between r111814 and r111865
-css3/selectors3/xml/css3-modsel-d3.xml
-fast/canvas/webgl/texture-color-profile.html
-
-# All tests that crashed more than once on the Lion WebKit2 bots between r111865 and r111885
-accessibility/adjacent-continuations-cause-assertion-failure.html
-accessibility/contenteditable-hidden-div.html
-css3/filters/custom/effect-custom-combined-missing.html
-fast/workers/empty-worker-nocrash.html
-svg/custom/font-face-name-without-name-attr.svg
-
-# All additional tests that crashed more than once on the Lion WebKit2 bots between r111885 and r111892
-fast/dom/Window/anonymous-slot-with-changes.html
-fast/repaint/scroll-in-clipped-layer.html
-fast/workers/shared-worker-constructor.html
-http/tests/canvas/philip/tests/security.drawImage.image.html
-platform/mac/accessibility/attributed-string-includes-highlighting.html
-svg/foreignObject/repaint-rect-coordinates.html
-
-# All additional tests that crashed more than once on the Lion WebKit2 bots between r111867 and r111906
-animations/3d/change-transform-in-end-event.html
-canvas/philip/tests/2d.canvas.readonly.html
-compositing/overflow/overflow-scaled-descendant-overlapping.html
-compositing/sibling-positioning.html
-compositing/video/video-with-invalid-source.html
-fast/events/onunload-not-on-body.html
-http/tests/cache/cancel-during-revalidation-succeeded.html
-http/tests/media/media-document.html
-http/tests/media/video-error-abort.html
-platform/mac/accessibility/attributed-string-includes-misspelled-with-selection.html
-svg/transforms/change-transform-origin-css.xhtml
-
 # Intermittent crashes
 # https://bugs.webkit.org/show_bug.cgi?id=82939
 sputnik/Unicode/Unicode_218/S7.6_A2.4.html
