@@ -135,7 +135,8 @@
                                 { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
                                 { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
                                 { "name": "failed", "type": "boolean", "optional": true, "description": "True if the resource failed to load." },
-                                { "name": "canceled", "type": "boolean", "optional": true, "description": "True if the resource was canceled during loading." }
+                                { "name": "canceled", "type": "boolean", "optional": true, "description": "True if the resource was canceled during loading." },
+                                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
                             ]
                         },
                         "description": "Information about frame resources."
@@ -975,7 +976,8 @@
                     { "name": "url", "type": "string", "description": "Resource URL. This is the url of the original network request." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Type of this resource." },
                     { "name": "response", "$ref": "Response", "optional": true, "description": "Cached response data." },
-                    { "name": "bodySize", "type": "number", "description": "Cached response body size." }
+                    { "name": "bodySize", "type": "number", "description": "Cached response body size." },
+                    { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
                 ]
             },
             {
@@ -1111,7 +1113,8 @@
                 "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                    { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
                 ]
             },
             {

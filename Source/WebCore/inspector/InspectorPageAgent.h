@@ -86,6 +86,7 @@ public:
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
     static void resourceContent(ErrorString*, Frame*, const KURL&, String* result, bool* base64Encoded);
+    static String sourceMapURLForResource(CachedResource*);
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);

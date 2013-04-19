@@ -49,8 +49,9 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLi
 TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
 PassOwnPtr<Vector<size_t> > lineEndings(const String&);
 
-String findSourceURL(const String& content);
-String findSourceMapURL(const String& content);
+String findScriptSourceURL(const String& content);
+String findScriptSourceMapURL(const String& content);
+String findStylesheetSourceMapURL(const String& content);
 
 } // namespace ContentSearchUtils
 } // namespace WebCore

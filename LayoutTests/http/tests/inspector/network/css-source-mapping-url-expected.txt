@@ -1,0 +1,7 @@
+Tests that the extraResourceInfo in Network.loadingFinished contains a sourceMapURL for a Stylesheet containing a sourceMappingURL. Also then tests that Page.getResourceTree contains the sourceMapURL for the resource.
+
+Response received for style.css
+Network.loadingFailed extraResourceInfo contains a sourceMapURL: source-map-test-style.css.map
+Page.getResourceTree resourcePayload contains sourceMapURL: source-map-test-style.css.map
+SUCCESS
+

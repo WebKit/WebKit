@@ -1,0 +1,88 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadStylesheetWithSourceMappingURL()
+{
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = "resources/source-map-test-style.css";
+    document.head.appendChild(link);
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "loadingFinished", loadingFinished);
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "loadingFailed", loadingFailed);
+
+    InspectorTest.evaluateInPage("loadStylesheetWithSourceMappingURL()");
+
+    function loadingFinished(requestId, timestamp, sourceMapURL)
+    {
+        var request = WebInspector.networkLog.requestForId(requestId);
+        if (/source-map-test-style\.css$/.exec(request.url)) {
+            InspectorTest.addResult("Response received for style.css");
+            if (sourceMapURL) {
+                InspectorTest.addResult("Network.loadingFailed extraResourceInfo contains a sourceMapURL: " + sourceMapURL);
+                afterLoadingResource();
+            } else {
+                InspectorTest.addResult("Network.loadingFailed extraResourceInfo missing sourceMapURL");
+                InspectorTest.addResult("FAILURE");
+                InspectorTest.completeTest();
+            }
+        }
+    }
+
+    function loadingFailed(requestId, time, localizedDescription, canceled)
+    {
+        var request = WebInspector.networkLog.requestForId(requestId);
+        if (/source-map-test-style\.css$/.exec(request.url)) {
+            InspectorTest.addResult("Failed to load source-map-test-style.css");
+            InspectorTest.addResult("FAILURE");
+            InspectorTest.completeTest();
+        }
+    }
+
+    function afterLoadingResource()
+    {
+        PageAgent.getResourceTree(processResourceTree);
+
+        function processResourceTree(error, mainFramePayload)
+        {
+            if (error) {
+                InspectorTest.addResult("Page.getResourceTree error: " + error);
+                InspectorTest.addResult("FAILURE");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            var resources = mainFramePayload.resources;
+            for (var i = 0; i < resources.length; ++i) {
+                var resourcePayload = resources[i];
+                if (/source-map-test-style\.css$/.exec(resourcePayload.url)) {
+                    if (resourcePayload.sourceMapURL) {
+                        InspectorTest.addResult("Page.getResourceTree resourcePayload contains sourceMapURL: " + resourcePayload.sourceMapURL);
+                        InspectorTest.addResult("SUCCESS");
+                        InspectorTest.completeTest();
+                    } else {
+                        InspectorTest.addResult("Page.getResourceTree resourcePayload missing sourceMapURL");
+                        InspectorTest.addResult("FAILURE");
+                        InspectorTest.completeTest();
+                    }
+                    return;
+                }
+            }
+
+            InspectorTest.addResult("Page.getResourceTree missing source-map-test-style.css");
+            InspectorTest.addResult("FAILURE");
+            InspectorTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the extraResourceInfo in Network.loadingFinished contains a sourceMapURL for a Stylesheet containing a sourceMappingURL. Also then tests that Page.getResourceTree contains the sourceMapURL for the resource.</p>
+</body>
+</html>

@@ -632,23 +632,20 @@ PassRefPtr<Array<TypeBuilder::Debugger::CallFrame> > InspectorDebuggerAgent::cur
 
 String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    DEFINE_STATIC_LOCAL(String, sourceMapHttpHeader, (ASCIILiteral("X-SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("X-SourceMap")));
 
-    String sourceMapURL = ContentSearchUtils::findSourceMapURL(script.source);
-    if (!sourceMapURL.isEmpty())
-        return sourceMapURL;
+    if (!script.url.isEmpty()) {
+        if (InspectorPageAgent* pageAgent = m_instrumentingAgents->inspectorPageAgent()) {
+            CachedResource* resource = pageAgent->cachedResource(pageAgent->mainFrame(), KURL(ParsedURLString, script.url));
+            if (resource) {
+                String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
+                if (!sourceMapHeader.isEmpty())
+                    return sourceMapHeader;
+            }
+        }
+    }
 
-    if (script.url.isEmpty())
-        return String();
-
-    InspectorPageAgent* pageAgent = m_instrumentingAgents->inspectorPageAgent();
-    if (!pageAgent)
-        return String();
-
-    CachedResource* resource = pageAgent->cachedResource(pageAgent->mainFrame(), KURL(ParsedURLString, script.url));
-    if (resource)
-        return resource->response().httpHeaderField(sourceMapHttpHeader);
-    return String();
+    return ContentSearchUtils::findScriptSourceMapURL(script.source);
 }
 
 // JavaScriptDebugListener functions
@@ -661,7 +658,7 @@ void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script
     String* sourceMapURLParam = sourceMapURL.isNull() ? 0 : &sourceMapURL;
     String sourceURL;
     if (!script.startLine && !script.startColumn)
-        sourceURL = ContentSearchUtils::findSourceURL(script.source);
+        sourceURL = ContentSearchUtils::findScriptSourceURL(script.source);
     bool hasSourceURL = !sourceURL.isEmpty();
     String scriptURL = hasSourceURL ? sourceURL : script.url;
     bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : 0;

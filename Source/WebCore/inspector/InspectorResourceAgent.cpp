@@ -167,15 +167,21 @@ static PassRefPtr<TypeBuilder::Network::Response> buildObjectForResourceResponse
     return responseObject;
 }
 
-static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedResource(const CachedResource& cachedResource, DocumentLoader* loader)
+static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedResource(CachedResource* cachedResource, DocumentLoader* loader)
 {
     RefPtr<TypeBuilder::Network::CachedResource> resourceObject = TypeBuilder::Network::CachedResource::create()
-        .setUrl(cachedResource.url())
-        .setType(InspectorPageAgent::cachedResourceTypeJson(cachedResource))
-        .setBodySize(cachedResource.encodedSize());
-    RefPtr<TypeBuilder::Network::Response> resourceResponse = buildObjectForResourceResponse(cachedResource.response(), loader);
+        .setUrl(cachedResource->url())
+        .setType(InspectorPageAgent::cachedResourceTypeJson(*cachedResource))
+        .setBodySize(cachedResource->encodedSize());
+
+    RefPtr<TypeBuilder::Network::Response> resourceResponse = buildObjectForResourceResponse(cachedResource->response(), loader);
     if (resourceResponse)
         resourceObject->setResponse(resourceResponse);
+
+    String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
+    if (!sourceMappingURL.isEmpty())
+        resourceObject->setSourceMapURL(sourceMappingURL);
+
     return resourceObject;
 }
 
@@ -292,7 +298,12 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, Document
     if (!finishTime)
         finishTime = currentTime();
 
-    m_frontend->loadingFinished(requestId, finishTime);
+    String sourceMappingURL;
+    NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
+    if (resourceData && resourceData->cachedResource())
+        sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(resourceData->cachedResource());
+
+    m_frontend->loadingFinished(requestId, finishTime, !sourceMappingURL.isEmpty() ? &sourceMappingURL : 0);
 }
 
 void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
@@ -327,7 +338,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
 
     RefPtr<TypeBuilder::Network::Initiator> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
 
-    m_frontend->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource, loader));
+    m_frontend->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(resource, loader));
 }
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)

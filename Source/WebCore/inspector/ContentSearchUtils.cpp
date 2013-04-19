@@ -168,9 +168,20 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLi
     return result;
 }
 
-static String findMagicComment(const String& content, const String& name)
+static String scriptCommentPattern(const String& name)
 {
-    String patternString = "//@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
+    // "//@ <name>=<value>"
+    return "//@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
+}
+
+static String stylesheetCommentPattern(const String& name)
+{
+    // "/*@ <name>=<value> */"
+    return "/\\*@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/";
+}
+
+static String findMagicComment(const String& content, const String& patternString)
+{
     const char* error = 0;
     JSC::Yarr::YarrPattern pattern(patternString, false, true, &error);
     ASSERT(!error);
@@ -188,14 +199,19 @@ static String findMagicComment(const String& content, const String& name)
     return content.substring(matches[2], matches[3] - matches[2]);
 }
 
-String findSourceURL(const String& content)
+String findScriptSourceURL(const String& content)
 {
-    return findMagicComment(content, "sourceURL");
+    return findMagicComment(content, scriptCommentPattern("sourceURL"));
 }
 
-String findSourceMapURL(const String& content)
+String findScriptSourceMapURL(const String& content)
 {
-    return findMagicComment(content, "sourceMappingURL");
+    return findMagicComment(content, scriptCommentPattern("sourceMappingURL"));
+}
+
+String findStylesheetSourceMapURL(const String& content)
+{
+    return findMagicComment(content, stylesheetCommentPattern("sourceMappingURL"));
 }
 
 } // namespace ContentSearchUtils
