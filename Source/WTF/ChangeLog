@@ -1,3 +1,13 @@
+2013-04-19  Alberto Garcia  <agarcia@igalia.com>
+
+        OSAllocatorPosix: fix build warnings about unused parameters in QNX
+        https://bugs.webkit.org/show_bug.cgi?id=114859
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+
 2013-04-19  Dan Beam  <dbeam@chromium.org>
 
         Remove unmaintained feature REQUEST_AUTOCOMPLETE
