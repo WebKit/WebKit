@@ -261,6 +261,7 @@ set(EWKUnitTests_BINARIES
     test_ewk_contextmenu
     test_ewk_frame
     test_ewk_view
+    test_ewk_setting
 )
 
 if (ENABLE_API_TESTS)

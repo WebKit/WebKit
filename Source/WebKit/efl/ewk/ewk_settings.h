@@ -385,6 +385,34 @@ EAPI void             ewk_settings_repaint_throttling_set(double deferred_repain
  */
 EAPI double           ewk_settings_default_timer_interval_get(void);
 
+/**
+ * Sets the CSS media type.
+ *
+ * Setting this will override the normal value of the CSS media property.
+ *
+ * Setting the value to @c NULL will restore the internal default value.
+ *
+ * @param type css media type to be set, must be write-able
+ *
+ * @sa ewk_settings_css_media_type_get
+ */
+EAPI void             ewk_settings_css_media_type_set(const char *type);
+
+/**
+ * Returns the current CSS media type.
+ *
+ * It will only return the value set through ewk_settings_css_media_type_set and not the one used internally.
+ *
+ * This is guaranteed to be eina_stringshare, so whenever possible
+ * save yourself some cpu cycles and use eina_stringshare_ref()
+ * instead of eina_stringshare_add() or strdup().
+ * 
+ * @return css media type set by user or @c NULL if none is set
+ *
+ * @sa ewk_settings_css_media_type_set
+ */
+EAPI const char      *ewk_settings_css_media_type_get(void);
+
 #ifdef __cplusplus
 }
 #endif

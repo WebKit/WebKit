@@ -66,6 +66,7 @@ static const char* _ewk_icon_database_path = 0;
 
 static const char* s_webDatabasePath = 0;
 static const char* s_localStoragePath = 0;
+static const char* s_cssMediaType = 0;
 static uint64_t s_webDatabaseQuota = 1 * 1024 * 1024; // 1MB.
 
 static WTF::String _ewk_settings_webkit_platform_get()
@@ -387,4 +388,14 @@ void ewk_settings_application_cache_clear()
 double ewk_settings_default_timer_interval_get(void)
 {
     return WebCore::Settings::defaultMinDOMTimerInterval();
+}
+
+void ewk_settings_css_media_type_set(const char* type)
+{
+    eina_stringshare_replace(&s_cssMediaType, type);
+}
+
+const char* ewk_settings_css_media_type_get()
+{
+    return s_cssMediaType;
 }
