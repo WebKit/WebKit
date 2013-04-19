@@ -104,11 +104,10 @@ function rawValuesHTML(results, numColumns)
 
 function chartHTML(results, numColumns)
 {
-    var shouldShowWebKitRevisions = isTipOfTreeWebKitBuilder();
-    var revisionKey = shouldShowWebKitRevisions ? WEBKIT_REVISIONS_KEY : CHROME_REVISIONS_KEY;
+    var revisionKey = WEBKIT_REVISIONS_KEY;
+    var revisionLabel = "WebKit Revision";
     var startRevision = results[revisionKey][numColumns - 1];
     var endRevision = results[revisionKey][0];
-    var revisionLabel = shouldShowWebKitRevisions ? "WebKit Revision" : "Chromium Revision";
 
     var fixable = results[FIXABLE_COUNT_KEY].slice(0, numColumns);
     var html = chart("Total failing", {"": fixable}, revisionLabel, startRevision, endRevision);
