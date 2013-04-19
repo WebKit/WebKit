@@ -1,5 +1,19 @@
 2013-04-18  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Update PDFLayerController's scale factors earlier
+        https://bugs.webkit.org/show_bug.cgi?id=114843
+
+        Reviewed by Simon Fraser.
+
+        Inform PDFLayerController of the initial page/device scale factors so that
+        it renders at the correct scale the first time, instead of first rendering
+        at 1x and then flashing to 2x (on 2x devices).
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+
+2013-04-18  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: Hook up the search-in-Spotlight menu item
         https://bugs.webkit.org/show_bug.cgi?id=114837
         <rdar://problem/13583591>

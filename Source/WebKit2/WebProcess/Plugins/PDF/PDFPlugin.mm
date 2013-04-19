@@ -308,10 +308,10 @@ void PDFPlugin::pdfDocumentDidLoad()
 
     setPDFDocument(document);
 
+    updatePageAndDeviceScaleFactors();
+
     [m_pdfLayerController.get() setFrameSize:size()];
     m_pdfLayerController.get().document = document.get();
-
-    updatePageAndDeviceScaleFactors();
 
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor([m_pdfLayerController.get() contentScaleFactor], IntPoint());
