@@ -85,27 +85,8 @@ builders._requestBuilders();
 
 // FIXME: Move everything below into the anonymous namespace above.
 
-CHROMIUM_WIN_BUILDER_MASTER = 'ChromiumWin';
-CHROMIUM_MAC_BUILDER_MASTER = 'ChromiumMac';
-CHROMIUM_LINUX_BUILDER_MASTER = 'ChromiumLinux';
-CHROMIUMOS_BUILDER_MASTER = 'ChromiumChromiumOS';
-CHROMIUM_GPU_BUILDER_MASTER = 'ChromiumGPU';
-CHROMIUM_GPU_FYI_BUILDER_MASTER = 'ChromiumGPUFYI';
-CHROMIUM_FYI_BUILDER_MASTER = 'ChromiumFYI';
-CHROMIUM_PERF_AV_BUILDER_MASTER = 'ChromiumPerfAv';
-CHROMIUM_WEBKIT_BUILDER_MASTER = 'ChromiumWebkit';
 WEBKIT_BUILDER_MASTER = 'webkit.org';
-
 var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
-    'Chromium': '@DEPS - chromium.org',
-    'ChromiumWin': '@DEPS - chromium.org',
-    'ChromiumMac': '@DEPS - chromium.org',
-    'ChromiumLinux': '@DEPS - chromium.org',
-    'ChromiumChromiumOS': '@DEPS CrOS - chromium.org',
-    'ChromiumGPU': '@DEPS - chromium.org',
-    'ChromiumGPUFYI': '@DEPS FYI - chromium.org',
-    'ChromiumPerfAv': '@DEPS - chromium.org',
-    'ChromiumWebkit': '@ToT - chromium.org',
     'webkit.org': '@ToT - webkit.org'
 };
 

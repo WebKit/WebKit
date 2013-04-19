@@ -1,5 +1,16 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Remove the Chromium-specific builder masters
+        https://bugs.webkit.org/show_bug.cgi?id=114802
+
+        Reviewed by Benjamin Poulain.
+
+        Remove all the Chromium-specific builder masters, the webkit.org builder master is the only one currently supported.
+
+        * TestResultServer/static-dashboards/builders.js:
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] Remove all the Chromium-specific builder groups
         https://bugs.webkit.org/show_bug.cgi?id=114801
 
