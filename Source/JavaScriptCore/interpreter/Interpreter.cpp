@@ -698,7 +698,7 @@ unsigned StackFrame::column()
 void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset)
 {
     codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset);
-    divot += startOffset;
+    divot += characterOffset;
 }
 
 String StackFrame::toString(CallFrame* callFrame)
@@ -714,6 +714,8 @@ String StackFrame::toString(CallFrame* callFrame)
         if (codeType != StackFrameNativeCode) {
             traceBuild.append(':');
             traceBuild.appendNumber(line());
+            traceBuild.append(':');
+            traceBuild.appendNumber(column());
         }
     }
     return traceBuild.toString().impl();

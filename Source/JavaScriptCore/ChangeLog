@@ -1,3 +1,17 @@
+2013-04-18  Oliver Hunt  <oliver@apple.com>
+
+        StackFrame::column() returning bogus value
+        https://bugs.webkit.org/show_bug.cgi?id=114840
+
+        Reviewed by Gavin Barraclough.
+
+        Don't add one part of the expression offset to the other part of the expression.
+        Make StackFrame::toString() include the column info.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::expressionInfo):
+        (JSC::StackFrame::toString):
+
 2013-04-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Crash beneath JSC::JIT::privateCompileSlowCases @ stephenrdonaldson.com
