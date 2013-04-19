@@ -768,48 +768,46 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
     toRenderLayerModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
 }
 
+static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderObject* object)
+{
+    return object->style()->position() != StaticPosition
+        || (object->hasTransform() && object->isRenderBlock())
+#if ENABLE(SVG)
+        || object->isSVGForeignObject()
+#endif
+        || object->isRenderView();
+}
+
+static inline bool isNonRenderBlockInline(RenderObject* object)
+{
+    return (object->isInline() && !object->isReplaced()) || !object->isRenderBlock();
+}
+
 RenderBlock* RenderObject::containingBlock() const
 {
     RenderObject* o = parent();
     if (!o && isRenderScrollbarPart())
         o = toRenderScrollbarPart(this)->rendererOwningScrollbar();
+
     if (!isText() && m_style->position() == FixedPosition) {
-        while (o) {
-            if (o->canContainFixedPositionObjects())
-                break;
+        while (o && !o->canContainFixedPositionObjects())
             o = o->parent();
-        }
         ASSERT(!o || !o->isAnonymousBlock());
     } else if (!isText() && m_style->position() == AbsolutePosition) {
-        while (o) {
-            // For relpositioned inlines, we return the nearest non-anonymous enclosing block. We don't try
-            // to return the inline itself.  This allows us to avoid having a positioned objects
-            // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
-            // from this method.  The container() method can actually be used to obtain the
-            // inline directly.
-            if (o->style()->position() != StaticPosition && (!o->isInline() || o->isReplaced()))
-                break;
-            if (o->isRenderView())
-                break;
-            if (o->hasTransform() && o->isRenderBlock())
-                break;
-
-            if (o->style()->hasInFlowPosition() && o->isInline() && !o->isReplaced()) {
-                o = o->containingBlock();
-                break;
-            }
-#if ENABLE(SVG)
-            if (o->isSVGForeignObject()) //foreignObject is the containing block for contents inside it
-                break;
-#endif
-
+        while (o && !isContainingBlockCandidateForAbsolutelyPositionedObject(o))
             o = o->parent();
-        }
+
+        // For a relatively positioned inline, return its nearest non-anonymous containing block,
+        // not the inline itself, to avoid having a positioned objects list in all RenderInlines
+        // and use RenderBlock* as this function's return type.
+        // Use RenderBlock::container() to obtain the inline.
+        if (o->isRenderInline())
+            o = o->containingBlock();
 
         while (o && o->isAnonymousBlock())
             o = o->containingBlock();
     } else {
-        while (o && ((o->isInline() && !o->isReplaced()) || !o->isRenderBlock()))
+        while (o && isNonRenderBlockInline(o))
             o = o->parent();
     }
 
