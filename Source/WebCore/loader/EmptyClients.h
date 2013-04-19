@@ -373,10 +373,6 @@ public:
 #endif
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() OVERRIDE;
-
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    virtual void didRequestAutocomplete(PassRefPtr<FormState>) OVERRIDE;
-#endif
 };
 
 class EmptyTextCheckerClient : public TextCheckerClient {

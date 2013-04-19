@@ -1,3 +1,12 @@
+2013-04-19  Dan Beam  <dbeam@chromium.org>
+
+        Remove unmaintained feature REQUEST_AUTOCOMPLETE
+        https://bugs.webkit.org/show_bug.cgi?id=114846
+
+        Reviewed by Kent Tamura.
+
+        * wtf/FeatureDefines.h: Remove REQUEST_AUTOCOMPLETE as a feature definition.
+
 2013-04-18  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Speculative build fix for Qt Mountain Lion Release after r148639.

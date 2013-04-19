@@ -42,10 +42,4 @@
 #endif
     void reset();
     boolean checkValidity();
-
-#if defined(ENABLE_REQUEST_AUTOCOMPLETE) && ENABLE_REQUEST_AUTOCOMPLETE
-    void requestAutocomplete();
-    [NotEnumerable] attribute EventListener onautocomplete;
-    [NotEnumerable] attribute EventListener onautocompleteerror;
-#endif
 };

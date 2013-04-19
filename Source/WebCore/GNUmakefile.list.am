@@ -2782,7 +2782,6 @@ webcore_sources += \
 	Source/WebCore/dom/Attr.cpp \
 	Source/WebCore/dom/Attr.h \
 	Source/WebCore/dom/Attribute.h \
-	Source/WebCore/dom/AutocompleteErrorEvent.h \
 	Source/WebCore/dom/BeforeLoadEvent.h \
 	Source/WebCore/dom/BeforeTextInsertedEvent.cpp \
 	Source/WebCore/dom/BeforeTextInsertedEvent.h \

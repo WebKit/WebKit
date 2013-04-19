@@ -231,10 +231,6 @@ bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = true;
 bool RuntimeEnabledFeatures::isDialogElementEnabled = false;
 #endif
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-bool RuntimeEnabledFeatures::isRequestAutocompleteEnabled = false;
-#endif
-
 #if ENABLE(CSP_NEXT)
 bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled = false;
 #endif

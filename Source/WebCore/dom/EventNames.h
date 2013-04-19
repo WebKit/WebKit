@@ -250,9 +250,6 @@ namespace WebCore {
     \
     macro(webkitdeviceproximity) \
     \
-    macro(autocomplete) \
-    macro(autocompleteerror) \
-    \
     macro(webkitprerenderstart) \
     macro(webkitprerenderstop) \
     macro(webkitprerenderload) \
