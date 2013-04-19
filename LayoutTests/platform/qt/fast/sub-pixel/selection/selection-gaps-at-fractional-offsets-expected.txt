@@ -5,11 +5,11 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x294
-  RenderBlock {HTML} at (0,0) size 800x294
-    RenderBody {BODY} at (8,8) size 784x278
-      RenderBlock {DIV} at (0,0) size 748x278 [border: (50px solid #FF0000)]
-        RenderBlock {DIV} at (74,74) size 600x130
+layer at (0,0) size 800x295
+  RenderBlock {HTML} at (0,0) size 800x295
+    RenderBody {BODY} at (8,8) size 784x279
+      RenderBlock {DIV} at (0,0) size 749x279 [border: (50px solid #FF0000)]
+        RenderBlock {DIV} at (74,74) size 601x131
           RenderText {#text} at (0,0) size 600x130
             text run at (0,0) width 570: "Four score and seven years ago our fathers brought forth,"
             text run at (570,0) width 10: " "

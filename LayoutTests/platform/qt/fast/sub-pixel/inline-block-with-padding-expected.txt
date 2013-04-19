@@ -1,0 +1,5 @@
+PASS links[0].offsetWidth is within 1 of 167
+Both links should render the same and not wrap.
+
+This shouldn't wrap
+This shouldn't wrap
