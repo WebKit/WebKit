@@ -483,7 +483,7 @@ public:
     template <typename CharType>
     ALWAYS_INLINE const CharType * getCharacters() const;
 
-    size_t cost()
+    size_t cost() const
     {
         // For substrings, return the cost of the base string.
         if (bufferOwnership() == BufferSubstring)
