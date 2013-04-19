@@ -170,8 +170,9 @@ void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, u
 void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
     for (HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t> >::const_iterator it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        // FIXME: If this is sent to another process, the source storage area ID will be bogus, since storage are IDs are per process.
-        it->first->send(Messages::StorageAreaMap::DispatchStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString), it->second);
+        uint64_t storageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
+
+        it->first->send(Messages::StorageAreaMap::DispatchStorageEvent(storageAreaID, key, oldValue, newValue, urlString), it->second);
     }
 }
 

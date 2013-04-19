@@ -32,10 +32,12 @@
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
+#include "WebPageGroupProxy.h"
 #include "WebProcess.h"
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/Storage.h>
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>
@@ -228,10 +230,31 @@ void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, con
 {
     ASSERT(storageType() == LocalStorage);
 
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(oldValue);
-    UNUSED_PARAM(newValue);
-    UNUSED_PARAM(urlString);
+    Vector<RefPtr<Frame> > frames;
+
+    PageGroup& pageGroup = *WebProcess::shared().webPageGroup(m_storageNamespaceID)->corePageGroup();
+    const HashSet<Page*>& pages = pageGroup.pages();
+    for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            Document* document = frame->document();
+            if (!document->securityOrigin()->equal(m_securityOrigin.get()))
+                continue;
+
+            Storage* storage = document->domWindow()->optionalLocalStorage();
+            if (!storage)
+                continue;
+
+            StorageAreaImpl* storageArea = static_cast<StorageAreaImpl*>(storage->area());
+            if (storageArea->storageAreaID() == sourceStorageAreaID) {
+                // This is the storage area that caused the event to be dispatched.
+                continue;
+            }
+
+            frames.append(frame);
+        }
+    }
+
+    StorageEventDispatcher::dispatchLocalStorageEventsToFrames(pageGroup, frames, key, oldValue, newValue, urlString, m_securityOrigin.get());
 }
 
 } // namespace WebKit
