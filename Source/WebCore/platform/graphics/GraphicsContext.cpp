@@ -745,7 +745,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 }
 #endif
 
-#if !PLATFORM(QT) && !USE(CAIRO) && !USE(SKIA) && !PLATFORM(OPENVG)
+#if !PLATFORM(QT) && !USE(CAIRO) && !USE(SKIA)
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }

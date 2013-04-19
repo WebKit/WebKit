@@ -70,10 +70,6 @@ typedef struct _cairo_rectangle cairo_rectangle_t;
 
 namespace WebCore {
 
-#if PLATFORM(OPENVG)
-class VGRect;
-#endif
-
 class LayoutRect;
 class IntRect;
 class IntPoint;
@@ -219,10 +215,6 @@ public:
 #if USE(SKIA)
     FloatRect(const SkRect&);
     operator SkRect() const;
-#endif
-
-#if PLATFORM(OPENVG)
-    operator VGRect() const;
 #endif
 
 #if USE(CAIRO)

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(OPENVG) && !PLATFORM(QT)
+#if !PLATFORM(QT)
 static void pathLengthApplierFunction(void* info, const PathElement* element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);

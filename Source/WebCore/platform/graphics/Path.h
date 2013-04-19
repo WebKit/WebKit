@@ -34,11 +34,6 @@
 
 #if USE(CG)
 typedef struct CGPath PlatformPath;
-#elif PLATFORM(OPENVG)
-namespace WebCore {
-class PlatformPathOpenVG;
-}
-typedef WebCore::PlatformPathOpenVG PlatformPath;
 #elif PLATFORM(QT)
 #include <qpainterpath.h>
 typedef QPainterPath PlatformPath;

@@ -46,11 +46,6 @@ namespace WebCore {
 class PlatformContextCairo;
 }
 typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
-#elif PLATFORM(OPENVG)
-namespace WebCore {
-class SurfaceOpenVG;
-}
-typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
 typedef QPainter PlatformGraphicsContext;
