@@ -1,5 +1,17 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Narrow down the test types list to only layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=114795
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove all the redundant test types that the webkit.org builders do not upload results for. All of the removed
+        test types were specific to the Chromium builders.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] The revision rows for aggregate results should no longer include Chromium revisions
         https://bugs.webkit.org/show_bug.cgi?id=114760
 

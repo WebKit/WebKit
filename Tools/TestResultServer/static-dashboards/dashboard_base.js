@@ -76,42 +76,7 @@ var ONE_WEEK_SECONDS = ONE_DAY_SECONDS * 7;
 // These should match the testtype uploaded to webkit-test-results.appspot.com.
 // See http://webkit-test-results.appspot.com/testfile.
 var TEST_TYPES = [
-    'base_unittests',
-    'browser_tests',
-    'cacheinvalidation_unittests',
-    'compositor_unittests',
-    'content_browsertests',
-    'content_unittests',
-    'courgette_unittests',
-    'crypto_unittests',
-    'googleurl_unittests',
-    'gfx_unittests',
-    'gl_tests',
-    'gpu_tests',
-    'gpu_unittests',
-    'installer_util_unittests',
-    'interactive_ui_tests',
-    'ipc_tests',
-    'jingle_unittests',
-    'layout-tests',
-    'media_unittests',
-    'mini_installer_test',
-    'net_unittests',
-    'printing_unittests',
-    'remoting_unittests',
-    'safe_browsing_tests',
-    'sql_unittests',
-    'sync_unit_tests',
-    'sync_integration_tests',
-    'test_shell_tests',
-    'ui_tests',
-    'unit_tests',
-    'views_unittests',
-    'webkit_unit_tests',
-    'androidwebview_instrumentation_tests',
-    'chromiumtestshell_instrumentation_tests',
-    'contentshell_instrumentation_tests',
-    'cc_unittests'
+    'layout-tests'
 ];
 
 
