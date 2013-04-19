@@ -31,6 +31,7 @@
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types;
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point;
 - (void)performWebSearch:(NSString *)string;
+- (void)performSpotlightSearch:(NSString *)string;
 - (void)openWithNativeApplication;
 - (void)saveToPDF;
 

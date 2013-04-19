@@ -1,3 +1,22 @@
+2013-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Hook up the search-in-Spotlight menu item
+        https://bugs.webkit.org/show_bug.cgi?id=114837
+        <rdar://problem/13583591>
+
+        Reviewed by Mark Rowe.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        Add performSpotlightSearch: delegate callback.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (WebKit::PDFPlugin::performSpotlightSearch):
+        Add performSpotlightSearch() PDFPlugin method.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate performSpotlightSearch:]): Hand the search string to PDFPlugin.
+        (WebKit::PDFPlugin::performSpotlightSearch): Hand the search string to WebPageProxy.
+
 2013-04-18  Anders Carlsson  <andersca@apple.com>
 
         Dispatch local storage events

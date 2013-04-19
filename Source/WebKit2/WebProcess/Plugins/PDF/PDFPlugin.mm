@@ -167,6 +167,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     _pdfPlugin->performWebSearch(string);
 }
 
+- (void)performSpotlightSearch:(NSString *)string
+{
+    _pdfPlugin->performSpotlightSearch(string);
+}
+
 - (void)openWithNativeApplication
 {
     _pdfPlugin->openWithNativeApplication();
@@ -982,6 +987,11 @@ String PDFPlugin::getSelectionString() const
 void PDFPlugin::performWebSearch(NSString *string)
 {
     webFrame()->page()->send(Messages::WebPageProxy::SearchTheWeb(string));
+}
+
+void PDFPlugin::performSpotlightSearch(NSString *string)
+{
+    webFrame()->page()->send(Messages::WebPageProxy::SearchWithSpotlight(string));
 }
 
 bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)

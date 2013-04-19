@@ -81,6 +81,7 @@ public:
     void writeItemsToPasteboard(NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
+    void performSpotlightSearch(NSString *);
 
     void focusNextAnnotation();
     void focusPreviousAnnotation();
