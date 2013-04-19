@@ -40,23 +40,6 @@ var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_r
 var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
 
 var PLATFORMS = {
-    'CHROMIUM': {
-        expectationsDirectory: null, /* FIXME: cleanup post blink split 'chromium', */
-        subPlatforms: {
-            'LION': { fallbackPlatforms: ['CHROMIUM'] },
-            'SNOWLEOPARD': { fallbackPlatforms: ['CHROMIUM'] },
-            'XP': { fallbackPlatforms: ['CHROMIUM'] },
-            'VISTA': { fallbackPlatforms: ['CHROMIUM'] },
-            'WIN7': { fallbackPlatforms: ['CHROMIUM'] },
-            'LUCID': { fallbackPlatforms: ['CHROMIUM'] },
-            'ANDROID': { fallbackPlatforms: ['CHROMIUM'], expectationsDirectory: null /* 'chromium-android' */ }
-        },
-        platformModifierUnions: {
-            'MAC': ['CHROMIUM_LION', 'CHROMIUM_SNOWLEOPARD'],
-            'WIN': ['CHROMIUM_XP', 'CHROMIUM_VISTA', 'CHROMIUM_WIN7'],
-            'LINUX': ['CHROMIUM_LUCID']
-        }
-    },
     'APPLE': {
         subPlatforms: {
             'MAC': {
@@ -66,16 +49,15 @@ var PLATFORMS = {
                         expectationsDirectory: 'mac-lion',
                         subPlatforms: {
                             'WK1': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC'] },
-                            'WK2': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC', 'WK2'] }
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
                         }
                     },
-                    'SNOWLEOPARD': {
-                        expectationsDirectory: 'mac-snowleopard',
+                    'MOUNTAINLION': {
                         subPlatforms: {
-                            'WK1': { fallbackPlatforms: ['APPLE_MAC_SNOWLEOPARD', 'APPLE_MAC'] },
-                            'WK2': { fallbackPlatforms: ['APPLE_MAC_SNOWLEOPARD', 'APPLE_MAC', 'WK2'] }
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
                         }
-                    }
+                    },
                 }
             },
             'WIN': {
