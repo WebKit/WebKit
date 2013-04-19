@@ -443,11 +443,15 @@ public:
 #endif
     }
 
+#if USE(COORDINATED_GRAPHICS)
+    static bool supportsContentsTiling();
+#else
     static bool supportsContentsTiling()
     {
         // FIXME: Enable the feature on different ports.
         return false;
     }
+#endif
 
     void updateDebugIndicators();
 

@@ -340,6 +340,40 @@ void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
     didChangeLayerState();
 }
 
+void CoordinatedGraphicsLayer::setContentsTileSize(const IntSize& s)
+{
+    if (contentsTileSize() == s)
+        return;
+
+    GraphicsLayer::setContentsTileSize(s);
+    m_layerState.contentsTileSize = s;
+    m_layerState.contentsTilingChanged = true;
+    didChangeLayerState();
+}
+
+void CoordinatedGraphicsLayer::setContentsTilePhase(const IntPoint& p)
+{
+    if (contentsTilePhase() == p)
+        return;
+
+    GraphicsLayer::setContentsTilePhase(p);
+    m_layerState.contentsTilePhase = p;
+    m_layerState.contentsTilingChanged = true;
+    didChangeLayerState();
+}
+
+static bool s_shouldSupportContentsTiling = false;
+
+void CoordinatedGraphicsLayer::setShouldSupportContentsTiling(bool s)
+{
+    s_shouldSupportContentsTiling = s;
+}
+
+bool GraphicsLayer::supportsContentsTiling()
+{
+    return s_shouldSupportContentsTiling;
+}
+
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
 #if USE(GRAPHICS_SURFACE)

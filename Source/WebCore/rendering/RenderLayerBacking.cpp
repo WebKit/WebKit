@@ -1446,6 +1446,9 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     if (!GraphicsLayer::supportsContentsTiling())
         return;
 
+    if (isDirectlyCompositedImage())
+        return;
+
     const RenderStyle* style = renderer()->style();
 
     if (!isSimpleContainer || !style->hasBackgroundImage()) {

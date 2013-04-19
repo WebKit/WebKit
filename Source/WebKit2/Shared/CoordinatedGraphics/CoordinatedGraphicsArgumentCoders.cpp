@@ -849,6 +849,11 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
     if (state.contentsRectChanged)
         encoder << state.contentsRect;
 
+    if (state.contentsTilingChanged) {
+        encoder << state.contentsTileSize;
+        encoder << state.contentsTilePhase;
+    }
+
     if (state.opacityChanged)
         encoder << state.opacity;
 
@@ -927,6 +932,13 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
 
     if (state.contentsRectChanged && !decoder.decode(state.contentsRect))
         return false;
+
+    if (state.contentsTilingChanged) {
+        if (!decoder.decode(state.contentsTileSize))
+            return false;
+        if (!decoder.decode(state.contentsTilePhase))
+            return false;
+    }
 
     if (state.opacityChanged && !decoder.decode(state.opacity))
         return false;

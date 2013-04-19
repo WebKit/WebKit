@@ -121,6 +121,10 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
 
+    // This is a temporary way to enable this only in the GL case, until TextureMapperImageBuffer is removed.
+    // See https://bugs.webkit.org/show_bug.cgi?id=114869
+    CoordinatedGraphicsLayer::setShouldSupportContentsTiling(true);
+
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 

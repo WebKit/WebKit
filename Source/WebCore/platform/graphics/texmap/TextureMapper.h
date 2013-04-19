@@ -115,6 +115,12 @@ public:
     enum PaintFlag {
         PaintingMirrored = 1 << 0,
     };
+
+    enum WrapMode {
+        StretchWrap,
+        RepeatWrap
+    };
+
     typedef unsigned PaintFlags;
 
     static PassOwnPtr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
@@ -163,12 +169,17 @@ public:
     virtual void removeCachedCustomFilterProgram(CustomFilterProgram*) { }
 #endif
 
+    void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
+    void setWrapMode(WrapMode m) { m_wrapMode = m; }
+
 protected:
     explicit TextureMapper(AccelerationMode);
 
     GraphicsContext* m_context;
 
     bool isInMaskMode() const { return m_isMaskMode; }
+    WrapMode wrapMode() const { return m_wrapMode; }
+    const TransformationMatrix& patternTransform() const { return m_patternTransform; }
 
 private:
 #if USE(TEXTURE_MAPPER_GL)
@@ -184,6 +195,8 @@ private:
     OwnPtr<BitmapTexturePool> m_texturePool;
     AccelerationMode m_accelerationMode;
     bool m_isMaskMode;
+    TransformationMatrix m_patternTransform;
+    WrapMode m_wrapMode;
 };
 
 }

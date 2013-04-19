@@ -548,8 +548,12 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* pr
     GC3Denum target = flags & ShouldUseARBTextureRect ? GC3Denum(Extensions3D::TEXTURE_RECTANGLE_ARB) : GC3Denum(GraphicsContext3D::TEXTURE_2D);
     m_context3D->bindTexture(target, texture);
     m_context3D->uniform1i(program->samplerLocation(), 0);
+    if (wrapMode() == RepeatWrap) {
+        m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::REPEAT);
+        m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::REPEAT);
+    }
 
-    TransformationMatrix patternTransform;
+    TransformationMatrix patternTransform = this->patternTransform();
     if (flags & ShouldFlipTexture)
         patternTransform.flipY();
     if (flags & ShouldUseARBTextureRect)
@@ -564,6 +568,8 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* pr
         flags |= ShouldBlend;
 
     draw(rect, modelViewMatrix, program, GraphicsContext3D::TRIANGLE_FAN, flags);
+    m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
 }
 
 BitmapTextureGL::BitmapTextureGL(TextureMapperGL* textureMapper)

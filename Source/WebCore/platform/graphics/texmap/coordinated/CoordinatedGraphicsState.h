@@ -93,6 +93,7 @@ struct CoordinatedGraphicsLayerState {
             bool canvasShouldSwapBuffers: 1;
             bool isScrollableChanged: 1;
             bool committedScrollOffsetChanged: 1;
+            bool contentsTilingChanged: 1;
         };
         unsigned changeMask;
     };
@@ -141,6 +142,8 @@ struct CoordinatedGraphicsLayerState {
     TransformationMatrix transform;
     TransformationMatrix childrenTransform;
     IntRect contentsRect;
+    IntPoint contentsTilePhase;
+    IntSize contentsTileSize;
     float opacity;
     Color solidColor;
     Color debugBorderColor;

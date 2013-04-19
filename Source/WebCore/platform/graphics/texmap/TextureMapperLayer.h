@@ -56,6 +56,7 @@ public:
         , m_id(0)
         , m_scrollClient(0)
         , m_isScrollable(false)
+        , m_patternTransformDirty(false)
     { }
 
     virtual ~TextureMapperLayer();
@@ -98,6 +99,8 @@ public:
     void setBackfaceVisibility(bool);
     void setOpacity(float);
     void setSolidColor(const Color&);
+    void setContentsTileSize(const IntSize&);
+    void setContentsTilePhase(const IntPoint&);
 #if ENABLE(CSS_FILTERS)
     void setFilters(const FilterOperations&);
 #endif
@@ -119,6 +122,7 @@ public:
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
+    void setShouldMapBackingStoreToContentsRect(bool m) { m_state.shouldMapBackingStoreToContentsRect = m; }
 
     void syncAnimations();
     bool descendantsOrSelfHaveRunningAnimations() const;
@@ -158,6 +162,7 @@ private:
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void applyMask(const TextureMapperPaintOptions&);
+    void computePatternTransformIfNeeded();
 
     // GraphicsLayerAnimation::Client
     virtual void setAnimatedTransform(const TransformationMatrix&) OVERRIDE;
@@ -206,6 +211,8 @@ private:
         TransformationMatrix childrenTransform;
         float opacity;
         FloatRect contentsRect;
+        IntSize contentsTileSize;
+        IntPoint contentsTilePhase;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
         Color solidColor;
@@ -225,6 +232,7 @@ private:
         bool visible : 1;
         bool showDebugBorders : 1;
         bool showRepaintCounter : 1;
+        bool shouldMapBackingStoreToContentsRect : 1;
 
         State()
             : opacity(1)
@@ -241,6 +249,7 @@ private:
             , visible(true)
             , showDebugBorders(false)
             , showRepaintCounter(false)
+            , shouldMapBackingStoreToContentsRect(false)
         {
         }
     };
@@ -255,6 +264,8 @@ private:
     bool m_isScrollable;
     FloatSize m_userScrollOffset;
     FloatSize m_accumulatedScrollOffsetFractionalPart;
+    TransformationMatrix m_patternTransform;
+    bool m_patternTransformDirty;
 };
 
 }

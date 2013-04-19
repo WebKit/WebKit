@@ -1,3 +1,23 @@
+2013-04-19  Noam Rosenthal  <noam@webkit.org>
+
+        [Texmap] Implementation for pattern compositing
+        https://bugs.webkit.org/show_bug.cgi?id=109588
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Serialize the two new properties from CoordinatedGraphicsLayer to CoordinatedGraphicsScene.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+            Encode/decode the new tiling properties.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+            Enable pattern compositing for coordinated graphics.
+            This is needed since we don't want to enable pattern compositing for
+            WebKit1 yet.
+
 2013-04-18  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Update PDFLayerController's scale factors earlier

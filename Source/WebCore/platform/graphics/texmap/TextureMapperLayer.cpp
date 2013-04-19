@@ -99,6 +99,17 @@ static Color blendWithOpacity(const Color& color, float opacity)
     return Color(colorWithOverrideAlpha(rgba, effectiveAlpha));
 }
 
+void TextureMapperLayer::computePatternTransformIfNeeded()
+{
+    if (!m_patternTransformDirty)
+        return;
+
+    m_patternTransformDirty = false;
+    m_patternTransform =
+        TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_state.contentsTileSize), m_state.contentsRect)
+        .multiply(TransformationMatrix().translate(m_state.contentsTilePhase.x() / m_state.contentsRect.width(), m_state.contentsTilePhase.y() / m_state.contentsRect.height()));
+}
+
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
     if (!m_state.visible || !m_state.contentsVisible)
@@ -110,30 +121,41 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     transform.multiply(options.transform);
     transform.multiply(m_currentTransform.combined());
 
-    if (m_state.solidColor.isValid() && !m_state.contentsRect.isEmpty()) {
+    if (m_state.solidColor.isValid() && !m_state.contentsRect.isEmpty() && m_state.solidColor.alpha()) {
         options.textureMapper->drawSolidColor(m_state.contentsRect, transform, blendWithOpacity(m_state.solidColor, options.opacity));
         if (m_state.showDebugBorders)
             options.textureMapper->drawBorder(m_state.debugBorderColor, m_state.debugBorderWidth, layerRect(), transform);
         return;
     }
 
-    if (m_backingStore) {
-        ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty());
-        ASSERT(!layerRect().isEmpty());
-        m_backingStore->paintToTextureMapper(options.textureMapper, layerRect(), transform, options.opacity);
-        if (m_state.showDebugBorders)
-            m_backingStore->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, layerRect(), transform);
-        // Only draw repaint count for the main backing store.
-        if (m_state.showRepaintCounter)
-            m_backingStore->drawRepaintCounter(options.textureMapper, m_state.repaintCount, m_state.debugBorderColor, layerRect(), transform);
+    options.textureMapper->setWrapMode(TextureMapper::StretchWrap);
+    options.textureMapper->setPatternTransform(TransformationMatrix());
+
+    if (!m_state.contentsTileSize.isEmpty()) {
+        computePatternTransformIfNeeded();
+        options.textureMapper->setWrapMode(TextureMapper::RepeatWrap);
+        options.textureMapper->setPatternTransform(m_patternTransform);
     }
 
-    if (m_contentsLayer) {
-        ASSERT(!layerRect().isEmpty());
-        m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
+    if (m_backingStore) {
+        ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty());
+        FloatRect targetRect = m_state.shouldMapBackingStoreToContentsRect ? m_state.contentsRect : layerRect();
+        ASSERT(!targetRect.isEmpty());
+        m_backingStore->paintToTextureMapper(options.textureMapper, targetRect, transform, options.opacity);
         if (m_state.showDebugBorders)
-            m_contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
+            m_backingStore->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, targetRect, transform);
+        // Only draw repaint count for the main backing store.
+        if (m_state.showRepaintCounter)
+            m_backingStore->drawRepaintCounter(options.textureMapper, m_state.repaintCount, m_state.debugBorderColor, targetRect, transform);
     }
+
+    if (!m_contentsLayer)
+        return;
+
+    ASSERT(!layerRect().isEmpty());
+    m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
+    if (m_state.showDebugBorders)
+        m_contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
 }
 
 int TextureMapperLayer::compareGraphicsLayersZValue(const void* a, const void* b)
@@ -551,7 +573,26 @@ void TextureMapperLayer::setChildrenTransform(const TransformationMatrix& childr
 
 void TextureMapperLayer::setContentsRect(const IntRect& contentsRect)
 {
+    if (contentsRect == m_state.contentsRect)
+        return;
     m_state.contentsRect = contentsRect;
+    m_patternTransformDirty = true;
+}
+
+void TextureMapperLayer::setContentsTileSize(const IntSize& size)
+{
+    if (size == m_state.contentsTileSize)
+        return;
+    m_state.contentsTileSize = size;
+    m_patternTransformDirty = true;
+}
+
+void TextureMapperLayer::setContentsTilePhase(const IntPoint& phase)
+{
+    if (phase == m_state.contentsTilePhase)
+        return;
+    m_state.contentsTilePhase = phase;
+    m_patternTransformDirty = true;
 }
 
 void TextureMapperLayer::setMasksToBounds(bool masksToBounds)

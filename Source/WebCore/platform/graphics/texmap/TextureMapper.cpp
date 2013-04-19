@@ -143,6 +143,7 @@ TextureMapper::TextureMapper(AccelerationMode accelerationMode)
     , m_texturePool(adoptPtr(new BitmapTexturePool()))
     , m_accelerationMode(accelerationMode)
     , m_isMaskMode(false)
+    , m_wrapMode(StretchWrap)
 { }
 
 TextureMapper::~TextureMapper()

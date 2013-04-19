@@ -86,6 +86,8 @@ public:
     virtual void setBackfaceVisibility(bool) OVERRIDE;
     virtual void setOpacity(float) OVERRIDE;
     virtual void setContentsRect(const IntRect&) OVERRIDE;
+    virtual void setContentsTilePhase(const IntPoint&) OVERRIDE;
+    virtual void setContentsTileSize(const IntSize&) OVERRIDE;
     virtual void setContentsToImage(Image*) OVERRIDE;
     virtual void setContentsToSolidColor(const Color&) OVERRIDE;
     virtual void setShowDebugBorder(bool) OVERRIDE;
@@ -144,6 +146,8 @@ public:
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
     bool hasPendingVisibleChanges();
+
+    static void setShouldSupportContentsTiling(bool);
 
 private:
 #if USE(GRAPHICS_SURFACE)

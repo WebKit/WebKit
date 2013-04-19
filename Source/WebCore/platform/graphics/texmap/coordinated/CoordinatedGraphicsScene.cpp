@@ -323,6 +323,11 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     if (layerState.contentsRectChanged)
         layer->setContentsRect(layerState.contentsRect);
 
+    if (layerState.contentsTilingChanged) {
+        layer->setContentsTilePhase(layerState.contentsTilePhase);
+        layer->setContentsTileSize(layerState.contentsTileSize);
+    }
+
     if (layerState.opacityChanged)
         layer->setOpacity(layerState.opacity);
 
@@ -579,11 +584,14 @@ void CoordinatedGraphicsScene::assignImageBackingToLayer(TextureMapperLayer* lay
 
     if (imageID == InvalidCoordinatedImageBackingID) {
         layer->setBackingStore(0);
+        layer->setShouldMapBackingStoreToContentsRect(false);
         return;
     }
+
     ImageBackingMap::iterator it = m_imageBackings.find(imageID);
     ASSERT(it != m_imageBackings.end());
     layer->setBackingStore(it->value.get());
+    layer->setShouldMapBackingStoreToContentsRect(true);
 }
 
 void CoordinatedGraphicsScene::removeReleasedImageBackingsIfNeeded()
