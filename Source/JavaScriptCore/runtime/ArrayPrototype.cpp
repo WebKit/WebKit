@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2011, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -304,64 +304,27 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    unsigned totalSize = length ? length - 1 : 0;
-    Vector<RefPtr<StringImpl>, 256> strBuffer(length);
-    bool allStrings8Bit = true;
-
+    String separator(",", String::ConstructFromLiteral);
+    JSStringJoiner stringJoiner(separator, length);
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
         if (thisObj->canGetIndexQuickly(k))
             element = thisObj->getIndexQuickly(k);
-        else
+        else {
             element = thisObj->get(exec, k);
-        
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        }
+
         if (element.isUndefinedOrNull())
-            continue;
-        
-        String str = element.toWTFString(exec);
-        strBuffer[k] = str.impl();
-        totalSize += str.length();
-        allStrings8Bit = allStrings8Bit && str.is8Bit();
-        
-        if (!strBuffer.data()) {
-            throwOutOfMemoryError(exec);
-        }
-        
+            stringJoiner.append(String());
+        else
+            stringJoiner.append(element.toWTFString(exec));
+
         if (exec->hadException())
-            break;
+            return JSValue::encode(jsUndefined());
     }
-    if (!totalSize)
-        return JSValue::encode(jsEmptyString(exec));
-
-    if (allStrings8Bit) {
-        Vector<LChar> buffer;
-        buffer.reserveCapacity(totalSize);
-        if (!buffer.data())
-            return JSValue::encode(throwOutOfMemoryError(exec));
-        
-        for (unsigned i = 0; i < length; i++) {
-            if (i)
-                buffer.append(',');
-            if (RefPtr<StringImpl> rep = strBuffer[i])
-                buffer.append(rep->characters8(), rep->length());
-        }
-        ASSERT(buffer.size() == totalSize);
-        return JSValue::encode(jsString(exec, String::adopt(buffer)));
-    }
-
-    Vector<UChar> buffer;
-    buffer.reserveCapacity(totalSize);
-    if (!buffer.data())
-        return JSValue::encode(throwOutOfMemoryError(exec));
-        
-    for (unsigned i = 0; i < length; i++) {
-        if (i)
-            buffer.append(',');
-        if (RefPtr<StringImpl> rep = strBuffer[i])
-            buffer.append(rep->characters(), rep->length());
-    }
-    ASSERT(buffer.size() == totalSize);
-    return JSValue::encode(jsString(exec, String::adopt(buffer)));
+    return JSValue::encode(stringJoiner.build(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)

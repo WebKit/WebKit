@@ -1,3 +1,19 @@
+2013-04-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use StringJoiner to create the JSString of arrayProtoFuncToString
+        https://bugs.webkit.org/show_bug.cgi?id=114779
+
+        Reviewed by Geoffrey Garen.
+
+        The function arrayProtoFuncToString was just a glorified JSStringJoiner.
+        This patch replaces it by JSStringJoiner to simplify the code and enjoy any optimization
+        made on JSStringJoiner.
+
+        For some reason, this makes the execution 3.4% faster, despite having almost identical code.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+
 2013-04-18  Oliver Hunt  <oliver@apple.com>
 
         StackFrame::column() returning bogus value
