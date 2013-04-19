@@ -1,5 +1,19 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Remove Chromium-specific helper functions that were used in the builder-loading code
+        https://bugs.webkit.org/show_bug.cgi?id=114803
+
+        Reviewed by Benjamin Poulain.
+
+        Remove three Chromium-specific helper functions that were used to determine Chromium DEPS, Content Shell and WebKit ToT
+        test runners. These are not required anymore and thus removed along with a couple of unit tests that were testing these
+        methods' correct behavior.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] Remove the Chromium-specific builder masters
         https://bugs.webkit.org/show_bug.cgi?id=114802
 

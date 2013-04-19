@@ -501,24 +501,6 @@ test('baseTest', 2, function() {
 
 // FIXME: Create builders_tests.js and move this there.
 
-test('isChromiumWebkitTipOfTreeTestRunner', 1, function() {
-    var builderList = ["WebKit Linux", "WebKit Linux (dbg)", "WebKit Linux 32", "WebKit Mac10.6", "WebKit Mac10.6 (dbg)",
-        "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)", "WebKit Win (deps)",
-        "WebKit Win7", "Linux (Content Shell)"];
-    var expectedBuilders = ["WebKit Linux", "WebKit Linux (dbg)", "WebKit Linux 32", "WebKit Mac10.6",
-        "WebKit Mac10.6 (dbg)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)", "WebKit Win7"];
-    deepEqual(builderList.filter(isChromiumWebkitTipOfTreeTestRunner), expectedBuilders);
-});
-
-test('isChromiumWebkitDepsTestRunner', 1, function() {
-    var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
-        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "WebKit Linux", "WebKit Linux ASAN",  "WebKit Linux (dbg)", "WebKit Linux (deps)", "WebKit Linux 32",
-        "WebKit Mac10.6", "WebKit Mac10.6 (dbg)", "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)", "WebKit Win (deps)",
-        "WebKit Win7", "Win (dbg)", "Win Builder"];
-    var expectedBuilders = ["WebKit Linux (deps)", "WebKit Mac10.6 (deps)", "WebKit Win (deps)"];
-    deepEqual(builderList.filter(isChromiumWebkitDepsTestRunner), expectedBuilders);
-});
-
 test('requestBuilderListAddsBuilderGroupEntry', 1, function() {
     var testBuilderGroups = { '@ToT - dummy.org': null };
     var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);

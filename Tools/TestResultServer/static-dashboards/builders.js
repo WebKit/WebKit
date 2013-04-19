@@ -140,22 +140,6 @@ function requestBuilderList(builderGroups, masterName, groupName, builderGroup, 
     builderGroups[groupName].append(builderList);
 }
 
-function isChromiumContentShellTestRunner(builder)
-{
-    return builder.indexOf('(Content Shell)') != -1;
-}
-
-function isChromiumWebkitTipOfTreeTestRunner(builder)
-{
-    // FIXME: Remove the Android check once the android tests bot is actually uploading results.
-    return builder.indexOf('ASAN') == -1 && !isChromiumContentShellTestRunner(builder) && builder.indexOf('Android') == -1 && !isChromiumWebkitDepsTestRunner(builder);
-}
-
-function isChromiumWebkitDepsTestRunner(builder)
-{
-    return builder.indexOf('(deps)') != -1;
-}
-
 // FIXME: Look into whether we can move the grouping logic into builders.jsonp and get rid of this code.
 function loadBuildersList(groupName, testType) {
     switch (testType) {
