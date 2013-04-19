@@ -29,6 +29,8 @@
 #include "StorageAreaImpl.h"
 #include "StorageAreaMap.h"
 #include "WebPage.h"
+#include "WebPageGroupProxy.h"
+#include "WebProcess.h"
 #include <WebCore/GroupSettings.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
@@ -48,12 +50,14 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
 
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)
 {
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(pageGroup->identifier(), 0);
+    uint64_t pageGroupID = WebProcess::shared().webPageGroup(pageGroup)->pageGroupID();
+
+    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(pageGroupID, 0);
     if (!result.isNewEntry)
         return result.iterator->value;
 
     unsigned quota = pageGroup->groupSettings()->localStorageQuotaBytes();
-    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, pageGroup->identifier(), quota));
+    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, pageGroupID, quota));
 
     result.iterator->value = localStorageNamespace.get();
     return localStorageNamespace.release();

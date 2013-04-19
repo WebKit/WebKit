@@ -66,8 +66,9 @@ QT_END_NAMESPACE
 #endif
 
 namespace WebCore {
-    class ResourceRequest;
-    struct PluginInfo;
+class PageGroup;
+class ResourceRequest;
+struct PluginInfo;
 }
 
 namespace WebKit {
@@ -136,6 +137,7 @@ public:
     void addWebFrame(uint64_t, WebFrame*);
     void removeWebFrame(uint64_t);
 
+    WebPageGroupProxy* webPageGroup(WebCore::PageGroup*);
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
     WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
 

@@ -673,6 +673,16 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
+WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
+{
+    for (HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin(), end = m_pageGroupMap.end(); it != end; ++it) {
+        if (it->value->corePageGroup() == pageGroup)
+            return it->value.get();
+    }
+
+    return 0;
+}
+
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
 {
     return m_pageGroupMap.get(pageGroupID).get();

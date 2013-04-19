@@ -50,7 +50,8 @@ public:
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
     bool isVisibleToInjectedBundle() const { return m_data.visibleToInjectedBundle; }
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
-    
+    WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
+
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
 private:
