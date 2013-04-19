@@ -879,7 +879,7 @@ void RenderQueue::renderScrollZoomJobs(TileIndexList* outstandingJobs, TileIndex
         scrollZoomJobsCompleted(*outstandingJobs, completedJobs, shouldBlitWhenCompleted);
 }
 
-void RenderQueue::scrollZoomJobsCompleted(const TileIndexList&, TileIndexList* completedJobs, bool shouldBlit)
+void RenderQueue::scrollZoomJobsCompleted(const TileIndexList& outstandingJobs, TileIndexList* completedJobs, bool shouldBlit)
 {
     // Get rid of the completed list!
     ASSERT(outstandingJobs.isEmpty());
