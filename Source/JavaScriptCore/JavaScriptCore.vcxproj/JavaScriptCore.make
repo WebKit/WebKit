@@ -9,7 +9,6 @@ install:
 	set WebKit_Libraries=$(SRCROOT)\AppleInternal
 	set WebKit_OutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
-    set WebKit_Source=$(SRCROOT)\..
     -mkdir "%ConfigurationBuildDir%\include\private"
     xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
     devenv "JavaScriptCore.submit.sln" /clean $(BUILDSTYLE)

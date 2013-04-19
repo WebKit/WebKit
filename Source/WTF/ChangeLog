@@ -1,3 +1,13 @@
+2013-04-19  Roger Fong  <roger_fong@apple.com>
+
+        Remove uses of WebKit_Source from AppleWin build in WTF.
+
+        * WTF.vcxproj/WTF.make:
+        * WTF.vcxproj/copy-files.cmd:
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+        (react_to_vsprops_changes):
+        (react_to_webkit1_interface_changes):
+
 2013-04-19  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the declaration of MemoryObjectInfo from StringImpl

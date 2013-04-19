@@ -8,9 +8,8 @@ import sys
 
 # It's fragile to rely on the location of this script to find the top-level
 # source directory.
-TOP_LEVEL_DIRECTORY = os.environ['WEBKIT_SOURCE'];
+TOP_LEVEL_DIRECTORY = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 WEBKIT_LIBRARIES = os.environ['WEBKIT_LIBRARIES'];
-WEBKIT_SOURCE = os.environ['WEBKIT_SOURCE'];
 
 def main():
     react_to_vsprops_changes()
@@ -32,12 +31,12 @@ def react_to_vsprops_changes():
 
     # Touch wtf/Platform.h so all files will be recompiled. This is necessary
     # to pick up changes to preprocessor macros (e.g., ENABLE_*).
-    wtf_platform_h = os.path.join(TOP_LEVEL_DIRECTORY, 'WTF', 'wtf', 'Platform.h')
+    wtf_platform_h = os.path.join(TOP_LEVEL_DIRECTORY, 'Source', 'WTF', 'wtf', 'Platform.h')
     touch_if_older_than(wtf_platform_h, newest_vsprops_time)
 
 
 def react_to_webkit1_interface_changes():
-    interfaces_directory = os.path.join(TOP_LEVEL_DIRECTORY, 'WebKit', 'win', 'Interfaces')
+    interfaces_directory = os.path.join(TOP_LEVEL_DIRECTORY, 'Source', 'WebKit', 'win', 'Interfaces')
     newest_idl_time = mtime_of_newest_file_matching_glob(os.path.join(interfaces_directory, '*.idl'))
     # WebKit.idl includes all the other IDL files, so needs to be rebuilt if any IDL file changes.
     # But Visual Studio isn't smart enough to figure this out, so we touch WebKit.idl to ensure that

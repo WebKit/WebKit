@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-NUMCPUS=`${WEBKIT_SOURCE}/../Tools/Scripts/num-cpus`
+NUMCPUS=`../../../Tools/Scripts/num-cpus`
 
 XSRCROOT="`pwd`/.."
 XSRCROOT=`realpath "$XSRCROOT"`
