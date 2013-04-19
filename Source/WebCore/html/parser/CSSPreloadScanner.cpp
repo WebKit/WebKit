@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2013 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
  *
@@ -211,10 +211,17 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
     return String(characters + offset, reducedLength);
 }
 
+template<unsigned referenceLength>
+static inline bool ruleEqualIgnoringCase(const Vector<UChar>& rule, const char (&reference)[referenceLength])
+{
+    unsigned referenceCharactersLength = referenceLength - 1;
+    return rule.size() == referenceCharactersLength && equalIgnoringCase(reference, rule.data(), referenceCharactersLength);
+}
+
 void CSSPreloadScanner::emitRule()
 {
-    if (equalIgnoringCase("import", m_rule.characters(), m_rule.length())) {
-        String url = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
+    if (ruleEqualIgnoringCase(m_rule, "import")) {
+        String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
         if (!url.isEmpty()) {
             KURL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
             OwnPtr<PreloadRequest> request = PreloadRequest::create("css", url, baseElementURL, CachedResource::CSSStyleSheet);
@@ -222,7 +229,7 @@ void CSSPreloadScanner::emitRule()
             m_requests->append(request.release());
         }
         m_state = Initial;
-    } else if (equalIgnoringCase("charset", m_rule.characters(), m_rule.length()))
+    } else if (ruleEqualIgnoringCase(m_rule, "charset"))
         m_state = Initial;
     else
         m_state = DoneParsingImportRules;
