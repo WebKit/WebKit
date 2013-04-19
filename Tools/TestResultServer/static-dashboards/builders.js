@@ -178,118 +178,19 @@ function isChromiumWebkitDepsTestRunner(builder)
 // FIXME: Look into whether we can move the grouping logic into builders.jsonp and get rid of this code.
 function loadBuildersList(groupName, testType) {
     switch (testType) {
-    case 'gl_tests':
-    case 'gpu_tests':
-        switch(groupName) {
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_GPU_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@DEPS FYI - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_GPU_FYI_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-        }
-        break;
-
     case 'layout-tests':
         switch(groupName) {
-        case 'Content Shell @ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumContentShellTestRunner);
-            break;
-
-        case '@ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitTipOfTreeTestRunner);
-            break;
-
         case '@ToT - webkit.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
             requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
-
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitDepsTestRunner);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-        }
-        break;
-
-    case 'test_shell_tests':
-    case 'webkit_unit_tests':
-        switch(groupName) {
-        case '@ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitTipOfTreeTestRunner);
-            break;
-
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitDepsTestRunner);
-            break;
-        }
-        break;
-
-    case 'androidwebview_instrumentation_tests':
-    case 'chromiumtestshell_instrumentation_tests':
-    case 'contentshell_instrumentation_tests':
-        switch(groupName) {
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@DEPS FYI - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS, CHROMIUM_FYI_BUILDER_MASTER , groupName, builderGroup, testType);
-            break;
-        }
-        break;
-
-    case 'cc_unittests':    
-        switch(groupName) {
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CC_UNITTEST_BUILDER_GROUPS, CHROMIUM_WIN_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CC_UNITTEST_BUILDER_GROUPS, CHROMIUM_MAC_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CC_UNITTEST_BUILDER_GROUPS, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(CC_UNITTEST_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
+        default:
+            console.error('Tried to load builders for an unsupported group "' + groupName + '"');
         }
         break;
 
     default:
-        switch(groupName) {
-        case '@DEPS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_WIN_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_MAC_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@DEPS CrOS - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUMOS_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-
-        case '@ToT - chromium.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
-            break;
-        }
-        break;
+        console.error('Tried to load builders for an unsupported test type "' + testType + '"');
     }
 }
 

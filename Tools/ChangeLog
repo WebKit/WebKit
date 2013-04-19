@@ -1,5 +1,18 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Remove Chromium-specific builder loading code from loadBuildersList
+        https://bugs.webkit.org/show_bug.cgi?id=114797
+
+        Reviewed by Benjamin Poulain.
+
+        Remove anything Chromium-specific from the builder-loading code, specifically removing support for loading builder data
+        for anything other that the layout-tests type and removing support for loading builder data from builders connected
+        to the Chromium-specific builder groups which are no longer supported.
+
+        * TestResultServer/static-dashboards/builders.js:
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] The currentBuilderGroupCategory method should return the layout tests builder groups by default
         https://bugs.webkit.org/show_bug.cgi?id=114796
 
