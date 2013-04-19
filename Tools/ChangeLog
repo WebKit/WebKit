@@ -1,3 +1,16 @@
+2013-04-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Make the 32 bits bot only build and run API tests
+        https://bugs.webkit.org/show_bug.cgi?id=113532
+
+        Reviewed by Martin Robinson.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: make the 32 bits bot use the new BuildAndAPITest type
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndAPITestFactory): new factory that builds and runs API tests, only used by the GTK+ 32 bits bot at the
+        moment;
+        (BuildAndAPITestFactory.__init__): add API tests step for platforms that have it.
+
 2013-04-19  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Only use thin archives on Linux
