@@ -1,3 +1,9 @@
+2013-04-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. WebKit_Source is incorrectly set.
+
+        * WebKit.vcxproj/WebKit.make:
+
 2013-04-19  Jose Lejin PJ  <jose.lejin@gmail.com>
 
         [EFL] Add method in ewk_settings for setting the CSS media type

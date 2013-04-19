@@ -8,7 +8,7 @@ install:
     set OFFICIAL_BUILD=1
 	set WebKit_Libraries=$(SRCROOT)\AppleInternal
 	set WebKit_OutputDir=$(OBJROOT)
-    set WebKit_Source=$(SRCROOT)
+    set WebKit_Source=$(SRCROOT)\..
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     devenv "WTF.submit.sln" /clean $(BUILDSTYLE)
     devenv "WTF.submit.sln" /build $(BUILDSTYLE)

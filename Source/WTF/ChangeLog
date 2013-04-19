@@ -1,3 +1,9 @@
+2013-04-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. WebKit_Source is incorrectly set.
+
+        * WTF.vcxproj/WTF.make:
+
 2013-04-19  Alberto Garcia  <agarcia@igalia.com>
 
         OSAllocatorPosix: fix build warnings about unused parameters in QNX

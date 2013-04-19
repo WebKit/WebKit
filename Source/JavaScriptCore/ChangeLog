@@ -1,3 +1,9 @@
+2013-04-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. WebKit_Source is incorrectly set.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-04-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] JSCore.gir.in has a few problems
