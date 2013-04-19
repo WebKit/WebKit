@@ -120,7 +120,7 @@ function currentBuilders()
 
 function isTipOfTreeWebKitBuilder()
 {
-    return currentBuilderGroup().isToTWebKit;
+    return true;
 }
 
 var g_resultsByBuilder = {};

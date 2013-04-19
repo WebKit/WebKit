@@ -503,7 +503,7 @@ test('baseTest', 2, function() {
 
 test('requestBuilderListAddsBuilderGroupEntry', 1, function() {
     var testBuilderGroups = { '@ToT - dummy.org': null };
-    var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
+    var builderGroup = new BuilderGroup();
     var groupName = '@ToT - dummy.org';
     requestBuilderList(testBuilderGroups, 'webkit.org', groupName, builderGroup, 'layout-tests');
 

@@ -90,9 +90,8 @@ var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
     'webkit.org': '@ToT - webkit.org'
 };
 
-function BuilderGroup(isToTWebKit)
+function BuilderGroup()
 {
-    this.isToTWebKit = isToTWebKit;
     // Map of builderName (the name shown in the waterfall) to builderPath (the
     // path used in the builder's URL)
     this.builders = {};
@@ -115,9 +114,6 @@ BuilderGroup.prototype.master = function()
 {
     return builderMaster(this.defaultBuilder());
 }
-
-BuilderGroup.TOT_WEBKIT = true;
-BuilderGroup.DEPS_WEBKIT = false;
 
 var BUILDER_TO_MASTER = {};
 
@@ -146,7 +142,7 @@ function loadBuildersList(groupName, testType) {
     case 'layout-tests':
         switch(groupName) {
         case '@ToT - webkit.org':
-            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
+            var builderGroup = new BuilderGroup();
             requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
         default:

@@ -1,5 +1,25 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Remove the isToTWebKit member variable from the BuilderGroup interface
+        https://bugs.webkit.org/show_bug.cgi?id=114805
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the isToTWebKit member variable from the BuilderGroup and all its usages as it now defaults to true for every
+        builder group. The isTipOfTreeWebKitBuilder method now returns true by default but should be removed in a follow-up patch.
+        The BuilderGroup constructor does not accept the isToTWebKit parameter anymore so all the callsites are adjusted accordingly.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (BuilderGroup):
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (isTipOfTreeWebKitBuilder):
+        (expectationsMap):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] htmlForIndividualTests unit test should include its dummy builder under the webkit.org builder master
         https://bugs.webkit.org/show_bug.cgi?id=114804
 
