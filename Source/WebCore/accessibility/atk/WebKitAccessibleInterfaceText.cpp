@@ -567,11 +567,38 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
     return g_strdup(ret.utf8().data());
 }
 
-static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
+enum GetTextRelativePosition {
+    GetTextPositionAt,
+    GetTextPositionBefore,
+    GetTextPositionAfter
+};
+
+static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, gint* startOffset, gint* endOffset)
 {
 #if PLATFORM(GTK)
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
-#else
+    // FIXME: Get rid of the code below once every single get_text_*_offset
+    // function has been properly implemented without using Pango/Cairo.
+    GailOffsetType offsetType;
+    switch (textPosition) {
+    case GetTextPositionBefore:
+        offsetType = GAIL_BEFORE_OFFSET;
+        break;
+
+    case GetTextPositionAt:
+        offsetType = GAIL_AT_OFFSET;
+        break;
+
+    case GetTextPositionAfter:
+        offsetType = GAIL_AFTER_OFFSET;
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), offsetType, boundaryType, offset, startOffset, endOffset);
+#endif
+
     UNUSED_PARAM(text);
     UNUSED_PARAM(offset);
     UNUSED_PARAM(boundaryType);
@@ -580,39 +607,21 @@ static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset,
 
     notImplemented();
     return 0;
-#endif
+}
+
+static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
+{
+    return webkitAccessibleTextGetTextForOffset(text, offset, boundaryType, GetTextPositionAfter, startOffset, endOffset);
 }
 
 static gchar* webkitAccessibleTextGetTextAtOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-#if PLATFORM(GTK)
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
-#else
-    UNUSED_PARAM(text);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(boundaryType);
-    UNUSED_PARAM(startOffset);
-    UNUSED_PARAM(endOffset);
-
-    notImplemented();
-    return 0;
-#endif
+    return webkitAccessibleTextGetTextForOffset(text, offset, boundaryType, GetTextPositionAt, startOffset, endOffset);
 }
 
 static gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-#if PLATFORM(GTK)
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
-#else
-    UNUSED_PARAM(text);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(boundaryType);
-    UNUSED_PARAM(startOffset);
-    UNUSED_PARAM(endOffset);
-
-    notImplemented();
-    return 0;
-#endif
+    return webkitAccessibleTextGetTextForOffset(text, offset, boundaryType, GetTextPositionBefore, startOffset, endOffset);
 }
 
 static gunichar webkitAccessibleTextGetCharacterAtOffset(AtkText*, gint)
