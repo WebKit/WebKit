@@ -159,8 +159,16 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     collectComplexTextRuns();
     adjustGlyphsAndAdvances();
 
-    if (!m_isLTROnly)
+    if (!m_isLTROnly) {
         m_runIndices.reserveInitialCapacity(m_complexTextRuns.size());
+
+        m_glyphCountFromStartToIndex.reserveInitialCapacity(m_complexTextRuns.size());
+        unsigned glyphCountSoFar = 0;
+        for (unsigned i = 0; i < m_complexTextRuns.size(); ++i) {
+            m_glyphCountFromStartToIndex.uncheckedAppend(glyphCountSoFar);
+            glyphCountSoFar += m_complexTextRuns[i]->glyphCount();
+        }
+    }
 
     m_runWidthSoFar = m_leadingExpansion;
 }
@@ -448,8 +456,7 @@ unsigned ComplexTextController::indexOfCurrentRun(unsigned& leftmostGlyph)
     }
 
     unsigned currentRunIndex = m_runIndices[m_currentRun];
-    for (unsigned i = 0; i < currentRunIndex; ++i)
-        leftmostGlyph += m_complexTextRuns[i]->glyphCount();
+    leftmostGlyph = m_glyphCountFromStartToIndex[currentRunIndex];
     return currentRunIndex;
 }
 

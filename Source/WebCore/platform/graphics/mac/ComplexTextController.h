@@ -132,9 +132,10 @@ private:
     unsigned indexOfCurrentRun(unsigned& leftmostGlyph);
     unsigned incrementCurrentRun(unsigned& leftmostGlyph);
 
-    // The default size of this vector was selected as being the smallest power of two greater than
+    // The initial capacity of these vectors was selected as being the smallest power of two greater than
     // the average (3.5) plus one standard deviation (7.5) of nonzero sizes used on Arabic Wikipedia.
     Vector<unsigned, 16> m_runIndices;
+    Vector<unsigned, 16> m_glyphCountFromStartToIndex;
 
     const Font& m_font;
     const TextRun& m_run;
