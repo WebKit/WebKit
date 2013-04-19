@@ -315,7 +315,44 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     59    at eval code
     60   eval at [native code]
     61   selfRecursive3 at stack-trace.js:69:8
-    62   global code at stack-trace.js:72:20
+    62    at eval code
+    63   eval at [native code]
+    64   selfRecursive3 at stack-trace.js:69:8
+    65    at eval code
+    66   eval at [native code]
+    67   selfRecursive3 at stack-trace.js:69:8
+    68    at eval code
+    69   eval at [native code]
+    70   selfRecursive3 at stack-trace.js:69:8
+    71    at eval code
+    72   eval at [native code]
+    73   selfRecursive3 at stack-trace.js:69:8
+    74    at eval code
+    75   eval at [native code]
+    76   selfRecursive3 at stack-trace.js:69:8
+    77    at eval code
+    78   eval at [native code]
+    79   selfRecursive3 at stack-trace.js:69:8
+    80    at eval code
+    81   eval at [native code]
+    82   selfRecursive3 at stack-trace.js:69:8
+    83    at eval code
+    84   eval at [native code]
+    85   selfRecursive3 at stack-trace.js:69:8
+    86    at eval code
+    87   eval at [native code]
+    88   selfRecursive3 at stack-trace.js:69:8
+    89    at eval code
+    90   eval at [native code]
+    91   selfRecursive3 at stack-trace.js:69:8
+    92    at eval code
+    93   eval at [native code]
+    94   selfRecursive3 at stack-trace.js:69:8
+    95    at eval code
+    96   eval at [native code]
+    97   selfRecursive3 at stack-trace.js:69:8
+    98    at eval code
+    99   eval at [native code]
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77:12
