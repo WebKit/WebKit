@@ -173,8 +173,8 @@ void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
 
     invalidateTrackIndexesAfterTrack(track.get());
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == owner());
-    track->setMediaElement(owner());
+    ASSERT(!track->mediaElement() || track->mediaElement() == element());
+    track->setMediaElement(element());
 
     scheduleAddTrackEvent(track.release());
 }
@@ -198,7 +198,7 @@ void TextTrackList::remove(TrackBase* track)
 
     invalidateTrackIndexesAfterTrack(textTrack);
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == owner());
+    ASSERT(!track->mediaElement() || track->mediaElement() == element());
     track->setMediaElement(0);
 
     RefPtr<TrackBase> trackRef = (*tracks)[index];

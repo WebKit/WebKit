@@ -331,7 +331,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #if ENABLE(VIDEO_TRACK)
     document()->unregisterForCaptionPreferencesChangedCallbacks(this);
     if (m_textTracks)
-        m_textTracks->clearOwner();
+        m_textTracks->clearElement();
     if (m_textTracks) {
         for (unsigned i = 0; i < m_textTracks->length(); ++i)
             m_textTracks->item(i)->clearClient();

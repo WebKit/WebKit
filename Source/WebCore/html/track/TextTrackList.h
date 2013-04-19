@@ -36,9 +36,9 @@ class TextTrack;
 
 class TextTrackList : public TrackListBase {
 public:
-    static PassRefPtr<TextTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
+    static PassRefPtr<TextTrackList> create(HTMLMediaElement* element, ScriptExecutionContext* context)
     {
-        return adoptRef(new TextTrackList(owner, context));
+        return adoptRef(new TextTrackList(element, context));
     }
     ~TextTrackList();
 

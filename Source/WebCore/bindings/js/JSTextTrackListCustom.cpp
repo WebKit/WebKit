@@ -50,7 +50,7 @@ bool JSTextTrackListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
         return false;
 
     // It is reachable if the media element parent is reachable.
-    return visitor.containsOpaqueRoot(root(textTrackList->owner()));
+    return visitor.containsOpaqueRoot(root(textTrackList->element()));
 }
 
 void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -62,7 +62,7 @@ void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(jsTextTrackList, visitor);
     
     TextTrackList* textTrackList = static_cast<TextTrackList*>(jsTextTrackList->impl());
-    visitor.addOpaqueRoot(root(textTrackList->owner()));
+    visitor.addOpaqueRoot(root(textTrackList->element()));
     textTrackList->visitJSEventListeners(visitor);
 }
     

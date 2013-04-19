@@ -37,9 +37,9 @@
 
 using namespace WebCore;
 
-TrackListBase::TrackListBase(HTMLMediaElement* owner, ScriptExecutionContext* context)
+TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
     : m_context(context)
-    , m_owner(owner)
+    , m_element(element)
     , m_pendingEventTimer(this, &TrackListBase::asyncEventTimerFired)
     , m_dispatchingEvents(0)
 {
@@ -60,7 +60,7 @@ void TrackListBase::remove(TrackBase* track)
     size_t index = m_inbandTracks.find(track);
     ASSERT(index != notFound);
 
-    ASSERT(track->mediaElement() == m_owner);
+    ASSERT(track->mediaElement() == m_element);
     track->setMediaElement(0);
 
     RefPtr<TrackBase> trackRef = m_inbandTracks[index];
