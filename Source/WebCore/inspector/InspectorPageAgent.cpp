@@ -270,7 +270,8 @@ void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame,
 //static
 String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResource)
 {
-    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("X-SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
 
     if (!cachedResource)
         return String();
@@ -280,6 +281,10 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
         return String();
 
     String sourceMapHeader = cachedResource->response().httpHeaderField(sourceMapHTTPHeader);
+    if (!sourceMapHeader.isEmpty())
+        return sourceMapHeader;
+
+    sourceMapHeader = cachedResource->response().httpHeaderField(sourceMapHTTPHeaderDeprecated);
     if (!sourceMapHeader.isEmpty())
         return sourceMapHeader;
 

@@ -632,7 +632,8 @@ PassRefPtr<Array<TypeBuilder::Debugger::CallFrame> > InspectorDebuggerAgent::cur
 
 String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("X-SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
 
     if (!script.url.isEmpty()) {
         if (InspectorPageAgent* pageAgent = m_instrumentingAgents->inspectorPageAgent()) {
@@ -641,6 +642,10 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
                 String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
                 if (!sourceMapHeader.isEmpty())
                     return sourceMapHeader;
+
+                sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeaderDeprecated);
+                if (!sourceMapHeader.isEmpty())
+                    return sourceMapHeader;                
             }
         }
     }
