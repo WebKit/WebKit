@@ -197,8 +197,7 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePr
     else
         out.appendLiteral("<span style=\"");
     appendAttributeValue(out, style->asText(), document->isHTMLDocument());
-    out.append('\"');
-    out.append('>');
+    out.appendLiteral("\">");
 }
 
 const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
@@ -234,9 +233,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, Text* text)
         // FIXME: Should this be included in forceInline?
         wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
 
-        StringBuilder openTag;
-        appendStyleNodeOpenTag(openTag, wrappingStyle->style(), text->document());
-        out.append(openTag.characters(), openTag.length());
+        appendStyleNodeOpenTag(out, wrappingStyle->style(), text->document());
     }
 
     if (!shouldAnnotate() || parentIsTextarea)
