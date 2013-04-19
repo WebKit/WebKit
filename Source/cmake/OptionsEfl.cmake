@@ -9,7 +9,7 @@ if (NOT DEFINED ENABLE_WEBKIT2)
     set(ENABLE_WEBKIT2 ON)
 endif ()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND NOT SHARED_CORE)
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT SHARED_CORE)
     message(FATAL_ERROR "Turn on the SHARED_CORE flag to make a debug build - e.g.\n build-webkit --efl --debug --cmakeargs=\"-DSHARED_CORE=ON\".\n")
 endif ()
 

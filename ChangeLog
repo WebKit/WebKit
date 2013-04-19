@@ -1,3 +1,12 @@
+2013-04-18  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Build break when using cmake without CMAKE_BUILD_TYPE
+        https://bugs.webkit.org/show_bug.cgi?id=114835
+
+        Unreviewed build fix.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-04-16  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Do not use JAVASCRIPTCORE_DIR in add_custom_command() of JavaScriptcore project
