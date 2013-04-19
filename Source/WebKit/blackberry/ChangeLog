@@ -1,3 +1,15 @@
+2013-04-19  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] EditorClientBlackBerry: Fix parameter name
+        https://bugs.webkit.org/show_bug.cgi?id=114856
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build fix due to a typo in a parameter name.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::requestCheckingOfString):
+
 2013-04-18 Nima Ghanavatian <nghanavatian@blackberry.com>
 
         [BlackBerry] Invalidate spell checking requests in platform code

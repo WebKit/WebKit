@@ -579,7 +579,7 @@ void EditorClientBlackBerry::checkGrammarOfString(const UChar*, int, WTF::Vector
     notImplemented();
 }
 
-void EditorClientBlackBerry::requestCheckingOfString(PassRefPtr<TextCheckingRequest> testCheckingRequest)
+void EditorClientBlackBerry::requestCheckingOfString(PassRefPtr<TextCheckingRequest> textCheckingRequest)
 {
     RefPtr<SpellCheckRequest> spellCheckRequest = static_cast<SpellCheckRequest*>(textCheckingRequest.get());
     m_webPagePrivate->m_inputHandler->requestCheckingOfString(spellCheckRequest);
