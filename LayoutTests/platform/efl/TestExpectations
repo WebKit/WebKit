@@ -651,7 +651,6 @@ webkit.org/b/114731 compositing/images/content-image.html [ Crash ]
 webkit.org/b/114731 compositing/masks/layer-mask-placement.html [ Crash ]
 webkit.org/b/114731 compositing/nested-direct-image-compositing.html [ Crash ]
 webkit.org/b/114731 compositing/reflections/transform-inside-reflection.html [ Crash ]
-webkit.org/b/114731 compositing/visibility/visibility-image-layers-dynamic.html [ Crash ]
 webkit.org/b/114731 compositing/visibility/visibility-image-layers.html [ Crash ]
 webkit.org/b/114731 compositing/webgl/webgl-no-alpha.html [ Crash ]
 webkit.org/b/114731 compositing/webgl/webgl-repaint.html [ Crash ]
@@ -1301,7 +1300,7 @@ webkit.org/b/79766 compositing/tiling/huge-layer.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/79766 compositing/video/video-poster.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
-webkit.org/b/79766 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
+webkit.org/b/79766 compositing/visibility/visibility-image-layers-dynamic.html [ Failure Crash ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect [ Skip ]
@@ -1991,3 +1990,5 @@ webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
 
 # Newly added test in r148136 is failing.
 webkit.org/b/114877 accessibility/link-inside-button-accessible-text.html [ Failure ]
+
+webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
