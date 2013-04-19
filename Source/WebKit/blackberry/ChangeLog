@@ -1,3 +1,19 @@
+2013-04-19  Andy Chen  <andchen@blackberry.com>
+
+        [BlackBerry] Find-on-page should do the scoping again when highlight policy changed 
+        https://bugs.webkit.org/show_bug.cgi?id=114885
+
+        Reviewed by Rob Buis.
+
+        PR 195773
+        Internally reviewed by Mike Fenton.
+        For find on page, we need to treat it as a new search if highlightAllMatches
+        changes but the text is not changed.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+
 2013-04-19  Xuefei Ren  <xren@blackberry.com>
 
         fixed debug broken from previous patch 

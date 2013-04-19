@@ -86,6 +86,7 @@ InPageSearchManager::~InPageSearchManager()
 
 bool InPageSearchManager::findNextString(const String& text, FindOptions findOptions, bool wrap, bool highlightAllMatches)
 {
+    bool highlightAllMatchesStateChanged = m_highlightAllMatches != highlightAllMatches;
     m_highlightAllMatches = highlightAllMatches;
 
     if (!text.length()) {
@@ -108,7 +109,7 @@ bool InPageSearchManager::findNextString(const String& text, FindOptions findOpt
 
     ExceptionCode ec = 0;
     RefPtr<Range> searchStartingPoint = m_activeMatch ? m_activeMatch->cloneRange(ec) : 0;
-    bool newSearch = m_activeSearchString != text;
+    bool newSearch = highlightAllMatchesStateChanged || (m_activeSearchString != text);
     bool forward = !(findOptions & WebCore::Backwards);
     if (newSearch) { // Start a new search.
         m_activeSearchString = text;
@@ -184,6 +185,13 @@ bool InPageSearchManager::findAndMarkText(const String& text, Range* range, Fram
         setActiveMatchAndMarker(match);
         if (isNewSearch) {
             scopeStringMatches(text, true /* reset */, false /* locateActiveMatchOnly */);
+            if (!m_highlightAllMatches) {
+                // Not highlighting all matches, we need to add the marker here,
+                // because scopeStringMatches does not add any markers, it only counts the number.
+                // No need to unmarkAllTextMatches, it is already done from the caller because of newSearch
+                m_activeMatch->ownerDocument()->markers()->addTextMatchMarker(m_activeMatch.get(), true);
+                frame->editor()->setMarkedTextMatchesAreHighlighted(true /* highlight */);
+            }
             return true;
         }
         if (startFromSelection || m_locatingActiveMatch) {
