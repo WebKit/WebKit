@@ -1945,6 +1945,9 @@ webkit.org/b/114150 fast/forms/datalist/update-range-with-datalist.html [ ImageO
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 
+# Newly added tests in r148115 is failing.
+webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+
 # Select element popup is not shown.
 webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Failure ]
 
@@ -1977,9 +1980,14 @@ webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
 
 # Compositing reftests added in r148172 fail on EFL
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ Failure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ Failure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ Failure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ Failure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ Failure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
 
+# Newly added test in r148131 is failing.
+webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
+
+# Newly added test in r148136 is failing.
+webkit.org/b/114877 accessibility/link-inside-button-accessible-text.html [ Failure ]
