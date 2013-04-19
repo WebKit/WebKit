@@ -18,6 +18,7 @@ function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units
     var rectangleBounds = [shapeBounds.x + units, shapeBounds.y + units, shapeBounds.width + units, shapeBounds.height + units];
     rules.push('-webkit-shape-inside: rectangle(' + rectangleBounds.join(',') + ')');
     rules.push('position: relative');
+    rules.push('overflow-wrap: break-word');
     stylesheet.insertRule('#' + elementId + '{' + rules.join(';') + '}');
 
     rules = [];
@@ -45,6 +46,7 @@ function createRectangleTestResult(elementId, stylesheetId, bounds, shapeBounds,
     rules.push('padding-left: ' + shapeBounds.x + units, 'padding-right: ' + (bounds.width - shapeBounds.width - shapeBounds.x) + units);
     rules.push('padding-top: ' + shapeBounds.y + units, 'padding-bottom: ' + (bounds.height - shapeBounds.height - shapeBounds.y) + units);
     rules.push('position: relative');
+    rules.push('overflow-wrap: break-word');
     stylesheet.insertRule('#' + elementId + '{' + rules.join(';') + '}');
 
     rules = [];

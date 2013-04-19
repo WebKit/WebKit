@@ -21,6 +21,10 @@ function simulateWithText(width, height, fontSize, content, elementId) {
     div.style.setProperty('height', height + 'px');
     div.style.setProperty('font', fontSize + 'px/1 Ahem, sans-serif');
     div.style.setProperty('color', 'green');
+    if (content instanceof Array) {
+        div.style.setProperty('white-space', 'pre');
+        content = content.join('\n');
+    }
     div.innerHTML = content;
 }
 
