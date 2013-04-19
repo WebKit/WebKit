@@ -1,5 +1,18 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] Only accept the 'group' parameter if present in the layout tests builders group
+        https://bugs.webkit.org/show_bug.cgi?id=114799
+
+        Reviewed by Benjamin Poulain.
+
+        The layout tests builder group is the only one supported, all the other Chromium-specific builder groups are
+        bound to be removed.
+
+        * TestResultServer/static-dashboards/history.js:
+        (.):
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] Remove Chromium-specific builder loading code from loadBuildersList
         https://bugs.webkit.org/show_bug.cgi?id=114797
 

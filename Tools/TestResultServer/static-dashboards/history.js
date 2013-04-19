@@ -216,10 +216,7 @@ history.History.prototype = {
         case 'group':
             history.validateParameter(this.crossDashboardState, key, value,
                 function() {
-                  return value in LAYOUT_TESTS_BUILDER_GROUPS ||
-                      value in CHROMIUM_GPU_TESTS_BUILDER_GROUPS ||
-                      value in CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS ||
-                      value in CHROMIUM_GTESTS_BUILDER_GROUPS;
+                  return value in LAYOUT_TESTS_BUILDER_GROUPS;
                 });
             return true;
 
