@@ -69,6 +69,8 @@ http/tests/media/text-served-as-text.html
 media/invalid-media-url-crash.html
 media/video-src-change.html
 
+webkit.org/b/114889 media/W3C/video/events/event_canplay.html [ Timeout Pass ]
+
 # --- Plugins ---
 
 # WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
