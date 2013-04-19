@@ -100,24 +100,7 @@ function $(id)
 
 function currentBuilderGroupCategory()
 {
-    switch (g_history.crossDashboardState.testType) {
-    case 'gl_tests':
-    case 'gpu_tests':
-        return CHROMIUM_GPU_TESTS_BUILDER_GROUPS;
-    case 'layout-tests':
-        return LAYOUT_TESTS_BUILDER_GROUPS;
-    case 'test_shell_tests':
-    case 'webkit_unit_tests':
-        return TEST_SHELL_TESTS_BUILDER_GROUPS;
-    case 'androidwebview_instrumentation_tests':
-    case 'chromiumtestshell_instrumentation_tests':
-    case 'contentshell_instrumentation_tests':
-        return CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS;
-    case 'cc_unittests':
-        return CC_UNITTEST_BUILDER_GROUPS;
-    default:
-        return LAYOUT_TESTS_BUILDER_GROUPS;
-    }
+    return LAYOUT_TESTS_BUILDER_GROUPS;
 }
 
 function currentBuilderGroupName()

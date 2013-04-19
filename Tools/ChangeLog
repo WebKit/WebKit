@@ -1,5 +1,19 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] The currentBuilderGroupCategory method should return the layout tests builder groups by default
+        https://bugs.webkit.org/show_bug.cgi?id=114796
+
+        Reviewed by Benjamin Poulain.
+
+        With the Chromium builders no longer uploading results and the layout-tests test type the only one supported by the
+        WebKit's dashboard, the currentBuilderGroupCategory can now return LAYOUT_TESTS_BUILDER_GROUPS as the default builder
+        group category.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (currentBuilderGroupCategory):
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] Narrow down the test types list to only layout-tests
         https://bugs.webkit.org/show_bug.cgi?id=114795
 
