@@ -801,7 +801,7 @@ RenderBlock* RenderObject::containingBlock() const
         // not the inline itself, to avoid having a positioned objects list in all RenderInlines
         // and use RenderBlock* as this function's return type.
         // Use RenderBlock::container() to obtain the inline.
-        if (o->isRenderInline())
+        if (o && o->isRenderInline())
             o = o->containingBlock();
 
         while (o && o->isAnonymousBlock())
