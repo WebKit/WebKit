@@ -5388,6 +5388,7 @@
     <ClCompile Include="..\css\SVGCSSComputedStyleDeclaration.cpp" />
     <ClCompile Include="..\css\SVGCSSParser.cpp" />
     <ClCompile Include="..\css\SVGCSSStyleSelector.cpp" />
+    <ClCompile Include="..\css\TransformFunctions.cpp" />
     <ClCompile Include="..\css\ViewportStyleResolver.cpp" />
     <ClCompile Include="..\css\WebKitCSSArrayFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp" />
@@ -12168,6 +12169,7 @@
     <ClInclude Include="..\css\StyleSheet.h" />
     <ClInclude Include="..\css\StyleSheetContents.h" />
     <ClInclude Include="..\css\StyleSheetList.h" />
+    <ClInclude Include="..\css\TransformFunctions.h" />
     <ClInclude Include="..\css\ViewportStyleResolver.h" />
     <ClInclude Include="..\css\WebKitCSSArrayFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSFilterValue.h" />

@@ -2753,6 +2753,8 @@ webcore_sources += \
 	Source/WebCore/css/StyleSheetContents.h \
 	Source/WebCore/css/StyleSheetList.cpp \
 	Source/WebCore/css/StyleSheetList.h \
+	Source/WebCore/css/TransformFunctions.cpp \
+	Source/WebCore/css/TransformFunctions.h \
 	Source/WebCore/css/ViewportStyleResolver.cpp \
 	Source/WebCore/css/ViewportStyleResolver.h \
 	Source/WebCore/css/WebKitCSSArrayFunctionValue.cpp \

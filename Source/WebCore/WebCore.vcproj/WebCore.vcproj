@@ -38943,6 +38943,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\TransformFunctions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\TransformFunctions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\ViewportStyleResolver.cpp"
 				>
 			</File>

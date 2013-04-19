@@ -1099,6 +1099,7 @@ set(WebCore_SOURCES
     css/SVGCSSComputedStyleDeclaration.cpp
     css/SVGCSSParser.cpp
     css/SVGCSSStyleSelector.cpp
+    css/TransformFunctions.cpp
     css/ViewportStyleResolver.cpp
     css/WebKitCSSFilterRule.cpp
     css/WebKitCSSFilterValue.cpp

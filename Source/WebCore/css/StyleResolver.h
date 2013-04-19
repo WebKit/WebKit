@@ -304,8 +304,6 @@ public:
     bool usesSiblingRules() const { return !m_ruleSets.features().siblingRules.isEmpty(); }
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesBeforeAfterRules() const { return m_ruleSets.features().usesBeforeAfterRules; }
-
-    static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
     void invalidateMatchedPropertiesCache();
 

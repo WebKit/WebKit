@@ -31,7 +31,7 @@
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
 #include "StylePropertySet.h"
-#include "StyleResolver.h"
+#include "TransformFunctions.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -66,7 +66,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
             return;
 
         TransformOperations operations;
-        if (!StyleResolver::createTransformOperations(value.get(), 0, 0, operations)) {
+        if (!transformsForValue(0, 0, value.get(), operations)) {
             ec = SYNTAX_ERR;
             return;
         }

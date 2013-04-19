@@ -5729,6 +5729,8 @@
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
 		FB2C15C3165D649D0039C9F8 /* CachedSVGDocumentReference.h in Headers */ = {isa = PBXBuildFile; fileRef = FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */; };
+		FB484F4C171F821E00040755 /* TransformFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB484F4A171F821E00040755 /* TransformFunctions.cpp */; };
+		FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FB484F4B171F821E00040755 /* TransformFunctions.h */; };
 		FB49C39D16784947007FFB5D /* CSSHostRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB49C39C16784947007FFB5D /* CSSHostRule.h */; };
 		FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB91392416AE4C17001FE682 /* DOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392016AE4B0B001FE682 /* DOMPath.h */; };
@@ -12570,6 +12572,8 @@
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
 		FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentReference.h; sourceTree = "<group>"; };
 		FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGroupingRule.h; sourceTree = "<group>"; };
+		FB484F4A171F821E00040755 /* TransformFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFunctions.cpp; sourceTree = "<group>"; };
+		FB484F4B171F821E00040755 /* TransformFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformFunctions.h; sourceTree = "<group>"; };
 		FB49C39C16784947007FFB5D /* CSSHostRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSHostRule.h; sourceTree = "<group>"; };
 		FB49C39E16784954007FFB5D /* CSSHostRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSHostRule.idl; sourceTree = "<group>"; };
 		FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSParserMode.h; sourceTree = "<group>"; };
@@ -19865,6 +19869,8 @@
 				B2227B020D00BFF10071B782 /* SVGCSSPropertyNames.in */,
 				B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
+				FB484F4A171F821E00040755 /* TransformFunctions.cpp */,
+				FB484F4B171F821E00040755 /* TransformFunctions.h */,
 				BC5EC1760A507E3E006007F5 /* view-source.css */,
 				3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */,
 				3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */,
@@ -24042,6 +24048,7 @@
 				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
 				E1B533491717DEE300F205F9 /* CachedRawResourceClient.h in Headers */,
 				BE88E0C21715CE2600658D98 /* TrackListBase.h in Headers */,
+				FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26992,6 +26999,7 @@
 				E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */,
 				E1B533471717D0A100F205F9 /* CachedSVGDocumentReference.cpp in Sources */,
 				BE88E0C11715CE2600658D98 /* TrackListBase.cpp in Sources */,
+				FB484F4C171F821E00040755 /* TransformFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

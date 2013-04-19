@@ -343,6 +343,7 @@ SOURCES += \
     css/StyleSheet.cpp \
     css/StyleSheetContents.cpp \
     css/StyleSheetList.cpp \
+    css/TransformFunctions.cpp \
     css/ViewportStyleResolver.cpp \
     css/WebKitCSSArrayFunctionValue.cpp \
     css/WebKitCSSFilterRule.cpp \
@@ -1583,6 +1584,7 @@ HEADERS += \
     css/StyleSheet.h \
     css/StyleSheetContents.h \
     css/StyleSheetList.h \
+    css/TransformFunctions.h \
     css/ViewportStyleResolver.h \
     css/WebKitCSSArrayFunctionValue.h \
     css/WebKitCSSFilterRule.h \

@@ -3783,6 +3783,9 @@
     <ClCompile Include="..\css\SVGCSSStyleSelector.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\TransformFunctions.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\ViewportStyleResolver.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -10558,6 +10561,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StyleSheetList.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\TransformFunctions.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\ViewportStyleResolver.h">
