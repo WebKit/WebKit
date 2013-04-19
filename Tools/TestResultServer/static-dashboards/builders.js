@@ -194,33 +194,6 @@ function loadBuildersList(groupName, testType) {
     }
 }
 
-var TEST_SHELL_TESTS_BUILDER_GROUPS = {
-    '@ToT - chromium.org': null,
-    '@DEPS - chromium.org': null,
-};
-
 var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@ToT - webkit.org': null,
-};
-
-var CHROMIUM_GPU_TESTS_BUILDER_GROUPS = {
-    '@DEPS - chromium.org': null,
-    '@DEPS FYI - chromium.org': null,
-    '@ToT - chromium.org': null,
-};
-
-var CHROMIUM_GTESTS_BUILDER_GROUPS = {
-    '@DEPS - chromium.org': null,
-    '@DEPS CrOS - chromium.org': null,
-    '@ToT - chromium.org': null,
-};
-
-var CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS = {
-    '@DEPS - chromium.org': null,
-    '@DEPS FYI - chromium.org': null,
-};
-
-var CC_UNITTEST_BUILDER_GROUPS = {
-    '@ToT - chromium.org': null,
-    '@DEPS - chromium.org': null,
 };
