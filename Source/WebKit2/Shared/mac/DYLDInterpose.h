@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#ifndef DYLDInterpose_h
+#define DYLDInterpose_h
 
-#if HAVE(XPC)
+#ifdef DYLD_INTERPOSE
+#undef DYLD_INTERPOSE
+#endif
 
-#import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebProcess.h"
-#import "XPCServiceEntryPoint.h"
-#import <WebCore/RunLoop.h>
+#define DYLD_INTERPOSE(_replacement, _replacee) \
+    __attribute__((used)) static struct { const void* replacement; const void* replacee; } _interpose_##_replacee \
+    __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacement, (const void*)(unsigned long)&_replacee };
 
-using namespace WebCore;
-using namespace WebKit;
-
-extern "C" WK_EXPORT void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
-
-void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
-{
-    // Remove the SecItemShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the this process don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebContentShim.dylib");
-
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
-    XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
-}
-
-#endif // HAVE(XPC)
+#endif // DYLDInterpose_h

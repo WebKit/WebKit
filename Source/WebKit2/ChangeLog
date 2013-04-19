@@ -1,3 +1,63 @@
+2013-04-19  Jer Noble  <jer.noble@apple.com>
+
+        WWDC session videos don’t play at developer.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=114858
+
+        Reviewed by Eric Carlson.
+
+        AVFoundation uses CFNetwork to store and retrieve cookies from the global store.
+        However, in the case where network access happens in the NetworkProcess, session
+        cookies are stored in-memory, and are not accessable in the WebProcess. Until such
+        a time as AVFoundation can provide an API which would allow us to provide cookies
+        for a specific request, we will interpose the CFNetwork method which they use to
+        retrieve the cookie string from the cookie store for their pending request.
+
+        Duplicate the previous SecItemShim target to a new, WebProcessShim target. This
+        target includes the SecItemShim functionality, but will add a new shim for cookie
+        retrieval:
+        * Shared/mac/CookieStorageShimLibrary.h: Added
+        (CookieStorageShimCallbacks):
+        * Shared/mac/CookieStorageShimLibrary.cpp: Added.
+        (WebKit::ShimProtector::ShimProtector): A simple stack-based counter class.
+        (WebKit::ShimProtector::~ShimProtector):
+        (WebKit::ShimProtector::count):
+        (WebKit::shimCFHTTPCookieStorageCopyRequestHeaderFieldsForURL): Interpose
+            the CFNetwork call, and pass to the registered callback.
+        (WebKit::WebKitCookieStorageShimInitialize): Register the callbacks.
+
+        Add a helper singleton class which will talk to the shim through the 
+        registered callbacks:
+        * Shared/mac/CookieStorageShim.h: Added
+        (WebKit::CookieStorageShim::CookieStorageShim):
+        * Shared/mac/CookieStorageShim.cpp: Added.
+        (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL): Pass the request
+            over to the NetworkProcess.
+        (WebKit::CookieStorageShim::shared): Simple singleton.
+        (WebKit::CookieStorageShim::initialize): Call the library initializer.
+
+        Initialize the shim only when the WebProcess is delegating network loading
+        to the NetworkProcess:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
+        Rename the WebProcess's shim from SecItemShim -> WebProcessShim:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::addDYLDEnvironmentAdditions):
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebKit::WebContentProcessMainDelegate::doPreInitializationWork):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
+        As the DYLD_INTERPOSE macro is used in multiple files now, put it in its
+        own header:
+        * Shared/mac/DYLDInterpose.h: Added.
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * WebProcess/mac/SecItemShimLibrary.mm:
+
+        Add new files to the project:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-04-19  Brady Eidson  <beidson@apple.com>
 
         Add JoinExistingSession to the WebContext XPC.

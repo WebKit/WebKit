@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#ifndef CookieStorageShimLibrary_h
+#define CookieStorageShimLibrary_h
 
-#if HAVE(XPC)
+#if ENABLE(NETWORK_PROCESS)
 
-#import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebProcess.h"
-#import "XPCServiceEntryPoint.h"
-#import <WebCore/RunLoop.h>
+typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 
-using namespace WebCore;
-using namespace WebKit;
+namespace WebKit {
 
-extern "C" WK_EXPORT void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
+struct CookieStorageShimCallbacks {
+    CFDictionaryRef (*cookieStorageCopyRequestHeaderFieldsForURL)(CFHTTPCookieStorageRef inCookieStorage, CFURLRef inRequestURL);
+};
 
-void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
-{
-    // Remove the SecItemShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the this process don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebContentShim.dylib");
+typedef void (*CookieStorageShimInitializeFunc)(const CookieStorageShimCallbacks& callbacks);
 
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
-    XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
 
-#endif // HAVE(XPC)
+#endif // ENABLE(NETWORK_PROCESS)
+
+#endif // CookieStorageShimLibrary_h
