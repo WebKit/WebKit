@@ -43,16 +43,29 @@
 
 namespace WTR {
 
+static void attributesClear(AtkAttributeSet* attributesSet)
+{
+    for (GSList* attributes = attributesSet; attributes; attributes = attributes->next) {
+        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+        g_free(atkAttribute->name);
+        g_free(atkAttribute->value);
+        g_free(atkAttribute);
+    }
+}
+
 static gchar* attributeSetToString(AtkAttributeSet* attributeSet)
 {
+    GOwnPtr<GSList> atkAttributes(attributeSet);
     GString* str = g_string_new(0);
-    for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
+    for (GSList* attributes = atkAttributes.get(); attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
         GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
         g_string_append(str, attributeData.get());
         if (attributes->next)
             g_string_append(str, ", ");
     }
+
+    attributesClear(atkAttributes.get());
 
     return g_string_free(str, FALSE);
 }
@@ -571,8 +584,32 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element || !ATK_IS_OBJECT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    GOwnPtr<gchar> language;
+    // In ATK, the document language is exposed as the document's locale.
+    if (atk_object_get_role(ATK_OBJECT(m_element)) == ATK_ROLE_DOCUMENT_FRAME) {
+        language.set(g_strdup_printf("AXLanguage: %s", atk_document_get_locale(ATK_DOCUMENT(m_element))));
+        return JSStringCreateWithUTF8CString(language.get());
+    }
+
+    // For all other objects, the language is exposed as an AtkText attribute.
+    if (!ATK_IS_TEXT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    GOwnPtr<GSList> textAttributes(atk_text_get_default_attributes(ATK_TEXT(m_element)));
+    for (GSList* attributes = textAttributes.get(); attributes; attributes = attributes->next) {
+        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+        if (!strcmp(atkAttribute->name, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE))) {
+            language.set(g_strdup_printf("AXLanguage: %s", atkAttribute->value));
+            break;
+        }
+    }
+
+    attributesClear(textAttributes.get());
+
+    return JSStringCreateWithUTF8CString(language.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const

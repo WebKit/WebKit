@@ -1,3 +1,15 @@
+2013-04-19  Krzysztof Czech  <k.czech@samsung.com>
+
+        [GTK][WK2] accessibility/language-attribute.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=106342
+
+        Reviewed by Gyuyoung Kim.
+
+        Adds support for getting language information.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::language):
+
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [Dashboard] Remove the isToTWebKit member variable from the BuilderGroup interface
