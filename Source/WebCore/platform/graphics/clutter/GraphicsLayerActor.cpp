@@ -73,8 +73,6 @@ static void graphicsLayerActorGetProperty(GObject*, guint propID, GValue*, GPara
 static void graphicsLayerActorSetProperty(GObject*, guint propID, const GValue*, GParamSpec*);
 static void graphicsLayerActorPaint(ClutterActor*);
 
-static void graphicsLayerActorAdded(ClutterContainer*, ClutterActor*, gpointer data);
-static void graphicsLayerActorRemoved(ClutterContainer*, ClutterActor*, gpointer data);
 static gboolean graphicsLayerActorDraw(ClutterCanvas*, cairo_t*, gint width, gint height, GraphicsLayerActor*);
 static void graphicsLayerActorUpdateTexture(GraphicsLayerActor*);
 static void drawLayerContents(ClutterActor*, GraphicsContext&);
@@ -110,9 +108,6 @@ static void graphics_layer_actor_init(GraphicsLayerActor* self)
 
     // Default used by GraphicsLayer.
     graphicsLayerActorSetAnchorPoint(self, 0.5, 0.5, 0.0);
-
-    g_signal_connect(self, "actor-added", G_CALLBACK(graphicsLayerActorAdded), 0);
-    g_signal_connect(self, "actor-removed", G_CALLBACK(graphicsLayerActorRemoved), 0);
 }
 
 static void graphicsLayerActorSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* pspec)
@@ -176,19 +171,20 @@ static void graphicsLayerActorAllocate(ClutterActor* self, const ClutterActorBox
 
     // FIXME: maybe we can cache children allocation and not call
     // allocate on them this often?
-    for (GList* list = layer->children; list; list = list->next) {
-        ClutterActor* child = CLUTTER_ACTOR(list->data);
+    GOwnPtr<GList> children(clutter_actor_get_children(self));
+    for (GList* child = children.get(); child; child = child->next) {
+        ClutterActor* childActor = CLUTTER_ACTOR(child->data);
 
-        float childWidth = clutter_actor_get_width(child);
-        float childHeight = clutter_actor_get_height(child);
+        float childWidth = clutter_actor_get_width(childActor);
+        float childHeight = clutter_actor_get_height(childActor);
 
         ClutterActorBox childBox;
-        childBox.x1 = clutter_actor_get_x(child);
-        childBox.y1 = clutter_actor_get_y(child);
+        childBox.x1 = clutter_actor_get_x(childActor);
+        childBox.y1 = clutter_actor_get_y(childActor);
         childBox.x2 = childBox.x1 + childWidth;
         childBox.y2 = childBox.y1 + childHeight;
 
-        clutter_actor_allocate(child, &childBox, flags);
+        clutter_actor_allocate(childActor, &childBox, flags);
     }
 
     priv->allocating = FALSE;
@@ -218,12 +214,9 @@ static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* ma
 
 static void graphicsLayerActorPaint(ClutterActor* actor)
 {
-    GraphicsLayerActor* graphicsLayer = GRAPHICS_LAYER_ACTOR(actor);
-
-    for (GList* list = graphicsLayer->children; list; list = list->next) {
-        ClutterActor* child = CLUTTER_ACTOR(list->data);
-        clutter_actor_paint(child);
-    }
+    GOwnPtr<GList> children(clutter_actor_get_children(actor));
+    for (GList* child = children.get(); child; child = child->next)
+        clutter_actor_paint(CLUTTER_ACTOR(child->data));
 }
 
 static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint width, gint height, GraphicsLayerActor* layer)
@@ -248,18 +241,6 @@ static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint
         drawLayerContents(CLUTTER_ACTOR(layer), context);
 
     return TRUE;
-}
-
-static void graphicsLayerActorAdded(ClutterContainer* container, ClutterActor* actor, gpointer data)
-{
-    GraphicsLayerActor* graphicsLayer = GRAPHICS_LAYER_ACTOR(container);
-    graphicsLayer->children = g_list_append(graphicsLayer->children, actor);
-}
-
-static void graphicsLayerActorRemoved(ClutterContainer* container, ClutterActor* actor, gpointer data)
-{
-    GraphicsLayerActor* graphicsLayer = GRAPHICS_LAYER_ACTOR(container);
-    graphicsLayer->children = g_list_remove(graphicsLayer->children, actor);
 }
 
 static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
@@ -340,9 +321,7 @@ void graphicsLayerActorRemoveAll(GraphicsLayerActor* layer)
 {
     g_return_if_fail(GRAPHICS_LAYER_IS_ACTOR(layer));
 
-    GOwnPtr<GList> children(clutter_actor_get_children(CLUTTER_ACTOR(layer)));
-    for (GList* child = children.get(); child; child = child->next)
-        clutter_actor_remove_child(CLUTTER_ACTOR(layer), CLUTTER_ACTOR(child->data));
+    clutter_actor_remove_all_children(CLUTTER_ACTOR(layer));
 }
 
 cairo_surface_t* graphicsLayerActorGetSurface(GraphicsLayerActor* layer)
@@ -402,7 +381,7 @@ gint graphicsLayerActorGetnChildren(GraphicsLayerActor* layer)
 {
     ASSERT(GRAPHICS_LAYER_IS_ACTOR(layer));
 
-    return g_list_length(layer->children);
+    return clutter_actor_get_n_children(CLUTTER_ACTOR(layer));
 }
 
 void graphicsLayerActorReplaceSublayer(GraphicsLayerActor* layer, ClutterActor* oldChildLayer, ClutterActor* newChildLayer)
@@ -411,8 +390,7 @@ void graphicsLayerActorReplaceSublayer(GraphicsLayerActor* layer, ClutterActor* 
     ASSERT(CLUTTER_IS_ACTOR(oldChildLayer));
     ASSERT(CLUTTER_IS_ACTOR(newChildLayer));
 
-    clutter_actor_remove_child(CLUTTER_ACTOR(layer), oldChildLayer);
-    clutter_actor_add_child(CLUTTER_ACTOR(layer), newChildLayer);
+    clutter_actor_replace_child(CLUTTER_ACTOR(layer), oldChildLayer, newChildLayer);
 }
 
 void graphicsLayerActorInsertSublayer(GraphicsLayerActor* layer, ClutterActor* childLayer, gint index)
@@ -420,14 +398,7 @@ void graphicsLayerActorInsertSublayer(GraphicsLayerActor* layer, ClutterActor* c
     ASSERT(GRAPHICS_LAYER_IS_ACTOR(layer));
     ASSERT(CLUTTER_IS_ACTOR(childLayer));
 
-    g_object_ref(childLayer);
-
-    layer->children = g_list_insert(layer->children, childLayer, index);
-    ASSERT(!clutter_actor_get_parent(childLayer));
-    clutter_actor_add_child(CLUTTER_ACTOR(layer), childLayer);
-    clutter_actor_queue_relayout(CLUTTER_ACTOR(layer));
-
-    g_object_unref(childLayer);
+    clutter_actor_insert_child_at_index(CLUTTER_ACTOR(layer), childLayer, index);
 }
 
 void graphicsLayerActorSetSublayers(GraphicsLayerActor* layer, GraphicsLayerActorList& subLayers)

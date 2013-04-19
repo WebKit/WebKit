@@ -64,7 +64,6 @@ typedef struct _GraphicsLayerActorPrivate GraphicsLayerActorPrivate;
 struct _GraphicsLayerActor {
     ClutterRectangle parent;
     GraphicsLayerActorPrivate *priv;
-    GList *children;
 };
 
 struct _GraphicsLayerActorClass {
