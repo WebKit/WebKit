@@ -472,7 +472,7 @@ test('htmlForIndividualTests', 4, function() {
 test('htmlForSingleTestRow', 1, function() {
     var historyInstance = resetGlobals();
     var builder = 'dummyBuilder';
-    BUILDER_TO_MASTER[builder] = CHROMIUM_WEBKIT_BUILDER_MASTER;
+    BUILDER_TO_MASTER[builder] = WEBKIT_BUILDER_MASTER;
     var test = createResultsObjectForTest('foo/exists.html', builder);
     historyInstance.dashboardSpecificState.showCorrectExpectations = true;
     g_resultsByBuilder[builder] = {buildNumbers: [2, 1], webkitRevision: [1234, 1233]};

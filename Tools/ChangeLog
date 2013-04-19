@@ -1,5 +1,17 @@
 2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Dashboard] htmlForIndividualTests unit test should include its dummy builder under the webkit.org builder master
+        https://bugs.webkit.org/show_bug.cgi?id=114804
+
+        Reviewed by Benjamin Poulain.
+
+        The htmlForIndividualTests unit test should include its dummy builder under the sole supported webkit.org builder master
+        just so the unit tests properly functions.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
+2013-04-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [Dashboard] Remove Chromium-specific helper functions that were used in the builder-loading code
         https://bugs.webkit.org/show_bug.cgi?id=114803
 
