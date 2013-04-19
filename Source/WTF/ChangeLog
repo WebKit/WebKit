@@ -1,5 +1,14 @@
 2013-04-19  Benjamin Poulain  <benjamin@webkit.org>
 
+        Remove the declaration of MemoryObjectInfo from StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=114788
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringImpl.h: The declaration is an other left over from chromium.
+
+2013-04-19  Benjamin Poulain  <benjamin@webkit.org>
+
         Make StringImpl::cost const
         https://bugs.webkit.org/show_bug.cgi?id=114790
 
