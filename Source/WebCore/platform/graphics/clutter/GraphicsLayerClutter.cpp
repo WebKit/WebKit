@@ -444,6 +444,15 @@ void GraphicsLayerClutter::setPreserves3D(bool preserves3D)
     noteLayerPropertyChanged(Preserves3DChanged);
 }
 
+void GraphicsLayerClutter::setMasksToBounds(bool masksToBounds)
+{
+    if (masksToBounds == m_masksToBounds)
+        return;
+
+    GraphicsLayer::setMasksToBounds(masksToBounds);
+    noteLayerPropertyChanged(MasksToBoundsChanged);
+}
+
 void GraphicsLayerClutter::setDrawsContent(bool drawsContent)
 {
     if (drawsContent == m_drawsContent)
@@ -736,6 +745,9 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
     if (m_uncommittedChanges & TransformChanged)
         updateTransform();
 
+    if (m_uncommittedChanges & MasksToBoundsChanged)
+        updateMasksToBounds();
+
     if (m_uncommittedChanges & OpacityChanged)
         updateOpacityOnLayer();
 
@@ -760,6 +772,7 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
 
 void GraphicsLayerClutter::setupContentsLayer(GraphicsLayerActor* contentsLayer)
 {
+    graphicsLayerActorSetMasksToBounds(contentsLayer, true);
     graphicsLayerActorSetAnchorPoint(contentsLayer, 0.0, 0.0, 0.0);
 }
 
@@ -858,6 +871,11 @@ void GraphicsLayerClutter::updateTransform()
 {
     CoglMatrix matrix = m_transform;
     clutter_actor_set_transform(CLUTTER_ACTOR(primaryLayer()), &matrix);
+}
+
+void GraphicsLayerClutter::updateMasksToBounds()
+{
+    graphicsLayerActorSetMasksToBounds(m_layer.get(), m_masksToBounds);
 }
 
 void GraphicsLayerClutter::updateStructuralLayer()

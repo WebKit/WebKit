@@ -524,6 +524,15 @@ void graphicsLayerActorSetFlatten(GraphicsLayerActor* layer, bool flatten)
     priv->flatten = flatten;
 }
 
+void graphicsLayerActorSetMasksToBounds(GraphicsLayerActor* layer, bool masksToBounds)
+{
+    ClutterActor* actor = CLUTTER_ACTOR(layer);
+    if (masksToBounds)
+        clutter_actor_set_clip(actor, 0, 0, clutter_actor_get_width(actor), clutter_actor_get_height(actor));
+    else
+        clutter_actor_remove_clip(actor);
+}
+
 WebCore::PlatformClutterAnimation* graphicsLayerActorGetAnimationForKey(GraphicsLayerActor* layer, const String key)
 {
     return static_cast<WebCore::PlatformClutterAnimation*>(g_object_get_data(G_OBJECT(layer), key.utf8().data()));

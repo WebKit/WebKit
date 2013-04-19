@@ -97,6 +97,7 @@ void graphicsLayerActorSetSublayers(GraphicsLayerActor*, WebCore::GraphicsLayerA
 gboolean graphicsLayerActorGetDrawsContent(GraphicsLayerActor*);
 void graphicsLayerActorSetDrawsContent(GraphicsLayerActor*, bool drawsContent);
 void graphicsLayerActorSetFlatten(GraphicsLayerActor*, bool flatten);
+void graphicsLayerActorSetMasksToBounds(GraphicsLayerActor*, bool masksToBounds);
 
 WebCore::PlatformClutterAnimation* graphicsLayerActorGetAnimationForKey(GraphicsLayerActor*, const String);
 

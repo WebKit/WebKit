@@ -63,7 +63,9 @@ public:
     virtual void addChildAtIndex(GraphicsLayer*, int index);
     virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling);
     virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling);
+
     virtual void removeFromParent();
+
     virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void setParent(GraphicsLayer*);
@@ -86,6 +88,7 @@ public:
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
 
     virtual void setPreserves3D(bool);
+    virtual void setMasksToBounds(bool);
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& animationName, double timeOffset);
     virtual void removeAnimation(const String& animationName);
@@ -190,6 +193,7 @@ private:
     void updateSublayerList();
     void updateGeometry(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateTransform();
+    void updateMasksToBounds();
     void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateContentsImage();
     void updateContentsRect();
