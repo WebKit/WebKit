@@ -2516,6 +2516,17 @@
                 "description": "Sets the new stylesheet text, thereby invalidating all existing <code>CSSStyleId</code>'s and <code>CSSRuleId</code>'s contained by this stylesheet."
             },
             {
+                "name": "setStyleText",
+                "parameters": [
+                    { "name": "styleId", "$ref": "CSSStyleId" },
+                    { "name": "text", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "style", "$ref": "CSSStyle", "description": "The resulting style after the text modification." }
+                ],
+                "description": "Sets the new <code>text</code> for the respective style."
+            },
+            {
                 "name": "setPropertyText",
                 "parameters": [
                     { "name": "styleId", "$ref": "CSSStyleId" },

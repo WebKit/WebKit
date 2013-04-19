@@ -146,14 +146,19 @@ public:
     bool setPropertyText(unsigned index, const String& text, bool overwrite, String* oldText, ExceptionCode&);
     bool toggleProperty(unsigned index, bool disable, ExceptionCode&);
 
+    bool getText(String* result) const;
+    bool setText(const String&, ExceptionCode&);
+
 private:
     InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
 
-    bool styleText(String* result) const;
+    // FIXME: Remove these aliases and update all the current call sites to use the new public methods.
+    bool styleText(String* result) const { return getText(result); }
+    bool applyStyleText(const String& text) { ExceptionCode ec = 0; return setText(text, ec); }
+
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
     PassRefPtr<TypeBuilder::CSS::CSSStyle> styleWithProperties() const;
     PassRefPtr<CSSRuleSourceData> extractSourceData() const;
-    bool applyStyleText(const String&);
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
     Vector<String> longhandProperties(const String& shorthandProperty) const;
@@ -196,6 +201,7 @@ public:
     PassRefPtr<TypeBuilder::CSS::CSSStyleSheetHeader> buildObjectForStyleSheetInfo();
     PassRefPtr<TypeBuilder::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
+    bool setStyleText(const InspectorCSSId&, const String& text, String* oldText, ExceptionCode&);
     bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText, ExceptionCode&);
     bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable, ExceptionCode&);
 
@@ -220,7 +226,7 @@ protected:
     virtual void forgetInspectorStyle(CSSStyleDeclaration* style);
 
     // Also accessed by friend class InspectorStyle.
-    virtual bool setStyleText(CSSStyleDeclaration*, const String&);
+    virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
     virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
 
 private:
@@ -272,7 +278,7 @@ protected:
     virtual void forgetInspectorStyle(CSSStyleDeclaration*) { }
 
     // Also accessed by friend class InspectorStyle.
-    virtual bool setStyleText(CSSStyleDeclaration*, const String&);
+    virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
     virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
 
 private:

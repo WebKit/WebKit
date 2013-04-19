@@ -353,7 +353,7 @@ body: [regular, 0:89-0:93] {
     ['text-align':'justify'] @[0:99-0:119] active
 }
 
-=== After style text set ===
+=== After property text set ===
 
 StyleSheet: 'html *, body[foo="bar"] {
     color: white; background: black;
@@ -374,6 +374,38 @@ html *, body[foo="bar"]: [regular, 0:0-0:23] {
 }
 body: [regular, 2:1-2:5] {
     ['text-align':'justify'] @[2:11-2:31] active
+}
+
+=== After first style text set ===
+
+StyleSheet: 'html *, body[foo="bar"] {}body {    text-align: justify;}'
+html *, body[foo="bar"]: [regular, 0:0-0:23] {
+}
+body: [regular, 0:26-0:30] {
+    ['text-align':'justify'] @[0:36-0:56] active
+}
+
+=== After second style text set ===
+
+StyleSheet: 'html *, body[foo="bar"] {color: green; background: red; foo: bar; *baz: bar; /* Comment */ font-weight: bold !important}body {    text-align: justify;}'
+html *, body[foo="bar"]: [regular, 0:0-0:23] {
+    ['color':'green'] @[0:25-0:38] active
+    ['background':'red'] @[0:39-0:55] active
+    ['foo':'bar' non-parsed] @[0:56-0:65] active
+    ['font-weight':'bold !important' is-important] @[0:91-0:119] active
+    ['background-image':'initial'] @[undefined-undefined] style
+    ['background-repeat-x':'initial'] @[undefined-undefined] style
+    ['background-repeat-y':'initial'] @[undefined-undefined] style
+    ['background-attachment':'initial'] @[undefined-undefined] style
+    ['background-position-x':'initial'] @[undefined-undefined] style
+    ['background-position-y':'initial'] @[undefined-undefined] style
+    ['background-origin':'initial'] @[undefined-undefined] style
+    ['background-clip':'initial'] @[undefined-undefined] style
+    ['background-color':'red'] @[undefined-undefined] style
+    ['background-size':'initial'] @[undefined-undefined] style
+}
+body: [regular, 0:120-0:124] {
+    ['text-align':'justify'] @[0:130-0:150] active
 }
 
 === Matched rules after rule added ===
@@ -402,8 +434,10 @@ body: [regular, 9:0-9:4] {
     ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[18:4-18:73] active
 }
 html *, body[foo="bar"]: [regular, 0:0-0:23] {
-    ['color':'white'] @[1:4-1:17] active
-    ['background':'black'] @[1:18-1:36] active
+    ['color':'green'] @[0:25-0:38] active
+    ['background':'red'] @[0:39-0:55] active
+    ['foo':'bar' non-parsed] @[0:56-0:65] active
+    ['font-weight':'bold !important' is-important] @[0:91-0:119] active
     ['background-image':'initial'] @[undefined-undefined] style
     ['background-repeat-x':'initial'] @[undefined-undefined] style
     ['background-repeat-y':'initial'] @[undefined-undefined] style
@@ -412,11 +446,11 @@ html *, body[foo="bar"]: [regular, 0:0-0:23] {
     ['background-position-y':'initial'] @[undefined-undefined] style
     ['background-origin':'initial'] @[undefined-undefined] style
     ['background-clip':'initial'] @[undefined-undefined] style
-    ['background-color':'black'] @[undefined-undefined] style
+    ['background-color':'red'] @[undefined-undefined] style
     ['background-size':'initial'] @[undefined-undefined] style
 }
-body: [regular, 2:1-2:5] {
-    ['text-align':'justify'] @[2:11-2:31] active
+body: [regular, 0:120-0:124] {
+    ['text-align':'justify'] @[0:130-0:150] active
 }
 body: [inspector, 0:0-0:4] {
     ['font-family':'serif'] @[1:4-1:23] active

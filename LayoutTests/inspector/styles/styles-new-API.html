@@ -192,23 +192,23 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After selector set ===");
-            loadAndDumpStyleSheet(rule.ruleId.styleSheetId, test_setStyleText);
+            loadAndDumpStyleSheet(rule.ruleId.styleSheetId, test_setPropertyText);
         }
 
         CSSAgent.setRuleSelector(styleSheet.rules[0].ruleId, "html *, body[foo=\"bar\"]", didSetSelector);
     }
 
-    function test_setStyleText(styleSheet)
+    function test_setPropertyText(styleSheet)
     {
-        function didSetStyleText(error, style)
+        function didSetPropertyText(error, style)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
                 return;
             }
             InspectorTest.addResult("");
-            InspectorTest.addResult("=== After style text set ===");
-            loadAndDumpStyleSheet(style.styleId.styleSheetId, test_addRule);
+            InspectorTest.addResult("=== After property text set ===");
+            loadAndDumpStyleSheet(style.styleId.styleSheetId, test_setStyleText1);
         }
 
         CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "", true);
@@ -216,7 +216,39 @@ function test()
 
         // This operation should not update the style as the new property text is not parsable.
         CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "zzz;", false);
-        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetStyleText);
+        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetPropertyText);
+    }
+
+    function test_setStyleText1(styleSheet)
+    {
+        function didSetStyleText1(error, style)
+        {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
+            InspectorTest.addResult("");
+            InspectorTest.addResult("=== After first style text set ===");
+            loadAndDumpStyleSheet(style.styleId.styleSheetId, test_setStyleText2);
+        }
+
+        CSSAgent.setStyleText(styleSheet.rules[0].style.styleId, "", didSetStyleText1);
+    }
+
+    function test_setStyleText2(styleSheet)
+    {
+        function didSetStyleText2(error, style)
+        {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
+            InspectorTest.addResult("");
+            InspectorTest.addResult("=== After second style text set ===");
+            loadAndDumpStyleSheet(style.styleId.styleSheetId, test_addRule);
+        }
+
+        CSSAgent.setStyleText(styleSheet.rules[0].style.styleId, "color: green; background: red; foo: bar; *baz: bar; /* Comment */ font-weight: bold !important", didSetStyleText2);
     }
 
     function test_addRule()
