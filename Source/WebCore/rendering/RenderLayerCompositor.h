@@ -119,11 +119,6 @@ public:
     void setCompositingLayersNeedRebuild(bool needRebuild = true);
     bool compositingLayersNeedRebuild() const { return m_compositingLayersNeedRebuild; }
 
-    // Controls whether or not to consult geometry when deciding which layers need
-    // to be composited. Defaults to true.
-    void setCompositingConsultsOverlap(bool b) { m_compositingConsultsOverlap = b; }
-    bool compositingConsultsOverlap() const { return m_compositingConsultsOverlap; }
-    
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
     void scheduleLayerFlush(bool canThrottle);
@@ -405,7 +400,6 @@ private:
     bool m_showDebugBorders;
     bool m_showRepaintCounter;
     bool m_acceleratedDrawingEnabled;
-    bool m_compositingConsultsOverlap;
 
     // When true, we have to wait until layout has happened before we can decide whether to enter compositing mode,
     // because only then do we know the final size of plugins and iframes.

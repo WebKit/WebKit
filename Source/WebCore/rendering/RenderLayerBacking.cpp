@@ -419,9 +419,6 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     if (m_usingTiledCacheLayer)
         return false;
 
-    if (!compositor()->compositingConsultsOverlap())
-        return false;
-
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
         return false;
 
