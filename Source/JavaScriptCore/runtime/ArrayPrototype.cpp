@@ -324,7 +324,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
-    return JSValue::encode(stringJoiner.build(exec));
+    return JSValue::encode(stringJoiner.join(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
@@ -367,7 +367,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         }
     }
 
-    return JSValue::encode(stringJoiner.build(exec));
+    return JSValue::encode(stringJoiner.join(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
@@ -413,7 +413,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
             stringJoiner.append(String());
     }
 
-    return JSValue::encode(stringJoiner.build(exec));
+    return JSValue::encode(stringJoiner.join(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
