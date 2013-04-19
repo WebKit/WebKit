@@ -200,3 +200,13 @@ CLEANFILES += \
 
 DISTCLEANFILES += \
 	$(top_builddir)/Source/JavaScriptCore/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc
+
+if ENABLE_INTROSPECTION
+# The GIR file is generated via autoconf, as we don't need to run the scanner against non-GObject libraries.
+JavaScriptCore-@WEBKITGTK_API_VERSION@.typelib: JavaScriptCore-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit) --includedir $(top_builddir) $< -o $@
+
+gir_DATA += JavaScriptCore-@WEBKITGTK_API_VERSION@.gir
+typelibs_DATA += JavaScriptCore-@WEBKITGTK_API_VERSION@.typelib
+CLEANFILES += JavaScriptCore-@WEBKITGTK_API_VERSION@.gir JavaScriptCore-@WEBKITGTK_API_VERSION@.typelib
+endif

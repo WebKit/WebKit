@@ -268,6 +268,7 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     --nsversion=@WEBKITGTK_API_VERSION@ \
 	     --include=GObject-2.0 \
 	     --include=Gtk-3.0 \
+	     --include=JavaScriptCore-@WEBKITGTK_API_VERSION@ \
 	     --include=Soup-2.4 \
 	     --library=webkit2gtk-@WEBKITGTK_API_VERSION@ \
 	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
@@ -297,14 +298,11 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     $(webkitgtk_gdom_built_h_api) \
 	     $(WebKit2)/UIProcess/API/gtk/*.cpp
 
-gir2dir = $(datadir)/gir-1.0
-gir2_DATA = WebKit2-@WEBKITGTK_API_VERSION@.gir
-
-typelibs2dir = $(libdir)/girepository-1.0
-typelibs2_DATA = WebKit2-@WEBKITGTK_API_VERSION@.typelib
-
 WebKit2-@WEBKITGTK_API_VERSION@.typelib: WebKit2-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
 	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit2) --includedir $(top_builddir) $< -o $@
+
+gir_DATA += WebKit2-@WEBKITGTK_API_VERSION@.gir
+typelibs_DATA += WebKit2-@WEBKITGTK_API_VERSION@.typelib
 
 CLEANFILES += WebKit2-@WEBKITGTK_API_VERSION@.gir WebKit2-@WEBKITGTK_API_VERSION@.typelib
 

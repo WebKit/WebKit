@@ -108,10 +108,6 @@ minibrowser_built_sources :=
 global_cppflags :=
 global_cflags :=
 global_cxxflags :=
-JSCORE_GIRSOURCES :=
-WEBKIT_GIRSOURCES :=
-typelibsdir :=
-typelibs_DATA :=
 EXTRA_DIST :=
 BUILT_SOURCES :=
 CLEANFILES :=
@@ -119,6 +115,13 @@ DOMAIN :=
 DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
 pkgconfig_DATA :=
+
+if ENABLE_INTROSPECTION
+gir_DATA :=
+typelibs_DATA :=
+girdir := $(datadir)/gir-1.0
+typelibsdir := $(libdir)/girepository-1.0
+endif
 
 # We do not care at all about this implicit built-in make rules,
 # disable them to save some build time
