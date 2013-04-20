@@ -72,6 +72,11 @@ void LoadableTextTrack::scheduleLoad(const KURL& url)
         m_loadTimer.startOneShot(0);
 }
 
+Element* LoadableTextTrack::element()
+{
+    return m_trackElement;
+}
+
 void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
 {
     if (m_loader)

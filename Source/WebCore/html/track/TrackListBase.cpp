@@ -50,6 +50,11 @@ TrackListBase::~TrackListBase()
 {
 }
 
+Element* TrackListBase::element() const
+{
+    return m_element;
+}
+
 unsigned TrackListBase::length() const
 {
     return m_inbandTracks.size();

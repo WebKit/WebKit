@@ -26,16 +26,15 @@
 #ifndef InbandTextTrackPrivate_h
 #define InbandTextTrackPrivate_h
 
+#if ENABLE(VIDEO_TRACK)
+
+#include "InbandTextTrackPrivateClient.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(VIDEO_TRACK)
-
 namespace WebCore {
-
-class InbandTextTrackPrivateClient;
 
 class InbandTextTrackPrivate : public RefCounted<InbandTextTrackPrivate> {
     WTF_MAKE_NONCOPYABLE(InbandTextTrackPrivate); WTF_MAKE_FAST_ALLOCATED;
@@ -77,6 +76,12 @@ public:
     virtual bool isDefault() const { return false; }
 
     virtual int textTrackIndex() const { return 0; }
+
+    void willBeRemoved()
+    {
+        if (m_client)
+            m_client->willRemoveTextTrackPrivate(this);
+    }
 
 protected:
     InbandTextTrackPrivate()

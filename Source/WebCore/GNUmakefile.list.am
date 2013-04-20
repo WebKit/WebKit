@@ -65,6 +65,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioProcessingEvent.h \
 	DerivedSources/WebCore/JSAudioSourceNode.cpp \
 	DerivedSources/WebCore/JSAudioSourceNode.h \
+	DerivedSources/WebCore/JSAudioTrack.cpp \
+	DerivedSources/WebCore/JSAudioTrack.h \
+	DerivedSources/WebCore/JSAudioTrackList.cpp \
+	DerivedSources/WebCore/JSAudioTrackList.h \
 	DerivedSources/WebCore/JSBarInfo.cpp \
 	DerivedSources/WebCore/JSBarInfo.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
@@ -777,6 +781,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSValidityState.h \
 	DerivedSources/WebCore/JSVoidCallback.cpp \
 	DerivedSources/WebCore/JSVoidCallback.h \
+	DerivedSources/WebCore/JSVideoTrack.cpp \
+	DerivedSources/WebCore/JSVideoTrack.h \
+	DerivedSources/WebCore/JSVideoTrackList.cpp \
+	DerivedSources/WebCore/JSVideoTrackList.h \
 	DerivedSources/WebCore/JSWaveShaperNode.cpp \
 	DerivedSources/WebCore/JSWaveShaperNode.h \
 	DerivedSources/WebCore/JSWaveTable.cpp \
@@ -1586,11 +1594,15 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/shadow/HTMLContentElement.idl \
 	$(WebCore)/html/shadow/HTMLShadowElement.idl \
+	$(WebCore)/html/track/AudioTrack.idl \
+	$(WebCore)/html/track/AudioTrackList.idl \
 	$(WebCore)/html/track/TextTrack.idl \
 	$(WebCore)/html/track/TextTrackCue.idl \
 	$(WebCore)/html/track/TextTrackCueList.idl \
 	$(WebCore)/html/track/TextTrackList.idl \
 	$(WebCore)/html/track/TrackEvent.idl \
+	$(WebCore)/html/track/VideoTrack.idl \
+	$(WebCore)/html/track/VideoTrackList.idl \
 	$(WebCore)/inspector/InjectedScriptHost.idl \
 	$(WebCore)/inspector/InspectorFrontendHost.idl \
 	$(WebCore)/inspector/JavaScriptCallFrame.idl \
@@ -2321,6 +2333,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioTrackCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioTrackListCustom.cpp \
 	Source/WebCore/bindings/js/JSBiquadFilterNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSBlobCustom.cpp \
 	Source/WebCore/bindings/js/JSCDATASectionCustom.cpp \
@@ -2467,7 +2481,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTextCustom.cpp \
 	Source/WebCore/bindings/js/JSTextTrackCueCustom.cpp \
 	Source/WebCore/bindings/js/JSTextTrackCustom.cpp \
-	Source/WebCore/bindings/js/JSTextTrackCustom.h \
 	Source/WebCore/bindings/js/JSTextTrackListCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchListCustom.cpp \
@@ -2475,6 +2488,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTrackCustom.h \
 	Source/WebCore/bindings/js/JSTrackEventCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
+	Source/WebCore/bindings/js/JSVideoTrackCustom.cpp \
+	Source/WebCore/bindings/js/JSVideoTrackListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
@@ -3769,6 +3784,10 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/AudioTrack.cpp \
+	Source/WebCore/html/track/AudioTrack.h \
+	Source/WebCore/html/track/AudioTrackList.cpp \
+	Source/WebCore/html/track/AudioTrackList.h \
 	Source/WebCore/html/track/InbandTextTrack.cpp \
 	Source/WebCore/html/track/InbandTextTrack.h \
 	Source/WebCore/html/track/LoadableTextTrack.cpp \
@@ -3789,6 +3808,10 @@ webcore_sources += \
 	Source/WebCore/html/track/TrackEvent.h \
 	Source/WebCore/html/track/TrackListBase.cpp \
 	Source/WebCore/html/track/TrackListBase.h \
+	Source/WebCore/html/track/VideoTrack.cpp \
+	Source/WebCore/html/track/VideoTrack.h \
+	Source/WebCore/html/track/VideoTrackList.cpp \
+	Source/WebCore/html/track/VideoTrackList.h \
 	Source/WebCore/html/track/WebVTTElement.cpp \
 	Source/WebCore/html/track/WebVTTElement.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
@@ -5499,6 +5522,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/InitializeLogging.h \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
+	Source/WebCore/platform/graphics/AudioTrackPrivate.h \
 	Source/WebCore/platform/graphics/cpu/arm/GraphicsContext3DNEON.h \
 	Source/WebCore/platform/graphics/cpu/arm/filters/NEONHelpers.h \
 	Source/WebCore/platform/graphics/cpu/arm/filters/FEBlendNEON.h \
@@ -5779,6 +5803,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	Source/WebCore/platform/graphics/TypesettingFeatures.h \
 	Source/WebCore/platform/graphics/UnitBezier.h \
+	Source/WebCore/platform/graphics/VideoTrackPrivate.h \
 	Source/WebCore/platform/graphics/WidthCache.h \
 	Source/WebCore/platform/graphics/WidthIterator.cpp \
 	Source/WebCore/platform/graphics/WidthIterator.h \

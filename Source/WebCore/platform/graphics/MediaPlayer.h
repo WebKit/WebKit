@@ -32,11 +32,13 @@
 #include "MediaPlayerProxy.h"
 #endif
 
+#include "AudioTrackPrivate.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "LayoutRect.h"
 #include "Timer.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -218,8 +220,12 @@ public:
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
 
 #if ENABLE(VIDEO_TRACK)
+    virtual void mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
     virtual void mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate>) { }
+    virtual void mediaPlayerDidAddVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
+    virtual void mediaPlayerDidRemoveAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
     virtual void mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate>) { }
+    virtual void mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
     virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) { }
@@ -450,8 +456,12 @@ public:
     CachedResourceLoader* cachedResourceLoader();
 
 #if ENABLE(VIDEO_TRACK)
+    void addAudioTrack(PassRefPtr<AudioTrackPrivate>);
     void addTextTrack(PassRefPtr<InbandTextTrackPrivate>);
+    void addVideoTrack(PassRefPtr<VideoTrackPrivate>);
+    void removeAudioTrack(PassRefPtr<AudioTrackPrivate>);
     void removeTextTrack(PassRefPtr<InbandTextTrackPrivate>);
+    void removeVideoTrack(PassRefPtr<VideoTrackPrivate>);
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);

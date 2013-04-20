@@ -25,10 +25,10 @@
 
 [
     Conditional=VIDEO_TRACK,
+    GenerateIsReachable=ImplElementRoot,
     IndexedGetter,
     EventTarget,
-    JSCustomMarkFunction,
-    CustomIsReachable
+    JSCustomMarkFunction
 ] interface TextTrackList {
     readonly attribute unsigned long length;
     TextTrack item(in unsigned long index);

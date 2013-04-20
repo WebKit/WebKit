@@ -41,6 +41,7 @@
 namespace WebCore {
 
     class AudioContext;
+    class AudioTrackList;
     class DedicatedWorkerContext;
     class DOMApplicationCache;
     class DOMWindow;
@@ -67,6 +68,7 @@ namespace WebCore {
     class SourceBufferList;
     class TextTrack;
     class TextTrackCue;
+    class VideoTrackList;
     class WebSocket;
     class WebKitNamedFlow;
     class Worker;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TrackBase.h"
 
+#include "HTMLMediaElement.h"
+
 #if ENABLE(VIDEO_TRACK)
 
 namespace WebCore {
@@ -41,6 +43,11 @@ TrackBase::TrackBase(Type type, const AtomicString& label, const AtomicString& l
 
 TrackBase::~TrackBase()
 {
+}
+
+Element* TrackBase::element()
+{
+    return m_mediaElement;
 }
 
 void TrackBase::setKind(const AtomicString& kind)

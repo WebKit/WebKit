@@ -1,6 +1,7 @@
 namespace="EventTarget"
 
 AudioContext conditional=WEB_AUDIO
+AudioTrackList conditional=VIDEO_TRACK
 BatteryManager conditional=BATTERY_STATUS
 DedicatedWorkerContext conditional=WORKERS
 DOMApplicationCache
@@ -37,6 +38,7 @@ SVGElementInstance conditional=SVG
 TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
+VideoTrackList conditional=VIDEO_TRACK
 WebKitNamedFlow
 WebSocket conditional=WEB_SOCKETS
 Worker conditional=WORKERS

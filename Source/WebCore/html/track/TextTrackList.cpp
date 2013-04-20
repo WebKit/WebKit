@@ -30,6 +30,7 @@
 #include "TextTrackList.h"
 
 #include "EventNames.h"
+#include "HTMLMediaElement.h"
 #include "InbandTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "LoadableTextTrack.h"
@@ -37,8 +38,8 @@
 
 using namespace WebCore;
 
-TextTrackList::TextTrackList(HTMLMediaElement* owner, ScriptExecutionContext* context)
-    : TrackListBase(owner, context)
+TextTrackList::TextTrackList(HTMLMediaElement* element, ScriptExecutionContext* context)
+    : TrackListBase(element, context)
 {
 }
 
@@ -173,8 +174,8 @@ void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
 
     invalidateTrackIndexesAfterTrack(track.get());
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == element());
-    track->setMediaElement(element());
+    ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
+    track->setMediaElement(mediaElement());
 
     scheduleAddTrackEvent(track.release());
 }

@@ -263,7 +263,14 @@ void InbandTextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
     m_cueMap.remove(static_cast<TextTrackCueGeneric*>(cue));
     TextTrack::removeCue(cue, ec);
 }
-    
+
+void InbandTextTrack::willRemoveTextTrackPrivate(InbandTextTrackPrivate* trackPrivate)
+{
+    UNUSED_PARAM(trackPrivate);
+    ASSERT(trackPrivate == m_private);
+    mediaElement()->removeTextTrack(this);
+}
+
 } // namespace WebCore
 
 #endif

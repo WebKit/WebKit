@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class HTMLMediaElement;
+class Element;
 class TrackBase;
 
 class TrackListBase : public RefCounted<TrackListBase>, public EventTarget {
@@ -59,7 +60,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
     void clearElement() { m_element = 0; }
-    HTMLMediaElement* element() const { return m_element; }
+    Element* element() const;
+    HTMLMediaElement* mediaElement() const { return m_element; }
 
     bool isFiringEventListeners() { return m_dispatchingEvents; }
 

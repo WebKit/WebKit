@@ -2686,14 +2686,20 @@ endif ()
 
 if (ENABLE_VIDEO_TRACK)
     list(APPEND WebCore_IDL_FILES
+        html/track/AudioTrack.idl
+        html/track/AudioTrackList.idl
         html/track/TextTrack.idl
         html/track/TextTrackCue.idl
         html/track/TextTrackCueList.idl
         html/track/TextTrackList.idl
         html/track/TrackEvent.idl
+        html/track/VideoTrack.idl
+        html/track/VideoTrackList.idl
     )
 
     list(APPEND WebCore_SOURCES
+        html/track/AudioTrack.cpp
+        html/track/AudioTrackList.cpp
         html/track/InbandTextTrack.cpp
         html/track/LoadableTextTrack.cpp
         html/track/TextTrack.cpp
@@ -2707,6 +2713,8 @@ if (ENABLE_VIDEO_TRACK)
         html/track/WebVTTElement.cpp
         html/track/WebVTTParser.cpp
         html/track/WebVTTTokenizer.cpp
+        html/track/VideoTrack.cpp
+        html/track/VideoTrackList.cpp
 
         loader/cache/CachedTextTrack.cpp
 

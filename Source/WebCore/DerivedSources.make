@@ -431,11 +431,15 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
     $(WebCore)/html/shadow/HTMLContentElement.idl \
     $(WebCore)/html/shadow/HTMLShadowElement.idl \
+    $(WebCore)/html/track/AudioTrack.idl \
+    $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/TextTrack.idl \
     $(WebCore)/html/track/TextTrackCue.idl \
     $(WebCore)/html/track/TextTrackCueList.idl \
     $(WebCore)/html/track/TextTrackList.idl \
     $(WebCore)/html/track/TrackEvent.idl \
+    $(WebCore)/html/track/VideoTrack.idl \
+    $(WebCore)/html/track/VideoTrackList.idl \
     $(WebCore)/inspector/InjectedScriptHost.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
     $(WebCore)/inspector/ScriptProfile.idl \

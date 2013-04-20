@@ -29902,6 +29902,10 @@
 				Name="graphics"
 				>
 				<File
+					RelativePath="..\platform\graphics\AudioTrackPrivate.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\BitmapImage.cpp"
 					>
 				</File>
@@ -30375,6 +30379,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\graphics\UnitBezier.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\VideoTrackPrivate.h"
 					>
 				</File>
 				<File
@@ -65754,6 +65762,22 @@
 				Name="track"
 				>
 				<File
+					RelativePath="..\html\track\AudioTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\AudioTrack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\AudioTrackList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\AudioTrackList.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\track\InbandTextTrack.cpp"
 					>
 				</File>
@@ -65831,6 +65855,22 @@
 				</File>
 				<File
 					RelativePath="..\html\track\TrackListBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\VideoTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\VideoTrack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\VideoTrackList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\VideoTrackList.h"
 					>
 				</File>
 				<File

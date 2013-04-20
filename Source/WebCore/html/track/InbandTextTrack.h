@@ -80,6 +80,7 @@ private:
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
     virtual void removeCue(TextTrackCue*, ExceptionCode&) OVERRIDE;
+    virtual void willRemoveTextTrackPrivate(InbandTextTrackPrivate*) OVERRIDE;
 
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);

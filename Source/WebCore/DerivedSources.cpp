@@ -472,12 +472,16 @@
 #include "JSTextEvent.cpp"
 #include "JSTextMetrics.cpp"
 #if ENABLE(VIDEO_TRACK)
+#include "JSAudioTrack.cpp"
+#include "JSAudioTrackList.cpp"
 #include "JSHTMLTrackElement.cpp"
 #include "JSTextTrack.cpp"
 #include "JSTextTrackCue.cpp"
 #include "JSTextTrackCueList.cpp"
 #include "JSTextTrackList.cpp"
 #include "JSTrackEvent.cpp"
+#include "JSVideoTrack.cpp"
+#include "JSVideoTrackList.cpp"
 #endif
 #include "JSTimeRanges.cpp"
 #include "JSTouch.cpp"

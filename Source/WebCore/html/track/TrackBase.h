@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Element;
 class HTMLMediaElement;
 
 class TrackBase : public RefCounted<TrackBase> {
@@ -44,6 +45,7 @@ public:
 
     void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
+    virtual Element* element();
 
     AtomicString kind() const { return m_kind; }
     virtual void setKind(const AtomicString&);

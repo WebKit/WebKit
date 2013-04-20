@@ -652,11 +652,15 @@ enable?(GAMEPAD) {
 
 enable?(VIDEO_TRACK) {
   IDL_BINDINGS += \
+    $$PWD/html/track/AudioTrack.idl \
+    $$PWD/html/track/AudioTrackList.idl \
     $$PWD/html/track/TextTrack.idl \
     $$PWD/html/track/TextTrackCue.idl \
     $$PWD/html/track/TextTrackCueList.idl \
     $$PWD/html/track/TextTrackList.idl \
     $$PWD/html/track/TrackEvent.idl \
+    $$PWD/html/track/VideoTrack.idl \
+    $$PWD/html/track/VideoTrackList.idl
 }
 
 enable?(MEDIA_SOURCE) {

@@ -219,11 +219,15 @@ endif ()
 
 if (ENABLE_VIDEO_TRACK)
     list(APPEND WebCore_SOURCES
+        bindings/js/JSAudioTrackCustom.cpp
+        bindings/js/JSAudioTrackListCustom.cpp
         bindings/js/JSTextTrackCueCustom.cpp
         bindings/js/JSTextTrackCustom.cpp
         bindings/js/JSTextTrackListCustom.cpp
         bindings/js/JSTrackCustom.cpp
         bindings/js/JSTrackEventCustom.cpp
+        bindings/js/JSVideoTrackCustom.cpp
+        bindings/js/JSVideoTrackListCustom.cpp
     )
 endif ()
 

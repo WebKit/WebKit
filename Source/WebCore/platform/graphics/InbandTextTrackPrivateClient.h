@@ -128,10 +128,12 @@ private:
 class InbandTextTrackPrivateClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
-    
+
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
+
+    virtual void willRemoveTextTrackPrivate(InbandTextTrackPrivate*) = 0;
 };
 
 } // namespace WebCore

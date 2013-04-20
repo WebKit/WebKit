@@ -98,6 +98,8 @@
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+#include "AudioTrackList.h"
+#include "AudioTrackPrivate.h"
 #include "CaptionUserPreferences.h"
 #include "HTMLTrackElement.h"
 #include "InbandTextTrack.h"
@@ -105,6 +107,8 @@
 #include "RuntimeEnabledFeatures.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
+#include "VideoTrackList.h"
+#include "VideoTrackPrivate.h"
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -296,7 +300,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_processingPreferenceChange(false)
     , m_lastTextTrackUpdateTime(-1)
     , m_captionDisplayMode(CaptionUserPreferences::Automatic)
+    , m_audioTracks(0)
     , m_textTracks(0)
+    , m_videoTracks(0)
     , m_ignoreTrackDisplayUpdate(0)
 #endif
 #if ENABLE(WEB_AUDIO)
@@ -330,11 +336,21 @@ HTMLMediaElement::~HTMLMediaElement()
     document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
 #if ENABLE(VIDEO_TRACK)
     document()->unregisterForCaptionPreferencesChangedCallbacks(this);
+    if (m_audioTracks) {
+        m_audioTracks->clearElement();
+        for (unsigned i = 0; i < m_audioTracks->length(); ++i)
+            m_audioTracks->item(i)->clearClient();
+    }
     if (m_textTracks)
         m_textTracks->clearElement();
     if (m_textTracks) {
         for (unsigned i = 0; i < m_textTracks->length(); ++i)
             m_textTracks->item(i)->clearClient();
+    }
+    if (m_videoTracks) {
+        m_videoTracks->clearElement();
+        for (unsigned i = 0; i < m_videoTracks->length(); ++i)
+            m_videoTracks->item(i)->clearClient();
     }
 #endif
 
@@ -1353,6 +1369,11 @@ void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
     }
 }
 
+void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack*)
+{
+    // We will want to change the media controls here once they exist
+}
+
 void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
 {
     if (track->trackType() == TextTrack::TrackElement) {
@@ -1390,6 +1411,11 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     
     configureTextTrackDisplay();
     updateActiveTextTrackCues(currentTime());
+}
+
+void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack*)
+{
+    // We will want to change the media controls here once they exist
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
@@ -2796,6 +2822,14 @@ double HTMLMediaElement::percentLoaded() const
 
 #if ENABLE(VIDEO_TRACK)
 
+void HTMLMediaElement::mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate> prpTrack)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    addAudioTrack(AudioTrack::create(this, prpTrack));
+}
+
 void HTMLMediaElement::mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
@@ -2828,24 +2862,30 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPriv
     // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
     // interface, with the track attribute initialized to the text track's TextTrack object, at the media element's
     // textTracks attribute's TextTrackList object.
-    addTextTrack(textTrack.get());
+    addTextTrack(textTrack.release());
+}
+
+void HTMLMediaElement::mediaPlayerDidAddVideoTrack(PassRefPtr<VideoTrackPrivate> prpTrack)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    addVideoTrack(VideoTrack::create(this, prpTrack));
+}
+
+void HTMLMediaElement::mediaPlayerDidRemoveAudioTrack(PassRefPtr<AudioTrackPrivate> prpTrack)
+{
+    prpTrack->willBeRemoved();
 }
 
 void HTMLMediaElement::mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
 {
-    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
-        return;
-    
-    if (!m_textTracks)
-        return;
+    prpTrack->willBeRemoved();
+}
 
-    // This cast is safe because we created the InbandTextTrack with the InbandTextTrackPrivate
-    // passed to mediaPlayerDidAddTextTrack.
-    RefPtr<InbandTextTrack> textTrack = static_cast<InbandTextTrack*>(prpTrack->client());
-    if (!textTrack)
-        return;
-
-    removeTextTrack(textTrack.get());
+void HTMLMediaElement::mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate> prpTrack)
+{
+    prpTrack->willBeRemoved();
 }
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
@@ -2924,15 +2964,45 @@ void HTMLMediaElement::closeCaptionTracksChanged()
 #endif
 }
 
-void HTMLMediaElement::addTextTrack(TextTrack* track)
+void HTMLMediaElement::addAudioTrack(PassRefPtr<AudioTrack> track)
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    audioTracks()->append(track);
+}
+
+void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
     textTracks()->append(track);
-    
+
     closeCaptionTracksChanged();
+}
+
+void HTMLMediaElement::addVideoTrack(PassRefPtr<VideoTrack> track)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    videoTracks()->append(track);
+}
+
+void HTMLMediaElement::removeAudioTrack(AudioTrack* track)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    m_audioTracks->remove(track);
 }
 
 void HTMLMediaElement::removeTextTrack(TextTrack* track)
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
     TrackDisplayUpdateScope scope(this);
     TextTrackCueList* cues = track->cues();
     if (cues)
@@ -2943,18 +3013,31 @@ void HTMLMediaElement::removeTextTrack(TextTrack* track)
     closeCaptionTracksChanged();
 }
 
-void HTMLMediaElement::removeAllInbandTracks()
+void HTMLMediaElement::removeVideoTrack(VideoTrack* track)
 {
-    if (!m_textTracks)
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
 
-    TrackDisplayUpdateScope scope(this);
-    for (int i = m_textTracks->length() - 1; i >= 0; --i) {
-        TextTrack* track = m_textTracks->item(i);
+    m_videoTracks->remove(track);
+}
 
-        if (track->trackType() == TextTrack::InBand)
-            removeTextTrack(track);
+void HTMLMediaElement::removeAllInbandTracks()
+{
+    while (m_audioTracks &&  m_audioTracks->length())
+        removeAudioTrack(m_audioTracks->lastItem());
+
+    if (m_textTracks) {
+        TrackDisplayUpdateScope scope(this);
+        for (int i = m_textTracks->length() - 1; i >= 0; --i) {
+            TextTrack* track = m_textTracks->item(i);
+
+            if (track->trackType() == TextTrack::InBand)
+                removeTextTrack(track);
+        }
     }
+
+    while (m_videoTracks &&  m_videoTracks->length())
+        removeVideoTrack(m_videoTracks->lastItem());
 }
 
 PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
@@ -2983,7 +3066,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     // first append the track to the text track list.
 
     // 6. Add the new text track to the media element's list of text tracks.
-    addTextTrack(textTrack.get());
+    addTextTrack(textTrack);
 
     // ... its text track readiness state to the text track loaded state ...
     textTrack->setReadinessState(TextTrack::Loaded);
@@ -2992,6 +3075,17 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     textTrack->setMode(TextTrack::hiddenKeyword());
 
     return textTrack.release();
+}
+
+AudioTrackList* HTMLMediaElement::audioTracks()
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return 0;
+
+    if (!m_audioTracks)
+        m_audioTracks = AudioTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+
+    return m_audioTracks.get();
 }
 
 TextTrackList* HTMLMediaElement::textTracks() 
@@ -3003,6 +3097,17 @@ TextTrackList* HTMLMediaElement::textTracks()
         m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
 
     return m_textTracks.get();
+}
+
+VideoTrackList* HTMLMediaElement::videoTracks()
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return 0;
+
+    if (!m_videoTracks)
+        m_videoTracks = VideoTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+
+    return m_videoTracks.get();
 }
 
 void HTMLMediaElement::didAddTextTrack(HTMLTrackElement* trackElement)
@@ -3020,7 +3125,7 @@ void HTMLMediaElement::didAddTextTrack(HTMLTrackElement* trackElement)
     if (!textTrack)
         return;
     
-    addTextTrack(textTrack.get());
+    addTextTrack(textTrack.release());
     
     // Do not schedule the track loading until parsing finishes so we don't start before all tracks
     // in the markup have been added.
@@ -4922,7 +5027,9 @@ void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_mediaSource, "mediaSource");
 #endif
 #if ENABLE(VIDEO_TRACK)
+    info.addMember(m_audioTracks, "audioTracks");
     info.addMember(m_textTracks, "textTracks");
+    info.addMember(m_videoTracks, "videoTracks");
     info.addMember(m_textTracksWhenResourceSelectionBegan, "textTracksWhenResourceSelectionBegan");
     info.addMember(m_cueTree, "cueTree");
     info.addMember(m_currentlyActiveCues, "currentlyActiveCues");

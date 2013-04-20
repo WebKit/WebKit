@@ -116,7 +116,9 @@ void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullStr
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
 TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
     raises (DOMException);
+readonly attribute AudioTrackList audioTracks;
 readonly attribute TextTrackList textTracks;
+readonly attribute VideoTrackList videoTracks;
 #endif
 
 [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;

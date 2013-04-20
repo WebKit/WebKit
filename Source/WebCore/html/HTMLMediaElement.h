@@ -39,10 +39,12 @@
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+#include "AudioTrack.h"
 #include "CaptionUserPreferences.h"
 #include "PODIntervalTree.h"
 #include "TextTrack.h"
 #include "TextTrackCue.h"
+#include "VideoTrack.h"
 #endif
 
 namespace WebCore {
@@ -70,8 +72,12 @@ class MediaKeys;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+class AudioTrackList;
+class AudioTrackPrivate;
 class InbandTextTrackPrivate;
 class TextTrackList;
+class VideoTrackList;
+class VideoTrackPrivate;
 
 typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
 typedef CueIntervalTree::IntervalType CueInterval;
@@ -84,7 +90,9 @@ typedef Vector<CueInterval> CueList;
 
 class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
 #if ENABLE(VIDEO_TRACK)
+    , private AudioTrackClient
     , private TextTrackClient
+    , private VideoTrackClient
 #endif
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     , public PlatformTextTrackMenuClient
@@ -226,11 +234,18 @@ public:
     PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, ExceptionCode& ec) { return addTextTrack(kind, label, emptyString(), ec); }
     PassRefPtr<TextTrack> addTextTrack(const String& kind, ExceptionCode& ec) { return addTextTrack(kind, emptyString(), emptyString(), ec); }
 
+    AudioTrackList* audioTracks();
     TextTrackList* textTracks();
+    VideoTrackList* videoTracks();
+
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
-    void addTextTrack(TextTrack*);
+    void addAudioTrack(PassRefPtr<AudioTrack>);
+    void addTextTrack(PassRefPtr<TextTrack>);
+    void addVideoTrack(PassRefPtr<VideoTrack>);
+    void removeAudioTrack(AudioTrack*);
     void removeTextTrack(TextTrack*);
+    void removeVideoTrack(VideoTrack*);
     void removeAllInbandTracks();
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
@@ -238,8 +253,12 @@ public:
     virtual void didAddTextTrack(HTMLTrackElement*);
     virtual void didRemoveTextTrack(HTMLTrackElement*);
 
+    virtual void mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate>) OVERRIDE;
     virtual void mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
+    virtual void mediaPlayerDidAddVideoTrack(PassRefPtr<VideoTrackPrivate>) OVERRIDE;
+    virtual void mediaPlayerDidRemoveAudioTrack(PassRefPtr<AudioTrackPrivate>) OVERRIDE;
     virtual void mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
+    virtual void mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate>) OVERRIDE;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) OVERRIDE;
@@ -275,6 +294,9 @@ public:
     void configureTextTrackDisplay();
     void updateTextTrackDisplay();
 
+    // AudioTrackClient
+    virtual void audioTrackEnabledChanged(AudioTrack*);
+
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
     virtual void textTrackKindChanged(TextTrack*);
@@ -283,6 +305,9 @@ public:
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
     virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
+
+    // VideoTrackClient
+    virtual void videoTrackSelectedChanged(VideoTrack*);
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
@@ -699,7 +724,9 @@ private:
 
     CaptionUserPreferences::CaptionDisplayMode m_captionDisplayMode;
 
+    RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;
+    RefPtr<VideoTrackList> m_videoTracks;
     Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;
 
     CueIntervalTree m_cueTree;

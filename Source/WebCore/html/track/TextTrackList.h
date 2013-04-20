@@ -52,7 +52,7 @@ public:
     virtual void remove(TrackBase*) OVERRIDE;
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual const AtomicString& interfaceName() const OVERRIDE;
 
 private:
     TextTrackList(HTMLMediaElement*, ScriptExecutionContext*);

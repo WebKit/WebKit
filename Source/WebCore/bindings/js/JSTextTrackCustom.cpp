@@ -26,31 +26,13 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
-#include "JSTextTrackCustom.h"
-
 #include "JSTextTrack.h"
 #include "JSTextTrackCueList.h"
+#include "JSTrackCustom.h"
 
 using namespace JSC;
 
 namespace WebCore {
-
-bool JSTextTrackOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSTextTrack* jsTextTrack = jsCast<JSTextTrack*>(handle.get().asCell());
-    TextTrack* textTrack = static_cast<TextTrack*>(jsTextTrack->impl());
-
-    // If the cue is firing event listeners, its wrapper is reachable because
-    // the wrapper is responsible for marking those event listeners.
-    if (textTrack->isFiringEventListeners())
-        return true;
-
-    // If the cue has no event listeners and has no custom properties, it is not reachable.
-    if (!textTrack->hasEventListeners() && !jsTextTrack->hasCustomProperties())
-        return false;
-
-    return visitor.containsOpaqueRoot(root(textTrack));
-}
 
 void JSTextTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

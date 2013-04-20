@@ -28,7 +28,8 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "JSTextTrackCue.h"
-#include "JSTextTrackCustom.h"
+#include "JSTrackCustom.h"
+#include "TextTrack.h"
 
 using namespace JSC;
 

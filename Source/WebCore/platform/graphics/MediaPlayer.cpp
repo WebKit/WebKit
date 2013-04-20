@@ -1103,6 +1103,22 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
 }
 
 #if ENABLE(VIDEO_TRACK)
+void MediaPlayer::addAudioTrack(PassRefPtr<AudioTrackPrivate> track)
+{
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidAddAudioTrack(track);
+}
+
+void MediaPlayer::removeAudioTrack(PassRefPtr<AudioTrackPrivate> track)
+{
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidRemoveAudioTrack(track);
+}
+
 void MediaPlayer::addTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
 {
     if (!m_mediaPlayerClient)
@@ -1117,6 +1133,22 @@ void MediaPlayer::removeTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
         return;
 
     m_mediaPlayerClient->mediaPlayerDidRemoveTextTrack(track);
+}
+
+void MediaPlayer::addVideoTrack(PassRefPtr<VideoTrackPrivate> track)
+{
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidAddVideoTrack(track);
+}
+
+void MediaPlayer::removeVideoTrack(PassRefPtr<VideoTrackPrivate> track)
+{
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidRemoveVideoTrack(track);
 }
 
 bool MediaPlayer::requiresTextTrackRepresentation() const
