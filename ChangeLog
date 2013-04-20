@@ -1,3 +1,23 @@
+2013-04-20  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][Mac] Remove obsolete workaround for debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=114750
+
+        Reviewed by Jocelyn Turcotte.
+
+        This workaround made default builds fail with recent Qt5 because
+        it removed the major version number from the library name, producing
+        QtWebKitWidgets, whereas the linking command line tried to link
+        against Qt5WebKitWidgets.
+        Debug builds are possible with and without framework-enabled builds
+        of Qt, but the debug versions of the Qt libraries have to be present.
+        Debug builds with a release version of Qt are not possible on Mac
+        since for debug builds qmake produces a linker command line where
+        all the Qt libraries have the "_debug" suffix, therefore if the debug
+        libraries are missing the build fails.
+
+        * Source/widgetsapi.pri:
+
 2013-04-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] JSCore.gir.in has a few problems
