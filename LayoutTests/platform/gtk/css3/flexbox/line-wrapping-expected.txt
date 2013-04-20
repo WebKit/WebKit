@@ -1,0 +1,100 @@
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
+ FAIL:
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+
+<div class="flexbox fixed row vertical-lr">
+    <div data-expected-height="" data-expected-width="100">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
+    </div>
+    <div data-expected-height="100" data-expected-width="40" style="-webkit-align-self: flex-start;">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="100"></div>
+    </div>
+</div>
+ FAIL:
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 74 for offsetLeft, but got 73. 
+
+<div class="flexbox fixed column vertical-lr">
+    <div data-expected-height="200" data-expected-width="50">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
+    </div>
+    <div data-expected-height="200" data-expected-width="50" style="-webkit-align-self: flex-start;">
+        <div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="74" data-offset-y="0"></div>
+    </div>
+</div>
+ FAIL:
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 54 for offsetLeft, but got 53. 
+Expected 54 for offsetLeft, but got 53. 
+
+<div class="flexbox fixed column vertical-lr">
+    <div data-expected-height="200" data-expected-width="50">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div>
+    </div>
+    <div data-expected-height="80" data-expected-width="50" style="-webkit-align-self: flex-start;">
+        <div data-offset-x="54"></div><div data-offset-x="54"></div>
+    </div>
+</div>
+ FAIL:
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+
+<div class="flexbox auto row vertical-lr" data-expected-height="500">
+    <div data-expected-height="250" data-expected-width="100">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
+    </div>
+    <div data-expected-height="250" data-expected-width="40" style="-webkit-align-self: flex-start;">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="250"></div>
+    </div>
+</div>
+ FAIL:
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 4 for offsetLeft, but got 3. 
+Expected 24 for offsetLeft, but got 23. 
+Expected 44 for offsetLeft, but got 43. 
+Expected 44 for offsetLeft, but got 43. 
+Expected 44 for offsetLeft, but got 43. 
+Expected 44 for offsetLeft, but got 43. 
+Expected 44 for offsetLeft, but got 43. 
+Expected 64 for offsetLeft, but got 63. 
+
+<div data-expected-height="500" data-expected-width="80" class="flexbox auto column vertical-lr">
+    <div data-expected-height="500" data-expected-width="40">
+        <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
+    </div>
+    <div data-expected-height="500" data-expected-width="40" style="-webkit-align-self: flex-start;">
+        <div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="64" data-offset-y="0"></div>
+    </div>
+</div>
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
