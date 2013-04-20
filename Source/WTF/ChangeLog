@@ -1,3 +1,14 @@
+2013-04-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        LLint should be able to use x87 instead of SSE for floating pointer
+        https://bugs.webkit.org/show_bug.cgi?id=112239
+
+        Reviewed by Filip Pizlo.
+
+        Disable GTK workaround now that LLInt does not require SSE2.
+
+        * wtf/Platform.h:
+
 2013-04-19  Roger Fong  <roger_fong@apple.com>
 
         Remove uses of WebKit_Source from AppleWin build in WTF.

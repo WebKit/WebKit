@@ -1,3 +1,28 @@
+2013-04-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        LLint should be able to use x87 instead of SSE for floating pointer
+        https://bugs.webkit.org/show_bug.cgi?id=112239
+
+        Reviewed by Filip Pizlo.
+
+        Implements LLInt floating point operations in x87, to ensure we support
+        x86 without SSE2.
+
+        X86 (except 64bit) now defaults to using x87 instructions in order to
+        support all 32bit x86 back to i686. The implementation uses the fucomi
+        instruction from i686 which sets the new minimum.
+
+        The FPU registers must always be empty on entering or exiting a function.
+        We make sure to only use two X87 registers, and they are always emptied
+        before calling deeper functions or returning from the LLInt.
+
+        * jit/JITStubs.cpp:
+        (JSC): Empty FPU registers before exiting.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2013-04-19  Roger Fong  <roger_fong@apple.com>
 
         Remove uses of WebKit_Source from AppleWin build in JavaScriptCore.

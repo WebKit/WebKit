@@ -88,6 +88,9 @@ end
 macro prepareStateForCCall()
     leap [PB, PC, 8], PC
     move PB, t3
+    if X86_64
+        resetX87Stack
+    end
 end
 
 macro restoreStateAfterCCall()

@@ -254,7 +254,8 @@ MACRO_INSTRUCTIONS =
 X86_INSTRUCTIONS =
     [
      "cdqi",
-     "idivi"
+     "idivi",
+     "resetX87Stack"
     ]
 
 ARM_INSTRUCTIONS =
