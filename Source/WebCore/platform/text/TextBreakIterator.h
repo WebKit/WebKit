@@ -59,6 +59,8 @@ class LazyLineBreakIterator {
 public:
     LazyLineBreakIterator()
         : m_iterator(0)
+        , m_cachedPriorContext(0)
+        , m_cachedPriorContextLength(0)
     {
         resetPriorContext();
     }
@@ -67,6 +69,8 @@ public:
         : m_string(string)
         , m_locale(locale)
         , m_iterator(0)
+        , m_cachedPriorContext(0)
+        , m_cachedPriorContextLength(0)
     {
         resetPriorContext();
     }
@@ -123,13 +127,18 @@ public:
     // previously stored prior context if non-empty.
     TextBreakIterator* get(unsigned priorContextLength)
     {
+        ASSERT(priorContextLength <= priorContextCapacity);
+        const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
         if (!m_iterator) {
-            ASSERT(priorContextLength <= priorContextCapacity);
-            const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
             if (m_string.is8Bit())
                 m_iterator = acquireLineBreakIterator(m_string.characters8(), m_string.length(), m_locale, priorContext, priorContextLength);
             else
                 m_iterator = acquireLineBreakIterator(m_string.characters16(), m_string.length(), m_locale, priorContext, priorContextLength);
+            m_cachedPriorContext = priorContext;
+            m_cachedPriorContextLength = priorContextLength;
+        } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
+            this->resetStringAndReleaseIterator(m_string, m_locale);
+            return this->get(priorContextLength);
         }
         return m_iterator;
     }
@@ -140,6 +149,8 @@ public:
         m_string = string;
         m_locale = locale;
         m_iterator = 0;
+        m_cachedPriorContext = 0;
+        m_cachedPriorContextLength = 0;
     }
 
 private:
@@ -148,6 +159,8 @@ private:
     AtomicString m_locale;
     TextBreakIterator* m_iterator;
     UChar m_priorContext[priorContextCapacity];
+    const UChar* m_cachedPriorContext;
+    unsigned m_cachedPriorContextLength;
 };
 
 // Iterates over "extended grapheme clusters", as defined in UAX #29.
