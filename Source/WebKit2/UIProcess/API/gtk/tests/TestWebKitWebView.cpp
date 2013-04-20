@@ -1150,34 +1150,6 @@ class SnapshotWebViewTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(SnapshotWebViewTest);
 
-    SnapshotWebViewTest()
-        : m_surface(0)
-    {
-    }
-
-    ~SnapshotWebViewTest()
-    {
-        cairo_surface_destroy(m_surface);
-    }
-
-    static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, SnapshotWebViewTest* test)
-    {
-        GOwnPtr<GError> error;
-        test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
-        g_assert(!test->m_surface || !error.get());
-        if (error)
-            g_assert_error(error.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE);
-        test->quitMainLoop();
-    }
-
-    cairo_surface_t* waitForSnapshot(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
-    {
-        m_surface = 0;
-        webkit_web_view_get_snapshot(m_webView, region, options, 0, reinterpret_cast<GAsyncReadyCallback>(onSnapshotReady), this);
-        g_main_loop_run(m_mainLoop);
-        return cairo_surface_reference(m_surface);
-    }
-
     static void onSnapshotCancelledReady(WebKitWebView* web_view, GAsyncResult* res, SnapshotWebViewTest* test)
     {
         GOwnPtr<GError> error;
@@ -1189,6 +1161,8 @@ public:
 
     gboolean getSnapshotAndCancel()
     {
+        if (m_surface)
+            cairo_surface_destroy(m_surface);
         m_surface = 0;
         GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
         webkit_web_view_get_snapshot(m_webView, WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE, cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(onSnapshotCancelledReady), this);
@@ -1198,19 +1172,7 @@ public:
         return true;
     }
 
-    cairo_surface_t* m_surface;
 };
-
-static gboolean cairoSurfacesEqual(cairo_surface_t* s1, cairo_surface_t* s2)
-{
-    return (cairo_image_surface_get_format(s1) == cairo_image_surface_get_format(s2)
-        && cairo_image_surface_get_width(s1) == cairo_image_surface_get_width(s2)
-        && cairo_image_surface_get_height(s1) == cairo_image_surface_get_height(s2)
-        && cairo_image_surface_get_stride(s1) == cairo_image_surface_get_stride(s2)
-        && !memcmp(const_cast<const void*>(reinterpret_cast<void*>(cairo_image_surface_get_data(s1))),
-            const_cast<const void*>(reinterpret_cast<void*>(cairo_image_surface_get_data(s2))),
-            cairo_image_surface_get_height(s1)*cairo_image_surface_get_stride(s1)));
-}
 
 static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
 {
@@ -1218,13 +1180,13 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // WebView not visible.
-    cairo_surface_t* surface1 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    cairo_surface_t* surface1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
     g_assert(!surface1);
 
     // Show surface, resize to 50x50, try again.
     test->showInWindowAndWaitUntilMapped();
     test->resizeView(50, 50);
-    surface1 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    surface1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
     g_assert(surface1);
 
     // obtained surface should be at the most 50x50. Store the size
@@ -1234,43 +1196,38 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert_cmpint(width, <=, 50);
     g_assert_cmpint(height, <=, 50);
 
-    cairo_surface_destroy(surface1);
-
     // Select all text in the WebView, request a snapshot ignoring selection.
     test->selectAll();
-    surface1 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    surface1 = cairo_surface_reference(test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE));
     g_assert(surface1);
     g_assert_cmpint(cairo_image_surface_get_width(surface1), ==, width);
     g_assert_cmpint(cairo_image_surface_get_height(surface1), ==, height);
 
     // Create identical surface.
-    cairo_surface_t* surface2 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    cairo_surface_t* surface2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
     g_assert(surface2);
 
     // Compare these two, they should be identical.
-    g_assert(cairoSurfacesEqual(surface1, surface2));
-    cairo_surface_destroy(surface2);
+    g_assert(Test::cairoSurfacesEqual(surface1, surface2));
 
     // Request a new snapshot, including the selection this time. The
     // size should be the same but the result must be different to the
     // one previously obtained.
-    surface2 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING);
+    surface2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING);
     g_assert(surface2);
     g_assert_cmpint(cairo_image_surface_get_width(surface2), ==, width);
     g_assert_cmpint(cairo_image_surface_get_height(surface2), ==, height);
-    g_assert(!cairoSurfacesEqual(surface1, surface2));
-    cairo_surface_destroy(surface2);
+    g_assert(!Test::cairoSurfacesEqual(surface1, surface2));
 
     // Request a snapshot of the whole document in the WebView. The
     // result should be different from the size obtained previously.
-    surface2 = test->waitForSnapshot(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    surface2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE);
     g_assert(surface2);
     g_assert_cmpint(cairo_image_surface_get_width(surface2),  >, width);
     g_assert_cmpint(cairo_image_surface_get_height(surface2), >, height);
-    g_assert(!cairoSurfacesEqual(surface1, surface2));
+    g_assert(!Test::cairoSurfacesEqual(surface1, surface2));
 
     cairo_surface_destroy(surface1);
-    cairo_surface_destroy(surface2);
 
     g_assert(test->getSnapshotAndCancel());
 }

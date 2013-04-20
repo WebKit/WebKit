@@ -20,6 +20,7 @@
 #ifndef TestMain_h
 #define TestMain_h
 
+#include <cairo.h>
 #include <glib-object.h>
 #include <wtf/HashSet.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -99,6 +100,17 @@ public:
         unsigned fatalMask = g_log_set_always_fatal(static_cast<GLogLevelFlags>(G_LOG_FATAL_MASK));
         fatalMask &= ~flag;
         g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
+    }
+
+    static bool cairoSurfacesEqual(cairo_surface_t* s1, cairo_surface_t* s2)
+    {
+        return (cairo_image_surface_get_format(s1) == cairo_image_surface_get_format(s2)
+            && cairo_image_surface_get_width(s1) == cairo_image_surface_get_width(s2)
+            && cairo_image_surface_get_height(s1) == cairo_image_surface_get_height(s2)
+            && cairo_image_surface_get_stride(s1) == cairo_image_surface_get_stride(s2)
+            && !memcmp(const_cast<const void*>(reinterpret_cast<void*>(cairo_image_surface_get_data(s1))),
+                const_cast<const void*>(reinterpret_cast<void*>(cairo_image_surface_get_data(s2))),
+                cairo_image_surface_get_height(s1)*cairo_image_surface_get_stride(s1)));
     }
 
     HashSet<GObject*> m_watchedObjects;

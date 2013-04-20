@@ -62,24 +62,12 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
-    void waitUntilWebViewDrawSignal()
-    {
-        g_signal_connect_after(m_webView, "draw", G_CALLBACK(webViewDraw), this);
-        g_main_loop_run(m_mainLoop);
-    }
-
     GRefPtr<WebKitFindController> m_findController;
     bool m_textFound;
     unsigned m_matchCount;
 
 private:
     bool m_runFindUntilCompletion;
-
-    static void webViewDraw(GtkWidget *widget, cairo_t *cr, FindControllerTest* test)
-    {
-        g_main_loop_quit(test->m_mainLoop);
-        g_signal_handlers_disconnect_matched(widget, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, test);
-    }
 
     static void foundTextCallback(WebKitFindController*, guint matchCount, FindControllerTest* test)
     {
@@ -271,67 +259,38 @@ static void testFindControllerOptions(FindControllerTest* test, gconstpointer)
     g_assert(test->m_textFound);
 }
 
-static gboolean gdkPixbufEqual(GdkPixbuf* firstPixbuf, GdkPixbuf* secondPixbuf)
-{
-    if (gdk_pixbuf_get_bits_per_sample(firstPixbuf) != gdk_pixbuf_get_bits_per_sample(secondPixbuf)
-        || gdk_pixbuf_get_has_alpha(firstPixbuf) != gdk_pixbuf_get_has_alpha(secondPixbuf)
-        || gdk_pixbuf_get_height(firstPixbuf) != gdk_pixbuf_get_height(secondPixbuf)
-        || gdk_pixbuf_get_n_channels(firstPixbuf) != gdk_pixbuf_get_n_channels(secondPixbuf)
-        || gdk_pixbuf_get_rowstride(firstPixbuf) != gdk_pixbuf_get_rowstride(secondPixbuf)
-        || gdk_pixbuf_get_width(firstPixbuf) != gdk_pixbuf_get_width(secondPixbuf))
-        return FALSE;
-
-    int pixbufRowstride = gdk_pixbuf_get_rowstride(firstPixbuf);
-    int pixbufHeight = gdk_pixbuf_get_height(firstPixbuf);
-    int pixbufWidth = gdk_pixbuf_get_width(firstPixbuf);
-    int numberOfChannels = gdk_pixbuf_get_n_channels(firstPixbuf);
-    int bitsPerSample = gdk_pixbuf_get_bits_per_sample(firstPixbuf);
-
-    // Last row can be of different length. Taken from gdk-pixbuf documentation.
-    int totalLength = (pixbufHeight - 1) * pixbufRowstride \
-        + pixbufWidth * ((numberOfChannels * bitsPerSample + 7) / 8);
-
-    guchar* firstPixels = gdk_pixbuf_get_pixels(firstPixbuf);
-    guchar* secondPixels = gdk_pixbuf_get_pixels(secondPixbuf);
-    for (int i = 0; i < totalLength; i++)
-        if (firstPixels[i] != secondPixels[i])
-            return FALSE;
-
-    return TRUE;
-}
-
 static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 {
     test->loadHtml(testString, 0);
     test->waitUntilLoadFinished();
 
     test->showInWindowAndWaitUntilMapped();
-    int allocatedHeight = gtk_widget_get_allocated_height(GTK_WIDGET(test->m_webView));
-    int allocatedWidth = gtk_widget_get_allocated_width(GTK_WIDGET(test->m_webView));
-    GdkWindow* webViewGdkWindow = gtk_widget_get_window(GTK_WIDGET(test->m_webView));
-    g_assert(webViewGdkWindow);
 
-    test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> originalPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
-    g_assert(originalPixbuf);
+    cairo_surface_t* originalSurface = cairo_surface_reference(
+        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    g_assert(originalSurface);
 
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
     g_assert(test->m_textFound);
 
-    test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> highlightPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
-    g_assert(highlightPixbuf);
-    g_assert(!gdkPixbufEqual(originalPixbuf.get(), highlightPixbuf.get()));
+    cairo_surface_t* highlightSurface = cairo_surface_reference(
+        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    g_assert(highlightSurface);
+    g_assert(!Test::cairoSurfacesEqual(originalSurface, highlightSurface));
 
     WebKitFindController* findController = webkit_web_view_get_find_controller(test->m_webView);
     webkit_find_controller_search_finish(findController);
     webkit_web_view_execute_editing_command(test->m_webView, "Unselect");
 
-    test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> unhighlightPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
-    g_assert(unhighlightPixbuf);
-    g_assert(gdkPixbufEqual(originalPixbuf.get(), unhighlightPixbuf.get()));
+    cairo_surface_t* unhighlightSurface = cairo_surface_reference(
+        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    g_assert(unhighlightSurface);
+    g_assert(Test::cairoSurfacesEqual(originalSurface, unhighlightSurface));
+
+    cairo_surface_destroy(originalSurface);
+    cairo_surface_destroy(highlightSurface);
+    cairo_surface_destroy(unhighlightSurface);
 }
 
 static void testFindControllerInstance(FindControllerTest* test, gconstpointer)

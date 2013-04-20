@@ -30,6 +30,7 @@ WebViewTest::WebViewTest()
     , m_parentWindow(0)
     , m_javascriptResult(0)
     , m_resourceDataSize(0)
+    , m_surface(0)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 }
@@ -40,6 +41,8 @@ WebViewTest::~WebViewTest()
         gtk_widget_destroy(m_parentWindow);
     if (m_javascriptResult)
         webkit_javascript_result_unref(m_javascriptResult);
+    if (m_surface)
+        cairo_surface_destroy(m_surface);
     g_object_unref(m_webView);
     g_main_loop_unref(m_mainLoop);
 }
@@ -420,3 +423,22 @@ bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascript
     return JSValueIsUndefined(context, value);
 }
 
+static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewTest* test)
+{
+    GOwnPtr<GError> error;
+    test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
+    g_assert(!test->m_surface || !error.get());
+    if (error)
+        g_assert_error(error.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE);
+    test->quitMainLoop();
+}
+
+cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
+{
+    if (m_surface)
+        cairo_surface_destroy(m_surface);
+    m_surface = 0;
+    webkit_web_view_get_snapshot(m_webView, region, options, 0, reinterpret_cast<GAsyncReadyCallback>(onSnapshotReady), this);
+    g_main_loop_run(m_mainLoop);
+    return m_surface;
+}

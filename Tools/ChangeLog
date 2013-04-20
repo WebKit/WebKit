@@ -1,3 +1,13 @@
+2013-04-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Fix unit test webkit2/WebKitFindController/hide
+        https://bugs.webkit.org/show_bug.cgi?id=89810
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip test webkit2/WebKitFindController/hide.
+
 2013-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fixes for the flakiness dashboard.
