@@ -1,3 +1,16 @@
+2013-04-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Fix baseline positioning issue by updating Freetype
+        https://bugs.webkit.org/show_bug.cgi?id=106775
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: Bump the Freetype Jhbuild dependency to 2.4.11.
+        * gtk/patches/freetype6-2.4.11-truetype-font-height-fix.patch: Added. This is the Freetype
+        patch (committed as e0469372) that fixes rounding issues for smaller fonts. It is bound to be included
+        in the 2.4.12 release of Freetype (not released yet) but is provided here as its effect on baselines is
+        considered positive and will reduce the amout of future rebaselining.
+
 2013-04-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Fix unit test webkit2/WebKitFindController/hide
