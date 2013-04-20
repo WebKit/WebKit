@@ -1,3 +1,12 @@
+2013-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        SunSpider/string-tagcloud should be more lenient in validating its results, since they depend on Math.log, which isn't formally specified
+        https://bugs.webkit.org/show_bug.cgi?id=114895
+
+        Reviewed by Michael Saboff.
+
+        * tests/sunspider-1.0/string-tagcloud.js:
+
 2013-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         Whenever it is cheap and non-invasive, SunSpider tests should validate their results to ensure that the browser runs them correctly
