@@ -90,7 +90,6 @@
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
-#include "CookieStorageShim.h"
 #include "NetworkProcessConnection.h"
 #endif
 
@@ -334,9 +333,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if ENABLE(NETWORK_PROCESS)
     m_usesNetworkProcess = parameters.usesNetworkProcess;
     ensureNetworkProcessConnection();
-
-    if (usesNetworkProcess())
-        CookieStorageShim::shared().initialize();
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
 

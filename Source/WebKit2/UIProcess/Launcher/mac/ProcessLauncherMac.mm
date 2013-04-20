@@ -121,7 +121,7 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
         NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
-        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
+        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
     } else if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
