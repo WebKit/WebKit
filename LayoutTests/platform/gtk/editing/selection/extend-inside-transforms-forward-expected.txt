@@ -6,10 +6,10 @@ layer at (0,0) size 800x216
 layer at (8,8) size 200x200
   RenderBlock {DIV} at (0,0) size 200x200
     RenderBlock {P} at (0,0) size 200x57
-      RenderText {#text} at (0,0) size 150x58
+      RenderText {#text} at (0,0) size 150x57
         text run at (0,0) width 150: "hello"
     RenderBlock {P} at (0,57) size 200x57
-      RenderText {#text} at (0,0) size 150x58
+      RenderText {#text} at (0,0) size 150x57
         text run at (0,0) width 150: "world"
 selection start: position 2 of child 0 {#text} of child 1 {P} of child 1 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 3 {P} of child 1 {DIV} of body

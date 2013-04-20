@@ -12,12 +12,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 773x37
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 773x34
           text run at (0,0) width 773: "Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: \"world hello\". To"
-          text run at (0,18) width 434: "test manually double click on the \"hello\" and drag it to after \"world\"."
-      RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 68x19
+          text run at (0,17) width 434: "test manually double click on the \"hello\" and drag it to after \"world\"."
+      RenderBlock {DIV} at (0,50) size 784x17
+        RenderText {#text} at (0,0) size 68x17
           text run at (0,0) width 68: "worldhello"
 selection start: position 5 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 10 of child 0 {#text} of child 3 {DIV} of body

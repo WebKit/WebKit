@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 438x19
+      RenderText {#text} at (0,0) size 438x17
         text run at (0,0) width 220: "This test focuses an editable body. "
         text run at (220,0) width 218: "Its contents should not be selected."
       RenderText {#text} at (0,0) size 0x0
