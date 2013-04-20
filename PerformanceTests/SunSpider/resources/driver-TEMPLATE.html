@@ -95,7 +95,10 @@ function finish()
     for (var test in output[0]) {
         outputString += '"' + test + '":[';
         for (var i = 0; i < output.length; i++) {
-             outputString += output[i][test] + ",";
+            var time = output[i][test];
+            if (time != time)
+                time = "\"NaN\"";
+            outputString += time + ",";
         }
         outputString = outputString.substring(0, outputString.length - 1);
         outputString += "],";

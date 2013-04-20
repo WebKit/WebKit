@@ -28,11 +28,19 @@ function nsieve(m, isPrime){
 }
 
 function sieve() {
+    var sum = 0;
     for (var i = 1; i <= 3; i++ ) {
         var m = (1<<i)*10000;
         var flags = Array(m+1);
-        nsieve(m, flags);
+        sum += nsieve(m, flags);
     }
+    return sum;
 }
 
-sieve();
+var result = sieve();
+
+var expected = 14302;
+if (result != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + result;
+
+

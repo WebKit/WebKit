@@ -25,9 +25,21 @@ function partial(n){
         a8 += alt/k;
         a9 += alt/(2*k -1);
     }
+    
+    // NOTE: We don't try to validate anything from pow(),  sin() or cos() because those aren't
+    // well-specified in ECMAScript.
+    return a6 + a7 + a8 + a9;
 }
 
+var total = 0;
+
 for (var i = 1024; i <= 16384; i *= 2) {
-    partial(i);
+    total += partial(i);
+}
+
+var expected = 60.08994194659945;
+
+if (total != expected) {
+    throw "ERROR: bad result: expected " + expected + " but got " + total;
 }
 

@@ -415,3 +415,6 @@ for (i = 0; i < 4000; ++i) {
     var longFormat = date.dateFormat("l, F d, Y g:i:s A");
     date.setTime(date.getTime() + 84266956);
 }
+
+// FIXME: Find a way to validate this test.
+// https://bugs.webkit.org/show_bug.cgi?id=114849

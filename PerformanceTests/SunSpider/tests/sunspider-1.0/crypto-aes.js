@@ -420,3 +420,7 @@ var password = "O Romeo, Romeo! wherefore art thou Romeo?";
 
 var cipherText = AESEncryptCtr(plainText, password, 256);
 var decryptedText = AESDecryptCtr(cipherText, password, 256);
+
+if (decryptedText != plainText)
+    throw "ERROR: bad result: expected " + plainText + " but got " + decryptedText;
+

@@ -240,12 +240,23 @@ function sunspiderCompareResults(output1, output2)
     
     function formatMean(meanWidth, mean, stdErr, count)
     {
+        if (mean != mean) {
+            var result = "  ERROR      ";
+            for (var i = 0; i < meanWidth; ++i)
+                result = " " + result;
+            return result;
+        }
+        
         var meanString = mean.toFixed(1).toString();
         while (meanString.length < meanWidth) {
             meanString = " " + meanString;
         }
         
-        var error = "+/- " + ((tDist(count) * stdErr / mean) * 100).toFixed(1) + "% ";
+        var errString = ((tDist(count) * stdErr / mean) * 100).toFixed(1) + "%";
+        while (errString.length < "99.9%".length)
+            errString += " ";
+        
+        var error = "+/- " + errString + " ";
         
         return meanString + "ms " + error;
     }
@@ -297,32 +308,37 @@ function sunspiderCompareResults(output1, output2)
         result += label + ": ";
         result = pad(result, labelWidth + 2);
         
-        var t = (mean1 - mean2) / (Math.sqrt((stdErr1 * stdErr1) + (stdErr2 * stdErr2)));
-        var df = count1 + count2 - 2;
-        
-        var statisticallySignificant = (Math.abs(t) > tDist(df+1));
-        var diff = mean2 - mean1;
-        var percentage = 100 * diff / mean1;
-        var isFaster = diff < 0;
-        var probablySame = (percentage < 0.1) && !statisticallySignificant;
-        var ratio = isFaster ? (mean1 / mean2) : (mean2 / mean1);
-        var fixedRatio = (ratio < 1.2) ? ratio.toFixed(3).toString() : ((ratio < 10) ? ratio.toFixed(2).toString() : ratio.toFixed(1).toString());
-        var formattedRatio = isFaster ? fixedRatio + "x as fast" : "*" + fixedRatio + "x as slow*";
-
         var diffSummary;
         var diffDetail;
         
-        if (probablySame) {
-            diffSummary = "-";
-            diffDetail = "";
-        } else if (!statisticallySignificant) {
+        if (mean1 != mean1 || mean2 != mean2) {
             diffSummary = "??";
-            diffDetail =  "    not conclusive: might be " + formattedRatio;
+            diffDetail = "    invalid runs detected";
         } else {
-            diffSummary = formattedRatio;
-            diffDetail = "    significant"; 
+            var t = (mean1 - mean2) / (Math.sqrt((stdErr1 * stdErr1) + (stdErr2 * stdErr2)));
+            var df = count1 + count2 - 2;
+            
+            var statisticallySignificant = (Math.abs(t) > tDist(df+1));
+            var diff = mean2 - mean1;
+            var percentage = 100 * diff / mean1;
+            var isFaster = diff < 0;
+            var probablySame = (percentage < 0.1) && !statisticallySignificant;
+            var ratio = isFaster ? (mean1 / mean2) : (mean2 / mean1);
+            var fixedRatio = (ratio < 1.2) ? ratio.toFixed(3).toString() : ((ratio < 10) ? ratio.toFixed(2).toString() : ratio.toFixed(1).toString());
+            var formattedRatio = isFaster ? fixedRatio + "x as fast" : "*" + fixedRatio + "x as slow*";
+
+            if (probablySame) {
+                diffSummary = "-";
+                diffDetail = "";
+            } else if (!statisticallySignificant) {
+                diffSummary = "??";
+                diffDetail =  "    not conclusive: might be " + formattedRatio;
+            } else {
+                diffSummary = formattedRatio;
+                diffDetail = "    significant"; 
+            }
         }
-        
+            
         return result + pad(diffSummary, 18) + formatMean(meanWidth1, mean1, stdErr1, count1) + "  " + formatMean(meanWidth2, mean2, stdErr2, count2) + diffDetail;
     }
     
@@ -336,14 +352,14 @@ function sunspiderCompareResults(output1, output2)
         var header = "TEST";
         while (header.length < labelWidth)
             header += " ";
-        header += "  COMPARISON            FROM                 TO             DETAILS";
+        header += "  COMPARISON               FROM                 TO             DETAILS";
         print(header);
         print("");
-        print("=============================================================================");
+        print("===============================================================================");
         print("");
         print(resultLine(labelWidth, 0, "** TOTAL **", meanWidth1, mean1, stdErr1, meanWidth2, mean2, stdErr2));
         print("");
-        print("=============================================================================");
+        print("===============================================================================");
         
         for (var category in categoryMeans1) {
             print("");

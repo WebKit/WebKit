@@ -64,3 +64,7 @@ function fannkuch(n) {
 var n = 8;
 var ret = fannkuch(n);
 
+var expected = 22;
+if (ret != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + ret;
+

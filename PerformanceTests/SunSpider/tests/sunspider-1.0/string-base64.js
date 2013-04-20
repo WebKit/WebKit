@@ -126,7 +126,9 @@ for ( var i = 8192; i <= 16384; i *= 2 ) {
     var base64;
 
     base64 = toBase64(str);
-    base64ToString(base64);
+    var encoded = base64ToString(base64);
+    if (encoded != str)
+        throw "ERROR: bad result: expected " + str + " but got " + encoded;
 
     // Double the string
     str += str;

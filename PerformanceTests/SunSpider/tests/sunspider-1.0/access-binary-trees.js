@@ -26,7 +26,7 @@ function bottomUpTree(item,depth){
    }
 }
 
-var ret;
+var ret = 0;
 
 for ( var n = 4; n <= 7; n += 1 ) {
     var minDepth = 4;
@@ -46,5 +46,9 @@ for ( var n = 4; n <= 7; n += 1 ) {
         }
     }
 
-    ret = longLivedTree.itemCheck();
+    ret += longLivedTree.itemCheck();
 }
+
+var expected = -4;
+if (ret != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + ret;

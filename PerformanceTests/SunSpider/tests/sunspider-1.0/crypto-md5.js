@@ -284,3 +284,9 @@ for (var i = 0; i <4; i++) {
 }
 
 var md5Output = hex_md5(plainText);
+
+var expected = "a831e91e0f70eddcb70dc61c6f82f6cd";
+
+if (md5Output != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + md5Output;
+

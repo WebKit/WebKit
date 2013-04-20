@@ -52,3 +52,12 @@ testOutput = 0;
 for (var i = 0; i < nx; i++)
     testOutput += a[3*(i*nx+i)+1];
 a = null;
+
+// This has to be an approximate test since ECMAscript doesn't formally specify
+// what sin() returns. Even if it did specify something like for example what Java 7
+// says - that sin() has to return a value within 1 ulp of exact - then we still
+// would not be able to do an exact test here since that would allow for just enough
+// low-bit slop to create possibly big errors due to testOutput being a sum.
+var expected = 6;
+if (("" + testOutput)[0] != expected)
+    throw "Error: bad test output: expected leading digit to be " + expected + " but got " + testOutput;

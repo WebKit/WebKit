@@ -34,3 +34,7 @@ return sum;
 }
 
 sum = TimeFunc(fast3bitlookup);
+
+var expected = 512000;
+if (sum != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + sum;

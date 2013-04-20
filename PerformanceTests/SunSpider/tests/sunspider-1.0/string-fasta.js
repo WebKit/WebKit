@@ -46,12 +46,12 @@ function fastaRepeat(n, seq) {
   while (n>0) {
     if (n<lenOut) lenOut = n;
     if (seqi + lenOut < seq.length) {
-      ret = seq.substring(seqi, seqi+lenOut);
+      ret += seq.substring(seqi, seqi+lenOut).length;
       seqi += lenOut;
     } else {
       var s = seq.substring(seqi);
       seqi = lenOut - s.length;
-      ret = s + seq.substring(0, seqi);
+      ret += (s + seq.substring(0, seqi)).length;
     }
     n -= lenOut;
   }
@@ -71,15 +71,20 @@ function fastaRandom(n, table) {
         }
       }
     }
-    ret = line.join('');
+    ret += line.join('').length;
     n -= line.length;
   }
 }
 
-var ret;
+var ret = 0;
 
 var count = 7;
-ret = fastaRepeat(2*count*100000, ALU);
-ret = fastaRandom(3*count*1000, IUB);
-ret = fastaRandom(5*count*1000, HomoSap);
+fastaRepeat(2*count*100000, ALU);
+fastaRandom(3*count*1000, IUB);
+fastaRandom(5*count*1000, HomoSap);
+
+var expected = 1456000;
+
+if (ret != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + ret;
 

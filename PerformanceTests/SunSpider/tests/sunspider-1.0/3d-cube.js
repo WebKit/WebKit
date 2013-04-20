@@ -10,6 +10,13 @@ var Origin = new Object();
 var Testing = new Object();
 var LoopTimer;
 
+var validation = {
+ 20: 2889.0000000000045,
+ 40: 2889.0000000000055,
+ 80: 2889.000000000005,
+ 160: 2889.0000000000055
+};
+
 var DisplArea = new Object();
 DisplArea.Width = 300;
 DisplArea.Height = 300;
@@ -321,6 +328,16 @@ function Init(CubeSize) {
   DrawQube();
   Testing.Init = true;
   Loop();
+  
+  // Perform a simple sum-based verification.
+  var sum = 0;
+  for (var i = 0; i < Q.length; ++i) {
+    var vector = Q[i].V;
+    for (var j = 0; j < vector.length; ++j)
+      sum += vector[j];
+  }
+  if (sum != validation[CubeSize])
+    throw "Error: bad vector sum for CubeSize = " + CubeSize + "; expected " + validation[CubeSize] + " but got " + sum;
 }
 
 for ( var i = 20; i <= 160; i *= 2 ) {
@@ -335,3 +352,4 @@ Origin = null;
 Testing = null;
 LoopTime = null;
 DisplArea = null;
+

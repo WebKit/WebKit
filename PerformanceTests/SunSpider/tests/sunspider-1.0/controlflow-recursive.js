@@ -18,8 +18,15 @@ function tak(x,y,z) {
     return tak(tak(x-1,y,z), tak(y-1,z,x), tak(z-1,x,y));
 }
 
+var result = 0;
+
 for ( var i = 3; i <= 5; i++ ) {
-    ack(3,i);
-    fib(17.0+i);
-    tak(3*i+3,2*i+2,i+1);
+    result += ack(3,i);
+    result += fib(17.0+i);
+    result += tak(3*i+3,2*i+2,i+1);
 }
+
+var expected = 57775;
+if (result != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + result;
+

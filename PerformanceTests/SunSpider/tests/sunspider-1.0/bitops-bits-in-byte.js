@@ -23,3 +23,8 @@ return sum;
 }
 
 result = TimeFunc(bitsinbyte);
+
+var expected = 358400;
+if (result != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + result;
+

@@ -31,3 +31,12 @@ function sieve() {
 }
 
 var result = sieve();
+
+var sum = 0;
+for (var i = 0; i < result.length; ++i)
+    sum += result[i];
+
+var expected = -1286749544853;
+if (sum != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + sum;
+

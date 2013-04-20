@@ -222,3 +222,7 @@ for (var i = 0; i <4; i++) {
 }
 
 var sha1Output = hex_sha1(plainText);
+
+var expected = "2524d264def74cce2498bf112bedf00e6c0b796d";
+if (sha1Output != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + sha1Output;

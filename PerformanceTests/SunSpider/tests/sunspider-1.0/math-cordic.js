@@ -98,3 +98,9 @@ function cordic( runs ) {
 }
 
 cordic(25000);
+
+var expected = 10362.570468755888;
+
+if (total != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + total;
+

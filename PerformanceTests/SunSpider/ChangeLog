@@ -1,3 +1,71 @@
+2013-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Whenever it is cheap and non-invasive, SunSpider tests should validate their results to ensure that the browser runs them correctly
+        https://bugs.webkit.org/show_bug.cgi?id=114852
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds low-overhead checking of the results of each SunSpider tests. This is not
+        meant to be an exhaustive test that everything was executed correctly, but rather a
+        simple sanity check that will catch glaring mistakes. The philosophy here is that we're
+        not trying to prevent all forms of cheating, or that we're trying to prove the
+        browser's correctness. Moreover, these checks are meant to incur minimal overhead;
+        they currently clock in at <2% slow-down in SunSpider 1.0.
+        
+        The test expectations were generated using the LLInt on command-line, and I've verified
+        that Firefox 20, Chrome 26, IE 10, Safari 6, and ToT with all of the JITs agree. Note
+        that some tests cannot be precisely validated because they use Math functions, which
+        ECMAScript chooses to not formally specify - those functions like sin() and friends are
+        allowed to return implementation-dependent results. Also some tests cannot be validated
+        at all because their behavior is either intentionally random or is timezone-dependent.
+        But 23 out of 26 tests now have some kind of validation.
+        
+        I've updated the harnesses to show erroneous runs when displaying results.
+
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html:
+        * resources/sunspider-analyze-results.js:
+        (formatResult):
+        (resultLine):
+        (printOutput):
+        * resources/sunspider-compare-results.js:
+        (.formatMean):
+        (.resultLine):
+        (.printOutput):
+        (sunspiderCompareResults):
+        * resources/sunspider-standalone-driver.js:
+        * tests/sunspider-1.0/3d-cube.js:
+        (Init):
+        * tests/sunspider-1.0/3d-morph.js:
+        * tests/sunspider-1.0/3d-raytrace.js:
+        * tests/sunspider-1.0/access-binary-trees.js:
+        * tests/sunspider-1.0/access-fannkuch.js:
+        * tests/sunspider-1.0/access-nbody.js:
+        * tests/sunspider-1.0/access-nsieve.js:
+        (sieve):
+        * tests/sunspider-1.0/bitops-3bit-bits-in-byte.js:
+        * tests/sunspider-1.0/bitops-bits-in-byte.js:
+        * tests/sunspider-1.0/bitops-bitwise-and.js:
+        * tests/sunspider-1.0/bitops-nsieve-bits.js:
+        * tests/sunspider-1.0/controlflow-recursive.js:
+        * tests/sunspider-1.0/crypto-aes.js:
+        * tests/sunspider-1.0/crypto-md5.js:
+        * tests/sunspider-1.0/crypto-sha1.js:
+        * tests/sunspider-1.0/date-format-tofte.js:
+        * tests/sunspider-1.0/date-format-xparb.js:
+        * tests/sunspider-1.0/math-cordic.js:
+        * tests/sunspider-1.0/math-partial-sums.js:
+        (partial):
+        * tests/sunspider-1.0/math-spectral-norm.js:
+        * tests/sunspider-1.0/regexp-dna.js:
+        * tests/sunspider-1.0/string-base64.js:
+        * tests/sunspider-1.0/string-fasta.js:
+        (fastaRepeat):
+        (fastaRandom):
+        * tests/sunspider-1.0/string-tagcloud.js:
+        * tests/sunspider-1.0/string-unpack-code.js:
+        * tests/sunspider-1.0/string-validate-input.js:
+
 2013-04-11  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the 10ms delay between test executions

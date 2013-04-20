@@ -151,7 +151,7 @@ NBodySystem.prototype.energy = function(){
    return e;
 }
 
-var ret;
+var ret = 0;
 
 for ( var n = 3; n <= 24; n *= 2 ) {
     (function(){
@@ -160,10 +160,15 @@ for ( var n = 3; n <= 24; n *= 2 ) {
         ));
         var max = n * 100;
         
-        ret = bodies.energy();
+        ret += bodies.energy();
         for (var i=0; i<max; i++){
             bodies.advance(0.01);
         }
-        ret = bodies.energy();
+        ret += bodies.energy();
     })();
 }
+
+var expected = -1.3524862408537381;
+if (ret != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + ret;
+

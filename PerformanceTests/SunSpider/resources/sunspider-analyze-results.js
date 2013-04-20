@@ -173,8 +173,20 @@ function tDist(n)
 }
 
 
-function formatResult(meanWidth, mean, stdErr, n)
+function formatResult(meanWidth, mean, stdErr, n, mode)
 {
+    // NaN mean means that the test did not run correctly.
+    if (mean != mean) {
+        var result = "";
+        for (var i = 0; i < meanWidth - 3; ++i)
+            result += " ";
+        if (mode == "test")
+            result += "ERROR: Invalid test run.";
+        else
+            result += "ERROR: Some tests failed.";
+        return result;
+    }
+    
     var meanString = mean.toFixed(1).toString();
     while (meanString.length < meanWidth) {
         meanString = " " + meanString;
@@ -219,7 +231,7 @@ function computeMeanWidth()
     return width;
 }
 
-function resultLine(labelWidth, indent, label, meanWidth, mean, stdErr)
+function resultLine(labelWidth, indent, label, meanWidth, mean, stdErr, mode)
 {
     var result = "";
     for (i = 0; i < indent; i++) {
@@ -232,7 +244,7 @@ function resultLine(labelWidth, indent, label, meanWidth, mean, stdErr)
         result += " ";
     }
     
-    return result + formatResult(meanWidth, mean, stdErr, count);
+    return result + formatResult(meanWidth, mean, stdErr, count, mode);
 }
 
 function printOutput()
@@ -247,14 +259,14 @@ function printOutput()
     else
         print("RESULTS (means and 95% confidence intervals)");
     print("--------------------------------------------");
-    print(resultLine(labelWidth, 0, "Total", meanWidth, mean, stdErr));
+    print(resultLine(labelWidth, 0, "Total", meanWidth, mean, stdErr, "total"));
     print("--------------------------------------------");
     for (var category in categoryMeans) {
         print("");
-        print(resultLine(labelWidth, 2, category, meanWidth, categoryMeans[category], categoryStdErrs[category]));
+        print(resultLine(labelWidth, 2, category, meanWidth, categoryMeans[category], categoryStdErrs[category], "category"));
         for (var test in testMeansByCategory[category]) {
             var shortName = test.replace(/^[^-]*-/, "");
-            print(resultLine(labelWidth, 4, shortName, meanWidth, testMeansByCategory[category][test], testStdErrsByCategory[category][test]));
+            print(resultLine(labelWidth, 4, shortName, meanWidth, testMeansByCategory[category][test], testStdErrsByCategory[category][test], "test"));
         }
     }
 }

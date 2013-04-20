@@ -47,11 +47,19 @@ for (var j = 0; j < tests.length; j++) {
             // higher-precision `run' timer, because `run' uses a fresh
             // global environment, so we fall back to `load'.
             var startTime = new Date;
-            load(testName);
-            times[j] = new Date() - startTime;
+            try {
+                load(testName);
+                times[j] = new Date() - startTime;
+            } catch (e) {
+                times[j] = 0 / 0;
+            }
         } catch (e) {
             // No test data, just use `run'.
-            times[j] = run(testName);
+            try {
+                times[j] = run(testName);
+            } catch (e) {
+                times[j] = 0 / 0;
+            }
         }
     }
     gc();

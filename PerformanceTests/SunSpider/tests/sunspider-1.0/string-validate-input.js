@@ -87,3 +87,6 @@ function addResult(r)
 }
 
 doTest();
+
+// FIXME: Come up with a way of validating this test.
+// https://bugs.webkit.org/show_bug.cgi?id=114851

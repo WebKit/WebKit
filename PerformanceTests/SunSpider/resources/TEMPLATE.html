@@ -44,6 +44,11 @@ function record(time) {
     }
 }
 
+window.onerror = function(e) {
+    console.log("@NAME@ failed with error: " + e);
+    record(0 / 0);
+}
+
 var _sunSpiderStartDate = new Date();
 
 @SCRIPT@
