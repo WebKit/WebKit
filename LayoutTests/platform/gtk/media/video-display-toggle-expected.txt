@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 493x19
+      RenderText {#text} at (0,0) size 493x17
         text run at (0,0) width 493: "This tests that toggling the display property won't make the controls disappear."
-      RenderBR {BR} at (493,15) size 0x0
+      RenderBR {BR} at (493,14) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,26) size 320x240
-  RenderVideo {VIDEO} at (0,18) size 320x240
-layer at (8,26) size 320x240
+layer at (8,25) size 320x240
+  RenderVideo {VIDEO} at (0,17) size 320x240
+layer at (8,25) size 320x240
   RenderFlexibleBox {DIV} at (0,0) size 320x240
     RenderBlock {DIV} at (0,200) size 320x40
-layer at (13,231) size 310x30
+layer at (13,230) size 310x30
   RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
     RenderButton {INPUT} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 135x8 [color=#E6E6E659]

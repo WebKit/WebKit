@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (165,0) size 4x19
+      RenderText {#text} at (165,0) size 4x17
         text run at (165,0) width 4: " "
-      RenderText {#text} at (334,0) size 4x19
+      RenderText {#text} at (334,0) size 4x17
         text run at (334,0) width 4: " "
-      RenderText {#text} at (503,0) size 4x19
+      RenderText {#text} at (503,0) size 4x17
         text run at (503,0) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (165,140) size 4x19
+      RenderText {#text} at (165,140) size 4x17
         text run at (165,140) width 4: " "
-      RenderText {#text} at (334,140) size 4x19
+      RenderText {#text} at (334,140) size 4x17
         text run at (334,140) width 4: " "
-      RenderText {#text} at (503,140) size 4x19
+      RenderText {#text} at (503,140) size 4x17
         text run at (503,140) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (165,280) size 4x19
+      RenderText {#text} at (165,280) size 4x17
         text run at (165,280) width 4: " "
-      RenderText {#text} at (334,280) size 4x19
+      RenderText {#text} at (334,280) size 4x17
         text run at (334,280) width 4: " "
-      RenderText {#text} at (503,280) size 4x19
+      RenderText {#text} at (503,280) size 4x17
         text run at (503,280) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (165,420) size 4x19
+      RenderText {#text} at (165,420) size 4x17
         text run at (165,420) width 4: " "
-      RenderText {#text} at (334,420) size 4x19
+      RenderText {#text} at (334,420) size 4x17
         text run at (334,420) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (28,28) size 125x100 clip at (29,29) size 110x85 scrollHeight 1728

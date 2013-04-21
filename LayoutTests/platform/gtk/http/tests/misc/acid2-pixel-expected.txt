@@ -4,7 +4,7 @@ layer at (0,0) size 800x298
   RenderBlock {HTML} at (0,0) size 800x298 [color=#FF0000] [bgcolor=#FFFFFF]
     RenderBody {BODY} at (0,0) size 800x298
       RenderBlock {H2} at (72,0) size 656x72 [color=#000080]
-        RenderText {#text} at (12,46) size 129x28
+        RenderText {#text} at (12,46) size 129x27
           text run at (12,46) width 129: "Hello World!"
 layer at (36,72) size 764x226
   RenderBlock (relative positioned) {DIV} at (36,72) size 764x226 [border: (12px solid #00000000)]
@@ -27,8 +27,8 @@ layer at (36,72) size 764x226
       RenderBlock {DIV} at (48,0) size 518x0
     RenderBlock {DIV} at (48,132) size 668x24
     RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: none (12px solid #000000) none (12px solid #000000)]
-      RenderInline {DIV} at (0,0) size 1x3
-        RenderText {#text} at (12,8) size 1x3
+      RenderInline {DIV} at (0,0) size 1x2
+        RenderText {#text} at (12,8) size 1x2
           text run at (12,8) width 1: " "
     RenderBlock {DIV} at (12,180) size 740x12
       RenderBlock {DIV} at (60,0) size 96x12 [color=#FFA500] [bgcolor=#FFFF00] [border: none (24px solid #000000) none (24px solid #000000)]
@@ -41,13 +41,13 @@ layer at (36,72) size 764x226
           RenderTableCell {LI} at (24,0) size 12x0 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
           RenderTableCell (anonymous) at (36,0) size 12x12 [r=0 c=3 rs=1 cs=1]
             RenderListItem {LI} at (0,0) size 12x12 [bgcolor=#000000]
-layer at (48,276) size 740x10 scrollHeight 276
+layer at (48,276) size 740x10 scrollHeight 266
   RenderBlock {DIV} at (12,204) size 740x10
-    RenderTable {TABLE} at (0,0) size 64x276
-      RenderTableSection {TBODY} at (0,0) size 64x276
-        RenderTableRow {TR} at (0,0) size 64x276
-          RenderTableCell {TD} at (0,0) size 64x276 [r=0 c=0 rs=1 cs=1]
-            RenderImage {IMG} at (0,155) size 64x64
+    RenderTable {TABLE} at (0,0) size 64x266
+      RenderTableSection {TBODY} at (0,0) size 64x266
+        RenderTableRow {TR} at (0,0) size 64x266
+          RenderTableCell {TD} at (0,0) size 64x266 [r=0 c=0 rs=1 cs=1]
+            RenderImage {IMG} at (0,150) size 64x64
 layer at (132,108) size 48x18
   RenderBlock (positioned) {P} at (132,108) size 48x18 [bgcolor=#000000] [border: none (6px solid #FFFF00) none]
 layer at (132,144) size 48x15
