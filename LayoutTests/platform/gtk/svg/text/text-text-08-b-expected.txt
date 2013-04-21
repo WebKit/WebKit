@@ -2,18 +2,18 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (28,0) size 632x429
-      RenderSVGText {text} at (19,2) size 330x72 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 330x72
+    RenderSVGContainer {g} at (28,1) size 632x426
+      RenderSVGText {text} at (19,3) size 330x71 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 330x71
           chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 330.00: "Normal Text"
-      RenderSVGText {text} at (19,62) size 296x72 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 296x72
+      RenderSVGText {text} at (19,63) size 296x71 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 296x71
           chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 295.80: "Fill opacity"
-      RenderSVGText {text} at (19,122) size 375x72 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 375x72
+      RenderSVGText {text} at (19,123) size 375x71 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 375x71
           chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 374.40: "Stroke opacity"
-      RenderSVGText {text} at (19,182) size 204x72 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 204x72
+      RenderSVGText {text} at (19,183) size 204x71 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 204x71
           chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 203.40: "Opacity"
     RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 269x45
