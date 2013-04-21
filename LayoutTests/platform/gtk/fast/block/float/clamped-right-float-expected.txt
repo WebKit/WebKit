@@ -4,5 +4,5 @@ layer at (0,0) size 800x108
   RenderBlock {HTML} at (0,0) size 800x108
     RenderBody {BODY} at (8,8) size 784x0
       RenderBlock (floating) {DIV} at (-4216,0) size 5000x100 [bgcolor=#66EEAA]
-        RenderText {#text} at (4712,0) size 288x19
+        RenderText {#text} at (4712,0) size 288x17
           text run at (4712,0) width 288: "Element floated right with a width of 5000px."

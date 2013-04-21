@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x77 layerType: background only
 layer at (10,13) size 320x64
   RenderBlock (positioned) zI: -1 {DIV} at (10,13) size 320x64 [color=#FFFF00] [bgcolor=#FF0000]
-    RenderText zI: -1 {#text} at (0,0) size 36x19
+    RenderText zI: -1 {#text} at (0,0) size 36x17
       text run at (0,0) width 36: "FAIL"
 layer at (0,0) size 800x77 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x77
@@ -12,6 +12,6 @@ layer at (0,0) size 800x77 layerType: foreground only
         RenderBlock {DIV} at (20,11) size 736x0
           RenderBlock {DIV} at (0,0) size 736x0
       RenderBlock (floating) {DIV} at (0,11) size 320x64 [color=#FFFFFF] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 175x19
+        RenderText {#text} at (0,0) size 175x17
           text run at (0,0) width 175: "This block should be green."
       RenderBlock {DIV} at (50,47) size 680x0
