@@ -261,30 +261,23 @@ void ScrollableArea::finishCurrentScrollAnimations() const
         scrollAnimator->finishCurrentScrollAnimations();
 }
 
-void ScrollableArea::didAddVerticalScrollbar(Scrollbar* scrollbar)
+void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    scrollAnimator()->didAddVerticalScrollbar(scrollbar);
+    if (orientation == VerticalScrollbar)
+        scrollAnimator()->didAddVerticalScrollbar(scrollbar);
+    else
+        scrollAnimator()->didAddHorizontalScrollbar(scrollbar);
 
     // <rdar://problem/9797253> AppKit resets the scrollbar's style when you attach a scrollbar
     setScrollbarOverlayStyle(scrollbarOverlayStyle());
 }
 
-void ScrollableArea::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
+void ScrollableArea::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    scrollAnimator()->willRemoveVerticalScrollbar(scrollbar);
-}
-
-void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    scrollAnimator()->didAddHorizontalScrollbar(scrollbar);
-
-    // <rdar://problem/9797253> AppKit resets the scrollbar's style when you attach a scrollbar
-    setScrollbarOverlayStyle(scrollbarOverlayStyle());
-}
-
-void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
+    if (orientation == VerticalScrollbar)
+        scrollAnimator()->willRemoveVerticalScrollbar(scrollbar);
+    else
+        scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
 }
 
 void ScrollableArea::contentsResized()

@@ -83,10 +83,8 @@ public:
 
     void finishCurrentScrollAnimations() const;
 
-    void didAddVerticalScrollbar(Scrollbar*);
-    void willRemoveVerticalScrollbar(Scrollbar*);
-    virtual void didAddHorizontalScrollbar(Scrollbar*);
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
+    virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation);
+    virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation);
 
     virtual void contentsResized();
 

@@ -1,3 +1,18 @@
+2013-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Widget should not depend on AXObjectCache
+        https://bugs.webkit.org/show_bug.cgi?id=114514
+
+        Reviewed by Chris Fleizach.
+
+        Update to API changes.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar):
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (WebKit::SimplePDFPlugin::createScrollbar):
+        (WebKit::SimplePDFPlugin::destroyScrollbar):
+
 2013-04-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Fix unit test webkit2/WebKitFindController/hide

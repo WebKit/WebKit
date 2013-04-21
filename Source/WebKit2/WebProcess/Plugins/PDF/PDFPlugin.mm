@@ -275,14 +275,11 @@ PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientatio
     if (orientation == HorizontalScrollbar) {
         m_horizontalScrollbarLayer.adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer.get() addSublayer:m_horizontalScrollbarLayer.get()];
-        
-        didAddHorizontalScrollbar(widget.get());
     } else {
         m_verticalScrollbarLayer.adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer.get() addSublayer:m_verticalScrollbarLayer.get()];
-        
-        didAddVerticalScrollbar(widget.get());
     }
+    didAddScrollbar(widget.get(), orientation);
     pluginView()->frame()->view()->addChild(widget.get());
     return widget.release();
 }

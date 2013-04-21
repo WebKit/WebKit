@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class AXObjectCache;
 class Element;
 class Event;
 class FloatSize;
@@ -484,6 +485,10 @@ private:
     virtual GraphicsLayer* layerForOverhangAreas() const OVERRIDE;
 #endif
 #endif
+
+    // Override scrollbar notifications to update the AXObject cache.
+    virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) OVERRIDE;
+    virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) OVERRIDE;
 
     void scheduleResizeEvent();
     void sendResizeEvent();

@@ -206,7 +206,6 @@ protected:
 
 private:
     virtual bool isScrollbar() const { return true; }
-    virtual AXObjectCache* existingAXObjectCache() const;
 };
 
 } // namespace WebCore

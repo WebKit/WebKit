@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScrollView.h"
 
-#include "AXObjectCache.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HostWindow.h"
@@ -91,16 +90,13 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
     if (hasBar && !m_horizontalScrollbar) {
         m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
         addChild(m_horizontalScrollbar.get());
-        didAddHorizontalScrollbar(m_horizontalScrollbar.get());
+        didAddScrollbar(m_horizontalScrollbar.get(), HorizontalScrollbar);
         m_horizontalScrollbar->styleChanged();
     } else if (!hasBar && m_horizontalScrollbar) {
-        willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
+        willRemoveScrollbar(m_horizontalScrollbar.get(), HorizontalScrollbar);
         removeChild(m_horizontalScrollbar.get());
         m_horizontalScrollbar = 0;
     }
-    
-    if (AXObjectCache* cache = axObjectCache())
-        cache->handleScrollbarUpdate(this);
 }
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
@@ -109,16 +105,13 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
     if (hasBar && !m_verticalScrollbar) {
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
         addChild(m_verticalScrollbar.get());
-        didAddVerticalScrollbar(m_verticalScrollbar.get());
+        didAddScrollbar(m_verticalScrollbar.get(), VerticalScrollbar);
         m_verticalScrollbar->styleChanged();
     } else if (!hasBar && m_verticalScrollbar) {
-        willRemoveVerticalScrollbar(m_verticalScrollbar.get());
+        willRemoveScrollbar(m_verticalScrollbar.get(), VerticalScrollbar);
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
     }
-    
-    if (AXObjectCache* cache = axObjectCache())
-        cache->handleScrollbarUpdate(this);
 }
 
 #if !PLATFORM(GTK)

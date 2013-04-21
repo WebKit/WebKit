@@ -2876,10 +2876,7 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
         widget = RenderScrollbar::createCustomScrollbar(this, orientation, actualRenderer->node());
     else {
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
-        if (orientation == HorizontalScrollbar)
-            didAddHorizontalScrollbar(widget.get());
-        else 
-            didAddVerticalScrollbar(widget.get());
+        didAddScrollbar(widget.get(), orientation);
     }
     renderer()->document()->view()->addChild(widget.get());        
     return widget.release();
@@ -2891,12 +2888,8 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
     if (!scrollbar)
         return;
 
-    if (!scrollbar->isCustomScrollbar()) {
-        if (orientation == HorizontalScrollbar)
-            willRemoveHorizontalScrollbar(scrollbar.get());
-        else
-            willRemoveVerticalScrollbar(scrollbar.get());
-    }
+    if (!scrollbar->isCustomScrollbar())
+        willRemoveScrollbar(scrollbar.get(), orientation);
 
     scrollbar->removeFromParent();
     scrollbar->disconnectFromScrollableArea();

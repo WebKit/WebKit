@@ -97,7 +97,6 @@ typedef PlatformWidget PlatformPageClient;
 
 namespace WebCore {
 
-class AXObjectCache;
 class Cursor;
 class Event;
 class Font;
@@ -231,9 +230,6 @@ public:
     virtual IntPoint convertToContainingView(const IntPoint&) const;
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
-    // A means to access the AX cache when this object can get a pointer to it.
-    virtual AXObjectCache* axObjectCache() const { return 0; }
-    
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
 
