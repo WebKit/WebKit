@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 72x19
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 72x17
           text run at (0,0) width 72: "no spacing:"
-      RenderBlock {P} at (0,36) size 784x20
+      RenderBlock {P} at (0,35) size 784x20
         RenderText {#text} at (0,1) size 70x18
           text run at (0,1) width 70: "abc abc abc"
-      RenderBlock (anonymous) at (0,74) size 784x18
-        RenderText {#text} at (0,0) size 294x19
+      RenderBlock (anonymous) at (0,73) size 784x17
+        RenderText {#text} at (0,0) size 294x17
           text run at (0,0) width 294: "word-spacing: 100px, all should look the same"
-      RenderBlock {P} at (0,110) size 784x20
+      RenderBlock {P} at (0,108) size 784x20
         RenderText {#text} at (0,1) size 270x18
           text run at (0,1) width 270: "abc abc abc"
-      RenderBlock {P} at (0,148) size 784x20
+      RenderBlock {P} at (0,146) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
         RenderInline {SPAN} at (0,0) size 14x18
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
             text run at (125,1) width 14: "ab"
         RenderText {#text} at (138,1) size 132x18
           text run at (138,1) width 132: "c abc"
-      RenderBlock {P} at (0,186) size 784x20
+      RenderBlock {P} at (0,184) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
         RenderInline {SPAN} at (0,0) size 8x18
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
             text run at (132,1) width 7: "b"
         RenderText {#text} at (138,1) size 132x18
           text run at (138,1) width 132: "c abc"
-      RenderBlock {P} at (0,224) size 784x20
+      RenderBlock {P} at (0,222) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
         RenderInline {SPAN} at (0,0) size 8x18
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
             text run at (138,1) width 7: "c"
         RenderText {#text} at (244,1) size 26x18
           text run at (244,1) width 26: " abc"
-      RenderBlock {P} at (0,262) size 784x20
+      RenderBlock {P} at (0,260) size 784x20
         RenderText {#text} at (0,1) size 133x18
           text run at (0,1) width 133: "abc a"
         RenderInline {SPAN} at (0,0) size 7x18
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
             text run at (138,1) width 7: "c"
         RenderText {#text} at (244,1) size 26x18
           text run at (244,1) width 26: " abc"
-      RenderBlock {P} at (0,300) size 784x20
+      RenderBlock {P} at (0,298) size 784x20
         RenderText {#text} at (0,1) size 133x18
           text run at (0,1) width 133: "abc a"
         RenderInline {SPAN} at (0,0) size 7x18
@@ -66,7 +66,7 @@ layer at (0,0) size 800x600
             text run at (132,1) width 7: "b"
         RenderText {#text} at (138,1) size 132x18
           text run at (138,1) width 132: "c abc"
-      RenderBlock {P} at (0,338) size 784x20
+      RenderBlock {P} at (0,336) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
         RenderInline {SPAN} at (0,0) size 1x18

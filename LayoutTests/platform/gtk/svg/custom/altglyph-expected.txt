@@ -2,19 +2,19 @@ layer at (0,0) size 808x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {html} at (0,0) size 800x585
-    RenderBody {body} at (8,16) size 784x565
-      RenderBlock {p} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 747x37
+    RenderBody {body} at (8,16) size 784x563
+      RenderBlock {p} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 747x34
           text run at (0,0) width 747: "The left edges of the black boxes below should line up with the left edges of their containing orange or green boxes. In"
-          text run at (0,18) width 286: "addition, all the assertions below should pass."
-      RenderBlock {div} at (0,52) size 800x200
-        RenderSVGRoot {svg} at (8,68) size 590x200
-          RenderSVGRect {rect} at (8,78) size 70x160 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=10.00] [width=70.00] [height=160.00]
-          RenderSVGRect {rect} at (78,78) size 100x150 [fill={[type=SOLID] [color=#008000]}] [x=70.00] [y=10.00] [width=100.00] [height=150.00]
-          RenderSVGRect {rect} at (178,78) size 70x140 [fill={[type=SOLID] [color=#FFA500]}] [x=170.00] [y=10.00] [width=70.00] [height=140.00]
-          RenderSVGRect {rect} at (248,78) size 70x130 [fill={[type=SOLID] [color=#008000]}] [x=240.00] [y=10.00] [width=70.00] [height=130.00]
-          RenderSVGRect {rect} at (318,78) size 80x120 [fill={[type=SOLID] [color=#FFA500]}] [x=310.00] [y=10.00] [width=80.00] [height=120.00]
-          RenderSVGRect {rect} at (398,78) size 60x110 [fill={[type=SOLID] [color=#008000]}] [x=390.00] [y=10.00] [width=60.00] [height=110.00]
+          text run at (0,17) width 286: "addition, all the assertions below should pass."
+      RenderBlock {div} at (0,50) size 800x200
+        RenderSVGRoot {svg} at (8,66) size 590x200
+          RenderSVGRect {rect} at (8,76) size 70x160 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=10.00] [width=70.00] [height=160.00]
+          RenderSVGRect {rect} at (78,76) size 100x150 [fill={[type=SOLID] [color=#008000]}] [x=70.00] [y=10.00] [width=100.00] [height=150.00]
+          RenderSVGRect {rect} at (178,76) size 70x140 [fill={[type=SOLID] [color=#FFA500]}] [x=170.00] [y=10.00] [width=70.00] [height=140.00]
+          RenderSVGRect {rect} at (248,76) size 70x130 [fill={[type=SOLID] [color=#008000]}] [x=240.00] [y=10.00] [width=70.00] [height=130.00]
+          RenderSVGRect {rect} at (318,76) size 80x120 [fill={[type=SOLID] [color=#FFA500]}] [x=310.00] [y=10.00] [width=80.00] [height=120.00]
+          RenderSVGRect {rect} at (398,76) size 60x110 [fill={[type=SOLID] [color=#008000]}] [x=390.00] [y=10.00] [width=60.00] [height=110.00]
           RenderSVGText {text} at (0,-90) size 590x600 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 390x600
               chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 9 width 390.00: "GGDGGBBBD"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x585
               RenderSVGInlineText {#text} at (390,0) size 200x600
                 chunk 1 text run 1 at (390.00,10.00) startOffset 0 endOffset 1 width 200.00: "X"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {pre} at (0,265) size 784x300
+      RenderBlock {pre} at (0,263) size 784x300
         RenderInline {span} at (0,0) size 312x15
           RenderInline {span} at (0,0) size 312x15
             RenderInline {span} at (0,0) size 32x15
