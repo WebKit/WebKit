@@ -789,7 +789,9 @@ webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 # Fails, test times out in testLoadErrorGC()
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 
-# Seems to get 200 HTTP responses when expecting something else.
+# Libsoup 2.42.0 regressions
+webkit.org/b/114918 http/tests/cache/reload-main-resource.php [ Failure ]
+webkit.org/b/114918 http/tests/cache/xhr-vary-header.html [ Failure ]
 webkit.org/b/114918 http/tests/xmlhttprequest/cache-override.html [ Failure Pass ]
 webkit.org/b/114918 http/tests/xmlhttprequest/range-test.html [ Failure Pass ]
 
