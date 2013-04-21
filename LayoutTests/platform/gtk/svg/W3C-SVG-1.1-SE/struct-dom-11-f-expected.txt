@@ -8,12 +8,12 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 387x15
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 67 width 387.00: "Test getIntersectionList and getEnclosureList return value liveness"
       RenderSVGRect {rect} at (10,70) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=70.00] [width=50.00] [height=50.00]
-      RenderSVGText {text} at (70,83) size 146x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 146x21
+      RenderSVGText {text} at (70,84) size 146x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 146x20
           chunk 1 text run 1 at (70.00,100.00) startOffset 0 endOffset 19 width 146.00: "getIntersectionList"
       RenderSVGRect {rect} at (10,130) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=130.00] [width=50.00] [height=50.00]
-      RenderSVGText {text} at (70,143) size 133x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 133x21
+      RenderSVGText {text} at (70,144) size 133x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 133x20
           chunk 1 text run 1 at (70.00,160.00) startOffset 0 endOffset 16 width 133.00: "getEnclosureList"
       RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,311) size 231x36

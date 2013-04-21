@@ -3,37 +3,37 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGText {text} at (10,313) size 198x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 198x34
+    RenderSVGText {text} at (10,313) size 198x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 198x33
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 198.00: "$Revision: 1.1 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (5,18) size 207x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 207x34
+    RenderSVGText {text} at (5,18) size 207x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 207x33
         chunk 1 text run 1 at (5.00,45.00) startOffset 0 endOffset 16 width 207.00: "org.w3c.svg.lang"
-    RenderSVGText {text} at (385,18) size 56x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 56x34
+    RenderSVGText {text} at (385,18) size 56x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 56x33
         chunk 1 text run 1 at (385.00,45.00) startOffset 0 endOffset 5 width 56.00: "false"
-    RenderSVGText {text} at (5,58) size 258x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 258x34
+    RenderSVGText {text} at (5,58) size 258x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 258x33
         chunk 1 text run 1 at (5.00,85.00) startOffset 0 endOffset 19 width 258.00: "org.w3c.svg.dynamic"
-    RenderSVGText {text} at (385,58) size 56x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 56x34
+    RenderSVGText {text} at (385,58) size 56x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 56x33
         chunk 1 text run 1 at (385.00,85.00) startOffset 0 endOffset 5 width 56.00: "false"
-    RenderSVGText {text} at (5,98) size 218x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 218x34
+    RenderSVGText {text} at (5,98) size 218x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 218x33
         chunk 1 text run 1 at (5.00,125.00) startOffset 0 endOffset 18 width 218.00: "org.w3c.svg.static"
-    RenderSVGText {text} at (385,98) size 56x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 56x34
+    RenderSVGText {text} at (385,98) size 56x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 56x33
         chunk 1 text run 1 at (385.00,125.00) startOffset 0 endOffset 5 width 56.00: "false"
-    RenderSVGText {text} at (5,138) size 209x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 209x34
+    RenderSVGText {text} at (5,138) size 209x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 209x33
         chunk 1 text run 1 at (5.00,165.00) startOffset 0 endOffset 15 width 209.00: "org.w3c.dom.svg"
-    RenderSVGText {text} at (385,138) size 56x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 56x34
+    RenderSVGText {text} at (385,138) size 56x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 56x33
         chunk 1 text run 1 at (385.00,165.00) startOffset 0 endOffset 5 width 56.00: "false"
-    RenderSVGText {text} at (5,178) size 148x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 148x34
+    RenderSVGText {text} at (5,178) size 148x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 148x33
         chunk 1 text run 1 at (5.00,205.00) startOffset 0 endOffset 11 width 148.00: "org.w3c.svg"
-    RenderSVGText {text} at (385,178) size 56x34 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 56x34
+    RenderSVGText {text} at (385,178) size 56x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 56x33
         chunk 1 text run 1 at (385.00,205.00) startOffset 0 endOffset 5 width 56.00: "false"

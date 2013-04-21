@@ -16,14 +16,14 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (253,144) size 49x49 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [data="M 500 100 L 500 300 L 700 300 L 700 100 L 550 100 L 550 250 L 650 250 L 650 100 L 500 100 Z"]
       RenderSVGContainer {g} at (354,144) size 49x49 [transform={m=((0.30,0.00)(0.00,0.30)) t=(243.00,150.00)}]
         RenderSVGPath {path} at (354,144) size 49x49 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [data="M 500 100 L 500 300 L 700 300 L 700 100 L 550 100 L 550 250 L 650 250 L 650 100 L 500 100 Z"]
-    RenderSVGText {text} at (5,200) size 405x32 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 405x32
+    RenderSVGText {text} at (5,200) size 405x31 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 405x31
         chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 39 width 405.00: "Animation on: 'points' and 'fill-rule'."
-    RenderSVGText {text} at (5,238) size 325x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 325x21
+    RenderSVGText {text} at (5,239) size 325x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 325x20
         chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 325.00: "Digit should match outline at indicated time."
-    RenderSVGText {text} at (5,258) size 392x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 392x21
+    RenderSVGText {text} at (5,259) size 392x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 392x20
         chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 392.00: "Filled square should follow morphing digit discretely."
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

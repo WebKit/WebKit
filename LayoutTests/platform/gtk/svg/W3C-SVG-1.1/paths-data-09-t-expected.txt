@@ -3,11 +3,11 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (14,12) size 402x226
-      RenderSVGText {text} at (75,12) size 306x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 306x28
+      RenderSVGText {text} at (75,12) size 306x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 306x27
           chunk 1 text run 1 at (75.00,34.00) startOffset 0 endOffset 26 width 306.00: "Lines drawn with commands:"
-      RenderSVGText {text} at (180,42) size 85x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 85x28
+      RenderSVGText {text} at (180,42) size 85x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 85x27
           chunk 1 text run 1 at (180.00,64.00) startOffset 0 endOffset 7 width 85.00: "m and z"
       RenderSVGContainer {g} at (14,68) size 402x170 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]
         RenderSVGPath {path} at (16,70) size 191x165 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 190 L 113.962 280 L 10.0385 280 L 62 190 Z M 62 205 L 100.971 272.5 L 23.0589 272.5 L 62.03 205 Z"]
