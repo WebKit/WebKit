@@ -789,6 +789,10 @@ webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 # Fails, test times out in testLoadErrorGC()
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 
+# Seems to get 200 HTTP responses when expecting something else.
+webkit.org/b/114918 http/tests/xmlhttprequest/cache-override.html [ Failure Pass ]
+webkit.org/b/114918 http/tests/xmlhttprequest/range-test.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////

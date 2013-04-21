@@ -443,6 +443,12 @@ webkit.org/b/109435 webgl/conformance/textures/copy-tex-image-2d-formats.html [ 
 webkit.org/b/109435 webgl/conformance/textures/texture-mips.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/textures/texture-size-limit.html [ Failure Crash ]
 
+# Failing media query test.
+webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
+
+# New test introduced in r148672 that fails on EFL WK2.
+webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure ]
+
 # Websocket tests are flaky on WK2
 webkit.org/b/111976 http/tests/websocket [ Crash Pass ]
 
