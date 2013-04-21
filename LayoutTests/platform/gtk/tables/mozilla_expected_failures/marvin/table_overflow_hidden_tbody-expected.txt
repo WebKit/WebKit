@@ -9,5 +9,5 @@ layer at (0,0) size 800x38
             RenderTableCell {TD} at (2,2) size 16x16 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 12x12 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 702x502 [border: (1px solid #FF0000)]
-                  RenderText {#text} at (1,1) size 60x19
+                  RenderText {#text} at (1,1) size 60x17
                     text run at (1,1) width 60: "scrollbars"
