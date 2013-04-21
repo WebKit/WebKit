@@ -68,9 +68,9 @@ PASS a["scrollLeft"] is 0
 PASS a["firstElementChild"] is null
 PASS a["clientLeft"] is 0
 PASS a["webkitShadowRoot"] is null
-PASS a["offsetHeight"] is 19
+PASS a["offsetHeight"] is 17
 PASS a["clientHeight"] is 0
-PASS a["offsetTop"] is 1089
+PASS a["offsetTop"] is 1087
 PASS a["scrollTop"] is 0
 PASS a["scrollHeight"] is 0
 PASS a["webkitInsertionParent"] is null
