@@ -1,3 +1,15 @@
+2013-04-21  Mark Lam  <mark.lam@apple.com>
+
+        Refactor identical inline functions in JSVALUE64 and JSVALUE32_64 sections
+        out into the common section.
+        https://bugs.webkit.org/show_bug.cgi?id=114910.
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2013-04-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         LLint should be able to use x87 instead of SSE for floating pointer
