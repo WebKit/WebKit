@@ -432,7 +432,7 @@ webkit.org/b/109435 webgl/conformance/more/functions/uniformfArrayLen1.html [ Fa
 webkit.org/b/109435 webgl/conformance/programs/gl-bind-attrib-location-long-names-test.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/programs/program-test.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
-#webkit.org/b/109435 webgl/conformance/rendering/gl-scissor-test.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/rendering/gl-scissor-test.html [ Failure Crash ]
 #webkit.org/b/109435 webgl/conformance/rendering/multisample-corruption.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/rendering/point-size.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
@@ -450,7 +450,7 @@ webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
 webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure ]
 
 # Websocket tests are flaky on WK2
-webkit.org/b/111976 http/tests/websocket [ Crash Pass ]
+webkit.org/b/111976 http/tests/websocket [ Crash Pass Failure ]
 
 # Most probably failures are result of delay in scrolling caused by 'delegated scrolling' usage.
 webkit.org/b/107286 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
