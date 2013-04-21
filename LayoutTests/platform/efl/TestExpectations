@@ -1843,6 +1843,11 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 webkit.org/b/101400 svg/css/shadow-changes.svg [ Failure ]
 webkit.org/b/101400 svg/css/composite-shadow-text.svg [ Failure ]
 
+# Regression (r148032 - r148103).
+webkit.org/b/114919 fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
+webkit.org/b/114920 fast/repaint/moving-shadow-on-container.html [ ImageOnlyFailure ]
+webkit.org/b/114920 fast/repaint/moving-shadow-on-path.html [ ImageOnlyFailure ]
+
 # Failing IndexedDB tests
 webkit.org/b/82776 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
