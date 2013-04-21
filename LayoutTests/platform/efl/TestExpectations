@@ -1846,11 +1846,11 @@ webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
 
 # Compositing reftests added in r148172 fail on EFL
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
 
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
