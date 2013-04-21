@@ -130,8 +130,8 @@ ParserError BytecodeGenerator::generate()
     m_codeBlock->shrinkToFit();
 
     if (m_expressionTooDeep)
-        return ParserError::OutOfMemory;
-    return ParserError::ErrorNone;
+        return ParserError(ParserError::OutOfMemory);
+    return ParserError(ParserError::ErrorNone);
 }
 
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)

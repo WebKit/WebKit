@@ -134,7 +134,36 @@ private:
     ALWAYS_INLINE void shift();
     ALWAYS_INLINE bool atEnd() const;
     ALWAYS_INLINE T peek(int offset) const;
-    int parseFourDigitUnicodeHex();
+    struct UnicodeHexValue {
+        
+        enum ValueType { ValidHex, IncompleteHex, InvalidHex };
+        
+        explicit UnicodeHexValue(int value)
+            : m_value(value)
+        {
+        }
+        explicit UnicodeHexValue(ValueType type)
+            : m_value(type == IncompleteHex ? -2 : -1)
+        {
+        }
+
+        ValueType valueType() const
+        {
+            if (m_value >= 0)
+                return ValidHex;
+            return m_value == -2 ? IncompleteHex : InvalidHex;
+        }
+        bool isValid() const { return m_value >= 0; }
+        int value() const
+        {
+            ASSERT(m_value >= 0);
+            return m_value;
+        }
+        
+    private:
+        int m_value;
+    };
+    UnicodeHexValue parseFourDigitUnicodeHex();
     void shiftLineTerminator();
 
     String invalidCharacterMessage() const;
@@ -157,8 +186,13 @@ private:
     template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
     template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned lexerFlags, bool strictMode);
     template <bool shouldBuildIdentifiers> NEVER_INLINE JSTokenType parseIdentifierSlowCase(JSTokenData*, unsigned lexerFlags, bool strictMode);
-    template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData*, bool strictMode);
-    template <bool shouldBuildStrings> NEVER_INLINE bool parseStringSlowCase(JSTokenData*, bool strictMode);
+    enum StringParseResult {
+        StringParsedSuccessfully,
+        StringUnterminated,
+        StringCannotBeParsed
+    };
+    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseString(JSTokenData*, bool strictMode);
+    template <bool shouldBuildStrings> NEVER_INLINE StringParseResult parseStringSlowCase(JSTokenData*, bool strictMode);
     ALWAYS_INLINE void parseHex(double& returnValue);
     ALWAYS_INLINE bool parseOctal(double& returnValue);
     ALWAYS_INLINE bool parseDecimal(double& returnValue);

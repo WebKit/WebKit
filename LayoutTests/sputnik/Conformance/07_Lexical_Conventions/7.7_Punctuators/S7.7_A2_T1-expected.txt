@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u007B'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u007B'
 S7.7_A2_T1
 
 PASS Expected parsing failure

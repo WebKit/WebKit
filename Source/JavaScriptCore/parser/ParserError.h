@@ -28,12 +28,30 @@
 
 #include "Error.h"
 #include "ExceptionHelpers.h"
+#include "ParserTokens.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 struct ParserError {
-    enum ErrorType { ErrorNone, StackOverflow, SyntaxError, EvalError, OutOfMemory } m_type;
+    enum SyntaxErrorType {
+        SyntaxErrorNone,
+        SyntaxErrorIrrecoverable,
+        SyntaxErrorUnterminatedLiteral,
+        SyntaxErrorRecoverable
+    };
+
+    enum ErrorType {
+        ErrorNone,
+        StackOverflow,
+        EvalError,
+        OutOfMemory,
+        SyntaxError
+    };
+
+    ErrorType m_type;
+    SyntaxErrorType m_syntaxErrorType;
+    JSToken m_token;
     String m_message;
     int m_line;
     ParserError()
@@ -41,15 +59,26 @@ struct ParserError {
         , m_line(-1)
     {
     }
-
-    ParserError(ErrorType type)
+    
+    explicit ParserError(ErrorType type)
         : m_type(type)
+        , m_syntaxErrorType(SyntaxErrorNone)
         , m_line(-1)
     {
     }
 
-    ParserError(ErrorType type, String msg, int line)
+    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token)
         : m_type(type)
+        , m_syntaxErrorType(syntaxError)
+        , m_token(token)
+        , m_line(-1)
+    {
+    }
+
+    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, String msg, int line)
+        : m_type(type)
+        , m_syntaxErrorType(syntaxError)
+        , m_token(token)
         , m_message(msg)
         , m_line(line)
     {
@@ -72,6 +101,7 @@ struct ParserError {
         CRASH();
         return createOutOfMemoryError(globalObject); // Appease Qt bot
     }
+#undef GET_ERROR_CODE
 };
 
 } // namespace JSC

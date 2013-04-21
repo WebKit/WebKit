@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002A'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u002A'
 S7.7_A2_T9
 
 PASS Expected parsing failure

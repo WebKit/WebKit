@@ -38,6 +38,8 @@ enum {
     BinaryOpTokenPrecedenceShift = 8,
     BinaryOpTokenAllowsInPrecedenceAdditionalShift = 4,
     BinaryOpTokenPrecedenceMask = 15 << BinaryOpTokenPrecedenceShift,
+    ErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 7),
+    UnterminatedErrorTokenFlag = ErrorTokenFlag << 1
 };
 
 #define BINARY_OP_PRECEDENCE(prec) (((prec) << BinaryOpTokenPrecedenceShift) | ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift)))
@@ -85,7 +87,6 @@ enum JSTokenType {
     SEMICOLON,
     COLON,
     DOT,
-    ERRORTOK,
     EOFTOK,
     EQUAL,
     PLUSEQUAL,
@@ -133,7 +134,18 @@ enum JSTokenType {
     MINUS = 19 | BINARY_OP_PRECEDENCE(9) | UnaryOpTokenFlag,
     TIMES = 20 | BINARY_OP_PRECEDENCE(10),
     DIVIDE = 21 | BINARY_OP_PRECEDENCE(10),
-    MOD = 22 | BINARY_OP_PRECEDENCE(10)
+    MOD = 22 | BINARY_OP_PRECEDENCE(10),
+    ERRORTOK = 0 | ErrorTokenFlag,
+    UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK = 0 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_IDENTIFIER_ESCAPE_ERRORTOK = 1 | ErrorTokenFlag,
+    UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK = 2 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK = 3 | ErrorTokenFlag,
+    UNTERMINATED_MULTILINE_COMMENT_ERRORTOK = 4 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    UNTERMINATED_NUMERIC_LITERAL_ERRORTOK = 5 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_OCTAL_NUMBER_ERRORTOK = 6 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_NUMERIC_LITERAL_ERRORTOK = 7 | ErrorTokenFlag,
+    UNTERMINATED_STRING_LITERAL_ERRORTOK = 8 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_STRING_LITERAL_ERRORTOK = 9 | ErrorTokenFlag,
 };
 
 union JSTokenData {

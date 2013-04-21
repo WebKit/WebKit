@@ -705,9 +705,19 @@ private:
         case RESERVED: 
         case NUMBER:
         case IDENT: 
-        case STRING: 
+        case STRING:
+        case UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK:
+        case UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+        case UNTERMINATED_MULTILINE_COMMENT_ERRORTOK:
+        case UNTERMINATED_NUMERIC_LITERAL_ERRORTOK:
+        case UNTERMINATED_STRING_LITERAL_ERRORTOK:
+        case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
+        case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+        case INVALID_NUMERIC_LITERAL_ERRORTOK:
+        case INVALID_OCTAL_NUMBER_ERRORTOK:
+        case INVALID_STRING_LITERAL_ERRORTOK:
         case ERRORTOK:
-        case EOFTOK: 
+        case EOFTOK:
             return 0;
         case LastUntaggedToken: 
             break;
@@ -734,7 +744,36 @@ private:
         case STRING: 
             m_errorMessage = "Unexpected string " + getToken();
             return;
-        case ERRORTOK: 
+            
+        case UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK:
+        case UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+            m_errorMessage = "Incomplete unicode escape in identifier: '" + getToken() + '\'';
+            return;
+        case UNTERMINATED_MULTILINE_COMMENT_ERRORTOK:
+            m_errorMessage = "Unterminated multiline comment";
+            return;
+        case UNTERMINATED_NUMERIC_LITERAL_ERRORTOK:
+            m_errorMessage = "Unterminated numeric literal '" + getToken() + '\'';
+            return;
+        case UNTERMINATED_STRING_LITERAL_ERRORTOK:
+            m_errorMessage = "Unterminated string literal '" + getToken() + '\'';
+            return;
+        case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
+            m_errorMessage = "Invalid escape in identifier: '" + getToken() + '\'';
+            return;
+        case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+            m_errorMessage = "Invalid unicode escape in identifier: '" + getToken() + '\'';
+            return;
+        case INVALID_NUMERIC_LITERAL_ERRORTOK:
+            m_errorMessage = "Invalid numeric literal: '" + getToken() + '\'';
+            return;
+        case INVALID_OCTAL_NUMBER_ERRORTOK:
+            m_errorMessage = "Invalid use of octal: '" + getToken() + '\'';
+                return;
+        case INVALID_STRING_LITERAL_ERRORTOK:
+            m_errorMessage = "Invalid string literal: '" + getToken() + '\'';
+            return;
+        case ERRORTOK:
             m_errorMessage = "Unrecognized token '" + getToken() + '\'';
             return;
         case EOFTOK:  
@@ -994,11 +1033,19 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
         // code we assume that it was a syntax error since running out of stack is much less
         // likely, and we are currently unable to distinguish between the two cases.
         if (isFunctionBodyNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
-            error = ParserError::StackOverflow;
-        else if (isEvalNode<ParsedNode>())
-            error = ParserError(ParserError::EvalError, errMsg, errLine);
-        else
-            error = ParserError(ParserError::SyntaxError, errMsg, errLine);
+            error = ParserError(ParserError::StackOverflow, ParserError::SyntaxErrorNone, m_token);
+        else {
+            ParserError::SyntaxErrorType errorType = ParserError::SyntaxErrorIrrecoverable;
+            if (m_token.m_type == EOFTOK)
+                errorType = ParserError::SyntaxErrorRecoverable;
+            else if (m_token.m_type & UnterminatedErrorTokenFlag)
+                errorType = ParserError::SyntaxErrorUnterminatedLiteral;
+            
+            if (isEvalNode<ParsedNode>())
+                error = ParserError(ParserError::EvalError, errorType, m_token, errMsg, errLine);
+            else
+                error = ParserError(ParserError::SyntaxError, errorType, m_token, errMsg, errLine);
+        }
     }
 
     m_arena->reset();

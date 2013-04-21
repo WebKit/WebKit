@@ -51,6 +51,15 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
 
     return true;
 }
+    
+bool checkSyntax(ExecState* exec, const SourceCode& source, ParserError& error)
+{
+    JSLockHolder lock(exec);
+    RELEASE_ASSERT(exec->vm().identifierTable == wtfThreadData().currentIdentifierTable());
+    VM* vm = &exec->vm();
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    return programNode;
+}
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {

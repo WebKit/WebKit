@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002B'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u002B'
 S7.7_A2_T7
 
 PASS Expected parsing failure

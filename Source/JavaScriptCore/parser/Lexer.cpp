@@ -596,21 +596,21 @@ ALWAYS_INLINE T Lexer<T>::peek(int offset) const
 }
 
 template <typename T>
-int Lexer<T>::parseFourDigitUnicodeHex()
+typename Lexer<T>::UnicodeHexValue Lexer<T>::parseFourDigitUnicodeHex()
 {
     T char1 = peek(1);
     T char2 = peek(2);
     T char3 = peek(3);
 
     if (UNLIKELY(!isASCIIHexDigit(m_current) || !isASCIIHexDigit(char1) || !isASCIIHexDigit(char2) || !isASCIIHexDigit(char3)))
-        return -1;
+        return UnicodeHexValue((m_code + 4) >= m_codeEnd ? UnicodeHexValue::IncompleteHex : UnicodeHexValue::InvalidHex);
 
     int result = convertUnicode(m_current, char1, char2, char3);
     shift();
     shift();
     shift();
     shift();
-    return result;
+    return UnicodeHexValue(result);
 }
 
 template <typename T>
@@ -883,14 +883,14 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
             m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
         shift();
         if (UNLIKELY(m_current != 'u'))
-            return ERRORTOK;
+            return atEnd() ? UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_ESCAPE_ERRORTOK;
         shift();
-        int character = parseFourDigitUnicodeHex();
-        if (UNLIKELY(character == -1))
-            return ERRORTOK;
-        UChar ucharacter = static_cast<UChar>(character);
+        UnicodeHexValue character = parseFourDigitUnicodeHex();
+        if (UNLIKELY(!character.isValid()))
+            return character.valueType() == UnicodeHexValue::IncompleteHex ? UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
+        UChar ucharacter = static_cast<UChar>(character.value());
         if (UNLIKELY(m_buffer16.size() ? !isIdentPart(ucharacter) : !isIdentStart(ucharacter)))
-            return ERRORTOK;
+            return INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
         if (shouldCreateIdentifier)
             record16(ucharacter);
         identifierStart = currentCharacter();
@@ -941,7 +941,7 @@ static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(UChar character)
 }
 
 template <typename T>
-template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTokenData* tokenData, bool strictMode)
+template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseResult Lexer<T>::parseString(JSTokenData* tokenData, bool strictMode)
 {
     int startingOffset = currentOffset();
     int startingLineNumber = lineNumber();
@@ -969,7 +969,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
                 shift();
                 if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
                     m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
-                    return false;
+                    return (atEnd() || (isASCIIHexDigit(m_current) && (m_code + 1 == m_codeEnd))) ? StringUnterminated : StringCannotBeParsed;
                 }
                 T prev = m_current;
                 shift();
@@ -1004,11 +1004,11 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
     } else
         tokenData->ident = 0;
 
-    return true;
+    return StringParsedSuccessfully;
 }
 
 template <typename T>
-template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenData* tokenData, bool strictMode)
+template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>::parseStringSlowCase(JSTokenData* tokenData, bool strictMode)
 {
     T stringQuoteCharacter = m_current;
     shift();
@@ -1034,7 +1034,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shift();
                 if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
                     m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
-                    return false;
+                    return StringCannotBeParsed;
                 }
                 T prev = m_current;
                 shift();
@@ -1043,16 +1043,16 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shift();
             } else if (m_current == 'u') {
                 shift();
-                int character = parseFourDigitUnicodeHex();
-                if (character != -1) {
+                UnicodeHexValue character = parseFourDigitUnicodeHex();
+                if (character.isValid()) {
                     if (shouldBuildStrings)
-                        record16(character);
+                        record16(character.value());
                 } else if (m_current == stringQuoteCharacter) {
                     if (shouldBuildStrings)
                         record16('u');
                 } else {
                     m_lexErrorMessage = "\\u can only be followed by a Unicode character sequence";
-                    return false;
+                    return character.valueType() == UnicodeHexValue::IncompleteHex ? StringUnterminated : StringCannotBeParsed;
                 }
             } else if (strictMode && isASCIIDigit(m_current)) {
                 // The only valid numeric escape in strict mode is '\0', and this must not be followed by a decimal digit.
@@ -1060,7 +1060,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shift();
                 if (character1 != '0' || isASCIIDigit(m_current)) {
                     m_lexErrorMessage = "The only valid numeric escape in strict mode is '\\0'";
-                    return false;
+                    return StringCannotBeParsed;
                 }
                 if (shouldBuildStrings)
                     record16(0);
@@ -1090,7 +1090,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shift();
             } else {
                 m_lexErrorMessage = "Unterminated string constant";
-                return false;
+                return StringUnterminated;
             }
 
             stringStart = currentCharacter();
@@ -1103,7 +1103,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
             // New-line or end of input is not allowed
             if (atEnd() || isLineTerminator(m_current)) {
                 m_lexErrorMessage = "Unexpected EOF";
-                return false;
+                return atEnd() ? StringUnterminated : StringCannotBeParsed;
             }
             // Anything else is just a normal character
         }
@@ -1118,7 +1118,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
         tokenData->ident = 0;
 
     m_buffer16.resize(0);
-    return true;
+    return StringParsedSuccessfully;
 }
 
 template <typename T>
@@ -1462,6 +1462,7 @@ start:
             if (parseMultilineComment())
                 goto start;
             m_lexErrorMessage = "Multiline comment was not closed properly";
+            token = UNTERMINATED_MULTILINE_COMMENT_ERRORTOK;
             goto returnError;
         }
         if (m_current == '=') {
@@ -1581,6 +1582,7 @@ start:
                 if (parseOctal(tokenData->doubleValue)) {
                     if (strictMode) {
                         m_lexErrorMessage = "Octal escapes are forbidden in strict mode";
+                        token = INVALID_OCTAL_NUMBER_ERRORTOK;
                         goto returnError;
                     }
                     token = NUMBER;
@@ -1599,6 +1601,7 @@ inNumberAfterDecimalPoint:
                 if ((m_current | 0x20) == 'e') {
                     if (!parseNumberAfterExponentIndicator()) {
                         m_lexErrorMessage = "Non-number found after exponent indicator";
+                        token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
                         goto returnError;
                     }
                 }
@@ -1611,17 +1614,24 @@ inNumberAfterDecimalPoint:
         // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
         if (UNLIKELY(isIdentStart(m_current))) {
             m_lexErrorMessage = "At least one digit must occur after a decimal point";
+            token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
             goto returnError;
         }
         m_buffer8.resize(0);
         break;
     case CharacterQuote:
         if (lexerFlags & LexerFlagsDontBuildStrings) {
-            if (UNLIKELY(!parseString<false>(tokenData, strictMode)))
+            StringParseResult result = parseString<false>(tokenData, strictMode);
+            if (UNLIKELY(result != StringParsedSuccessfully)) {
+                token = result == StringUnterminated ? UNTERMINATED_STRING_LITERAL_ERRORTOK : INVALID_STRING_LITERAL_ERRORTOK;
                 goto returnError;
+            }
         } else {
-            if (UNLIKELY(!parseString<true>(tokenData, strictMode)))
+            StringParseResult result = parseString<true>(tokenData, strictMode);
+            if (UNLIKELY(result != StringParsedSuccessfully)) {
+                token = result == StringUnterminated ? UNTERMINATED_STRING_LITERAL_ERRORTOK : INVALID_STRING_LITERAL_ERRORTOK;
                 goto returnError;
+            }
         }
         shift();
         token = STRING;
@@ -1643,10 +1653,12 @@ inNumberAfterDecimalPoint:
         goto start;
     case CharacterInvalid:
         m_lexErrorMessage = invalidCharacterMessage();
+        token = ERRORTOK;
         goto returnError;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         m_lexErrorMessage = "Internal Error";
+        token = ERRORTOK;
         goto returnError;
     }
 
@@ -1678,7 +1690,8 @@ returnError:
     m_error = true;
     tokenLocation->line = m_lineNumber;
     tokenLocation->endOffset = currentOffset();
-    return ERRORTOK;
+    RELEASE_ASSERT(token & ErrorTokenFlag);
+    return token;
 }
 
 template <typename T>

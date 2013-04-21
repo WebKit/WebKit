@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002C'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u002C'
 S7.7_A2_T6
 
 PASS Expected parsing failure

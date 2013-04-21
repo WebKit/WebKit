@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002D'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u002D'
 S7.7_A2_T8
 
 PASS Expected parsing failure

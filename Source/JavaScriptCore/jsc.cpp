@@ -146,7 +146,7 @@ public:
     void parseArguments(int, char**);
 };
 
-static const char interactivePrompt[] = "> ";
+static const char interactivePrompt[] = ">>> ";
 
 class StopWatch {
 public:
@@ -268,23 +268,28 @@ GlobalObject::GlobalObject(VM& vm, Structure* structure)
 {
 }
 
-static inline SourceCode jscSource(const char* utf8, const String& filename)
+static inline String stringFromUTF(const char* utf8)
 {
     // Find the the first non-ascii character, or nul.
     const char* pos = utf8;
     while (*pos > 0)
         pos++;
     size_t asciiLength = pos - utf8;
-
+    
     // Fast case - string is all ascii.
     if (!*pos)
-        return makeSource(String(utf8, asciiLength), filename);
-
+        return String(utf8, asciiLength);
+    
     // Slow case - contains non-ascii characters, use fromUTF8WithLatin1Fallback.
     ASSERT(*pos < 0);
     ASSERT(strlen(utf8) == asciiLength + strlen(pos));
-    String source = String::fromUTF8WithLatin1Fallback(utf8, asciiLength + strlen(pos));
-    return makeSource(source.impl(), filename);
+    return String::fromUTF8WithLatin1Fallback(utf8, asciiLength + strlen(pos));
+}
+
+static inline SourceCode jscSource(const char* utf8, const String& filename)
+{
+    String str = stringFromUTF(utf8);
+    return makeSource(str, filename);
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
@@ -607,17 +612,33 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 static void runInteractive(GlobalObject* globalObject)
 {
     String interpreterName("Interpreter");
-
-    while (true) {
+    
+    bool shouldQuit = false;
+    while (!shouldQuit) {
 #if HAVE(READLINE) && !RUNNING_FROM_XCODE
-        char* line = readline(interactivePrompt);
-        if (!line)
-            break;
-        if (line[0])
-            add_history(line);
+        ParserError error;
+        String source;
+        do {
+            error = ParserError();
+            char* line = readline(source.isEmpty() ? interactivePrompt : "... ");
+            source = source + line;
+            source = source + '\n';
+            checkSyntax(globalObject->globalExec(), makeSource(source, interpreterName), error);
+            shouldQuit = !line;
+            if (!line || !line[0])
+                break;
+            if (line[0])
+                add_history(line);
+        } while (error.m_syntaxErrorType == ParserError::SyntaxErrorRecoverable);
+        
+        if (error.m_type != ParserError::ErrorNone) {
+            printf("%s:%d\n", error.m_message.utf8().data(), error.m_line);
+            continue;
+        }
+        
+        
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, interpreterName), JSValue(), &evaluationException);
-        free(line);
+        JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, interpreterName), JSValue(), &evaluationException);
 #else
         printf("%s", interactivePrompt);
         Vector<char, 256> line;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\'
+CONSOLE MESSAGE: line 76: SyntaxError: Invalid escape in identifier: '\'
 S13_A7_T3
 
 PASS Expected parsing failure

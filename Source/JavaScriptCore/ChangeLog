@@ -1,3 +1,51 @@
+2013-04-21  Oliver Hunt  <oliver@apple.com>
+
+        JS Lexer and Parser should be more informative when they encounter errors
+        https://bugs.webkit.org/show_bug.cgi?id=114924
+
+        Reviewed by Filip Pizlo.
+
+        Add new tokens to represent the various ways that parsing and lexing have failed.
+        This gives us the ability to produce better error messages in some cases,
+        and to indicate whether or not the failure was due to invalid source, or simply
+        early termination.
+
+        The jsc prompt now makes use of this so that you can write functions that
+        are more than one line long.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * jsc.cpp:
+        (stringFromUTF):
+        (jscSource):
+        (runInteractive):
+        * parser/Lexer.cpp:
+        (JSC::::parseFourDigitUnicodeHex):
+        (JSC::::parseIdentifierSlowCase):
+        (JSC::::parseString):
+        (JSC::::parseStringSlowCase):
+        (JSC::::lex):
+        * parser/Lexer.h:
+        (UnicodeHexValue):
+        (JSC::Lexer::UnicodeHexValue::UnicodeHexValue):
+        (JSC::Lexer::UnicodeHexValue::valueType):
+        (JSC::Lexer::UnicodeHexValue::isValid):
+        (JSC::Lexer::UnicodeHexValue::value):
+        (Lexer):
+        * parser/Parser.h:
+        (JSC::Parser::getTokenName):
+        (JSC::Parser::updateErrorMessageSpecialCase):
+        (JSC::::parse):
+        * parser/ParserError.h:
+        (ParserError):
+        (JSC::ParserError::ParserError):
+        * parser/ParserTokens.h:
+        * runtime/Completion.cpp:
+        (JSC):
+        (JSC::checkSyntax):
+        * runtime/Completion.h:
+        (JSC):
+
 2013-04-21  Mark Lam  <mark.lam@apple.com>
 
         Refactor identical inline functions in JSVALUE64 and JSVALUE32_64 sections
