@@ -4,8 +4,8 @@ layer at (0,0) size 800x186
   RenderBlock {html} at (0,0) size 800x186
     RenderBody {body} at (8,16) size 784x154
       RenderBlock {p} at (0,0) size 784x69
-        RenderText {#text} at (0,23) size 49x19
-          text run at (0,23) width 49: "simple: "
+        RenderText {#text} at (0,24) size 49x17
+          text run at (0,24) width 49: "simple: "
         RenderMathMLMath {math} at (49,0) size 86x69 [padding: 0 1 0 1]
           RenderMathMLTable {mtable} at (1,0) size 84x69
             RenderTableSection (anonymous) at (0,0) size 84x69
@@ -63,7 +63,7 @@ layer at (0,0) size 800x186
                           text run at (0,-4) width 12: "23"
               RenderTableRow {mtr} at (0,47) size 84x22
                 RenderTableCell {mtd} at (0,47) size 84x22 [r=2 c=0 rs=1 cs=3]
-                  RenderMathMLSubSup {msub} at (33,4) size 19x14
+                  RenderMathMLSubSup {msub} at (32,4) size 20x14
                     RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14 [padding: 0 0 5 0]
                       RenderBlock {mi} at (0,0) size 7x9
                         RenderText {#text} at (0,-9) size 7x25
@@ -74,8 +74,8 @@ layer at (0,0) size 800x186
                           text run at (0,-4) width 12: "31"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,85) size 784x69
-        RenderText {#text} at (0,23) size 308x19
-          text run at (0,23) width 308: "left, default (center) and right column alignment: "
+        RenderText {#text} at (0,24) size 308x17
+          text run at (0,24) width 308: "left, default (center) and right column alignment: "
         RenderMathMLMath {math} at (308,0) size 260x69 [padding: 0 1 0 1]
           RenderMathMLTable {mtable} at (1,0) size 84x69
             RenderTableSection (anonymous) at (0,0) size 84x69
@@ -241,7 +241,7 @@ layer at (0,0) size 800x186
                           text run at (0,-4) width 12: "23"
               RenderTableRow {mtr} at (0,47) size 84x22
                 RenderTableCell {mtd} at (0,47) size 28x22 [r=2 c=0 rs=1 cs=1]
-                  RenderMathMLSubSup {msub} at (5,4) size 19x14
+                  RenderMathMLSubSup {msub} at (4,4) size 20x14
                     RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14 [padding: 0 0 5 0]
                       RenderBlock {mi} at (0,0) size 7x9
                         RenderText {#text} at (0,-9) size 7x25
@@ -251,7 +251,7 @@ layer at (0,0) size 800x186
                         RenderText {#text} at (0,-4) size 12x19
                           text run at (0,-4) width 12: "31"
                 RenderTableCell {mtd} at (28,47) size 28x22 [r=2 c=1 rs=1 cs=1]
-                  RenderMathMLSubSup {msub} at (5,4) size 19x14
+                  RenderMathMLSubSup {msub} at (4,4) size 20x14
                     RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14 [padding: 0 0 5 0]
                       RenderBlock {mi} at (0,0) size 7x9
                         RenderText {#text} at (0,-9) size 7x25
@@ -261,7 +261,7 @@ layer at (0,0) size 800x186
                         RenderText {#text} at (0,-4) size 12x19
                           text run at (0,-4) width 12: "32"
                 RenderTableCell {mtd} at (56,47) size 28x22 [r=2 c=2 rs=1 cs=1]
-                  RenderMathMLSubSup {msub} at (8,4) size 13x14
+                  RenderMathMLSubSup {msub} at (7,4) size 14x14
                     RenderMathMLBlock (anonymous, flex) at (0,0) size 7x14 [padding: 0 0 5 0]
                       RenderBlock {mi} at (0,0) size 7x9
                         RenderText {#text} at (0,-9) size 7x25
