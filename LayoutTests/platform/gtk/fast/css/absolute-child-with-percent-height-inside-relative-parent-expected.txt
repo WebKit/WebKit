@@ -1,12 +1,12 @@
-layer at (0,0) size 900x585
+layer at (0,0) size 902x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderText {#text} at (0,0) size 0x0
-layer at (87,8) size 627x230
-  RenderBlock (relative positioned) {DIV} at (79,0) size 627x230 [bgcolor=#0000FF]
-layer at (400,8) size 501x230 backgroundClip at (0,0) size 900x585 clip at (0,0) size 900x585 outlineClip at (0,0) size 900x585
-  RenderBlock (positioned) {DIV} at (313,0) size 501x230 [bgcolor=#FF0000]
-    RenderImage {IMG} at (51,0) size 400x230
+layer at (86,8) size 628x230
+  RenderBlock (relative positioned) {DIV} at (78,0) size 628x230 [bgcolor=#0000FF]
+layer at (400,8) size 501x230
+  RenderBlock (positioned) {DIV} at (313,0) size 503x230 [bgcolor=#FF0000]
+    RenderImage {IMG} at (49,0) size 403x230
     RenderText {#text} at (0,0) size 0x0

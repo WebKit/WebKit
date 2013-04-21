@@ -9,5 +9,5 @@ layer at (0,0) size 800x76
             RenderTableCell {TD} at (0,15) size 106x6 [border: (2px solid #FFA500)] [r=0 c=0 rs=1 cs=1]
 layer at (8,8) size 110x20
   RenderBlock (relative positioned) {CAPTION} at (0,0) size 110x20 [border: (4px solid #008000)]
-    RenderText {#text} at (31,4) size 48x13
+    RenderText {#text} at (31,4) size 48x12
       text run at (31,4) width 48: "xxxx"

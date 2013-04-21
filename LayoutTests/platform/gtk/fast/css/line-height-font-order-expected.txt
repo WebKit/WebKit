@@ -4,18 +4,18 @@ layer at (0,0) size 800x196
   RenderBlock {HTML} at (0,0) size 800x196
     RenderBody {BODY} at (8,15) size 784x166
       RenderBlock {P} at (0,0) size 784x75
-        RenderText {#text} at (0,28) size 90x18
-          text run at (0,28) width 90: "This tests bug "
-        RenderInline {A} at (0,0) size 618x18 [color=#0000EE]
-          RenderText {#text} at (90,28) size 618x18
-            text run at (90,28) width 618: "Bug 13174: line-height in font shorthand does not override a previously stated line-height property"
-        RenderText {#text} at (708,28) size 4x18
-          text run at (708,28) width 4: "."
+        RenderText {#text} at (0,29) size 90x16
+          text run at (0,29) width 90: "This tests bug "
+        RenderInline {A} at (0,0) size 618x16 [color=#0000EE]
+          RenderText {#text} at (90,29) size 618x16
+            text run at (90,29) width 618: "Bug 13174: line-height in font shorthand does not override a previously stated line-height property"
+        RenderText {#text} at (708,29) size 4x16
+          text run at (708,29) width 4: "."
       RenderBlock {P} at (0,90) size 784x76
-        RenderText {#text} at (0,28) size 123x18
-          text run at (0,28) width 123: "This text should be "
-        RenderInline {CODE} at (0,0) size 189x18
-          RenderText {#text} at (123,29) size 189x18
-            text run at (123,29) width 189: "font:15px/5em Georgia"
-        RenderText {#text} at (312,28) size 4x18
-          text run at (312,28) width 4: "."
+        RenderText {#text} at (0,29) size 123x16
+          text run at (0,29) width 123: "This text should be "
+        RenderInline {CODE} at (0,0) size 189x16
+          RenderText {#text} at (123,30) size 189x16
+            text run at (123,30) width 189: "font:15px/5em Georgia"
+        RenderText {#text} at (312,29) size 4x16
+          text run at (312,29) width 4: "."

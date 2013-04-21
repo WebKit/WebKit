@@ -7,13 +7,13 @@ layer at (0,0) size 800x50
         RenderTableSection {TBODY} at (0,0) size 784x34
           RenderTableRow {TR} at (0,2) size 784x14
             RenderTableCell {TD} at (2,2) size 8x14 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 144x13
+              RenderText {#text} at (1,1) size 144x12
                 text run at (1,1) width 144: "texttesttest"
             RenderTableCell {TD} at (12,2) size 8x14 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 144x13
+              RenderText {#text} at (1,1) size 144x12
                 text run at (1,1) width 144: "texttesttest"
             RenderTableCell {TD} at (22,8) size 760x2 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=2 rs=1 cs=1]
           RenderTableRow {TR} at (0,18) size 784x14
             RenderTableCell {TD} at (2,18) size 780x14 [color=#333333] [bgcolor=#EEEEEE] [r=1 c=0 rs=1 cs=3]
-              RenderText {#text} at (1,1) size 312x13
+              RenderText {#text} at (1,1) size 312x12
                 text run at (1,1) width 312: "texttesttexttesttesttextte"
