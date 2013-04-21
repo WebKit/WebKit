@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-              RenderText {#text} at (0,0) size 240x19
+              RenderText {#text} at (0,0) size 240x17
                 text run at (0,0) width 240: "You should not see a caret in this text."
       RenderText {#text} at (0,0) size 0x0
