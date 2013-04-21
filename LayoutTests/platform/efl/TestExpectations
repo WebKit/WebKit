@@ -693,7 +693,9 @@ webkit.org/b/91958 http/tests/inspector-enabled/injected-script-discard.html [ F
 webkit.org/b/85615 http/tests/inspector/resource-har-pages.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/search/resources-search-match-index.html [ Failure Pass ]
 webkit.org/b/93820 inspector/console/console-format-collections.html [ Failure Pass ]
-webkit.org/b/96886 inspector/debugger/dynamic-script-tag.html [ Failure Pass ]
+webkit.org/b/96886 [ Release ] inspector/debugger/dynamic-script-tag.html [ Failure Pass ]
+webkit.org/b/114160 [ Debug ] inspector/debugger/dynamic-script-tag.html [ Crash Failure Pass ]
+
 Bug(EFL) inspector/profiler/heap-snapshot.html [ Failure Pass ]
 Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
 
@@ -813,9 +815,6 @@ webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 # Crashing IndexedDB tests
 webkit.org/b/112578 storage/indexeddb/transaction-coordination-across-databases.html [ Crash ]
 webkit.org/b/107194 storage/indexeddb/pending-activity.html [ Crash ]
-
-# Sometimes hits an assertion.
-webkit.org/b/114160 [ Debug ] inspector/debugger/dynamic-script-tag.html [ Crash Pass ]
 
 # Flaky IndexedDB tests
 webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure Pass ]
