@@ -11826,6 +11826,7 @@
     <ClInclude Include="..\platform\graphics\transforms\TransformState.h" />
     <ClInclude Include="..\platform\graphics\transforms\TranslateTransformOperation.h" />
     <ClInclude Include="..\platform\graphics\filters\CustomFilterArrayParameter.h" />
+    <ClInclude Include="..\platform\graphics\filters\CustomFilterColorParameter.h" />
     <ClInclude Include="..\platform\graphics\filters\CustomFilterCompiledProgram.h" />
     <ClInclude Include="..\platform\graphics\filters\CustomFilterConstants.h" />
     <ClInclude Include="..\platform\graphics\filters\CustomFilterGlobalContext.h" />

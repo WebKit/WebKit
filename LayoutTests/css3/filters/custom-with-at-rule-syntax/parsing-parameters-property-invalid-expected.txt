@@ -51,6 +51,40 @@ PASS styleDeclaration.length is 0
 PASS styleDeclaration.getPropertyValue('parameters') is null
 
 ========================================
+Color parameter tests.
+========================================
+
+No rgb color values.
+parameters: c rgb(,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No hsl color values.
+parameters: c hsl(,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Hex with 8 characters.
+parameters: c #FF0000FF;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Hex with 2 character.
+parameters: c #FF;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Rgba with 3 values and 2 commas.
+parameters: c rgba(255, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
 Transform parameter tests.
 ========================================
 
@@ -228,6 +262,58 @@ PASS styleDeclaration.getPropertyValue('parameters') is null
 
 Invalid value unit 'px' in array after valid values.
 parameters: a array(1, 2, 3, 4px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
+Mixing parameter types.
+========================================
+
+Number parameter with hex color.
+parameters: n1 1 2 #FF0000;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Number parameter with color keyword.
+parameters: n1 1 2 red;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Number parameter with rgb color.
+parameters: n1 1 2 rgb(255, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color with number parameter.
+parameters: a rgb(255, 0, 0) 1;
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color in array.
+parameters: a array(0, rgb(255, 0, 0));
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color and array.
+parameters: a array(0, 0) rgb(255, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color with transform values.
+parameters: a rotate(45deg) rgb(255, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color with transform values.
+parameters: a rgb(255, 0, 0) rotate(45deg);
 PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
 PASS styleDeclaration.length is 0
 PASS styleDeclaration.getPropertyValue('parameters') is null

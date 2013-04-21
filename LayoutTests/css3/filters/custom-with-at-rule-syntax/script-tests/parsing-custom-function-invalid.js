@@ -39,6 +39,13 @@ testInvalidFilterRule("No parameter definition before valid parameter defintion.
 testInvalidFilterRule("No parameter value.", "custom(my-filter, n)");
 testInvalidFilterRule("No parameter value with multiple parameters.", "custom(my-filter, n1, n2, n3)");
 
+heading("Color parameter tests.");
+testInvalidFilterRule("No rgb color values.", "custom(my-filter, c rgb(,,))");
+testInvalidFilterRule("No hsl color values.", "custom(my-filter, c hsl(,,))");
+testInvalidFilterRule("Hex with 8 characters.", "custom(my-filter, c #FF0000FF)");
+testInvalidFilterRule("Hex with 2 character.", "custom(my-filter, c #FF)");
+testInvalidFilterRule("Rgba with 3 values and 2 commas.", "custom(my-filter, c rgba(255, 0, 0))");
+
 heading("Transform parameter tests.");
 testInvalidFilterRule("One invalid transform function.", "custom(my-filter, t invalid-rotate(0deg))");
 testInvalidFilterRule("Multiple invalid transform functions.", "custom(my-filter, t invalid-rotate(0deg) invalid-perspective(0))");
@@ -74,3 +81,13 @@ testInvalidFilterRule("Invalid value 'none' in array.", "custom(my-filter, a arr
 testInvalidFilterRule("Invalid value unit 'px' in array.", "custom(my-filter, a array(1px))");
 testInvalidFilterRule("Invalid value unit 'deg' in array.", "custom(my-filter, a array(1deg))");
 testInvalidFilterRule("Invalid value unit 'px' in array after valid values.", "custom(my-filter, a array(1, 2, 3, 4px))");
+
+heading("Mixing parameter types.");
+testInvalidFilterRule("Number parameter with hex color.", "custom(my-filter, n1 1 2 #FF0000)");
+testInvalidFilterRule("Number parameter with color keyword.", "custom(my-filter, n1 1 2 red)");
+testInvalidFilterRule("Number parameter with rgb color.", "custom(my-filter, n1 1 2 rgb(255, 0, 0))");
+testInvalidFilterRule("Color with number parameter.", "custom(my-filter, a rgb(255, 0, 0) 1)");
+testInvalidFilterRule("Color in array.", "custom(my-filter, a array(0, rgb(255, 0, 0)))");
+testInvalidFilterRule("Color and array.", "custom(my-filter, a array(0, 0) rgb(255, 0, 0))");
+testInvalidFilterRule("Color with transform values.", "custom(my-filter, a rotate(45deg) rgb(255, 0, 0))");
+testInvalidFilterRule("Color with transform values.", "custom(my-filter, a rgb(255, 0, 0) rotate(45deg))");

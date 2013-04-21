@@ -215,6 +215,9 @@ void CustomFilterRenderer::bindProgramParameters()
         case CustomFilterParameter::ARRAY:
             bindProgramArrayParameters(uniformLocation, static_cast<CustomFilterArrayParameter*>(parameter));
             break;
+        case CustomFilterParameter::COLOR:
+            // FIXME: Bind color to context.
+            break;
         case CustomFilterParameter::NUMBER:
             bindProgramNumberParameters(uniformLocation, static_cast<CustomFilterNumberParameter*>(parameter));
             break;

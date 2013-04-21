@@ -32433,6 +32433,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterColorParameter.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterCompiledProgram.cpp"
 						>
 					</File>

@@ -86,8 +86,34 @@ testParametersProperty("Multiple array parameters.",
     "a1 array(1, -2.2, 3.14, 0.4, 5), a2 array(1, 2, 3)",
     ["a1 array(1, -2.2, 3.14, 0.4, 5)", "a2 array(1, 2, 3)"]);
 
+heading("Color parameter tests.");
+testParametersProperty("Hex color.",
+    "c #00FF00",
+    "c rgb(0, 255, 0)",
+    ["c rgb(0, 255, 0)"]);
+testParametersProperty("Color keyword.",
+    "c green",
+    "c rgb(0, 128, 0)",
+    ["c rgb(0, 128, 0)"]);
+testParametersProperty("Color rgb function.",
+    "c rgb(0, 128, 0)",
+    "c rgb(0, 128, 0)",
+    ["c rgb(0, 128, 0)"]);
+testParametersProperty("Color hsl function.",
+    "c hsl(120, 100%, 50%)",
+    "c rgb(0, 255, 0)",
+    ["c rgb(0, 255, 0)"]);
+testParametersProperty("Color rgba function.",
+    "c rgba(0, 255, 0, 0.2)",
+    "c rgba(0, 255, 0, 0.2)",
+    ["c rgba(0, 255, 0, 0.2)"]);
+testParametersProperty("Color hsla function.",
+    "c hsla(120, 100%, 50%, 0.2)",
+    "c rgba(0, 255, 0, 0.2)",
+    ["c rgba(0, 255, 0, 0.2)"]);
+
 heading("Combined parameter tests.");
-testParametersProperty("Number parameter, transform parameter, and array parameter.",
-    "n 1, t rotate(0deg), a array(1)",
-    "n 1, t rotate(0deg), a array(1)",
-    ["n 1", "t rotate(0deg)", "a array(1)"]);
+testParametersProperty("Number parameter, color parameter, transform parameter and array parameter.",
+    "n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1)",
+    "n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1)",
+    ["n 1", "c rgb(0, 128, 0)", "t rotate(0deg)", "a array(1)"]);

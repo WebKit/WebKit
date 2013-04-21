@@ -40,12 +40,11 @@ namespace WebCore {
 class CustomFilterParameter : public RefCounted<CustomFilterParameter> {
 public:
     // FIXME: Implement other parameters types:
-    // booleans: https://bugs.webkit.org/show_bug.cgi?id=76438
     // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-    // 3d-transforms: https://bugs.webkit.org/show_bug.cgi?id=71443
     // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
     enum ParameterType {
         ARRAY,
+        COLOR,
         NUMBER,
         TRANSFORM
     };

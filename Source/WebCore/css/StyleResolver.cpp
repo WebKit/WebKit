@@ -154,6 +154,7 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterArrayParameter.h"
+#include "CustomFilterColorParameter.h"
 #include "CustomFilterConstants.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
@@ -3693,6 +3694,15 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterArrayParameter
     return arrayParameter.release();
 }
 
+PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterColorParameter(const String& name, CSSValueList* values)
+{
+    ASSERT(values->length());
+    CSSPrimitiveValue* firstPrimitiveValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(0));
+    RefPtr<CustomFilterColorParameter> colorParameter = CustomFilterColorParameter::create(name);
+    colorParameter->setColor(Color(firstPrimitiveValue->getRGBA32Value()));
+    return colorParameter.release();
+}
+
 PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterNumberParameter(const String& name, CSSValueList* values)
 {
     RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
@@ -3720,7 +3730,6 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterTransformParam
 PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(const String& name, CSSValue* parameterValue)
 {
     // FIXME: Implement other parameters types parsing.
-    // booleans: https://bugs.webkit.org/show_bug.cgi?id=76438
     // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
     // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
     // Number parameters are wrapped inside a CSSValueList and all
@@ -3742,7 +3751,7 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(cons
     if (values->itemWithoutBoundsCheck(0)->isWebKitCSSTransformValue())
         return parseCustomFilterTransformParameter(name, values);
 
-    // We can have only arrays of booleans or numbers, so use the first value to choose between those two.
+    // We can only have arrays of colors or numbers, so use the first value to choose between those two.
     // We need up to 4 values (all booleans or all numbers).
     if (!values->itemWithoutBoundsCheck(0)->isPrimitiveValue() || values->length() > 4)
         return 0;
@@ -3751,8 +3760,8 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(cons
     if (firstPrimitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         return parseCustomFilterNumberParameter(name, values);
 
-    // FIXME: Implement the boolean array parameter here.
-    // https://bugs.webkit.org/show_bug.cgi?id=76438
+    if (firstPrimitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return parseCustomFilterColorParameter(name, values);
 
     return 0;
 }

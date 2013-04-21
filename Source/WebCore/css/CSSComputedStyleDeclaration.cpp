@@ -72,6 +72,7 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterArrayParameter.h"
+#include "CustomFilterColorParameter.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterParameter.h"
@@ -839,6 +840,13 @@ static PassRefPtr<CSSValue> valueForCustomFilterArrayParameter(const CustomFilte
     return arrayParameterValue.release();
 }
 
+static PassRefPtr<CSSValue> valueForCustomFilterColorParameter(const CustomFilterColorParameter* colorParameter)
+{
+    RefPtr<CSSValueList> colorParameterValue = CSSValueList::createSpaceSeparated();
+    colorParameterValue->append(cssValuePool().createColorValue(colorParameter->color().rgb()));
+    return colorParameterValue.release();
+}
+
 static PassRefPtr<CSSValue> valueForCustomFilterNumberParameter(const CustomFilterNumberParameter* numberParameter)
 {
     RefPtr<CSSValueList> numberParameterValue = CSSValueList::createSpaceSeparated();
@@ -863,6 +871,8 @@ static PassRefPtr<CSSValue> valueForCustomFilterParameter(const RenderObject* re
     switch (parameter->parameterType()) {
     case CustomFilterParameter::ARRAY:
         return valueForCustomFilterArrayParameter(static_cast<const CustomFilterArrayParameter*>(parameter));
+    case CustomFilterParameter::COLOR:
+        return valueForCustomFilterColorParameter(static_cast<const CustomFilterColorParameter*>(parameter));
     case CustomFilterParameter::NUMBER:
         return valueForCustomFilterNumberParameter(static_cast<const CustomFilterNumberParameter*>(parameter));
     case CustomFilterParameter::TRANSFORM:

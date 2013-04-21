@@ -8560,9 +8560,8 @@ PassRefPtr<CSSValueList> CSSParser::parseCustomFilterParameters(CSSParserValueLi
                 argsList->next();
             } else
                 parameterValue = parseCustomFilterTransform(argsList);
-        } else {
+        } else if (validUnit(arg, FNumber, CSSStrictMode)) {
             RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
-            arg = argsList->current();
             while (arg) {
                 // If we hit a comma, it means that we finished this parameter's values.
                 if (isComma(arg))
@@ -8575,6 +8574,16 @@ PassRefPtr<CSSValueList> CSSParser::parseCustomFilterParameters(CSSParserValueLi
             if (!paramValueList->length() || paramValueList->length() > 4)
                 return 0;
             parameterValue = paramValueList.release();
+        }
+        if (!parameterValue && arg) {
+            // All parameter values need to be CSSValueLists.
+            RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
+            RefPtr<CSSPrimitiveValue> colorValue = parseColor(arg);
+            if (!colorValue)
+                return 0;
+            paramValueList->append(colorValue.release());
+            parameterValue = paramValueList.release();
+            arg = argsList->next();
         }
 
         if (!parameterValue || !acceptCommaOperator(argsList))

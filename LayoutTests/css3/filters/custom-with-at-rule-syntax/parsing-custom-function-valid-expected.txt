@@ -109,6 +109,82 @@ PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS subValue.cssText is 'custom(my-filter, background 0 1 0 1)'
 
 ========================================
+Color parameter tests.
+========================================
+
+Hex color.
+custom(my-filter, c #00FF00)
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgb(0, 255, 0))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgb(0, 255, 0))'
+
+Color keyword.
+custom(my-filter, c green)
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgb(0, 128, 0))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgb(0, 128, 0))'
+
+Color rgb function.
+custom(my-filter, c rgb(0, 128, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgb(0, 128, 0))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgb(0, 128, 0))'
+
+Color hsl function.
+custom(my-filter, c hsl(120, 100%, 50%))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgb(0, 255, 0))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgb(0, 255, 0))'
+
+Color rgba function.
+custom(my-filter, c rgba(0, 255, 0, 0.2))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgba(0, 255, 0, 0.2))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgba(0, 255, 0, 0.2))'
+
+Color hsla function.
+custom(my-filter, c hsla(120, 100%, 50%, 0.2))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, c rgba(0, 255, 0, 0.2))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, c rgba(0, 255, 0, 0.2))'
+
+========================================
 Transform parameter tests.
 ========================================
 
@@ -228,17 +304,17 @@ PASS subValue.cssText is 'custom(my-filter, a1 array(1, -2.2, 3.14, 0.4, 5), a2 
 Combined parameter tests.
 ========================================
 
-Number parameter, transform parameter, and array parameter.
-custom(my-filter, n 1, t rotate(0deg), a array(1))
+Number parameter, color parameter, transform parameter, and array parameter.
+custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))
 PASS styleRule.type is CSSRule.STYLE_RULE
 PASS styleDeclaration.length is 1
-PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, n 1, t rotate(0deg), a array(1))'
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))'
 PASS filterPropertyValue instanceof CSSValueList is true
 PASS filterPropertyValue.constructor === CSSValueList is true
 PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
 PASS filterPropertyValue.length is 1
 PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS subValue.cssText is 'custom(my-filter, n 1, t rotate(0deg), a array(1))'
+PASS subValue.cssText is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))'
 PASS successfullyParsed is true
 
 TEST COMPLETE

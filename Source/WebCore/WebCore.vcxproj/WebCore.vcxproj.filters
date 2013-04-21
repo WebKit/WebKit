@@ -9819,6 +9819,9 @@
     <ClInclude Include="..\platform\graphics\filters\CustomFilterArrayParameter.h">
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\filters\CustomFilterColorParameter.h">
+      <Filter>platform\graphics\filters</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\filters\CustomFilterCompiledProgram.h">
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>

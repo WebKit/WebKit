@@ -30,6 +30,13 @@ testInvalidParametersProperty("No parameter definition before valid parameter de
 testInvalidParametersProperty("No parameter value.", "n");
 testInvalidParametersProperty("No parameter value with multiple parameters.", "n1, n2, n3");
 
+heading("Color parameter tests.");
+testInvalidParametersProperty("No rgb color values.", "c rgb(,,)");
+testInvalidParametersProperty("No hsl color values.", "c hsl(,,)");
+testInvalidParametersProperty("Hex with 8 characters.", "c #FF0000FF");
+testInvalidParametersProperty("Hex with 2 character.", "c #FF");
+testInvalidParametersProperty("Rgba with 3 values and 2 commas.", "c rgba(255, 0, 0)");
+
 heading("Transform parameter tests.");
 testInvalidParametersProperty("One invalid transform function.", "t invalid-rotate(0deg)");
 testInvalidParametersProperty("Multiple invalid transform functions.", "t invalid-rotate(0deg) invalid-perspective(0)");
@@ -62,3 +69,14 @@ testInvalidParametersProperty("Invalid value 'none' in array.", "a array(none)")
 testInvalidParametersProperty("Invalid value unit 'px' in array.", "a array(1px)");
 testInvalidParametersProperty("Invalid value unit 'deg' in array.", "a array(1deg)");
 testInvalidParametersProperty("Invalid value unit 'px' in array after valid values.", "a array(1, 2, 3, 4px)");
+
+heading("Mixing parameter types.");
+testInvalidParametersProperty("Number parameter with hex color.", "n1 1 2 #FF0000");
+testInvalidParametersProperty("Number parameter with color keyword.", "n1 1 2 red");
+testInvalidParametersProperty("Number parameter with rgb color.", "n1 1 2 rgb(255, 0, 0)");
+testInvalidParametersProperty("Color with number parameter.", "a rgb(255, 0, 0) 1");
+testInvalidParametersProperty("Color in array.", "a array(0, rgb(255, 0, 0))");
+testInvalidParametersProperty("Color and array.", "a array(0, 0) rgb(255, 0, 0)");
+testInvalidParametersProperty("Color with transform values.", "a rotate(45deg) rgb(255, 0, 0)");
+testInvalidParametersProperty("Color with transform values.", "a rgb(255, 0, 0) rotate(45deg)");
+

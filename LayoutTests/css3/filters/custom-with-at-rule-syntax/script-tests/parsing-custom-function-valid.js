@@ -68,6 +68,26 @@ testFilterProperty("Parameter name same as CSS keyword.",
     "custom(my-filter, background 0 1 0 1)",
     "custom(my-filter, background 0 1 0 1)");
 
+heading("Color parameter tests.");
+testFilterProperty("Hex color.",
+    "custom(my-filter, c #00FF00)",
+    "custom(my-filter, c rgb(0, 255, 0))");
+testFilterProperty("Color keyword.",
+    "custom(my-filter, c green)",
+    "custom(my-filter, c rgb(0, 128, 0))");
+testFilterProperty("Color rgb function.",
+    "custom(my-filter, c rgb(0, 128, 0))",
+    "custom(my-filter, c rgb(0, 128, 0))");
+testFilterProperty("Color hsl function.",
+    "custom(my-filter, c hsl(120, 100%, 50%))",
+    "custom(my-filter, c rgb(0, 255, 0))");
+testFilterProperty("Color rgba function.",
+    "custom(my-filter, c rgba(0, 255, 0, 0.2))",
+    "custom(my-filter, c rgba(0, 255, 0, 0.2))");
+testFilterProperty("Color hsla function.",
+    "custom(my-filter, c hsla(120, 100%, 50%, 0.2))",
+    "custom(my-filter, c rgba(0, 255, 0, 0.2))");
+
 heading("Transform parameter tests.")
 testFilterProperty("Transform parameter with one transform function.",
     "custom(my-filter, t rotate(0deg))",
@@ -100,6 +120,6 @@ testFilterProperty("Multiple array parameters.",
     "custom(my-filter, a1 array(1, -2.2, 3.14, 0.4, 5), a2 array(1, 2, 3))");
 
 heading("Combined parameter tests.");
-testFilterProperty("Number parameter, transform parameter, and array parameter.",
-    "custom(my-filter, n 1, t rotate(0deg), a array(1))",
-    "custom(my-filter, n 1, t rotate(0deg), a array(1))");
+testFilterProperty("Number parameter, color parameter, transform parameter, and array parameter.",
+    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))",
+    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))");
