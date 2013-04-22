@@ -11,6 +11,9 @@ Move focus back to the link and verify.
 PASS document.activeElement is link1
 Send an enter key event which should also trigger focus to move to the fragment.
 PASS document.activeElement is document.getElementById('fragment1')
+Verify Tab behaves correctly after following the link.
+PASS document.activeElement is document.getElementById('fragment3')
+PASS document.activeElement is document.getElementById('fragment1')
 Activate a link that does not have a focusable fragment and verify focus does not move.
 PASS document.activeElement is link2
 PASS document.activeElement is link2
@@ -21,3 +24,4 @@ link1 link2
 
 fragment1
 fragment2
+fragment3

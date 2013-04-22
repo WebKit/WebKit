@@ -12,6 +12,7 @@
 
 <div id="fragment1" name="fragment1" tabindex="0">fragment1</div>
 <div id="fragment2" name="fragment2">fragment2</div>
+<div id="fragment3" name="fragment3" tabindex="0">fragment3</div>
 
 <script>
 
@@ -33,6 +34,12 @@ shouldBe("document.activeElement", "link1");
 if (window.testRunner) {
   debug("Send an enter key event which should also trigger focus to move to the fragment.");
   eventSender.keyDown("\r");
+  shouldBe("document.activeElement", "document.getElementById('fragment1')");
+
+  debug("Verify Tab behaves correctly after following the link.");
+  eventSender.keyDown("\t");
+  shouldBe("document.activeElement", "document.getElementById('fragment3')");
+  eventSender.keyDown("\t", ["shiftKey"]);
   shouldBe("document.activeElement", "document.getElementById('fragment1')");
 }
 
