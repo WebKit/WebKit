@@ -1,3 +1,21 @@
+2013-04-22  David Kilzer  <ddkilzer@apple.com>
+
+        StringImpl.h should compile with -Wshorten-64-to-32
+        <http://webkit.org/b/114970>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following warnings with -Wshorten-64-to-32:
+
+            StringImpl.h:317:25: error: implicit conversion loses integer precision: 'uintptr_t' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                    unsigned hash = reinterpret_cast<uintptr_t>(this);
+                             ~~~~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl): Add static_cast<uint32_t>() to
+        formalize taking the lower 32-bits of the pointer value on
+        64-bit architectures.
+
 2013-04-22  Andreas Kling  <akling@apple.com>
 
         Shrink baseline size of WTF::Vector on 64-bit by switching to unsigned capacity and size.
