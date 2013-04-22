@@ -1,3 +1,14 @@
+2013-04-22  Eli Fidler  <efidler@blackberry.com>
+
+        [BlackBerry] Update about:config lists
+        https://bugs.webkit.org/show_bug.cgi?id=114967
+
+        Reviewed by Rob Buis.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/AboutDataHaveFeatures.in:
+        * WebCoreSupport/AboutDataUseFeatures.in:
+
 2013-04-22  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Update BatteryClientBlackBerry to use our port's new listener interface
