@@ -605,7 +605,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
                 pos = selectionInUserSelectAll.end();
         }
 
-        if (!m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional()) {
+        if (!m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() && pos.isNotNull()) {
             // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
             // was created right-to-left
             Position start = newSelection.start();
