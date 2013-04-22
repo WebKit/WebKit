@@ -621,14 +621,15 @@ static void runInteractive(GlobalObject* globalObject)
         do {
             error = ParserError();
             char* line = readline(source.isEmpty() ? interactivePrompt : "... ");
+            shouldQuit = !line;
+            if (!line)
+                break;
             source = source + line;
             source = source + '\n';
             checkSyntax(globalObject->globalExec(), makeSource(source, interpreterName), error);
-            shouldQuit = !line;
-            if (!line || !line[0])
+            if (!line[0])
                 break;
-            if (line[0])
-                add_history(line);
+            add_history(line);
         } while (error.m_syntaxErrorType == ParserError::SyntaxErrorRecoverable);
         
         if (error.m_type != ParserError::ErrorNone) {

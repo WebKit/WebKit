@@ -1,5 +1,14 @@
 2013-04-22  Oliver Hunt  <oliver@apple.com>
 
+        Perform null check before trying to use the result of readline()
+
+        RS=Gavin
+
+        * jsc.cpp:
+        (runInteractive):
+
+2013-04-22  Oliver Hunt  <oliver@apple.com>
+
         Fix assertions to account for new Vector layout
 
         RS=Gavin
