@@ -199,6 +199,17 @@ static PlayerToPrivateMapType& playerToPrivateMap()
 };
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+static dispatch_queue_t globalLoaderDelegateQueue()
+{
+    static dispatch_queue_t globalQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return globalQueue;
+}
+#endif
 
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
 { 
@@ -411,7 +422,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:dispatch_get_main_queue()];
+    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 #endif
 
     m_haveCheckedPlayability = false;
@@ -1612,7 +1623,17 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return NO;
 
-    return m_callback->shouldWaitForLoadingOfResource(loadingRequest);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_callback) {
+            [loadingRequest finishLoadingWithError:nil];
+            return;
+        }
+
+        if (!m_callback->shouldWaitForLoadingOfResource(loadingRequest))
+            [loadingRequest finishLoadingWithError:nil];
+    });
+
+    return YES;
 }
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
