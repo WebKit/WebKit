@@ -36,6 +36,19 @@
          (require-all (socket-domain AF_SYSTEM)
                       (socket-protocol 2)) ; SYSPROTO_CONTROL
          (socket-domain AF_ROUTE)))
+
+;; Low level graphics. Defined in system.sb on newer OS versions.
+(define (system-graphics)
+    (allow mach-lookup (global-name "com.apple.cvmsServ"))
+    (allow iokit-open
+        (iokit-connection "IOAccelerator")
+        (iokit-user-client-class "IOAccelerationUserClient")
+        (iokit-user-client-class "IOSurfaceRootUserClient")
+        (iokit-user-client-class "IOSurfaceSendRight")
+        (iokit-user-client-class "IOFramebufferSharedUserClient")
+        (iokit-user-client-class "AppleSNBFBUserClient")
+        (iokit-user-client-class "AGPMClient")
+        (iokit-user-client-class "AppleGraphicsControlClient")))
 #endif
 
 ;; Read-only preferences and data
@@ -117,17 +130,9 @@
 
 ;; IOKit user clients
 (allow iokit-open
-       (iokit-connection "IOAccelerator")
-       (iokit-user-client-class "IOAccelerationUserClient")
-       (iokit-user-client-class "IOFramebufferSharedUserClient")
-       (iokit-user-client-class "AppleGraphicsControlClient")
-       (iokit-user-client-class "AppleSNBFBUserClient")
        (iokit-user-client-class "AppleUpstreamUserClient")
-       (iokit-user-client-class "AGPMClient")
        (iokit-user-client-class "IOHIDParamUserClient")
        (iokit-user-client-class "RootDomainUserClient")
-       (iokit-user-client-class "IOSurfaceRootUserClient")
-       (iokit-user-client-class "IOSurfaceSendRight")
        (iokit-user-client-class "IOAudioControlUserClient")
        (iokit-user-client-class "IOAudioEngineUserClient"))
 
@@ -143,7 +148,6 @@
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.cookied")
-       (global-name "com.apple.cvmsServ")
        (global-name "com.apple.dock.server")
        (global-name "com.apple.system.opendirectoryd.api")
        (global-name "com.apple.tccd")
@@ -182,6 +186,9 @@
     (global-name "com.apple.CoreServices.coreservicesd"))
 (allow file-read-data
      (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
+
+;; Graphics
+(system-graphics)
 
 ;; Networking
 (system-network)

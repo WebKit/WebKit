@@ -1,3 +1,12 @@
+2013-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13681842> [Mac] Tweak WebProcess sandbox profile to use
+        system-graphics function when available.
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up libPlatform.la
