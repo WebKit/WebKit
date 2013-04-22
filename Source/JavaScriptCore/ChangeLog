@@ -1,3 +1,24 @@
+2013-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken 32-bit build to green the bots.
+        https://bugs.webkit.org/show_bug.cgi?id=114968.
+
+        Unreviewed.
+
+        Basically, I moved a JIT::emit_op_loop_hint() and JIT::emitSlow_op_loop_hint()
+        into common code where they belong, instead of the 64-bit specific section.
+
+        Also fixed some SH4 assertions failures which were also caused by
+        https://bugs.webkit.org/show_bug.cgi?id=114963. Thanks to Julien Brianceau
+        for pointing this out.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        * jit/JITOpcodes.cpp:
+        (JSC):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+
 2013-04-22  Oliver Hunt  <oliver@apple.com>
 
         Perform null check before trying to use the result of readline()

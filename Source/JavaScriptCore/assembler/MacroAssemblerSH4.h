@@ -1907,7 +1907,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
 
         if (cond == Overflow) {
             m_assembler.addvlRegReg(src, dest);
@@ -1937,7 +1937,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
 
         move(imm, scratchReg3);
         return branchAdd32(cond, scratchReg3, dest);
@@ -1945,7 +1945,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
 
         if (src != dest)
             move(src, dest);
