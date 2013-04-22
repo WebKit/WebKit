@@ -6,22 +6,34 @@ EXPECTED (event.track == 'video.textTracks[0]') OK
 EVENT(addtrack)
 EXPECTED (event.track == 'video.textTracks[1]') OK
 
+EVENT(addtrack)
+EXPECTED (event.track == 'video.textTracks[2]') OK
+
+EVENT(addtrack)
+EXPECTED (event.track == 'video.textTracks[3]') OK
+
 EVENT(canplaythrough)
 
 ** Check initial in-band track states
-EXPECTED (video.textTracks.length == '2') OK
+EXPECTED (video.textTracks.length == '4') OK
 RUN(inbandTrack1 = video.textTracks[0])
 RUN(inbandTrack2 = video.textTracks[1])
+RUN(inbandTrack3 = video.textTracks[2])
+RUN(inbandTrack4 = video.textTracks[3])
 EXPECTED (inbandTrack1.language == 'en') OK
 EXPECTED (inbandTrack1.kind == 'subtitles') OK
-EXPECTED (inbandTrack2.language == 'fr') OK
-EXPECTED (inbandTrack2.kind == 'subtitles') OK
+EXPECTED (inbandTrack2.language == 'en') OK
+EXPECTED (inbandTrack2.kind == 'forced') OK
+EXPECTED (inbandTrack3.language == 'fr') OK
+EXPECTED (inbandTrack3.kind == 'subtitles') OK
+EXPECTED (inbandTrack4.language == 'fr') OK
+EXPECTED (inbandTrack4.kind == 'forced') OK
 
-** Add tracks, check sort order
+** Add two tracks, check sort order
 RUN(addTrack = video.addTextTrack('captions', 'Caption Track', 'en'))
 RUN(trackElement = document.createElement('track'))
 RUN(video.appendChild(trackElement))
-EXPECTED (video.textTracks.length == '4') OK
+EXPECTED (video.textTracks.length == '6') OK
 EXPECTED (video.textTracks[0] == 'trackElement.track') OK
 EXPECTED (video.textTracks[1] == 'addTrack') OK
 EXPECTED (video.textTracks[2] == 'inbandTrack1') OK
