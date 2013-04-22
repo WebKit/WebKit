@@ -529,10 +529,6 @@ editing/style/font-family-with-space.html [ Missing ]
 editing/style/smoosh-styles-001.html [ Missing ]
 editing/style/style-boundary-005.html [ Missing ]
 
-# CSS Sticky (-webkit-sticky) supported by EFL, but these tests fail.
-webkit.org/b/95182 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
-
 # Testcase assumes a thumb width of 12px, default there uses 29px.
 webkit.org/b/95071 fast/forms/range/slider-in-multi-column.html [ Failure ]
 webkit.org/b/95071 fast/forms/range/slider-transformed.html [ Failure ]
@@ -1116,8 +1112,6 @@ Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Started failing after sub-pixel layout was enabled.
 Bug(EFL) fast/replaced/table-percent-height-text-controls.html [ Failure ]
-Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure ]
-Bug(EFL) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
@@ -1301,11 +1295,6 @@ webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFail
 # Font kerning issue, fails on GTK as well.
 webkit.org/b/76048 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
-# Fails on GTK as well
-webkit.org/b/84678 fast/spatial-navigation/snav-container-white-space.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-fully-aligned-horizontally.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-iframe-no-scrollable-content.html [ Failure ]
-
 # Times-out with debug build during heavy cpu loads
 webkit.org/b/85902 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Crash Pass Slow ]
 
@@ -1336,12 +1325,6 @@ webkit.org/b/68591 http/tests/websocket/tests/hybi/send-file-blob.html
 
 # WKTR / EFL's DRT do not support setViewModeMediaFeature().
 Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
-Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
 
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
@@ -1408,7 +1391,6 @@ webkit.org/b/29359 fast/forms/datetimelocal [ Skip ]
 webkit.org/b/29359 fast/forms/month [ Skip ]
 webkit.org/b/29359 fast/forms/time [ Skip ]
 webkit.org/b/29359 fast/forms/week [ Skip ]
-webkit.org/b/89209 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 
 # These tests cause flakiness (extra console messages in output)
 webkit.org/b/88729 userscripts/window-onerror-for-isolated-world-1.html
@@ -1518,9 +1500,6 @@ webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 # EFL does not yet support global selection
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
-# Gradient instead of solid color in the rectangle
-webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]
-
 webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
 # Fails on the bots.
@@ -1586,8 +1565,6 @@ Bug(EFL) fast/dynamic/012.html [ Failure ]
 Bug(EFL) fast/dynamic/layer-hit-test-crash.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
-Bug(EFL) fast/repaint/invisible-objects.html [ Failure ]
-Bug(EFL) fast/repaint/layer-hide-when-needs-layout.html [ Failure ]
 Bug(EFL) fast/text/whitespace/028.html [ Failure ]
 Bug(EFL) fullscreen/full-screen-iframe-legacy.html [ Failure Pass ]
 Bug(EFL) media/track/track-cues-pause-on-exit.html [ Failure Pass ]
@@ -1802,9 +1779,6 @@ webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ Im
 webkit.org/b/110694 html5lib/generated/run-domjs-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-pending-spec-changes-plain-text-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure ]
-
-# New test
-webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
