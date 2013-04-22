@@ -448,6 +448,9 @@ webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
 # New test introduced in r148672 that fails on EFL WK2.
 webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure ]
 
+# Regression(r148748).
+webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure ]
+
 # Websocket tests are flaky on WK2
 webkit.org/b/111976 http/tests/websocket [ Crash Pass Failure ]
 

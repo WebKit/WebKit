@@ -646,6 +646,8 @@ webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass
 webkit.org/b/114731 compositing [ Crash Pass ]
 webkit.org/b/114731 css1/box_properties/acid_test.html [ Crash Pass ]
 webkit.org/b/114731 css1/cascade/cascade_order.html [ Crash Pass ]
+webkit.org/b/114731 css3/images/cross-fade-background-size.html [ Crash Pass ]
+webkit.org/b/114731 ietestcenter/css3/grid/display-grid-001.htm [ Crash Pass ]
 webkit.org/b/114731 fast/canvas/webgl [ Crash Pass ]
 webkit.org/b/114731 http/tests/canvas/webgl [ Crash Pass ]
 webkit.org/b/114731 http/tests/inspector/styles/xsl-transformed.xml [ Crash Pass ]
