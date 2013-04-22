@@ -1,3 +1,15 @@
+2013-04-22  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Add dummy implementation of AccessibilityController::accessibleElementById()
+        https://bugs.webkit.org/show_bug.cgi?id=114939
+
+        Reviewed by Carlos Garcia Campos.
+
+        This was added in r129308.
+
+        * DumpRenderTree/blackberry/AccessibilityControllerBlackBerry.cpp:
+        (AccessibilityController::accessibleElementById):
+
 2013-04-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL build fix after r148855.

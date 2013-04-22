@@ -77,3 +77,8 @@ void AccessibilityController::removeNotificationListener()
 {
 }
 
+AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef)
+{
+    notImplemented();
+    return 0;
+}
