@@ -48,6 +48,7 @@
 #include <WebCore/RenderView.h>
 #include <oleacc.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
