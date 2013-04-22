@@ -84,7 +84,7 @@ ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo(ExclusionS
     if (shapeInsideInfo && shapeInsideInfo->needsRemoval() && exclusionShapeStatus == ShapePresent)
         shapeInsideInfo = 0;
 
-    if (!shapeInsideInfo && flowThreadContainingBlock()) {
+    if (!shapeInsideInfo && flowThreadContainingBlock() && allowsExclusionShapeInsideInfoSharing()) {
         LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false);
         RenderRegion* region = regionAtBlockOffset(offset);
         if (region)
