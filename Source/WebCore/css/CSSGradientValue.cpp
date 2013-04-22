@@ -340,15 +340,21 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
         if (isLinearGradient()) {
             float firstOffset = stops[0].offset;
             float lastOffset = stops[numStops - 1].offset;
-            float scale = lastOffset - firstOffset;
+            if (firstOffset != lastOffset) {
+                float scale = lastOffset - firstOffset;
 
-            for (size_t i = 0; i < numStops; ++i)
-                stops[i].offset = (stops[i].offset - firstOffset) / scale;
+                for (size_t i = 0; i < numStops; ++i)
+                    stops[i].offset = (stops[i].offset - firstOffset) / scale;
 
-            FloatPoint p0 = gradient->p0();
-            FloatPoint p1 = gradient->p1();
-            gradient->setP0(FloatPoint(p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y())));
-            gradient->setP1(FloatPoint(p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y())));
+                FloatPoint p0 = gradient->p0();
+                FloatPoint p1 = gradient->p1();
+                gradient->setP0(FloatPoint(p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y())));
+                gradient->setP1(FloatPoint(p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y())));
+            } else {
+                // There's a single position that is outside the scale, clamp the positions to 1.
+                for (size_t i = 0; i < numStops; ++i)
+                    stops[i].offset = 1;
+            }
         } else if (isRadialGradient()) {
             // Rather than scaling the points < 0, we truncate them, so only scale according to the largest point.
             float firstOffset = 0;
