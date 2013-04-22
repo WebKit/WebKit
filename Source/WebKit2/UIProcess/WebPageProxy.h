@@ -1051,7 +1051,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPluginPath(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, uint32_t& pluginLoadPolicy);
+    void findPlugin(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, String& newMIMEType, uint32_t& pluginLoadPolicy);
 #endif
 
     PageClient* m_pageClient;

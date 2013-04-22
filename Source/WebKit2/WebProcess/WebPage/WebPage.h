@@ -288,7 +288,7 @@ public:
     PassRefPtr<WebCore::Range> currentSelectionAsRange();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PassRefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&);
+    PassRefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&, String& newMIMEType);
 #endif
 
     EditorState editorState() const;

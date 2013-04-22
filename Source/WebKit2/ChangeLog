@@ -1,5 +1,42 @@
 2013-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WebKit2] Plugins without a MIME Type fail to load
+        https://bugs.webkit.org/show_bug.cgi?id=112834
+
+        Reviewed by Benjamin Poulain.
+
+        The problem is that when the plugin is created and the MIME Type
+        is empty, since the MIME Type guessed in the UI process using the
+        plugin extension is not passed to the WebProcess, when the plugin
+        is instantiated, the value of NPMIMEType parameter passed to
+        NPP_New is NULL, and NPERR_INVALID_INSTANCE_ERROR is returned.
+        GetPluginPath message has been renamed to FindPlugin, since it
+        doesn't only return the path but also the new MIME Type and load
+        policy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin): Receive an output newMIMEType
+        parameter that is passed to PluginModuleInfo::findPlugin() so that
+        in case of guessing the MIME Type, the new one is passed back to
+        the WebProcess.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin): Pass the MIME Type
+        from the parameters to WebPage::createPlugin.
+        (WebKit::WebFrameLoaderClient::recreatePlugin): Pass a newMIMEType
+        parameter to WebPage::createPlugin.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Add newMIMEType out parameter and
+        pass it to the FindPlugin message.
+        (WebKit::WebPage::canPluginHandleResponse): Pass newMIMEType to
+        FindPlugin message.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
+2013-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Widget should not depend on AXObjectCache
         https://bugs.webkit.org/show_bug.cgi?id=114514
 

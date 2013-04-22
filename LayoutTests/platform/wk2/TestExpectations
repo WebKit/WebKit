@@ -650,7 +650,6 @@ http/tests/navigation/anchor-frames-same-origin.html
 
 # Unexplained plugin failures
 platform/mac/plugins/testplugin-onnew-onpaint.html
-plugins/no-mime-with-valid-extension.html
 
 # Unexplained plugin failures that were formerly in the NPRuntime support for out-of-process plug-ins
 # list.

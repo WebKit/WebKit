@@ -1323,7 +1323,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters);
+    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters, parameters.mimeType);
     if (!plugin)
         return 0;
 
@@ -1340,7 +1340,8 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
     ASSERT(m_frame->page());
 
     PluginView* pluginView = static_cast<PluginView*>(widget);
-    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters());
+    String newMIMEType;
+    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters(), newMIMEType);
     pluginView->recreateAndInitialize(plugin.release());
 #endif
 }
