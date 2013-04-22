@@ -1,3 +1,12 @@
+2013-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13334446> [Mac] Tweak sandbox profiles.
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-04-22  Anders Carlsson  <andersca@apple.com>
 
         Don't kill our XPC services in response to memory pressure

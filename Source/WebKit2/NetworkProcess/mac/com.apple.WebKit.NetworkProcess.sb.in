@@ -1,6 +1,6 @@
 (version 1)
 (deny default (with partial-symbolication))
-(allow ipc-posix-shm system-audit file-read-metadata)
+(allow system-audit file-read-metadata)
 
 (import "system.sb")
 
@@ -20,7 +20,7 @@
   (allow file-read*
          (literal "/Library/Preferences/com.apple.networkd.plist"))
   (allow mach-lookup
-         (global-name "com.apple.SystemConfiguration.PPPController") ;; FIXME (13121943): Is this necessary?
+         (global-name "com.apple.SystemConfiguration.PPPController")
          (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
          (global-name "com.apple.networkd"))
   (allow network-outbound
@@ -78,6 +78,13 @@
 (allow iokit-open
     (iokit-user-client-class "RootDomainUserClient"))
 
+;; cookied.
+;; FIXME: Update for <rdar://problem/13642852>.
+(allow ipc-posix-shm-read-data
+    (ipc-posix-name "FNetwork.defaultStorageSession")
+    (ipc-posix-name-regex #"\.PrivateBrowsing-")
+    (ipc-posix-name-regex #"^Private WebKit Session-"))
+
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name "com.apple.PowerManagement.control")
@@ -102,6 +109,8 @@
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 (system-network)
 (allow network-outbound

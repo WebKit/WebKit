@@ -1,6 +1,6 @@
 (version 1)
 (deny default (with partial-symbolication))
-(allow ipc-posix-shm system-audit system-socket file-read-metadata)
+(allow system-audit file-read-metadata)
 
 (import "system.sb")
 
@@ -26,7 +26,7 @@
   (allow file-read*
          (literal "/Library/Preferences/com.apple.networkd.plist"))
   (allow mach-lookup
-         (global-name "com.apple.SystemConfiguration.PPPController") ;; FIXME (13121943): Is this necessary?
+         (global-name "com.apple.SystemConfiguration.PPPController")
          (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
          (global-name "com.apple.networkd"))
   (allow network-outbound
@@ -136,6 +136,33 @@
        (iokit-user-client-class "IOAudioControlUserClient")
        (iokit-user-client-class "IOAudioEngineUserClient"))
 
+;; cookied.
+;; FIXME: Update for <rdar://problem/13642852>.
+(allow ipc-posix-shm-read-data
+    (ipc-posix-name "FNetwork.defaultStorageSession")
+    (ipc-posix-name-regex #"\.PrivateBrowsing-")
+    (ipc-posix-name-regex #"^Private WebKit Session-"))
+
+;; ColorSync
+;; FIXME: Remove names with underscores when possible (see <rdar://problem/13072721>).
+(allow ipc-posix-shm*
+    (ipc-posix-name "_CS_GSHMEMLOCK")
+    (ipc-posix-name "_CS_DSHMEMLOCK")
+    (ipc-posix-name "_CSGRAYPROFILE")
+    (ipc-posix-name "_CSRGBPROFILE")
+    (ipc-posix-name "_CSGENGPROFILE")
+    (ipc-posix-name "_CSGENRPROFILE")
+    (ipc-posix-name "com.apple.ColorSync.Gen.lock")
+    (ipc-posix-name "com.apple.ColorSync.Disp.lock")
+    (ipc-posix-name "com.apple.ColorSync.Gray2.2")
+    (ipc-posix-name "com.apple.ColorSync.sRGB")
+    (ipc-posix-name "com.apple.ColorSync.GenGray")
+    (ipc-posix-name "com.apple.ColorSync.GenRGB"))
+
+;; Audio
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+    (ipc-posix-name-regex #"^AudioIO"))
+
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.DiskArbitration.diskarbitrationd")
@@ -143,7 +170,7 @@
        (global-name "com.apple.FontObjectsServer")
        (global-name "com.apple.FontServer")
        (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.SystemConfiguration.PPPController") ;; FIXME (13121943): Is this necessary?
+       (global-name "com.apple.SystemConfiguration.PPPController")
        (global-name "com.apple.audio.VDCAssistant")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
@@ -179,6 +206,8 @@
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup
