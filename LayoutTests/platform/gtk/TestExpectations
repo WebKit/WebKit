@@ -399,12 +399,11 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 # No support for exposing in-band text tracks
-webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout ]
+webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
 webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-legacy-api.html [ Failure ]
-webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Failure ]
 
 #Incorrect rebaseline
 webkit.org/b/107818 media/controls-styling.html [ Failure ]
