@@ -63,6 +63,12 @@ http/tests/xmlhttprequest/remember-bad-password.html
 webkit.org/b/103847 compositing [ Skip ]
 webkit.org/b/103847 transforms/3d [ Skip ]
 
+# EFL WK1 doesn't support pasteboard functionality yet.
+Bug(EFL) editing/pasteboard/can-read-in-copy-and-cut-events.html [ Skip ]
+Bug(EFL) editing/pasteboard/can-read-in-dragstart-event.html [ Skip ]
+Bug(EFL) editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html [ Skip ]
+Bug(EFL) editing/pasteboard/pasting-into-p-should-not-nest-p.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
