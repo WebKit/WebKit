@@ -107,7 +107,17 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
     WebPage* webPage = webFrame->page();
 
-    NetworkResourceLoadParameters loadParameters(identifier, webPage->pageID(), webFrame->frameID(), resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect);
+    NetworkResourceLoadParameters loadParameters;
+    loadParameters.identifier = identifier;
+    loadParameters.webPageID = webPage->pageID();
+    loadParameters.webFrameID = webFrame->frameID();
+    loadParameters.request = resourceLoader->request();
+    loadParameters.priority = priority;
+    loadParameters.contentSniffingPolicy = contentSniffingPolicy;
+    loadParameters.allowStoredCredentials = allowStoredCredentials;
+    loadParameters.inPrivateBrowsingMode = privateBrowsingEnabled;
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
+
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.

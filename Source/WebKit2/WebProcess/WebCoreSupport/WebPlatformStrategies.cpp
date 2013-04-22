@@ -235,7 +235,15 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
 
     CoreIPC::DataReference dataReference;
 
-    NetworkResourceLoadParameters loadParameters(resourceLoadIdentifier, 0, 0, request, ResourceLoadPriorityHighest, SniffContent, storedCredentials, context->storageSession().isPrivateBrowsingSession(), context->shouldClearReferrerOnHTTPSToHTTPRedirect());
+    NetworkResourceLoadParameters loadParameters;
+    loadParameters.identifier = resourceLoadIdentifier;
+    loadParameters.request = request;
+    loadParameters.priority = ResourceLoadPriorityHighest;
+    loadParameters.contentSniffingPolicy = SniffContent;
+    loadParameters.allowStoredCredentials = storedCredentials;
+    loadParameters.inPrivateBrowsingMode = context->storageSession().isPrivateBrowsingSession();
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
+
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, dataReference), 0)) {
         response = ResourceResponse();
         error = internalError(request.url());

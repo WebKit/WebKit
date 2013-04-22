@@ -45,35 +45,21 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadParameters {
 public:
     NetworkResourceLoadParameters();
-    NetworkResourceLoadParameters(ResourceLoadIdentifier, uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
 
-    ResourceLoadIdentifier identifier() const { return m_identifier; }
-    uint64_t webPageID() const { return m_webPageID; }
-    uint64_t webFrameID() const { return m_webFrameID; }
-    const WebCore::ResourceRequest& request() const { return m_request; }
-    const SandboxExtension::HandleArray& requestBodySandboxExtensions() const { return m_requestBodySandboxExtensions; }
-    const SandboxExtension::Handle& resourceSandboxExtension() const { return m_resourceSandboxExtension; }
-    WebCore::ResourceLoadPriority priority() const { return m_priority; }
-    WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
-    WebCore::StoredCredentials allowStoredCredentials() const { return m_allowStoredCredentials; }
-    bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
-    bool shouldClearReferrerOnHTTPSToHTTPRedirect() const { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
-
-private:
-    ResourceLoadIdentifier m_identifier;
-    uint64_t m_webPageID;
-    uint64_t m_webFrameID;
-    WebCore::ResourceRequest m_request;
-    SandboxExtension::HandleArray m_requestBodySandboxExtensions; // Created automatically for the sender.
-    SandboxExtension::Handle m_resourceSandboxExtension; // Created automatically for the sender.
-    WebCore::ResourceLoadPriority m_priority;
-    WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
-    WebCore::StoredCredentials m_allowStoredCredentials;
-    bool m_inPrivateBrowsingMode;
-    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
+    ResourceLoadIdentifier identifier;
+    uint64_t webPageID;
+    uint64_t webFrameID;
+    WebCore::ResourceRequest request;
+    SandboxExtension::HandleArray requestBodySandboxExtensions; // Created automatically for the sender.
+    SandboxExtension::Handle resourceSandboxExtension; // Created automatically for the sender.
+    WebCore::ResourceLoadPriority priority;
+    WebCore::ContentSniffingPolicy contentSniffingPolicy;
+    WebCore::StoredCredentials allowStoredCredentials;
+    bool inPrivateBrowsingMode;
+    bool shouldClearReferrerOnHTTPSToHTTPRedirect;
 };
 
 } // namespace WebKit
