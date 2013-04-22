@@ -69,7 +69,7 @@ http/tests/media/text-served-as-text.html
 media/invalid-media-url-crash.html
 media/video-src-change.html
 
-webkit.org/b/114889 media/W3C/video/events/event_canplay.html [ Timeout Pass ]
+webkit.org/b/114889 media/W3C/video/events/event_canplay.html [ Failure Pass ]
 
 # --- Plugins ---
 
