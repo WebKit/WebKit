@@ -38,11 +38,6 @@
 #new-flexbox * {
     display: -webkit-inline-flex;
 }
-#grid * {
-    display: -webkit-inline-grid;
-    -webkit-grid-rows: 100px;
-    -webkit-grid-columns: 100px;
-}
 </style>
 <script>
 window.onload = function() {
@@ -54,7 +49,6 @@ window.onload = function() {
     createRectangleTest('table', 'stylesheet', elementBounds, shapeBounds, 'px');
     createRectangleTest('old-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
     createRectangleTest('new-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('grid', 'stylesheet', elementBounds, shapeBounds, 'px');
 }
 </script>
 </head>
@@ -96,11 +90,6 @@ a green square within a blue border.</p>
 
 <p>New flexbox</p>
 <div id='new-flexbox'>
-    <div class='content'>xxxx</div>
-</div>
-
-<p>Grid</p>
-<div id='grid'>
     <div class='content'>xxxx</div>
 </div>
 </body>
