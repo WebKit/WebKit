@@ -1,6 +1,9 @@
 (version 1)
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+(allow ipc-posix-shm)
+#endif
 
 (import "system.sb")
 
@@ -136,6 +139,8 @@
        (iokit-user-client-class "IOAudioControlUserClient")
        (iokit-user-client-class "IOAudioEngineUserClient"))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
 (allow ipc-posix-shm-read-data
@@ -162,6 +167,8 @@
 ;; Audio
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-regex #"^AudioIO"))
+
+#endif
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
@@ -206,8 +213,10 @@
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+#endif
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup

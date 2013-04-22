@@ -1,3 +1,13 @@
+2013-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13334446> [Mac] Tweak sandbox profiles.
+
+        Reviewed by Anders Carlsson.
+
+        Unbreak Lion, which doesn't provide detailed control over IPC.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Enable introspection always for developer builds
