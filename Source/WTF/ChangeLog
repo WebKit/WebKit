@@ -1,3 +1,38 @@
+2013-04-22  Andreas Kling  <akling@apple.com>
+
+        Shrink baseline size of WTF::Vector on 64-bit by switching to unsigned capacity and size.
+        <http://webkit.org/b/97268>
+        <rdar://problem/12376519>
+
+        Reviewed by Sam Weinig.
+
+        Shrink Vector by 8 bytes on 64-bit by using 32-bit capacity and size.
+        Vector now inherits from VectorBuffer instead of having a VectorBuffer member;
+        this is necessary for m_size to fall into the padding after the base class members.
+
+        The WTF::Vector API still uses size_t.
+
+        Based on Blink r148313 by <cevans@chromium.org>.
+
+        * wtf/SizeLimits.cpp:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (VectorBufferBase):
+        (WTF::VectorBuffer::shouldReallocateBuffer):
+        (Vector):
+        (WTF::Vector::Vector):
+        (WTF::Vector::capacity):
+        (WTF::Vector::at):
+        (WTF::Vector::data):
+        (WTF::Vector::swap):
+        (WTF::::Vector):
+        (WTF::::reserveCapacity):
+        (WTF::::tryReserveCapacity):
+        (WTF::::reserveInitialCapacity):
+        (WTF::::shrinkCapacity):
+        (WTF::::releaseBuffer):
+
 2013-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         Memory barrier support should also ensure that we always do a compiler fence

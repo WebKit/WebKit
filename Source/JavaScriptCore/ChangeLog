@@ -1,3 +1,15 @@
+2013-04-22  Andreas Kling  <akling@apple.com>
+
+        Shrink baseline size of WTF::Vector on 64-bit by switching to unsigned capacity and size.
+        <http://webkit.org/b/97268>
+        <rdar://problem/12376519>
+
+        Reviewed by Sam Weinig.
+
+        Update LLInt WTF::Vector offset constants to match the new memory layout.
+
+        * llint/LowLevelInterpreter.asm:
+
 2013-04-21  Oliver Hunt  <oliver@apple.com>
 
         JS Lexer and Parser should be more informative when they encounter errors

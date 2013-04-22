@@ -154,11 +154,11 @@ else
 end
 
 # This must match wtf/Vector.h
-const VectorSizeOffset = 0
+const VectorBufferOffset = 0
 if JSVALUE64
-    const VectorBufferOffset = 8
+    const VectorSizeOffset = 12
 else
-    const VectorBufferOffset = 4
+    const VectorSizeOffset = 8
 end
 
 
