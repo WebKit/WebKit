@@ -319,9 +319,6 @@ webkit.org/b/99054 touchadjustment/iframe.html [ Timeout ]
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-# These tests require subpixel layout to be enabled
-webkit.org/b/94792 fast/sub-pixel [ Skip ]
-
 # Mediastream implementation is not complete yet.
 webkit.org/b/79203 fast/mediastream [ Skip ]
 webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
@@ -1124,17 +1121,10 @@ webkit.org/b/83913 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure 
 
 webkit.org/b/86971 svg/custom/non-scaling-stroke.svg [ Failure ]
 
-webkit.org/b/84678 webkit.org/b/96226 fast/spatial-navigation/snav-container-white-space.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-fully-aligned-horizontally.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-iframe-no-scrollable-content.html [ Failure ]
-
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
 webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
-
-webkit.org/b/84701 fast/block/line-layout/selection-highlight-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/84701 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
@@ -1162,8 +1152,6 @@ webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailur
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
-
-webkit.org/b/86445 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
 
 # This test is affecting other tests and seems to be behaving incorrectly itself
 webkit.org/b/86771 fast/dom/gc-10.html [ Skip ]
@@ -1195,9 +1183,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
 webkit.org/b/92100 accessibility/canvas-accessibilitynodeobject.html [ Failure ]
-
-# These tests depend on subpixel layout.
-webkit.org/b/92352 css3/flexbox/flex-rounding.html [ Failure ]
 
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
 
@@ -1334,20 +1319,6 @@ webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 
 webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
-
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-layout.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-padding-003.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html [ ImageOnlyFailure ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 
