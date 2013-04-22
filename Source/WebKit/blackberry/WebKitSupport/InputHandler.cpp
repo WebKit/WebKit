@@ -1203,6 +1203,9 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
     if (isActiveTextEdit())
         clearCurrentFocusElement();
 
+    m_currentFocusElement = element;
+    m_currentFocusElementType = TextPopup;
+
     switch (type) {
     case BlackBerry::Platform::InputTypeDate:
     case BlackBerry::Platform::InputTypeTime:
@@ -2611,10 +2614,10 @@ void InputHandler::restoreViewState()
 
 void InputHandler::showTextInputTypeSuggestionBox(bool allowEmptyPrefix)
 {
-    HTMLInputElement* focusedInputElement = static_cast<HTMLInputElement*>(m_currentFocusElement->toInputElement());
-    if (!focusedInputElement || !focusedInputElement->isTextField())
+    if (!isActiveTextEdit())
         return;
 
+    HTMLInputElement* focusedInputElement = static_cast<HTMLInputElement*>(m_currentFocusElement->toInputElement());
     if (!focusedInputElement)
         return;
 

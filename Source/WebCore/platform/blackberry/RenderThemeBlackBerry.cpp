@@ -1090,8 +1090,14 @@ Color RenderThemeBlackBerry::platformInactiveTextSearchHighlightColor() const
 
 bool RenderThemeBlackBerry::supportsDataListUI(const AtomicString& type) const
 {
-    // TODO: support other input types in the future.
-    return type == InputTypeNames::text();
+#if ENABLE(DATALIST_ELEMENT)
+    // We support all non-popup driven types.
+    return type == InputTypeNames::text() || type == InputTypeNames::search() || type == InputTypeNames::url()
+        || type == InputTypeNames::telephone() || type == InputTypeNames::email() || type == InputTypeNames::number()
+        || type == InputTypeNames::range();
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(DATALIST_ELEMENT)

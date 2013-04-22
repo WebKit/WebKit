@@ -1,3 +1,21 @@
+2013-04-22  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Add additional datalist support.
+        https://bugs.webkit.org/show_bug.cgi?id=114883
+
+        Reviewed by Rob Buis.
+
+        PR 210083.
+
+        Properly set state when opening a Date/Time popup and simplify
+        the logic for showing datalist options.
+
+        Internally Reviewed by Otto Cheung.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openDatePopup):
+        (BlackBerry::WebKit::InputHandler::showTextInputTypeSuggestionBox):
+
 2013-04-19  Andy Chen  <andchen@blackberry.com>
 
         [BlackBerry] Find-on-page should do the scoping again when highlight policy changed 
