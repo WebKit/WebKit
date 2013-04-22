@@ -1,3 +1,22 @@
+2013-04-22  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Update BatteryClientBlackBerry to use our port's new listener interface
+        https://bugs.webkit.org/show_bug.cgi?id=114892
+
+        Reviewed by Rob Buis.
+        PR 328147
+
+        Modify the client so we only have one listener for battery change events.
+        The dispatch of different event listeners are handled by BatteryController.
+
+        * WebCoreSupport/BatteryClientBlackBerry.cpp:
+        (WebCore::BatteryClientBlackBerry::BatteryClientBlackBerry):
+        (WebCore::BatteryClientBlackBerry::startUpdating):
+        (WebCore::BatteryClientBlackBerry::stopUpdating):
+        (WebCore::BatteryClientBlackBerry::onStatusChange):
+        * WebCoreSupport/BatteryClientBlackBerry.h:
+        (BatteryClientBlackBerry):
+
 2013-04-22  Xuefei Ren  <xren@blackberry.com>
 
         fix build warning(unused parameter)
