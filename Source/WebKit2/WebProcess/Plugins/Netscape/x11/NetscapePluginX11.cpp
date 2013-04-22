@@ -533,6 +533,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
+    case WebEvent::GestureSingleTap:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case WebEvent::TouchStart:

@@ -1,3 +1,15 @@
+2013-04-22  Krzysztof Wolanski  <k.wolanski@samsung.com>:
+
+        [WK2] Fix build warning when GESTURE_EVENTS is ON.
+        https://bugs.webkit.org/show_bug.cgi?id=114812
+
+        Reviewed by Andreas Kling.
+
+        Handle GestureSingleTap in the event type switch.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
 2013-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebKit2] Plugins without a MIME Type fail to load
