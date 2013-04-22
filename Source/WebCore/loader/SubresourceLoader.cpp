@@ -123,8 +123,10 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
-        // If this redirect takes us somewhere besides the final response URL of the resource we're revalidating,
-        // then make this an unconditional GET request.
+        // CachedResources are keyed off their original request URL.
+        // Requesting the same original URL a second time can redirect to a unique second resource.
+        // Therefore, if a redirect to a different destination URL occurs, we should no longer consider this a revalidation of the first resource.
+        // Doing so would have us reusing the resource from the first request if the second request's revalidation succeeds.
         if (newRequest.isConditional() && m_resource->resourceToRevalidate() && newRequest.url() != m_resource->resourceToRevalidate()->response().url()) {
             newRequest.makeUnconditional();
             memoryCache()->revalidationFailed(m_resource);
