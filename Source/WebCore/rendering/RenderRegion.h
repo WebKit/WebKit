@@ -145,6 +145,7 @@ private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
     virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual bool canDOMChildrenHaveRenderParent() const OVERRIDE { return true; }
 
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;

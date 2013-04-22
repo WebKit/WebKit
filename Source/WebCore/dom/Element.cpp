@@ -2559,6 +2559,32 @@ RenderRegion* Element::renderRegion() const
     return 0;
 }
 
+bool Element::moveToFlowThreadIsNeeded(RefPtr<RenderStyle>& cachedStyle)
+{
+    Document* doc = document();
+    
+    if (!doc->cssRegionsEnabled())
+        return false;
+
+#if ENABLE(FULLSCREEN_API)
+    if (doc->webkitIsFullScreen() && doc->webkitCurrentFullScreenElement() == this)
+        return false;
+#endif
+
+    if (isInShadowTree())
+        return false;
+
+    if (!cachedStyle)
+        cachedStyle = styleForRenderer();
+    if (!cachedStyle)
+        return false;
+
+    if (cachedStyle->flowThread().isEmpty())
+        return false;
+
+    return !document()->renderView()->flowThreadController()->isContentNodeRegisteredWithAnyNamedFlow(this);
+}
+
 #if ENABLE(CSS_REGIONS)
 
 const AtomicString& Element::webkitRegionOverset() const

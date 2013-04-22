@@ -197,7 +197,7 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool Text::textRendererIsNeeded(const NodeRenderingContext& context)
+bool Text::textRendererIsNeeded(NodeRenderingContext& context)
 {
     if (isEditingText())
         return true;
@@ -302,7 +302,12 @@ void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfRe
     if (!attached())
         return;
     RenderText* textRenderer = toRenderText(renderer());
-    if (!textRenderer || !textRendererIsNeeded(NodeRenderingContext(this, textRenderer->style()))) {
+    if (!textRenderer) {
+        reattach();
+        return;
+    }
+    NodeRenderingContext renderingContext(this, textRenderer->style());
+    if (!textRendererIsNeeded(renderingContext)) {
         reattach();
         return;
     }

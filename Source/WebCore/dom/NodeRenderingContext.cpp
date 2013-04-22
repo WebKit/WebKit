@@ -148,7 +148,7 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     return 0;
 }
 
-RenderObject* NodeRenderingContext::parentRenderer() const
+RenderObject* NodeRenderingContext::parentRenderer()
 {
     if (RenderObject* renderer = m_node->renderer())
         return renderer->parent();
@@ -170,10 +170,15 @@ RenderObject* NodeRenderingContext::parentRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
+    if (m_node->isElementNode() && toElement(m_node)->moveToFlowThreadIsNeeded(m_style)) {
+        moveToFlowThread();
+        return m_parentFlowRenderer;
+    }
+
     return m_renderingParent ? m_renderingParent->renderer() : 0;
 }
 
-bool NodeRenderingContext::shouldCreateRenderer() const
+bool NodeRenderingContext::shouldCreateRenderer()
 {
     if (!m_node->document()->shouldCreateRenderers())
         return false;
@@ -182,8 +187,16 @@ bool NodeRenderingContext::shouldCreateRenderer() const
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
-    if (!parentRenderer->canHaveChildren())
-        return false;
+    if (!parentRenderer->canHaveChildren()) {
+        if (parentRenderer->canDOMChildrenHaveRenderParent()) {
+            // In a region, only the children that need to be in a flow thread should have a renderer.
+            bool shouldBeInNamedFlow = m_node->isElementNode() && toElement(m_node)->moveToFlowThreadIsNeeded(m_style);
+            if (!shouldBeInNamedFlow)
+                return false;
+        } else
+            return false;
+    }
+
     if (!m_renderingParent->childShouldCreateRenderer(*this))
         return false;
     return true;
@@ -192,35 +205,21 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
     ASSERT(m_node->isElementNode());
+
+    if (!toElement(m_node)->moveToFlowThreadIsNeeded(m_style))
+        return;
+
+    moveToFlowThread();
+}
+
+void NodeRenderingContext::moveToFlowThread()
+{
+    ASSERT(m_node->isElementNode());
+    ASSERT(toElement(m_node)->moveToFlowThreadIsNeeded(m_style));
+
+    if (!m_style)
+        m_style = toElement(m_node)->styleForRenderer();
     ASSERT(m_style);
-    if (!m_node->document()->cssRegionsEnabled())
-        return;
-
-    if (m_style->flowThread().isEmpty())
-        return;
-
-    // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
-    // cannot be directly collected into a named flow.
-    if (m_node->isPseudoElement())
-        return;
-
-    // FIXME: Do not collect elements if they are in shadow tree.
-    if (m_node->isInShadowTree())
-        return;
-
-#if ENABLE(FULLSCREEN_API)
-    Document* document = m_node->document();
-    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == m_node)
-        return;
-#endif
-
-#if ENABLE(SVG)
-    // Allow only svg root elements to be directly collected by a render flow thread.
-    if (m_node->isSVGElement()
-        && (!(m_node->hasTagName(SVGNames::svgTag) && m_node->parentNode() && !m_node->parentNode()->isSVGElement())))
-        return;
-#endif
-
     ASSERT(m_node->document()->renderView());
     FlowThreadController* flowThreadController = m_node->document()->renderView()->flowThreadController();
     m_parentFlowRenderer = flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
@@ -245,7 +244,8 @@ void NodeRenderingContext::createRendererForElementIfNeeded()
 
     if (!shouldCreateRenderer())
         return;
-    m_style = element->styleForRenderer();
+    if (!m_style)
+        m_style = element->styleForRenderer();
     ASSERT(m_style);
 
     moveToFlowThreadIfNeeded();
