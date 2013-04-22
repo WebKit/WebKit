@@ -1994,6 +1994,9 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
 {
     my ($dir, $prefix, $sourceDir, $project, $joinedOverridableFeatures, @buildArgs) = @_;
 
+    # Always enable introspection when building WebKitGTK+.
+    unshift(@buildArgs, "--enable-introspection");
+
     my $joinedBuildArgs = join(" ", @buildArgs);
 
     if (-e "GNUmakefile") {

@@ -1,3 +1,14 @@
+2013-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Enable introspection always for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=114983
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Make warnings during gir scanning cause the build to fail. Eliminate
+        warnings about deprecated API that the g-ir-scanner uses when generating
+        the scanner program. Use --quiet.
+
 2013-04-22  Anders Carlsson  <andersca@apple.com>
 
         Make it easier to extend NetworkResourceLoadParameters

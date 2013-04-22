@@ -1,3 +1,17 @@
+2013-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Enable introspection always for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=114983
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): Always enable introspection
+        when using build-webkit.
+        * gtk/jhbuildrc: Enable documentation for all jhbuild modules and explicitly
+        choose the memory gsettings backend while in the jhbuild. This eliminates
+        warnings from programs that fall back to the memory backend.
+
 2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up libPlatform.la
