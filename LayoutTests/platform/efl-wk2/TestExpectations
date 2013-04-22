@@ -449,7 +449,9 @@ webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
 webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure ]
 
 # Regression(r148748).
-webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure ]
+webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114946 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Crash ]
 
 # Websocket tests are flaky on WK2
 webkit.org/b/111976 http/tests/websocket [ Crash Pass Failure ]
