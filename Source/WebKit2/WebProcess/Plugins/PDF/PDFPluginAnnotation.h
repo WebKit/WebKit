@@ -70,6 +70,9 @@ protected:
 
     WebCore::Element* parent() const { return m_parent; }
     PDFLayerController *pdfLayerController() const { return m_pdfLayerController; }
+    WebCore::EventListener* eventListener() const { return m_eventListener.get(); }
+
+    virtual bool handleEvent(WebCore::Event*);
 
 private:
     virtual PassRefPtr<WebCore::Element> createAnnotationElement() = 0;

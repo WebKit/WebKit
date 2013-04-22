@@ -1,3 +1,94 @@
+2013-04-22  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Support unlocking encrypted PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=114938
+        <rdar://problem/12872888>
+
+        Reviewed by Alexey Proskuryakov and Oliver Hunt.
+
+        If we try to load an encrypted PDF, we need to provide a sane mechanism
+        through which the user can provide the password. Add a slightly-below-center
+        password field to match PDFKit's normal behavior.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add PDFPluginPasswordField.{h,mm}
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add attemptToUnlockWithPassword:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        Add createPasswordEntryForm, attemptToUnlockPDF, m_passwordField.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (annotationStyle): Make #annotationContainer a flexbox that centers its contents.
+        This won't affect the normal absolutely-positioned form fields, but the inline
+        password field will be centered vertically and horizontally.
+
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        If the document is locked when loaded, create a password field.
+
+        (WebKit::PDFPlugin::createPasswordEntryForm):
+        Create a PDFPluginPasswordField and attach it to the document.
+
+        (WebKit::PDFPlugin::attemptToUnlockPDF):
+        Try to unlock the PDF with the given password. If this succeeds, remove
+        the password field and relayout the scroll view.
+
+        (WebKit::PDFPlugin::calculateSizes):
+        Make the document 0x0 if it is locked, preventing scrolling.
+
+        (WebKit::PDFPlugin::handleMouseEvent):
+        Don't pass mouse events to PDFLayerController while it is locked,
+        as it has no useful events to provide, and will try to present a
+        dialog asking for the password if we let a click through.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h:
+        (WebKit::PDFPluginAnnotation::eventListener): Added.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::handleEvent):
+        Move event-handling code here from PDFPluginAnnotationEventListener::handleEvent
+        so that subclasses can override this instead of having to have their own
+        event listeners (this is also why we now expose eventListener()).
+
+        (WebKit::PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent):
+        Forward the event to our owning PDFPluginAnnotation.
+
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.h: Added.
+        (WebKit::PDFPluginPasswordField::PDFPluginPasswordField):
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm: Added.
+        (WebKit::PDFPluginPasswordField::create):
+        (WebKit::PDFPluginPasswordField::~PDFPluginPasswordField):
+        Unregister for keyup.
+
+        (WebKit::PDFPluginPasswordField::createAnnotationElement):
+        Register for keyup, and set our element's class to "password".
+
+        (WebKit::PDFPluginPasswordField::updateGeometry):
+        Added. Override updateGeometry and do nothing, as the password field
+        has a geometry defined by CSS instead of by the PDF content.
+
+        (WebKit::PDFPluginPasswordField::handleEvent):
+        If the enter/return key is pressed, attempt to unlock the PDF. Also,
+        we do not call either of our superclass' implementations of handleEvent,
+        because blurring the password field should not destroy it, and tabbing
+        between fields has no relevance when there can only be one field.
+
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener):
+        Removed. We now share our superclass' event listener.
+
+        (WebKit::PDFPluginTextAnnotation::textAnnotation): Const.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::~PDFPluginTextAnnotation):
+        PDFPluginTextAnnotation no longer has its own event listener,
+        so there's nothing left to clear here. Just make sure to unregister
+        our event from PDFPluginAnnotation's shared event listener!
+
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+        Ensure that we can create a PDFPluginTextAnnotation with a null annotation.
+
+        (WebKit::PDFPluginTextAnnotation::commit): Use value().
+        (WebKit::PDFPluginTextAnnotation::value):
+        Factor retrieving the value of the form control out of commit().
+
+        (WebKit::PDFPluginTextAnnotation::handleEvent):
+        Call up to PDFPluginAnnotation's handler so that defocus destroys the annotation.
+
 2013-04-22  Anders Carlsson  <andersca@apple.com>
 
         Slow/beachballing when using the find bar on a page with plug-ins

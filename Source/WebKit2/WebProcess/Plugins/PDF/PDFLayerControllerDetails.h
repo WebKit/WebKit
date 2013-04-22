@@ -110,6 +110,8 @@
 - (CGRect)boundsForAnnotation:(PDFAnnotation *)annotation;
 - (void)activateNextAnnotation:(BOOL)previous;
 
+- (void)attemptToUnlockWithPassword:(NSString *)password;
+
 - (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
 
 @end

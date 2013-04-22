@@ -315,6 +315,7 @@
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
+		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */; };
 		31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31099971146C759B0029DEB9 /* WebNotificationClient.cpp */; };
 		310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31099968146C71F50029DEB9 /* WebNotificationClient.h */; };
@@ -1732,6 +1733,8 @@
 		2D2ADF0C16363DEC00197E47 /* PDFLayerControllerDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerDetails.h; path = PDF/PDFLayerControllerDetails.h; sourceTree = "<group>"; };
 		2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginChoiceAnnotation.h; path = PDF/PDFPluginChoiceAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
+		2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordField.h; path = PDF/PDFPluginPasswordField.h; sourceTree = "<group>"; };
+		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		31099968146C71F50029DEB9 /* WebNotificationClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebNotificationClient.h; sourceTree = "<group>"; };
@@ -5125,6 +5128,8 @@
 				2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */,
 				2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */,
 				2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */,
+				2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */,
+				2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */,
 				E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */,
 				E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */,
 			);
@@ -6827,6 +6832,7 @@
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
 				BC7043CD12F75EE0006472B9 /* WKBundleNavigationAction.cpp in Sources */,
 				BC4BEFE2120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp in Sources */,
+				2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */,
 				BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */,
 				BC7B633E12A45D1200D174A4 /* WKBundlePageGroup.cpp in Sources */,
 				EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */,

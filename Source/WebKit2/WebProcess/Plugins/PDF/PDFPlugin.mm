@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PDFKIT_PLUGIN)
-
 #import "config.h"
 #import "PDFPlugin.h"
+
+#if ENABLE(PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
 #import "AttributedString.h"
@@ -36,6 +36,7 @@
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
 #import "PDFPluginAnnotation.h"
+#import "PDFPluginPasswordField.h"
 #import "PluginView.h"
 #import "WebContextMessages.h"
 #import "WebEvent.h"
@@ -76,6 +77,9 @@ static const char* annotationStyle =
 "    left: 0; "
 "    right: 0; "
 "    bottom: 0; "
+"    display: -webkit-box; "
+"    -webkit-box-align: center; "
+"    -webkit-box-pack: center; "
 "} "
 ".annotation { "
 "    position: absolute; "
@@ -83,7 +87,12 @@ static const char* annotationStyle =
 "} "
 "textarea.annotation { "
 "    resize: none; "
-"}";
+"} "
+"input.annotation[type='password'] { "
+"    position: static; "
+"    width: 200px; "
+"    margin-top: 100px; "
+"} ";
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
@@ -319,6 +328,27 @@ void PDFPlugin::pdfDocumentDidLoad()
     updateScrollbars();
 
     runScriptsInPDFDocument();
+
+    if ([document.get() isLocked])
+        createPasswordEntryForm();
+}
+
+void PDFPlugin::createPasswordEntryForm()
+{
+    m_passwordField = PDFPluginPasswordField::create(m_pdfLayerController.get(), this);
+    m_passwordField->attach(m_annotationContainer.get());
+}
+
+void PDFPlugin::attemptToUnlockPDF(const String& password)
+{
+    [m_pdfLayerController attemptToUnlockWithPassword:password];
+
+    if (![pdfDocument() isLocked]) {
+        m_passwordField = nullptr;
+
+        calculateSizes();
+        updateScrollbars();
+    }
 }
 
 void PDFPlugin::updatePageAndDeviceScaleFactors()
@@ -337,6 +367,11 @@ void PDFPlugin::contentsScaleFactorChanged(float)
 
 void PDFPlugin::calculateSizes()
 {
+    if ([pdfDocument() isLocked]) {
+        setPDFDocumentSize(IntSize(0, 0));
+        return;
+    }
+
     // FIXME: This should come straight from PDFKit.
     computePageBoxes();
 
@@ -562,6 +597,9 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     }
 
     if (m_scrollCornerLayer && IntRect(m_scrollCornerLayer.get().frame).contains(mousePosition))
+        return false;
+
+    if ([pdfDocument() isLocked])
         return false;
 
     // Right-clicks and Control-clicks always call handleContextMenuEvent as well.

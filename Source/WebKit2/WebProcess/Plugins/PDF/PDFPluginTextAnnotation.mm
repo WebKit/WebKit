@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PDFKIT_PLUGIN)
-
 #import "config.h"
 #import "PDFPluginTextAnnotation.h"
+
+#if ENABLE(PDFKIT_PLUGIN)
 
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFKitImports.h"
@@ -43,7 +43,6 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
-#import <WebCore/WindowsKeyboardCodes.h>
 
 using namespace WebCore;
 
@@ -77,8 +76,7 @@ PassRefPtr<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotatio
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 {
-    element()->removeEventListener(eventNames().keydownEvent, m_eventListener.get(), false);
-    m_eventListener->setTextAnnotation(0);
+    element()->removeEventListener(eventNames().keydownEvent, eventListener(), false);
 }
 
 PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
@@ -94,9 +92,12 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
     else
         element = document->createElement(inputTag, false);
 
-    element->addEventListener(eventNames().keydownEvent, m_eventListener, false);
+    element->addEventListener(eventNames().keydownEvent, eventListener(), false);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element.get());
+
+    if (!textAnnotation)
+        return element;
 
     // FIXME: Match font weight and style as well?
     styledElement->setInlineStyleProperty(CSSPropertyColor, colorFromNSColor(textAnnotation.fontColor).serialized());
@@ -121,36 +122,38 @@ void PDFPluginTextAnnotation::updateGeometry()
 
 void PDFPluginTextAnnotation::commit()
 {
-    PDFAnnotationTextWidget *textAnnotation = this->textAnnotation();
-
-    if (textAnnotation.isMultiline)
-        textAnnotation.stringValue = static_cast<HTMLTextAreaElement*>(element())->value();
-    else
-        textAnnotation.stringValue = static_cast<HTMLInputElement*>(element())->value();
-
+    textAnnotation().stringValue = value();
     PDFPluginAnnotation::commit();
 }
 
-void PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+String PDFPluginTextAnnotation::value() const
 {
-    if (!m_annotation)
-        return;
+    return toHTMLTextFormControlElement(element())->value();
+}
+
+bool PDFPluginTextAnnotation::handleEvent(Event* event)
+{
+    if (PDFPluginAnnotation::handleEvent(event))
+        return true;
 
     if (event->isKeyboardEvent() && event->type() == eventNames().keydownEvent) {
         KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
 
         if (keyboardEvent->keyIdentifier() == "U+0009") {
             if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey() || keyboardEvent->altGraphKey())
-                return;
+                return false;
 
             if (keyboardEvent->shiftKey())
-                m_annotation->plugin()->focusPreviousAnnotation();
+                plugin()->focusPreviousAnnotation();
             else
-                m_annotation->plugin()->focusNextAnnotation();
-
+                plugin()->focusNextAnnotation();
+            
             event->preventDefault();
+            return true;
         }
     }
+
+    return false;
 }
 
 } // namespace WebKit

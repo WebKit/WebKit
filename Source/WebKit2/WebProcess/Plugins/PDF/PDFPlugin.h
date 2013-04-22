@@ -58,6 +58,7 @@ struct PluginInfo;
 namespace WebKit {
 
 class PDFPluginAnnotation;
+class PDFPluginPasswordField;
 class PluginView;
 class WebFrame;
 
@@ -85,6 +86,8 @@ public:
 
     void focusNextAnnotation();
     void focusPreviousAnnotation();
+
+    void attemptToUnlockPDF(const String& password);
 
 private:
     explicit PDFPlugin(WebFrame*);
@@ -133,6 +136,8 @@ private:
 
     void updatePageAndDeviceScaleFactors();
 
+    void createPasswordEntryForm();
+
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
 
     RetainPtr<CALayer> m_containerLayer;
@@ -143,6 +148,7 @@ private:
     RetainPtr<PDFLayerController> m_pdfLayerController;
     
     RefPtr<PDFPluginAnnotation> m_activeAnnotation;
+    RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<WebCore::Element> m_annotationContainer;
 
     WebCore::AffineTransform m_rootViewToPluginTransform;

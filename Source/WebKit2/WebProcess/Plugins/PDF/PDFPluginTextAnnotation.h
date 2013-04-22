@@ -30,6 +30,8 @@
 
 #include "PDFPluginAnnotation.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 class Element;
 }
@@ -46,41 +48,19 @@ public:
     virtual void updateGeometry() OVERRIDE;
     virtual void commit() OVERRIDE;
 
-private:
+protected:
     PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
         : PDFPluginAnnotation(annotation, pdfLayerController, plugin)
-        , m_eventListener(PDFPluginTextAnnotationEventListener::create(this))
     {
     }
 
-    class PDFPluginTextAnnotationEventListener : public WebCore::EventListener {
-    public:
-        static PassRefPtr<PDFPluginTextAnnotationEventListener> create(PDFPluginTextAnnotation* annotation)
-        {
-            return adoptRef(new PDFPluginTextAnnotationEventListener(annotation));
-        }
-
-        virtual bool operator==(const EventListener& listener) OVERRIDE { return this == &listener; }
-
-        void setTextAnnotation(PDFPluginTextAnnotation* annotation) { m_annotation = annotation; }
-
-    private:
-        PDFPluginTextAnnotationEventListener(PDFPluginTextAnnotation* annotation)
-            : WebCore::EventListener(WebCore::EventListener::CPPEventListenerType)
-            , m_annotation(annotation)
-        {
-        }
-
-        virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) OVERRIDE;
-
-        PDFPluginTextAnnotation* m_annotation;
-    };
-
     virtual PassRefPtr<WebCore::Element> createAnnotationElement() OVERRIDE;
+    String value() const;
 
-    PDFAnnotationTextWidget * textAnnotation() { return static_cast<PDFAnnotationTextWidget *>(annotation()); }
+private:
+    virtual bool handleEvent(WebCore::Event*) OVERRIDE;
 
-    RefPtr<PDFPluginTextAnnotationEventListener> m_eventListener;
+    PDFAnnotationTextWidget *textAnnotation() const { return static_cast<PDFAnnotationTextWidget *>(annotation()); }
 };
 
 } // namespace WebKit

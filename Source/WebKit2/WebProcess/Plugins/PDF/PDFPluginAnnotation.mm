@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PDFKIT_PLUGIN)
-
 #import "config.h"
 #import "PDFPluginAnnotation.h"
+
+#if ENABLE(PDFKIT_PLUGIN)
 
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
@@ -108,13 +108,20 @@ void PDFPluginAnnotation::updateGeometry()
     styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSPrimitiveValue::CSS_PX);
 }
 
+bool PDFPluginAnnotation::handleEvent(Event* event)
+{
+    if (event->type() == eventNames().blurEvent || event->type() == eventNames().changeEvent) {
+        m_plugin->setActiveAnnotation(0);
+        return true;
+    }
+
+    return false;
+}
+
 void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    if (!m_annotation)
-        return;
-
-    if (event->type() == eventNames().blurEvent || event->type() == eventNames().changeEvent)
-        m_annotation->plugin()->setActiveAnnotation(0);
+    if (m_annotation)
+        m_annotation->handleEvent(event);
 }
 
 } // namespace WebKit
