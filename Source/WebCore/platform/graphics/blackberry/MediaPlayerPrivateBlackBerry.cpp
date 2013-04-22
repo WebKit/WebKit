@@ -183,8 +183,8 @@ void MediaPlayerPrivate::load(const WTF::String& url)
         mediaURL.setProtocol("file");
         mediaURL.setPath(fsRoot + "/" + secOrigin + "/" + fsPath);
         modifiedUrl = mediaURL.string();
-    } else if (modifiedUrl.startsWith("file://")) {
-        // The QNX Multimedia Framework cannot handle filenames containing URL escape sequences.
+    } else if (modifiedUrl.startsWith("file://") || modifiedUrl.startsWith("data:")) {
+        // The QNX Multimedia Framework cannot handle filenames or data containing URL escape sequences.
         modifiedUrl = decodeURLEscapeSequences(modifiedUrl);
     }
 
