@@ -1,3 +1,10 @@
+2013-04-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Windows build fix after r148921
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the memory instrumentation code

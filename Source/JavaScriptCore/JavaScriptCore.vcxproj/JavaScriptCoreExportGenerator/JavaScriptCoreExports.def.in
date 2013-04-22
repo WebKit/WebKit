@@ -88,11 +88,9 @@ EXPORTS
     ?addCurrentThread@MachineThreads@JSC@@QAEXXZ
     ?addFinalizer@Heap@JSC@@QAEXPAVJSCell@2@P6AX0@Z@Z
     ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z
-    ?addPrivateBuffer@MemoryClassInfo@WTF@@QAEXIPBD00@Z
     ?addPropertyTransition@Structure@JSC@@SAPAV12@AAVVM@2@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEHAAVVM@2@VPropertyName@2@IPAVJSCell@2@@Z
-    ?addRawBuffer@MemoryClassInfo@WTF@@QAEXPBXIPBD1@Z
     ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
@@ -334,7 +332,6 @@ EXPORTS
     ?indefiniteTime@MediaTime@WTF@@SAABV12@XZ 
     ?init@AtomicString@WTF@@SAXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
-    ?init@MemoryClassInfo@WTF@@AAEXPBXPBD1I@Z
     ?initialize@double_conversion@WTF@@YAXXZ
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ
@@ -441,7 +438,6 @@ EXPORTS
     ?s_segmentCapacity@MarkStackArray@JSC@@0IB
     ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
-    ?setCustomAllocation@MemoryClassInfo@WTF@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGarbageCollectionTimerEnabled@Heap@JSC@@QAEX_N@Z
