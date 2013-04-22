@@ -135,6 +135,8 @@ private:
     void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>*);
     void pluginDidReceiveUserInteraction();
 
+    bool shouldCreateTransientPaintingSnapshot() const;
+
     // WebCore::PluginViewBase
 #if PLATFORM(MAC)
     virtual PlatformLayer* platformLayer() const;

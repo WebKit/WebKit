@@ -929,7 +929,7 @@ void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {
     case WillPaintFlattened:
-        if (m_plugin && m_isInitialized)
+        if (shouldCreateTransientPaintingSnapshot())
             m_transientPaintingSnapshot = m_plugin->snapshot();
         break;
     case DidPaintFlattened:
@@ -1670,6 +1670,25 @@ void PluginView::pluginDidReceiveUserInteraction()
         return;
 
     m_didReceiveUserInteraction = true;
+}
+
+bool PluginView::shouldCreateTransientPaintingSnapshot() const
+{
+    if (!m_plugin)
+        return false;
+
+    if (!m_isInitialized)
+        return false;
+
+    if (FrameView* frameView = frame()->view()) {
+        if (frameView->paintBehavior() & (PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText)) {
+            // This paint behavior is used when drawing the find indicator and there's no need to
+            // snapshot plug-ins, because they can never be painted as part of the find indicator.
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace WebKit

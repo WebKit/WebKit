@@ -1,3 +1,21 @@
+2013-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Slow/beachballing when using the find bar on a page with plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=114990
+        <rdar://problem/12832313>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::notifyWidget):
+        Call shouldCreateTransientPaintingSnapshot().
+
+        (WebKit::PluginView::shouldCreateTransientPaintingSnapshot):
+        Don't create a painting snapshot if we're asked to paint the find indicator.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add new member function.
+
 2013-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13334446> [Mac] Tweak sandbox profiles.
