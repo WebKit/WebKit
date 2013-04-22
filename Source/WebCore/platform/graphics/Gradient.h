@@ -57,6 +57,15 @@ typedef class SkShader* PlatformPattern;
 #elif PLATFORM(WX)
 class wxGraphicsBrush;
 typedef wxGraphicsBrush* PlatformGradient;
+#elif PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+namespace Graphics {
+class Gradient;
+}
+}
+}
+typedef BlackBerry::Platform::Graphics::Gradient* PlatformGradient;
 #else
 typedef void* PlatformGradient;
 #endif
