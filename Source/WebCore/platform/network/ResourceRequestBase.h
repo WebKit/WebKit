@@ -123,6 +123,7 @@ namespace WebCore {
         void setPriority(ResourceLoadPriority);
 
         bool isConditional() const;
+        void makeUnconditional();
 
         // Whether the associated ResourceHandleClient needs to be notified of
         // upload progress made for that resource.

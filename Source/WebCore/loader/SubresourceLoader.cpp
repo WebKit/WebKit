@@ -123,6 +123,13 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
+        // If this redirect takes us somewhere besides the final response URL of the resource we're revalidating,
+        // then make this an unconditional GET request.
+        if (newRequest.isConditional() && m_resource->resourceToRevalidate() && newRequest.url() != m_resource->resourceToRevalidate()->response().url()) {
+            newRequest.makeUnconditional();
+            memoryCache()->revalidationFailed(m_resource);
+        }
+        
         if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url())) {
             cancel();
             return;

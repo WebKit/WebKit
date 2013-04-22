@@ -472,6 +472,15 @@ bool ResourceRequestBase::isConditional() const
             m_httpHeaderFields.contains("If-Unmodified-Since"));
 }
 
+void ResourceRequestBase::makeUnconditional()
+{
+    m_httpHeaderFields.remove("If-Match");
+    m_httpHeaderFields.remove("If-Modified-Since");
+    m_httpHeaderFields.remove("If-None-Match");
+    m_httpHeaderFields.remove("If-Range");
+    m_httpHeaderFields.remove("If-Unmodified-Since");
+}
+
 double ResourceRequestBase::defaultTimeoutInterval()
 {
     return s_defaultTimeoutInterval;
