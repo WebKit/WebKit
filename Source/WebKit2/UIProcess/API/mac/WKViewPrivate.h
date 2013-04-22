@@ -64,6 +64,7 @@ typedef enum {
 @property(copy, nonatomic) NSColor *underlayColor;
 
 - (NSView*)fullScreenPlaceholderView;
+- (NSWindow*)createFullScreenWindow;
 
 - (void)beginDeferringViewInWindowChanges;
 - (void)endDeferringViewInWindowChanges;

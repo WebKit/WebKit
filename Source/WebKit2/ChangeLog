@@ -1,3 +1,20 @@
+2013-04-15  Jer Noble  <jer.noble@apple.com>
+
+        Refactor creation of the full screen window into an (overridable) method.
+        https://bugs.webkit.org/show_bug.cgi?id=110369
+
+        Reviewed by Eric Carlson.
+
+        Add a new WKView method -(NSWindow)createFullScreenWindow which can be overridden
+        by subclasses to provide custom full screen windows to the WKFullScreenWindowController.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView fullScreenWindowController]):
+        (-[WKView createFullScreenWindow]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:]):
+
 2013-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_web_context_set_disk_cache_directory to WebKit2 GTK+ API

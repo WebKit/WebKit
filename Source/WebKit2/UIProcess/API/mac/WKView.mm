@@ -83,6 +83,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
+#import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/FileSystem.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
@@ -3064,7 +3065,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (WKFullScreenWindowController*)fullScreenWindowController
 {
     if (!_data->_fullScreenWindowController) {
-        _data->_fullScreenWindowController.adoptNS([[WKFullScreenWindowController alloc] init]);
+        _data->_fullScreenWindowController.adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow]]);
         [_data->_fullScreenWindowController.get() setWebView:self];
     }
     return _data->_fullScreenWindowController.get();
@@ -3488,6 +3489,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
     }
+}
+
+- (NSWindow*)createFullScreenWindow
+{
+#if ENABLE(FULLSCREEN_API)
+    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO] autorelease];
+#else
+    return nil;
+#endif
 }
 
 @end

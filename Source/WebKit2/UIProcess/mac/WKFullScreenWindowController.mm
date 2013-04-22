@@ -90,14 +90,13 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 #pragma mark -
 #pragma mark Initialization
-- (id)init
+- (id)initWithWindow:(NSWindow *)window
 {
-    RetainPtr<NSWindow> window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSClosableWindowMask backing:NSBackingStoreBuffered defer:NO]);
-    self = [super initWithWindow:window.get()];
+    self = [super initWithWindow:window];
     if (!self)
         return nil;
-    [window.get() setDelegate:self];
-    [window.get() setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
+    [window setDelegate:self];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
     [self windowDidLoad];
     
     return self;
