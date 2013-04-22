@@ -1,3 +1,26 @@
+2013-04-22  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::AtomicString::find() should take unsigned 'start' argument
+        <http://webkit.org/b/114958>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following warnings with -Wshorten-64-to-32:
+
+            AtomicString.h:113:76: error: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                size_t find(UChar c, size_t start = 0) const { return m_string.find(c, start); }
+                                                                      ~~~~~~~~         ^~~~~
+            AtomicString.h:115:35: error: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                    { return m_string.find(s, start, caseSentitive); }
+                             ~~~~~~~~         ^~~~~
+            AtomicString.h:117:35: error: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                    { return m_string.find(s, start, caseSentitive); }
+                             ~~~~~~~~         ^~~~~
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::find): Change type of 'start' argument from
+        size_t to unsigned.
+
 2013-04-21  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve StringImpl code density for older ARM hardware

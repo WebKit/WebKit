@@ -110,10 +110,10 @@ public:
     bool contains(const String& s, bool caseSensitive = true) const
         { return m_string.contains(s, caseSensitive); }
 
-    size_t find(UChar c, size_t start = 0) const { return m_string.find(c, start); }
-    size_t find(const LChar* s, size_t start = 0, bool caseSentitive = true) const
+    size_t find(UChar c, unsigned start = 0) const { return m_string.find(c, start); }
+    size_t find(const LChar* s, unsigned start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
-    size_t find(const String& s, size_t start = 0, bool caseSentitive = true) const
+    size_t find(const String& s, unsigned start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
     
     bool startsWith(const String& s, bool caseSensitive = true) const
