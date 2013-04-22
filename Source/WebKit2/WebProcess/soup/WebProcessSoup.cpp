@@ -175,6 +175,11 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 #endif
 
+    ASSERT(!parameters.diskCacheDirectory.isEmpty());
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
+    soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
+    soup_cache_load(soupCache.get());
+
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
 

@@ -1,3 +1,28 @@
+2013-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Soup disk cache should respect the diskCacheDirectory from the process initial parameters
+        https://bugs.webkit.org/show_bug.cgi?id=111845
+
+        Reviewed by Anders Carlsson.
+
+        Move the cache initialization to platformInitializeWebProcess() to
+        create the cache using the directory received from the UI
+        process. This allows to add public API to set a different disk
+        cache directory from the UI process.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory): Return
+        default disk cache directory.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory): Ditto.
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl): Remove soup cache initialization.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): Ditto.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Initialize
+        soup cache.
+
 2013-04-22  Krzysztof Wolanski  <k.wolanski@samsung.com>:
 
         [WK2] Fix build warning when GESTURE_EVENTS is ON.

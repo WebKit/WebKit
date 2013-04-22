@@ -123,12 +123,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         g_object_unref(resolverEfl);
     }
 
-    // Set SOUP cache.
-    String soupCacheDirectory = String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";
-    SoupCache* soupCache = soup_cache_new(soupCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER);
-    soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache));
-    soup_cache_load(soupCache);
-
     int socket = atoi(argv[1]);
 
     ChildProcessInitializationParameters parameters;
@@ -138,9 +132,10 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     RunLoop::run();
 
-    soup_cache_flush(soupCache);
-    soup_cache_dump(soupCache);
-    g_object_unref(soupCache);
+    if (SoupSessionFeature* soupCache = soup_session_get_feature(session, SOUP_TYPE_CACHE)) {
+        soup_cache_flush(SOUP_CACHE(soupCache));
+        soup_cache_dump(SOUP_CACHE(soupCache));
+    }
 
     edje_shutdown();
     ecore_evas_shutdown();
