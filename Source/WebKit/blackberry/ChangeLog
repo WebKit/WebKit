@@ -1,3 +1,19 @@
+2013-04-22  Xan Lopez  <xlopez@igalia.com>
+
+        [BlackBerry] ASSERT in FrameLoaderClient::convertMainResourceLoadToDownload
+        https://bugs.webkit.org/show_bug.cgi?id=114741
+
+        Reviewed by George Staikos.
+
+        Consider the case where a ResourceHandle won't have a FilterStream
+        object associated (for example, Blob objects) instead of ASSERTing
+        pointlessly when asking our network layer for such an object.
+
+        This partially fixes fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload):
+
 2013-04-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Add additional datalist support.

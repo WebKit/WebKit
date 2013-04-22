@@ -1187,9 +1187,18 @@ void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, 
     m_webPagePrivate->load(request.url().string(), BlackBerry::Platform::String::emptyString(), "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", suggestedName);
 }
 
-void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest&, const ResourceResponse& r)
+void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& r)
 {
     BlackBerry::Platform::FilterStream* stream = NetworkManager::instance()->streamForHandle(documentLoader->mainResourceLoader()->handle());
+    // There are cases where there won't have a FilterStream
+    // associated with a ResourceHandle. For instance, Blob objects
+    // have their own ResourceHandle class which won't call startJob
+    // to do the proper setup. Do it here.
+    if (!stream) {
+        int playerId = static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->playerId();
+        NetworkManager::instance()->startJob(playerId, documentLoader->mainResourceLoader()->handle(), request, m_frame, false);
+        stream = NetworkManager::instance()->streamForHandle(documentLoader->mainResourceLoader()->handle());
+    }
     ASSERT(stream);
 
     m_webPagePrivate->m_client->downloadRequested(stream, r.suggestedFilename());
