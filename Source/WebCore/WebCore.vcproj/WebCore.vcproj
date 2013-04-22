@@ -39011,6 +39011,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSMatFunctionValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSMatFunctionValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSMixFunctionValue.cpp"
 				>
 			</File>

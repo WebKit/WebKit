@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,52 +27,38 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CustomFilterParameter_h
-#define CustomFilterParameter_h
+#ifndef WebKitCSSMatFunctionValue_h
+#define WebKitCSSMatFunctionValue_h
 
 #if ENABLE(CSS_SHADERS)
+
+#include "CSSValueList.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CustomFilterParameter : public RefCounted<CustomFilterParameter> {
+class WebKitCSSMatFunctionValue : public CSSValueList {
 public:
-    // FIXME: Implement other parameters types:
-    // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-    enum ParameterType {
-        ARRAY,
-        COLOR,
-        MATRIX,
-        NUMBER,
-        TRANSFORM
-    };
-    
-    virtual ~CustomFilterParameter() { }
-    
-    ParameterType parameterType() const { return m_type; }
-    const String& name() const { return m_name; }
-    
-    bool isSameType(const CustomFilterParameter& other) const { return parameterType() == other.parameterType(); }
-    
-    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter*, double progress, const LayoutSize&) = 0;
-    virtual bool operator==(const CustomFilterParameter&) const = 0;
-    bool operator!=(const CustomFilterParameter& o) const { return !(*this == o); }
-protected:
-    CustomFilterParameter(ParameterType type, const String& name)
-        : m_name(name)
-        , m_type(type)
+    static PassRefPtr<WebKitCSSMatFunctionValue> create()
     {
+        return adoptRef(new WebKitCSSMatFunctionValue());
     }
 
+    String customCssText() const;
+
+    PassRefPtr<WebKitCSSMatFunctionValue> cloneForCSSOM() const;
+
+    bool equals(const WebKitCSSMatFunctionValue&) const;
+
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
-    String m_name;
-    ParameterType m_type;
+    WebKitCSSMatFunctionValue();
+    WebKitCSSMatFunctionValue(const WebKitCSSMatFunctionValue& cloneFrom);
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS)
 
-#endif // CustomFilterParameter_h
+#endif

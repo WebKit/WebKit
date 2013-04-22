@@ -253,24 +253,186 @@ PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
 PASS removeBaseURL(subValue.cssText) is "c rgba(0, 255, 0, 0.2)"
 
 ========================================
-Combined parameter tests.
+Mat2 parameter tests.
 ========================================
 
-Number parameter, color parameter, transform parameter and array parameter.
-parameters: n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1);
+Mat2 parameter.
+parameters: m mat2(1, 0, 0, 1);
 PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
 PASS styleDeclaration.length is 1
-PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1)"
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat2(1, 0, 0, 1)"
 PASS parametersPropertyValue instanceof CSSValueList is true
 PASS parametersPropertyValue.constructor === CSSValueList is true
 PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
-PASS parametersPropertyValue.length is 4
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat2(1, 0, 0, 1)"
+
+Mat2 parameter with negative values.
+parameters: m mat2(-1, -1, -1, -1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat2(-1, -1, -1, -1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat2(-1, -1, -1, -1)"
+
+Mat2 parameter with negative and positive values.
+parameters: m mat2(-1, 1, 1, -1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat2(-1, 1, 1, -1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat2(-1, 1, 1, -1)"
+
+Mat2 parameter with multiple signed floats.
+parameters: m mat2(1, -2.2, 3.14, 0.4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat2(1, -2.2, 3.14, 0.4)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat2(1, -2.2, 3.14, 0.4)"
+
+========================================
+Mat3 parameter tests.
+========================================
+
+Mat3 parameter.
+parameters: m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)"
+
+Mat3 parameter with negative values.
+parameters: m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1)"
+
+Mat3 parameter with negative and positive values.
+parameters: m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1)"
+
+Mat3 parameter with multiple signed floats.
+parameters: m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1)"
+
+========================================
+Mat4 parameter tests.
+========================================
+
+Mat4 parameter.
+parameters: m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
+
+Mat4 parameter with negative values.
+parameters: m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)"
+
+Mat4 parameter with negative and positive values.
+parameters: m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1)"
+
+Mat4 parameter with multiple signed floats.
+parameters: m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 1
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4)"
+
+========================================
+Combined parameter tests.
+========================================
+
+Number parameter, color parameter, transform parameter, matrix parameters and array parameter.
+parameters: n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 1
+PASS removeBaseURL(styleDeclaration.getPropertyValue('parameters')) is "n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1)"
+PASS parametersPropertyValue instanceof CSSValueList is true
+PASS parametersPropertyValue.constructor === CSSValueList is true
+PASS parametersPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS parametersPropertyValue.length is 7
 PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
 PASS removeBaseURL(subValue.cssText) is "n 1"
 PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
 PASS removeBaseURL(subValue.cssText) is "c rgb(0, 128, 0)"
 PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
 PASS removeBaseURL(subValue.cssText) is "t rotate(0deg)"
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m1 mat2(1, 0, 0, 1)"
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)"
+PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
+PASS removeBaseURL(subValue.cssText) is "m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
 PASS subValue.cssValueType is CSSValue.CSS_VALUE_LIST
 PASS removeBaseURL(subValue.cssText) is "a array(1)"
 PASS successfullyParsed is true

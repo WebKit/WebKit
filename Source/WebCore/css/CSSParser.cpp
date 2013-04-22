@@ -106,6 +106,7 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "WebKitCSSArrayFunctionValue.h"
+#include "WebKitCSSMatFunctionValue.h"
 #include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #endif
@@ -8307,7 +8308,6 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
 
     return list.release();
 }
-    
 
 PassRefPtr<CSSValue> CSSParser::parseTransformValue(CSSParserValue *value)
 {
@@ -8465,6 +8465,48 @@ PassRefPtr<WebKitCSSArrayFunctionValue> CSSParser::parseCustomFilterArrayFunctio
     return arrayFunction;
 }
 
+PassRefPtr<WebKitCSSMatFunctionValue> CSSParser::parseMatValue(CSSParserValue* value)
+{
+    if (value->unit != CSSParserValue::Function || !value->function)
+        return 0;
+
+    unsigned numberOfValues = 0;
+    if (equalIgnoringCase(value->function->name, "mat2("))
+        numberOfValues = 4;
+    else if (equalIgnoringCase(value->function->name, "mat3("))
+        numberOfValues = 9;
+    else if (equalIgnoringCase(value->function->name, "mat4("))
+        numberOfValues = 16;
+    else
+        return 0;
+
+    CSSParserValueList* args = value->function->args.get();
+    if (!args || args->size() != (numberOfValues * 2 - 1))
+        return 0;
+
+    RefPtr<WebKitCSSMatFunctionValue> matValueList = WebKitCSSMatFunctionValue::create();
+    CSSParserValue* arg = args->current();
+    while (arg) {
+        if (!validUnit(arg, FNumber, CSSStrictMode))
+            return 0;
+        matValueList->append(cssValuePool().createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
+        arg = args->next();
+
+        if (!arg)
+            break;
+
+        if (!isComma(arg))
+            return 0;
+
+        arg = args->next();
+    }
+
+    if (!matValueList || matValueList->length() != numberOfValues)
+        return 0;
+
+    return matValueList.release();
+}
+
 PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue* value)
 {
     ASSERT(value->unit == CSSParserValue::Function && value->function);
@@ -8552,14 +8594,19 @@ PassRefPtr<CSSValueList> CSSParser::parseCustomFilterParameters(CSSParserValueLi
         if (arg->unit == CSSParserValue::Function && arg->function) {
             // FIXME: Implement parsing for the other parameter types.
             // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-            // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
             if (equalIgnoringCase(arg->function->name, "array(")) {
                 parameterValue = parseCustomFilterArrayFunction(arg);
                 // This parsing step only consumes function arguments,
                 // argsList is therefore moved forward explicitely.
                 argsList->next();
-            } else
-                parameterValue = parseCustomFilterTransform(argsList);
+            } else {
+                // Parse mat2, mat3 and mat4 functions.
+                parameterValue = parseMatValue(arg);
+                if (!parameterValue && arg)
+                    parameterValue = parseCustomFilterTransform(argsList);
+                else if (parameterValue)
+                    argsList->next();
+            }
         } else if (validUnit(arg, FNumber, CSSStrictMode)) {
             RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
             while (arg) {

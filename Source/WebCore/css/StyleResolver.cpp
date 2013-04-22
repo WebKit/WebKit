@@ -3679,9 +3679,9 @@ static bool sortParametersByNameComparator(const RefPtr<CustomFilterParameter>& 
     return codePointCompareLessThan(a->name(), b->name());
 }
 
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterArrayParameter(const String& name, CSSValueList* values)
+PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterArrayParameter(const String& name, CSSValueList* values, bool isArray)
 {
-    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name);
+    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name, isArray ? CustomFilterArrayParameter::ARRAY : CustomFilterArrayParameter::MATRIX);
     for (unsigned i = 0, length = values->length(); i < length; ++i) {
         CSSValue* value = values->itemWithoutBoundsCheck(i);
         if (!value->isPrimitiveValue())
@@ -3742,7 +3742,10 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(cons
         return 0;
 
     if (parameterValue->isWebKitCSSArrayFunctionValue())
-        return parseCustomFilterArrayParameter(name, values);
+        return parseCustomFilterArrayParameter(name, values, true);
+
+    if (parameterValue->isWebKitCSSMatFunctionValue())
+        return parseCustomFilterArrayParameter(name, values, false);
 
     // If the first value of the list is a transform function,
     // then we could safely assume that all the remaining items

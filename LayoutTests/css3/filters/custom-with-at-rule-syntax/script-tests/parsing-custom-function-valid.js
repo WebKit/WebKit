@@ -119,7 +119,49 @@ testFilterProperty("Multiple array parameters.",
     "custom(my-filter, a1 array(1, -2.2, 3.14, 0.4, 5), a2 array(1, 2, 3))",
     "custom(my-filter, a1 array(1, -2.2, 3.14, 0.4, 5), a2 array(1, 2, 3))");
 
+heading("Mat2 parameter tests.");
+testFilterProperty("Mat2 parameter.",
+    "custom(my-filter, m mat2(1, 0, 0, 1))",
+    "custom(my-filter, m mat2(1, 0, 0, 1))");
+testFilterProperty("Mat2 parameter with negative values.",
+    "custom(my-filter, m mat2(-1, -1, -1, -1))",
+    "custom(my-filter, m mat2(-1, -1, -1, -1))");
+testFilterProperty("Mat2 parameter with negative and positive values.",
+    "custom(my-filter, m mat2(-1, 1, 1, -1))",
+    "custom(my-filter, m mat2(-1, 1, 1, -1))");
+testFilterProperty("Mat2 parameter with multiple signed floats.",
+    "custom(my-filter, m mat2(1, -2.2, 3.14, 0.4))",
+    "custom(my-filter, m mat2(1, -2.2, 3.14, 0.4))");
+
+heading("Mat3 parameter tests.");
+testFilterProperty("Mat3 parameter.",
+    "custom(my-filter, m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1))",
+    "custom(my-filter, m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1))");
+testFilterProperty("Mat3 parameter with negative values.",
+    "custom(my-filter, m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1))",
+    "custom(my-filter, m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1))");
+testFilterProperty("Mat3 parameter with negative and positive values.",
+    "custom(my-filter, m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1))",
+    "custom(my-filter, m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1))");
+testFilterProperty("Mat3 parameter with multiple signed floats.",
+    "custom(my-filter, m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1))",
+    "custom(my-filter, m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1))");
+
+heading("Mat4 parameter tests.");
+testFilterProperty("Mat4 parameter.",
+    "custom(my-filter, m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))",
+    "custom(my-filter, m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))");
+testFilterProperty("Mat4 parameter with negative values.",
+    "custom(my-filter, m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))",
+    "custom(my-filter, m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))");
+testFilterProperty("Mat4 parameter with negative and positive values.",
+    "custom(my-filter, m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1))",
+    "custom(my-filter, m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1))");
+testFilterProperty("Mat4 parameter with multiple signed floats.",
+    "custom(my-filter, m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4))",
+    "custom(my-filter, m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4))");
+
 heading("Combined parameter tests.");
-testFilterProperty("Number parameter, color parameter, transform parameter, and array parameter.",
-    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))",
-    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))");
+testFilterProperty("Number parameter, color parameter, transform parameter, matrix parameters and array parameter.",
+    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1))",
+    "custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1))");

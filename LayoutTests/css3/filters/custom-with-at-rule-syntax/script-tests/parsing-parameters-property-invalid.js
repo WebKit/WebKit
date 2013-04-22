@@ -70,6 +70,48 @@ testInvalidParametersProperty("Invalid value unit 'px' in array.", "a array(1px)
 testInvalidParametersProperty("Invalid value unit 'deg' in array.", "a array(1deg)");
 testInvalidParametersProperty("Invalid value unit 'px' in array after valid values.", "a array(1, 2, 3, 4px)");
 
+heading("Mat2 parameter tests.");
+testInvalidParametersProperty("Empty mat2.", "a mat2()");
+testInvalidParametersProperty("Too view arguments.", "a mat2(0, 0, 0)");
+testInvalidParametersProperty("No arguments but commas.", "a mat2(,,,)");
+testInvalidParametersProperty("Ending commas.", "a mat2(0, 0,,)");
+testInvalidParametersProperty("Idents in mat2 function.", "a mat2(0, 0, a, b)");
+testInvalidParametersProperty("Too many arguments.", "a mat2(0, 0, 0, 0, 1)");
+testInvalidParametersProperty("No commas.", "a mat2(1 0 0 1)");
+testInvalidParametersProperty("Some commas.", "a mat2(1, 0, 0 1)");
+testInvalidParametersProperty("Leading commas.", "a mat2(, 0, 0, 1)");
+testInvalidParametersProperty("No length units.", "a mat2(1px, 0px, 0px, 1px)");
+testInvalidParametersProperty("No degree units.", "a mat2(1deg, 0deg, 0deg, 1deg)");
+testInvalidParametersProperty("NaN in mat2.", "a mat2(1, 0, 0, NaN)");
+
+heading("Mat3 parameter tests.");
+testInvalidParametersProperty("Empty mat3.", "a mat3()");
+testInvalidParametersProperty("Too view arguments.", "a mat3(0, 0, 0, 0)");
+testInvalidParametersProperty("No arguments but commas.", "a mat3(,,,,,,,,,,,,,,,)");
+testInvalidParametersProperty("Ending commas.", "a mat3(1, 0, 0, 0, 1, 0, 0,,)");
+testInvalidParametersProperty("Idents in mat3 function.", "a mat3(1, 0, 0, 0, 1, 0, 0, a, b)");
+testInvalidParametersProperty("Too many arguments.", "a mat3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0)");
+testInvalidParametersProperty("No commas.", "a mat3(1 0 0 0 1 0 0 0 1)");
+testInvalidParametersProperty("Some commas.", "a mat3(1, 0, 0, 0, 1, 0 0 0 1)");
+testInvalidParametersProperty("Leading commas.", "a mat3(, 0, 0, 0, 1, 0, 0, 0, 1)");
+testInvalidParametersProperty("No length units.", "a mat3(1px, 0, 0, 0, 1px, 0, 0, 0, 1px)");
+testInvalidParametersProperty("No degree units.", "a mat3(1deg, 0, 0, 0, 1deg, 0, 0, 0, 1deg)");
+testInvalidParametersProperty("NaN in mat3.", "a mat2(NaN, 0, 0, 0, 1, 0, 0, 0, 1)");
+
+heading("Mat4 parameter tests.");
+testInvalidParametersProperty("Empty mat4.", "a mat4()");
+testInvalidParametersProperty("Too view arguments.", "a mat4(1, 0, 0, 0, 1, 0, 0, 0, 1)");
+testInvalidParametersProperty("No arguments but commas.", "a mat4(,,,,,,,,,,,,,,,)");
+testInvalidParametersProperty("Ending commas.", "a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,,)");
+testInvalidParametersProperty("Idents in mat4 function.", "a mat4(1, 0, 0, 0, 1, 0, 0, a, b)");
+testInvalidParametersProperty("Too many arguments.", "a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0)");
+testInvalidParametersProperty("No commas.", "a mat4(1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1)");
+testInvalidParametersProperty("Some commas.", "a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 0 0 0 1)");
+testInvalidParametersProperty("Leading commas.", "a mat4(, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)");
+testInvalidParametersProperty("No length units.", "a mat4(1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px)");
+testInvalidParametersProperty("No degree units.", "a mat4(1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg)");
+testInvalidParametersProperty("NaN in mat4.", "a mat4(NaN, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)");
+
 heading("Mixing parameter types.");
 testInvalidParametersProperty("Number parameter with hex color.", "n1 1 2 #FF0000");
 testInvalidParametersProperty("Number parameter with color keyword.", "n1 1 2 red");
@@ -79,4 +121,7 @@ testInvalidParametersProperty("Color in array.", "a array(0, rgb(255, 0, 0))");
 testInvalidParametersProperty("Color and array.", "a array(0, 0) rgb(255, 0, 0)");
 testInvalidParametersProperty("Color with transform values.", "a rotate(45deg) rgb(255, 0, 0)");
 testInvalidParametersProperty("Color with transform values.", "a rgb(255, 0, 0) rotate(45deg)");
+testInvalidParametersProperty("Color after array values.", "a array(0) rgb(255, 0, 0)");
+testInvalidParametersProperty("Color with mat2.", "a rgb(255, 0, 0) mat2(0, 0, 0, 0)");
+testInvalidParametersProperty("mat2 with mat3.", "a mat2(1, 0, 0, 1) mat3(0, 0, 0, 0, 0, 0, 0, 0, 0)");
 

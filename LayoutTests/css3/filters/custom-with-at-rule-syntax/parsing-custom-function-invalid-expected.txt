@@ -341,6 +341,234 @@ PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
 ========================================
+Mat2 parameter tests.
+========================================
+
+Empty mat2.
+custom(my-filter, a mat2())
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too view arguments.
+custom(my-filter, a mat2(0, 0, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No arguments but commas.
+custom(my-filter, a mat2(,,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Ending commas.
+custom(my-filter, a mat2(0, 0,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Idents in mat2 function.
+custom(my-filter, a mat2(0, 0, a, b))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too many arguments.
+custom(my-filter, a mat2(0, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No commas.
+custom(my-filter, a mat2(1 0 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Some commas.
+custom(my-filter, a mat2(1, 0, 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Leading commas.
+custom(my-filter, a mat2(, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No length units.
+custom(my-filter, a mat2(1px, 0px, 0px, 1px))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No degree units.
+custom(my-filter, a mat2(1deg, 0deg, 0deg, 1deg))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+NaN in mat2.
+custom(my-filter, a mat2(1, 0, 0, NaN))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+========================================
+Mat3 parameter tests.
+========================================
+
+Empty mat3.
+custom(my-filter, a mat3())
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too view arguments.
+custom(my-filter, a mat3(0, 0, 0, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No arguments but commas.
+custom(my-filter, a mat3(,,,,,,,,,,,,,,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Ending commas.
+custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Idents in mat3 function.
+custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0, a, b))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too many arguments.
+custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No commas.
+custom(my-filter, a mat3(1 0 0 0 1 0 0 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Some commas.
+custom(my-filter, a mat3(1, 0, 0, 0, 1, 0 0 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Leading commas.
+custom(my-filter, a mat3(, 0, 0, 0, 1, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No length units.
+custom(my-filter, a mat3(1px, 0, 0, 0, 1px, 0, 0, 0, 1px))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No degree units.
+custom(my-filter, a mat3(1deg, 0, 0, 0, 1deg, 0, 0, 0, 1deg))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+NaN in mat3.
+custom(my-filter, a mat2(NaN, 0, 0, 0, 1, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+========================================
+Mat4 parameter tests.
+========================================
+
+Empty mat4.
+custom(my-filter, a mat4())
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too view arguments.
+custom(my-filter, a mat4(1, 0, 0, 0, 1, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No arguments but commas.
+custom(my-filter, a mat4(,,,,,,,,,,,,,,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Ending commas.
+custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,,))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Idents in mat4 function.
+custom(my-filter, a mat4(1, 0, 0, 0, 1, 0, 0, a, b))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too many arguments.
+custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No commas.
+custom(my-filter, a mat4(1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Some commas.
+custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 0 0 0 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Leading commas.
+custom(my-filter, a mat4(, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No length units.
+custom(my-filter, a mat4(1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No degree units.
+custom(my-filter, a mat4(1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+NaN in mat4.
+custom(my-filter, a mat4(NaN, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+========================================
 Mixing parameter types.
 ========================================
 
@@ -388,6 +616,18 @@ PASS declaration.getPropertyValue('-webkit-filter') is null
 
 Color with transform values.
 custom(my-filter, a rgb(255, 0, 0) rotate(45deg))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Color with mat2.
+custom(my-filter, a rgb(255, 0, 0) mat2(0, 0, 0, 0))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+mat2 with mat3.
+custom(my-filter, a mat2(1, 0, 0, 1) mat3(0, 0, 0, 0, 0, 0, 0, 0, 0))
 PASS styleRule.type is CSSRule.STYLE_RULE
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null

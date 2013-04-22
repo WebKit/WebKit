@@ -267,6 +267,234 @@ PASS styleDeclaration.length is 0
 PASS styleDeclaration.getPropertyValue('parameters') is null
 
 ========================================
+Mat2 parameter tests.
+========================================
+
+Empty mat2.
+parameters: a mat2();
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too view arguments.
+parameters: a mat2(0, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No arguments but commas.
+parameters: a mat2(,,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Ending commas.
+parameters: a mat2(0, 0,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Idents in mat2 function.
+parameters: a mat2(0, 0, a, b);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too many arguments.
+parameters: a mat2(0, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No commas.
+parameters: a mat2(1 0 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Some commas.
+parameters: a mat2(1, 0, 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Leading commas.
+parameters: a mat2(, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No length units.
+parameters: a mat2(1px, 0px, 0px, 1px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No degree units.
+parameters: a mat2(1deg, 0deg, 0deg, 1deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+NaN in mat2.
+parameters: a mat2(1, 0, 0, NaN);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
+Mat3 parameter tests.
+========================================
+
+Empty mat3.
+parameters: a mat3();
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too view arguments.
+parameters: a mat3(0, 0, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No arguments but commas.
+parameters: a mat3(,,,,,,,,,,,,,,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Ending commas.
+parameters: a mat3(1, 0, 0, 0, 1, 0, 0,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Idents in mat3 function.
+parameters: a mat3(1, 0, 0, 0, 1, 0, 0, a, b);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too many arguments.
+parameters: a mat3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No commas.
+parameters: a mat3(1 0 0 0 1 0 0 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Some commas.
+parameters: a mat3(1, 0, 0, 0, 1, 0 0 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Leading commas.
+parameters: a mat3(, 0, 0, 0, 1, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No length units.
+parameters: a mat3(1px, 0, 0, 0, 1px, 0, 0, 0, 1px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No degree units.
+parameters: a mat3(1deg, 0, 0, 0, 1deg, 0, 0, 0, 1deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+NaN in mat3.
+parameters: a mat2(NaN, 0, 0, 0, 1, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
+Mat4 parameter tests.
+========================================
+
+Empty mat4.
+parameters: a mat4();
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too view arguments.
+parameters: a mat4(1, 0, 0, 0, 1, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No arguments but commas.
+parameters: a mat4(,,,,,,,,,,,,,,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Ending commas.
+parameters: a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,,);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Idents in mat4 function.
+parameters: a mat4(1, 0, 0, 0, 1, 0, 0, a, b);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Too many arguments.
+parameters: a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No commas.
+parameters: a mat4(1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Some commas.
+parameters: a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 0 0 0 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Leading commas.
+parameters: a mat4(, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No length units.
+parameters: a mat4(1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+No degree units.
+parameters: a mat4(1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+NaN in mat4.
+parameters: a mat4(NaN, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+========================================
 Mixing parameter types.
 ========================================
 
@@ -314,6 +542,24 @@ PASS styleDeclaration.getPropertyValue('parameters') is null
 
 Color with transform values.
 parameters: a rgb(255, 0, 0) rotate(45deg);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color after array values.
+parameters: a array(0) rgb(255, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+Color with mat2.
+parameters: a rgb(255, 0, 0) mat2(0, 0, 0, 0);
+PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS styleDeclaration.length is 0
+PASS styleDeclaration.getPropertyValue('parameters') is null
+
+mat2 with mat3.
+parameters: a mat2(1, 0, 0, 1) mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
 PASS filterAtRule.type is CSSRule.WEBKIT_FILTER_RULE
 PASS styleDeclaration.length is 0
 PASS styleDeclaration.getPropertyValue('parameters') is null

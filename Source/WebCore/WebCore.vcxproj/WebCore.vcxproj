@@ -5395,6 +5395,7 @@
     <ClCompile Include="..\css\WebKitCSSKeyframeRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSKeyframesRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp" />
+    <ClCompile Include="..\css\WebKitCSSMatFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSMixFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSRegionRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSShaderValue.cpp" />
@@ -12177,6 +12178,7 @@
     <ClInclude Include="..\css\WebKitCSSKeyframeRule.h" />
     <ClInclude Include="..\css\WebKitCSSKeyframesRule.h" />
     <ClInclude Include="..\css\WebKitCSSMatrix.h" />
+    <ClInclude Include="..\css\WebKitCSSMatFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSMixFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSRegionRule.h" />
     <ClInclude Include="..\css\WebKitCSSShaderValue.h" />

@@ -112,8 +112,62 @@ testParametersProperty("Color hsla function.",
     "c rgba(0, 255, 0, 0.2)",
     ["c rgba(0, 255, 0, 0.2)"]);
 
+heading("Mat2 parameter tests.");
+testParametersProperty("Mat2 parameter.",
+    "m mat2(1, 0, 0, 1)",
+    "m mat2(1, 0, 0, 1)",
+    ["m mat2(1, 0, 0, 1)"]);
+testParametersProperty("Mat2 parameter with negative values.",
+    "m mat2(-1, -1, -1, -1)",
+    "m mat2(-1, -1, -1, -1)",
+    ["m mat2(-1, -1, -1, -1)"]);
+testParametersProperty("Mat2 parameter with negative and positive values.",
+    "m mat2(-1, 1, 1, -1)",
+    "m mat2(-1, 1, 1, -1)",
+    ["m mat2(-1, 1, 1, -1)"]);
+testParametersProperty("Mat2 parameter with multiple signed floats.",
+    "m mat2(1, -2.2, 3.14, 0.4)",
+    "m mat2(1, -2.2, 3.14, 0.4)",
+    ["m mat2(1, -2.2, 3.14, 0.4)"]);
+
+heading("Mat3 parameter tests.");
+testParametersProperty("Mat3 parameter.",
+    "m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)",
+    "m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)",
+    ["m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)"]);
+testParametersProperty("Mat3 parameter with negative values.",
+    "m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1)",
+    "m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1)",
+    ["m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1)"]);
+testParametersProperty("Mat3 parameter with negative and positive values.",
+    "m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1)",
+    "m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1)",
+    ["m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1)"]);
+testParametersProperty("Mat3 parameter with multiple signed floats.",
+    "m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1)",
+    "m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1)",
+    ["m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1)"]);
+
+heading("Mat4 parameter tests.");
+testParametersProperty("Mat4 parameter.",
+    "m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)",
+    "m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)",
+    ["m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"]);
+testParametersProperty("Mat4 parameter with negative values.",
+    "m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)",
+    "m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)",
+    ["m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)"]);
+testParametersProperty("Mat4 parameter with negative and positive values.",
+    "m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1)",
+    "m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1)",
+    ["m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1)"]);
+testParametersProperty("Mat4 parameter with multiple signed floats.",
+    "m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4)",
+    "m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4)",
+    ["m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4)"]);
+
 heading("Combined parameter tests.");
-testParametersProperty("Number parameter, color parameter, transform parameter and array parameter.",
-    "n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1)",
-    "n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1)",
-    ["n 1", "c rgb(0, 128, 0)", "t rotate(0deg)", "a array(1)"]);
+testParametersProperty("Number parameter, color parameter, transform parameter, matrix parameters and array parameter.",
+    "n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1)",
+    "n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1)",
+    ["n 1", "c rgb(0, 128, 0)", "t rotate(0deg)", "m1 mat2(1, 0, 0, 1)", "m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1)", "m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)", "a array(1)"]);

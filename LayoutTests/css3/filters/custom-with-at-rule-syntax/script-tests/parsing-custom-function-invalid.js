@@ -82,6 +82,50 @@ testInvalidFilterRule("Invalid value unit 'px' in array.", "custom(my-filter, a 
 testInvalidFilterRule("Invalid value unit 'deg' in array.", "custom(my-filter, a array(1deg))");
 testInvalidFilterRule("Invalid value unit 'px' in array after valid values.", "custom(my-filter, a array(1, 2, 3, 4px))");
 
+
+heading("Mat2 parameter tests.");
+testInvalidFilterRule("Empty mat2.", "custom(my-filter, a mat2())");
+testInvalidFilterRule("Too view arguments.", "custom(my-filter, a mat2(0, 0, 0))");
+testInvalidFilterRule("No arguments but commas.", "custom(my-filter, a mat2(,,,))");
+testInvalidFilterRule("Ending commas.", "custom(my-filter, a mat2(0, 0,,))");
+testInvalidFilterRule("Idents in mat2 function.", "custom(my-filter, a mat2(0, 0, a, b))");
+testInvalidFilterRule("Too many arguments.", "custom(my-filter, a mat2(0, 0, 0, 0, 1))");
+testInvalidFilterRule("No commas.", "custom(my-filter, a mat2(1 0 0 1))");
+testInvalidFilterRule("Some commas.", "custom(my-filter, a mat2(1, 0, 0 1))");
+testInvalidFilterRule("Leading commas.", "custom(my-filter, a mat2(, 0, 0, 1))");
+testInvalidFilterRule("No length units.", "custom(my-filter, a mat2(1px, 0px, 0px, 1px))");
+testInvalidFilterRule("No degree units.", "custom(my-filter, a mat2(1deg, 0deg, 0deg, 1deg))");
+testInvalidFilterRule("NaN in mat2.", "custom(my-filter, a mat2(1, 0, 0, NaN))");
+
+heading("Mat3 parameter tests.");
+testInvalidFilterRule("Empty mat3.", "custom(my-filter, a mat3())");
+testInvalidFilterRule("Too view arguments.", "custom(my-filter, a mat3(0, 0, 0, 0))");
+testInvalidFilterRule("No arguments but commas.", "custom(my-filter, a mat3(,,,,,,,,,,,,,,,))");
+testInvalidFilterRule("Ending commas.", "custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0,,))");
+testInvalidFilterRule("Idents in mat3 function.", "custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0, a, b))");
+testInvalidFilterRule("Too many arguments.", "custom(my-filter, a mat3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0))");
+testInvalidFilterRule("No commas.", "custom(my-filter, a mat3(1 0 0 0 1 0 0 0 1))");
+testInvalidFilterRule("Some commas.", "custom(my-filter, a mat3(1, 0, 0, 0, 1, 0 0 0 1))");
+testInvalidFilterRule("Leading commas.", "custom(my-filter, a mat3(, 0, 0, 0, 1, 0, 0, 0, 1))");
+testInvalidFilterRule("No length units.", "custom(my-filter, a mat3(1px, 0, 0, 0, 1px, 0, 0, 0, 1px))");
+testInvalidFilterRule("No degree units.", "custom(my-filter, a mat3(1deg, 0, 0, 0, 1deg, 0, 0, 0, 1deg))");
+testInvalidFilterRule("NaN in mat3.", "custom(my-filter, a mat2(NaN, 0, 0, 0, 1, 0, 0, 0, 1))");
+
+heading("Mat4 parameter tests.");
+testInvalidFilterRule("Empty mat4.", "custom(my-filter, a mat4())");
+testInvalidFilterRule("Too view arguments.", "custom(my-filter, a mat4(1, 0, 0, 0, 1, 0, 0, 0, 1))");
+testInvalidFilterRule("No arguments but commas.", "custom(my-filter, a mat4(,,,,,,,,,,,,,,,))");
+testInvalidFilterRule("Ending commas.", "custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,,))");
+testInvalidFilterRule("Idents in mat4 function.", "custom(my-filter, a mat4(1, 0, 0, 0, 1, 0, 0, a, b))");
+testInvalidFilterRule("Too many arguments.", "custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0))");
+testInvalidFilterRule("No commas.", "custom(my-filter, a mat4(1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))");
+testInvalidFilterRule("Some commas.", "custom(my-filter, a mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 0 0 0 1))");
+testInvalidFilterRule("Leading commas.", "custom(my-filter, a mat4(, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))");
+testInvalidFilterRule("No length units.", "custom(my-filter, a mat4(1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px, 0, 0, 0, 0, 1px))");
+testInvalidFilterRule("No degree units.", "custom(my-filter, a mat4(1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg, 0, 0, 0, 0, 1deg))");
+testInvalidFilterRule("NaN in mat4.", "custom(my-filter, a mat4(NaN, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))");
+
+
 heading("Mixing parameter types.");
 testInvalidFilterRule("Number parameter with hex color.", "custom(my-filter, n1 1 2 #FF0000)");
 testInvalidFilterRule("Number parameter with color keyword.", "custom(my-filter, n1 1 2 red)");
@@ -91,3 +135,5 @@ testInvalidFilterRule("Color in array.", "custom(my-filter, a array(0, rgb(255, 
 testInvalidFilterRule("Color and array.", "custom(my-filter, a array(0, 0) rgb(255, 0, 0))");
 testInvalidFilterRule("Color with transform values.", "custom(my-filter, a rotate(45deg) rgb(255, 0, 0))");
 testInvalidFilterRule("Color with transform values.", "custom(my-filter, a rgb(255, 0, 0) rotate(45deg))");
+testInvalidFilterRule("Color with mat2.", "custom(my-filter, a rgb(255, 0, 0) mat2(0, 0, 0, 0))");
+testInvalidFilterRule("mat2 with mat3.", "custom(my-filter, a mat2(1, 0, 0, 1) mat3(0, 0, 0, 0, 0, 0, 0, 0, 0))");

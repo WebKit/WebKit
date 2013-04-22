@@ -2784,6 +2784,8 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSKeyframesRule.h \
 	Source/WebCore/css/WebKitCSSMatrix.cpp \
 	Source/WebCore/css/WebKitCSSMatrix.h \
+	Source/WebCore/css/WebKitCSSMatFunctionValue.cpp \
+	Source/WebCore/css/WebKitCSSMatFunctionValue.h \
 	Source/WebCore/css/WebKitCSSMixFunctionValue.cpp \
 	Source/WebCore/css/WebKitCSSMixFunctionValue.h \
 	Source/WebCore/css/WebKitCSSRegionRule.cpp \

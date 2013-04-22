@@ -3804,6 +3804,9 @@
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\WebKitCSSMatFunctionValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\WebKitCSSMixFunctionValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -10585,6 +10588,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSMatrix.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\WebKitCSSMatFunctionValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSMixFunctionValue.h">

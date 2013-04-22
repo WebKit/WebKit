@@ -39,9 +39,9 @@ namespace WebCore {
 
 class CustomFilterArrayParameter : public CustomFilterParameter {
 public:
-    static PassRefPtr<CustomFilterArrayParameter> create(const String& name)
+    static PassRefPtr<CustomFilterArrayParameter> create(const String& name, CustomFilterParameter::ParameterType parameterType = CustomFilterParameter::ARRAY)
     {
-        return adoptRef(new CustomFilterArrayParameter(name));
+        return adoptRef(new CustomFilterArrayParameter(parameterType, name));
     }
 
     unsigned size() const { return m_data.size(); }
@@ -76,8 +76,8 @@ public:
     }
 
 private:
-    CustomFilterArrayParameter(const String& name)
-        : CustomFilterParameter(ARRAY, name)
+    CustomFilterArrayParameter(ParameterType parameterType, const String& name)
+        : CustomFilterParameter(parameterType, name)
     {
     }
 

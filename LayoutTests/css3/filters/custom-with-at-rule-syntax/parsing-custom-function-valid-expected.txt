@@ -301,20 +301,176 @@ PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS subValue.cssText is 'custom(my-filter, a1 array(1, -2.2, 3.14, 0.4, 5), a2 array(1, 2, 3))'
 
 ========================================
-Combined parameter tests.
+Mat2 parameter tests.
 ========================================
 
-Number parameter, color parameter, transform parameter, and array parameter.
-custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))
+Mat2 parameter.
+custom(my-filter, m mat2(1, 0, 0, 1))
 PASS styleRule.type is CSSRule.STYLE_RULE
 PASS styleDeclaration.length is 1
-PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))'
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat2(1, 0, 0, 1))'
 PASS filterPropertyValue instanceof CSSValueList is true
 PASS filterPropertyValue.constructor === CSSValueList is true
 PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
 PASS filterPropertyValue.length is 1
 PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS subValue.cssText is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), a array(1))'
+PASS subValue.cssText is 'custom(my-filter, m mat2(1, 0, 0, 1))'
+
+Mat2 parameter with negative values.
+custom(my-filter, m mat2(-1, -1, -1, -1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat2(-1, -1, -1, -1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat2(-1, -1, -1, -1))'
+
+Mat2 parameter with negative and positive values.
+custom(my-filter, m mat2(-1, 1, 1, -1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat2(-1, 1, 1, -1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat2(-1, 1, 1, -1))'
+
+Mat2 parameter with multiple signed floats.
+custom(my-filter, m mat2(1, -2.2, 3.14, 0.4))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat2(1, -2.2, 3.14, 0.4))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat2(1, -2.2, 3.14, 0.4))'
+
+========================================
+Mat3 parameter tests.
+========================================
+
+Mat3 parameter.
+custom(my-filter, m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat3(1, 0, 0, 0, 1, 0, 0, 0, 1))'
+
+Mat3 parameter with negative values.
+custom(my-filter, m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat3(-1, -1, -1, -1, -1, -1, -1, -1, -1))'
+
+Mat3 parameter with negative and positive values.
+custom(my-filter, m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat3(-1, 1, 1, -1, -1, 1, 1, -1, 1))'
+
+Mat3 parameter with multiple signed floats.
+custom(my-filter, m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat3(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1))'
+
+========================================
+Mat4 parameter tests.
+========================================
+
+Mat4 parameter.
+custom(my-filter, m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1))'
+
+Mat4 parameter with negative values.
+custom(my-filter, m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat4(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))'
+
+Mat4 parameter with negative and positive values.
+custom(my-filter, m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat4(-1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1))'
+
+Mat4 parameter with multiple signed floats.
+custom(my-filter, m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, m mat4(1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4, 1, -2.2, 3.14, 0.4))'
+
+========================================
+Combined parameter tests.
+========================================
+
+Number parameter, color parameter, transform parameter, matrix parameters and array parameter.
+custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1))
+PASS styleRule.type is CSSRule.STYLE_RULE
+PASS styleDeclaration.length is 1
+PASS styleDeclaration.getPropertyValue('-webkit-filter') is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1))'
+PASS filterPropertyValue instanceof CSSValueList is true
+PASS filterPropertyValue.constructor === CSSValueList is true
+PASS filterPropertyValue.__proto__ === CSSValueList.prototype is true
+PASS filterPropertyValue.length is 1
+PASS subValue.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS subValue.cssText is 'custom(my-filter, n 1, c rgb(0, 128, 0), t rotate(0deg), m1 mat2(1, 0, 0, 1), m2 mat3(1, 0, 0, 0, 1, 0, 0, 0, 1), m3 mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), a array(1))'
 PASS successfullyParsed is true
 
 TEST COMPLETE

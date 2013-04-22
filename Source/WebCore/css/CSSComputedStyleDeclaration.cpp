@@ -78,6 +78,7 @@
 #include "CustomFilterParameter.h"
 #include "CustomFilterTransformParameter.h"
 #include "WebKitCSSArrayFunctionValue.h"
+#include "WebKitCSSMatFunctionValue.h"
 #include "WebKitCSSMixFunctionValue.h"
 #endif
 
@@ -840,6 +841,14 @@ static PassRefPtr<CSSValue> valueForCustomFilterArrayParameter(const CustomFilte
     return arrayParameterValue.release();
 }
 
+static PassRefPtr<CSSValue> valueForCustomFilterMatParameter(const CustomFilterArrayParameter* matrixParameter)
+{
+    RefPtr<WebKitCSSMatFunctionValue> matrixParameterValue = WebKitCSSMatFunctionValue::create();
+    for (unsigned i = 0, size = matrixParameter->size(); i < size; ++i)
+        matrixParameterValue->append(cssValuePool().createValue(matrixParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
+    return matrixParameterValue.release();
+}
+
 static PassRefPtr<CSSValue> valueForCustomFilterColorParameter(const CustomFilterColorParameter* colorParameter)
 {
     RefPtr<CSSValueList> colorParameterValue = CSSValueList::createSpaceSeparated();
@@ -873,6 +882,8 @@ static PassRefPtr<CSSValue> valueForCustomFilterParameter(const RenderObject* re
         return valueForCustomFilterArrayParameter(static_cast<const CustomFilterArrayParameter*>(parameter));
     case CustomFilterParameter::COLOR:
         return valueForCustomFilterColorParameter(static_cast<const CustomFilterColorParameter*>(parameter));
+    case CustomFilterParameter::MATRIX:
+        return valueForCustomFilterMatParameter(static_cast<const CustomFilterArrayParameter*>(parameter));
     case CustomFilterParameter::NUMBER:
         return valueForCustomFilterNumberParameter(static_cast<const CustomFilterNumberParameter*>(parameter));
     case CustomFilterParameter::TRANSFORM:

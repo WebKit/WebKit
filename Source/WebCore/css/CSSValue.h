@@ -95,6 +95,7 @@ public:
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
 #if ENABLE(CSS_SHADERS)
     bool isWebKitCSSArrayFunctionValue() const { return m_classType == WebKitCSSArrayFunctionValueClass; }
+    bool isWebKitCSSMatFunctionValue() const { return m_classType == WebKitCSSMatFunctionValueClass; }
     bool isWebKitCSSMixFunctionValue() const { return m_classType == WebKitCSSMixFunctionValueClass; }
     bool isWebKitCSSShaderValue() const { return m_classType == WebKitCSSShaderClass; }
 #endif
@@ -186,6 +187,7 @@ protected:
         WebKitCSSFilterClass,
 #if ENABLE(CSS_SHADERS)
         WebKitCSSArrayFunctionValueClass,
+        WebKitCSSMatFunctionValueClass,
         WebKitCSSMixFunctionValueClass,
 #endif
 #endif
