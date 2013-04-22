@@ -82,7 +82,6 @@ void InspectorMemoryAgent::getDOMCounters(ErrorString*, int* documents, int* nod
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
-    , m_inspectorClient(client)
     , m_page(page)
     , m_frontend(0)
 {

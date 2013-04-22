@@ -67,7 +67,6 @@ public:
 private:
     InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorCompositeState*, Page*);
 
-    InspectorClient* m_inspectorClient;
     Page* m_page;
     InspectorFrontend::Memory* m_frontend;
 };
