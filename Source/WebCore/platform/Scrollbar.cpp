@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollView.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include <algorithm>
@@ -36,11 +37,6 @@
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
 #endif
-
-// FIXME: The following #includes are a layering violation and should be removed.
-#include "EventHandler.h"
-#include "Frame.h"
-#include "FrameView.h"
 
 using namespace std;
 
@@ -130,7 +126,7 @@ bool Scrollbar::isScrollableAreaActive() const
 
 bool Scrollbar::isScrollViewScrollbar() const
 {
-    return parent() && parent()->isFrameView() && toFrameView(parent())->isScrollViewScrollbar(this);
+    return parent() && parent()->isScrollViewScrollbar(this);
 }
 
 void Scrollbar::offsetDidChange()
@@ -457,9 +453,6 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
         if (part == NoPart)
             m_scrollableArea->mouseExitedScrollbar(this);
     }
-
-    if (parent() && parent()->isFrameView())
-        toFrameView(parent())->frame()->eventHandler()->setMousePressed(false);
 
     return true;
 }
