@@ -39,7 +39,6 @@
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
-#include "InspectorClient.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
@@ -49,7 +48,6 @@
 #include "MemoryUsageSupport.h"
 #include "Node.h"
 #include "NodeTraversal.h"
-#include "Page.h"
 #include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
@@ -80,9 +78,8 @@ void InspectorMemoryAgent::getDOMCounters(ErrorString*, int* documents, int* nod
     *jsEventListeners = ThreadLocalInspectorCounters::current().counterValue(ThreadLocalInspectorCounters::JSEventListenerCounter);
 }
 
-InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)
+InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
-    , m_page(page)
     , m_frontend(0)
 {
 }

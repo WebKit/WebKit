@@ -40,11 +40,9 @@
 
 namespace WebCore {
 
-class InspectorClient;
 class InspectorDOMStorageAgent;
 class InspectorState;
 class InstrumentingAgents;
-class Page;
 
 typedef String ErrorString;
 
@@ -53,9 +51,9 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, pu
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     {
-        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, client, state, page));
+        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state));
     }
     virtual ~InspectorMemoryAgent();
 
@@ -65,9 +63,8 @@ public:
     virtual void clearFrontend();
 
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorCompositeState*, Page*);
+    InspectorMemoryAgent(InstrumentingAgents*, InspectorCompositeState*);
 
-    Page* m_page;
     InspectorFrontend::Memory* m_frontend;
 };
 
