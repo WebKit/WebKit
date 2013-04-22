@@ -1909,22 +1909,25 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     Node* endContainer = m_end.container();
     Node* stopNode = pastLastNode();
 
-    HashSet<Node*> nodeSet;
+    HashSet<Node*> selectedElementsSet;
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         if (node->isElementNode())
-            nodeSet.add(node);
+            selectedElementsSet.add(node);
     }
 
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
-        if (node->isElementNode()) {
-            if (!nodeSet.contains(node->parentNode())) {
-                if (RenderBoxModelObject* renderBoxModelObject = toElement(node)->renderBoxModelObject()) {
-                    Vector<FloatQuad> elementQuads;
-                    renderBoxModelObject->absoluteQuads(elementQuads);
-                    m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
+    // Don't include elements that are only partially selected.
+    Node* lastNode = m_end.childBefore() ? m_end.childBefore() : endContainer;
+    for (Node* parent = lastNode->parentNode(); parent; parent = parent->parentNode())
+        selectedElementsSet.remove(parent);
 
-                    quads.append(elementQuads);
-                }
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
+        if (node->isElementNode() && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
+            if (RenderBoxModelObject* renderBoxModelObject = toElement(node)->renderBoxModelObject()) {
+                Vector<FloatQuad> elementQuads;
+                renderBoxModelObject->absoluteQuads(elementQuads);
+                m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
+
+                quads.append(elementQuads);
             }
         } else if (node->isTextNode()) {
             if (RenderObject* renderer = toText(node)->renderer()) {

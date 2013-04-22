@@ -81,6 +81,18 @@
 
 <div class="box" id="test10">weee! Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 
+<br><br>
+
+<div class="box" id="test11"><div>Lorem ipsum dolor sit amet,</div> consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test12">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test13">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
 </div>
 
 <script>
@@ -398,9 +410,65 @@
     shouldBe("rects[3].width", "18");
     shouldBe("rects[3].height", "360");
 
+    // Test 11
     debug("Test 11");
     var range11 = document.createRange();
+    range11.setStartBefore(document.getElementById('test11'));
+    range11.setEndAfter(document.getElementById('test11').firstChild);
+    show(range11);
     rects = range11.getClientRects();
+    shouldBe("rects.length", "2");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "2524");
+    shouldBe("rects[0].width", "400");
+    shouldBe("rects[0].height", "40");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "2535");
+    shouldBe("rects[1].width", "177");
+    shouldBe("rects[1].height", "18");
+
+    // Test 12
+    debug("Test 12");
+    var range12 = document.createRange();
+    range12.setStartBefore(document.getElementById('test12'));
+    range12.setEndBefore(document.getElementById('test12').firstChild);
+    show(range12);
+    rects = range12.getClientRects();
+    shouldBe("rects.length", "1");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "2760");
+    shouldBe("rects[0].width", "400");
+    shouldBe("rects[0].height", "160");
+
+    // Test 13
+    debug("Test 13");
+    var range13 = document.createRange();
+    range13.setStartBefore(document.getElementById('test13'));
+    range13.setEndAfter(document.getElementById('test13').firstChild);
+    show(range13);
+    rects = range13.getClientRects();
+    shouldBe("rects.length", "4");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "2967");
+    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].height", "18");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "3007");
+    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "3047");
+    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "3087");
+    shouldBe("rects[3].width", "306");
+    shouldBe("rects[3].height", "18");
+
+    // Test 14
+    debug("Test 14");
+    var range14 = document.createRange();
+    rects = range14.getClientRects();
     shouldBe("rects.length", "0");
 
     if (window.testRunner) {
