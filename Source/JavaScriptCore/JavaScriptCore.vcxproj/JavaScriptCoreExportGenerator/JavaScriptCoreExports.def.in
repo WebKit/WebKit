@@ -57,7 +57,6 @@ EXPORTS
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1SourceProvider@JSC@@UAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
-    ??1StringImpl@WTF@@QAE@XZ
     ??1StringPrintStream@WTF@@UAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1VM@JSC@@QAE@XZ
@@ -231,6 +230,7 @@ EXPORTS
     ?destroy@JSCell@JSC@@KAXPAV12@@Z
     ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
     ?destroy@OutOfLineBits@BitVector@WTF@@SAXPAV123@@Z
+    ?destroy@StringImpl@WTF@@SAXPAV12@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?discardAllCode@VM@JSC@@QAEXXZ

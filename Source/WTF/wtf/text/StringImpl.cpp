@@ -148,6 +148,12 @@ StringImpl::~StringImpl()
     m_substringBuffer->deref();
 }
 
+void StringImpl::destroy(StringImpl* stringImpl)
+{
+    stringImpl->~StringImpl();
+    fastFree(stringImpl);
+}
+
 PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
 {
     ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");

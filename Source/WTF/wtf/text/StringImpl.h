@@ -346,9 +346,10 @@ private:
         STRING_STATS_ADD_16BIT_STRING(m_length);
     }
 #endif
+    ~StringImpl();
 
 public:
-    WTF_EXPORT_STRING_API ~StringImpl();
+    WTF_EXPORT_STRING_API static void destroy(StringImpl*);
 
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const LChar*, unsigned length);
@@ -588,12 +589,12 @@ public:
 
     inline void deref()
     {
-        if (m_refCount == s_refCountIncrement) {
-            delete this;
+        unsigned tempRefCount = m_refCount - s_refCountIncrement;
+        if (!tempRefCount) {
+            StringImpl::destroy(this);
             return;
         }
-
-        m_refCount -= s_refCountIncrement;
+        m_refCount = tempRefCount;
     }
 
     WTF_EXPORT_PRIVATE static StringImpl* empty();

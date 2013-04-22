@@ -1,3 +1,21 @@
+2013-04-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve StringImpl code density for older ARM hardware
+        https://bugs.webkit.org/show_bug.cgi?id=114898
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce the number of instructions needed for StringImpl::deref
+        on older ARM hardware.
+
+        The extra indirection should have a negligible impact on x86_64.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::destroy):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::StringImpl::deref):
+
 2013-04-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         LLint should be able to use x87 instead of SSE for floating pointer

@@ -1,3 +1,12 @@
+2013-04-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve StringImpl code density for older ARM hardware
+        https://bugs.webkit.org/show_bug.cgi?id=114898
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed JSGlobalData to VM
