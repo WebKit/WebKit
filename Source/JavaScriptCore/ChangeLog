@@ -1,3 +1,12 @@
+2013-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Fix assertions to account for new Vector layout
+
+        RS=Gavin
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+
 2013-04-22  Mark Lam  <mark.lam@apple.com>
 
         Change baseline JIT watchdog timer check to use the proper fast slow path
