@@ -1,3 +1,20 @@
+2013-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Don't kill our XPC services in response to memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=114985
+        <rdar://problem/13229217>
+
+        Reviewed by Mark Rowe.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        Call xpc_transaction_begin() so we'll never be killed by the kernel when there's memory pressure;
+        we prefer to manage our own lifetime thank you very much!
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize):
+        Remove call to disable sudden termination.
+
 2013-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13681842> [Mac] Tweak WebProcess sandbox profile to use
