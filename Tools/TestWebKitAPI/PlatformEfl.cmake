@@ -106,7 +106,7 @@ set(test_webkit2_api_fail_BINARIES
     RestoreSessionStateContainingFormData
     ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
-    efl/WKViewClientWebProcessCallbacks
+    #efl/WKViewClientWebProcessCallbacks
 )
 
 # Tests disabled because of missing features on the test harness:
