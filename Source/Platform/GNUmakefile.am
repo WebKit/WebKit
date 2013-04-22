@@ -36,7 +36,27 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/text
 
 noinst_LTLIBRARIES += \
+	libPlatform.la \
 	libPlatformGtk.la
+
+libPlatform_la_SOURCES = \
+	$(platform_sources)
+
+libPlatform_la_CXXFLAGS = \
+	-fvisibility-inlines-hidden \
+	$(global_cxxflags)
+
+libPlatform_la_CFLAGS = \
+	-fvisibility=hidden \
+	$(global_cflags)
+
+libPlatform_la_CPPFLAGS = \
+	-DBUILDING_WEBKIT \
+	$(global_cppflags) \
+	$(platform_cppflags) \
+	$(platform_webcore_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing
 
 libPlatformGtk_la_SOURCES = \
 	$(platformgtk_sources)

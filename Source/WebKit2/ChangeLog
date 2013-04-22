@@ -1,3 +1,13 @@
+2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Set up libPlatform.la
+        https://bugs.webkit.org/show_bug.cgi?id=114168
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add the new libPlatform.la library to the libwebkitgtk library. Link the WebKitPluginProcess
+        executable against libPlatform.la as well.
+
 2013-04-22  Sam Weinig  <sam@webkit.org>
 
         Hard code plug-in sandbox profile lookup directories and move

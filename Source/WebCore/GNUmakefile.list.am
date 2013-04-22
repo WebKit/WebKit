@@ -5519,8 +5519,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/LayoutUnit.h \
 	Source/WebCore/platform/Gamepads.h \
 	Source/WebCore/platform/HashTools.h \
-	Source/WebCore/platform/HistogramSupport.cpp \
-	Source/WebCore/platform/HistogramSupport.h \
 	Source/WebCore/platform/InitializeLogging.h \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
@@ -5829,27 +5827,10 @@ webcore_platform_sources += \
 	Source/WebCore/platform/Length.cpp \
 	Source/WebCore/platform/Length.h \
 	Source/WebCore/platform/LengthSize.h \
-	Source/WebCore/platform/leveldb/LevelDBComparator.h \
-	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
-	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
-	Source/WebCore/platform/leveldb/LevelDBIterator.h \
-	Source/WebCore/platform/leveldb/LevelDBSlice.h \
-	Source/WebCore/platform/leveldb/LevelDBTransaction.h \
-	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
-	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h \
-	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
-	Source/WebCore/platform/LinkHash.cpp \
-	Source/WebCore/platform/LinkHash.h \
 	Source/WebCore/platform/LocalizedStrings.h \
-	Source/WebCore/platform/Logging.cpp \
-	Source/WebCore/platform/Logging.h \
 	Source/WebCore/platform/MainThreadTask.h \
 	Source/WebCore/platform/MIMETypeRegistry.cpp \
 	Source/WebCore/platform/MIMETypeRegistry.h \
-	Source/WebCore/platform/MemoryPressureHandler.cpp \
-	Source/WebCore/platform/MemoryPressureHandler.h \
-	Source/WebCore/platform/MemoryUsageSupport.cpp \
-	Source/WebCore/platform/MemoryUsageSupport.h \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
@@ -5991,8 +5972,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.h \
-	Source/WebCore/platform/NotImplemented.cpp \
-	Source/WebCore/platform/NotImplemented.h \
 	Source/WebCore/platform/Pasteboard.h \
 	Source/WebCore/platform/PasteboardStrategy.h \
 	Source/WebCore/platform/PlatformEvent.cpp \
@@ -6022,10 +6001,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/PurgePriority.h \
 	Source/WebCore/platform/RefCountedSupplement.h \
 	Source/WebCore/platform/ReferrerPolicy.h \
-	Source/WebCore/platform/RunLoop.cpp \
-	Source/WebCore/platform/RunLoop.h \
-	Source/WebCore/platform/RuntimeApplicationChecks.cpp \
-	Source/WebCore/platform/RuntimeApplicationChecks.h \
 	Source/WebCore/platform/SchemeRegistry.cpp \
 	Source/WebCore/platform/SchemeRegistry.h \
 	Source/WebCore/platform/ScrollAnimator.cpp \
@@ -6140,12 +6115,39 @@ webcore_platform_sources += \
 	Source/WebCore/platform/Timer.cpp \
 	Source/WebCore/platform/Timer.h \
 	Source/WebCore/platform/TreeShared.h \
-	Source/WebCore/platform/UUID.cpp \
-	Source/WebCore/platform/UUID.h \
 	Source/WebCore/platform/VisitedLinkStrategy.h \
 	Source/WebCore/platform/Widget.cpp \
 	Source/WebCore/platform/Widget.h \
 	Source/WebCore/platform/WindowsKeyboardCodes.h
+
+platform_sources += \
+	Source/WebCore/platform/leveldb/LevelDBComparator.h \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
+	Source/WebCore/platform/leveldb/LevelDBIterator.h \
+	Source/WebCore/platform/leveldb/LevelDBSlice.h \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.h \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
+	Source/WebCore/platform/HistogramSupport.cpp \
+	Source/WebCore/platform/HistogramSupport.h \
+	Source/WebCore/platform/LinkHash.cpp \
+	Source/WebCore/platform/LinkHash.h \
+	Source/WebCore/platform/Logging.cpp \
+	Source/WebCore/platform/Logging.h \
+	Source/WebCore/platform/MemoryPressureHandler.cpp \
+	Source/WebCore/platform/MemoryPressureHandler.h \
+	Source/WebCore/platform/MemoryUsageSupport.cpp \
+	Source/WebCore/platform/MemoryUsageSupport.h \
+	Source/WebCore/platform/NotImplemented.cpp \
+	Source/WebCore/platform/NotImplemented.h \
+	Source/WebCore/platform/RunLoop.cpp \
+	Source/WebCore/platform/RunLoop.h \
+	Source/WebCore/platform/RuntimeApplicationChecks.cpp \
+	Source/WebCore/platform/RuntimeApplicationChecks.h \
+	Source/WebCore/platform/UUID.cpp \
+	Source/WebCore/platform/UUID.h
 
 # WebCore files that use GTK/GDK or any other dependency that requires GTK+.
 webcoregtk_sources += \

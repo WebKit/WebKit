@@ -1,3 +1,15 @@
+2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Set up libPlatform.la
+        https://bugs.webkit.org/show_bug.cgi?id=114168
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Set up the libPlatform.la static library to build the source files listed in platform_sources.
+        As with the libPlatformGtk.la library, only the Source/WebCore/platform and its subdirectories are allowed to be
+        searched for headers to include, providing a convenient way to detect any platform violations. These directories
+        are listed in the platform_webcore_cppflags variable.
+
 2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix GTK+ for real after r147712

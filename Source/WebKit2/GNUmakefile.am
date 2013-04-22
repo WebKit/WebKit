@@ -222,6 +222,7 @@ endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD += \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libPlatform.la \
 	libPlatformGtk.la \
 	libWebCoreDOM.la \
 	libWebCoreGtk.la \
@@ -654,6 +655,7 @@ Programs_WebKitPluginProcess_LDADD += \
 endif
 
 Programs_WebKitPluginProcess_LDADD += \
+	libPlatform.la \
 	libPlatformGtk2.la \
 	libWebCoreModules.la \
 	libWebCoreGtk2.la \
