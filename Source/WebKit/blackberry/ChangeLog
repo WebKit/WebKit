@@ -1,3 +1,16 @@
+2013-04-22  Xuefei Ren  <xren@blackberry.com>
+
+        fix build warning(unused parameter)
+        https://bugs.webkit.org/show_bug.cgi?id=114855
+
+        Reviewed by Rob Buis.
+
+        remove warning(unused parameter) in
+        Source/WebKit/blackberry/WebKitSupport/InputHandler.cpp
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::extractedTextRequest):
+
 2013-04-22  Xan Lopez  <xlopez@igalia.com>
 
         [BlackBerry] ASSERT in FrameLoaderClient::convertMainResourceLoadToDownload

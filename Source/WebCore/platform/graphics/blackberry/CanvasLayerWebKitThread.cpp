@@ -58,7 +58,7 @@ CanvasLayerCompositingThreadClient::CanvasLayerCompositingThreadClient(BlackBerr
 {
 }
 
-void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program&)
+void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double, const GLES2Program&)
 {
     if (!m_buffer)
         return;
@@ -70,12 +70,12 @@ void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* la
         BlackBerry::Platform::Graphics::SourceOver, static_cast<unsigned char>(layer->drawOpacity() * 255));
 }
 
-void CanvasLayerCompositingThreadClient::deleteTextures(LayerCompositingThread* layer)
+void CanvasLayerCompositingThreadClient::deleteTextures(LayerCompositingThread*)
 {
     // Nothing to do here, the buffer is not owned by us.
 }
 
-void CanvasLayerCompositingThreadClient::commitPendingTextureUploads(LayerCompositingThread* layer)
+void CanvasLayerCompositingThreadClient::commitPendingTextureUploads(LayerCompositingThread*)
 {
     if (!m_buffer)
         return;

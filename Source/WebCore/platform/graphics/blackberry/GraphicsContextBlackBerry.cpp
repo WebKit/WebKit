@@ -174,7 +174,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     platformContext()->addArc(rect, startAngle, angleSpan);
 }
 
-void GraphicsContext::drawConvexPolygon(size_t numPoints, const FloatPoint* points, bool shouldAntialias)
+void GraphicsContext::drawConvexPolygon(size_t numPoints, const FloatPoint* points, bool)
 {
     if (paintingDisabled())
         return;
@@ -200,7 +200,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     platformContext()->addFillRect(rect, platformGradient, platformPattern);
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -234,7 +234,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
         platformContext()->addStrokeRect(rect, lineWidth);
 }
 
-void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -245,12 +245,12 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     platformContext()->setFillColor(m_state.fillColor.rgb());
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode)
 {
     return rect;
 }
 
-void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -353,7 +353,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
     platformContext()->clipOut(FloatRect(rect));
 }
 
-void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialias)
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool)
 {
     if (paintingDisabled())
         return;
@@ -395,7 +395,7 @@ IntRect GraphicsContext::clipBounds() const
     return IntRect(IntPoint(INT_MIN / 2, INT_MIN / 2), IntSize(INT_MAX, INT_MAX));
 }
 
-void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 {
 }
 
@@ -407,7 +407,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
     platformContext()->setTextDrawingMode(mode);
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colorSpace)
+void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -431,7 +431,7 @@ void GraphicsContext::setPlatformStrokeThickness(float thickness)
     platformContext()->setStrokeThickness(thickness);
 }
 
-void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorSpace)
+void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -439,7 +439,7 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
     platformContext()->setFillColor(color.rgb());
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode)
 {
     if (paintingDisabled())
         return;

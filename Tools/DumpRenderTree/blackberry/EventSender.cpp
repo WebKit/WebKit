@@ -47,7 +47,7 @@ void sendTouchEvent(BlackBerry::Platform::TouchEvent::Type);
 
 // Callbacks
 
-static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef, JSStringRef, JSValueRef* exception)
+static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef, JSStringRef, JSValueRef*)
 {
     notImplemented();
     return JSValueMakeUndefined(context);

@@ -2232,7 +2232,7 @@ spannable_string_t* InputHandler::textAfterCursor(int32_t length, int32_t flags)
     return spannableTextInRange(start, end, flags);
 }
 
-extracted_text_t* InputHandler::extractedTextRequest(extracted_text_request_t* request, int32_t flags)
+extracted_text_t* InputHandler::extractedTextRequest(extracted_text_request_t*, int32_t flags)
 {
     if (!isActiveTextEdit())
         return 0;

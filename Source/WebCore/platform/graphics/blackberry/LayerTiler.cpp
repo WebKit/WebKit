@@ -446,7 +446,7 @@ void LayerTiler::performTileJob(LayerTile* tile, const TextureJob& job)
     ASSERT_NOT_REACHED();
 }
 
-bool LayerTiler::drawTile(LayerCompositingThread* layer, double scale, const TileIndex& index, const FloatRect& dst, const GLES2Program& program)
+bool LayerTiler::drawTile(LayerCompositingThread* layer, double scale, const TileIndex& index, const FloatRect& dst, const GLES2Program&)
 {
     TransformationMatrix drawTransform = layer->drawTransform();
     float vertices[4 * 4];

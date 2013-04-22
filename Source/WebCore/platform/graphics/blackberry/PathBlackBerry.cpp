@@ -231,12 +231,12 @@ void GraphicsContext::strokePath(const Path& path)
     }
 }
 
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>&, int, int, const Color&)
 {
     notImplemented();
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Path&, int, int, const Color&)
 {
     notImplemented();
 }
@@ -263,7 +263,7 @@ void GraphicsContext::clip(const Path& path, WindRule)
     pp->applyAsClip(platformContext());
 }
 
-void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
+void GraphicsContext::clipPath(const Path& path, WindRule)
 {
     if (path.platformPath()->isRectangular())
         platformContext()->clip(path.boundingRect());

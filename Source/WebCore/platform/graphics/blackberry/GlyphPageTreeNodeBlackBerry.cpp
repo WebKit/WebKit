@@ -47,7 +47,7 @@ private:
     DestroyFunction m_destroy;
 };
 
-bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     bool haveGlyphs = false;
     unsigned position = 0;

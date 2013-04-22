@@ -36,7 +36,7 @@ void Pattern::platformDestroy()
     m_pattern = 0;
 }
 
-PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransform)
+PlatformPatternPtr Pattern::platformPattern(const AffineTransform&)
 {
     if (m_pattern)
         return m_pattern;

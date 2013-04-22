@@ -62,7 +62,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 }
 
 // Return the code point index for the given |x| offset into the text run.
-int Font::offsetForPositionForComplexText(const TextRun& run, float position, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, float position, bool) const
 {
     // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
     // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
