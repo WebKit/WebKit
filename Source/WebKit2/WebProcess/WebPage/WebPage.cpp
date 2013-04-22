@@ -242,6 +242,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_readyToFindPrimarySnapshottedPlugin(false)
     , m_didFindPrimarySnapshottedPlugin(false)
+    , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
@@ -2943,8 +2944,7 @@ void WebPage::addPluginView(PluginView* pluginView)
 
     m_pluginViews.add(pluginView);
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
-        determinePrimarySnapshottedPlugIn();
+    m_determinePrimarySnapshottedPlugInTimer.startOneShot(0);
 #endif
 }
 
@@ -3923,9 +3923,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
 void WebPage::didFinishLoad(WebFrame* frame)
 {
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    if (!frame->isMainFrame())
+        return;
+
     m_readyToFindPrimarySnapshottedPlugin = true;
-    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
-        determinePrimarySnapshottedPlugIn();
+    m_determinePrimarySnapshottedPlugInTimer.startOneShot(0);
 #else
     UNUSED_PARAM(frame);
 #endif
@@ -3937,6 +3939,14 @@ static int primarySnapshottedPlugInSearchGap = 200;
 static float primarySnapshottedPlugInSearchBucketSize = 1.1;
 static int primarySnapshottedPlugInMinimumWidth = 450;
 static int primarySnapshottedPlugInMinimumHeight = 300;
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+void WebPage::determinePrimarySnapshottedPlugInTimerFired()
+{
+    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
+        determinePrimarySnapshottedPlugIn();
+}
+#endif
 
 void WebPage::determinePrimarySnapshottedPlugIn()
 {

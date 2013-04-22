@@ -1,3 +1,32 @@
+2013-04-22  Tim Horton  <timothy_horton@apple.com>
+
+        Plugin Snapshotting: Don't consume insane amounts of time detecting the primary plugin
+        https://bugs.webkit.org/show_bug.cgi?id=114994
+        <rdar://problem/13696269>
+
+        Reviewed by Anders Carlsson.
+
+        On some pages, we currently waste a lot of time on every subframe load
+        and every addPluginView doing primary plugin detection. This patch
+        attempts to address this via a few minor changes:
+
+        - Only allow detection after the main frame's didFinishLoad comes, instead of the first subframe.
+
+        - Only explicitly detect on the main frame's didFinishLoad (not subframes).
+
+        - Coalesce calls to determinePrimarySnapshottedPlugIn from both addPluginView
+        (in case JS is adding lots of plugins in a loop) and didFinishLoad.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addPluginView): Coalesce calls to determinePrimarySnapshottedPlugIn.
+        (WebKit::WebPage::didFinishLoad):
+        Coalesce calls to determinePrimarySnapshottedPlugIn.
+        Bail on subframe loads, we're only interested in the main frame being complete.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugInTimerFired):
+        Call determinePrimarySnapshottedPlugIn.
+        * WebProcess/WebPage/WebPage.h:
+        Add m_determinePrimarySnapshottedPlugInTimer and determinePrimarySnapshottedPlugInTimerFired
+
 2013-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13334446> [Mac] Tweak sandbox profiles.

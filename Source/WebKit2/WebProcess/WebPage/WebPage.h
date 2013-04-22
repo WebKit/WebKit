@@ -648,6 +648,7 @@ public:
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     void determinePrimarySnapshottedPlugIn();
+    void determinePrimarySnapshottedPlugInTimerFired();
     void resetPrimarySnapshottedPlugIn();
     bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
 #endif
@@ -874,6 +875,7 @@ private:
     String m_primaryPlugInPageOrigin;
     String m_primaryPlugInOrigin;
     String m_primaryPlugInMimeType;
+    WebCore::RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
 #if PLATFORM(MAC)
