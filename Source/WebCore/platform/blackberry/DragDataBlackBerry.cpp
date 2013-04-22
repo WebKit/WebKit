@@ -92,4 +92,12 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Frame*, PassRefPtr<Range>, boo
     return 0;
 }
 
+#if ENABLE(FILE_SYSTEM)
+String DragData::droppedFileSystemId() const
+{
+    notImplemented();
+    return String();
+}
+#endif
+
 } // namespace WebCore
