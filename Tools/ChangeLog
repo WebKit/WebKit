@@ -1,3 +1,14 @@
+2013-04-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Mark WKViewClientWebProcessCallbacks API test as failing
+        https://bugs.webkit.org/show_bug.cgi?id=114922
+
+        Reviewed by Gyuyoung Kim.
+
+        Mark WKViewClientWebProcessCallbacks API test as failing on WK2 EFL.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2013-04-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Fix baseline positioning issue by updating Freetype

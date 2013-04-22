@@ -87,7 +87,6 @@ set(test_webkit2_api_BINARIES
     WKStringJSString
     WKURL
     WillSendSubmitEvent
-    efl/WKViewClientWebProcessCallbacks
 )
 
 # Seccomp filters is an internal API and its symbols
@@ -107,6 +106,7 @@ set(test_webkit2_api_fail_BINARIES
     RestoreSessionStateContainingFormData
     ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
+    efl/WKViewClientWebProcessCallbacks
 )
 
 # Tests disabled because of missing features on the test harness:
