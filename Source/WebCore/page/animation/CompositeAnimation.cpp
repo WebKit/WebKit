@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
