@@ -1037,8 +1037,8 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
             outerNode = outerNode->parentNode();
         }
 
-        Node* startNode = start.deprecatedNode();
-        for (Node* node = NodeTraversal::nextSkippingChildren(startNode, outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(node, outerNode.get())) {
+        RefPtr<Node> startNode = start.deprecatedNode();
+        for (RefPtr<Node> node = NodeTraversal::nextSkippingChildren(startNode.get(), outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(node.get(), outerNode.get())) {
             // Move lastNode up in the tree as much as node was moved up in the
             // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
             // node and the original start node is maintained in the clone.
@@ -1050,7 +1050,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
             RefPtr<Node> clonedNode = node->cloneNode(true);
             insertNodeAfter(clonedNode, lastNode);
             lastNode = clonedNode.release();
-            if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(node))
+            if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(node.get()))
                 break;
         }
     }
