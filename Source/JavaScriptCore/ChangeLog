@@ -1,3 +1,34 @@
+2013-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Change baseline JIT watchdog timer check to use the proper fast slow path
+        infrastructure.
+        https://bugs.webkit.org/show_bug.cgi?id=114963.
+
+        Reviewed by Oliver Hunt.
+
+        SH4 parts contributed by Julien Brianceau.
+
+        * assembler/ARMAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/SH4Assembler.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_enter):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+
 2013-04-22  Andreas Kling  <akling@apple.com>
 
         Shrink baseline size of WTF::Vector on 64-bit by switching to unsigned capacity and size.

@@ -780,6 +780,7 @@ namespace JSC {
         void emitSlow_op_jngreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -852,13 +853,11 @@ namespace JSC {
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
         
-        enum OptimizationCheckKind { LoopOptimizationCheck, EnterOptimizationCheck };
 #if ENABLE(DFG_JIT)
-        void emitOptimizationCheck(OptimizationCheckKind);
+        void emitEnterOptimizationCheck();
 #else
-        void emitOptimizationCheck(OptimizationCheckKind) { }
+        void emitEnterOptimizationCheck() { }
 #endif
-        void emitWatchdogTimerCheck();
 
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);
@@ -943,12 +942,6 @@ namespace JSC {
         bool m_shouldEmitProfiling;
 #endif
     } JIT_CLASS_ALIGNMENT;
-
-    inline void JIT::emit_op_loop_hint(Instruction*)
-    {
-        emitWatchdogTimerCheck();
-        emitOptimizationCheck(LoopOptimizationCheck);
-    }
 
 } // namespace JSC
 

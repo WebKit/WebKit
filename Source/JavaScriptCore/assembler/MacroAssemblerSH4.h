@@ -68,6 +68,7 @@ public:
     enum ResultCondition {
         Overflow = SH4Assembler::OF,
         Signed = SH4Assembler::SI,
+        PositiveOrZero = SH4Assembler::NS,
         Zero = SH4Assembler::EQ,
         NonZero = SH4Assembler::NE
     };
@@ -1920,6 +1921,12 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             return branchFalse();
         }
 
+        if (cond == PositiveOrZero) {
+            m_assembler.addlRegReg(src, dest);
+            m_assembler.cmppz(dest);
+            return branchTrue();
+        }
+
         m_assembler.addlRegReg(src, dest);
         compare32(0, dest, Equal);
 
@@ -1954,6 +1961,11 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         if (cond == Signed) {
             m_assembler.cmppz(dest);
             return branchFalse();
+        }
+
+        if (cond == PositiveOrZero) {
+            m_assembler.cmppz(dest);
+            return branchTrue();
         }
 
         compare32(0, dest, Equal);

@@ -1113,7 +1113,7 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
 
 void JIT::emit_op_enter(Instruction*)
 {
-    emitOptimizationCheck(EnterOptimizationCheck);
+    emitEnterOptimizationCheck();
     
     // Even though JIT code doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging

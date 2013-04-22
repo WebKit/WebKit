@@ -107,21 +107,21 @@ namespace JSC {
 
         // ARM conditional constants
         typedef enum {
-            EQ = 0x00000000, // Zero
-            NE = 0x10000000, // Non-zero
-            CS = 0x20000000,
-            CC = 0x30000000,
-            MI = 0x40000000,
-            PL = 0x50000000,
-            VS = 0x60000000,
-            VC = 0x70000000,
-            HI = 0x80000000,
-            LS = 0x90000000,
-            GE = 0xa0000000,
-            LT = 0xb0000000,
-            GT = 0xc0000000,
-            LE = 0xd0000000,
-            AL = 0xe0000000
+            EQ = 0x00000000, // Zero / Equal.
+            NE = 0x10000000, // Non-zero / Not equal.
+            CS = 0x20000000, // Unsigned higher or same.
+            CC = 0x30000000, // Unsigned lower.
+            MI = 0x40000000, // Negative.
+            PL = 0x50000000, // Positive or zero.
+            VS = 0x60000000, // Overflowed.
+            VC = 0x70000000, // Not overflowed.
+            HI = 0x80000000, // Unsigned higher.
+            LS = 0x90000000, // Unsigned lower or same.
+            GE = 0xa0000000, // Signed greater than or equal.
+            LT = 0xb0000000, // Signed less than.
+            GT = 0xc0000000, // Signed greater than.
+            LE = 0xd0000000, // Signed less than or euqal.
+            AL = 0xe0000000  // Unconditional / Always execute.
         } Condition;
 
         // ARM instruction constants

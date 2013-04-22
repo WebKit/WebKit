@@ -68,6 +68,7 @@ public:
     enum ResultCondition {
         Overflow = X86Assembler::ConditionO,
         Signed = X86Assembler::ConditionS,
+        PositiveOrZero = X86Assembler::ConditionNS,
         Zero = X86Assembler::ConditionE,
         NonZero = X86Assembler::ConditionNE
     };

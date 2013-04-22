@@ -80,6 +80,7 @@ public:
     enum ResultCondition {
         Overflow,
         Signed,
+        PositiveOrZero,
         Zero,
         NonZero
     };
@@ -1509,7 +1510,7 @@ public:
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
         if (cond == Overflow) {
             /*
                 move    dest, dataTemp
@@ -1540,6 +1541,12 @@ public:
             add32(src, dest);
             // Check if dest is negative.
             m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == PositiveOrZero) {
+            add32(src, dest);
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, MIPSRegisters::zero, dest);
             return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
         }
         if (cond == Zero) {

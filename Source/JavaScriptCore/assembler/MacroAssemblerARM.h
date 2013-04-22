@@ -58,6 +58,7 @@ public:
     enum ResultCondition {
         Overflow = ARMAssembler::VS,
         Signed = ARMAssembler::MI,
+        PositiveOrZero = ARMAssembler::PL,
         Zero = ARMAssembler::EQ,
         NonZero = ARMAssembler::NE
     };

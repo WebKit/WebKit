@@ -481,6 +481,52 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     isZero.link(this);
 }
 
+void JIT::emit_op_loop_hint(Instruction*)
+{
+    // Emit the watchdog timer check:
+    if (m_vm->watchdog.isEnabled())
+        addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog.timerDidFireAddress())));
+
+    // Emit the JIT optimization check: 
+    if (canBeOptimized())
+        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
+            AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
+}
+
+void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    // Emit the slow path of the watchdog timer check:
+    if (m_vm->watchdog.isEnabled()) {
+        linkSlowCase(iter);
+
+        JITStubCall stubCall(this, cti_handle_watchdog_timer);
+        stubCall.call();
+
+#if ENABLE(DFG_JIT)
+        if (canBeOptimized()) {
+            Jump doOptimize = branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
+                AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
+            doOptimize.link(this);
+        } else
+#endif
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
+    }
+
+#if ENABLE(DFG_JIT)
+    // Emit the slow path for the JIT optimization check:
+    if (canBeOptimized()) {
+        linkSlowCase(iter);
+
+        JITStubCall stubCall(this, cti_optimize);
+        stubCall.addArgument(TrustedImm32(m_bytecodeOffset));
+        stubCall.call();
+
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
+    }
+#endif
+}
+
 void JIT::emit_op_neq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
@@ -863,7 +909,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_enter(Instruction*)
 {
-    emitOptimizationCheck(EnterOptimizationCheck);
+    emitEnterOptimizationCheck();
     
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging

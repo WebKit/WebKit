@@ -103,31 +103,19 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
 }
 
 #if ENABLE(DFG_JIT)
-void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
+void JIT::emitEnterOptimizationCheck()
 {
     if (!canBeOptimized())
         return;
-    
-    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop() : Options::executionCounterIncrementForReturn()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
+
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForReturn()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
     JITStubCall stubCall(this, cti_optimize);
     stubCall.addArgument(TrustedImm32(m_bytecodeOffset));
-    if (kind == EnterOptimizationCheck)
-        ASSERT(!m_bytecodeOffset);
+    ASSERT(!m_bytecodeOffset);
     stubCall.call();
     skipOptimize.link(this);
 }
 #endif
-
-void JIT::emitWatchdogTimerCheck()
-{
-    if (!m_vm->watchdog.isEnabled())
-        return;
-
-    Jump skipCheck = branchTest8(Zero, AbsoluteAddress(m_vm->watchdog.timerDidFireAddress()));
-    JITStubCall stubCall(this, cti_handle_watchdog_timer);
-    stubCall.call();
-    skipCheck.link(this);
-}
 
 #define NEXT_OPCODE(name) \
     m_bytecodeOffset += OPCODE_LENGTH(name); \
@@ -473,6 +461,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_jngreater)
         DEFINE_SLOWCASE_OP(op_jngreatereq)
         DEFINE_SLOWCASE_OP(op_jtrue)
+        DEFINE_SLOWCASE_OP(op_loop_hint)
         DEFINE_SLOWCASE_OP(op_lshift)
         DEFINE_SLOWCASE_OP(op_mod)
         DEFINE_SLOWCASE_OP(op_mul)

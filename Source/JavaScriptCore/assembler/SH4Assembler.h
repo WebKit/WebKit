@@ -341,22 +341,23 @@ public:
     typedef enum {
         EQ = 0x0, // Equal
         NE = 0x1, // Not Equal
-        HS = 0x2, // Unsigend Greater Than equal
-        HI = 0x3, // Unsigend Greater Than
-        LS = 0x4, // Unsigend Lower or Same
-        LI = 0x5, // Unsigend Lower
+        HS = 0x2, // Unsigned Greater Than equal
+        HI = 0x3, // Unsigned Greater Than
+        LS = 0x4, // Unsigned Lower or Same
+        LI = 0x5, // Unsigned Lower
         GE = 0x6, // Greater or Equal
         LT = 0x7, // Less Than
         GT = 0x8, // Greater Than
         LE = 0x9, // Less or Equal
         OF = 0xa, // OverFlow
         SI = 0xb, // Signed
-        EQU= 0xc, // Equal or unordered(NaN)
-        NEU= 0xd,
-        GTU= 0xe,
-        GEU= 0xf,
-        LTU= 0x10,
-        LEU= 0x11,
+        NS = 0xc, // Not Signed
+        EQU= 0xd, // Equal or unordered(NaN)
+        NEU= 0xe,
+        GTU= 0xf,
+        GEU= 0x10,
+        LTU= 0x11,
+        LEU= 0x12,
     } Condition;
 
     // Opaque label types
