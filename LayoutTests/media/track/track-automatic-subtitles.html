@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-controls.js></script>
+        <script src="../media-file.js"></script>
+        <script src=../trackmenu-test.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            var timer = null;
+            var expectedLanguage;
+            var testStage = 0;
+            var trackLanguages = [];
+
+            function testTracks()
+            {
+                for (var ndx = 0; ndx < trackLanguages.length; ++ndx) {
+                    testExpected("video.textTracks[" + ndx + "].language", trackLanguages[ndx]);
+                    testExpected("video.textTracks[" + ndx + "].kind", "subtitles");
+                    testExpected("video.textTracks[" + ndx + "].mode", expectedLanguage == trackLanguages[ndx] ? "showing" : "disabled");
+                    consoleWrite("");
+                }
+            }
+
+            function trackLoaded()
+            {
+                consoleWrite("EVENT(load)");
+                if (expectedLanguage == "") {
+                    failTest("'" + event.target.srclang + "' track loaded unexpectedly.");
+                    return;
+                }
+                testExpected("event.target.srclang", expectedLanguage);
+                testExpected("event.target.readyState", HTMLTrackElement.LOADED);
+
+                timer = setTimeout(nextStep, 200);
+            }
+
+            function createTrackElement(language, isDefault)
+            {
+                var track = document.createElement('track');
+                track.setAttribute('kind', "captions");
+                track.src = 'data:text/vtt,' + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n");
+                track.setAttribute('srclang', language);
+                track.setAttribute('onload', 'trackLoaded()');
+                if (isDefault) {
+                    consoleWrite("-- '" + language + "' track marked as default.");
+                    track.setAttribute('default', 'default');
+                }
+                video.appendChild(track);
+            }
+
+            function createTrackElements(languages, defaultIndex)
+            {
+                trackLanguages = languages;
+                var tracks = document.querySelectorAll('track');
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.removeChild(tracks[ndx]);
+
+                consoleWrite("- creating tracks for: [" + languages + "].");
+                for (var ndx = 0; ndx < languages.length; ++ndx)
+                    createTrackElement(languages[ndx], ndx == defaultIndex);
+            }
+
+            function nextStep()
+            {
+                ++testStage;
+                switch (testStage) {
+                case 1:
+                    consoleWrite("<br>Test 1: 'ru' track selected because mode is automatic and no audio track is available in user language");
+                    run("internals.setCaptionDisplayMode('Automatic')");
+                    run("internals.setPrimaryAudioTrackLanguageOverride('fr')");
+                    run("internals.setUserPreferredLanguages(['ru'])");
+                    expectedLanguage = "ru";
+                    createTrackElements(['en', 'ru', 'en-au', 'jp']);
+                    consoleWrite("");
+
+                    break;
+
+                case 2:
+                    consoleWrite("<br>Test 2: no track selected because none matches user language");
+                    expectedLanguage = "";
+                    run("internals.setUserPreferredLanguages(['se'])");
+                    createTrackElements(['en', 'ru', 'en-au', 'jp']);
+                    timer = setTimeout(nextStep, 100);
+                    break;
+
+                case 3:
+                    for (var ndx = 0; ndx < video.textTracks.length; ++ndx)
+                        testExpected("video.textTracks[" + ndx + "].mode", "disabled");
+
+                    consoleWrite("");
+                    endTest();
+                    return;
+                }
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                run("internals.settings.setShouldDisplayTrackKind('Captions', false)");
+                run("internals.settings.setShouldDisplayTrackKind('Subtitles', true)");
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('canplaythrough', nextStep);
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <p>Tests "Automatic" mode track selection.</p>
+        <video width="500" height="300" controls>
+        </video>
+    </body>
+</html>

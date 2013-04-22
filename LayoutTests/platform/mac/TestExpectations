@@ -1367,6 +1367,9 @@ webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-forced-s
 webkit.org/b/112492 media/track/track-language-preference.html [ Failure Pass ]
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Failure Pass ]
 
+# The logic in this test is no longer correct for Apple ports
+webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
+
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
 webkit.org/b/104949 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
