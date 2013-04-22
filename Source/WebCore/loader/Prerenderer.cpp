@@ -41,9 +41,7 @@
 #include "PrerendererClient.h"
 #include "ReferrerPolicy.h"
 #include "SecurityPolicy.h"
-#include "WebCoreMemoryInstrumentation.h"
 
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -142,15 +140,6 @@ PrerendererClient* Prerenderer::client()
         m_client = PrerendererClient::from(document()->page());
     }
     return m_client;
-}
-
-void Prerenderer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.ignoreMember(m_client);
-    info.addMember(m_activeHandles, "activeHandles");
-    info.addMember(m_suspendedHandles, "suspendedHandles");
 }
 
 }

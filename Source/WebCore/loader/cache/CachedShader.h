@@ -45,8 +45,6 @@ public:
     
     const String& shaderString();
     void data(PassRefPtr<ResourceBuffer>, bool allDataReceived);
-    
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
     RefPtr<TextResourceDecoder> m_decoder;

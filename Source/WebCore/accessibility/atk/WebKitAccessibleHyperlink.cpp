@@ -34,6 +34,7 @@
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
+#include <wtf/text/CString.h>
 
 #include <atk/atk.h>
 #include <glib.h>

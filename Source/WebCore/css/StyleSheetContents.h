@@ -136,8 +136,6 @@ public:
     void addedToMemoryCache();
     void removedFromMemoryCache();
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     void shrinkToFit();
 
 private:

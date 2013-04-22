@@ -120,16 +120,12 @@
 #include "UserAgentStyleSheets.h"
 #include "ViewportStyleResolver.h"
 #include "VisitedLinkState.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -180,14 +176,6 @@
 #endif
 
 using namespace std;
-
-namespace WTF {
-
-template<> struct SequenceMemoryInstrumentationTraits<const WebCore::RuleData*> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
-
-}
 
 namespace WebCore {
 
@@ -4218,54 +4206,6 @@ inline StyleResolver::MatchedProperties::MatchedProperties()
 
 inline StyleResolver::MatchedProperties::~MatchedProperties()
 {
-}
-
-void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(properties, "properties");
-}
-
-void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(matchedProperties, "matchedProperties");
-    info.addMember(ranges, "ranges");
-    info.addMember(renderStyle, "renderStyle");
-    info.addMember(parentRenderStyle, "parentRenderStyle");
-}
-
-void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_expression, "expression");
-}
-
-void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_ruleSets, "ruleSets");
-    info.addMember(m_keyframesRuleMap, "keyframesRuleMap");
-    info.addMember(m_matchedPropertiesCache, "matchedPropertiesCache");
-    info.addMember(m_matchedPropertiesCacheSweepTimer, "matchedPropertiesCacheSweepTimer");
-
-    info.addMember(m_medium, "medium");
-    info.addMember(m_rootDefaultStyle, "rootDefaultStyle");
-    info.addMember(m_document, "document");
-
-    info.addMember(m_fontSelector, "fontSelector");
-    info.addMember(m_viewportDependentMediaQueryResults, "viewportDependentMediaQueryResults");
-    info.ignoreMember(m_deprecatedStyleBuilder);
-    info.addMember(m_inspectorCSSOMWrappers);
-    info.addMember(m_scopeResolver, "scopeResolver");
-
-    info.addMember(m_state, "state");
-
-    // FIXME: move this to a place where it would be called only once?
-    info.addMember(CSSDefaultStyleSheets::defaultStyle, "defaultStyle");
-    info.addMember(CSSDefaultStyleSheets::defaultQuirksStyle, "defaultQuirksStyle");
-    info.addMember(CSSDefaultStyleSheets::defaultPrintStyle,"defaultPrintStyle");
-    info.addMember(CSSDefaultStyleSheets::defaultViewSourceStyle, "defaultViewSourceStyle");
 }
 
 } // namespace WebCore

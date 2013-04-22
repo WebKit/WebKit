@@ -26,10 +26,7 @@
 #include "config.h"
 #include "ResourceRequestBase.h"
 
-#include "PlatformMemoryInstrumentation.h"
 #include "ResourceRequest.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 using namespace std;
 
@@ -473,17 +470,6 @@ bool ResourceRequestBase::isConditional() const
             m_httpHeaderFields.contains("If-None-Match") ||
             m_httpHeaderFields.contains("If-Range") ||
             m_httpHeaderFields.contains("If-Unmodified-Since"));
-}
-
-void ResourceRequestBase::reportMemoryUsageBase(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_url, "url");
-    info.addMember(m_firstPartyForCookies, "firstPartyForCookies");
-    info.addMember(m_httpMethod, "httpMethod");
-    info.addMember(m_httpHeaderFields, "httpHeaderFields");
-    info.addMember(m_responseContentDispositionEncodingFallbackArray, "responseContentDispositionEncodingFallbackArray");
-    info.addMember(m_httpBody, "httpBody");
 }
 
 double ResourceRequestBase::defaultTimeoutInterval()

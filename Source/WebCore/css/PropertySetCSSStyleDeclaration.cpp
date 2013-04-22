@@ -30,8 +30,6 @@
 #include "MutationRecord.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
 
 using namespace std;
 
@@ -130,13 +128,6 @@ void PropertySetCSSStyleDeclaration::ref()
 void PropertySetCSSStyleDeclaration::deref()
 {
     m_propertySet->deref(); 
-}
-
-void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_propertySet, "propertySet");
-    info.addMember(m_cssomCSSValueClones, "cssomCSSValueClones");
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const
@@ -364,20 +355,6 @@ void StyleRuleCSSStyleDeclaration::reattach(MutableStylePropertySet* propertySet
     m_propertySet->deref();
     m_propertySet = propertySet;
     m_propertySet->ref();
-}
-
-void StyleRuleCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentRule, "parentRule");
-}
-
-void InlineCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentElement, "parentElement");
 }
 
 void InlineCSSStyleDeclaration::didMutate(MutationType type)

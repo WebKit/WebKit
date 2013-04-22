@@ -35,7 +35,6 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "FloatPoint.h"
-#include "PlatformMemoryInstrumentation.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
@@ -448,12 +447,6 @@ IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntRect& visib
 IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntPoint& scrollPosition)
 {
     return constrainScrollPositionForOverhang(visibleContentRect(), totalContentsSize(), scrollPosition, scrollOrigin(), headerHeight(), footerHeight());
-}
-
-void ScrollableArea::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_scrollAnimator, "scrollAnimator");
 }
 
 } // namespace WebCore

@@ -103,8 +103,6 @@ public:
     void combineCSSFeatureFlags();
     void resetCSSFeatureFlags();
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     DocumentStyleSheetCollection(Document*);
 

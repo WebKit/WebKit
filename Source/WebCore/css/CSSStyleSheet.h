@@ -105,8 +105,6 @@ public:
 
     StyleSheetContents* contents() const { return m_contents.get(); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule);
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);

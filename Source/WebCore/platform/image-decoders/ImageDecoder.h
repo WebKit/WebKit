@@ -123,7 +123,6 @@ namespace WebCore {
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
         bool premultiplyAlpha() const { return m_premultiplyAlpha; }
-        void reportMemoryUsage(MemoryObjectInfo*) const;
 
         void setHasAlpha(bool alpha);
         void setColorProfile(const ColorProfile&);
@@ -392,8 +391,6 @@ namespace WebCore {
         // If the image has a cursor hot-spot, stores it in the argument
         // and returns true. Otherwise returns false.
         virtual bool hotSpot(IntPoint&) const { return false; }
-
-        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 #if USE(SKIA)
         virtual void setMemoryAllocator(SkBitmap::Allocator* allocator)

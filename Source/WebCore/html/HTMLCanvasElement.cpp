@@ -47,7 +47,6 @@
 #include "RenderHTMLCanvas.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -622,18 +621,6 @@ AffineTransform HTMLCanvasElement::baseTransform() const
     if (size.width() && size.height())
         transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
     return m_imageBuffer->baseTransform() * transform;
-}
-
-void HTMLCanvasElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    HTMLElement::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_observers, "observers");
-    info.addMember(m_context, "context");
-    info.addMember(m_imageBuffer, "imageBuffer");
-    info.addMember(m_contextStateSaver, "contextStateSaver");
-    info.addMember(m_presentedImage, "presentedImage");
-    info.addMember(m_copiedImage, "copiedImage");
 }
 
 }

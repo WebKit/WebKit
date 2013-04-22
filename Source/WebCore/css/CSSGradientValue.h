@@ -52,7 +52,6 @@ struct CSSGradientColorStop {
     RefPtr<CSSPrimitiveValue> m_color;
     Color m_resolvedColor;
     bool m_colorIsDerivedFromElement;
-    void reportMemoryUsage(MemoryObjectInfo*) const;
     bool operator==(const CSSGradientColorStop& other) const
     {
         return compareCSSValuePtr(m_color, other.m_color)
@@ -120,8 +119,6 @@ protected:
 
     bool isCacheable() const;
 
-    void reportBaseClassMemoryUsage(MemoryObjectInfo*) const;
-
     // Points. Some of these may be null.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
@@ -158,8 +155,6 @@ public:
     }
 
     bool equals(const CSSLinearGradientValue&) const;
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
@@ -203,8 +198,6 @@ public:
     PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
 
     bool equals(const CSSRadialGradientValue&) const;
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSRadialGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)

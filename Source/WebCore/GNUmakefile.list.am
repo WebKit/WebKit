@@ -3113,8 +3113,6 @@ webcore_sources += \
 	Source/WebCore/dom/ViewportArguments.h \
 	Source/WebCore/dom/VisitedLinkState.cpp \
 	Source/WebCore/dom/VisitedLinkState.h \
-	Source/WebCore/dom/WebCoreMemoryInstrumentation.cpp \
-	Source/WebCore/dom/WebCoreMemoryInstrumentation.h \
 	Source/WebCore/dom/WebKitAnimationEvent.cpp \
 	Source/WebCore/dom/WebKitAnimationEvent.h \
 	Source/WebCore/dom/WebKitNamedFlow.cpp \
@@ -3869,8 +3867,6 @@ webcore_sources += \
 	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
 	Source/WebCore/inspector/DOMPatchSupport.h \
-	Source/WebCore/inspector/HeapGraphSerializer.cpp \
-	Source/WebCore/inspector/HeapGraphSerializer.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \
 	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScript.cpp \
@@ -3966,8 +3962,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/InstrumentingAgents.cpp \
 	Source/WebCore/inspector/InstrumentingAgents.h \
-	Source/WebCore/inspector/MemoryInstrumentationImpl.cpp \
-	Source/WebCore/inspector/MemoryInstrumentationImpl.h \
 	Source/WebCore/inspector/NetworkResourcesData.cpp \
 	Source/WebCore/inspector/NetworkResourcesData.h \
 	Source/WebCore/inspector/PageConsoleAgent.cpp \
@@ -4152,7 +4146,6 @@ webcore_sources += \
 	Source/WebCore/loader/SubframeLoader.h \
 	Source/WebCore/loader/SubresourceLoader.cpp \
 	Source/WebCore/loader/SubresourceLoader.h \
-	Source/WebCore/loader/SubstituteData.cpp \
 	Source/WebCore/loader/SubstituteData.h \
 	Source/WebCore/loader/SubstituteResource.h \
 	Source/WebCore/loader/TextResourceDecoder.cpp \
@@ -5978,8 +5971,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/PlatformEvent.h \
 	Source/WebCore/platform/PlatformExportMacros.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
-	Source/WebCore/platform/PlatformMemoryInstrumentation.cpp \
-	Source/WebCore/platform/PlatformMemoryInstrumentation.h \
 	Source/WebCore/platform/PlatformMenuDescription.h \
 	Source/WebCore/platform/PlatformMouseEvent.h \
 	Source/WebCore/platform/PlatformPasteboard.h \

@@ -36,7 +36,6 @@ public:
     virtual ~CSSGroupingRule();
 
     virtual void reattach(StyleRuleBase*) OVERRIDE;
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     CSSRuleList* cssRules() const;
 

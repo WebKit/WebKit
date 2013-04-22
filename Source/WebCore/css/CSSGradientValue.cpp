@@ -36,21 +36,12 @@
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
 #include "StyleResolver.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
 
 namespace WebCore {
-
-void CSSGradientColorStop::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_position, "position");
-    info.addMember(m_color, "color");
-}
 
 PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
@@ -477,17 +468,6 @@ bool CSSGradientValue::knownToBeOpaque(const RenderObject*) const
     return true;
 }
 
-void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_firstX, "firstX");
-    info.addMember(m_firstY, "firstY");
-    info.addMember(m_secondX, "secondX");
-    info.addMember(m_secondY, "secondY");
-    info.addMember(m_stops, "stops");
-}
-
 String CSSLinearGradientValue::customCssText() const
 {
     StringBuilder result;
@@ -759,13 +739,6 @@ bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
         equalXorY = !other.m_firstX || !other.m_firstY;
 
     return equalXorY && m_stops == other.m_stops;
-}
-
-void CSSLinearGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_angle, "angle");
 }
 
 String CSSRadialGradientValue::customCssText() const
@@ -1194,18 +1167,6 @@ bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
         equalHorizontalAndVerticalSize = !other.m_endHorizontalSize && !other.m_endVerticalSize;
     }
     return equalShape && equalSizingBehavior && equalHorizontalAndVerticalSize && m_stops == other.m_stops;
-}
-
-void CSSRadialGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_firstRadius, "firstRadius");
-    info.addMember(m_secondRadius, "secondRadius");
-    info.addMember(m_shape, "shape");
-    info.addMember(m_sizingBehavior, "sizingBehavior");
-    info.addMember(m_endHorizontalSize, "endHorizontalSize");
-    info.addMember(m_endVerticalSize, "endVerticalSize");
 }
 
 } // namespace WebCore

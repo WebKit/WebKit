@@ -42,7 +42,6 @@
 #include "RenderWidgetProtector.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/StackStats.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1146,27 +1145,6 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     if (!m_intervalArena)
         m_intervalArena = IntervalArena::create();
     return m_intervalArena.get();
-}
-
-void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    RenderBlock::reportMemoryUsage(memoryObjectInfo);
-    info.addWeakPointer(m_frameView);
-    info.addWeakPointer(m_selectionStart);
-    info.addWeakPointer(m_selectionEnd);
-    info.addMember(m_widgets, "widgets");
-    info.addMember(m_layoutState, "layoutState");
-#if USE(ACCELERATED_COMPOSITING)
-    info.addMember(m_compositor, "compositor");
-#endif
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-    info.addMember(m_customFilterGlobalContext, "customFilterGlobalContext");
-#endif
-    info.addMember(m_flowThreadController, "flowThreadController");
-    info.addMember(m_intervalArena, "intervalArena");
-    info.addWeakPointer(m_renderQuoteHead);
-    info.addMember(m_legacyPrinting, "legacyPrinting");
 }
 
 FragmentationDisabler::FragmentationDisabler(RenderObject* root)

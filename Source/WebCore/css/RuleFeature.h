@@ -55,8 +55,6 @@ struct RuleFeatureSet {
 
     void collectFeaturesFromSelector(const CSSSelector*);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     HashSet<AtomicStringImpl*> idsInRules;
     HashSet<AtomicStringImpl*> classesInRules;
     HashSet<AtomicStringImpl*> attrsInRules;

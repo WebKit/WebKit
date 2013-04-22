@@ -57,8 +57,6 @@ public:
 
     bool equals(const WebKitCSSShaderValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSShaderValue(const String& url);
 

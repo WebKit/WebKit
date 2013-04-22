@@ -50,8 +50,6 @@ public:
 
     bool equals(const WebKitCSSMatFunctionValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSMatFunctionValue();
     WebKitCSSMatFunctionValue(const WebKitCSSMatFunctionValue& cloneFrom);

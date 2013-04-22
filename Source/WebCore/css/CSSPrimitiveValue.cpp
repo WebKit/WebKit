@@ -39,7 +39,6 @@
 #include "Rect.h"
 #include "RenderStyle.h"
 #include "StyleSheetContents.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
 #include <wtf/StdLibExtras.h>
@@ -1357,50 +1356,6 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.shape && other.m_value.shape && m_value.shape->equals(*other.m_value.shape);
     }
     return false;
-}
-
-void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    switch (m_primitiveUnitType) {
-    case CSS_ATTR:
-    case CSS_COUNTER_NAME:
-    case CSS_PARSER_IDENTIFIER:
-    case CSS_PARSER_HEXCOLOR:
-    case CSS_STRING:
-    case CSS_URI:
-#if ENABLE(CSS_VARIABLES)
-    case CSS_VARIABLE_NAME:
-#endif
-        // FIXME: detect other cases when m_value is StringImpl*
-        info.addMember(m_value.string, "value.string");
-        break;
-    case CSS_COUNTER:
-        info.addMember(m_value.counter, "value.counter");
-        break;
-    case CSS_RECT:
-        info.addMember(m_value.rect, "value.rect");
-        break;
-    case CSS_QUAD:
-        info.addMember(m_value.quad, "value.quad");
-        break;
-    case CSS_PAIR:
-        info.addMember(m_value.pair, "value.pair");
-        break;
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSS_DASHBOARD_REGION:
-        info.addMember(m_value.region, "value.region");
-        break;
-#endif
-    case CSS_SHAPE:
-        info.addMember(m_value.shape, "value.shape");
-        break;
-    case CSS_CALC:
-        info.addMember(m_value.calc, "value.calc");
-        break;
-    default:
-        break;
-    }
 }
 
 } // namespace WebCore

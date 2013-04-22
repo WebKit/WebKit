@@ -44,8 +44,6 @@ public:
 
     bool equals(const FontFeatureValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     FontFeatureValue(const String&, int);
 

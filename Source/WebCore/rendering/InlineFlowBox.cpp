@@ -38,7 +38,6 @@
 #include "RenderView.h"
 #include "RootInlineBox.h"
 #include "Text.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 #include <math.h>
 
@@ -1653,16 +1652,5 @@ void InlineFlowBox::checkConsistency() const
 }
 
 #endif
-
-void InlineFlowBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
-    InlineBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_overflow, "overflow");
-    info.addMember(m_firstChild, "firstChild");
-    info.addMember(m_lastChild, "lastChild");
-    info.addMember(m_prevLineBox, "prevLineBox");
-    info.addMember(m_nextLineBox, "nextLineBox");
-}
 
 } // namespace WebCore

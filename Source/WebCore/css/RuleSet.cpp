@@ -42,11 +42,7 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframesRule.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackCue.h"
@@ -148,37 +144,6 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
     SelectorFilter::collectIdentifierHashes(selector(), m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
-}
-
-void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_rule, "rule");
-}
-
-void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_idRules, "idRules");
-    info.addMember(m_classRules, "classRules");
-    info.addMember(m_tagRules, "tagRules");
-    info.addMember(m_shadowPseudoElementRules, "shadowPseudoElementRules");
-    info.addMember(m_linkPseudoClassRules, "linkPseudoClassRules");
-#if ENABLE(VIDEO_TRACK)
-    info.addMember(m_cuePseudoRules, "cuePseudoRules");
-#endif
-    info.addMember(m_focusPseudoClassRules, "focusPseudoClassRules");
-    info.addMember(m_universalRules, "universalRules");
-    info.addMember(m_pageRules, "pageRules");
-    info.addMember(m_regionSelectorsAndRuleSets, "regionSelectorsAndRuleSets");
-    info.addMember(m_features, "features");
-}
-
-void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(ruleSet, "ruleSet");
-    info.addMember(selector, "selector");
 }
 
 static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData& ruleData)

@@ -110,7 +110,6 @@ public:
     bool hasFailedOrCanceledSubresources() const;
 
     static unsigned averageSizeInBytes();
-    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 #ifndef NDEBUG
     void showStyle();

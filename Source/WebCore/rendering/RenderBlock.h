@@ -471,9 +471,6 @@ public:
     bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-    static void reportStaticMembersMemoryUsage(MemoryInstrumentation*);
-
 protected:
     virtual void willBeDestroyed();
 

@@ -73,8 +73,6 @@ public:
 
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     SecurityContext();
     virtual ~SecurityContext();

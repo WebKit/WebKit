@@ -50,8 +50,6 @@ namespace WebCore {
         bool mimeTypeAllowedByNosniff() const;
 #endif
 
-        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
     private:
         virtual PurgePriority purgePriority() const { return PurgeLast; }
 

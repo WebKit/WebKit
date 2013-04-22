@@ -683,8 +683,6 @@ public:
     virtual void unregisterScopedHTMLStyleChild();
     size_t numberOfScopedHTMLStyleChildren() const;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
     void textRects(Vector<IntRect>&) const;
 
     unsigned connectedSubframeCount() const;

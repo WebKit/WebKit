@@ -35,11 +35,9 @@
 #include "FormDataList.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
-#include "PlatformMemoryInstrumentation.h"
 #include "TextEncoding.h"
 #include <wtf/Decoder.h>
 #include <wtf/Encoder.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -425,24 +423,6 @@ void FormData::removeGeneratedFilesIfNeeded()
         }
     }
     m_hasGeneratedFiles = false;
-}
-
-void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_boundary, "boundary");
-    info.addMember(m_elements, "elements");
-}
-
-void FormDataElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_data, "data");
-    info.addMember(m_filename, "filename");
-#if ENABLE(BLOB)
-    info.addMember(m_url, "url");
-#endif
-    info.addMember(m_generatedFilename, "generatedFilename");
 }
 
 static void encodeElement(Encoder& encoder, const FormDataElement& element)

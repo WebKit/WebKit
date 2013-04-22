@@ -27,7 +27,6 @@
 #include "CSSBorderImageSliceValue.h"
 
 #include "Rect.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,12 +52,6 @@ String CSSBorderImageSliceValue::customCssText() const
 bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
 {
     return m_fill == other.m_fill && compareCSSValuePtr(m_slices, other.m_slices);
-}
-
-void CSSBorderImageSliceValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_slices, "slices");
 }
 
 } // namespace WebCore

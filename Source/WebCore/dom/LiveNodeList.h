@@ -77,8 +77,6 @@ public:
             document()->unregisterNodeList(this);
     }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
     // DOM API
     virtual unsigned length() const OVERRIDE;
     virtual Node* item(unsigned offset) const OVERRIDE;

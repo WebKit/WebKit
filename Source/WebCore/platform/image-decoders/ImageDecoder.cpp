@@ -32,7 +32,6 @@
 #include "JPEGImageDecoder.h"
 #endif
 #include "PNGImageDecoder.h"
-#include "PlatformMemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #if USE(WEBP)
 #include "WEBPImageDecoder.h"
@@ -40,7 +39,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <wtf/MemoryInstrumentationVector.h>
 
 using namespace std;
 
@@ -228,12 +226,6 @@ void ImageFrame::setStatus(FrameStatus status)
     m_status = status;
 }
 
-void ImageFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_backingStore, "backingStore");
-}
-
 #endif
 
 namespace {
@@ -335,16 +327,6 @@ int ImageDecoder::lowerBoundScaledY(int origY, int searchStart)
 int ImageDecoder::scaledY(int origY, int searchStart)
 {
     return getScaledValue<Exact>(m_scaledRows, origY, searchStart);
-}
-
-void ImageDecoder::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_data, "data");
-    info.addMember(m_frameBufferCache, "frameBufferCache");
-    info.addMember(m_colorProfile, "colorProfile");
-    info.addMember(m_scaledColumns, "scaledColumns");
-    info.addMember(m_scaledRows, "scaledRows");
 }
 
 }

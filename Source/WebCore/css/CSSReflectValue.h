@@ -56,8 +56,6 @@ public:
 
     bool equals(const CSSReflectValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSReflectValue(PassRefPtr<CSSPrimitiveValue> direction, PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
         : CSSValue(ReflectClass)

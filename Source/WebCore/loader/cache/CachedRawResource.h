@@ -49,8 +49,6 @@ public:
 
     virtual bool canReuse(const ResourceRequest&) const;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);

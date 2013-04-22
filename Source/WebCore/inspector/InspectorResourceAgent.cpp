@@ -74,7 +74,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -648,19 +647,6 @@ void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
         memoryCache()->evictResources();
 
     m_resourcesData->clear(m_pageAgent->loaderId(loader));
-}
-
-void InspectorResourceAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorResourceAgent);
-    InspectorBaseAgent<InspectorResourceAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addWeakPointer(m_pageAgent);
-    info.addWeakPointer(m_client);
-    info.addWeakPointer(m_frontend);
-    info.addMember(m_userAgentOverride, "userAgentOverride");
-    info.addMember(m_resourcesData, "resourcesData");
-    info.addMember(m_pendingXHRReplayData, "pendingXHRReplayData");
-    info.addMember(m_styleRecalculationInitiator, "styleRecalculationInitiator");
 }
 
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorCompositeState* state)

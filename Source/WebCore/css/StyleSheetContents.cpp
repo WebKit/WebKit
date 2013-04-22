@@ -32,10 +32,7 @@
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Deque.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -513,19 +510,6 @@ void StyleSheetContents::shrinkToFit()
 {
     m_importRules.shrinkToFit();
     m_childRules.shrinkToFit();
-}
-
-void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_ownerRule, "ownerRule");
-    info.addMember(m_originalURL, "originalURL");
-    info.addMember(m_encodingFromCharsetRule, "encodingFromCharsetRule");
-    info.addMember(m_importRules, "importRules");
-    info.addMember(m_childRules, "childRules");
-    info.addMember(m_namespaces, "namespaces");
-    info.addMember(m_parserContext, "parserContext");
-    info.addMember(m_clients, "clients");
 }
 
 }

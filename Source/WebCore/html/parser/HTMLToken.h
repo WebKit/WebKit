@@ -28,6 +28,8 @@
 
 #include "Attribute.h"
 #include "HTMLToken.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

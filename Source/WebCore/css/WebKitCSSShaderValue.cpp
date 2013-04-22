@@ -40,7 +40,7 @@
 #include "KURL.h"
 #include "StyleCachedShader.h"
 #include "StylePendingShader.h"
-#include "WebCoreMemoryInstrumentation.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -101,13 +101,6 @@ String WebKitCSSShaderValue::customCssText() const
 bool WebKitCSSShaderValue::equals(const WebKitCSSShaderValue& other) const
 {
     return m_url == other.m_url;
-}
-
-void WebKitCSSShaderValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_url, "url");
-    info.addMember(m_format, "format");
 }
     
 } // namespace WebCore

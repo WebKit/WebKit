@@ -31,7 +31,6 @@
 #include "CachedResourceLoader.h"
 #include "ResourceBuffer.h"
 #include "SubresourceLoader.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -237,12 +236,5 @@ void CachedRawResource::clear()
     if (m_loader)
         m_loader->clearResourceData();
 }
-
-void CachedRawResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceRaw);
-    CachedResource::reportMemoryUsage(memoryObjectInfo);
-}
-
 
 } // namespace WebCore

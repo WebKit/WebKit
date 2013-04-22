@@ -35,7 +35,6 @@
 namespace WTF {
 
 struct AtomicStringHash;
-class MemoryObjectInfo;
 
 class AtomicString {
 public:

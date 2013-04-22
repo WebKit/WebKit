@@ -32,7 +32,6 @@
 #include "StylePropertySet.h"
 #include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -85,13 +84,6 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
             return i;
     }
     return -1;
-}
-
-void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_keyframes, "keyframes");
-    info.addMember(m_name, "name");
 }
 
 WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes* keyframesRule, CSSStyleSheet* parent)
@@ -205,15 +197,6 @@ void WebKitCSSKeyframesRule::reattach(StyleRuleBase* rule)
     ASSERT(rule);
     ASSERT_WITH_SECURITY_IMPLICATION(rule->isKeyframesRule());
     m_keyframesRule = static_cast<StyleRuleKeyframes*>(rule);
-}
-
-void WebKitCSSKeyframesRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_keyframesRule, "keyframesRule");
-    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
-    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 } // namespace WebCore

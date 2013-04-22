@@ -35,12 +35,9 @@
 #include "PublicURLManager.h"
 #include "ScriptCallStack.h"
 #include "Settings.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 // FIXME: This is a layering violation.
 #include "JSDOMWindow.h"
@@ -49,13 +46,6 @@
 #include "DatabaseContext.h"
 #endif
 
-namespace WTF {
-
-template<> struct SequenceMemoryInstrumentationTraits<WebCore::ContextDestructionObserver*> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
-
-}
 namespace WebCore {
 
 class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
@@ -384,20 +374,6 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 double ScriptExecutionContext::timerAlignmentInterval() const
 {
     return Settings::defaultDOMTimerAlignmentInterval();
-}
-
-void ScriptExecutionContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    SecurityContext::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_messagePorts, "messagePorts");
-    info.addMember(m_destructionObservers, "destructionObservers");
-    info.addMember(m_activeDOMObjects, "activeDOMObjects");
-    info.addMember(m_timeouts, "timeouts");
-    info.addMember(m_pendingExceptions, "pendingExceptions");
-#if ENABLE(BLOB)
-    info.addMember(m_publicURLManager, "publicURLManager");
-#endif
 }
 
 ScriptExecutionContext::Task::~Task()

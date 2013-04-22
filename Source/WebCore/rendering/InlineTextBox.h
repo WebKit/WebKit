@@ -102,8 +102,6 @@ public:
     virtual const char* boxName() const;
 #endif
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     LayoutUnit selectionTop();
     LayoutUnit selectionBottom();

@@ -50,10 +50,8 @@
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WorkerScriptDebugServer.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -484,18 +482,6 @@ void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const Str
     }
     unsigned id = ScriptProfiler::getHeapObjectId(value);
     *heapSnapshotObjectId = String::number(id);
-}
-
-void InspectorProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorProfilerAgent);
-    InspectorBaseAgent<InspectorProfilerAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_consoleAgent, "consoleAgent");
-    info.addMember(m_injectedScriptManager, "injectedScriptManager");
-    info.addWeakPointer(m_frontend);
-    info.addMember(m_profiles, "profiles");
-    info.addMember(m_snapshots, "snapshots");
-    info.addMember(m_profileNameIdleTimeMap, "profileNameIdleTimeMap");
 }
 
 void InspectorProfilerAgent::willProcessTask()

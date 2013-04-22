@@ -53,7 +53,6 @@
     <ClCompile Include="..\wtf\MainThread.cpp" />
     <ClCompile Include="..\wtf\MD5.cpp" />
     <ClCompile Include="..\wtf\MediaTime.cpp" />
-    <ClCompile Include="..\wtf\MemoryInstrumentation.cpp" />
     <ClCompile Include="..\wtf\MetaAllocator.cpp" />
     <ClCompile Include="..\wtf\NullPtr.cpp" />
     <ClCompile Include="..\wtf\NumberOfCores.cpp" />
@@ -166,16 +165,6 @@
     <ClInclude Include="..\wtf\MathExtras.h" />
     <ClInclude Include="..\wtf\MD5.h" />
     <ClInclude Include="..\wtf\MediaTime.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentation.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationArrayBufferView.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationHashCountedSet.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationHashMap.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationHashSet.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationListHashSet.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationSequence.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationString.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationVector.h" />
-    <ClInclude Include="..\wtf\MemoryObjectInfo.h" />
     <ClInclude Include="..\wtf\MessageQueue.h" />
     <ClInclude Include="..\wtf\MetaAllocator.h" />
     <ClInclude Include="..\wtf\MetaAllocatorHandle.h" />

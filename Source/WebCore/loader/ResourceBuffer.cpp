@@ -27,7 +27,6 @@
 #include "ResourceBuffer.h"
 
 #include "PurgeableBuffer.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -132,11 +131,5 @@ CFDataRef ResourceBuffer::createCFData()
     return m_sharedBuffer->createCFData();
 }
 #endif
-
-void ResourceBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_sharedBuffer, "sharedBuffer");
-}
 
 } // namespace WebCore

@@ -31,11 +31,6 @@
 #include "config.h"
 #include "NodeRareData.h"
 
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryInstrumentationVector.h>
-
 namespace WebCore {
 
 struct SameSizeAsNodeRareData {
@@ -47,25 +42,5 @@ struct SameSizeAsNodeRareData {
 };
 
 COMPILE_ASSERT(sizeof(NodeRareData) == sizeof(SameSizeAsNodeRareData), NodeRareDataShouldStaySmall);
-
-void NodeListsNodeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_childNodeList, "childNodeList");
-    info.addMember(m_atomicNameCaches, "atomicNameCaches");
-    info.addMember(m_nameCaches, "nameCaches");
-    info.addMember(m_tagNodeListCacheNS, "tagNodeListCacheNS");
-}
-
-void NodeRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_nodeLists, "nodeLists");
-    info.addMember(m_mutationObserverData, "mutationObserverData");
-
-#if ENABLE(MICRODATA)
-    info.addMember(m_microDataTokenLists, "microDataTokenLists");
-#endif
-}
 
 } // namespace WebCore

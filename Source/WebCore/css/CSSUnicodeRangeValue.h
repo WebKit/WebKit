@@ -46,8 +46,6 @@ public:
 
     bool equals(const CSSUnicodeRangeValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSUnicodeRangeValue(UChar32 from, UChar32 to)
         : CSSValue(UnicodeRangeClass)

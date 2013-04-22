@@ -58,14 +58,11 @@ public:
     struct ImageWithScale {
         String imageURL;
         float scaleFactor;
-        void reportMemoryUsage(MemoryObjectInfo*) const;
     };
 
     bool hasFailedOrCanceledSubresources() const;
 
     PassRefPtr<CSSImageSetValue> cloneForCSSOM() const;
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     ImageWithScale bestImageForScaleFactor();

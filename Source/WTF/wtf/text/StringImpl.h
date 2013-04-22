@@ -465,9 +465,6 @@ public:
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    bool hasInternalBuffer() const { return bufferOwnership() == BufferInternal; }
-    bool hasOwnedBuffer() const { return bufferOwnership() == BufferOwned; }
-    StringImpl* baseString() const { return bufferOwnership() == BufferSubstring ? m_substringBuffer : 0; }
 
     // FIXME: Remove all unnecessary usages of characters()
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
@@ -740,7 +737,7 @@ private:
 
     bool isASCIILiteral() const
     {
-        return is8Bit() && hasInternalBuffer() && reinterpret_cast<const void*>(m_data8) != reinterpret_cast<const void*>(this + 1);
+        return is8Bit() && bufferOwnership() == BufferInternal && reinterpret_cast<const void*>(m_data8) != reinterpret_cast<const void*>(this + 1);
     }
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.

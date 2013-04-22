@@ -90,16 +90,6 @@ HEADERS += \
     MathExtras.h \
     MD5.h \
     MediaTime.h \
-    MemoryInstrumentation.h \
-    MemoryInstrumentationArrayBufferView.h \
-    MemoryInstrumentationHashCountedSet.h \
-    MemoryInstrumentationHashMap.h \
-    MemoryInstrumentationHashSet.h \
-    MemoryInstrumentationListHashSet.h \
-    MemoryInstrumentationSequence.h \
-    MemoryInstrumentationString.h \
-    MemoryInstrumentationVector.h \
-    MemoryObjectInfo.h \
     MessageQueue.h \
     MetaAllocator.h \
     MetaAllocatorHandle.h \
@@ -223,7 +213,6 @@ SOURCES += \
     MD5.cpp \
     MainThread.cpp \
     MediaTime.cpp \
-    MemoryInstrumentation.cpp \
     MetaAllocator.cpp \
     NullPtr.cpp \
     NumberOfCores.cpp \

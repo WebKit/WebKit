@@ -30,7 +30,6 @@
 #include "ContentSecurityPolicy.h"
 #include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -141,13 +140,6 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
     }
 
     return flags;
-}
-
-void SecurityContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_securityOrigin, "securityOrigin");
-    info.addMember(m_contentSecurityPolicy, "contentSecurityPolicy");
 }
 
 }

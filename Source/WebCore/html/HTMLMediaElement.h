@@ -377,8 +377,6 @@ public:
 
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     HTMLMediaElement(const QualifiedName&, Document*, bool);
     virtual ~HTMLMediaElement();

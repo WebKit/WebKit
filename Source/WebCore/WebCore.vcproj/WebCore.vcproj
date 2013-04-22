@@ -28299,10 +28299,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\SubstituteData.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\SubstituteData.h"
 				>
 			</File>
@@ -29140,14 +29136,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\PlatformKeyboardEvent.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\PlatformMemoryInstrumentation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\PlatformMemoryInstrumentation.h"
 				>
 			</File>
 			<File
@@ -56583,14 +56571,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\WebCoreMemoryInstrumentation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WebCoreMemoryInstrumentation.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\WebKitAnimationEvent.cpp"
 				>
 				<FileConfiguration
@@ -75699,30 +75679,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\HeapGraphSerializer.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\inspector\HeapGraphSerializer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\IdentifiersFactory.cpp"
 				>
 				<FileConfiguration
@@ -76840,30 +76796,6 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InstrumentingAgents.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\MemoryInstrumentationImpl.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\inspector\MemoryInstrumentationImpl.h"
 				>
 			</File>
 			<File

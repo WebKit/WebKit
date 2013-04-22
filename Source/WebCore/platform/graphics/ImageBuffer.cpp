@@ -28,7 +28,6 @@
 #include "ImageBuffer.h"
 
 #include "IntRect.h"
-#include "PlatformMemoryInstrumentation.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -117,12 +116,5 @@ PassOwnPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size,
     return create(size, resolutionScale, colorSpace, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
 }
 #endif
-
-void ImageBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_data, "data");
-    info.addMember(m_context, "context");
-}
 
 }

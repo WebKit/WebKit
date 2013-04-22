@@ -34,12 +34,8 @@
 #include "RenderTableRow.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <limits>
 #include <wtf/HashSet.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StackStats.h>
 
 using namespace std;
@@ -1436,31 +1432,6 @@ void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsign
 
     cell->setLogicalLocation(cellLocation);
     view()->addLayoutDelta(oldCellLocation - cell->location());
-}
-
-void RenderTableSection::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_children, "children");
-    info.addMember(m_grid, "grid");
-    info.addMember(m_rowPos, "rowPos");
-    info.addMember(m_overflowingCells, "overflowingCells");
-    info.addMember(m_cellsCollapsedBorders, "cellsCollapsedBorders");
-}
-
-void RenderTableSection::RowStruct::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    info.addMember(row, "row");
-    info.addMember(rowRenderer, "rowRenderer");
-    info.addMember(logicalHeight, "logicalHeight");
-}
-
-void RenderTableSection::CellStruct::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    info.addMember(cells, "cells");
 }
 
 } // namespace WebCore

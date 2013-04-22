@@ -59,8 +59,6 @@
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/TemporaryChange.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -3187,31 +3185,6 @@ void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>*)
     if (!m_hasPendingLayerFlush)
         return;
     scheduleLayerFlushNow();
-}
-
-void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    info.addWeakPointer(m_renderView);
-    info.addMember(m_rootContentLayer, "rootContentLayer");
-    info.addMember(m_updateCompositingLayersTimer, "updateCompositingLayersTimer");
-    info.addMember(m_clipLayer, "clipLayer");
-    info.addMember(m_scrollLayer, "scrollLayer");
-    info.addMember(m_viewportConstrainedLayers, "viewportConstrainedLayers");
-    info.addMember(m_viewportConstrainedLayersNeedingUpdate, "viewportConstrainedLayersNeedingUpdate");
-    info.addMember(m_overflowControlsHostLayer, "overflowControlsHostLayer");
-    info.addMember(m_layerForHorizontalScrollbar, "layerForHorizontalScrollbar");
-    info.addMember(m_layerForVerticalScrollbar, "layerForVerticalScrollbar");
-    info.addMember(m_layerForScrollCorner, "layerForScrollCorner");
-#if ENABLE(RUBBER_BANDING)
-    info.addMember(m_layerForOverhangAreas, "layerForOverhangAreas");
-    info.addMember(m_contentShadowLayer, "contentShadowLayer");
-    info.addMember(m_layerForTopOverhangArea, "layerForTopOverhangArea");
-    info.addMember(m_layerForBottomOverhangArea, "layerForBottomOverhangArea");
-    info.addMember(m_layerForHeader, "layerForHeader");
-    info.addMember(m_layerForFooter, "layerForFooter");
-#endif
-    info.addMember(m_layerUpdater, "layerUpdater");
 }
 
 } // namespace WebCore

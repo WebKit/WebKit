@@ -34,7 +34,6 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -248,14 +247,6 @@ String MediaQueryExp::serialize() const
 
     const_cast<MediaQueryExp*>(this)->m_serializationCache = result.toString();
     return m_serializationCache;
-}
-
-void MediaQueryExp::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_mediaFeature, "mediaFeature");
-    info.addMember(m_serializationCache, "serializationCache");
-    info.addMember(m_value, "value");
 }
 
 } // namespace

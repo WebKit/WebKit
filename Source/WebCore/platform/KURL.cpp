@@ -29,12 +29,10 @@
 
 #include "DecodeEscapeSequences.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformMemoryInstrumentation.h"
 #include "TextEncoding.h"
 #include <stdio.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
-#include <wtf/MemoryInstrumentationString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -1904,12 +1902,6 @@ String mimeTypeFromURL(const KURL& url)
 
     // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure
     return MIMETypeRegistry::getMIMETypeForExtension(extension);
-}
-
-void KURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_string, "string");
 }
 
 bool KURL::isSafeToSendToAnotherThread() const

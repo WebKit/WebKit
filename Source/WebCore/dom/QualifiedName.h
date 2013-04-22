@@ -54,8 +54,6 @@ public:
         const AtomicString m_namespace;
         mutable AtomicString m_localNameUpper;
 
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
             : m_existingHash(0)
@@ -99,8 +97,6 @@ public:
     
     // Init routine for globals
     static void init();
-    
-    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     void ref() const { m_impl->ref(); }

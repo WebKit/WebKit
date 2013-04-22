@@ -62,14 +62,6 @@ public:
         return m_data != o.m_data && *m_data != *o.m_data;
     }
 
-    // Template helps us to write the implementation without MemoryInstrumentation.h include.
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addMember(m_data, "data");
-    }
-
 private:
     RefPtr<T> m_data;
 };

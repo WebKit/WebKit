@@ -79,8 +79,6 @@ public:
     bool styleSharingCandidateMatchesHostRules(const Element*);
     void matchHostRules(const Element*, Vector<RuleSet*>& matchedRules);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     RuleSet* ruleSetFor(const ContainerNode* scope) const;
     void setupStack(const ContainerNode*);

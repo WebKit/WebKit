@@ -83,8 +83,6 @@ public:
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     StylePropertyMetadata metadata() const { return m_metadata; }
 
 private:

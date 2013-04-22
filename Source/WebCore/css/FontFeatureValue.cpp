@@ -28,7 +28,6 @@
 
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -53,12 +52,6 @@ String FontFeatureValue::customCssText() const
 bool FontFeatureValue::equals(const FontFeatureValue& other) const
 {
     return m_tag == other.m_tag && m_value == other.m_value;
-}
-
-void FontFeatureValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_tag, "tag");
 }
 
 }

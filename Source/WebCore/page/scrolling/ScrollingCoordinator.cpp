@@ -39,6 +39,7 @@
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/StringBuilder.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"

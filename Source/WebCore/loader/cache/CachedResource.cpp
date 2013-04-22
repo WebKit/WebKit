@@ -46,24 +46,12 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "SubresourceLoader.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/MemoryInstrumentationHashCountedSet.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryObjectInfo.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/Vector.h>
-
-namespace WTF {
-
-template<> struct SequenceMemoryInstrumentationTraits<WebCore::CachedResourceClient*> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
-
-}
 
 using namespace WTF;
 
@@ -910,33 +898,6 @@ void CachedResource::CachedResourceCallback::cancel()
 void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>*)
 {
     m_resource->didAddClient(m_client);
-}
-
-void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
-    memoryObjectInfo->setName(url().string().utf8().data());
-    info.addMember(m_resourceRequest, "resourceRequest");
-    info.addMember(m_fragmentIdentifierForRequest, "fragmentIdentifierForRequest");
-    info.addMember(m_clients, "clients");
-    info.addMember(m_accept, "accept");
-    info.addMember(m_loader, "loader");
-    info.addMember(m_response, "response");
-    info.addMember(m_data, "data");
-    info.addMember(m_nextInAllResourcesList, "nextInAllResourcesList");
-    info.addMember(m_prevInAllResourcesList, "prevInAllResourcesList");
-    info.addMember(m_nextInLiveResourcesList, "nextInLiveResourcesList");
-    info.addMember(m_prevInLiveResourcesList, "prevInLiveResourcesList");
-    info.addMember(m_owningCachedResourceLoader, "owningCachedResourceLoader");
-    info.addMember(m_resourceToRevalidate, "resourceToRevalidate");
-    info.addMember(m_proxyResource, "proxyResource");
-    info.addMember(m_handlesToRevalidate, "handlesToRevalidate");
-    info.addMember(m_options, "options");
-    info.addMember(m_decodedDataDeletionTimer, "decodedDataDeletionTimer");
-    info.ignoreMember(m_clientsAwaitingCallback);
-
-    if (m_purgeableData && !m_purgeableData->wasPurged())
-        info.addRawBuffer(m_purgeableData.get(), m_purgeableData->size(), "PurgeableData", "purgeableData");
 }
 
 #if PLATFORM(MAC)

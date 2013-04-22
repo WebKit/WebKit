@@ -94,8 +94,6 @@ public:
     virtual void animationAdvanced(const Image*);
     virtual void changedInRect(const Image*, const IntRect&);
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
     static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
 
 private:

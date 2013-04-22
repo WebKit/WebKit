@@ -31,8 +31,6 @@
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
 #include "ScriptableDocumentParser.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -218,12 +216,6 @@ String MediaQuerySet::mediaText() const
     return text.toString();
 }
 
-void MediaQuerySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_queries, "queries");
-}
-    
 MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
     : m_mediaQueries(mediaQueries)
     , m_parentStyleSheet(parentSheet)
@@ -294,14 +286,6 @@ void MediaList::reattach(MediaQuerySet* mediaQueries)
 {
     ASSERT(mediaQueries);
     m_mediaQueries = mediaQueries;
-}
-
-void MediaList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_mediaQueries, "mediaQueries");
-    info.addMember(m_parentStyleSheet, "parentStyleSheet");
-    info.addMember(m_parentRule, "parentRule");
 }
 
 #if ENABLE(RESOLUTION_MEDIA_QUERY)

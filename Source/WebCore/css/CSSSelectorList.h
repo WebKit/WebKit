@@ -67,8 +67,6 @@ public:
 
     String selectorsText() const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     unsigned length() const;
     void deleteSelectors();

@@ -50,10 +50,6 @@ class NativeImageSkia;
 #include "SharedBitmap.h"
 #endif
 
-namespace WTF {
-class MemoryObjectInfo;
-}
-
 namespace WebCore {
 
 // FIXME: NativeImagePtr and PassNativeImagePtr should be smart
@@ -74,7 +70,6 @@ typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;
 #elif USE(SKIA)
 typedef RefPtr<NativeImageSkia> NativeImagePtr;
 typedef PassRefPtr<NativeImageSkia> PassNativeImagePtr;
-void reportMemoryUsage(const NativeImageSkia*, WTF::MemoryObjectInfo*);
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #elif PLATFORM(BLACKBERRY)

@@ -54,7 +54,6 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
@@ -1318,31 +1317,6 @@ EventTargetData* XMLHttpRequest::eventTargetData()
 EventTargetData* XMLHttpRequest::ensureEventTargetData()
 {
     return &m_eventTargetData;
-}
-
-void XMLHttpRequest::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_upload, "upload");
-    info.addMember(m_url, "url");
-    info.addMember(m_method, "method");
-    info.addMember(m_requestHeaders, "requestHeaders");
-    info.addMember(m_requestEntityBody, "requestEntityBody");
-    info.addMember(m_mimeTypeOverride, "mimeTypeOverride");
-    info.addMember(m_responseBlob, "responseBlob");
-    info.addMember(m_loader, "loader");
-    info.addMember(m_response, "response");
-    info.addMember(m_responseEncoding, "responseEncoding");
-    info.addMember(m_decoder, "decoder");
-    info.addMember(m_responseBuilder, "responseBuilder");
-    info.addMember(m_responseDocument, "responseDocument");
-    info.addMember(m_binaryResponseBuilder, "binaryResponseBuilder");
-    info.addMember(m_responseArrayBuffer, "responseArrayBuffer");
-    info.addMember(m_lastSendURL, "lastSendURL");
-    info.addMember(m_eventTargetData, "eventTargetData");
-    info.addMember(m_progressEventThrottle, "progressEventThrottle");
-    info.addMember(m_securityOrigin, "securityOrigin");
 }
 
 } // namespace WebCore

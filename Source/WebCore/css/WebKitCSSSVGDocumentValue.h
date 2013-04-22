@@ -46,8 +46,6 @@ public:
     bool loadRequested() const { return m_loadRequested; }
     bool equals(const WebKitCSSSVGDocumentValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSSVGDocumentValue(const String& url);
 

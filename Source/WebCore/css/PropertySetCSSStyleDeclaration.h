@@ -51,8 +51,6 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     virtual CSSRule* parentRule() const OVERRIDE { return 0; };
     virtual unsigned length() const OVERRIDE;
@@ -100,8 +98,6 @@ public:
 
     void reattach(MutableStylePropertySet*);
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     StyleRuleCSSStyleDeclaration(MutableStylePropertySet*, CSSRule*);
 
@@ -124,8 +120,6 @@ public:
         , m_parentElement(parentElement) 
     {
     }
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
     
 private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;

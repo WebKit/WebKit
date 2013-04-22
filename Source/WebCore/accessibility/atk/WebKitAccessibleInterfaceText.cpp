@@ -49,6 +49,7 @@
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)
 #include <libgail-util/gail-util.h>

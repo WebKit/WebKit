@@ -107,7 +107,6 @@
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
 #include "UserActionElementSet.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WheelEvent.h"
 #include "WindowEventContext.h"
 #include "XMLNames.h"
@@ -2685,22 +2684,6 @@ void Node::removedLastRef()
     m_deletionHasBegun = true;
 #endif
     delete this;
-}
-
-void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_parentOrShadowHostNode, "parentOrShadowHostNode");
-    info.addMember(m_treeScope, "treeScope");
-    info.ignoreMember(m_next);
-    info.ignoreMember(m_previous);
-    info.addMember(this->renderer(), "renderer");
-    if (hasRareData()) {
-        if (isElementNode())
-            info.addMember(static_cast<ElementRareData*>(rareData()), "elementRareData");
-        else
-            info.addMember(rareData(), "rareData");
-    }
 }
 
 void Node::textRects(Vector<IntRect>& rects) const

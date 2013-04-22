@@ -34,7 +34,6 @@
 #include "RenderObject.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -167,19 +166,6 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
     }
 
     m_crossfadeSubimageObserver.setReady(true);
-}
-
-void CSSCrossfadeValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_fromValue, "fromValue");
-    info.addMember(m_toValue, "toValue");
-    info.addMember(m_percentageValue, "percentageValue");
-    // FIXME: add instrumentation for
-    // m_cachedFromImage
-    // m_cachedToImage
-    // m_generatedImage
 }
 
 PassRefPtr<Image> CSSCrossfadeValue::image(RenderObject* renderer, const IntSize& size)

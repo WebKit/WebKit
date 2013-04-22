@@ -144,8 +144,6 @@ public:
 
     void setDataBufferingPolicy(DataBufferingPolicy);
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     ResourceLoader(Frame*, ResourceLoaderOptions);
 

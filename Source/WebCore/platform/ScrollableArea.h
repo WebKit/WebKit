@@ -184,8 +184,6 @@ public:
     virtual bool usesCompositedScrolling() const { return false; }
 #endif
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     ScrollableArea();
     virtual ~ScrollableArea();

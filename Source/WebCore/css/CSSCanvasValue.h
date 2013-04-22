@@ -49,8 +49,6 @@ public:
 
     bool equals(const CSSCanvasValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSCanvasValue(const String& name)
         : CSSImageGeneratorValue(CanvasClass)

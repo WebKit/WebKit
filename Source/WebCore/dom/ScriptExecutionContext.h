@@ -154,8 +154,6 @@ public:
 
     virtual EventQueue* eventQueue() const = 0;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 #if ENABLE(SQL_DATABASE)
     void setDatabaseContext(DatabaseContext*);
 #endif

@@ -260,8 +260,6 @@ public:
     virtual bool createsAnonymousWrapper() const { return false; }
     //////////////////////////////////////////
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!

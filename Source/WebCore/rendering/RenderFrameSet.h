@@ -76,8 +76,6 @@ public:
 
     void notifyFrameEdgeInfoChanged();
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     static const int noSplit = -1;
 
@@ -86,8 +84,6 @@ private:
     public:
         GridAxis();
         void resize(int);
-
-        void reportMemoryUsage(MemoryObjectInfo*) const;
 
         Vector<int> m_sizes;
         Vector<int> m_deltas;

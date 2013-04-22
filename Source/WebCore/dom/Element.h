@@ -82,8 +82,6 @@ public:
 
     bool isEquivalent(const ElementData* other) const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     bool isUnique() const { return m_isUnique; }
 
 protected:
@@ -620,8 +618,6 @@ public:
 
     IntSize savedLayerScrollOffset() const;
     void setSavedLayerScrollOffset(const IntSize&);
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)

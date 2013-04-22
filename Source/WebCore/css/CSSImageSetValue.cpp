@@ -38,8 +38,7 @@
 #include "Page.h"
 #include "StyleCachedImageSet.h"
 #include "StylePendingImage.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -193,19 +192,6 @@ CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
 PassRefPtr<CSSImageSetValue> CSSImageSetValue::cloneForCSSOM() const
 {
     return adoptRef(new CSSImageSetValue(*this));
-}
-
-void CSSImageSetValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
-    info.addMember(m_imagesInSet, "imagesInSet");
-}
-
-void CSSImageSetValue::ImageWithScale::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(imageURL, "imageURL");
 }
 
 } // namespace WebCore

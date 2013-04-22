@@ -39,7 +39,6 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "ScriptProfiler.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -235,15 +234,6 @@ void InspectorHeapProfilerAgent::getHeapObjectId(ErrorString* errorString, const
     }
     unsigned id = ScriptProfiler::getHeapObjectId(value);
     *heapSnapshotObjectId = String::number(id);
-}
-
-void InspectorHeapProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorProfilerAgent);
-    InspectorBaseAgent<InspectorHeapProfilerAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_injectedScriptManager, "injectedScriptManager");
-    info.addWeakPointer(m_frontend);
-    info.addMember(m_snapshots, "snapshots");
 }
 
 } // namespace WebCore

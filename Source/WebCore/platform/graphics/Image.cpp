@@ -34,11 +34,9 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformMemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include <math.h>
 #include <wtf/MainThread.h>
-#include <wtf/MemoryObjectInfo.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(CG)
@@ -197,14 +195,6 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
     intrinsicRatio = size();
     intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
     intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
-}
-
-void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    memoryObjectInfo->setClassName("Image");
-    info.addMember(m_encodedImageData, "encodedImageData");
-    info.addWeakPointer(m_imageObserver);
 }
 
 }

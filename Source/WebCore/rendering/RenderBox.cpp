@@ -54,10 +54,8 @@
 #include "RenderView.h"
 #include "ScrollbarTheme.h"
 #include "TransformState.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <algorithm>
 #include <math.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/StackStats.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -65,12 +63,6 @@
 #endif
 
 using namespace std;
-
-namespace WTF {
-template<> struct SequenceMemoryInstrumentationTraits<WebCore::LayoutUnit> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
-}
 
 namespace WebCore {
 
@@ -4591,22 +4583,6 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
 
     ASSERT(beforeChild->parent() == this);
     return beforeChild;
-}
-
-void RenderBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    RenderBoxModelObject::reportMemoryUsage(memoryObjectInfo);
-    info.addWeakPointer(m_inlineBoxWrapper);
-    info.addMember(m_overflow, "overflow");
-}
-
-void RenderBox::reportStaticMembersMemoryUsage(MemoryInstrumentation* memoryInstrumentation)
-{
-    memoryInstrumentation->addRootObject(gOverrideHeightMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gOverrideWidthMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gOverrideContainingBlockLogicalHeightMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gOverrideContainingBlockLogicalWidthMap, WebCoreMemoryTypes::RenderingStructures);
 }
 
 } // namespace WebCore

@@ -2331,9 +2331,6 @@
     <ClCompile Include="..\loader\SubresourceLoader.cpp">
       <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\SubstituteData.cpp">
-      <Filter>loader</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\TextResourceDecoder.cpp">
       <Filter>loader</Filter>
     </ClCompile>
@@ -2551,9 +2548,6 @@
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\PlatformInstrumentation.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\PlatformMemoryInstrumentation.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\PlatformStrategies.cpp">
@@ -4920,9 +4914,6 @@
     <ClCompile Include="..\dom\ViewportArguments.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\WebCoreMemoryInstrumentation.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\WebKitAnimationEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -6399,9 +6390,6 @@
     <ClCompile Include="..\inspector\DOMPatchSupport.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\HeapGraphSerializer.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\IdentifiersFactory.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -6535,9 +6523,6 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\InstrumentingAgents.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\MemoryInstrumentationImpl.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\NetworkResourcesData.cpp">
@@ -9393,9 +9378,6 @@
     <ClInclude Include="..\platform\PlatformKeyboardEvent.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\PlatformMemoryInstrumentation.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\PlatformMenuDescription.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -11823,9 +11805,6 @@
     <ClInclude Include="..\dom\ViewportArguments.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\WebCoreMemoryInstrumentation.h">
-      <Filter>dom</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\WebKitAnimationEvent.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -13740,9 +13719,6 @@
     <ClInclude Include="..\inspector\DOMPatchSupport.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\HeapGraphSerializer.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\IdentifiersFactory.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -13894,9 +13870,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InstrumentingAgents.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\MemoryInstrumentationImpl.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\NetworkResourcesData.h">

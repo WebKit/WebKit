@@ -64,15 +64,11 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TransformState.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/StdLibExtras.h>
 #if ENABLE(CSS_EXCLUSIONS)
 #include "ExclusionShapeInsideInfo.h"
 #include "ExclusionShapeOutsideInfo.h"
 #endif
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationHashSet.h>
-#include <wtf/MemoryInstrumentationListHashSet.h>
 #include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
 
@@ -8130,25 +8126,5 @@ String ValueToString<RenderBlock::FloatingObject*>::string(const RenderBlock::Fl
 }
 
 #endif
-
-void RenderBlock::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_floatingObjects, "floatingObjects");
-    info.addMember(m_rareData, "rareData");
-    info.addMember(m_children, "children");
-    info.addMember(m_lineBoxes, "lineBoxes");
-}
-
-void RenderBlock::reportStaticMembersMemoryUsage(MemoryInstrumentation* memoryInstrumentation)
-{
-    memoryInstrumentation->addRootObject(gColumnInfoMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gPositionedDescendantsMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gPercentHeightDescendantsMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gPositionedContainerMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gPercentHeightContainerMap, WebCoreMemoryTypes::RenderingStructures);
-    memoryInstrumentation->addRootObject(gDelayedUpdateScrollInfoSet, WebCoreMemoryTypes::RenderingStructures);
-}
 
 } // namespace WebCore

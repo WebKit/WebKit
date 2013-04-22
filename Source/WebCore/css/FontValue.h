@@ -41,8 +41,6 @@ public:
 
     bool equals(const FontValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> variant;
     RefPtr<CSSPrimitiveValue> weight;

@@ -141,8 +141,6 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return false; }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 

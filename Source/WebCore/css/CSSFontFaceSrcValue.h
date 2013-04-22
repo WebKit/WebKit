@@ -73,8 +73,6 @@ public:
 
     bool equals(const CSSFontFaceSrcValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSFontFaceSrcValue(const String& resource, bool local)
         : CSSValue(FontFaceSrcClass)

@@ -1,3 +1,42 @@
+2013-04-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the memory instrumentation code
+        https://bugs.webkit.org/show_bug.cgi?id=114931
+
+        Reviewed by Andreas Kling.
+
+        On Mac x86_64, the code removal cause the binary to be
+        9224 bytes smaller.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/ListHashSet.h:
+        (ListHashSet):
+        (ListHashSetNodeAllocator):
+        (WTF::ListHashSetNodeAllocator::pool):
+        (WTF::ListHashSetNodeAllocator::pastPool):
+        * wtf/MemoryInstrumentation.cpp: Removed.
+        * wtf/MemoryInstrumentation.h: Removed.
+        * wtf/MemoryInstrumentationArrayBufferView.h: Removed.
+        * wtf/MemoryInstrumentationHashCountedSet.h: Removed.
+        * wtf/MemoryInstrumentationHashMap.h: Removed.
+        * wtf/MemoryInstrumentationHashSet.h: Removed.
+        * wtf/MemoryInstrumentationListHashSet.h: Removed.
+        * wtf/MemoryInstrumentationSequence.h: Removed.
+        * wtf/MemoryInstrumentationString.h: Removed.
+        * wtf/MemoryInstrumentationVector.h: Removed.
+        * wtf/MemoryObjectInfo.h: Removed.
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isASCIILiteral):
+        * wtf/text/WTFString.h:
+
 2013-04-22  David Kilzer  <ddkilzer@apple.com>
 
         StringImpl.h should compile with -Wshorten-64-to-32

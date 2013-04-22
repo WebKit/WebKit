@@ -27,7 +27,6 @@
 #include "CSSReflectValue.h"
 
 #include "CSSPrimitiveValue.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace std;
@@ -61,13 +60,6 @@ bool CSSReflectValue::equals(const CSSReflectValue& other) const
     return m_direction == other.m_direction
         && compareCSSValuePtr(m_offset, other.m_offset)
         && compareCSSValuePtr(m_mask, other.m_mask);
-}
-
-void CSSReflectValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_offset, "offset");
-    info.addMember(m_mask, "mask");
 }
 
 } // namespace WebCore

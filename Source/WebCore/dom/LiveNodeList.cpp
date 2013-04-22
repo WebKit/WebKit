@@ -28,7 +28,6 @@
 #include "HTMLCollection.h"
 #include "HTMLPropertiesCollection.h"
 #include "PropertyNodeList.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -88,13 +87,6 @@ void LiveNodeListBase::invalidateIdNameCacheMaps() const
     const HTMLCollection* cacheBase = static_cast<const HTMLCollection*>(this);
     cacheBase->m_idCache.clear();
     cacheBase->m_nameCache.clear();
-}
-
-void LiveNodeListBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_ownerNode, "ownerNode");
-    info.addWeakPointer(m_cachedItem);
 }
 
 Node* LiveNodeList::namedItem(const AtomicString& elementId) const

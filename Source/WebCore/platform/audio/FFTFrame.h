@@ -109,8 +109,6 @@ public:
     unsigned fftSize() const { return m_FFTSize; }
     unsigned log2FFTSize() const { return m_log2FFTSize; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     unsigned m_FFTSize;
     unsigned m_log2FFTSize;

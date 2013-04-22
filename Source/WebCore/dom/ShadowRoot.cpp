@@ -247,14 +247,4 @@ ScopeContentDistribution* ShadowRoot::ensureScopeDistribution()
     return m_scopeDistribution.get();
 }   
 
-void ShadowRoot::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    DocumentFragment::reportMemoryUsage(memoryObjectInfo);
-    TreeScope::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_prev, "prev");
-    info.addMember(m_next, "next");
-    info.addMember(m_scopeDistribution, "scopeDistribution");
-}
-
 }

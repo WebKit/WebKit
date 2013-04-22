@@ -37,8 +37,6 @@
 #include "SecurityOrigin.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -56,12 +54,6 @@ private:
     
     virtual CSSStyleSheet* styleSheet() const { return m_styleSheet; }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_styleSheet, "styleSheet");
-    }
-    
     CSSStyleSheet* m_styleSheet;
 };
 
@@ -177,19 +169,6 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
             continue;
         m_childRuleCSSOMWrappers[i]->reattach(m_contents->ruleAt(i));
     }
-}
-
-void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_contents, "contents");
-    info.addMember(m_title, "title");
-    info.addMember(m_mediaQueries, "mediaQueries");
-    info.addMember(m_ownerNode, "ownerNode");
-    info.addMember(m_ownerRule, "ownerRule");
-    info.addMember(m_mediaCSSOMWrapper, "mediaCSSOMWrapper");
-    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
-    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

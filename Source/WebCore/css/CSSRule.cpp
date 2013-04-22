@@ -50,15 +50,6 @@ void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
     notImplemented();
 }
 
-void CSSRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    if (m_parentIsRule)
-        info.addMember(m_parentRule, "parentRule");
-    else
-        info.addMember(m_parentStyleSheet, "parentStyleSheet");
-}
-
 const CSSParserContext& CSSRule::parserContext() const
 {
     CSSStyleSheet* styleSheet = parentStyleSheet();

@@ -38,8 +38,6 @@ public:
     bool hasReplacedLogicalWidth() const;
     bool hasReplacedLogicalHeight() const;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 protected:
     virtual void willBeDestroyed();
 

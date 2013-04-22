@@ -59,8 +59,6 @@ public:
 
     void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     explicit DocumentEventQueue(ScriptExecutionContext*);
 

@@ -59,8 +59,6 @@ public:
     // Number of elevations loaded from resource.
     static const unsigned NumberOfRawElevations;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     explicit HRTFDatabase(float sampleRate);
 

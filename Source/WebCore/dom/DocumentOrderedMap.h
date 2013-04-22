@@ -56,8 +56,6 @@ public:
 
     void checkConsistency() const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const TreeScope*) const;
 

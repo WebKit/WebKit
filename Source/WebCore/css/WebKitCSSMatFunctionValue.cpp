@@ -30,7 +30,7 @@
 #include "config.h"
 #include "WebKitCSSMatFunctionValue.h"
 
-#include "WebCoreMemoryInstrumentation.h"
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_SHADERS)
 
@@ -73,12 +73,6 @@ PassRefPtr<WebKitCSSMatFunctionValue> WebKitCSSMatFunctionValue::cloneForCSSOM()
 bool WebKitCSSMatFunctionValue::equals(const WebKitCSSMatFunctionValue& other) const
 {
     return CSSValueList::equals(other);
-}
-
-void WebKitCSSMatFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 
 } // namespace WebCore

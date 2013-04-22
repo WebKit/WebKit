@@ -73,8 +73,6 @@ public:
     ContentDistributor& distributor() { return m_distributor; }
     const ContentDistributor& distributor() const { return m_distributor; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     ElementShadow() { }
 

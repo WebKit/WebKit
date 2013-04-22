@@ -50,8 +50,6 @@ public:
 
     bool equals(const WebKitCSSArrayFunctionValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSArrayFunctionValue();
     WebKitCSSArrayFunctionValue(const WebKitCSSArrayFunctionValue& cloneFrom);

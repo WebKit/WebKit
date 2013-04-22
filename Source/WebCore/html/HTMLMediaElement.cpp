@@ -79,11 +79,9 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/NonCopyingSort.h>
 #include <wtf/Uint8Array.h>
 #include <wtf/text/CString.h>
@@ -5003,47 +5001,6 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;
-}
-
-void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    HTMLElement::reportMemoryUsage(memoryObjectInfo);
-    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_loadTimer, "loadTimer");
-    info.addMember(m_progressEventTimer, "progressEventTimer");
-    info.addMember(m_playbackProgressTimer, "playbackProgressTimer");
-    info.addMember(m_playedTimeRanges, "playedTimeRanges");
-    info.addMember(m_asyncEventQueue, "asyncEventQueue");
-    info.addMember(m_currentSrc, "currentSrc");
-    info.addMember(m_error, "error");
-    info.addMember(m_currentSourceNode, "currentSourceNode");
-    info.addMember(m_nextChildNodeToConsider, "nextChildNodeToConsider");
-    info.addMember(m_player, "player");
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    info.addMember(m_proxyWidget, "proxyWidget");
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    info.addMember(m_mediaSource, "mediaSource");
-#endif
-#if ENABLE(VIDEO_TRACK)
-    info.addMember(m_audioTracks, "audioTracks");
-    info.addMember(m_textTracks, "textTracks");
-    info.addMember(m_videoTracks, "videoTracks");
-    info.addMember(m_textTracksWhenResourceSelectionBegan, "textTracksWhenResourceSelectionBegan");
-    info.addMember(m_cueTree, "cueTree");
-    info.addMember(m_currentlyActiveCues, "currentlyActiveCues");
-#endif
-    info.addMember(m_mediaGroup, "mediaGroup");
-    info.addMember(m_mediaController, "mediaController");
-
-#if PLATFORM(MAC)
-    info.addMember(m_sleepDisabler, "sleepDisabler");
-#endif
-#if ENABLE(WEB_AUDIO)
-    info.addMember(m_audioSourceNode, "audioSourceNode");
-#endif
-
 }
 
 }

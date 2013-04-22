@@ -28,7 +28,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ResourceBuffer.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -70,14 +69,6 @@ void CachedSVGDocument::data(PassRefPtr<ResourceBuffer> data, bool allDataReceiv
 
     setLoading(false);
     checkNotify();
-}
-
-void CachedSVGDocument::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceSVG);
-    CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_document, "document");
-    info.addMember(m_decoder, "decoder");
 }
 
 }

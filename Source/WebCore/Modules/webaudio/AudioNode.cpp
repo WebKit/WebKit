@@ -33,10 +33,8 @@
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
 #include "ExceptionCode.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
-#include <wtf/MemoryInstrumentationVector.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -490,14 +488,6 @@ void AudioNode::finishDeref(RefType refType)
         } else if (refType == RefTypeConnection)
             disableOutputsIfNecessary();
     }
-}
-
-void AudioNode::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Audio);
-    info.addMember(m_context, "context");
-    info.addMember(m_inputs, "inputs");
-    info.addMember(m_outputs, "outputs");
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

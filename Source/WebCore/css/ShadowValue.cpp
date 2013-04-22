@@ -21,7 +21,6 @@
 #include "ShadowValue.h"
 
 #include "CSSPrimitiveValue.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,17 +86,6 @@ bool ShadowValue::equals(const ShadowValue& other) const
         && compareCSSValuePtr(blur, other.blur)
         && compareCSSValuePtr(spread, other.spread)
         && compareCSSValuePtr(style, other.style);
-}
-
-void ShadowValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(x, "x");
-    info.addMember(y, "y");
-    info.addMember(blur, "blur");
-    info.addMember(spread, "spread");
-    info.addMember(style, "style");
-    info.addMember(color, "color");
 }
 
 }

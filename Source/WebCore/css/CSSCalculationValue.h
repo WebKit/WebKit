@@ -76,7 +76,6 @@ public:
     virtual bool hasVariableReference() const = 0;
 #endif
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
     virtual Type type() const = 0;
 
     CalculationCategory category() const { return m_category; }    
@@ -114,8 +113,6 @@ public:
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
     bool hasVariableReference() const;
 #endif
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
     
 private:    
     CSSCalcValue(PassRefPtr<CSSCalcExpressionNode> expression, CalculationPermittedValueRange range)

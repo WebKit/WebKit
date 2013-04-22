@@ -75,8 +75,6 @@
 #include "Page.h"
 #include "ScriptObject.h"
 #include "Settings.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -401,33 +399,6 @@ void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumRes
     m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
 }
 
-void InspectorController::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorController);
-    info.addMember(m_inspectorAgent, "inspectorAgent");
-    info.addMember(m_instrumentingAgents, "instrumentingAgents");
-    info.addMember(m_injectedScriptManager, "injectedScriptManager");
-    info.addMember(m_state, "state");
-    info.addMember(m_overlay, "overlay");
-
-    info.addMember(m_inspectorAgent, "inspectorAgent");
-    info.addMember(m_domAgent, "domAgent");
-    info.addMember(m_resourceAgent, "resourceAgent");
-    info.addMember(m_pageAgent, "pageAgent");
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    info.addMember(m_debuggerAgent, "debuggerAgent");
-    info.addMember(m_domDebuggerAgent, "domDebuggerAgent");
-    info.addMember(m_profilerAgent, "profilerAgent");
-#endif
-
-    info.addMember(m_inspectorBackendDispatcher, "inspectorBackendDispatcher");
-    info.addMember(m_inspectorFrontendClient, "inspectorFrontendClient");
-    info.addMember(m_inspectorFrontend, "inspectorFrontend");
-    info.addMember(m_page, "page");
-    info.addWeakPointer(m_inspectorClient);
-    info.addMember(m_agents, "agents");
-}
-
 void InspectorController::willProcessTask()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
@@ -471,13 +442,6 @@ void InspectorController::didComposite()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didComposite();
-}
-
-HashMap<String, size_t> InspectorController::processMemoryDistribution() const
-{
-    HashMap<String, size_t> memoryInfo;
-    m_memoryAgent->getProcessMemoryDistributionMap(&memoryInfo);
-    return memoryInfo;
 }
 
 } // namespace WebCore

@@ -46,8 +46,6 @@ public:
 
     bool equals(const ShadowValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
     RefPtr<CSSPrimitiveValue> x;
     RefPtr<CSSPrimitiveValue> y;
     RefPtr<CSSPrimitiveValue> blur;

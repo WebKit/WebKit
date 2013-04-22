@@ -123,7 +123,6 @@ public:
         , m_result(result)
     {
     }
-    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     MediaQueryExp m_expression;
     bool m_result;
@@ -354,7 +353,6 @@ public:
     struct MatchedProperties {
         MatchedProperties();
         ~MatchedProperties();
-        void reportMemoryUsage(MemoryObjectInfo*) const;
         
         RefPtr<StylePropertySet> properties;
         union {
@@ -570,9 +568,7 @@ public:
     void setEffectiveZoom(float f) { m_state.setEffectiveZoom(f); }
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
-    
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-    
+
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
@@ -592,7 +588,6 @@ private:
 
     static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
     struct MatchedPropertiesCacheItem {
-        void reportMemoryUsage(MemoryObjectInfo*) const;
         Vector<MatchedProperties> matchedProperties;
         MatchRanges ranges;
         RefPtr<RenderStyle> renderStyle;

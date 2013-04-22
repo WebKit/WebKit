@@ -1256,7 +1256,6 @@ set(WebCore_SOURCES
     dom/UserTypingGestureIndicator.cpp
     dom/ViewportArguments.cpp
     dom/VisitedLinkState.cpp
-    dom/WebCoreMemoryInstrumentation.cpp
     dom/WebKitAnimationEvent.cpp
     dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp
@@ -1592,7 +1591,6 @@ set(WebCore_SOURCES
     inspector/ContentSearchUtils.cpp
     inspector/DOMEditor.cpp
     inspector/DOMPatchSupport.cpp
-    inspector/HeapGraphSerializer.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp
@@ -1637,7 +1635,6 @@ set(WebCore_SOURCES
     inspector/InspectorValues.cpp
     inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
-    inspector/MemoryInstrumentationImpl.cpp
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
@@ -1686,7 +1683,6 @@ set(WebCore_SOURCES
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp
     loader/SubresourceLoader.cpp
-    loader/SubstituteData.cpp
     loader/TextResourceDecoder.cpp
     loader/TextTrackLoader.cpp
     loader/ThreadableLoader.cpp
@@ -1846,7 +1842,6 @@ set(WebCore_SOURCES
     platform/NotImplemented.cpp
     platform/PlatformEvent.cpp
     platform/PlatformInstrumentation.cpp
-    platform/PlatformMemoryInstrumentation.cpp
     platform/RunLoop.cpp
     platform/RuntimeApplicationChecks.cpp
     platform/ScrollAnimator.cpp

@@ -56,8 +56,6 @@ public:
 
     PassRefPtr<StyleRuleKeyframes> copy() const { return adoptRef(new StyleRuleKeyframes(*this)); }
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     StyleRuleKeyframes();
     StyleRuleKeyframes(const StyleRuleKeyframes&);
@@ -75,7 +73,6 @@ public:
     virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_KEYFRAMES_RULE; }
     virtual String cssText() const OVERRIDE;
     virtual void reattach(StyleRuleBase*) OVERRIDE;
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);

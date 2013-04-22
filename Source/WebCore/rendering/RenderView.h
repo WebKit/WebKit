@@ -284,8 +284,6 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 protected:
     FrameView* m_frameView;
 

@@ -60,6 +60,7 @@
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include <glib/gprintf.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>

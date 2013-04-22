@@ -58,8 +58,6 @@ public:
 
     PassOwnPtr<MediaQuery> copy() const { return adoptPtr(new MediaQuery(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
  private:
     MediaQuery(const MediaQuery&);
 

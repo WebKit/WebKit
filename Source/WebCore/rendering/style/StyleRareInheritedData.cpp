@@ -28,8 +28,6 @@
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryObjectInfo.h>
 
 namespace WebCore {
 
@@ -302,24 +300,6 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
     if (textShadow && o.textShadow && (*textShadow != *o.textShadow))
         return false;
     return true;
-}
-
-void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(listStyleImage, "listStyleImage");
-    info.addMember(indent, "indent");
-    info.addMember(textShadow, "textShadow");
-    info.addMember(highlight, "highlight");
-    info.addMember(cursorData, "cursorData");
-    info.addMember(hyphenationString, "hyphenationString");
-    info.addMember(locale, "locale");
-    info.addMember(textEmphasisCustomMark, "textEmphasisCustomMark");
-    info.addMember(quotes, "quotes");
-    info.addMember(m_lineGrid, "lineGrid");
-#if ENABLE(CSS_VARIABLES)
-    info.addMember(m_variables, "variables");
-#endif
 }
 
 } // namespace WebCore

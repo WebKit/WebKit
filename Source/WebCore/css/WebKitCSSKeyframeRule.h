@@ -56,8 +56,6 @@ public:
     
     String cssText() const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     StyleKeyframe();
     
@@ -76,7 +74,6 @@ public:
     virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_KEYFRAME_RULE; }
     virtual String cssText() const OVERRIDE { return m_keyframe->cssText(); }
     virtual void reattach(StyleRuleBase*) OVERRIDE;
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String& s) { m_keyframe->setKeyText(s); }

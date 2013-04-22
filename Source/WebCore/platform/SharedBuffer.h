@@ -114,8 +114,6 @@ public:
     //      }
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     void createPurgeableBuffer() const;
 
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);

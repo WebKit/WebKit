@@ -60,19 +60,12 @@ public:
     virtual ~InspectorMemoryAgent();
 
     virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);
-    virtual void getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<TypeBuilder::Memory::MemoryBlock>& out_processMemory, RefPtr<InspectorObject>& graphMetaInformation);
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
-    void getProcessMemoryDistributionMap(HashMap<String, size_t>* memoryInfo);
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
 
 private:
     InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorCompositeState*, Page*);
-
-    PassRefPtr<InspectorObject> getProcessMemoryDistributionImpl(bool reportGraph, HashMap<String, size_t>* memoryInfo);
 
     InspectorClient* m_inspectorClient;
     Page* m_page;

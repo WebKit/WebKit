@@ -217,8 +217,6 @@ public:
         }
     }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     NodeListsNodeData()
         : m_childNodeList(0)
@@ -334,9 +332,6 @@ public:
         ASSERT(amount <= m_connectedFrameCount);
         m_connectedFrameCount -= amount;
     }
-
-    // This member function is intentionally not virtual to avoid adding a vtable pointer.
-    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     NodeRareData(RenderObject* renderer)

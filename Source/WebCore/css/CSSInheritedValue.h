@@ -37,8 +37,6 @@ public:
 
     bool equals(const CSSInheritedValue&) const { return true; }
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSInheritedValue()
         : CSSValue(InheritedClass)

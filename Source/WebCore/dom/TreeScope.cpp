@@ -384,20 +384,6 @@ Node* TreeScope::focusedNode()
     return 0;
 }
 
-void TreeScope::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_rootNode, "rootNode");
-    info.addMember(m_parentTreeScope, "parentTreeScope");
-    info.addMember(m_elementsById, "elementsById");
-    info.addMember(m_imageMapsByName, "imageMapsByName");
-    info.addMember(m_labelsByForAttribute, "labelsByForAttribute");
-    info.addMember(m_idTargetObserverRegistry, "idTargetObserverRegistry");
-    info.addMember(m_selection, "selection");
-    info.addMember(m_documentScope, "documentScope");
-
-}
-
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 {
     while (true) {

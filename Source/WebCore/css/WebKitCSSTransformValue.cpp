@@ -27,7 +27,6 @@
 #include "WebKitCSSTransformValue.h"
 
 #include "CSSValueList.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,12 +94,6 @@ WebKitCSSTransformValue::WebKitCSSTransformValue(const WebKitCSSTransformValue& 
 PassRefPtr<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() const
 {
     return adoptRef(new WebKitCSSTransformValue(*this));
-}
-
-void WebKitCSSTransformValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 
 }

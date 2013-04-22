@@ -21,8 +21,6 @@
 #include "config.h"
 #include "CSSCharsetRule.h"
 
-#include "WebCoreMemoryInstrumentation.h"
-
 namespace WebCore {
 
 CSSCharsetRule::CSSCharsetRule(CSSStyleSheet* parent, const String& encoding)
@@ -34,13 +32,6 @@ CSSCharsetRule::CSSCharsetRule(CSSStyleSheet* parent, const String& encoding)
 String CSSCharsetRule::cssText() const
 {
     return "@charset \"" + m_encoding + "\";";
-}
-
-void CSSCharsetRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_encoding, "encoding");
 }
 
 } // namespace WebCore

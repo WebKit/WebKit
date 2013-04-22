@@ -457,8 +457,6 @@ public:
 
     virtual bool canThrottleLayerFlush() const { return false; }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     virtual void willBeDestroyed();

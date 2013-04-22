@@ -33,6 +33,7 @@
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/StyledElement.h>
+#import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

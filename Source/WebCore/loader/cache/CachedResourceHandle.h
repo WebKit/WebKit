@@ -44,8 +44,6 @@ public:
     typedef CachedResource* CachedResourceHandleBase::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_resource ? &CachedResourceHandleBase::m_resource : 0; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     CachedResourceHandleBase();
     CachedResourceHandleBase(CachedResource*);

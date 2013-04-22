@@ -91,8 +91,6 @@ public:
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
     float opacity; // Whether or not we're transparent.
 
     float m_aspectRatioDenominator;

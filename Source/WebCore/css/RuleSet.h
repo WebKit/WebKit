@@ -74,8 +74,6 @@ public:
     static const unsigned maximumIdentifierCount = 4;
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     StyleRule* m_rule;
     unsigned m_selectorIndex : 13;
@@ -134,8 +132,6 @@ public:
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase> >&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
     bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);
@@ -161,7 +157,6 @@ public:
     struct RuleSetSelectorPair {
         RuleSetSelectorPair(const CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
         RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
-        void reportMemoryUsage(MemoryObjectInfo*) const;
 
         const CSSSelector* selector;
         OwnPtr<RuleSet> ruleSet;

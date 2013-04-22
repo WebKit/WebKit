@@ -35,8 +35,6 @@
 #include "CSSStyleSheet.h"
 #include "ExceptionCode.h"
 #include "StyleRule.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)

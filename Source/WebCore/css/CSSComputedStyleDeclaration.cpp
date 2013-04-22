@@ -61,7 +61,6 @@
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>
@@ -3019,12 +3018,6 @@ PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyPropertiesI
             list.append(CSSProperty(set[i], value.release(), false));
     }
     return MutableStylePropertySet::create(list.data(), list.size());
-}
-
-void CSSComputedStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_node, "node");
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

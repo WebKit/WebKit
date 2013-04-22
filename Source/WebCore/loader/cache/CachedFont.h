@@ -62,8 +62,6 @@ public:
     SVGFontElement* getSVGFontById(const String&) const;
 #endif
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
 private:
     virtual void checkNotify();
     FontCustomPlatformData* m_fontData;

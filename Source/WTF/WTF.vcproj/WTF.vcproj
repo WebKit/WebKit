@@ -933,50 +933,6 @@
 			>
 		</File>
 		<File
-		        RelativePath="..\wtf\MemoryInstrumentation.cpp"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentation.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationArrayBufferView.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationHashCountedSet.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationHashMap.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationHashSet.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationListHashSet.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationSequence.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationString.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryInstrumentationVector.h"
-			>
-		</File>
-		<File
-		        RelativePath="..\wtf\MemoryObjectInfo.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\MessageQueue.h"
 			>
 		</File>

@@ -44,8 +44,6 @@ public:
     CSSStyleRule* getWrapperForRuleInSheets(StyleRule*, DocumentStyleSheetCollection*);
     void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     template <class ListType>
     void collect(ListType*);

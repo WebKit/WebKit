@@ -35,7 +35,6 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -84,14 +83,6 @@ void WebKitCSSFilterRule::reattach(StyleRuleBase* rule)
     m_filterRule = static_cast<StyleRuleFilter*>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_filterRule->mutableProperties());
-}
-
-void WebKitCSSFilterRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_filterRule);
-    info.addMember(m_propertiesCSSOMWrapper);
 }
 
 } // namespace WebCore

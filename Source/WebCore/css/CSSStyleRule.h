@@ -39,7 +39,6 @@ public:
     virtual CSSRule::Type type() const { return STYLE_RULE; }
     virtual String cssText() const OVERRIDE;
     virtual void reattach(StyleRuleBase*) OVERRIDE;
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String selectorText() const;
     void setSelectorText(const String&);

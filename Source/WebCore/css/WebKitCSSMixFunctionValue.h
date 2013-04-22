@@ -50,8 +50,6 @@ public:
 
     bool equals(const WebKitCSSMixFunctionValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSMixFunctionValue();
     WebKitCSSMixFunctionValue(const WebKitCSSMixFunctionValue& cloneFrom);

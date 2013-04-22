@@ -161,8 +161,6 @@ public:
     static void setMaxPixelsPerDecodedImage(unsigned maxPixels) { s_maxPixelsPerDecodedImage = maxPixels; }
 #endif
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     NativeImageDecoderPtr m_decoder;
 

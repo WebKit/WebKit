@@ -96,8 +96,6 @@ public:
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
     static TreeScope* noDocumentInstance()
     {
         DEFINE_STATIC_LOCAL(TreeScope, instance, ());

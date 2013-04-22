@@ -49,8 +49,6 @@ public:
 
     bool equals(const CSSFunctionValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
     CSSFunctionValue(String, PassRefPtr<CSSValueList>);

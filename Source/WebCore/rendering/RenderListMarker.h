@@ -44,8 +44,6 @@ public:
 
     bool isInside() const;
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
     void updateMarginsAndContent();
 
 private:

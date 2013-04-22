@@ -70,8 +70,6 @@ public:
 
     bool equals(const WebKitCSSFilterValue&) const;
 
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSFilterValue(FilterOperationType);
     WebKitCSSFilterValue(const WebKitCSSFilterValue& cloneFrom);

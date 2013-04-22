@@ -77,8 +77,6 @@ public:
         thisObject->deref();
     }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
 protected:
     virtual ~ActiveDOMObject();
 

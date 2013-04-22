@@ -44,9 +44,6 @@
 #include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/WTFString.h>
 
 using WebCore::TypeBuilder::Array;
@@ -765,29 +762,6 @@ void InspectorDebuggerAgent::clearBreakDetails()
 {
     m_breakReason = InspectorFrontend::Debugger::Reason::Other;
     m_breakAuxData = 0;
-}
-
-void InspectorDebuggerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorDebuggerAgent);
-    InspectorBaseAgent<InspectorDebuggerAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_injectedScriptManager, "injectedScriptManager");
-    info.addWeakPointer(m_frontend);
-    info.addMember(m_pausedScriptState, "pausedScriptState");
-    info.addMember(m_currentCallStack, "currentCallStack");
-    info.addMember(m_scripts, "scripts");
-    info.addMember(m_breakpointIdToDebugServerBreakpointIds, "breakpointIdToDebugServerBreakpointIds");
-    info.addMember(m_continueToLocationBreakpointId, "continueToLocationBreakpointId");
-    info.addMember(m_breakAuxData, "breakAuxData");
-    info.addWeakPointer(m_listener);
-}
-
-void ScriptDebugListener::Script::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorDebuggerAgent);
-    info.addMember(url, "url");
-    info.addMember(source, "source");
-    info.addMember(sourceMappingURL, "sourceMappingURL");
 }
 
 void InspectorDebuggerAgent::reset()

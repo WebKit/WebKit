@@ -33,6 +33,7 @@
 
 #include "InspectorBackendDispatcher.h"
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,8 +56,6 @@ public:
     virtual void discardAgent() { }
 
     String name() { return m_name; }
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     InstrumentingAgents* m_instrumentingAgents;

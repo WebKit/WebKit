@@ -501,7 +501,6 @@ SOURCES += \
     dom/UserTypingGestureIndicator.cpp \
     dom/ViewportArguments.cpp \
     dom/VisitedLinkState.cpp \
-    dom/WebCoreMemoryInstrumentation.cpp \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
@@ -785,7 +784,6 @@ SOURCES += \
     inspector/ContentSearchUtils.cpp \
     inspector/DOMEditor.cpp \
     inspector/DOMPatchSupport.cpp \
-    inspector/HeapGraphSerializer.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptBase.cpp \
@@ -828,7 +826,6 @@ SOURCES += \
     inspector/InspectorValues.cpp \
     inspector/InspectorWorkerAgent.cpp \
     inspector/InstrumentingAgents.cpp \
-    inspector/MemoryInstrumentationImpl.cpp \
     inspector/NetworkResourcesData.cpp \
     inspector/PageConsoleAgent.cpp \
     inspector/PageDebuggerAgent.cpp \
@@ -905,7 +902,6 @@ SOURCES += \
     loader/SinkDocument.cpp \
     loader/SubframeLoader.cpp \
     loader/SubresourceLoader.cpp \
-    loader/SubstituteData.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
     page/animation/AnimationBase.cpp \
@@ -1118,7 +1114,6 @@ SOURCES += \
     platform/text/RegularExpression.cpp \
     platform/PlatformEvent.cpp \
     platform/PlatformInstrumentation.cpp \
-    platform/PlatformMemoryInstrumentation.cpp \
     platform/RuntimeApplicationChecks.cpp \
     platform/RunLoop.cpp \
     platform/SchemeRegistry.cpp \
@@ -1731,7 +1726,6 @@ HEADERS += \
     dom/UIEventWithKeyState.h \
     dom/UserGestureIndicator.h \
     dom/ViewportArguments.h \
-    dom/WebCoreMemoryInstrumentation.h \
     dom/WebKitAnimationEvent.h \
     dom/WebKitNamedFlow.h \
     dom/WebKitTransitionEvent.h \
@@ -1974,7 +1968,6 @@ HEADERS += \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
     inspector/DOMPatchSupport.h \
-    inspector/HeapGraphSerializer.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptBase.h \
@@ -2018,7 +2011,6 @@ HEADERS += \
     inspector/InspectorTimelineAgent.h \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \
-    inspector/MemoryInstrumentationImpl.h \
     inspector/NetworkResourcesData.h \
     inspector/PageConsoleAgent.h \
     inspector/PageDebuggerAgent.h \
@@ -2371,7 +2363,6 @@ HEADERS += \
     platform/network/qt/NetworkStateNotifierPrivate.h \
     platform/network/qt/CookieJarQt.h \
     platform/PlatformExportMacros.h \
-    platform/PlatformMemoryInstrumentation.h \
     platform/PlatformTouchEvent.h \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \

@@ -35,7 +35,6 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "StyleRule.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_REGIONS)

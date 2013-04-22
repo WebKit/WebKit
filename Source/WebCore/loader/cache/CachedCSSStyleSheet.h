@@ -52,8 +52,6 @@ namespace WebCore {
 
         PassRefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&);
         void saveParsedStyleSheet(PassRefPtr<StyleSheetContents>);
-    
-        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;

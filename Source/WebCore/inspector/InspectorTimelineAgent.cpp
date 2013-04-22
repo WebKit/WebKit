@@ -603,11 +603,7 @@ void InspectorTimelineAgent::setNativeHeapStatistics(TypeBuilder::Timeline::Time
         return;
     if (!m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics))
         return;
-    HashMap<String, size_t> map;
-    m_memoryAgent->getProcessMemoryDistributionMap(&map);
     RefPtr<InspectorObject> stats = InspectorObject::create();
-    for (HashMap<String, size_t>::iterator it = map.begin(); it != map.end(); ++it)
-        stats->setNumber(it->key, it->value);
     size_t privateBytes = 0;
     size_t sharedBytes = 0;
     MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);

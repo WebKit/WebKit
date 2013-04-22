@@ -34,7 +34,6 @@
 #include "CSSValueList.h"
 #include "Length.h"
 #include "StyleResolver.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -113,11 +112,6 @@ bool CSSCalcValue::hasVariableReference() const
 }
 #endif
 
-void CSSCalcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-}
-    
 double CSSCalcValue::clampToPermittedRange(double value) const
 {
     return m_nonNegative && value < 0 ? 0 : value;
@@ -237,12 +231,6 @@ public:
         return compareCSSValuePtr(m_value, static_cast<const CSSCalcPrimitiveValue&>(other).m_value);
     }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_value, "value");
-    }
-
     virtual Type type() const { return CssCalcPrimitiveValue; }
     
 private:
@@ -335,13 +323,6 @@ public:
         const double leftValue = m_leftSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         const double rightValue = m_rightSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         return evaluate(leftValue, rightValue);
-    }
-
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_leftSide, "leftSide");
-        info.addMember(m_rightSide, "rightSide");
     }
 
     static String buildCssText(const String& leftExpression, const String& rightExpression, CalcOperator op)

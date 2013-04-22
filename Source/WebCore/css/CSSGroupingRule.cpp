@@ -37,8 +37,6 @@
 #include "CSSStyleSheet.h"
 #include "ExceptionCode.h"
 #include "StyleRule.h"
-#include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -158,15 +156,6 @@ void CSSGroupingRule::reattach(StyleRuleBase* rule)
         if (m_childRuleCSSOMWrappers[i])
             m_childRuleCSSOMWrappers[i]->reattach(m_groupRule->childRules()[i].get());
     }
-}
-
-void CSSGroupingRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_groupRule, "groupRule");
-    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
-    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 } // namespace WebCore

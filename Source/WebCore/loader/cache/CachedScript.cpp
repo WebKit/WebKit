@@ -34,7 +34,6 @@
 #include "MemoryCache.h"
 #include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -107,13 +106,5 @@ bool CachedScript::mimeTypeAllowedByNosniff() const
     return !parseContentTypeOptionsHeader(m_response.httpHeaderField("X-Content-Type-Options")) == ContentTypeOptionsNosniff || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType());
 }
 #endif
-
-void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceScript);
-    CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_script, "script");
-    info.addMember(m_decoder, "decoder");
-}
 
 } // namespace WebCore

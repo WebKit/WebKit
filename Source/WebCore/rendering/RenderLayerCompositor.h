@@ -264,7 +264,6 @@ public:
     void resetTrackedRepaintRects();
     void setTracksRepaints(bool);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
     void setShouldReevaluateCompositingAfterLayout() { m_reevaluateCompositingAfterLayout = true; }
 
     bool viewHasTransparentBackground(Color* backgroundColor = 0) const;

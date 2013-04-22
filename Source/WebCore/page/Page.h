@@ -389,8 +389,6 @@ public:
     void hiddenPageCSSAnimationSuspensionStateChanged();
 #endif
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
 #if ENABLE(VIDEO_TRACK)
     void captionPreferencesChanged();
 #endif

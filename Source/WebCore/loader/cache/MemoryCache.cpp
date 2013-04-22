@@ -35,16 +35,12 @@
 #include "PublicSuffix.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/MemoryInstrumentationHashMap.h>
-#include <wtf/MemoryInstrumentationVector.h>
-#include <wtf/MemoryObjectInfo.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
@@ -786,19 +782,6 @@ MemoryCache::Statistics MemoryCache::getStatistics()
 #endif
     }
     return stats;
-}
-
-void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::MemoryCacheStructures);
-    memoryObjectInfo->setClassName("MemoryCache");
-    info.addMember(m_resources, "resources");
-    info.addMember(m_allResources, "allResources");
-    info.addMember(m_liveDecodedResources, "liveDecodedResources");
-#if !ENABLE(CACHE_PARTITIONING)
-    for (CachedResourceMap::const_iterator i = m_resources.begin(); i != m_resources.end(); ++i)
-        info.addMember(i->value, "cachedResourceItem", WTF::RetainingPointer);
-#endif
 }
 
 void MemoryCache::setDisabled(bool disabled)
