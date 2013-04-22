@@ -47,6 +47,7 @@ webkit_web_context_set_tls_errors_policy
 webkit_web_context_get_tls_errors_policy
 webkit_web_context_set_web_extensions_directory
 webkit_web_context_prefetch_dns
+webkit_web_context_set_disk_cache_directory
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback

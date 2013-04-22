@@ -20,7 +20,10 @@
 #include "config.h"
 #include "TestMain.h"
 
+#include <glib/gstdio.h>
 #include <gtk/gtk.h>
+#include <webkit2/webkit2.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 void beforeAll();
 void afterAll();
@@ -35,6 +38,19 @@ static void registerGResource(void)
     g_resource_unref(resource);
 }
 
+static void removeNonEmptyDirectory(const char* directoryPath)
+{
+    GDir* directory = g_dir_open(directoryPath, 0, 0);
+    g_assert(directory);
+    const char* fileName;
+    while ((fileName = g_dir_read_name(directory))) {
+        GOwnPtr<char> filePath(g_build_filename(directoryPath, fileName, NULL));
+        g_unlink(filePath.get());
+    }
+    g_dir_close(directory);
+    g_rmdir(directoryPath);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, 0);
@@ -45,9 +61,15 @@ int main(int argc, char** argv)
 
     registerGResource();
 
+    GOwnPtr<char> diskCacheTempDirectory(g_dir_make_tmp("WebKit2TestsDiskCache-XXXXXX", 0));
+    g_assert(diskCacheTempDirectory.get());
+    webkit_web_context_set_disk_cache_directory(webkit_web_context_get_default(), diskCacheTempDirectory.get());
+
     beforeAll();
     int returnValue = g_test_run();
     afterAll();
+
+    removeNonEmptyDirectory(diskCacheTempDirectory.get());
 
     return returnValue;
 }

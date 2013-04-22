@@ -192,6 +192,10 @@ WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 
+WEBKIT_API void
+webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
+                                                     const gchar                   *directory);
+
 G_END_DECLS
 
 #endif

@@ -1,5 +1,24 @@
 2013-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add webkit_web_context_set_disk_cache_directory to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=111848
+
+        Reviewed by Anders Carlsson.
+
+        This allow applications to set a custom directory for the disk
+        cache.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_disk_cache_directory):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (removeNonEmptyDirectory):
+        (main): Use a different temporary disk cache directory for every
+        test.
+
+2013-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Soup disk cache should respect the diskCacheDirectory from the process initial parameters
         https://bugs.webkit.org/show_bug.cgi?id=111845
 

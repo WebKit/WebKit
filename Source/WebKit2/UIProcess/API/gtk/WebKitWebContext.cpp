@@ -773,6 +773,23 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
 }
 
 /**
+ * webkit_web_context_set_disk_cache_directory:
+ * @context: a #WebKitWebContext
+ * @directory: the directory to set
+ *
+ * Set the directory where disk cache files will be stored
+ * This method must be called before loading anything in this context, otherwise
+ * it will not have any effect.
+ */
+void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, const char* directory)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(directory);
+
+    context->priv->context->setDiskCacheDirectory(WebCore::filenameToString(directory));
+}
+
+/**
  * webkit_web_context_prefetch_dns:
  * @context: a #WebKitWebContext
  * @hostname: a hostname to be resolved
