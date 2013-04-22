@@ -1,0 +1,37 @@
+(allow mach-lookup
+    (global-name "com.apple.ist.ds.appleconnect2.service.admin")
+    (global-name "com.apple.ist.ds.appleconnect2.service.agent")
+    (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
+    (global-name "com.apple.ist.ds.appleconnect2.service.menuextra")
+    (global-name "org.h5l.kcm"))
+;; FIXME: This is explicitly being called out <rdar://problem/13481170>
+(deny mach-lookup
+    (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\..*\[[0-9]+\]$"))
+(allow mach-lookup
+    (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$"))
+
+(shared-preferences-read
+    "com.apple.GSS"
+    "com.apple.ist.ds.appleconnect2"
+    "com.apple.ist.ds.appleconnect2.acceptanceTest"
+    "com.apple.ist.ds.appleconnect2.production"
+    "com.apple.ist.ds.appleconnect2.uat"
+    "com.apple.Kerberos"
+    "edu.mit.Kerberos")
+
+(allow file-read*
+    (subpath "/Library/KerberosPlugins/GSSAPI")
+    (literal "/Library/Preferences/edu.mit.Kerberos")
+    (home-literal "/Library/Preferences/edu.mit.Kerberos"))
+
+(allow file-read*
+    (literal "/private/etc/services"))
+
+(if (defined? 'mach-register)
+    (allow mach-register
+        (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$")))
+
+(allow network-outbound
+   (remote udp "*:4160" "*:88"))
+(allow network-inbound
+   (local udp))

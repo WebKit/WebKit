@@ -53,8 +53,6 @@
 
 @end
 
-NSString * const WebKit2PlugInSandboxProfileDirectoryPathKey = @"WebKit2PlugInSandboxProfileDirectoryPath";
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -140,13 +138,7 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
 {
     launchOptions.architecture = pluginInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
-
     launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
-
-    // FIXME: We should rip this out once we have a good place to install plug-in sandbox profiles.
-    NSString* sandboxProfileDirectoryPath = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2PlugInSandboxProfileDirectoryPathKey];
-    if (sandboxProfileDirectoryPath)
-        launchOptions.extraInitializationData.add("sandbox-profile-directory-path", String(sandboxProfileDirectoryPath));
 
 #if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();

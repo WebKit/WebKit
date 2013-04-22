@@ -280,11 +280,8 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
-static String loadSandboxProfile(const String& pluginPath, const String& sandboxProfileDirectoryPath)
+static String loadSandboxProfileForDirectory(const String& pluginPath, NSString *sandboxProfileDirectoryPath)
 {
-    if (sandboxProfileDirectoryPath.isEmpty())
-        return String();
-
     RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)
         return String();
@@ -300,7 +297,7 @@ static String loadSandboxProfile(const String& pluginPath, const String& sandbox
     // Fold all / characters to : to prevent the plugin bundle-id from trying to escape the profile directory
     bundleIdentifier.replace('/', ':');
 
-    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, sandboxProfileDirectoryPath.createCFString().get(), kCFURLPOSIXPathStyle, TRUE));
+    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, (CFStringRef)sandboxProfileDirectoryPath, kCFURLPOSIXPathStyle, TRUE));
 
     RetainPtr<CFStringRef> sandboxFileName = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier.createCFString().get()));
     RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
@@ -316,6 +313,21 @@ static String loadSandboxProfile(const String& pluginPath, const String& sandbox
         return String();
 
     return [commonProfileString.get() stringByAppendingString:profileString.get()];
+}
+
+static String loadSandboxProfile(const String& pluginPath)
+{
+    // First look in the WebKit2 bundle.
+    String sandboxProfile = loadSandboxProfileForDirectory(pluginPath, [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"]);
+    if (!sandboxProfile.isEmpty())
+        return sandboxProfile;
+
+    // Then try /System/Library/Sandbox/Profiles/.
+    sandboxProfile = loadSandboxProfileForDirectory(pluginPath, @"/System/Library/Sandbox/Profiles/");
+    if (!sandboxProfile.isEmpty())
+        return sandboxProfile;
+
+    return String();
 }
 
 static void muteAudio(void)
@@ -362,7 +374,7 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    String sandboxProfile = loadSandboxProfile(m_pluginPath, parameters.extraInitializationData.get("sandbox-profile-directory-path"));
+    String sandboxProfile = loadSandboxProfile(m_pluginPath);
     if (sandboxProfile.isEmpty())
         return;
 

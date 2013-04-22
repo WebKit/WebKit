@@ -1,0 +1,9 @@
+(webkit-powerbox)
+(shared-preferences-read "com.apple.quicktime.plugin.preferences")
+
+(allow file-read* file-write*
+    (home-subpath "/Library/Caches/QuickTime")
+    (home-literal "/Library/Preferences/QuickTime Preferences"))
+
+(allow network-inbound (local udp))
+(allow network-outbound (remote udp))

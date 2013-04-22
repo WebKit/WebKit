@@ -11,7 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
-				1A50DB70110A3D67000D3FE5 /* CopyFiles */,
+				1A50DB70110A3D67000D3FE5 /* Copy Files */,
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
 				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
 			);
@@ -146,7 +146,7 @@
 		1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */; };
 		1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */; };
 		1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9F3112B844E2008FE984 /* PluginQuirks.h */; };
-		1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
+		1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
@@ -404,7 +404,7 @@
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
 		510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 510AFFB816542048001BA05E /* WebResourceLoader.h */; };
-		510CC8491613C85C00D03ED3 /* NetworkProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */; };
+		510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
 		510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = 510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */; };
 		5110AE0C133C16CB0072717A /* WKIconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */; };
@@ -569,6 +569,12 @@
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7801C095142290C400FAF9AF /* WebHitTestResult.cpp */; };
 		7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
+		7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */; };
+		7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */; };
+		7CB16FF11724BA26007A0A95 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */; };
+		7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */; };
+		7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */; };
+		7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */; };
 		8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CFECE931490F140002AAA32 /* EditorState.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905620E812BC248B000799B6 /* WebMemorySampler.cpp */; };
@@ -918,7 +924,7 @@
 		BCAF35E816CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
 		BCAF35E916CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
 		BCAF35EA16CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35E716CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h */; };
-		BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */; };
+		BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */; };
 		BCAF361C16CA286700D4E9FC /* com.apple.WebKit.OfflineStorage.sb in Resources */ = {isa = PBXBuildFile; fileRef = BCAF361516CA274000D4E9FC /* com.apple.WebKit.OfflineStorage.sb */; };
 		BCAF361D16CA28C100D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCAF361E16CA28C500D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
@@ -1003,7 +1009,7 @@
 		BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */; };
 		BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */; };
 		BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
-		BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCDE094213272496001259FB /* PluginProcess.app */; };
+		BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = BCDE094213272496001259FB /* PluginProcess.app */; };
 		BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE0937514FB128B001138D9 /* LayerHostingContext.mm */; };
 		BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0937614FB128B001138D9 /* LayerHostingContext.h */; };
 		BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0E424168B7A280057E66A /* WebProcessSupplement.h */; };
@@ -1340,17 +1346,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1A50DB70110A3D67000D3FE5 /* CopyFiles */ = {
+		1A50DB70110A3D67000D3FE5 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = WebKit2.framework;
 			dstSubfolderSpec = 1;
 			files = (
-				510CC8491613C85C00D03ED3 /* NetworkProcess.app in CopyFiles */,
-				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
-				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
-				BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in CopyFiles */,
+				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
+				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
+				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
+				BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5183B38F1379F56800E8754E /* Copy Sec Item Shim */ = {
@@ -1373,6 +1380,22 @@
 				5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */,
 			);
 			name = "Copy Message Generation Scripts";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = PlugInSandboxProfiles;
+			dstSubfolderSpec = 7;
+			files = (
+				7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */,
+				7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */,
+				7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */,
+				7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */,
+				7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */,
+				7CB16FF11724BA26007A0A95 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */,
+			);
+			name = "Copy Plug-in Sandbox Profiles";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BCDE093C13272496001259FB /* Copy Plug-in Process Shim */ = {
@@ -1994,6 +2017,12 @@
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		7801C095142290C400FAF9AF /* WebHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResult.cpp; sourceTree = "<group>"; };
 		7801C096142290C400FAF9AF /* WebHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHitTestResult.h; sourceTree = "<group>"; };
+		7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.ist.ds.appleconnect.webplugin.sb; sourceTree = "<group>"; };
+		7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.QuickTime Plugin.plugin.sb"; sourceTree = "<group>"; };
+		7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.WebKit.plugin-common.sb"; sourceTree = "<group>"; };
+		7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.macromedia.Flash Player.plugin.sb"; sourceTree = "<group>"; };
+		7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.microsoft.SilverlightPlugin.sb; sourceTree = "<group>"; };
+		7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.oracle.java.JavaAppletPlugin.sb; sourceTree = "<group>"; };
 		8CFECE931490F140002AAA32 /* EditorState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorState.cpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2862,6 +2891,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7CB16FE11724B9B5007A0A95 /* PlugInSandboxProfiles */,
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
 				1CBC945D16515ED200D68AAE /* DockBottom.pdf */,
 				1CB75C931701E880009F809F /* DockRight.pdf */,
@@ -3698,6 +3728,20 @@
 				BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */,
 			);
 			name = mac;
+			sourceTree = "<group>";
+		};
+		7CB16FE11724B9B5007A0A95 /* PlugInSandboxProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */,
+				7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */,
+				7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */,
+				7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */,
+				7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */,
+				7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */,
+			);
+			name = PlugInSandboxProfiles;
+			path = Resources/PlugInSandboxProfiles;
 			sourceTree = "<group>";
 		};
 		9394AE411702B25B00344232 /* mac */ = {
@@ -5759,6 +5803,7 @@
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
+				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
 				5D1A239015E75B100023E981 /* Copy Message Generation Scripts */,
 				5D1A239215E760590023E981 /* Remove Compiled Python Files */,
 				8DC2EF540486A6940098B216 /* Sources */,

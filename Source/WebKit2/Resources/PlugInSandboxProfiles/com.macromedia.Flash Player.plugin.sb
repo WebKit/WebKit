@@ -1,0 +1,18 @@
+(allow ipc-posix-sem (ipc-posix-name "MacromediaSemaphoreDig"))
+
+(allow file-read*
+    (home-literal "/mm.cfg")
+    (home-literal "/mms.cfg"))
+
+(deny file-read-xattr (with no-log)
+    (home-literal "/Library/Caches")
+    (home-literal "/Library/Preferences"))
+
+(allow file-read* file-write-create file-write-mode
+    (home-literal "/Library/Caches/Adobe")
+    (home-literal "/Library/Preferences/Macromedia"))
+
+(allow file-read* file-write*
+    (literal "/Library/Application Support/Macromedia/mms.cfg")
+    (home-subpath "/Library/Caches/Adobe/Flash Player")
+    (home-subpath "/Library/Preferences/Macromedia/Flash Player"))

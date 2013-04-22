@@ -87,12 +87,6 @@ public:
             return false;
         extraInitializationData.add("plugin-path", pluginPath);
 
-        // FIXME: We should stop passing this and have it in a hard coded place. For now
-        // though, let the absence of a sandboxProfileDirectoryPath indicate no plugin
-        // sandboxing should take place.
-        String sandboxProfileDirectoryPath = m_commandLine["sandbox-profile-directory-path"];
-        extraInitializationData.add("sandbox-profile-directory-path", sandboxProfileDirectoryPath);
-
         return true;
     }
 

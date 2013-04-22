@@ -1,3 +1,31 @@
+2013-04-22  Sam Weinig  <sam@webkit.org>
+
+        Hard code plug-in sandbox profile lookup directories and move
+        the profiles to WebKit2.
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        (WebKit::PluginProcessMainDelegate::getExtraInitializationData):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (WebKit::PluginServiceInitializerDelegate::getExtraInitializationData):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        Stop passing the sandbox-profile-directory-path to the plug-in process.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::loadSandboxProfileForDirectory):
+        (WebKit::loadSandboxProfile):
+        (WebKit::PluginProcess::initializeSandbox):
+        Hard code the plug-in sandbox profile lookup to only look in the WebKit2 bundle
+        and /System/Library/Sandbox/Profiles/.
+
+        * Resources/PlugInSandboxProfiles: Added.
+        Add profiles.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Copy the profiles to the bundle.
+
 2013-04-15  Jer Noble  <jer.noble@apple.com>
 
         Refactor creation of the full screen window into an (overridable) method.
