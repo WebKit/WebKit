@@ -1906,11 +1906,6 @@ webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 # [Qt] New fast/flexbox/line-clamp-link-after-ellipsis.html layout test is failing since r142335.
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Skip ]
 
-# Some fast/exclusions/shape-outside-floats tests are failing
-webkit.org/b/113769 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
-webkit.org/b/113769 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Failure ]
-webkit.org/b/113769 fast/exclusions/shape-inside/shape-inside-polygon-padding-003.html [ Skip ]
-
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
@@ -2270,7 +2265,7 @@ fast/block/lineboxcontain/font.html
 css3/flexbox/flexbox-overflow-auto.html
 fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
-fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html
+
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
 fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
@@ -2290,14 +2285,6 @@ fast/regions/region-style-rule-position.html
 fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html
 webkit.org/b/110762 compositing/overlap-blending/children-opacity-no-overlap.html [ Skip ]
 webkit.org/b/110762 compositing/overlap-blending/reflection-opacity-huge.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ Skip ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ Skip ]
 webkit.org/b/110447 fast/regions/shape-inside/shape-inside-on-regions.html [ Skip ]
 css3/flexbox/auto-margins.html
 fast/regions/overflow-in-uniform-regions.html
