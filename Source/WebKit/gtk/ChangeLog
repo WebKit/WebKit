@@ -1,3 +1,16 @@
+2013-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Fix remaining introspection warnings
+        https://bugs.webkit.org/show_bug.cgi?id=114980
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * webkit/webkitspellchecker.h:
+        (_WebKitSpellCheckerInterface): Align the name of the check_spelling_of_string virtual
+        method with the concrete method to avoid a g-ir-scanner warning.
+        * webkit/webkitversion.h.in: Skip WEBKITGTK_API_VERSION for introspection because it
+        doesn't follow the appropriate namespace name.
+
 2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up libPlatform.la

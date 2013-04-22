@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 struct _WebKitSpellCheckerInterface {
     GTypeInterface g_iface;
 
-    void   (*check_spelling_of_string)                        (WebKitSpellChecker* checker, const char* word, int* misspelling_location, int* misspelling_length);
+    void   (*check_spelling_of_string)                        (WebKitSpellChecker* checker, const char* string, int* misspelling_location, int* misspelling_length);
     char** (*get_guesses_for_word)                            (WebKitSpellChecker* checker, const char* word, const char* context);
     void   (*update_spell_checking_languages)                 (WebKitSpellChecker* checker, const char* languages);
     char*  (*get_autocorrect_suggestions_for_misspelled_word) (WebKitSpellChecker* checker, const char* word);
