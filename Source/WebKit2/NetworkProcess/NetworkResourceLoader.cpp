@@ -205,7 +205,11 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle*, const Resou
 
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
 
-    m_handle->continueDidReceiveResponse();
+    if (!isLoadingMainResource()) {
+        // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
+        m_handle->continueDidReceiveResponse();
+        return;
+    }
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
@@ -277,6 +281,11 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_handle->continueWillSendRequest(m_suggestedRequestForWillSendRequest);
 
     m_suggestedRequestForWillSendRequest = ResourceRequest();
+}
+
+void NetworkResourceLoader::continueDidReceiveResponse()
+{
+    m_handle->continueDidReceiveResponse();
 }
 
 void NetworkResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

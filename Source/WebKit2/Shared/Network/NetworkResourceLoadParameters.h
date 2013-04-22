@@ -60,6 +60,7 @@ public:
     WebCore::StoredCredentials allowStoredCredentials;
     bool inPrivateBrowsingMode;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
+    bool isMainResource;
 };
 
 } // namespace WebKit

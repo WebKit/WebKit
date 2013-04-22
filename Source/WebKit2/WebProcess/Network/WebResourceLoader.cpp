@@ -36,6 +36,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
@@ -104,6 +105,9 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     ResourceResponse responseCopy(response);
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
     m_coreLoader->didReceiveResponse(responseCopy);
+
+    if (m_coreLoader == m_coreLoader->documentLoader()->mainResourceLoader())
+        send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
 }
 
 void WebResourceLoader::didReceiveData(const CoreIPC::DataReference& data, int64_t encodedDataLength)

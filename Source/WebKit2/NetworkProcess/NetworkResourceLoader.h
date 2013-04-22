@@ -106,6 +106,7 @@ private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
 
     void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
+    void continueDidReceiveResponse();
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif

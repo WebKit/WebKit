@@ -46,6 +46,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , allowStoredCredentials(DoNotAllowStoredCredentials)
     , inPrivateBrowsingMode(false)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
+    , isMainResource(false)
 {
 }
 
@@ -93,6 +94,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encodeEnum(allowStoredCredentials);
     encoder << inPrivateBrowsingMode;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
+    encoder << isMainResource;
 }
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
@@ -138,6 +140,8 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, Ne
     if (!decoder.decode(result.inPrivateBrowsingMode))
         return false;
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
+        return false;
+    if (!decoder.decode(result.isMainResource))
         return false;
 
     return true;

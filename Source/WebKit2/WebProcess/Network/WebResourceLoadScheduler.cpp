@@ -37,6 +37,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
+#include <WebCore/CachedResource.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
@@ -69,7 +70,7 @@ PassRefPtr<SubresourceLoader> WebResourceLoadScheduler::scheduleSubresourceLoad(
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
-        scheduleLoad(loader.get(), priority, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
+        scheduleLoad(loader.get(), resource, priority, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
     return loader.release();
 }
 
@@ -77,11 +78,11 @@ PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginS
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), ResourceLoadPriorityLow, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
+        scheduleLoad(loader.get(), 0, ResourceLoadPriorityLow, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
     return loader.release();
 }
 
-void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, ResourceLoadPriority priority, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     ASSERT(resourceLoader);
     ASSERT(priority != ResourceLoadPriorityUnresolved);
@@ -117,6 +118,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     loadParameters.allowStoredCredentials = allowStoredCredentials;
     loadParameters.inPrivateBrowsingMode = privateBrowsingEnabled;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
+    loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
 
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.

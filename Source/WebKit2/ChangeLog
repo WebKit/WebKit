@@ -1,3 +1,56 @@
+2013-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Web process should decide when to continue main resource loads
+        https://bugs.webkit.org/show_bug.cgi?id=114995
+
+        Reviewed by Sam Weinig.
+
+        Main resource loads can be converted to downloads, so we need the ability to let the web process decide when
+        to continue loading after a response has been received.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        For non-main resources, just call continueDidReceiveResponse directly; there's no need to ping-pong to the web process in that case.
+
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        Just call ResourceHandle::continueDidReceiveResponse.
+
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        Add ContinueDidReceiveResponse message.
+        
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader):
+        Initialize m_isLoadingMainResource.
+
+        * NetworkProcess/SchedulableLoader.h:
+        (WebKit::SchedulableLoader::isLoadingMainResource):
+        Add getter.
+
+        (SchedulableLoader):
+        Move m_shouldClearReferrerOnHTTPSToHTTPRedirect next to the rest of the booleans.
+
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (NetworkResourceLoadParameters):
+        Add isMainResource flag.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleSubresourceLoad):
+        Pass the cached resource to scheduleLoad.
+
+        (WebKit::WebResourceLoadScheduler::schedulePluginStreamLoad):
+        Pass null to scheduleLoad.
+
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        Initialize isMainResource.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        If this is a main resource load, send back a ContinueDidReceiveResponse message.
+
 2013-04-22  Tim Horton  <timothy_horton@apple.com>
 
         Plugin Snapshotting: Don't consume insane amounts of time detecting the primary plugin

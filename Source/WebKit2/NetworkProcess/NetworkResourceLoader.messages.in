@@ -23,5 +23,6 @@
 messages -> NetworkResourceLoader LegacyReceiver {
 
     ContinueWillSendRequest(WebCore::ResourceRequest request)
+    ContinueDidReceiveResponse()
     ContinueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
 }

@@ -52,6 +52,7 @@ public:
     WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
     WebCore::StoredCredentials allowStoredCredentials() const { return m_allowStoredCredentials; }
     bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
+    bool isLoadingMainResource() const { return m_isLoadingMainResource; }
 
     NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
     virtual void connectionToWebProcessDidClose() = 0;
@@ -80,6 +81,8 @@ private:
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
     bool m_inPrivateBrowsingMode;
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
+    bool m_isLoadingMainResource;
 
     Vector<RefPtr<SandboxExtension> > m_requestBodySandboxExtensions;
     Vector<RefPtr<SandboxExtension> > m_resourceSandboxExtensions;
@@ -87,8 +90,6 @@ private:
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
     RefPtr<HostRecord> m_hostRecord;
-
-    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 };
 
 } // namespace WebKit
