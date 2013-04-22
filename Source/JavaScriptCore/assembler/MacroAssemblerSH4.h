@@ -1975,6 +1975,40 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         return branchTrue();
     }
 
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
+        Jump result;
+
+        move(imm, scratchReg3);
+        RegisterID destptr = claimScratch();
+        RegisterID destval = claimScratch();
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(dest.m_ptr), destptr);
+        m_assembler.movlMemReg(destptr, destval);
+        if (cond == Overflow) {
+            m_assembler.addvlRegReg(scratchReg3, destval);
+            result = branchTrue();
+        } else {
+            m_assembler.addlRegReg(scratchReg3, destval);
+
+            if (cond == Signed) {
+                m_assembler.cmppz(destval);
+                result = branchFalse();
+            } else if (cond == PositiveOrZero) {
+                m_assembler.cmppz(destval);
+                result = branchTrue();
+            } else {
+                m_assembler.movImm8(0, scratchReg3);
+                m_assembler.cmplRegReg(scratchReg3, destval, SH4Condition(cond));
+                result = (cond == NonZero) ? branchFalse() : branchTrue();
+            }
+        }
+        m_assembler.movlRegMem(destval, destptr);
+        releaseScratch(destval);
+        releaseScratch(destptr);
+        return result;
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
