@@ -95,7 +95,7 @@ void ColorPickerClient::setValueAndClosePopup(int, const String& value)
 
     static const char* cancelValue = "-1";
     if (value != cancelValue)
-        m_element->setValue(value);
+        m_element->setValue(value, DispatchChangeEvent);
     closePopup();
 }
 

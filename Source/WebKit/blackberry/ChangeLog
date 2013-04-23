@@ -1,3 +1,18 @@
+2013-04-23  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Need to send out change event for date/color picker
+        https://bugs.webkit.org/show_bug.cgi?id=114942
+
+        Reviewed by Carlos Garcia Campos.
+
+        We need to instruct the FormControlElements to send out 'change' event
+        when the user makes the selection and closes the PagePopup for date/color.
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::setValueAndClosePopup):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::setValueAndClosePopup):
+
 2013-04-22  Eli Fidler  <efidler@blackberry.com>
 
         [BlackBerry] Update about:config lists
