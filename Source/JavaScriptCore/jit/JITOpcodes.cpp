@@ -1279,36 +1279,18 @@ void JIT::emit_op_put_to_base(Instruction* currentInstruction)
 
 void JIT::emit_op_loop_hint(Instruction*)
 {
-    // Emit the watchdog timer check:
-    if (m_vm->watchdog.isEnabled())
-        addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog.timerDidFireAddress())));
-
     // Emit the JIT optimization check: 
     if (canBeOptimized())
         addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
             AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
+
+    // Emit the watchdog timer check:
+    if (m_vm->watchdog.isEnabled())
+        addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog.timerDidFireAddress())));
 }
 
 void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
-    // Emit the slow path of the watchdog timer check:
-    if (m_vm->watchdog.isEnabled()) {
-        linkSlowCase(iter);
-
-        JITStubCall stubCall(this, cti_handle_watchdog_timer);
-        stubCall.call();
-
-#if ENABLE(DFG_JIT)
-        if (canBeOptimized()) {
-            Jump doOptimize = branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-                AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
-            doOptimize.link(this);
-        } else
-#endif
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
-    }
-
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
     if (canBeOptimized()) {
@@ -1321,6 +1303,17 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
     }
 #endif
+
+    // Emit the slow path of the watchdog timer check:
+    if (m_vm->watchdog.isEnabled()) {
+        linkSlowCase(iter);
+
+        JITStubCall stubCall(this, cti_handle_watchdog_timer);
+        stubCall.call();
+
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
+    }
+
 }
 
 void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const int* baseVR, const int* valueVR)

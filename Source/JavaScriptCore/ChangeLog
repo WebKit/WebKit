@@ -1,3 +1,25 @@
+2013-04-23  Mark Lam  <mark.lam@apple.com>
+
+        Simplify the baseline JIT loop hint call site.
+        https://bugs.webkit.org/show_bug.cgi?id=115052.
+
+        Reviewed by Geoffrey Garen.
+
+        Moved the watchdog timer check after the JIT optimization check. This
+        ensures that the JIT opimization counter is incremented on every loop
+        hint even if the watchdog timer fires.
+
+        Removed the code that allows the JIT OSR to happen if the watchdog
+        timer fires but does not result in a termination. It is extremely rare
+        that the JIT optimization counter would trigger an OSR on the same pass
+        as when the watchdog timer fire. If it does happen, we'll simply hold
+        off on servicing the watchdog timer until the next pass (because it's
+        not time critical).
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+
 2013-04-23  Roger Fong  <roger_fong@apple.com>
 
         AppleWin build fix.
@@ -103,6 +125,13 @@
         https://bugs.webkit.org/show_bug.cgi?id=114963.
 
         Reviewed by Oliver Hunt.
+
+        Edit: The PositiveOrZero condition is added because it is needed for
+        the JIT optimization check. Previously, the JIT check branches around
+        the slow path if the test result is 'Signed' i.e. negative. Since we
+        now need to test for a condition that branches to the slow path (not
+        around it), we need the complement of 'Signed / Negative' i.e. Positive
+        or zero.
 
         SH4 parts contributed by Julien Brianceau.
 
