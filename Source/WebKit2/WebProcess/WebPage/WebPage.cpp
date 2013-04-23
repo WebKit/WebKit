@@ -833,6 +833,10 @@ void WebPage::close()
 
     m_sandboxExtensionTracker.invalidate();
 
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    m_determinePrimarySnapshottedPlugInTimer.stop();
+#endif
+
     m_underlayPage = nullptr;
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader()->detachFromParent();

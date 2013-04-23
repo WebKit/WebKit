@@ -1,3 +1,16 @@
+2013-04-23  Tim Horton  <timothy_horton@apple.com>
+
+        Web process crashes at WebPage::determinePrimarySnapshottedPlugInTimerFired + 8
+        https://bugs.webkit.org/show_bug.cgi?id=115056
+        <rdar://problem/13719543>
+
+        Reviewed by Simon Fraser.
+
+        Stop the primary plugin detection timer if the WebPage is torn down.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2013-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_uri_request_get_http_headers to WebKit2 GTK+ API
