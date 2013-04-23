@@ -355,7 +355,7 @@
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
         "HTML": [ "esprehn+autocc@chromium.org" ],
-        "IndexedDB": [ "alecflett@chromium.org", "dgrogan@chromium.org", "jsbell@chromium.org" ],
+        "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com" ],
