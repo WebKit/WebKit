@@ -193,7 +193,6 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     }
 
     ViewportAttributes result;
-    result.orientation = orientation;
 
     // Resolve minimum-scale and maximum-scale values according to spec.
     if (resultMinZoom == ViewportArguments::ValueAuto)
