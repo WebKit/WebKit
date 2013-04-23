@@ -138,7 +138,6 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     }
 
     if (m_backingStore) {
-        ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty());
         FloatRect targetRect = m_state.shouldMapBackingStoreToContentsRect ? m_state.contentsRect : layerRect();
         ASSERT(!targetRect.isEmpty());
         m_backingStore->paintToTextureMapper(options.textureMapper, targetRect, transform, options.opacity);
