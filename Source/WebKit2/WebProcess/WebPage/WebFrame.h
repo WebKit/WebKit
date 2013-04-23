@@ -101,6 +101,7 @@ public:
     PassRefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint) const;
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;
+    bool containsAnyFormControls() const;
     void stopLoading();
     bool handlesPageScaleGesture() const;
 

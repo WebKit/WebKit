@@ -579,6 +579,24 @@ bool WebFrame::containsAnyFormElements() const
     return false;
 }
 
+bool WebFrame::containsAnyFormControls() const
+{
+    if (!m_coreFrame)
+        return false;
+    
+    Document* document = m_coreFrame->document();
+    if (!document)
+        return false;
+
+    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
+        if (!node->isElementNode())
+            continue;
+        if (toElement(node)->hasTagName(HTMLNames::inputTag) || toElement(node)->hasTagName(HTMLNames::selectTag) || toElement(node)->hasTagName(HTMLNames::textareaTag))
+            return true;
+    }
+    return false;
+}
+
 void WebFrame::stopLoading()
 {
     if (!m_coreFrame)

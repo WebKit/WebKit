@@ -1,3 +1,18 @@
+2013-04-22  Sam Weinig  <sam@webkit.org>
+
+        Need WebKit SPI to detect whether a page contains form controls
+        <rdar://problem/13686661>
+        https://bugs.webkit.org/show_bug.cgi?id=115003
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameContainsAnyFormControls):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::containsAnyFormControls):
+        * WebProcess/WebPage/WebFrame.h:
+
 2013-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] REGRESSION (r142806): "Just Leaking" Console errors on launch

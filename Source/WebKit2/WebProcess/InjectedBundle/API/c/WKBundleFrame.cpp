@@ -221,6 +221,11 @@ bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frameRef)
     return toImpl(frameRef)->containsAnyFormElements();
 }
 
+bool WKBundleFrameContainsAnyFormControls(WKBundleFrameRef frameRef)
+{
+    return toImpl(frameRef)->containsAnyFormControls();
+}
+
 void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef directionRef)
 {
     toImpl(frameRef)->setTextDirection(toWTFString(directionRef));
