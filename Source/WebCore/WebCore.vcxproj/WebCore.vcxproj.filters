@@ -3684,9 +3684,6 @@
     <ClCompile Include="..\css\CSSValuePool.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\DeprecatedStyleBuilder.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\FontFeatureValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -6839,6 +6836,18 @@
       <Filter>platform\graphics\cg</Filter>
     </ClCompile>
     <ClCompile Include="..\html\track\TrackListBase.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\AudioTrack.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\AudioTrackList.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\VideoTrack.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\VideoTrackList.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
   </ItemGroup>
@@ -10459,9 +10468,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\DashboardRegion.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\DeprecatedStyleBuilder.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\FontFeatureValue.h">
@@ -14354,9 +14360,31 @@
     <ClInclude Include="..\platform\graphics\cg\SubimageCacheWithTimer.h">
       <Filter>platform\graphics\cg</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h" />
-    <ClInclude Include="..\platform\VisitedLinkStrategy.h" />
     <ClInclude Include="..\html\track\TrackListBase.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h">
+      <Filter>loader\cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\VisitedLinkStrategy.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\AudioTrackPrivate.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\VideoTrackPrivate.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\AudioTrack.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\AudioTrackList.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\VideoTrack.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\VideoTrackList.h">
       <Filter>html\track</Filter>
     </ClInclude>
   </ItemGroup>
