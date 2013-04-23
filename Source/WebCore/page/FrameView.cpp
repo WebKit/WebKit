@@ -126,9 +126,6 @@ double FrameView::s_maxDeferredRepaintDelayDuringLoading = 0;
 double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
-// While the browser window is being resized, resize events will be dispatched at most this often.
-static const double minimumIntervalBetweenResizeEventsDuringLiveResizeInSeconds = 0.2;
-
 // The maximum number of updateWidgets iterations that should be done before returning.
 static const unsigned maxUpdateWidgetsIterations = 2;
 
@@ -175,7 +172,6 @@ FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
     , m_slowRepaintObjectCount(0)
-    , m_delayedResizeEventTimer(this, &FrameView::delayedResizeEventTimerFired)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
     , m_inSynchronousPostLayout(false)
@@ -2770,19 +2766,14 @@ void FrameView::performPostLayoutTasks()
         bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
         m_lastViewportSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
-        if (resized) {
-            if (inLiveResize())
-                scheduleResizeEvent();
-            else
-                sendResizeEvent();
-        }
+        if (resized)
+            sendResizeEvent();
     }
 }
 
 void FrameView::sendResizeEvent()
 {
-    if (!m_frame)
-        return;
+    ASSERT(m_frame);
 
     m_frame->eventHandler()->sendResizeEvent();
 
@@ -2798,11 +2789,6 @@ void FrameView::sendResizeEvent()
 #endif
 }
 
-void FrameView::delayedResizeEventTimerFired(Timer<FrameView>*)
-{
-    sendResizeEvent();
-}
-
 void FrameView::willStartLiveResize()
 {
     ScrollView::willStartLiveResize();
@@ -2811,18 +2797,8 @@ void FrameView::willStartLiveResize()
     
 void FrameView::willEndLiveResize()
 {
-    ScrollableArea::willEndLiveResize();
-    if (m_delayedResizeEventTimer.isActive()) {
-        m_delayedResizeEventTimer.stop();
-        sendResizeEvent();
-    }
+    ScrollView::willEndLiveResize();
     adjustTiledBackingCoverage();
-}
-
-void FrameView::scheduleResizeEvent()
-{
-    if (!m_delayedResizeEventTimer.isActive())
-        m_delayedResizeEventTimer.startOneShot(minimumIntervalBetweenResizeEventsDuringLiveResizeInSeconds);
 }
 
 void FrameView::postLayoutTimerFired(Timer<FrameView>*)

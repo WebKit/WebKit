@@ -540,8 +540,6 @@ private:
     int m_borderX;
     int m_borderY;
 
-    Timer<FrameView> m_delayedResizeEventTimer;
-
     Timer<FrameView> m_layoutTimer;
     bool m_delayedLayout;
     RenderObject* m_layoutRoot;
