@@ -1822,8 +1822,6 @@ inspector/profiler/heap-snapshot-summary-sorting-fields.html
 inspector/profiler/heap-snapshot-summary-sorting.html
 inspector/profiler/heap-snapshot-summary-sorting-instances.html
 
-# New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
-webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
@@ -2753,7 +2751,6 @@ http/tests/inspector/console-resource-errors.html
 http/tests/inspector/resource-tree/resource-request-content-while-loading.html
 http/tests/inspector/search/resources-search-match-index.html
 inspector/profiler/heap-snapshot.html
-inspector/profiler/memory-instrumentation-cached-images.html
 inspector/styles/media-queries.html
 inspector/styles/region-style-crash.html
 

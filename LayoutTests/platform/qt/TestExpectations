@@ -260,12 +260,7 @@ inspector/profiler/heap-snapshot-summary-show-ranges.html
 inspector/profiler/heap-snapshot-summary-sorting-fields.html
 inspector/profiler/heap-snapshot-summary-sorting.html
 inspector/profiler/heap-snapshot-summary-sorting-instances.html
-inspector/profiler/memory-instrumentation-cached-images.html
 webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
-
-webkit.org/b/113787 inspector/profiler/memory-instrumentation-external-array.html [ Skip ]
-
-webkit.org/b/113787 inspector/profiler/memory-instrumentation-external-string.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=40300
 inspector/debugger/live-edit.html
@@ -2532,8 +2527,6 @@ webkit.org/b/98640 plugins/refcount-leaks.html
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
-# New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
-webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
