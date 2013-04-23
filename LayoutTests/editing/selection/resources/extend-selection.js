@@ -36,6 +36,39 @@ function extendSelectionWithinBlock(direction, granularity)
     return positions;
 }
 
+function extendSelectionWithinBlockWin(direction, granularity)
+{
+    if (granularity === "character")
+        return extendSelectionWithinBlock(direction, granularity);
+
+    var positions = [];
+
+    if (direction === "right") {
+        positions.push(getSerializedSelection());
+        getSelection().modify("extend", "right", granularity);
+
+        for (var index = 0; index < 3; ++index) {
+            positions.push(getSerializedSelection());
+            getSelection().modify("extend", "left", granularity);
+        }
+
+        positions.push(getSerializedSelection());
+        getSelection().modify("extend", "right", granularity);
+
+        positions.push(getSerializedSelection());
+    } else {
+        for (var index = 0; index < 2; ++index) {
+            positions.push(getSerializedSelection());
+            getSelection().modify("extend", "left", granularity);
+        }
+        for (var index = 0; index < 3; ++index) {
+            positions.push(getSerializedSelection());
+            getSelection().modify("extend", "right", granularity);
+        }
+    }
+    return positions;
+}
+
 function extendSelectionToEnd(direction, granularity)
 {
     var positions = [];
@@ -108,7 +141,7 @@ function extendAndLogSelection(functionToExtendSelection, direction, granularity
 
 function extendAndLogSelectionWithinBlock(direction, granularity, platform)
 {
-    return extendAndLogSelection({'mac': extendSelectionWithinBlock}[platform], direction, granularity);
+    return extendAndLogSelection({'mac': extendSelectionWithinBlock, 'win': extendSelectionWithinBlockWin}[platform], direction, granularity);
 }
 
 function extendAndLogSelectionToEnd(direction, granularity)

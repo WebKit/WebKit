@@ -51,9 +51,9 @@ function runTests(editingBehavior) {
     testQueryCommandState("bold", '<b>hello</b>', selectAll, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("bold", 'hello <b>world</b>', selectAll, {'mac': false, 'win': false}[editingBehavior]);
     testQueryCommandState("bold", '<b>hello</b> world', selectAll, {'mac': true, 'win': false}[editingBehavior]);
-    testQueryCommandState("bold", 'hello <b>world</b> WebKit', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
+    testQueryCommandState("bold", 'hello <b>world</b> WebKit', selectSecondWord, {'mac': true, 'win': false}[editingBehavior]);
     testQueryCommandState("bold", '<b>hello</b> world <b>WebKit</b>', selectSecondWord, {'mac': false, 'win': false}[editingBehavior]);
-    testQueryCommandState("bold", '<i>hello <b>hello</b> WebKit</i>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
+    testQueryCommandState("bold", '<i>hello <b>hello</b> WebKit</i>', selectSecondWord, {'mac': true, 'win': false}[editingBehavior]);
     testQueryCommandState("bold", '<b>hello <i>hello</i> WebKit</b>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("bold", '<b><div>hello <i>hello</i> WebKit</div></b>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("bold", '<b style="font-weight: normal;">hello</b>', selectAll, {'mac': false, 'win': false}[editingBehavior]);
@@ -76,7 +76,7 @@ function runTests(editingBehavior) {
     testQueryCommandState("subscript", '<sub>hello</sub> world', selectAll, {'mac': true, 'win': false}[editingBehavior]);
     testQueryCommandState("subscript", 'hello <sub>world</sub>', selectAll, {'mac': false, 'win': false}[editingBehavior]);
     testQueryCommandState("subscript", '<div style="vertical-align: sub;">hello world</div>', selectAll, {'mac': true, 'win': true}[editingBehavior]);
-    testQueryCommandState("subscript", 'hello <span style="vertical-align: sub;">world</span> WebKit', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
+    testQueryCommandState("subscript", 'hello <span style="vertical-align: sub;">world</span> WebKit', selectSecondWord, {'mac': true, 'win': false}[editingBehavior]);
 
     testQueryCommandState("superscript", 'hello', selectAll, {'mac': false, 'win': false}[editingBehavior]);
     testQueryCommandState("superscript", '<sub>hello</sub>', selectAll, {'mac': false, 'win': false}[editingBehavior]);
@@ -94,7 +94,7 @@ function runTests(editingBehavior) {
     testQueryCommandState("underline", '<u><div>hello world</div></u>', selectAll, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("underline", '<u><s><div>hello world WebKit</div></s></u>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("underline", '<s><u>hello</u> world</s> WebKit', selectSecondWord, {'mac': false, 'win': false}[editingBehavior]);
-    testQueryCommandState("underline", '<u><s>hello</s> world</u> WebKit', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
+    testQueryCommandState("underline", '<u><s>hello</s> world</u> WebKit', selectSecondWord, {'mac': true, 'win': false}[editingBehavior]);
     testQueryCommandState("underline", '<s>hello <u>world</s> WebKit</u>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
 
     testQueryCommandState("strikeThrough", 'hello', selectAll, {'mac': false, 'win': false}[editingBehavior]);
@@ -106,7 +106,7 @@ function runTests(editingBehavior) {
     testQueryCommandState("strikeThrough", '<s><u><div>hello world WebKit</div></u></s>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("strikeThrough", '<u><s>hello</s> world</u> WebKit', selectSecondWord, {'mac': false, 'win': false}[editingBehavior]);
     testQueryCommandState("strikeThrough", 'hello <s>world WebKit</s>', selectSecondWord, {'mac': true, 'win': true}[editingBehavior]);
-    testQueryCommandState("strikeThrough", 'hello <s>world WebKit</s>', selectFirstTwoWords, {'mac': false, 'win': false}[editingBehavior]);
+    testQueryCommandState("strikeThrough", 'hello <s>world WebKit</s>', selectFirstTwoWords, {'mac': false, 'win': true}[editingBehavior]);
 }
 
 runTests('win');

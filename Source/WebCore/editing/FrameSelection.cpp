@@ -581,6 +581,26 @@ VisiblePosition FrameSelection::endForPlatform() const
     return positionForPlatform(false);
 }
 
+VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePosition &originalPosition)
+{
+    VisiblePosition positionAfterCurrentWord = nextWordPosition(originalPosition);
+
+    if (m_frame && m_frame->editor()->behavior().shouldSkipSpaceWhenMovingRight()) {
+        // In order to skip spaces when moving right, we advance one
+        // word further and then move one word back. Given the
+        // semantics of previousWordPosition() this will put us at the
+        // beginning of the word following.
+        VisiblePosition positionAfterSpacingAndFollowingWord = nextWordPosition(positionAfterCurrentWord);
+        if (positionAfterSpacingAndFollowingWord != positionAfterCurrentWord)
+            positionAfterCurrentWord = previousWordPosition(positionAfterSpacingAndFollowingWord);
+
+        bool movingBackwardsMovedPositionToStartOfCurrentWord = positionAfterCurrentWord == previousWordPosition(nextWordPosition(originalPosition));
+        if (movingBackwardsMovedPositionToStartOfCurrentWord)
+            positionAfterCurrentWord = positionAfterSpacingAndFollowingWord;
+    }
+    return positionAfterCurrentWord;
+}
+
 #if ENABLE(USERSELECT_ALL)
 static void adjustPositionForUserSelectAll(VisiblePosition& pos, bool isForward)
 {
@@ -607,7 +627,7 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         break;
     case WordGranularity:
         if (directionOfEnclosingBlock() == LTR)
-            pos = nextWordPosition(pos);
+            pos = nextWordPositionForPlatform(pos);
         else
             pos = previousWordPosition(pos);
         break;
@@ -641,7 +661,7 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = pos.next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
-        pos = nextWordPosition(pos);
+        pos = nextWordPositionForPlatform(pos);
         break;
     case SentenceGranularity:
         pos = nextSentencePosition(pos);
@@ -725,7 +745,7 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
-        pos = nextWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        pos = nextWordPositionForPlatform(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     case SentenceGranularity:
         pos = nextSentencePosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
@@ -781,7 +801,7 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
         if (directionOfEnclosingBlock() == LTR)
             pos = previousWordPosition(pos);
         else
-            pos = nextWordPosition(pos);
+            pos = nextWordPositionForPlatform(pos);
         break;
     case LineBoundary:
         if (directionOfEnclosingBlock() == LTR)
