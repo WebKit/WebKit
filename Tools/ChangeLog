@@ -1,3 +1,9 @@
+2013-04-23  Andreas Kling  <akling@apple.com>
+
+        Add Benjamin Poulain's @apple.com address to his entry. Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-04-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Respect image-rendering setting for determing image-rendering quality
