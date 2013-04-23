@@ -148,7 +148,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         const Vector<Length>& values = polygon->values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
-        Vector<FloatPoint>* vertices = new Vector<FloatPoint>(valuesSize / 2);
+        OwnPtr<Vector<FloatPoint> > vertices = adoptPtr(new Vector<FloatPoint>(valuesSize / 2));
         for (unsigned i = 0; i < valuesSize; i += 2) {
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),
@@ -156,7 +156,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
             (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxHeight, writingMode);
         }
 
-        exclusionShape = createExclusionPolygon(adoptPtr(vertices), polygon->windRule());
+        exclusionShape = createExclusionPolygon(vertices.release(), polygon->windRule());
         break;
     }
 

@@ -135,9 +135,9 @@ static inline void snapVerticesToLayoutUnitGrid(Vector<FloatPoint>& vertices)
         vertices[i].set(LayoutUnit(vertices[i].x()).toFloat(), LayoutUnit(vertices[i].y()).toFloat());
 }
 
-static inline FloatPolygon *computeShapePaddingBounds(const FloatPolygon& polygon, float padding, WindRule fillRule)
+static inline PassOwnPtr<FloatPolygon> computeShapePaddingBounds(const FloatPolygon& polygon, float padding, WindRule fillRule)
 {
-    Vector<FloatPoint>* paddedVertices = new Vector<FloatPoint>();
+    OwnPtr<Vector<FloatPoint> > paddedVertices = adoptPtr(new Vector<FloatPoint>());
     FloatPoint intersection;
 
     for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
@@ -153,12 +153,12 @@ static inline FloatPolygon *computeShapePaddingBounds(const FloatPolygon& polygo
     }
 
     snapVerticesToLayoutUnitGrid(*paddedVertices);
-    return new FloatPolygon(adoptPtr(paddedVertices), fillRule);
+    return adoptPtr(new FloatPolygon(paddedVertices.release(), fillRule));
 }
 
-static inline FloatPolygon *computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
+static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
 {
-    Vector<FloatPoint>* marginVertices = new Vector<FloatPoint>();
+    OwnPtr<Vector<FloatPoint> > marginVertices = adoptPtr(new Vector<FloatPoint>());
     FloatPoint intersection;
 
     for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
@@ -174,7 +174,7 @@ static inline FloatPolygon *computeShapeMarginBounds(const FloatPolygon& polygon
     }
 
     snapVerticesToLayoutUnitGrid(*marginVertices);
-    return new FloatPolygon(adoptPtr(marginVertices), fillRule);
+    return adoptPtr(new FloatPolygon(marginVertices.release(), fillRule));
 }
 
 const FloatPolygon& ExclusionPolygon::shapePaddingBounds() const
@@ -184,7 +184,7 @@ const FloatPolygon& ExclusionPolygon::shapePaddingBounds() const
         return m_polygon;
 
     if (!m_paddingBounds)
-        m_paddingBounds = adoptPtr(computeShapePaddingBounds(m_polygon, shapePadding(), m_polygon.fillRule()));
+        m_paddingBounds = computeShapePaddingBounds(m_polygon, shapePadding(), m_polygon.fillRule());
 
     return *m_paddingBounds;
 }
@@ -196,7 +196,7 @@ const FloatPolygon& ExclusionPolygon::shapeMarginBounds() const
         return m_polygon;
 
     if (!m_marginBounds)
-        m_marginBounds = adoptPtr(computeShapeMarginBounds(m_polygon, shapeMargin(), m_polygon.fillRule()));
+        m_marginBounds = computeShapeMarginBounds(m_polygon, shapeMargin(), m_polygon.fillRule());
 
     return *m_marginBounds;
 }
