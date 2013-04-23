@@ -72,10 +72,10 @@ public:
     void connect(const String& url, const String& protocol, ExceptionCode&);
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
 
-    bool send(const String& message, ExceptionCode&);
-    bool send(ArrayBuffer*, ExceptionCode&);
-    bool send(ArrayBufferView*, ExceptionCode&);
-    bool send(Blob*, ExceptionCode&);
+    void send(const String& message, ExceptionCode&);
+    void send(ArrayBuffer*, ExceptionCode&);
+    void send(ArrayBufferView*, ExceptionCode&);
+    void send(Blob*, ExceptionCode&);
 
     void close(int code, const String& reason, ExceptionCode&);
     void close(ExceptionCode& ec) { close(WebSocketChannel::CloseEventCodeNotSpecified, String(), ec); }

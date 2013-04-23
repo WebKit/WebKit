@@ -64,13 +64,13 @@
 
     attribute DOMString binaryType;
 
-    boolean send(in ArrayBuffer data)
+    void send(in ArrayBuffer data)
         raises(DOMException);
-    boolean send(in ArrayBufferView data)
+    void send(in ArrayBufferView data)
         raises(DOMException);
-    boolean send(in Blob data)
+    void send(in Blob data)
         raises(DOMException);
-    boolean send(in DOMString data)
+    void send(in DOMString data)
         raises(DOMException);
 
     void close(in [Clamp, Optional] unsigned short code, in [Optional] DOMString reason) raises(DOMException);

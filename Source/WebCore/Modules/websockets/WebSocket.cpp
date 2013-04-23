@@ -291,83 +291,82 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     ActiveDOMObject::setPendingActivity(this);
 }
 
-bool WebSocket::send(const String& message, ExceptionCode& ec)
+void WebSocket::send(const String& message, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p send() Sending String '%s'", this, message.utf8().data());
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
-        return false;
+        return;
     }
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
         size_t payloadSize = message.utf8().length();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
-        return false;
+        return;
     }
     ASSERT(m_channel);
     ThreadableWebSocketChannel::SendResult result = m_channel->send(message);
     if (result == ThreadableWebSocketChannel::InvalidMessage) {
         scriptExecutionContext()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Websocket message contains invalid character(s).");
         ec = SYNTAX_ERR;
-        return false;
+        return;
     }
-    return result == ThreadableWebSocketChannel::SendSuccess;
 }
 
-bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
+void WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p send() Sending ArrayBuffer %p", this, binaryData);
     ASSERT(binaryData);
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
-        return false;
+        return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned payloadSize = binaryData->byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
-        return false;
+        return;
     }
     ASSERT(m_channel);
-    return m_channel->send(*binaryData, 0, binaryData->byteLength()) == ThreadableWebSocketChannel::SendSuccess;
+    m_channel->send(*binaryData, 0, binaryData->byteLength());
 }
 
-bool WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
+void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p send() Sending ArrayBufferView %p", this, arrayBufferView);
     ASSERT(arrayBufferView);
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
-        return false;
+        return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned payloadSize = arrayBufferView->byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
-        return false;
+        return;
     }
     ASSERT(m_channel);
     RefPtr<ArrayBuffer> arrayBuffer(arrayBufferView->buffer());
-    return m_channel->send(*arrayBuffer, arrayBufferView->byteOffset(), arrayBufferView->byteLength()) == ThreadableWebSocketChannel::SendSuccess;
+    m_channel->send(*arrayBuffer, arrayBufferView->byteOffset(), arrayBufferView->byteLength());
 }
 
-bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)
+void WebSocket::send(Blob* binaryData, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData->url().elidedString().utf8().data());
     ASSERT(binaryData);
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
-        return false;
+        return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned long payloadSize = static_cast<unsigned long>(binaryData->size());
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
-        return false;
+        return;
     }
     ASSERT(m_channel);
-    return m_channel->send(*binaryData) == ThreadableWebSocketChannel::SendSuccess;
+    m_channel->send(*binaryData);
 }
 
 void WebSocket::close(int code, const String& reason, ExceptionCode& ec)

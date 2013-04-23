@@ -41,7 +41,7 @@ document.iframeReady = function()
     shouldBeNonNull("document.childWebSocket");
     debug("PASS 'socket1' is sent to the server. unload the iframe. expect receiving 'socket1' on ws...");
     document.body.removeChild(frameDiv);
-    shouldBeFalse("document.childWebSocket.send('send to closed socket')");
+    shouldBeUndefined("document.childWebSocket.send('send to closed socket')");
 };
 
 </script>

@@ -77,7 +77,7 @@ function testBufferedAmount(message, expectedBufferedAmountDifference)
     // (the number does not reset to zero once the connection closes).
     messageToSend = message;
     var bufferedAmountBeforeSend = ws.bufferedAmount;
-    shouldBeFalse("ws.send(messageToSend)");
+    shouldBeUndefined("ws.send(messageToSend)");
     var bufferedAmountAfterSend = ws.bufferedAmount;
     bufferedAmountDifference = bufferedAmountAfterSend - bufferedAmountBeforeSend;
     shouldEvaluateTo("bufferedAmountDifference", expectedBufferedAmountDifference);
