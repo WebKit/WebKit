@@ -69,7 +69,7 @@ void TransformState::translateMappedCoordinates(const LayoutSize& offset)
 
 void TransformState::move(const LayoutSize& offset, TransformAccumulation accumulate)
 {
-    if (accumulate == FlattenTransform || !m_accumulatedTransform)
+    if (accumulate == FlattenTransform && !m_accumulatedTransform)
         m_accumulatedOffset += offset;
     else {
         applyAccumulatedOffset();

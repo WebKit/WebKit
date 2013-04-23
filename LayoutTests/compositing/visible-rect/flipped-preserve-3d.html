@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .contents {
+            position: absolute;
+            -webkit-perspective: 1000px;
+            width: 600px;
+            height: 600px;
+            border: 1px solid black;
+        }
+        
+        .card-container {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 440px;
+            height: 440px;
+            -webkit-transform: rotateY(180deg);
+            -webkit-transform-origin-x: 250px;
+            -webkit-transform-style: preserve-3d;
+        }
+
+        .card-back {
+            position: absolute;
+            z-index: 1;
+            overflow: hidden;
+            width: 420px;
+            height: 420px;
+            -webkit-transform: rotateY(180deg);
+            background-color: silver;
+        }
+        
+        .bottom-section {
+            position: absolute;
+            z-index: 1;
+            width: 418px;
+            height: 510px;
+            bottom: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: gray;
+        }
+        
+        .scrolled-content {
+            width: 100%;
+            height: 120px;
+            -webkit-transform: translateZ(0);
+        }
+        
+        h2 {
+            margin: 0;
+            text-indent: -3000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="contents">
+        <div class="card-container">
+            <div class="card-back">
+                <div class="bottom-section">
+                    <div class="scrolled-content">
+                        <h2>Description</h2>
+                        Some text here.
+                    </div>
+                    <div class="scrolled-content">
+                        <h2>Description</h2>
+                        Some text here.
+                    </div>
+                    <div class="scrolled-content">
+                        <h2>Description</h2>
+                        Some text here.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
