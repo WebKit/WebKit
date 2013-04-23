@@ -1,3 +1,9 @@
+2013-04-23  Roger Fong  <roger_fong@apple.com>
+
+        AppleWin build fix.
+
+        * WTF.vcproj/WTF.vcproj:
+
 2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove unused code of RefCounted after chromium removal

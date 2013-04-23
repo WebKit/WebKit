@@ -38,6 +38,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
+				BasicRuntimeChecks="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -834,6 +836,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSCJSValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSCJSValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSCJSValueInlines.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSDateMath.cpp"
 				>
 			</File>
@@ -851,14 +865,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSFunction.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\VM.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\VM.h"
 				>
 			</File>
 			<File
@@ -979,18 +985,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSTypeInfo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSCJSValue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSCJSValue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSCJSValueInlines.h"
 				>
 			</File>
 			<File
@@ -1174,7 +1168,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\PropertyStorage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\PropertyTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Protect.h"
 				>
 			</File>
 			<File
@@ -1183,14 +1185,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\PrototypeMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\PropertyStorage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Protect.h"
 				>
 			</File>
 			<File
@@ -1371,6 +1365,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\TypedArrayDescriptor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\VM.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\VM.h"
 				>
 			</File>
 			<File
@@ -2237,7 +2239,7 @@
 				RelativePath="..\..\jit\JITStubs.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\..\jit\JITThunks.cpp"
 				>
 			</File>

@@ -38,6 +38,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
+				BasicRuntimeChecks="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -609,27 +611,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\AVLTree.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\AutodrainedPool.h"
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\SchedulePair.h"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\SchedulePairCF.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\Bitmap.h"
+			RelativePath="..\wtf\AVLTree.h"
 			>
 		</File>
 		<File
 			RelativePath="..\wtf\BitArray.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\Bitmap.h"
 			>
 		</File>
 		<File
@@ -925,11 +919,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\MediaTime.h"
+			RelativePath="..\wtf\MediaTime.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\MediaTime.cpp"
+			RelativePath="..\wtf\MediaTime.h"
 			>
 		</File>
 		<File
@@ -966,14 +960,6 @@
 		</File>
 		<File
 			RelativePath="..\wtf\NullPtr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\RAMSize.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\RAMSize.h"
 			>
 		</File>
 		<File
@@ -1093,6 +1079,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\RAMSize.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\RAMSize.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\RandomNumber.cpp"
 			>
 		</File>
@@ -1138,6 +1132,14 @@
 		</File>
 		<File
 			RelativePath="..\wtf\SaturatedArithmetic.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\SchedulePair.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\SchedulePairCF.cpp"
 			>
 		</File>
 		<File
@@ -1297,15 +1299,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\WeakPtr.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\WTFThreadData.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\wtf\WTFThreadData.h"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\WeakPtr.h"
 			>
 		</File>
 	</Files>

@@ -1,3 +1,9 @@
+2013-04-23  Roger Fong  <roger_fong@apple.com>
+
+        AppleWin build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2013-04-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Update public header documentation
