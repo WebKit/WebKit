@@ -1,0 +1,17 @@
+Tests that intrinsic values on regions work as expected. On success, you will see a series of PASS below.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

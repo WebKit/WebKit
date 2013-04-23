@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .content {
+                display: inline-block;
+                width: 100px;
+                height: 100px;
+                background-color: salmon;
+            }
+
+            .region { border: 5px solid pink; }
+            .regionParent { float: left; border: 5px solid blue; }
+        </style>
+        <script src="../../resources/check-layout.js"></script>
+    </head>
+    <body>
+        <p>Test that the width of a floating block is correctly computed when its child is a region</p>
+        <p>On success, you will see a series of PASS below.</p>
+
+        <div class="container" style="height: 150px;">
+            <div class="content" style="-webkit-flow-into: flow1;"></div>
+            <div class="regionParent" data-expected-width="220">
+                <div class="region" style="-webkit-flow-from: flow1; width: 200px;"></div>
+            </div>
+        </div>
+
+        <div class="container" style="height: 150px;">
+            <div class="content" style="-webkit-flow-into: flow2;"></div>
+            <div class="regionParent" data-expected-width="220">
+                <div class="region" style="-webkit-flow-from: flow2;  min-width: 200px;"></div>
+            </div>
+        </div>
+
+        <div class="container" style="height: 250px;">
+            <div class="content" style="-webkit-flow-into: flow3;"></div>
+            <div class="content" style="-webkit-flow-into: flow3;"></div>
+            <div class="content" style="-webkit-flow-into: flow3;"></div>
+            <div class="regionParent" data-expected-width="220">
+                <div class="region" style="-webkit-flow-from: flow3; max-width: 200px;"></div>
+            </div>
+        </div>
+
+        <script>checkLayout(".regionParent");</script>
+    </body>
+</html>
