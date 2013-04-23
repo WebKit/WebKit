@@ -110,6 +110,7 @@ private:
     friend class SVGElement;
 #endif
 
+    const Attribute* attributeBase() const;
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
@@ -940,6 +941,13 @@ inline size_t ElementData::length() const
     return m_arraySize;
 }
 
+inline const Attribute* ElementData::attributeBase() const
+{
+    if (m_isUnique)
+        return static_cast<const UniqueElementData*>(this)->m_attributeVector.data();
+    return static_cast<const ShareableElementData*>(this)->m_attributeArray;
+}
+
 inline const StylePropertySet* ElementData::presentationAttributeStyle() const
 {
     if (!m_isUnique)
@@ -957,8 +965,9 @@ inline const Attribute* ElementData::getAttributeItem(const AtomicString& name, 
 
 inline size_t ElementData::getAttributeItemIndex(const QualifiedName& name) const
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        if (attributeItem(i)->name().matches(name))
+    const Attribute* attributes = attributeBase();
+    for (unsigned i = 0, count = length(); i < count; ++i) {
+        if (attributes[i].name().matches(name))
             return i;
     }
     return notFound;
@@ -968,15 +977,14 @@ inline size_t ElementData::getAttributeItemIndex(const QualifiedName& name) cons
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
 inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
-    unsigned len = length();
+    const Attribute* attributes = attributeBase();
     bool doSlowCheck = shouldIgnoreAttributeCase;
+    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? name.lower() : name;
 
-    const AtomicString caseAdjustedName = shouldIgnoreAttributeCase ? name.lower() : name;
     // Optimize for the case where the attribute exists and its name exactly matches.
-    for (unsigned i = 0; i < len; ++i) {
-        const Attribute* attribute = attributeItem(i);
-        if (!attribute->name().hasPrefix()) {
-            if (caseAdjustedName == attribute->localName())
+    for (unsigned i = 0, count = length(); i < count; ++i) {
+        if (!attributes[i].name().hasPrefix()) {
+            if (caseAdjustedName == attributes[i].localName())
                 return i;
         } else
             doSlowCheck = true;
@@ -989,9 +997,10 @@ inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool 
 
 inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name) const
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        if (attributeItem(i)->name().matches(name))
-            return attributeItem(i);
+    const Attribute* attributes = attributeBase();
+    for (unsigned i = 0, count = length(); i < count; ++i) {
+        if (attributes[i].name().matches(name))
+            return &attributes[i];
     }
     return 0;
 }
@@ -999,9 +1008,7 @@ inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name)
 inline const Attribute* ElementData::attributeItem(unsigned index) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
-    if (m_isUnique)
-        return &static_cast<const UniqueElementData*>(this)->m_attributeVector.at(index);
-    return &static_cast<const ShareableElementData*>(this)->m_attributeArray[index];
+    return attributeBase() + index;
 }
 
 } // namespace
