@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+#shape-inside {
+    border: 2px solid blue;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    line-height: 20px;
+    -webkit-shape-inside: rectangle(50px, 0px, 100px, 45px);
+}
+#border {
+    position: absolute;
+    left: 58px;
+    width: 100px;
+    height: 40px;
+    border: 2px solid green;
+}
+</style>
+</head>
+<body>
+<div id="border"></div>
+<div id="shape-inside">
+    This text should wrap inside the green rectangle, and overflow should wrap
+    outside the blue rectangle.
+</div>
+</body>
+</html>

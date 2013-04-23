@@ -63,8 +63,8 @@ function generateString(dimensions, lineHeight) {
     if (dimensions.shapeRadiusX == 0 || dimensions.shapeRadiusY == 0)
         resultLength = dimensions.shapeWidth * dimensions.shapeHeight / (lineHeight * lineHeight);
     else {
-        for (var lineTop = 0; lineTop < dimensions.shapeHeight; lineTop += lineHeight) {
-            var width = dimensions.shapeWidth - 2 * xInset(dimensions, lineTop, lineTop + lineHeight);
+        for (var lineBottom = lineHeight; lineBottom < dimensions.shapeHeight; lineBottom += lineHeight) {
+            var width = dimensions.shapeWidth - 2 * xInset(dimensions, lineBottom, lineBottom + lineHeight);
             resultLength += width / lineHeight;
         }
     }

@@ -1679,6 +1679,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         // actual shape when a line is beginning in a new region which has a shape on it. Usecase: shape-inside is applied not on the first, but on either of the following regions in the region chain.
         absoluteLogicalTop = logicalTop() + lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     }
+    bool lineOverflowsFromShapeInside = false;
 #endif
 
     while (!end.atEnd()) {
@@ -1707,6 +1708,12 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         if (exclusionShapeInsideInfo) {
             LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
             exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+
+            LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
+            if (!flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
+                setLogicalHeight(shapeContainingBlockHeight);
+                lineOverflowsFromShapeInside = true;
+            }
         }
 #endif
         WordMeasurements wordMeasurements;
@@ -2680,8 +2687,16 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 #else
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = m_block->layoutExclusionShapeInsideInfo();
+
     if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->lineOverlapsShapeBounds())
         return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+
+    // In layoutRunsAndFloatsInRange we have to use lineOverlapsShapeBounds() to determine the line segments since shape-outside's codepaths uses the same code to determine its segments. The line containing is not a requirement for shape-outside,
+    // so in this case we can end up with some extra segments for the overflowing content, but we don't want to apply the segments for the overflowing content, so we need to reset it.
+    if (!m_block->flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds()) {
+        exclusionShapeInsideInfo->clearSegments();
+        return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+    }
 
     InlineIterator end = resolver.position();
     InlineIterator oldEnd = end;

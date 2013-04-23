@@ -85,6 +85,7 @@ public:
     }
 
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
+    void clearSegments() { m_segments.clear(); }
 
     LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShapeLogicalBoundingBox().y()) + logicalTopOffset(); }
     LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShapeLogicalBoundingBox().maxY()) + logicalTopOffset(); }
@@ -96,7 +97,10 @@ public:
     LayoutUnit logicalLineTop() const { return m_shapeLineTop + logicalTopOffset(); }
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
 
-    bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && logicalLineBottom() >= shapeLogicalTop(); }
+    LayoutUnit shapeContainingBlockHeight() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX) ? (m_shapeLogicalHeight + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalHeight; }
+
+    bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom(); }
+    bool lineWithinShapeBounds() const { return lineOverlapsShapeBounds() && (logicalLineBottom() <= shapeLogicalBottom()); }
 
     void dirtyShapeSize() { m_shape.clear(); }
     bool shapeSizeDirty() { return !m_shape.get(); }

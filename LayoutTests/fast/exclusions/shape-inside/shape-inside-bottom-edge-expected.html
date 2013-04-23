@@ -2,47 +2,61 @@
 <html>
 <head>
 <style>
-.shape-inside {
-    position: absolute;
-    left: 0px;
-    width: 600px;
-    height: 200px;
-}
-
-.shape-background {
-    position: absolute;
-    left: 50px;
-    width: 400px;
+.box {
+    width: 450px;
     height: 100px;
-    background-color: green;
+    line-height: 20px;
+    outline: 2px solid green;
 }
 
-#shape-background-no-overlap {
-    top: 50px;
+.rounded-rectangle {
+    width: 100px;
+    height: 100px;
 }
 
-#shape-inside-no-overlap {
-    top: 0px;
-    padding-top: 150px;
+.details {
+    padding-top: 15px;
+    font-style: italic;
 }
 
-#shape-background-overlap {
-    top: 250px;
-}
-
-#shape-inside-overlap {
-    top: 200px;
-    padding-left: 50px;
-    padding-top: 149.9px;
-}
 </style>
 </head>
 
 <body>
-  <div id="shape-background-no-overlap" class="shape-background"></div>
-  <div id="shape-inside-no-overlap" class="shape-inside">This text should appear below and to the left of the green rectangle.</div>
+  <div class="box">
+    <p style="padding-top: 55px; padding-left: 25px;">Content1</p>
+  </div>
+<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content1 text line's bottom equals to the shape-inside's rectangle bottom boundary, so it should fit in the shape-inside.</p>
+<hr>
 
-  <div id="shape-background-overlap" class="shape-background"></div>
-  <div id="shape-inside-overlap" class="shape-inside">This text should directly appear below the green rectangle.</div>
+<div class="box">
+    <p style="padding-top: 100px;">Content2</p>
+</div>
+
+<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content2 text line overlaps with the shape-inside's rectangle bottom boundary, so the Content2 should be pushed below the content box.</p>
+<hr>
+
+<div class="box">
+    <p style="padding-top: 100px;">Content3</p>
+</div>
+
+<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content3 text line starts after the shape-inside's rectangle bottom boundary, so the Content3 should be pushed below the content box.</p>
+<hr>
+
+<div class="box rounded-rectangle">
+  <p style="padding-top: 100px;">Content4</p>
+</div>
+<p class="details">There is a 100x100px shape-inside rounded rectangle inside the green box.<br/>The shape top and bottom boundaries match with the content box boundaries, the overflow should start on the left, below the green content box.</p>
+<hr>
+
+<div class="box rounded-rectangle">
+  <p style="padding-top: 100px;">Content5</p>
+</div>
+<p class="details">There is a 75x75px shape-inside rounded rectangle inside the green 100x100px box.<br/>The forth line should overflow, the overflow should start on the left, below the green content box.</p>
+<hr>
+
+<p>Based on a recent change on the <a href="http://dev.w3.org/csswg/css-exclusions/#shape-inside-property">exclusions specification</a>. The 'shape-inside' property adds an exclusion area to the element's wrapping context.
+This modifies the normal rectangular shape of the content area to a possibly non-rectangular wrapping area. The exclusion area added is defined by subtracting the shape from the element's content area.</p>
+<p>Bug <a href="http://webkit.org/b/114526 ">114526</a>: [CSS Exclusions] shape-inside overflow should be pushed to the outside of the content box</p>
 </body>
 </html>

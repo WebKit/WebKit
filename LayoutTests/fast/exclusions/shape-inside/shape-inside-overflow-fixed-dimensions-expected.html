@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#shape-inside {
+    border: 2px solid blue;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    line-height: 20px;
+}
+#border {
+    position: absolute;
+    left: 58px;
+    width: 100px;
+    height: 40px;
+    border: 2px solid green;
+}
+.spacer {
+    width: 50px;
+    height: 40px;
+}
+</style>
+</head>
+<body>
+<div id="border"></div>
+<div id="shape-inside">
+    <div class="spacer" style="float:left"></div>
+    <div class="spacer" style="float:right"></div>
+    This text should wrap
+    <div style="padding-top: 162px;">
+        inside the green rectangle, and overflow should wrap outside the blue rectangle.
+    </div>
+</div>
+</body>
+</html>
