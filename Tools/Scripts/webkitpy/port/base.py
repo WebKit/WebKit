@@ -1491,23 +1491,6 @@ class Port(object):
             "3D Rendering": ["animations/3d", "transforms/3d"],
         }
 
-    # Ports which use compile-time feature detection should define this method and return
-    # a dictionary mapping from symbol substrings to possibly disabled test directories.
-    # When the symbol substrings are not matched, the directories will be skipped.
-    # If ports don't ever enable certain features, then those directories can just be
-    # in the Skipped list instead of compile-time-checked here.
-    def _missing_symbol_to_skipped_tests(self):
-        """Return the supported feature dictionary. The keys are symbol-substrings
-        and the values are the lists of directories to skip if that symbol is missing."""
-        return {
-            "MathMLElement": ["mathml"],
-            "GraphicsLayer": ["compositing"],
-            "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
-            "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl", "webgl"],
-            "MHTMLArchive": ["mhtml"],
-            "CSSVariableValue": ["fast/css/variables", "inspector/styles/variables"],
-        }
-
     def _has_test_in_directories(self, directory_lists, test_list):
         if not test_list:
             return False
@@ -1529,15 +1512,6 @@ class Port(object):
             supported_feature_list = self._runtime_feature_list()
             if supported_feature_list is not None:
                 return reduce(operator.add, [directories for feature, directories in self._missing_feature_to_skipped_tests().items() if feature not in supported_feature_list])
-
-        # Only check the symbols of there are tests in the test_list that might get skipped.
-        # This is a performance optimization to avoid the calling nm.
-        # Runtime feature detection not supported, fallback to static dectection:
-        # Disable any tests for symbols missing from the executable or libraries.
-        if self._has_test_in_directories(self._missing_symbol_to_skipped_tests().values(), test_list):
-            symbols_string = self._symbols_string()
-            if symbols_string is not None:
-                return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in symbols_string], [])
 
         return []
 

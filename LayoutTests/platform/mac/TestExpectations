@@ -1157,6 +1157,9 @@ webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify [ Failure ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
 
+# MHTML is not yet enabled
+mhtml [ Skip ]
+
 # Our slow tests, in alphabetical order.
 webkit.org/b/57672 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass ]
 

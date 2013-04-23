@@ -1,3 +1,19 @@
+2013-04-23  Jessie Berlin  <jberlin@apple.com>
+
+        NRWT: confusing warning about a line being in a Skipped file when it is really just listed
+        in _missing_symbol_to_skipped_tests in base.py
+        https://bugs.webkit.org/show_bug.cgi?id=108884
+
+        Reviewed by Tim Horton.
+
+        Remove symbol-based skipped list detection.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._missing_feature_to_skipped_tests):
+        (Port._skipped_tests_for_unsupported_features):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_path_to_test_expectations_file):
+
 2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove wxWebKit support from the Tools
