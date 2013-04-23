@@ -1,3 +1,21 @@
+2013-04-23  Xan Lopez  <xlopez@igalia.com>
+
+        [BlackBerry] Do not access BackForwardListImpl from DRT
+        https://bugs.webkit.org/show_bug.cgi?id=115041
+
+        Reviewed by Carlos Garcia Campos.
+
+        Export the necessary functionality in our BackForwardList port
+        client in order for DRT to work.
+
+        * WebCoreSupport/BackForwardListBlackBerry.cpp:
+        (WebCore::BackForwardListBlackBerry::backListWithLimit):
+        (WebCore):
+        (WebCore::BackForwardListBlackBerry::forwardListWithLimit):
+        (WebCore::BackForwardListBlackBerry::capacity):
+        * WebCoreSupport/BackForwardListBlackBerry.h:
+        (BackForwardListBlackBerry):
+
 2013-04-23  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Need to send out change event for date/color picker

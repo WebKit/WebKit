@@ -40,6 +40,9 @@ public:
     void clear();
     HistoryItemVector& entries();
     HistoryItem* currentItem();
+    void backListWithLimit(int, HistoryItemVector&);
+    void forwardListWithLimit(int, HistoryItemVector&);
+    int capacity();
 
 private:
     explicit BackForwardListBlackBerry(BlackBerry::WebKit::WebPagePrivate*);

@@ -112,6 +112,21 @@ HistoryItemVector& BackForwardListBlackBerry::entries()
     return m_impl->entries();
 }
 
+void BackForwardListBlackBerry::backListWithLimit(int limit, HistoryItemVector& list)
+{
+    m_impl->backListWithLimit(limit, list);
+}
+
+void BackForwardListBlackBerry::forwardListWithLimit(int limit, HistoryItemVector& list)
+{
+    m_impl->forwardListWithLimit(limit, list);
+}
+
+int BackForwardListBlackBerry::capacity()
+{
+    return m_impl->capacity();
+}
+
 HistoryItem* BackForwardListBlackBerry::currentItem()
 {
     return m_impl->currentItem();

@@ -22,7 +22,7 @@
 #include "APICast.h"
 #include "AccessibilityController.h"
 #include "BackForwardController.h"
-#include "BackForwardListImpl.h"
+#include "BackForwardListBlackBerry.h"
 #include "Credential.h"
 #include "DatabaseTracker.h"
 #include "DocumentLoader.h"
@@ -506,7 +506,8 @@ static String dumpBackForwardListForWebView()
     // FORMAT:
     // "        (file test):fast/loader/resources/click-fragment-link.html  **nav target**"
     // "curr->  (file test):fast/loader/resources/click-fragment-link.html#testfragment  **nav target**"
-    WebCore::BackForwardListImpl* bfList = static_cast<WebCore::BackForwardListImpl*>(mainFrame->page()->backForward()->client());
+    WebCore::BackForwardListBlackBerry* bfList = static_cast<WebCore::BackForwardListBlackBerry*>(mainFrame->page()->backForward()->client());
+
     int maxItems = bfList->capacity();
     WebCore::HistoryItemVector entries;
     bfList->backListWithLimit(maxItems, entries);
