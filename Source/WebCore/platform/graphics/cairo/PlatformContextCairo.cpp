@@ -191,7 +191,7 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
         cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_BILINEAR);
         break;
     }
-    cairo_pattern_set_extend(pattern.get(), CAIRO_EXTEND_NONE);
+    cairo_pattern_set_extend(pattern.get(), CAIRO_EXTEND_PAD);
 
     // The pattern transformation properly scales the pattern for when the source rectangle is a
     // different size than the destination rectangle. We also account for any offset we introduced
