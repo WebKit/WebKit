@@ -147,6 +147,7 @@ public:
     GraphicsContext* graphicsContext() { return m_context; }
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
     virtual void endClip() = 0;
+    virtual IntRect clipBounds() = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
 
     void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }

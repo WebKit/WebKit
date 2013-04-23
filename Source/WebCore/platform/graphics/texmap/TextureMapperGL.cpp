@@ -1198,6 +1198,11 @@ void TextureMapperGL::endClip()
     clipStack().applyIfNeeded(m_context3D.get());
 }
 
+IntRect TextureMapperGL::clipBounds()
+{
+    return clipStack().current().scissorBox;
+}
+
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
 {
     BitmapTextureGL* texture = new BitmapTextureGL(this);

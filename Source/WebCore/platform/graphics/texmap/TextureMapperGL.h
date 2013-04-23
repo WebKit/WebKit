@@ -64,6 +64,7 @@ public:
     virtual void beginPainting(PaintFlags = 0) OVERRIDE;
     virtual void endPainting() OVERRIDE;
     virtual void endClip() OVERRIDE;
+    virtual IntRect clipBounds() OVERRIDE;
     virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
     virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }

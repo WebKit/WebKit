@@ -359,11 +359,13 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
         return;
     }
 
-    Vector<IntRect> rects;
-
     nonOverlapRegion.translate(options.offset);
-    rects = nonOverlapRegion.rects();
+    Vector<IntRect> rects = nonOverlapRegion.rects();
     for (size_t i = 0; i < rects.size(); ++i) {
+        IntRect rect = rects[i];
+        if (!rect.intersects(options.textureMapper->clipBounds()))
+            continue;
+
         options.textureMapper->beginClip(TransformationMatrix(), rects[i]);
         paintSelfAndChildrenWithReplica(options);
         options.textureMapper->endClip();
@@ -371,13 +373,17 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
 
     rects = overlapRegion.rects();
     IntSize maxTextureSize = options.textureMapper->maxTextureSize();
-    IntRect rect;
+    IntRect adjustedClipBounds(options.textureMapper->clipBounds());
+    adjustedClipBounds.move(-options.offset);
     for (size_t i = 0; i < rects.size(); ++i) {
-        rect = rects[i];
+        IntRect rect = rects[i];
         for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
                 tileRect.intersect(rect);
+                if (!tileRect.intersects(adjustedClipBounds))
+                    continue;
+
                 paintWithIntermediateSurface(options, tileRect);
             }
         }
