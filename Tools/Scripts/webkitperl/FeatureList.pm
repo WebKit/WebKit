@@ -199,9 +199,6 @@ my @features = (
     { option => "css3-text-line-break", desc => "Toggle CSS3 Text Line Break support",
       define => "ENABLE_CSS3_TEXT_LINE_BREAK", default => 0, value => \$css3TextLineBreakSupport },
 
-    { option => "css4-images", desc => "Toggle CSS4 Images support",
-      define => "ENABLE_CSS4_IMAGES", default => 0, value => \$css4ImagesSupport },
-
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", default => 1, value => \$cssBoxDecorationBreakSupport },
 

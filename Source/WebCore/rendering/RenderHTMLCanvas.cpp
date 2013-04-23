@@ -68,7 +68,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
         }
     }
 
-    bool useLowQualityScale = style()->imageRendering() == ImageRenderingPixelated || style()->imageRendering() == ImageRenderingCrispEdges || style()->imageRendering() == ImageRenderingOptimizeSpeed;
+    bool useLowQualityScale = style()->imageRendering() == ImageRenderingCrispEdges || style()->imageRendering() == ImageRenderingOptimizeSpeed;
     static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect, useLowQualityScale);
 }
 

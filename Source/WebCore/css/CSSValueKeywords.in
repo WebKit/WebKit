@@ -934,10 +934,8 @@ off
 // image-rendering
 // auto
 // optimizeSpeed
-crisp-edges
-pixelated
--webkit-smooth
 optimizeQuality
+-webkit-crisp-edges
 -webkit-optimize-contrast
 
 // -webkit-shape-inside

@@ -4032,13 +4032,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
         m_value.ident = CSSValueAuto;
         break;
     case ImageRenderingCrispEdges:
-        m_value.ident = CSSValueCrispEdges;
-        break;
-    case ImageRenderingPixelated:
-        m_value.ident = CSSValuePixelated;
-        break;
-    case ImageRenderingSmooth:
-        m_value.ident = CSSValueWebkitSmooth;
+        m_value.ident = CSSValueWebkitCrispEdges;
         break;
     case ImageRenderingOptimizeSpeed:
         m_value.ident = CSSValueOptimizespeed;
@@ -4055,12 +4049,8 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
     case CSSValueAuto:
         return ImageRenderingAuto;
     case CSSValueWebkitOptimizeContrast:
-    case CSSValueCrispEdges:
+    case CSSValueWebkitCrispEdges:
         return ImageRenderingCrispEdges;
-    case CSSValuePixelated:
-        return ImageRenderingPixelated;
-    case CSSValueWebkitSmooth:
-        return ImageRenderingSmooth;
     case CSSValueOptimizespeed:
         return ImageRenderingOptimizeSpeed;
     case CSSValueOptimizequality:

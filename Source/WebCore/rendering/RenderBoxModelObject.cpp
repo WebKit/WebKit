@@ -164,10 +164,8 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     switch (object->style()->imageRendering()) {
     case ImageRenderingOptimizeSpeed:
     case ImageRenderingCrispEdges:
-    case ImageRenderingPixelated:
         return true;
     case ImageRenderingOptimizeQuality:
-    case ImageRenderingSmooth:
         return false;
     case ImageRenderingAuto:
         break;

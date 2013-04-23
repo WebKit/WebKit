@@ -1,3 +1,14 @@
+2013-04-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Respect image-rendering setting for determing image-rendering quality
+        https://bugs.webkit.org/show_bug.cgi?id=113405
+
+        Reviewed by Benjamin Poulain.
+
+        Remove CSS4 Images option. It is not ready for implementation.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-04-22  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/114989> Add a user default to allow use of the Safari binary rather than SafariForWebKitDevelopment

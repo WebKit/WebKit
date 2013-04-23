@@ -479,10 +479,7 @@ enum TextOrientation { TextOrientationVerticalRight, TextOrientationUpright, Tex
 
 enum TextOverflow { TextOverflowClip = 0, TextOverflowEllipsis };
 
-enum EImageRendering {
-    ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality,
-    ImageRenderingCrispEdges, ImageRenderingPixelated, ImageRenderingSmooth
-};
+enum EImageRendering { ImageRenderingAuto = 0, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality, ImageRenderingCrispEdges };
 
 enum ImageResolutionSource { ImageResolutionSpecified = 0, ImageResolutionFromImage };
 
