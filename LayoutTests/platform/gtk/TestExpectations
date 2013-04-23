@@ -1376,6 +1376,9 @@ webkit.org/b/18092 tables/mozilla/core/row_span.html [ ImageOnlyFailure Rebaseli
 webkit.org/b/131010 tables/mozilla_expected_failures/bugs/bug131020-3.html [ ImageOnlyFailure Rebaseline ]
 webkit.org/b/23847 tables/mozilla_expected_failures/bugs/bug23847.html [ ImageOnlyFailure Rebaseline ]
 
+webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
+webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
