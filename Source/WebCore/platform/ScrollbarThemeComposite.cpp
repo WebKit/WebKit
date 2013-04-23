@@ -26,15 +26,8 @@
 #include "config.h"
 #include "ScrollbarThemeComposite.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
-#include "Page.h"
-#include "PlatformMouseEvent.h"
 #include "ScrollbarThemeClient.h"
-#include "Settings.h"
 
 using namespace std;
 
