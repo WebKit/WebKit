@@ -1,5 +1,25 @@
 2013-04-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Turn off tiled drawing in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=115064
+
+        Reviewed by Tim Horton.
+        
+        We get little benefit from making the Web Inspector use tiled drawing;
+        it doesn't scroll the main frame, so doesn't benefit from the ScrollingCoordinator.
+        Not using tiled drawing also means that we won't make compositing
+        layers for position: -webkit-sticky, which avoids a number of issues
+        with compositing layer proliferation in the inspector.
+        
+        Also turn off accelerated drawing, since that pref will force a single
+        compositing layer.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+
+2013-04-23  Simon Fraser  <simon.fraser@apple.com>
+
         When the web page transparency changes, DrawingAreaImpl needs to know about it
         https://bugs.webkit.org/show_bug.cgi?id=115062
 
