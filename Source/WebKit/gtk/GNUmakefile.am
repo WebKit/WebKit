@@ -300,7 +300,6 @@ WebKit-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) JavaScriptCore-@WEBKITGTK_AP
 	     $(G_IR_SCANNER) \
 	     --quiet \
 	     --warn-all \
-	     --warn-error \
 	     --symbol-prefix=webkit \
 	     --identifier-prefix=WebKit \
 	     --namespace=WebKit \

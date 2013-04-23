@@ -1,5 +1,13 @@
 2013-04-22  Martin Robinson  <mrobinson@igalia.com>
 
+        Try to fix the build after enabling gobject-introspection
+
+        * GNUmakefile.am: Disable --warn-error for WebKit1 until we can work out all gir failures.
+        * webkit/webkitwebplugin.cpp: Skip this API for introspection because it return a GSList
+        of pointer (non-boxed) types.
+
+2013-04-22  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Enable introspection always for developer builds
         https://bugs.webkit.org/show_bug.cgi?id=114983
 
