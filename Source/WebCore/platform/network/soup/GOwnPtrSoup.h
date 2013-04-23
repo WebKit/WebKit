@@ -24,11 +24,13 @@
 
 typedef struct _SoupURI SoupURI;
 typedef struct _SoupCookie SoupCookie;
+typedef struct SoupMessageHeaders SoupMessageHeaders;
 
 namespace WTF {
 
 template<> void freeOwnedGPtr<SoupURI>(SoupURI* ptr);
 template<> void freeOwnedGPtr<SoupCookie>(SoupCookie* ptr);
+template<> void freeOwnedGPtr<SoupMessageHeaders>(SoupMessageHeaders*);
 
 }
 

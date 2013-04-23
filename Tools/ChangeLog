@@ -1,3 +1,13 @@
+2013-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_uri_request_get_http_headers to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=112160
+
+        Reviewed by Andreas Kling.
+
+        * MiniBrowser/gtk/GNUmakefile.am: Add missing libsoup flags to
+        CPPFLAGS.
+
 2013-04-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Make EFL WKView API shareable between ports

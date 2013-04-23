@@ -32,6 +32,8 @@
 static WebKitTestBus* bus;
 static WebKitTestServer* kServer;
 
+const char* kDNTHeaderNotPresent = "DNT header not present";
+
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 {
     test->setRedirectURI(kServer->getURIForPath("/normal").data());
@@ -345,6 +347,43 @@ static void testWebPageURI(WebPageURITest* test, gconstpointer)
 
 }
 
+static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
+{
+    GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkit_uri_request_new("file:///foo/bar"));
+    g_assert(uriRequest.get());
+    g_assert_cmpstr(webkit_uri_request_get_uri(uriRequest.get()), ==, "file:///foo/bar");
+    g_assert(!webkit_uri_request_get_http_headers(uriRequest.get()));
+
+    // Load a request with no Do Not Track header.
+    webkit_uri_request_set_uri(uriRequest.get(), kServer->getURIForPath("/do-not-track-header").data());
+    test->loadRequest(uriRequest.get());
+    test->waitUntilLoadFinished();
+
+    size_t mainResourceDataSize = 0;
+    const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpint(mainResourceDataSize, ==, strlen(kDNTHeaderNotPresent));
+    g_assert(!strncmp(mainResourceData, kDNTHeaderNotPresent, mainResourceDataSize));
+
+    // Add the Do Not Track header and load the request again.
+    SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(uriRequest.get());
+    g_assert(headers);
+    soup_message_headers_append(headers, "DNT", "1");
+    test->loadRequest(uriRequest.get());
+    test->waitUntilLoadFinished();
+
+    mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpint(mainResourceDataSize, ==, 1);
+    g_assert(!strncmp(mainResourceData, "1", mainResourceDataSize));
+
+    // Load a URI for which the web extension will add the Do Not Track header.
+    test->loadURI(kServer->getURIForPath("/add-do-not-track-header").data());
+    test->waitUntilLoadFinished();
+
+    mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpint(mainResourceDataSize, ==, 1);
+    g_assert(!strncmp(mainResourceData, "1", mainResourceDataSize));
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -375,6 +414,13 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
         soup_server_unpause_message(server, message);
         return;
+    } else if (g_str_equal(path, "/do-not-track-header") || g_str_equal(path, "/add-do-not-track-header")) {
+        const char* doNotTrack = soup_message_headers_get_one(message->request_headers, "DNT");
+        if (doNotTrack)
+            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, doNotTrack, strlen(doNotTrack));
+        else
+            soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kDNTHeaderNotPresent, strlen(kDNTHeaderNotPresent));
+        soup_message_set_status(message, SOUP_STATUS_OK);
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 
@@ -409,6 +455,7 @@ void beforeAll()
 
     ViewIsLoadingTest::add("WebKitWebView", "is-loading", testWebViewIsLoading);
     WebPageURITest::add("WebKitWebPage", "get-uri", testWebPageURI);
+    WebViewTest::add("WebKitURIRequest", "http-headers", testURIRequestHTTPHeaders);
 }
 
 void afterAll()

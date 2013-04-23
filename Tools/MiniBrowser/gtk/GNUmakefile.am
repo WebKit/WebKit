@@ -14,7 +14,8 @@ Programs_MiniBrowser_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_MiniBrowser_SOURCES = \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.h \

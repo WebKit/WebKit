@@ -76,6 +76,10 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
         GOwnPtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
         GOwnPtr<char> newURI(g_strdup_printf("%s/javascript.js", prefix.get()));
         webkit_uri_request_set_uri(request, newURI.get());
+    } else if (g_str_has_suffix(requestURI, "/add-do-not-track-header")) {
+        SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(request);
+        g_assert(headers);
+        soup_message_headers_append(headers, "DNT", "1");
     } else if (g_str_has_suffix(requestURI, "/cancel-this.js"))
         return TRUE;
 

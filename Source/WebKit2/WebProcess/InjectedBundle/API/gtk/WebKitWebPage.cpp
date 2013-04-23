@@ -137,7 +137,9 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     if (returnValue)
         return 0;
 
-    RefPtr<WebURLRequest> newRequest = WebURLRequest::create(webkitURIRequestGetResourceRequest(request.get()));
+    ResourceRequest resourceRequest;
+    webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
+    RefPtr<WebURLRequest> newRequest = WebURLRequest::create(resourceRequest);
 
     ImmutableDictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));

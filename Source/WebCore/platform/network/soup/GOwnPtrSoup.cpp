@@ -36,4 +36,10 @@ template <> void freeOwnedGPtr<SoupCookie>(SoupCookie* ptr)
         soup_cookie_free(ptr);
 }
 
+template <> void freeOwnedGPtr<SoupMessageHeaders>(SoupMessageHeaders* ptr)
+{
+    if (ptr)
+        soup_message_headers_free(ptr);
+}
+
 }

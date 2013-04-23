@@ -69,6 +69,8 @@ namespace WebCore {
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
+        void updateSoupMessageHeaders(SoupMessageHeaders*) const;
+        void updateFromSoupMessageHeaders(SoupMessageHeaders*);
         void updateSoupMessage(SoupMessage*) const;
         SoupMessage* toSoupMessage() const;
         void updateFromSoupMessage(SoupMessage*);

@@ -1,3 +1,40 @@
+2013-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_uri_request_get_http_headers to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=112160
+
+        Reviewed by Andreas Kling.
+
+        It allows to load requests with custom headers, or to update the
+        headers of a request before being sent to the server in the
+        WebKitWebPage::send-request callback.
+
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (_WebKitURIRequestPrivate): Add SoupMessageHeaders.
+        (webkit_uri_request_get_http_headers): Return the HTTP headers of
+        the request as a SoupMessageHeaders if the request is HTTP. A new
+        SoupMessageHeaders is created on demand using the existing headers
+        of the request.
+        (webkitURIRequestGetResourceRequest): Instead of returning a const
+        reference of the internal ResourceRequest, set a request passed as
+        a reference and update its HTTP headers using the
+        SoupMessageHeaders if present.
+        * UIProcess/API/gtk/WebKitURIRequest.h:
+        * UIProcess/API/gtk/WebKitURIRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_request): Update to the new
+        webkitURIRequestGetResourceRequest API.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add
+        webkit_uri_request_get_http_headers symbol.
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        (testWebPageURI):
+        (testURIRequestHTTPHeaders):
+        (serverCallback):
+        (beforeAll):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame): Update to the new
+        webkitURIRequestGetResourceRequest API.
+
 2013-04-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Make EFL WKView API shareable between ports
