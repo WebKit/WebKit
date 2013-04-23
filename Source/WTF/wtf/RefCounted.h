@@ -71,7 +71,7 @@ public:
         return m_refCount == 1;
     }
 
-    int refCount() const
+    unsigned refCount() const
     {
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT(m_verifier.isSafeToUse());
@@ -111,12 +111,6 @@ public:
 #endif
     }
 
-    // Helper for generating JIT code. Please do not use for non-JIT purposes.
-    const int* addressOfCount() const
-    {
-        return &m_refCount;
-    }
-
 protected:
     RefCountedBase()
         : m_refCount(1)
@@ -144,7 +138,7 @@ protected:
         ASSERT(!m_adoptionIsRequired);
 #endif
 
-        ASSERT(m_refCount > 0);
+        ASSERT(m_refCount);
         if (m_refCount == 1) {
 #if CHECK_REF_COUNTED_LIFECYCLE
             m_deletionHasBegun = true;
@@ -175,7 +169,7 @@ private:
     friend void adopted(RefCountedBase*);
 #endif
 
-    int m_refCount;
+    unsigned m_refCount;
 #if CHECK_REF_COUNTED_LIFECYCLE
     bool m_deletionHasBegun;
     bool m_adoptionIsRequired;

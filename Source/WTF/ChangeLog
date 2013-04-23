@@ -1,3 +1,16 @@
+2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove unused code of RefCounted after chromium removal
+        https://bugs.webkit.org/show_bug.cgi?id=115009
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::refCount):
+        (RefCountedBase):
+        It looks like addressOfCount() is no longer needed.
+        Also change the type back to unsigned as it make more sense.
+
 2013-04-23  David Kilzer  <ddkilzer@apple.com>
 
         RetainPtr.h should compile with -Wshorten-64-to-32
