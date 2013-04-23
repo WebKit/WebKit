@@ -178,6 +178,12 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
     m_scrollOffset += scrollDelta;
 }
 
+void DrawingAreaImpl::pageBackgroundTransparencyChanged()
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->pageBackgroundTransparencyChanged();
+}
+
 void DrawingAreaImpl::setLayerTreeStateIsFrozen(bool isFrozen)
 {
     if (m_layerTreeStateIsFrozen == isFrozen)

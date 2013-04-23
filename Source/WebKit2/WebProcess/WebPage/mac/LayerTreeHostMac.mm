@@ -182,6 +182,11 @@ void LayerTreeHostMac::deviceOrPageScaleFactorChanged()
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
 }
 
+void LayerTreeHostMac::pageBackgroundTransparencyChanged()
+{
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
+}
+
 void LayerTreeHostMac::didInstallPageOverlay(PageOverlay* pageOverlay)
 {
     createPageOverlayLayer(pageOverlay);

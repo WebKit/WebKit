@@ -72,6 +72,7 @@ public:
     virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
+    virtual void pageBackgroundTransparencyChanged() = 0;
 
     virtual void didInstallPageOverlay(PageOverlay*) = 0;
     virtual void didUninstallPageOverlay(PageOverlay*) = 0;

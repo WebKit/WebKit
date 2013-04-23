@@ -58,6 +58,7 @@ private:
     virtual void forceRepaint() OVERRIDE;
     virtual void sizeDidChange(const WebCore::IntSize& newSize) OVERRIDE;
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
+    virtual void pageBackgroundTransparencyChanged() OVERRIDE;
 
     virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
     virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;

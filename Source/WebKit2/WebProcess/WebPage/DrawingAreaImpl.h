@@ -54,6 +54,7 @@ private:
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
+    virtual void pageBackgroundTransparencyChanged() OVERRIDE;
     virtual void setLayerTreeStateIsFrozen(bool);
     virtual bool layerTreeStateIsFrozen() const { return m_layerTreeStateIsFrozen; }
     virtual LayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }

@@ -1,3 +1,27 @@
+2013-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        When the web page transparency changes, DrawingAreaImpl needs to know about it
+        https://bugs.webkit.org/show_bug.cgi?id=115062
+
+        Reviewed by Tim Horton.
+        
+        The non-composited contents layer owned by LayerTreeHostMac needs to
+        be marked as opaque or not depending on whether the WebPage draws
+        a background (or transparent background). It computed this at creation,
+        but did not dynamically update the state. Fix it so it does.
+        
+        This fixes cases of garbage pixels in the Web Inspector toolbar area
+        in some configurations.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::pageBackgroundTransparencyChanged):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::pageBackgroundTransparencyChanged):
+
 2013-04-23  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r148922): Crash opening web archives or loading web pages
