@@ -169,21 +169,6 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
     m_selectors.initialize(m_selectorList);
 }
 
-bool SelectorQuery::matches(Element* element) const
-{
-    return m_selectors.matches(element);
-}
-
-PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
-{
-    return m_selectors.queryAll(rootNode);
-}
-
-PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
-{
-    return m_selectors.queryFirst(rootNode);
-}
-
 SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)
 {
     HashMap<AtomicString, OwnPtr<SelectorQuery> >::iterator it = m_entries.find(selectors);
