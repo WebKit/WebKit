@@ -1,3 +1,106 @@
+2013-04-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Filled out more cases of branch folding in bytecode when emitting
+        expressions into a branching context
+        https://bugs.webkit.org/show_bug.cgi?id=115057
+
+        Reviewed by Filip Pizlo.
+
+        This covers a few cases like:
+
+            - while (true) { }
+            - while (1) { }
+            - if (x) break;
+            - if (x) continue;
+            - if (boolean_expr == boolean_const) { }
+            - if (boolean_expr == 1_or_0) { }
+            - if (bitop == 1_or_0) { }
+
+        This also works, but will bring shame on your family:
+
+            - while ("hello world") { }
+
+        No change on the benchmarks we track, but a 2.5X speedup on a microbenchmark
+        that uses these techniques.
+
+        * JavaScriptCore.order: Order!
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::shouldEmitDebugHooks): Updated ancillary code
+        for interface simplifications.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstantNode::emitBytecodeInConditionContext): Constants can
+        jump unconditionally when used within a condition context.
+
+        (JSC::ConstantNode::emitBytecode):
+        (JSC::StringNode::jsValue): Gave constants a common base class so I
+        could implement their codegen just once.
+
+        (JSC::BinaryOpNode::emitBytecodeInConditionContext):
+        (JSC::canFoldToBranch):
+        (JSC::BinaryOpNode::tryFoldToBranch): Fold (!/=)= and (!/=)== where
+        appropriate. A lot of cases are not appropriate because of the surprising
+        type conversion semantics of ==. For example, if (number == true) { } is
+        not the same as if (number) { } because the former will up-convert true
+        to number and then do numeric comparison.
+
+        (JSC::singleStatement):
+        (JSC::IfElseNode::tryFoldBreakAndContinue):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::ContinueNode::trivialTarget):
+        (JSC::BreakNode::trivialTarget): Fold "if (expression) break" and
+        "if (expression) continue" into direct jumps from expression.
+
+        * parser/ASTBuilder.h:
+        (ASTBuilder):
+        (JSC::ASTBuilder::createIfStatement):
+        * parser/NodeConstructors.h:
+        (JSC::ConstantNode::ConstantNode):
+        (JSC):
+        (JSC::NullNode::NullNode):
+        (JSC::BooleanNode::BooleanNode):
+        (JSC::NumberNode::NumberNode):
+        (JSC::StringNode::StringNode):
+        (JSC::IfElseNode::IfElseNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isConstant):
+        (JSC::ExpressionNode::isBoolean):
+        (JSC::StatementNode::isBreak):
+        (JSC::StatementNode::isContinue):
+        (ConstantNode):
+        (JSC::ConstantNode::isPure):
+        (JSC::ConstantNode::isConstant):
+        (NullNode):
+        (JSC::NullNode::jsValue):
+        (JSC::BooleanNode::value):
+        (JSC::BooleanNode::isBoolean):
+        (JSC::BooleanNode::jsValue):
+        (JSC::NumberNode::value):
+        (NumberNode):
+        (JSC::NumberNode::jsValue):
+        (StringNode):
+        (BinaryOpNode):
+        (IfElseNode):
+        (ContinueNode):
+        (JSC::ContinueNode::isContinue):
+        (BreakNode):
+        (JSC::BreakNode::isBreak):
+        * parser/Parser.cpp:
+        (JSC::::parseIfStatement):
+        * parser/ResultType.h:
+        (JSC::ResultType::definitelyIsBoolean):
+        (ResultType):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::pureToBoolean):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::pureToBoolean): Updated for interface changes above.
+
 2013-04-23  Mark Lam  <mark.lam@apple.com>
 
         Simplify the baseline JIT loop hint call site.

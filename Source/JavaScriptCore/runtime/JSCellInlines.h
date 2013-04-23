@@ -192,6 +192,13 @@ inline bool JSCell::toBoolean(ExecState* exec) const
     return !structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
 }
 
+inline TriState JSCell::pureToBoolean() const
+{
+    if (isString()) 
+        return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+    return MixedTriState;
+}
+
 } // namespace JSC
 
 #endif // JSCellInlines_h
