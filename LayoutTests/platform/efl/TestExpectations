@@ -642,18 +642,6 @@ webkit.org/b/110546 fast/parser/document-write-fighting-eof.html [ Crash ]
 
 webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass ]
 
-# ASSERTION FAILED: m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty().
-webkit.org/b/114731 compositing [ Crash Pass ]
-webkit.org/b/114731 css1/box_properties/acid_test.html [ Crash Pass ]
-webkit.org/b/114731 css1/cascade/cascade_order.html [ Crash Pass ]
-webkit.org/b/114731 ietestcenter/css3/grid/display-grid-001.htm [ Crash Pass ]
-webkit.org/b/114731 fast/canvas/webgl [ Crash Pass ]
-webkit.org/b/114731 http/tests/canvas/webgl [ Crash Pass ]
-webkit.org/b/114731 http/tests/inspector/styles/xsl-transformed.xml [ Crash Pass ]
-webkit.org/b/114731 media/track/track-text-track-cue-list.html [ Crash Pass ]
-webkit.org/b/114731 media/video-display-toggle.html [ Crash Pass ]
-webkit.org/b/114731 webgl [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
