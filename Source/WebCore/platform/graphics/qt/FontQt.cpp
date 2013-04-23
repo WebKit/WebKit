@@ -296,7 +296,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
 
     for (int i = 0; i < numGlyphs; ++i) {
         Glyph glyph = glyphBuffer.glyphAt(from + i);
-        float advance = glyphBuffer.advanceAt(from + i);
+        float advance = glyphBuffer.advanceAt(from + i).width();
         if (!glyph)
             continue;
         glyphIndexes.append(glyph);

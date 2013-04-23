@@ -50,6 +50,7 @@ typedef struct _CFURLResponse *CFURLResponseRef;
 typedef const struct _CFURLRequest *CFURLRequestRef;
 typedef const struct __CTFont * CTFontRef;
 typedef const struct __CTLine * CTLineRef;
+typedef const struct __CTRun * CTRunRef;
 typedef const struct __CTTypesetter * CTTypesetterRef;
 typedef const struct __AXUIElement *AXUIElementRef;
 typedef struct _NSRange NSRange;
@@ -252,6 +253,8 @@ extern bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
+
+extern CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 
 #if PLATFORM(MAC) && USE(CA)
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);

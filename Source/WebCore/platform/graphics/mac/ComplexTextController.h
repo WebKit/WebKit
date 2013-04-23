@@ -94,6 +94,7 @@ private:
         CFIndex indexEnd() const { return m_indexEnd; }
         CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
         const CGGlyph* glyphs() const { return m_glyphs; }
+        CGSize initialAdvance() const { return m_initialAdvance; }
         const CGSize* advances() const { return m_advances; }
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
@@ -115,6 +116,7 @@ private:
         Vector<CFIndex, 64> m_glyphEndOffsets;
         Vector<CGGlyph, 64> m_glyphsVector;
         const CGGlyph* m_glyphs;
+        CGSize m_initialAdvance;
         Vector<CGSize, 64> m_advancesVector;
         const CGSize* m_advances;
         bool m_isLTR;

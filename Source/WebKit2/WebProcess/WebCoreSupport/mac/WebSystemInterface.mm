@@ -125,6 +125,7 @@ void InitWebCoreSystemInterface(void)
         INIT(IOSurfaceContextCreate);
         INIT(IOSurfaceContextCreateImage);
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
+        INIT(CTRunGetInitialAdvance);
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);

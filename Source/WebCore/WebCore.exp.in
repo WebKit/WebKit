@@ -1650,6 +1650,7 @@ _wkCopyRequestWithStorageSession
 _wkCreateCTLineWithUniCharProvider
 _wkCreateCustomCFReadStream
 _wkCreatePrivateStorageSession
+_wkCTRunGetInitialAdvance
 _wkDeleteAllHTTPCookies
 _wkDeleteHTTPCookie
 _wkGetCFURLResponseHTTPResponse

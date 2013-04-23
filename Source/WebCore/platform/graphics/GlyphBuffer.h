@@ -67,6 +67,7 @@ typedef Glyph GlyphBufferGlyph;
 #if USE(CG) || (OS(DARWIN) && PLATFORM(WX))
 struct GlyphBufferAdvance : CGSize {
 public:
+    GlyphBufferAdvance() : CGSize(CGSizeZero) { }
     GlyphBufferAdvance(CGSize size) : CGSize(size)
     {
     }
@@ -75,25 +76,10 @@ public:
     CGFloat width() const { return this->CGSize::width; }
     CGFloat height() const { return this->CGSize::height; }
 };
-#elif OS(WINCE)
-// There is no cross-platform code that uses the height of GlyphBufferAdvance,
-// so we can save memory space on embedded devices by storing only the width
-struct GlyphBufferAdvance {
-public:
-    GlyphBufferAdvance(float width)
-        : advance(width)
-    {
-    }
-
-    void setWidth(float width) { advance = width; }
-    float width() const { return advance; }
-
-private:
-    float advance;
-};
 #elif PLATFORM(QT)
 struct GlyphBufferAdvance : public QPointF {
 public:
+    GlyphBufferAdvance() : QPointF() { }
     GlyphBufferAdvance(const QPointF& advance)
         : QPointF(advance)
     {
@@ -128,6 +114,9 @@ public:
     const GlyphBufferAdvance* advances(int from) const { return m_advances.data() + from; }
 
     const SimpleFontData* fontDataAt(int index) const { return m_fontData[index]; }
+
+    void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
+    const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
     
     Glyph glyphAt(int index) const
     {
@@ -138,9 +127,9 @@ public:
 #endif
     }
 
-    float advanceAt(int index) const
+    GlyphBufferAdvance advanceAt(int index) const
     {
-        return m_advances[index].width();
+        return m_advances[index];
     }
 
     FloatSize offsetAt(int index) const
@@ -168,8 +157,6 @@ public:
 #if USE(CG) || (OS(DARWIN) && PLATFORM(WX))
         CGSize advance = { width, 0 };
         m_advances.append(advance);
-#elif OS(WINCE)
-        m_advances.append(width);
 #elif PLATFORM(QT)
         m_advances.append(QPointF(width, 0));
 #else
@@ -240,6 +227,7 @@ private:
     Vector<const SimpleFontData*, 2048> m_fontData;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;
     Vector<GlyphBufferAdvance, 2048> m_advances;
+    GlyphBufferAdvance m_initialAdvance;
 #if PLATFORM(WIN)
     Vector<FloatSize, 2048> m_offsets;
 #endif

@@ -1,3 +1,14 @@
+2013-04-23  Antoine Quint  <graouts@apple.com>
+
+        Initial advance of text runs should be taken into account
+        https://bugs.webkit.org/show_bug.cgi?id=114949
+
+        Reviewed by Darin Adler.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-04-12  Jeffrey Pfau  <jpfau@apple.com>
 
         Query directly for cache partition names

@@ -477,8 +477,9 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
     // Draw each contiguous run of glyphs that use the same font data.
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
     FloatSize offset = glyphBuffer.offsetAt(0);
-    FloatPoint startPoint(point);
-    float nextX = startPoint.x() + glyphBuffer.advanceAt(0);
+    FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
+    float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
+    float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
     int lastFrom = 0;
     int nextGlyph = 1;
 #if ENABLE(SVG_FONTS)
@@ -500,8 +501,10 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
             fontData = nextFontData;
             offset = nextOffset;
             startPoint.setX(nextX);
+            startPoint.setY(nextY);
         }
-        nextX += glyphBuffer.advanceAt(nextGlyph);
+        nextX += glyphBuffer.advanceAt(nextGlyph).width();
+        nextY += glyphBuffer.advanceAt(nextGlyph).height();
         nextGlyph++;
     }
 
@@ -550,7 +553,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     GlyphBuffer markBuffer;
     for (int i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
-        float advance = glyphBuffer.advanceAt(i) - middleOfLastGlyph + middleOfNextGlyph;
+        float advance = glyphBuffer.advanceAt(i).width() - middleOfLastGlyph + middleOfNextGlyph;
         markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, markFontData, advance);
         middleOfLastGlyph = middleOfNextGlyph;
     }

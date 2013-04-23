@@ -1,3 +1,15 @@
+2013-04-23  Antoine Quint  <graouts@apple.com>
+
+        Initial advance of text runs should be taken into account
+        https://bugs.webkit.org/show_bug.cgi?id=114949
+
+        Reviewed by Darin Adler.
+
+        Adding support for new method CTRunGetInitialAdvance in WebKitSystemInterface.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-04-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the memory instrumentation code

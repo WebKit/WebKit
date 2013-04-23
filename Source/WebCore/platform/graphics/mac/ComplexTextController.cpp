@@ -500,6 +500,9 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         if (fallbackFonts && complexTextRun.fontData() != m_font.primaryFont())
             fallbackFonts->add(complexTextRun.fontData());
 
+        if (glyphBuffer && glyphBuffer->isEmpty())
+            glyphBuffer->setInitialAdvance(complexTextRun.initialAdvance());
+
         while (m_glyphInCurrentRun < glyphCount) {
             unsigned glyphStartOffset = complexTextRun.indexAt(g);
             unsigned glyphEndOffset;
@@ -564,6 +567,15 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
         const SimpleFontData* fontData = complexTextRun.fontData();
+
+        // Represent the initial advance for a text run by adjusting the advance
+        // of the last glyph of the previous text run in the glyph buffer.
+        if (r && m_adjustedAdvances.size()) {
+            CGSize previousAdvance = m_adjustedAdvances.last();
+            previousAdvance.width += complexTextRun.initialAdvance().width;
+            previousAdvance.height -= complexTextRun.initialAdvance().height;
+            m_adjustedAdvances[m_adjustedAdvances.size() - 1] = previousAdvance;
+        }
 
         if (!complexTextRun.isLTR())
             m_isLTROnly = false;

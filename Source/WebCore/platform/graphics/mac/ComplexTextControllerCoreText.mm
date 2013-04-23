@@ -94,6 +94,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
     , m_stringLength(stringLength)
     , m_indexBegin(runRange.location)
     , m_indexEnd(runRange.location + runRange.length)
+    , m_initialAdvance(wkCTRunGetInitialAdvance(ctRun))    
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
     , m_isMonotonic(true)
 {
@@ -129,6 +130,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     , m_stringLength(stringLength)
     , m_indexBegin(0)
     , m_indexEnd(stringLength)
+    , m_initialAdvance(CGSizeZero)
     , m_isLTR(ltr)
     , m_isMonotonic(true)
 {

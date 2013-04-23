@@ -163,6 +163,8 @@ bool WKCTFontTransformGlyphs(CTFontRef font, CGGlyph glyphs[], CGSize advances[]
 
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
+CGSize WKCTRunGetInitialAdvance(CTRunRef);
+
 CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
 CGImageRef WKIOSurfaceContextCreateImage(CGContextRef context);
 

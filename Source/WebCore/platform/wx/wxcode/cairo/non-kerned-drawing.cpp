@@ -228,7 +228,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
 #endif
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i);
+        offset += glyphBuffer.advanceAt(from + i).width();
     }
 
     cairo_set_source_rgba(cr, color.Red()/255.0, color.Green()/255.0, color.Blue()/255.0, color.Alpha()/255.0);
@@ -252,7 +252,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
     wxString text = wxEmptyString;
     for (unsigned i = 0; i < numGlyphs; i++) {
         text = text.Append((wxChar)glyphs[i]);
-        offset += glyphBuffer.advanceAt(from + i);
+        offset += glyphBuffer.advanceAt(from + i).width();
     }
     
     // the y point is actually the bottom point of the text, turn it into the top

@@ -105,7 +105,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i);
+        offset += glyphBuffer.advanceAt(from + i).width();
     }
 
     PlatformContextCairo* platformContext = context->platformContext();
