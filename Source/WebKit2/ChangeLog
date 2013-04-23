@@ -1,3 +1,14 @@
+2013-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] REGRESSION (r142806): "Just Leaking" Console errors on launch
+        https://bugs.webkit.org/show_bug.cgi?id=115002
+        <rdar://problem/13254212>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm:
+        (WebKit::BootstrapMain): Added an autorelease pool for code that uses Objective-C.
+
 2013-04-22  Anders Carlsson  <andersca@apple.com>
 
         Web process should decide when to continue main resource loads

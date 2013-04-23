@@ -63,11 +63,14 @@ static int BootstrapMain(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    NSString *entryPointFunctionName = (NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
-    BootstrapMainFunction bootstrapMainFunction = reinterpret_cast<BootstrapMainFunction>(dlsym(frameworkLibrary, [entryPointFunctionName UTF8String]));
-    if (!bootstrapMainFunction) {
-        NSLog(@"Unable to find entry point '%s' in WebKit2.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());
-        return EXIT_FAILURE;
+    BootstrapMainFunction bootstrapMainFunction;
+    @autoreleasepool {
+        NSString *entryPointFunctionName = (NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
+        bootstrapMainFunction = reinterpret_cast<BootstrapMainFunction>(dlsym(frameworkLibrary, [entryPointFunctionName UTF8String]));
+        if (!bootstrapMainFunction) {
+            NSLog(@"Unable to find entry point '%s' in WebKit2.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());
+            return EXIT_FAILURE;
+        }
     }
 
     return bootstrapMainFunction(argc, argv);
