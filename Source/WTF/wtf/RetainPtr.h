@@ -315,7 +315,7 @@ namespace WTF {
         static unsigned hash(const RetainPtr<P>& o)
         {
             ASSERT_WITH_MESSAGE(o.get(), "attempt to use null RetainPtr in HashTable");
-            return CFHash(o.get());
+            return static_cast<unsigned>(CFHash(o.get()));
         }
         static bool equal(const RetainPtr<P>& a, const RetainPtr<P>& b)
         {

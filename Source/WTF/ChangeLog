@@ -1,3 +1,22 @@
+2013-04-23  David Kilzer  <ddkilzer@apple.com>
+
+        RetainPtr.h should compile with -Wshorten-64-to-32
+        <http://webkit.org/b/115047>
+
+        Reviewed by Anders Carlsson.
+
+        Fixes the following warning:
+
+            RetainPtr.h:318:20: error: implicit conversion loses integer precision: 'CFHashCode' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                        return CFHash(o.get());
+                        ~~~~~~ ^~~~~~~~~~~~~~~
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtrObjectHash::hash): Cast return value of CFHash()
+        to unsigned.  This has no effect on 32-bit architectures, but
+        takes the lower 32-bits of the CFHashCode (unsigned long) on
+        64-bit architectures, which is what happens implicitly now.
+
 2013-04-22  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Move NullPtr.cpp from PlatformWinCE.cmake to CMakeLists.txt
