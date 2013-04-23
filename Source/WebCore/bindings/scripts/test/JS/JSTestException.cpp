@@ -60,6 +60,7 @@ void JSTestExceptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
     Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestExceptionPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestExceptionConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

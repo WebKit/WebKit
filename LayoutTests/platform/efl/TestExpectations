@@ -236,7 +236,6 @@ fast/forms/number/number-spinbutton-in-multi-column.html
 fast/forms/select/listbox-in-multi-column.html
 fast/inline/continuation-outlines-with-layers.html
 fast/invalid/residual-style.html
-fast/js/constructor-length.html
 
 # The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html

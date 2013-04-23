@@ -47,7 +47,7 @@ PASS (new Blob([], {type:'text\rplain'})).type is ''
 PASS (new Blob([], {type:'text\nplain'})).type is ''
 PASS (new Blob([], {type:'helloî'})).type is ''
 PASS (new Blob([], {type:'\0'})).type is ''
-PASS window.Blob.length is 2
+PASS window.Blob.length is 0
 PASS new Blob([new DataView(new ArrayBuffer(100))]).size is 100
 PASS new Blob([new Uint8Array(100)]).size is 100
 PASS new Blob([new Uint8ClampedArray(100)]).size is 100

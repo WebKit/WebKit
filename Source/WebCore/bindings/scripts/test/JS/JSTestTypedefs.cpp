@@ -116,12 +116,12 @@ ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData
 
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
-    { "func", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t)1, NoIntrinsic },
-    { "multiTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMultiTransferList), (intptr_t)4, NoIntrinsic },
-    { "setShadow", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t)5, NoIntrinsic },
+    { "func", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t)0, NoIntrinsic },
+    { "multiTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMultiTransferList), (intptr_t)1, NoIntrinsic },
+    { "setShadow", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t)3, NoIntrinsic },
     { "methodWithSequenceArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithSequenceArg), (intptr_t)1, NoIntrinsic },
     { "nullableArrayArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionNullableArrayArg), (intptr_t)1, NoIntrinsic },
-    { "funcWithClamp", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClamp), (intptr_t)2, NoIntrinsic },
+    { "funcWithClamp", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClamp), (intptr_t)1, NoIntrinsic },
     { "immutablePointFunction", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionImmutablePointFunction), (intptr_t)0, NoIntrinsic },
     { "stringArrayFunction", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction), (intptr_t)1, NoIntrinsic },
     { "stringArrayFunction2", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction2), (intptr_t)1, NoIntrinsic },

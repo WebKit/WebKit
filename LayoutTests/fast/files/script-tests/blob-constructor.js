@@ -69,7 +69,7 @@ shouldBe("(new Blob([], {type:'hello\u00EE'})).type", "''");
 shouldBe("(new Blob([], {type:'\\0'})).type", "''");
 
 // Odds and ends
-shouldBe("window.Blob.length", "2");
+shouldBe("window.Blob.length", "0");
 
 // Test ArrayBufferView Parameters
 shouldBe("new Blob([new DataView(new ArrayBuffer(100))]).size", "100");

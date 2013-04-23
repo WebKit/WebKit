@@ -61,6 +61,7 @@ void JSTestCustomNamedGetterConstructor::finishCreation(ExecState* exec, JSDOMGl
     Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestCustomNamedGetterPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

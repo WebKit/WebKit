@@ -25,7 +25,7 @@
 
 [
     CustomConstructor,
-    ConstructorParameters=3,
+    ConstructorParameters=1,
     CustomToJSObject,
     JSNoStaticTables
 ] interface DataView : ArrayBufferView {

@@ -91,7 +91,7 @@ void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(ExecState* 
     Base::finishCreation(exec->vm());
     ASSERT(inherits(&s_info));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestSerializedScriptValueInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(3), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -114,8 +114,8 @@ ConstructType JSTestSerializedScriptValueInterfaceConstructor::getConstructData(
 
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
-    { "acceptTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionAcceptTransferList), (intptr_t)2, NoIntrinsic },
-    { "multiTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionMultiTransferList), (intptr_t)4, NoIntrinsic },
+    { "acceptTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionAcceptTransferList), (intptr_t)1, NoIntrinsic },
+    { "multiTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionMultiTransferList), (intptr_t)0, NoIntrinsic },
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
