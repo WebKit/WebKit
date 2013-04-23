@@ -43,7 +43,7 @@ descriptorShouldBe("global", "'undefined'", {writable: false, enumerable: false,
 descriptorShouldBe("global", "'NaN'", {writable: false, enumerable: false, configurable: false, value:"NaN"});
 descriptorShouldBe("global", "'Infinity'", {writable: false, enumerable: false, configurable: false, value:"Infinity"});
 descriptorShouldBe("global", "'window'", {writable: false, enumerable: true, configurable: false, value:"global"});
-descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: true, configurable: false, value:"XMLHttpRequest"});
+descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: false, configurable: true, value:"XMLHttpRequest"});
 descriptorShouldBe("global", "'length'", {writable: true, enumerable: true, configurable: false, value:"global.length"});
 descriptorShouldBe("global", "0", {writable: true, enumerable: false, configurable: false, value:"global[0]"});
 descriptorShouldBe("document.getElementsByTagName('div')", "'length'", {writable: false, enumerable: true, configurable: false, value:"1"});

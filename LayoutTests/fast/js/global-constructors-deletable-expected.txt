@@ -1,0 +1,23 @@
+Test to ensure that global constructors can be deleted
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS delete window.CSSRuleList is true
+PASS window.CSSRuleList is undefined
+PASS delete window.Document is true
+PASS window.Document is undefined
+PASS delete window.Element is true
+PASS window.Element is undefined
+PASS delete window.HTMLDivElement is true
+PASS window.HTMLDivElement is undefined
+PASS delete window.ProgressEvent is true
+PASS window.ProgressEvent is undefined
+PASS delete window.Selection is true
+PASS window.Selection is undefined
+PASS delete window.XMLHttpRequest is true
+PASS window.XMLHttpRequest is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -353,6 +353,18 @@ namespace JSC {
         return true;
     }
 
+    template <class ThisImp>
+    inline void putEntry(ExecState* exec, const HashEntry* entry, PropertyName propertyName, JSValue value, ThisImp* thisObj, bool shouldThrow = false)
+    {
+        // If this is a function put it as an override property.
+        if (entry->attributes() & Function)
+            thisObj->putDirect(exec->vm(), propertyName, value);
+        else if (!(entry->attributes() & ReadOnly))
+            entry->propertyPutter()(exec, thisObj, value);
+        else if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+    }
+
     /**
      * This one is for "put".
      * It looks up a hash entry for the property to be set.  If an entry
@@ -366,14 +378,7 @@ namespace JSC {
         if (!entry)
             return false;
 
-        // If this is a function put it as an override property.
-        if (entry->attributes() & Function)
-            thisObj->putDirect(exec->vm(), propertyName, value);
-        else if (!(entry->attributes() & ReadOnly))
-            entry->propertyPutter()(exec, thisObj, value);
-        else if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-
+        putEntry<ThisImp>(exec, entry, propertyName, value, thisObj, shouldThrow);
         return true;
     }
 

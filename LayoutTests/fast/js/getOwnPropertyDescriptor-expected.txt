@@ -127,8 +127,8 @@ PASS Object.getOwnPropertyDescriptor(global, 'window').configurable is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').value is XMLHttpRequest
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').enumerable is true
-PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').configurable is false
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'length').value is global.length
 PASS Object.getOwnPropertyDescriptor(global, 'length').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'length').hasOwnProperty('set') is false

@@ -1256,10 +1256,13 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     // Look in the static hashtable of properties
     const HashEntry* entry = thisObject->findPropertyHashEntry(exec, propertyName);
-    if (entry && entry->attributes() & DontDelete && !exec->vm().isInDefineOwnProperty())
-        return false; // this builtin property can't be deleted
+    if (entry) {
+        if (entry->attributes() & DontDelete && !exec->vm().isInDefineOwnProperty())
+            return false; // this builtin property can't be deleted
 
-    // FIXME: Should the code here actually do some deletion?
+        putEntry(exec, entry, propertyName, jsUndefined(), thisObject);
+    }
+
     return true;
 }
 

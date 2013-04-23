@@ -1,3 +1,23 @@
+2013-04-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Global constructors should be configurable and not enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=110573
+
+        Reviewed by Geoffrey Garen.
+
+        Update JSObject::deleteProperty() so that mark to set the property
+        value to undefined if it is in static hashtable of properties. The
+        previous code was not doing anything in this case and this meant
+        we could not remove builtin DOMWindow properties such as
+        "ProgressEvent" even if marked as Deletable.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        * runtime/Lookup.h:
+        (JSC):
+        (JSC::putEntry):
+        (JSC::lookupPut):
+
 2013-04-23  Geoffrey Garen  <ggaren@apple.com>
 
         Filled out more cases of branch folding in bytecode when emitting
