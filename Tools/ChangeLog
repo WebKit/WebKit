@@ -1,3 +1,15 @@
+2013-04-22  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/114989> Add a user default to allow use of the Safari binary rather than SafariForWebKitDevelopment
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (skipSafariExecutableEntitlementChecks): Look for the SkipSafariExecutableEntitlementChecks default in the
+        /Library/Preferences/org.webkit.BuildConfiguration preference domain.
+        (safariPathFromSafariBundle): If the user default is set asking us to skip the entitlement checks, return
+        the path to the regular Safari binary.
+
 2013-04-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
        Unreviewed Efl build fix after r148921
