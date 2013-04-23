@@ -1,3 +1,47 @@
+2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the WebKit layer of wxWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=115006
+
+        Reviewed by Anders Carlsson.
+
+        The wxWebKit port is no longer actively maintained by Kevin
+        on webkit.org. Remove the code until new maintainers resume the work.
+
+        * wx/WebBrowserShell.cpp: Removed.
+        * wx/WebBrowserShell.h: Removed.
+        * wx/WebDOMSelection.cpp: Removed.
+        * wx/WebDOMSelection.h: Removed.
+        * wx/WebEdit.cpp: Removed.
+        * wx/WebEdit.h: Removed.
+        * wx/WebFrame.cpp: Removed.
+        * wx/WebFrame.h: Removed.
+        * wx/WebFramePrivate.h: Removed.
+        * wx/WebKitDefines.h: Removed.
+        * wx/WebKitSupport/ChromeClientWx.cpp: Removed.
+        * wx/WebKitSupport/ChromeClientWx.h: Removed.
+        * wx/WebKitSupport/ContextMenuClientWx.cpp: Removed.
+        * wx/WebKitSupport/ContextMenuClientWx.h: Removed.
+        * wx/WebKitSupport/DragClientWx.cpp: Removed.
+        * wx/WebKitSupport/DragClientWx.h: Removed.
+        * wx/WebKitSupport/EditCommandWx.h: Removed.
+        * wx/WebKitSupport/EditorClientWx.cpp: Removed.
+        * wx/WebKitSupport/EditorClientWx.h: Removed.
+        * wx/WebKitSupport/FrameLoaderClientWx.cpp: Removed.
+        * wx/WebKitSupport/FrameLoaderClientWx.h: Removed.
+        * wx/WebKitSupport/FrameNetworkingContextWx.h: Removed.
+        * wx/WebKitSupport/InspectorClientWx.cpp: Removed.
+        * wx/WebKitSupport/InspectorClientWx.h: Removed.
+        * wx/WebSettings.cpp: Removed.
+        * wx/WebSettings.h: Removed.
+        * wx/WebView.cpp: Removed.
+        * wx/WebView.h: Removed.
+        * wx/WebViewPrivate.h: Removed.
+        * wx/bindings/python/samples/simple.py: Removed.
+        * wx/bindings/python/webview.i: Removed.
+        * wx/bindings/python/wscript: Removed.
+        * wx/wscript: Removed.
+
 2013-04-22  Jessie Berlin  <jberlin@apple.com>
 
         Speculative Windows build fix.
