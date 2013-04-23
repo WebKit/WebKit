@@ -1,3 +1,19 @@
+2013-04-23  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Fix test_build_check for Qt on Mac after r148075.
+        https://bugs.webkit.org/show_bug.cgi?id=115038
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_build_check):
+            run-webkit-tests is supposed to fail, if it is run on a different
+            platform than specified on the command line.
+            However, Qt allows exactly this for Qt-platforms to allow comparing
+            of test results of different baselines.
+            Before r148075 "chromium-linux-x86" was used for testing.
+            This patch changes the port_name to gtk when running the test on mac.
+
 2013-04-23  Xan Lopez  <xlopez@igalia.com>
 
         [BlackBerry] Do not access BackForwardListImpl from DRT
