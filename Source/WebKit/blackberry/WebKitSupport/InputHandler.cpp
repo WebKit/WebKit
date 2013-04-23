@@ -625,9 +625,6 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
     }
 
     if (requestLength >= MaxSpellCheckingStringLength) {
-        // Batch requests which are generally created by us on focus, should not exceed this limit. Check that this is in fact of Incremental type.
-        ASSERT(spellCheckRequest->data().processType() == TextCheckingProcessIncremental);
-
         // Cancel this request and send it off in newly created chunks.
         spellCheckRequest->didCancel();
         if (m_currentFocusElement->document() && m_currentFocusElement->document()->frame() && m_currentFocusElement->document()->frame()->selection()) {

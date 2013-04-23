@@ -1,3 +1,18 @@
+2013-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Invalid assert in InputHandler::requestCheckingOfString()
+        https://bugs.webkit.org/show_bug.cgi?id=114952
+
+        Reviewed by Rob Buis.
+
+        Do not assume that Batch requests are only created whe input field
+        is focused, the Editor can also create Batch requests when pasting
+        a selection.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        Remove invalid assert.
+
 2013-04-23  Xan Lopez  <xlopez@igalia.com>
 
         [BlackBerry] Simplify BackForwardListBlackBerry::clear
