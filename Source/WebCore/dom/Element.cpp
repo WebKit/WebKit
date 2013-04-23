@@ -1409,9 +1409,13 @@ void Element::recalcStyle(StyleChange change)
             elementRareData()->resetComputedStyle();
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
-        RefPtr<RenderStyle> newStyle = styleForRenderer();
-        StyleChange ch = Node::diff(currentStyle.get(), newStyle.get(), document());
-        if (ch == Detach || !currentStyle) {
+        StyleChange localChange = Detach;
+        RefPtr<RenderStyle> newStyle;
+        if (currentStyle) {
+            newStyle = styleForRenderer();
+            localChange = Node::diff(currentStyle.get(), newStyle.get(), document());
+        }
+        if (localChange == Detach) {
             // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
             reattach();
             // attach recalculates the style for all children. No need to do it twice.
@@ -1424,7 +1428,7 @@ void Element::recalcStyle(StyleChange change)
         }
 
         if (RenderObject* renderer = this->renderer()) {
-            if (ch != NoChange || pseudoStyleCacheIsInvalid(currentStyle.get(), newStyle.get()) || (change == Force && renderer->requiresForcedStyleRecalcPropagation()) || styleChangeType() == SyntheticStyleChange)
+            if (localChange != NoChange || pseudoStyleCacheIsInvalid(currentStyle.get(), newStyle.get()) || (change == Force && renderer->requiresForcedStyleRecalcPropagation()) || styleChangeType() == SyntheticStyleChange)
                 renderer->setAnimatableStyle(newStyle.get());
             else if (needsStyleRecalc()) {
                 // Although no change occurred, we use the new style so that the cousin style sharing code won't get
@@ -1435,7 +1439,7 @@ void Element::recalcStyle(StyleChange change)
 
         // If "rem" units are used anywhere in the document, and if the document element's font size changes, then go ahead and force font updating
         // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-        if (document()->styleSheetCollection()->usesRemUnits() && document()->documentElement() == this && ch != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
+        if (document()->styleSheetCollection()->usesRemUnits() && document()->documentElement() == this && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
             // Cached RenderStyles may depend on the re units.
             document()->styleResolver()->invalidateMatchedPropertiesCache();
             change = Force;
@@ -1445,7 +1449,7 @@ void Element::recalcStyle(StyleChange change)
             if (styleChangeType() >= FullStyleChange)
                 change = Force;
             else
-                change = ch;
+                change = localChange;
         }
     }
     StyleResolverParentPusher parentPusher(this);
