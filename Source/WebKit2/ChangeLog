@@ -1,3 +1,16 @@
+2013-04-23  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION(r148922): Crash opening web archives or loading web pages
+        https://bugs.webkit.org/show_bug.cgi?id=115061
+        <rdar://problem/13714228>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        Calling ResourceLoader::didReceiveResponse can cause the WebResourceLoader object to go away,
+        so protect it here and guard against a null core loader.
+
 2013-04-23  Tim Horton  <timothy_horton@apple.com>
 
         Web process crashes at WebPage::determinePrimarySnapshottedPlugInTimerFired + 8

@@ -102,9 +102,15 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
 void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const PlatformCertificateInfo& certificateInfo)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponseWithCertificateInfo for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
+
+    RefPtr<WebResourceLoader> protector(this);
+
     ResourceResponse responseCopy(response);
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
     m_coreLoader->didReceiveResponse(responseCopy);
+
+    if (!m_coreLoader)
+        return;
 
     if (m_coreLoader == m_coreLoader->documentLoader()->mainResourceLoader())
         send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
