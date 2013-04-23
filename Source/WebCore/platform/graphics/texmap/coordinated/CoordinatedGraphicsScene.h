@@ -98,7 +98,6 @@ public:
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-    void setAnimationsLocked(bool);
     void setBackgroundColor(const Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
@@ -195,7 +194,6 @@ private:
     CoordinatedLayerID m_rootLayerID;
     FloatPoint m_scrollPosition;
     FloatPoint m_renderedContentsScrollPosition;
-    bool m_animationsLocked;
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     bool m_animationFrameRequested;
 #endif

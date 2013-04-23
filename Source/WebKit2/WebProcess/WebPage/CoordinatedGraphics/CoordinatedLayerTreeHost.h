@@ -142,8 +142,6 @@ private:
     void performScheduledLayerFlush();
     void didPerformScheduledLayerFlush();
     void syncDisplayState();
-    void lockAnimations();
-    void unlockAnimations();
 
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 

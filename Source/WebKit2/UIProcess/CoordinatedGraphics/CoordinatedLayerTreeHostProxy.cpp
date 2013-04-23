@@ -122,11 +122,6 @@ void CoordinatedLayerTreeHostProxy::removeImageBacking(CoordinatedImageBackingID
     dispatchUpdate(bind(&CoordinatedGraphicsScene::removeImageBacking, m_scene.get(), imageID));
 }
 
-void CoordinatedLayerTreeHostProxy::setAnimationsLocked(bool locked)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setAnimationsLocked, m_scene.get(), locked));
-}
-
 void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
 {
     // Inform the renderer to adjust viewport-fixed layers.

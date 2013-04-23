@@ -324,8 +324,7 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
 
         m_waitingForUIProcess = true;
         m_shouldSyncFrame = false;
-    } else
-        unlockAnimations();
+    }
 
     if (m_forceRepaintAsyncCallbackID) {
         m_webPage->send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsyncCallbackID));
@@ -469,36 +468,12 @@ void CoordinatedLayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::lockAnimations()
-{
-    m_animationsLocked = true;
-    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::SetAnimationsLocked(true));
-}
-
-void CoordinatedLayerTreeHost::unlockAnimations()
-{
-    if (!m_animationsLocked)
-        return;
-
-    m_animationsLocked = false;
-    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::SetAnimationsLocked(false));
-}
-
 void CoordinatedLayerTreeHost::performScheduledLayerFlush()
 {
     if (m_isSuspended || m_waitingForUIProcess)
         return;
 
-    // We lock the animations while performing layout, to avoid flickers caused by animations continuing in the UI process while
-    // the web process layout wants to cancel them.
-    lockAnimations();
     syncDisplayState();
-
-    // We can unlock the animations before flushing if there are no visible changes, for example if there are content updates
-    // in a layer with opacity 0.
-    bool canUnlockBeforeFlush = !m_isValid || !toCoordinatedGraphicsLayer(m_rootLayer.get())->hasPendingVisibleChanges();
-    if (canUnlockBeforeFlush)
-        unlockAnimations();
 
     if (!m_isValid)
         return;

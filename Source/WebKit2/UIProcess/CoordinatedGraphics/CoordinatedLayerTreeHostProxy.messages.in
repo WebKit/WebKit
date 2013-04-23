@@ -36,8 +36,6 @@ messages -> CoordinatedLayerTreeHostProxy {
     ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
 
-    SetAnimationsLocked(bool locked)
-
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     RequestAnimationFrame()
 #endif

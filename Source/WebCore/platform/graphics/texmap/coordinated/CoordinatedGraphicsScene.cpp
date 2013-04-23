@@ -59,7 +59,6 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     : m_client(client)
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
-    , m_animationsLocked(false)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_animationFrameRequested(false)
 #endif
@@ -94,8 +93,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         return;
 
     layer->setTextureMapper(m_textureMapper.get());
-    if (!m_animationsLocked)
-        layer->applyAnimationsRecursively();
+    layer->applyAnimationsRecursively();
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
@@ -612,9 +610,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 {
     m_renderedContentsScrollPosition = state.scrollPosition;
 
-    // Since the frame has now been rendered, we can safely unlock the animations until the next layout.
-    setAnimationsLocked(false);
-
     if (state.rootCompositingLayer != m_rootLayerID)
         setRootLayerID(state.rootCompositingLayer);
 
@@ -725,11 +720,6 @@ void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(TextureMapperLayer* la
     }
 #endif
     layer->setAnimations(state.animations);
-}
-
-void CoordinatedGraphicsScene::setAnimationsLocked(bool locked)
-{
-    m_animationsLocked = locked;
 }
 
 void CoordinatedGraphicsScene::detach()

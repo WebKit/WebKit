@@ -1,3 +1,22 @@
+2013-04-23  Noam Rosenthal  <noam@webkit.org>
+
+        [Coordinated Graphics] Remove the lockAnimations code path
+        https://bugs.webkit.org/show_bug.cgi?id=114899
+
+        Remove locking/unlocking animations and checks for the lock state.
+        The animation locking has been tested to create not-so-smooth animations,
+        while the use case where the composited animations run out of sync from
+        the non-composited animations is very rare and unnoticeable.
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::performScheduledLayerFlush):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-04-22  Sam Weinig  <sam@webkit.org>
 
         Need WebKit SPI to detect whether a page contains form controls
