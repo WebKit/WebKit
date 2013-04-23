@@ -51,10 +51,7 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, pu
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
-    {
-        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state));
-    }
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state);
     virtual ~InspectorMemoryAgent();
 
     virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);

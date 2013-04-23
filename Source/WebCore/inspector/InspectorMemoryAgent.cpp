@@ -84,6 +84,12 @@ InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAge
 {
 }
 
+PassOwnPtr<InspectorMemoryAgent> InspectorMemoryAgent::create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
+{
+    return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state));
+}
+
+
 void InspectorMemoryAgent::setFrontend(InspectorFrontend* frontend)
 {
     ASSERT(!m_frontend);
