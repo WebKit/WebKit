@@ -27,6 +27,7 @@
 #include <Ecore_Evas.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebKit2/WKImageCairo.h>
+#include <WebKit2/WKViewEfl.h>
 #include <cairo.h>
 
 using namespace WebKit;

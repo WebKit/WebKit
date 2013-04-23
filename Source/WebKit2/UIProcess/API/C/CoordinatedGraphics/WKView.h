@@ -24,8 +24,6 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKGeometry.h>
 
-typedef struct _cairo_surface cairo_surface_t;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -83,7 +81,6 @@ WK_EXPORT void WKViewSetUserViewportTranslation(WKViewRef, double tx, double ty)
 WK_EXPORT WKPoint WKViewUserViewportToContents(WKViewRef, WKPoint);
 
 WK_EXPORT void WKViewPaintToCurrentGLContext(WKViewRef);
-WK_EXPORT void WKViewPaintToCairoSurface(WKViewRef, cairo_surface_t*);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 
@@ -102,8 +99,6 @@ WK_EXPORT void WKViewSetShowsAsSource(WKViewRef, bool);
 WK_EXPORT bool WKViewGetShowsAsSource(WKViewRef);
 
 WK_EXPORT void WKViewExitFullScreen(WKViewRef);
-
-WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);
 
 #ifdef __cplusplus
 }

@@ -25,35 +25,27 @@
  */
 
 #include "config.h"
+#if USE(COORDINATED_GRAPHICS)
+
 #include "WebView.h"
 
 #include "CoordinatedLayerTreeHostProxy.h"
-#include "DownloadManagerEfl.h"
 #include "DrawingAreaProxyImpl.h"
-#include "EwkView.h"
-#include "InputMethodContextEfl.h"
 #include "NotImplemented.h"
-#include "PageViewportController.h"
-#include "PageViewportControllerClientEfl.h"
-#include "WebContextMenuProxyEfl.h"
+#include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
-#include "WebPopupMenuListenerEfl.h"
-#include "ewk_context_private.h"
 #include <WebCore/CoordinatedGraphicsScene.h>
-#include <WebCore/PlatformContextCairo.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-using namespace EwkViewCallbacks;
 using namespace WebCore;
 
 namespace WebKit {
 
 WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
-    : m_ewkView(0)
-    , m_page(context->createWebPage(this, pageGroup))
+    : m_page(context->createWebPage(this, pageGroup))
     , m_focused(false)
     , m_visible(false)
     , m_contentScaleFactor(1.0)
@@ -75,29 +67,11 @@ WebView::~WebView()
     m_page->close();
 }
 
-PassRefPtr<WebView> WebView::create(WebContext* context, WebPageGroup* pageGroup)
-{
-    return adoptRef(new WebView(context, pageGroup));
-}
-
-// FIXME: Remove when possible.
-void WebView::setEwkView(EwkView* ewkView)
-{
-    m_ewkView = ewkView;
-
-#if ENABLE(FULLSCREEN_API)
-    m_page->fullScreenManager()->setWebView(ewkView->evasObject());
-#endif
-
-}
-
 void WebView::initialize()
 {
     m_page->initializeWebPage();
-#if USE(COORDINATED_GRAPHICS)
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
         scene->setActive(true);
-#endif
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -135,7 +109,6 @@ IntPoint WebView::userViewportToContents(const IntPoint& point) const
     return m_userViewportTransform.mapPoint(point);
 }
 
-#if USE(COORDINATED_GRAPHICS)
 void WebView::paintToCurrentGLContext()
 {
     CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
@@ -147,31 +120,6 @@ void WebView::paintToCurrentGLContext()
     const FloatRect& viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_size));
 
     scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
-}
-#endif
-
-void WebView::paintToCairoSurface(cairo_surface_t* surface)
-{
-#if USE(COORDINATED_GRAPHICS)
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return;
-#endif
-    PlatformContextCairo context(cairo_create(surface));
-
-    const FloatPoint& position = contentPosition();
-    double effectiveScale = m_page->deviceScaleFactor() * contentScaleFactor();
-
-    cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - position.x() * m_page->deviceScaleFactor(), - position.y() * m_page->deviceScaleFactor() };
-    cairo_set_matrix(context.cr(), &transform);
-#if USE(COORDINATED_GRAPHICS)
-    scene->paintToGraphicsContext(&context);
-#endif
-}
-
-Evas_Object* WebView::evasObject()
-{
-    return m_ewkView->evasObject();
 }
 
 void WebView::setThemePath(const String& theme)
@@ -253,7 +201,6 @@ AffineTransform WebView::transformToScene() const
     return transform.toAffineTransform();
 }
 
-#if USE(COORDINATED_GRAPHICS)
 CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
 {
     DrawingAreaProxy* drawingArea = m_page->drawingArea();
@@ -266,7 +213,6 @@ CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
 
     return layerTreeHostProxy->coordinatedGraphicsScene();
 }
-#endif
 
 void WebView::updateViewportSize()
 {
@@ -355,9 +301,9 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     m_client.didChangeTooltip(this, newToolTip);
 }
 
-void WebView::setCursor(const Cursor& cursor)
+void WebView::setCursor(const WebCore::Cursor&)
 {
-    m_ewkView->setCursor(cursor);
+    notImplemented();
 }
 
 void WebView::setCursorHiddenUntilMouseMoves(bool)
@@ -411,12 +357,14 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHand
 
 PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuListenerEfl::create(page);
+    notImplemented();
+    return 0;
 }
 
 PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* page)
 {
-    return WebContextMenuProxyEfl::create(m_ewkView, page);
+    notImplemented();
+    return 0;
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -432,7 +380,6 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
     notImplemented();
 }
 
-#if USE(COORDINATED_GRAPHICS)
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
@@ -444,7 +391,6 @@ void WebView::exitAcceleratedCompositingMode()
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
         scene->setActive(false);
 }
-#endif
 
 void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
@@ -489,15 +435,12 @@ void WebView::countStringMatchesInCustomRepresentation(const String&, FindOption
 
 void WebView::updateTextInputState()
 {
-    InputMethodContextEfl* inputMethodContext = m_ewkView->inputMethodContext();
-    if (inputMethodContext)
-        inputMethodContext->updateTextInputState();
+    notImplemented();
 }
 
-void WebView::handleDownloadRequest(DownloadProxy* download)
+void WebView::handleDownloadRequest(DownloadProxy*)
 {
-    EwkContext* context = m_ewkView->ewkContext();
-    context->downloadManager()->registerDownloadJob(toAPI(download), m_ewkView);
+    notImplemented();
 }
 
 FloatRect WebView::convertToDeviceSpace(const FloatRect& userRect)
@@ -549,3 +492,6 @@ void WebView::pageTransitionViewportReady()
 }
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS)
+

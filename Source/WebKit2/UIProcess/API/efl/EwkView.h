@@ -29,7 +29,7 @@
 #include "WKEinaSharedString.h"
 #include "WKGeometry.h"
 #include "WKRetainPtr.h"
-#include "WebView.h"
+#include "WebViewEfl.h"
 #include "ewk_url_request_private.h"
 #include <Evas.h>
 #include <WebCore/FloatPoint.h>

@@ -26,6 +26,8 @@
 #ifndef WebViewClient_h
 #define WebViewClient_h
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "APIClient.h"
 #include "WKView.h"
 #include <wtf/text/WTFString.h>
@@ -55,5 +57,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS)
 
 #endif // WebViewClient_h

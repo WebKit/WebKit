@@ -1,3 +1,167 @@
+2013-04-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Make EFL WKView API shareable between ports
+        https://bugs.webkit.org/show_bug.cgi?id=114734
+
+        Reviewed by Anders Carlsson.
+
+        EFL-independent part of WKView API (and its implementation) is now
+        shareable between ports that use Coordinated Graphics and put to
+        CoordinatedGraphics folders.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp: Renamed from Source/WebKit2/UIProcess/API/C/efl/WKView.cpp.
+        (WKViewCreate):
+        (WKViewInitialize):
+        (WKViewGetSize):
+        (WKViewSetSize):
+        (WKViewSetViewClient):
+        (WKViewIsFocused):
+        (WKViewSetIsFocused):
+        (WKViewIsVisible):
+        (WKViewSetIsVisible):
+        (WKViewGetContentScaleFactor):
+        (WKViewSetContentScaleFactor):
+        (WKViewGetContentPosition):
+        (WKViewSetContentPosition):
+        (WKViewSetUserViewportTranslation):
+        (WKViewUserViewportToContents):
+        (WKViewPaintToCurrentGLContext):
+        (WKViewGetPage):
+        (WKViewSetDrawsBackground):
+        (WKViewGetDrawsBackground):
+        (WKViewSetDrawsTransparentBackground):
+        (WKViewGetDrawsTransparentBackground):
+        (WKViewSetThemePath):
+        (WKViewSuspendActiveDOMObjectsAndAnimations):
+        (WKViewResumeActiveDOMObjectsAndAnimations):
+        (WKViewSetShowsAsSource):
+        (WKViewGetShowsAsSource):
+        (WKViewExitFullScreen):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h: Renamed from Source/WebKit2/UIProcess/API/C/efl/WKView.h.
+        * UIProcess/API/C/efl/WKViewEfl.cpp: Added.
+        (WKViewPaintToCairoSurface):
+        (WKViewCreateSnapshot):
+        * UIProcess/API/C/efl/WKViewEfl.h: Added.
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp: Renamed from Source/WebKit2/UIProcess/efl/WebView.cpp.
+        (WebKit):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::initialize):
+        (WebKit::WebView::setSize):
+        (WebKit::WebView::setFocused):
+        (WebKit::WebView::setVisible):
+        (WebKit::WebView::setUserViewportTranslation):
+        (WebKit::WebView::userViewportToContents):
+        (WebKit::WebView::paintToCurrentGLContext):
+        (WebKit::WebView::setThemePath):
+        (WebKit::WebView::setDrawsBackground):
+        (WebKit::WebView::drawsBackground):
+        (WebKit::WebView::setDrawsTransparentBackground):
+        (WebKit::WebView::drawsTransparentBackground):
+        (WebKit::WebView::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebView::resumeActiveDOMObjectsAndAnimations):
+        (WebKit::WebView::setShowsAsSource):
+        (WebKit::WebView::showsAsSource):
+        (WebKit::WebView::exitFullScreen):
+        (WebKit::WebView::initializeClient):
+        (WebKit::WebView::didChangeContentsSize):
+        (WebKit::WebView::transformFromScene):
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::coordinatedGraphicsScene):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::dipSize):
+        (WebKit::WebView::createDrawingAreaProxy):
+        (WebKit::WebView::setViewNeedsDisplay):
+        (WebKit::WebView::displayView):
+        (WebKit::WebView::scrollView):
+        (WebKit::WebView::viewSize):
+        (WebKit::WebView::isViewWindowActive):
+        (WebKit::WebView::isViewFocused):
+        (WebKit::WebView::isViewVisible):
+        (WebKit::WebView::isViewInWindow):
+        (WebKit::WebView::processDidCrash):
+        (WebKit::WebView::didRelaunchProcess):
+        (WebKit::WebView::pageClosed):
+        (WebKit::WebView::toolTipChanged):
+        (WebKit::WebView::setCursor):
+        (WebKit::WebView::setCursorHiddenUntilMouseMoves):
+        (WebKit::WebView::registerEditCommand):
+        (WebKit::WebView::clearAllEditCommands):
+        (WebKit::WebView::canUndoRedo):
+        (WebKit::WebView::executeUndoRedo):
+        (WebKit::WebView::screenToWindow):
+        (WebKit::WebView::windowToScreen):
+        (WebKit::WebView::doneWithKeyEvent):
+        (WebKit::WebView::doneWithTouchEvent):
+        (WebKit::WebView::createPopupMenuProxy):
+        (WebKit::WebView::createContextMenuProxy):
+        (WebKit::WebView::createColorChooserProxy):
+        (WebKit::WebView::setFindIndicator):
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        (WebKit::WebView::updateAcceleratedCompositingMode):
+        (WebKit::WebView::didCommitLoadForMainFrame):
+        (WebKit::WebView::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::WebView::customRepresentationZoomFactor):
+        (WebKit::WebView::setCustomRepresentationZoomFactor):
+        (WebKit::WebView::flashBackingStoreUpdates):
+        (WebKit::WebView::findStringInCustomRepresentation):
+        (WebKit::WebView::countStringMatchesInCustomRepresentation):
+        (WebKit::WebView::updateTextInputState):
+        (WebKit::WebView::handleDownloadRequest):
+        (WebKit::WebView::convertToDeviceSpace):
+        (WebKit::WebView::convertToUserSpace):
+        (WebKit::WebView::didChangeViewportProperties):
+        (WebKit::WebView::pageDidRequestScroll):
+        (WebKit::WebView::didRenderFrame):
+        (WebKit::WebView::pageTransitionViewportReady):
+        * UIProcess/CoordinatedGraphics/WebView.h: Renamed from Source/WebKit2/UIProcess/efl/WebView.h.
+        (WebCore):
+        (WebKit):
+        (WebView):
+        (WebKit::WebView::size):
+        (WebKit::WebView::isFocused):
+        (WebKit::WebView::isVisible):
+        (WebKit::WebView::setContentScaleFactor):
+        (WebKit::WebView::contentScaleFactor):
+        (WebKit::WebView::setContentPosition):
+        (WebKit::WebView::contentPosition):
+        (WebKit::WebView::pageRef):
+        (WebKit::WebView::page):
+        * UIProcess/CoordinatedGraphics/WebViewClient.cpp: Renamed from Source/WebKit2/UIProcess/efl/WebViewClient.cpp.
+        (WebKit):
+        (WebKit::WebViewClient::viewNeedsDisplay):
+        (WebKit::WebViewClient::didChangeContentsSize):
+        (WebKit::WebViewClient::webProcessCrashed):
+        (WebKit::WebViewClient::webProcessDidRelaunch):
+        (WebKit::WebViewClient::didChangeContentsPosition):
+        (WebKit::WebViewClient::didRenderFrame):
+        (WebKit::WebViewClient::didCompletePageTransition):
+        (WebKit::WebViewClient::didChangeViewportAttributes):
+        (WebKit::WebViewClient::didChangeTooltip):
+        * UIProcess/CoordinatedGraphics/WebViewClient.h: Renamed from Source/WebKit2/UIProcess/efl/WebViewClient.h.
+        (WebCore):
+        (WebKit):
+        * UIProcess/efl/WebViewEfl.cpp: Added.
+        (WebKit):
+        (WebKit::WebView::create):
+        (WebKit::WebViewEfl::WebViewEfl):
+        (WebKit::WebViewEfl::setEwkView):
+        (WebKit::WebViewEfl::paintToCairoSurface):
+        (WebKit::WebViewEfl::createPopupMenuProxy):
+        (WebKit::WebViewEfl::createContextMenuProxy):
+        (WebKit::WebViewEfl::setCursor):
+        (WebKit::WebViewEfl::updateTextInputState):
+        (WebKit::WebViewEfl::handleDownloadRequest):
+        * UIProcess/efl/WebViewEfl.h: Added.
+        (WebKit):
+        (WebViewEfl):
+        (WebKit::WebViewEfl::ewkView):
+
 2013-04-23  Antoine Quint  <graouts@apple.com>
 
         Initial advance of text runs should be taken into account

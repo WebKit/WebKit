@@ -19,13 +19,12 @@
  */
 
 #include "config.h"
+#if USE(COORDINATED_GRAPHICS)
+
 #include "WKView.h"
 
-#include "EwkView.h"
 #include "WKAPICast.h"
-#include "ewk_context_private.h"
-#include "ewk_page_group_private.h"
-#include <WebKit2/WKImageCairo.h>
+#include "WebView.h"
 
 using namespace WebKit;
 
@@ -107,16 +106,9 @@ WKPoint WKViewUserViewportToContents(WKViewRef viewRef, WKPoint point)
     return WKPointMake(result.x(), result.y());
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WKViewPaintToCurrentGLContext(WKViewRef viewRef)
 {
     toImpl(viewRef)->paintToCurrentGLContext();
-}
-#endif
-
-void WKViewPaintToCairoSurface(WKViewRef viewRef, cairo_surface_t* surface)
-{
-    toImpl(viewRef)->paintToCairoSurface(surface);
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
@@ -178,8 +170,4 @@ void WKViewExitFullScreen(WKViewRef viewRef)
 #endif
 }
 
-WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
-{
-    EwkView* ewkView = toEwkView(toImpl(viewRef)->evasObject());
-    return WKImageCreateFromCairoSurface(ewkView->takeSnapshot().get(), 0 /* options */);
-}
+#endif // USE(COORDINATED_GRAPHICS)

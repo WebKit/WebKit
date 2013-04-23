@@ -24,12 +24,15 @@
  */
 
 #include "config.h"
+
+#if USE(COORDINATED_GRAPHICS)
+
 #include "WebViewClient.h"
-#include "WebViewportAttributes.h"
 
 #include "WKAPICast.h"
 #include "WKBase.h"
 #include "WKRetainPtr.h"
+#include "WebViewportAttributes.h"
 
 using namespace WebCore;
 
@@ -109,3 +112,5 @@ void WebViewClient::didChangeTooltip(WebView* view, const String& tooltip)
 }
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS)

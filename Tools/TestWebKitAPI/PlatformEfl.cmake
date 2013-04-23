@@ -11,6 +11,7 @@ add_custom_target(forwarding-headersSoupForTestWebKitAPI
 set(ForwardingNetworkHeadersForTestWebKitAPI_NAME forwarding-headersSoupForTestWebKitAPI)
 
 include_directories(
+    ${WEBKIT2_DIR}/UIProcess/API/C/CoordinatedGraphics
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${WEBKIT2_DIR}/UIProcess/API/efl

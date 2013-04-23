@@ -43,6 +43,7 @@
 #include "WKPopupItem.h"
 #include "WKString.h"
 #include "WKView.h"
+#include "WKViewEfl.h"
 #include "WebContext.h"
 #include "WebImage.h"
 #include "WebPageGroup.h"
@@ -282,7 +283,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     ASSERT(m_context);
 
     // FIXME: Remove when possible.
-    webView()->setEwkView(this);
+    static_cast<WebViewEfl*>(webView())->setEwkView(this);
 #if USE(ACCELERATED_COMPOSITING)
     m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_evasObject)));
     if (m_evasGL)
