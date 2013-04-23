@@ -35,6 +35,7 @@
 #include "Font.h"
 #include "Image.h"
 #include "InitializeLogging.h"
+#include "MemoryCache.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformStrategiesQt.h"
@@ -109,6 +110,8 @@ Q_DECL_EXPORT void initializeWebCoreQt()
 #if USE(QTKIT)
     InitWebCoreSystemInterface();
 #endif
+    if (!WebCore::memoryCache()->disabled())
+        WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(60);
 
     initialized = true;
 }
