@@ -1,3 +1,9 @@
+2013-04-22  Jessie Berlin  <jberlin@apple.com>
+
+        Speculative Windows build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-04-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the memory instrumentation code

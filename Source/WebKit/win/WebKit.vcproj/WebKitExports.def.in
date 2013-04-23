@@ -122,6 +122,7 @@ EXPORTS
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?didBeginFrame@InspectorController@WebCore@@QAEXXZ
         ?didCancelFrame@InspectorController@WebCore@@QAEXXZ
+        ??0InspectorMemoryAgent@WebCore@@AAE@PAVInstrumentingAgents@1@PAVInspectorCompositeState@1@@Z
 #endif
         ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
