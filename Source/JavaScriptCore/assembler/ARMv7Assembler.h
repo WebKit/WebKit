@@ -422,21 +422,21 @@ public:
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)
     typedef enum {
-        ConditionEQ,
-        ConditionNE,
-        ConditionHS, ConditionCS = ConditionHS,
-        ConditionLO, ConditionCC = ConditionLO,
-        ConditionMI,
-        ConditionPL,
-        ConditionVS,
-        ConditionVC,
-        ConditionHI,
-        ConditionLS,
-        ConditionGE,
-        ConditionLT,
-        ConditionGT,
-        ConditionLE,
-        ConditionAL,
+        ConditionEQ, // Zero / Equal.
+        ConditionNE, // Non-zero / Not equal.
+        ConditionHS, ConditionCS = ConditionHS, // Unsigned higher or same.
+        ConditionLO, ConditionCC = ConditionLO, // Unsigned lower.
+        ConditionMI, // Negative.
+        ConditionPL, // Positive or zero.
+        ConditionVS, // Overflowed.
+        ConditionVC, // Not overflowed.
+        ConditionHI, // Unsigned higher.
+        ConditionLS, // Unsigned lower or same.
+        ConditionGE, // Signed greater than or equal.
+        ConditionLT, // Signed less than.
+        ConditionGT, // Signed greater than.
+        ConditionLE, // Signed less than or equal.
+        ConditionAL, // Unconditional / Always execute.
         ConditionInvalid
     } Condition;
 

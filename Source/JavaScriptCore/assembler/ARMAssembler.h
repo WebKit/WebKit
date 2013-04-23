@@ -120,7 +120,7 @@ namespace JSC {
             GE = 0xa0000000, // Signed greater than or equal.
             LT = 0xb0000000, // Signed less than.
             GT = 0xc0000000, // Signed greater than.
-            LE = 0xd0000000, // Signed less than or euqal.
+            LE = 0xd0000000, // Signed less than or equal.
             AL = 0xe0000000  // Unconditional / Always execute.
         } Condition;
 

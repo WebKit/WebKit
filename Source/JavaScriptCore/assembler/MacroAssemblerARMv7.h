@@ -119,7 +119,7 @@ public:
     enum ResultCondition {
         Overflow = ARMv7Assembler::ConditionVS,
         Signed = ARMv7Assembler::ConditionMI,
-        PositiveOrZero = ARMAssembler::PL,
+        PositiveOrZero = ARMv7Assembler::ConditionPL,
         Zero = ARMv7Assembler::ConditionEQ,
         NonZero = ARMv7Assembler::ConditionNE
     };
