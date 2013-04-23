@@ -165,6 +165,7 @@ set(WTF_SOURCES
     MainThread.cpp
     MediaTime.cpp
     MetaAllocator.cpp
+    NullPtr.cpp
     OSRandomSource.cpp
     NumberOfCores.cpp
     RAMSize.cpp

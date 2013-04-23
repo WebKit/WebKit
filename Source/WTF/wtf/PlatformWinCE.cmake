@@ -1,5 +1,4 @@
 list(APPEND WTF_SOURCES
-    NullPtr.cpp
     OSAllocatorWin.cpp
     ThreadingWin.cpp
     ThreadSpecificWin.cpp
