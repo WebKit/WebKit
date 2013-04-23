@@ -973,6 +973,7 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
+    String primaryAudioTrackLanguage = m_languageOfPrimaryAudioTrack;
     m_languageOfPrimaryAudioTrack = String();
 
     if (!m_avAsset)
@@ -1026,6 +1027,9 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         this, boolString(hasVideo()), boolString(hasAudio()), boolString(hasClosedCaptions()));
 
     sizeChanged();
+
+    if (!primaryAudioTrackLanguage.isNull() && primaryAudioTrackLanguage != languageOfPrimaryAudioTrack())
+        player()->characteristicChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
@@ -1494,6 +1498,7 @@ NSArray* itemKVOProperties()
                 @"playbackBufferFull",
                 @"playbackBufferEmpty",
                 @"duration",
+                @"hasEnabledAudio",
                 nil];
     }
     return keys;
@@ -1573,6 +1578,8 @@ NSArray* itemKVOProperties()
         else if ([keyPath isEqualToString:@"seekableTimeRanges"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemSeekableTimeRangesChanged);
         else if ([keyPath isEqualToString:@"tracks"])
+            m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemTracksChanged);
+        else if ([keyPath isEqualToString:@"hasEnabledAudio"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemTracksChanged);
         else if ([keyPath isEqualToString:@"presentationSize"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemPresentationSizeChanged);

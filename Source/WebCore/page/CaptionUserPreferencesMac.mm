@@ -625,12 +625,15 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
         return 0;
     if (!track->isMainProgramContent())
         return 0;
-    if (displayMode == ForcedOnly && !track->containsOnlyForcedSubtitles())
+
+    bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
+    if ((trackHasOnlyForcedSubtitles && displayMode != ForcedOnly)
+        || (!trackHasOnlyForcedSubtitles && displayMode == ForcedOnly))
         return 0;
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
 
-    if (displayMode == Automatic || track->containsOnlyForcedSubtitles()) {
+    if (displayMode == Automatic || trackHasOnlyForcedSubtitles) {
 
         if (!mediaElement || !mediaElement->player())
             return 0;
@@ -651,7 +654,14 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
         if (audioTrackLanguage.isEmpty())
             return 0;
 
-        if (displayMode == Automatic) {
+        if (trackHasOnlyForcedSubtitles) {
+            languageList.append(audioTrackLanguage);
+            size_t offset = indexOfBestMatchingLanguageInList(textTrackLanguage, languageList);
+
+            // Only consider a forced-only track if it IS in the same language as the primary audio track.
+            if (offset)
+                return 0;
+        } else {
             languageList.append(defaultLanguage());
 
             // Only enable a text track if the current audio track is NOT in the user's preferred language ...
@@ -661,13 +671,6 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
 
             // and the text track matches the user's preferred language.
             offset = indexOfBestMatchingLanguageInList(textTrackLanguage, languageList);
-            if (offset)
-                return 0;
-        } else {
-            languageList.append(audioTrackLanguage);
-            size_t offset = indexOfBestMatchingLanguageInList(textTrackLanguage, languageList);
-
-            // Only consider a forced-only track if it IS in the same language as the primary audio track.
             if (offset)
                 return 0;
         }

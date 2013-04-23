@@ -3193,6 +3193,9 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
         if (trackScore) {
+
+            LOG(Media, "HTMLMediaElement::configureTextTrackGroup -  '%s' track with language '%s' has score %i", String(textTrack->kind()).utf8().data(), String(textTrack->language()).utf8().data(), trackScore);
+
             // * If the text track kind is { [subtitles or captions] [descriptions] } and the user has indicated an interest in having a
             // track with this text track kind, text track language, and text track label enabled, and there is no
             // other text track in the media element's list of text tracks with a text track kind of either subtitles
@@ -3236,6 +3239,11 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     if (!trackToEnable && fallbackTrack)
         trackToEnable = fallbackTrack;
 
+    if (!defaultTrack && trackToEnable && trackToEnable != fallbackTrack && m_captionDisplayMode != CaptionUserPreferences::AlwaysOn)
+        m_forcedOrAutomaticSubtitleTrackLanguage = trackToEnable->language();
+    else
+        m_forcedOrAutomaticSubtitleTrackLanguage = emptyString();
+    
     if (currentlyEnabledTracks.size()) {
         for (size_t i = 0; i < currentlyEnabledTracks.size(); ++i) {
             RefPtr<TextTrack> textTrack = currentlyEnabledTracks[i];
@@ -3792,6 +3800,12 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     LOG(Media, "HTMLMediaElement::mediaPlayerCharacteristicChanged");
     
     beginProcessingMediaPlayerCallback();
+
+#if ENABLE(VIDEO_TRACK)
+    if (m_forcedOrAutomaticSubtitleTrackLanguage != m_player->languageOfPrimaryAudioTrack())
+        markCaptionAndSubtitleTracksAsUnconfigured(AfterDelay);
+#endif
+
     if (hasMediaControls())
         mediaControls()->reset();
     if (renderer())
@@ -4415,8 +4429,7 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
-        m_processingPreferenceChange = true;
-        markCaptionAndSubtitleTracksAsUnconfigured();
+        markCaptionAndSubtitleTracksAsUnconfigured(Immediately);
         updateTextTrackDisplay();
     }
 #else
@@ -4635,7 +4648,7 @@ void HTMLMediaElement::captionPreferencesChanged()
     setClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);
 }
 
-void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()
+void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode mode)
 {
     if (!m_textTracks)
         return;
@@ -4655,7 +4668,13 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()
         if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword())
             textTrack->setHasBeenConfigured(false);
     }
-    configureTextTracks();
+
+    m_processingPreferenceChange = true;
+    m_pendingActionFlags &= ~ConfigureTextTracks;
+    if (mode == Immediately)
+        configureTextTracks();
+    else
+        scheduleDelayedAction(ConfigureTextTracks);
 }
 
 #endif
