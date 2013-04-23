@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2013 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ namespace WebCore {
     public:
         explicit ContentType(const String& type);
 
-        String parameter (const String& parameterName) const;
+        String parameter(const String& parameterName) const;
         String type() const;
         Vector<String> codecs() const;
         const String& raw() const { return m_type; }

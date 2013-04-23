@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -700,7 +700,7 @@ bool KURL::setProtocol(const String& s)
         return false;
 
     if (!m_isValid) {
-        parse(newProtocol + ":" + m_string);
+        parse(newProtocol + ':' + m_string);
         return true;
     }
 
