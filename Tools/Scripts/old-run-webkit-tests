@@ -194,9 +194,6 @@ if (isWindows()) {
     exit 1;
 }
 
-# Default to --no-http for wx for now.
-$testHTTP = 0 if (isWx());
-
 my $perlInterpreter = "perl";
 
 my $expectedTag = "expected";
@@ -236,8 +233,6 @@ if (isAppleMacWebKit()) {
     $platform = "qt";
 } elsif (isGtk()) {
     $platform = "gtk";
-} elsif (isWx()) {
-    $platform = "wx";
 } elsif (isWinCairo()) {
     $platform = "wincairo";
 } elsif (isCygwin() || isWindows()) {

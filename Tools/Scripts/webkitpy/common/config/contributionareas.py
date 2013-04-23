@@ -144,7 +144,6 @@ contribution_areas = [
     _Area('The QtWebKit Port', ['qt']),
     _Area('The WinCE Port', ['wince']),
     _Area('The WinCairo Port', ['cairo']),
-    _Area('The wxWebKit Port', ['wx']),
     _Area('Threading', ['thread']),
     _Area('Tools'),
     _Area('Touch Support', ['touch']),

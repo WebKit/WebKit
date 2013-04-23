@@ -281,16 +281,6 @@ if (isInspectorFrontend()) {
 
 my $result = 0;
 
-if (isWx()) {
-    $makeArgs .= " --port=wx";
-
-    downloadWafIfNeeded();
-    @options = split(/ /, $makeArgs);
-    @projects = ();
-    $result = buildWafProject('.', $clean, @options);
-    exit exitStatus($result) if exitStatus($result);
-}
-
 if (isChromium()) {
     # Currently chromium does not honour the features passed to build-webkit.
     # Until this is solved, we issue a warning about that.

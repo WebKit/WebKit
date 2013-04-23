@@ -1,3 +1,56 @@
+2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove wxWebKit support from the Tools
+        https://bugs.webkit.org/show_bug.cgi?id=115005
+
+        Reviewed by Andreas Kling.
+
+        The wxWebKit port is no longer actively maintained by Kevin
+        on webkit.org. Remove the code until new maintainers resume the work.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/wscript: Removed.
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp: Removed.
+        * DumpRenderTree/wx/DumpRenderTreeWx.h: Removed.
+        * DumpRenderTree/wx/GCControllerWx.cpp: Removed.
+        * DumpRenderTree/wx/TestRunnerWx.cpp: Removed.
+        * DumpRenderTree/wx/WorkQueueItemWx.cpp: Removed.
+        * Scripts/build-dumprendertree:
+        * Scripts/build-jsc:
+        (buildMyProject):
+        * Scripts/build-webkit:
+        * Scripts/old-run-webkit-tests:
+        * Scripts/run-launcher:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (determineConfigurationProductDir):
+        (determinePassedArchitecture):
+        (builtDylibPathForName):
+        (determineIsQt):
+        (isAppleWebKit):
+        (launcherPath):
+        (launcherName):
+        (checkRequiredSystemConfig):
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        * waf/build/build_utils.py: Removed.
+        * waf/build/settings.py: Removed.
+        * waf/build/waf_extensions.py: Removed.
+        * waf/build/wxpresets.py: Removed.
+        * wx/browser/browser.cpp: Removed.
+        * wx/browser/wscript: Removed.
+        * wx/install-unix-extras: Removed.
+        * wx/packaging/build-debian-installer.py: Removed.
+        * wx/packaging/build-mac-installer.py: Removed.
+        * wx/packaging/build-win-installer.py: Removed.
+        * wx/packaging/debian/changelog: Removed.
+        * wx/packaging/debian/compat: Removed.
+        * wx/packaging/debian/control: Removed.
+        * wx/packaging/debian/copyright: Removed.
+        * wx/packaging/debian/python-webkitwx.install: Removed.
+        * wx/packaging/debian/rules: Removed.
+        * wx/packaging/wxWebKitInstaller.iss.in: Removed.
+
 2013-04-23  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Fix test_build_check for Qt on Mac after r148075.
