@@ -35,6 +35,7 @@
 #include "CustomFilterRenderer.h"
 
 #include "CustomFilterArrayParameter.h"
+#include "CustomFilterColorParameter.h"
 #include "CustomFilterCompiledProgram.h"
 #include "CustomFilterConstants.h"
 #include "CustomFilterMesh.h"
@@ -161,6 +162,37 @@ void CustomFilterRenderer::bindProgramArrayParameters(int uniformLocation, Custo
     m_context->uniform1fv(uniformLocation, parameterSize, floatVector.data());
 }
 
+void CustomFilterRenderer::bindProgramColorParameters(int uniformLocation, CustomFilterColorParameter* colorParameter)
+{
+    float r, g, b, a;
+    colorParameter->color().getRGBA(r, g, b, a);
+
+    m_context->uniform4f(uniformLocation, r, g, b, a);
+}
+
+void CustomFilterRenderer::bindProgramMatrixParameters(int uniformLocation, CustomFilterArrayParameter* matrixParameter)
+{
+    unsigned parameterSize = matrixParameter->size();
+    Vector<GC3Dfloat, 16> floatVector;
+
+    for (unsigned i = 0; i < parameterSize; ++i)
+        floatVector.append(matrixParameter->valueAt(i));
+
+    switch (parameterSize) {
+    case 4:
+        m_context->uniformMatrix2fv(uniformLocation, 1, false, floatVector.data());
+        break;
+    case 9:
+        m_context->uniformMatrix3fv(uniformLocation, 1, false, floatVector.data());
+        break;
+    case 16:
+        m_context->uniformMatrix4fv(uniformLocation, 1, false, floatVector.data());
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void CustomFilterRenderer::bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter* numberParameter)
 {
     switch (numberParameter->size()) {
@@ -216,8 +248,10 @@ void CustomFilterRenderer::bindProgramParameters()
             bindProgramArrayParameters(uniformLocation, static_cast<CustomFilterArrayParameter*>(parameter));
             break;
         case CustomFilterParameter::COLOR:        
+            bindProgramColorParameters(uniformLocation, static_cast<CustomFilterColorParameter*>(parameter));
+            break;
         case CustomFilterParameter::MATRIX:
-            // FIXME: Bind color and matrix to context.
+            bindProgramMatrixParameters(uniformLocation, static_cast<CustomFilterArrayParameter*>(parameter));
             break;
         case CustomFilterParameter::NUMBER:
             bindProgramNumberParameters(uniformLocation, static_cast<CustomFilterNumberParameter*>(parameter));

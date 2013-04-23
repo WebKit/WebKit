@@ -44,6 +44,7 @@
 namespace WebCore {
 
 class CustomFilterArrayParameter;
+class CustomFilterColorParameter;
 class CustomFilterCompiledProgram;
 class CustomFilterMesh;
 class CustomFilterNumberParameter;
@@ -76,6 +77,8 @@ private:
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset);
     void unbindVertexAttribute(int attributeLocation);
     void bindProgramArrayParameters(int uniformLocation, CustomFilterArrayParameter*);
+    void bindProgramColorParameters(int uniformLocation, CustomFilterColorParameter*);
+    void bindProgramMatrixParameters(int uniformLocation, CustomFilterArrayParameter*);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
     void bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter*);
     void bindProgramParameters();
