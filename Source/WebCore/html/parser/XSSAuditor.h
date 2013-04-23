@@ -59,6 +59,8 @@ public:
     XSSAuditor();
 
     void init(Document*, XSSAuditorDelegate*);
+    void initForFragment();
+
     PassOwnPtr<XSSInfo> filterToken(const FilterTokenRequest&);
     bool isSafeToSendToAnotherThread() const;
 

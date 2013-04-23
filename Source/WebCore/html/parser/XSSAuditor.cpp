@@ -227,6 +227,16 @@ XSSAuditor::XSSAuditor()
     // we want to reference might not all have been constructed yet.
 }
 
+void XSSAuditor::initForFragment()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_state == Uninitialized);
+    m_state = Initialized;
+    // When parsing a fragment, we don't enable the XSS auditor because it's
+    // too much overhead.
+    ASSERT(!m_isEnabled);
+}
+
 void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 {
     const size_t miniumLengthForSuffixTree = 512; // FIXME: Tune this parameter.

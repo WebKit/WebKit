@@ -118,6 +118,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
     ASSERT(!shouldUseThreading());
     bool reportErrors = false; // For now document fragment parsing never reports errors.
     m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors, m_options));
+    m_xssAuditor.initForFragment();
 }
 
 HTMLDocumentParser::~HTMLDocumentParser()
