@@ -142,11 +142,11 @@ layer at (0,0) size 785x2315
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,1452) size 58x23 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 56x21
-          RenderTableRow {TR} at (0,0) size 56x0
+          RenderTableRow {TR} at (0,0) size 56x21
             RenderTableCell {TD} at (0,0) size 56x21 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (1,1) size 54x19
                 text run at (1,1) width 54: "blah blah"
-          RenderTableRow {TR} at (0,0) size 56x21
+          RenderTableRow {TR} at (0,21) size 56x0
       RenderBlock (anonymous) at (0,1475) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,1494) size 602x364 [border: (1px outset #808080)]

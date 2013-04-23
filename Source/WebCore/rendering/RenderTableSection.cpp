@@ -273,7 +273,9 @@ int RenderTableSection::calcRowLogicalHeight()
     m_rowPos.resize(m_grid.size() + 1);
     m_rowPos[0] = spacing;
 
-    for (unsigned r = 0; r < m_grid.size(); r++) {
+    unsigned totalRows = m_grid.size();
+
+    for (unsigned r = 0; r < totalRows; r++) {
         m_grid[r].baseline = 0;
         LayoutUnit baselineDescent = 0;
 
@@ -292,8 +294,26 @@ int RenderTableSection::calcRowLogicalHeight()
 
                 // FIXME: We are always adding the height of a rowspan to the last rows which doesn't match
                 // other browsers. See webkit.org/b/52185 for example.
-                if ((cell->rowIndex() + cell->rowSpan() - 1) != r)
-                    continue;
+                if ((cell->rowIndex() + cell->rowSpan() - 1) != r) {
+                    // We will apply the height of the rowspan to the current row if next row is not valid.
+                    if ((r + 1) < totalRows) {
+                        unsigned col = 0;
+                        CellStruct nextRowCell = cellAt(r + 1, col);
+
+                        // We are trying to find that next row is valid or not.
+                        while (nextRowCell.cells.size() && nextRowCell.cells[0]->rowSpan() > 1 && nextRowCell.cells[0]->rowIndex() < (r + 1)) {
+                            col++;
+                            if (col < totalCols)
+                                nextRowCell = cellAt(r + 1, col);
+                            else
+                                break;
+                        }
+
+                        // We are adding the height of the rowspan to the current row if next row is not valid.
+                        if (col < totalCols && nextRowCell.cells.size())
+                            continue;
+                    }
+                }
 
                 // For row spanning cells, |r| is the last row in the span.
                 unsigned cellStartRow = cell->rowIndex();
