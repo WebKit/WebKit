@@ -35,8 +35,21 @@
 NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSVirtualMachine : NSObject
 
+// Create a new JSVirtualMachine.
 - (id)init;
 
+// addManagedReference:withOwner and removeManagedReference:withOwner allow 
+// clients of JSVirtualMachine to make the JavaScript runtime aware of 
+// arbitrary external Objective-C object graphs. The runtime can then use 
+// this information to retain any JavaScript values that are referenced 
+// from somewhere in said object graph.
+// 
+// For correct behavior clients must make their external object graphs 
+// reachable from within the JavaScript runtime. If an Objective-C object is 
+// reachable from within the JavaScript runtime, all managed references 
+// transitively reachable from it as recorded with 
+// addManagedReference:withOwner: will be scanned by the garbage collector.
+// 
 - (void)addManagedReference:(id)object withOwner:(id)owner;
 - (void)removeManagedReference:(id)object withOwner:(id)owner;
 
