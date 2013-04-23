@@ -1257,6 +1257,12 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     }
 }
 
+bool RenderLayerCompositor::hasCoordinatedScrolling() const
+{
+    ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
+    return scrollingCoordinator && scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView->frameView());
+}
+
 void RenderLayerCompositor::frameViewDidScroll()
 {
     FrameView* frameView = m_renderView->frameView();
@@ -1267,11 +1273,12 @@ void RenderLayerCompositor::frameViewDidScroll()
 
     // If there's a scrolling coordinator that manages scrolling for this frame view,
     // it will also manage updating the scroll layer position.
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
-        if (scrollingCoordinator->coordinatesScrollingForFrameView(frameView))
-            return;
-        if (Settings* settings = m_renderView->document()->settings()) {
-            if (settings->compositedScrollingForFramesEnabled())
+    if (hasCoordinatedScrolling())
+        return;
+
+    if (Settings* settings = m_renderView->document()->settings()) {
+        if (settings->compositedScrollingForFramesEnabled()) {
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->scrollableAreaScrollLayerDidChange(frameView);
         }
     }
@@ -2187,7 +2194,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     }
 
     if (isSticky)
-        return true;
+        return hasCoordinatedScrolling();
 
     RenderObject* container = renderer->container();
     // If the renderer is not hooked up yet then we have to wait until it is.
@@ -2381,38 +2388,38 @@ bool RenderLayerCompositor::keepLayersPixelAligned() const
     return true;
 }
 
-static bool shouldCompositeOverflowControls(FrameView* view)
+bool RenderLayerCompositor::shouldCompositeOverflowControls() const
 {
+    FrameView* view = m_renderView->frameView();
+
     if (view->platformWidget())
         return false;
 
-    if (Page* page = view->frame()->page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            if (scrollingCoordinator->coordinatesScrollingForFrameView(view))
-                return true;
-    }
+    if (hasCoordinatedScrolling())
+        return true;
 
     if (!view->hasOverlayScrollbars())
         return false;
+
     return true;
 }
 
 bool RenderLayerCompositor::requiresHorizontalScrollbarLayer() const
 {
     FrameView* view = m_renderView->frameView();
-    return shouldCompositeOverflowControls(view) && view->horizontalScrollbar();
+    return shouldCompositeOverflowControls() && view->horizontalScrollbar();
 }
 
 bool RenderLayerCompositor::requiresVerticalScrollbarLayer() const
 {
     FrameView* view = m_renderView->frameView();
-    return shouldCompositeOverflowControls(view) && view->verticalScrollbar();
+    return shouldCompositeOverflowControls() && view->verticalScrollbar();
 }
 
 bool RenderLayerCompositor::requiresScrollCornerLayer() const
 {
     FrameView* view = m_renderView->frameView();
-    return shouldCompositeOverflowControls(view) && view->isScrollCornerVisible();
+    return shouldCompositeOverflowControls() && view->isScrollCornerVisible();
 }
 
 #if ENABLE(RUBBER_BANDING)

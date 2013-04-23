@@ -377,6 +377,9 @@ private:
     bool requiresContentShadowLayer() const;
 #endif
 
+    bool hasCoordinatedScrolling() const;
+    bool shouldCompositeOverflowControls() const;
+
     void scheduleLayerFlushNow();
     bool isThrottlingLayerFlushes() const;
     void startLayerFlushTimerIfNeeded();
