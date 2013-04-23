@@ -1909,9 +1909,6 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 # Uses showModalDialog (https://bugs.webkit.org/show_bug.cgi?id=53675)
 fast/animation/request-animation-frame-during-modal.html
 
-# This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=55921
 # Windows port doesn't support HTML in pastes.
 editing/pasteboard/onpaste-text-html-types.html

@@ -361,9 +361,6 @@ webkit.org/b/89052 fast/css/image-orientation
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ WontFix ]
 
-# This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html [ WontFix ]
-
 # No CORS support for media elements is implemented yet.
 Bug(EFL) http/tests/security/video-cross-origin-readback.html [ Failure ]
 
