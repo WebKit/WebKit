@@ -426,6 +426,7 @@ void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 {
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
 }
 
 void LayerTreeHostGtk::cancelPendingLayerFlush()

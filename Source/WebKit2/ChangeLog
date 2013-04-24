@@ -1,3 +1,17 @@
+2013-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] Implement LayerTreeHostGtk::pageBackgroundTransparencyChanged
+        https://bugs.webkit.org/show_bug.cgi?id=115094
+
+        Reviewed by Tim Horton.
+
+        The method was introduced in r149004 (and a stub implementation for the GTK port added in r149017).
+        Implement the method for the GTK port in the same manner it is implemented under the Mac port,
+        calling setContentsOpaque on the non-composited content layer.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::pageBackgroundTransparencyChanged):
+
 2013-04-24  Simon Cooper  <scooper@apple.com>
 
         <rdar://problem/13614117> Refine the Flash Player profile
