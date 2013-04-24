@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,20 +32,20 @@ namespace WebCore {
 
 class DiagnosticLoggingKeys {
 public:
-    // Message keys
-    static const String& mediaLoadedKey();
-    static const String& mediaLoadingFailedKey();
-    static const String& pluginLoadedKey();
-    static const String& pluginLoadingFailedKey();
-    static const String& pageContainsPluginKey();
-    static const String& pageContainsAtLeastOnePluginKey();
-    static const String& pageContainsMediaEngineKey();
-    static const String& pageContainsAtLeastOneMediaEngineKey();
+    // Message keys.
+    static String mediaLoadedKey();
+    static String mediaLoadingFailedKey();
+    static String pluginLoadedKey();
+    static String pluginLoadingFailedKey();
+    static String pageContainsPluginKey();
+    static String pageContainsAtLeastOnePluginKey();
+    static String pageContainsMediaEngineKey();
+    static String pageContainsAtLeastOneMediaEngineKey();
 
-    // Success keys
-    static const String& passKey();
-    static const String& failKey();
-    static const String& noopKey();
+    // Success keys.
+    static String passKey();
+    static String failKey();
+    static String noopKey();
 };
 
 }

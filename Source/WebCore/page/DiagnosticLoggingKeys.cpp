@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,70 +28,59 @@
 
 namespace WebCore {
 
-const String& DiagnosticLoggingKeys::mediaLoadedKey()
+String DiagnosticLoggingKeys::mediaLoadedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("mediaLoaded")));
-    return key;
+    return ASCIILiteral("mediaLoaded");
 }
 
-const String& DiagnosticLoggingKeys::mediaLoadingFailedKey()
+String DiagnosticLoggingKeys::mediaLoadingFailedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("mediaFailedLoading")));
-    return key;
+    return ASCIILiteral("mediaFailedLoading");
 }
 
-const String& DiagnosticLoggingKeys::pluginLoadedKey()
+String DiagnosticLoggingKeys::pluginLoadedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pluginLoaded")));
-    return key;
+    return ASCIILiteral("pluginLoaded");
 }
 
-const String& DiagnosticLoggingKeys::pluginLoadingFailedKey()
+String DiagnosticLoggingKeys::pluginLoadingFailedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pluginFailedLoading")));
-    return key;
+    return ASCIILiteral("pluginFailedLoading");
 }
 
-const String& DiagnosticLoggingKeys::pageContainsPluginKey()
+String DiagnosticLoggingKeys::pageContainsPluginKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsPlugin")));
-    return key;
+    return ASCIILiteral("pageContainsPlugin");
 }
 
-const String& DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
+String DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsAtLeastOnePlugin")));
-    return key;
+    return ASCIILiteral("pageContainsAtLeastOnePlugin");
 }
 
-const String& DiagnosticLoggingKeys::pageContainsMediaEngineKey()
+String DiagnosticLoggingKeys::pageContainsMediaEngineKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsMediaEngine")));
-    return key;
+    return ASCIILiteral("pageContainsMediaEngine");
 }
 
-const String& DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
+String DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsAtLeastOneMediaEngine")));
-    return key;
+    return ASCIILiteral("pageContainsAtLeastOneMediaEngine");
 }
 
-const String& DiagnosticLoggingKeys::passKey()
+String DiagnosticLoggingKeys::passKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pass")));
-    return key;
+    return ASCIILiteral("pass");
 }
 
-const String& DiagnosticLoggingKeys::failKey()
+String DiagnosticLoggingKeys::failKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("fail")));
-    return key;
+    return ASCIILiteral("fail");
 }
 
-const String& DiagnosticLoggingKeys::noopKey()
+String DiagnosticLoggingKeys::noopKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("noop")));
-    return key;
+    return ASCIILiteral("noop");
 }
 
 }

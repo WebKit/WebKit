@@ -1,3 +1,28 @@
+2013-04-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not use static string in DiagnosticLoggingKeys
+        https://bugs.webkit.org/show_bug.cgi?id=115093
+
+        Reviewed by Andreas Kling.
+
+        The code is not hot enough to justify keeping the memory around.
+        This removes 3kb from the binary on x86_64.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::mediaLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::mediaLoadingFailedKey):
+        (WebCore::DiagnosticLoggingKeys::pluginLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::pluginLoadingFailedKey):
+        (WebCore::DiagnosticLoggingKeys::pageContainsPluginKey):
+        (WebCore::DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey):
+        (WebCore::DiagnosticLoggingKeys::pageContainsMediaEngineKey):
+        (WebCore::DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey):
+        (WebCore::DiagnosticLoggingKeys::passKey):
+        (WebCore::DiagnosticLoggingKeys::failKey):
+        (WebCore::DiagnosticLoggingKeys::noopKey):
+        * page/DiagnosticLoggingKeys.h:
+        (DiagnosticLoggingKeys):
+
 2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove wxWebKit #ifdefs from WebCore/platform/graphics
