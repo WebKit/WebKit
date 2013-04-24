@@ -199,6 +199,7 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
 
     {
         GLES2ContextState::VertexAttributeStateSaver vertexAttribStateSaver;
+        GLES2ContextState::VertexArrayOESStateSaver vertexArrayOESStateSaver;
 
         static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
         static float vertices[] = { -1, -1, -1, 1, 1, 1, 1, -1 };

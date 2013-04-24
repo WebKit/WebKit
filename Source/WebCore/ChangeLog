@@ -1,3 +1,17 @@
+2013-04-24  Jonathan Feldstein <jfeldstein@blackberry.com>
+
+        [BlackBerry] Fixes the San Angeles demo on khronos.org
+        https://bugs.webkit.org/show_bug.cgi?id=115106
+
+        Reviewed by Rob Buis
+        Internally Reviewed by Jeremy Nicholl and Arvid Nilsson
+
+        Fixes a bug in which the currently bound vertex array object's vertex array
+        state was being modified as opposed to the default vertex array state.
+
+        * platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp:
+        (EGLImageLayerWebKitThread::blitToFrontBuffer):
+
 2013-04-24  Nico Weber  <thakis@chromium.org>
 
         Fold RenderThemeMacShared into RenderThemeMac
