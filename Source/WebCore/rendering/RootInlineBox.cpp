@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
@@ -466,8 +467,8 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
 }
 
-GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, 
-                                         LayoutUnit selTop, LayoutUnit selHeight, const PaintInfo* paintInfo)
+GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+    LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
     RenderObject::SelectionState lineState = selectionState();
 
@@ -478,12 +479,14 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoi
 
     InlineBox* firstBox = firstSelectedBox();
     InlineBox* lastBox = lastSelectedBox();
-    if (leftGap)
-        result.uniteLeft(block()->logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
-                                                          firstBox->parent()->renderer(), firstBox->logicalLeft(), selTop, selHeight, paintInfo));
-    if (rightGap)
-        result.uniteRight(block()->logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
-                                                            lastBox->parent()->renderer(), lastBox->logicalRight(), selTop, selHeight, paintInfo));
+    if (leftGap) {
+        result.uniteLeft(block()->logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, firstBox->parent()->renderer(), firstBox->logicalLeft(),
+            selTop, selHeight, cache, paintInfo));
+    }
+    if (rightGap) {
+        result.uniteRight(block()->logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastBox->parent()->renderer(), lastBox->logicalRight(),
+            selTop, selHeight, cache, paintInfo));
+    }
 
     // When dealing with bidi text, a non-contiguous selection region is possible.
     // e.g. The logical text aaaAAAbbb (capitals denote RTL text and non-capitals LTR) is layed out

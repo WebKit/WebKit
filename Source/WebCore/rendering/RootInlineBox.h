@@ -28,6 +28,7 @@ namespace WebCore {
 
 class EllipsisBox;
 class HitTestResult;
+class LogicalSelectionOffsetCaches;
 class RenderRegion;
 
 struct BidiStatus;
@@ -131,7 +132,8 @@ public:
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
-    GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, LayoutUnit selTop, LayoutUnit selHeight, const PaintInfo*);
+    GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+        LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
 
     RenderBlock* block() const;
 

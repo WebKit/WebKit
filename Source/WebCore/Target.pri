@@ -2448,8 +2448,9 @@ HEADERS += \
     rendering/InlineBox.h \
     rendering/InlineFlowBox.h \
     rendering/InlineTextBox.h \
-    rendering/LayoutState.h \
     rendering/LayoutRepainter.h \
+    rendering/LayoutState.h \
+    rendering/LogicalSelectionOffsetCaches.h \
     rendering/mathml/RenderMathMLBlock.h \
     rendering/mathml/RenderMathMLFenced.h \
     rendering/mathml/RenderMathMLFraction.h \
