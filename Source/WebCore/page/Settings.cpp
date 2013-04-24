@@ -102,7 +102,7 @@ bool Settings::gQTKitEnabled = true;
 bool Settings::gMockScrollbarsEnabled = false;
 bool Settings::gUsesOverlayScrollbars = false;
 
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
     
@@ -500,7 +500,7 @@ void Settings::setShowTiledScrollingIndicator(bool enabled)
     m_showTiledScrollingIndicator = enabled;
 }
 
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
 void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;

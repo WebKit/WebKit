@@ -209,7 +209,7 @@ namespace WebCore {
         void setShowTiledScrollingIndicator(bool);
         bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
 
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
         static void setShouldUseHighResolutionTimers(bool);
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
@@ -347,7 +347,7 @@ namespace WebCore {
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
 #endif
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
         static bool gShouldUseHighResolutionTimers;
 #endif
         static bool gShouldRespectPriorityInCSSAttributeSetters;

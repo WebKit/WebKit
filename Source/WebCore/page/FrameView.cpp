@@ -4044,10 +4044,8 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!canHaveScrollbars())
         return false;
 
-#if !PLATFORM(WX)
     if (platformWidget())
         return false;
-#endif
 
 #if ENABLE(THREADED_SCROLLING)
     if (Page* page = m_frame->page()) {
