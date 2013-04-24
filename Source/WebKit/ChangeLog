@@ -1,3 +1,14 @@
+2013-04-24  Jessie Berlin  <jberlin@apple.com>
+
+        Assertion failure (crash in release) attempting to delete database storage in WK1 without
+        creating a WebView first
+        https://bugs.webkit.org/show_bug.cgi?id=115065
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove WebDatabaseManagerInternal.h.
+
 2013-04-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the WebKit layer of wxWebKit

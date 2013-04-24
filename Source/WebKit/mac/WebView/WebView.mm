@@ -44,7 +44,7 @@
 #import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSourceInternal.h"
-#import "WebDatabaseManagerInternal.h"
+#import "WebDatabaseManagerPrivate.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
 #import "WebDefaultUIDelegate.h"
@@ -712,10 +712,10 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 
         // Initialize our platform strategies first before invoking the rest
         // of the initialization code which may depend on the strategies.
-        WebPlatformStrategies::initialize();
+        WebPlatformStrategies::initializeIfNecessary();
 
 #if ENABLE(SQL_DATABASE)
-        WebKitInitializeDatabasesIfNecessary();
+        [WebDatabaseManager sharedWebDatabaseManager];
 #endif
 
         WebKitInitializeStorageIfNecessary();
@@ -3053,7 +3053,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 + (void)_setLoadResourcesSerially:(BOOL)serialize 
 {
-    WebPlatformStrategies::initialize();
+    WebPlatformStrategies::initializeIfNecessary();
     resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
 }
 

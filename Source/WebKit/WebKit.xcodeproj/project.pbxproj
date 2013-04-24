@@ -99,7 +99,6 @@
 		5158F6EF106D862A00AF457C /* WebHistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */; };
 		5185F62610712B80007AA393 /* WebNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F62510712B80007AA393 /* WebNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F62710712B97007AA393 /* WebNavigationData.mm */; };
-		51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */; };
 		51CBFCAD0D10E6C5002DBF51 /* WebCachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */; };
@@ -512,7 +511,6 @@
 		51A8B579042834F700CA2D3A /* WebView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B57A042834F700CA2D3A /* WebView.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManagerInternal.h; sourceTree = "<group>"; };
 		51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseDelegate.h; sourceTree = "<group>"; };
 		51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListInternal.h; sourceTree = "<group>"; };
 		51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCachedFramePlatformData.h; sourceTree = "<group>"; };
@@ -1031,7 +1029,6 @@
 				511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */,
 				511F3FD30CECC88F00852565 /* WebDatabaseManagerClient.h */,
 				511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */,
-				51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */,
 				511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */,
 				A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */,
 				A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */,
@@ -1430,7 +1427,6 @@
 				939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */,
 				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
 				511F3FD70CECC88F00852565 /* WebDatabaseManagerClient.h in Headers */,
-				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
 				511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */,
 				A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */,
 				9398104B0824BF01008DF038 /* WebDataSource.h in Headers */,

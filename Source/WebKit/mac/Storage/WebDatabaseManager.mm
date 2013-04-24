@@ -27,11 +27,11 @@
  */
 
 #import "WebDatabaseManagerPrivate.h"
-#import "WebDatabaseManagerInternal.h"
 
 #if ENABLE(SQL_DATABASE)
 
 #import "WebDatabaseManagerClient.h"
+#import "WebPlatformStrategies.h"
 #import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseManager.h>
@@ -57,6 +57,24 @@ static NSString *databasesDirectoryPath();
 {
     static WebDatabaseManager *sharedManager = [[WebDatabaseManager alloc] init];
     return sharedManager;
+}
+
+- (id)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    WebPlatformStrategies::initializeIfNecessary();
+
+    DatabaseManager& dbManager = DatabaseManager::manager();
+
+    // Set the database root path in WebCore
+    dbManager.initialize(databasesDirectoryPath());
+
+    // Set the DatabaseManagerClient
+    dbManager.setClient(WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
+
+    return self;
 }
 
 - (NSArray *)origins
@@ -129,23 +147,6 @@ static NSString *databasesDirectoryPath()
         databasesDirectory = @"~/Library/WebKit/Databases";
     
     return [databasesDirectory stringByStandardizingPath];
-}
-
-void WebKitInitializeDatabasesIfNecessary()
-{
-    static BOOL initialized = NO;
-    if (initialized)
-        return;
-
-    DatabaseManager& dbManager = DatabaseManager::manager();
-
-    // Set the database root path in WebCore
-    dbManager.initialize(databasesDirectoryPath());
-
-    // Set the DatabaseManagerClient
-    dbManager.setClient(WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
-    
-    initialized = YES;
 }
 
 #endif

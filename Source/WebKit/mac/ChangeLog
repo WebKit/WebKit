@@ -1,3 +1,35 @@
+2013-04-24  Jessie Berlin  <jberlin@apple.com>
+
+        Assertion failure (crash in release) attempting to delete database storage in WK1 without
+        creating a WebView first
+        https://bugs.webkit.org/show_bug.cgi?id=115065
+
+        Reviewed by Brady Eidson.
+
+        Make sure the WebPlatformStrategies is initialized before using the WebDatabaseManager.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager init]):
+        Move the logic from WebKitInitializeDatabasesIfNecessary here, and add a call to
+        WebPlatformStrategies::initializeIfNecessary.
+
+        * Storage/WebDatabaseManagerInternal.h: Removed.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+        Change "initialize" to "initalizeIfNecessary".
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::initializeIfNecessary):
+        Only call setPlatformStrategies once.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Updated for the name change from initialize to initializeIfNecessary.
+        Instead of calling WebKitInitializeDatabasesIfNecessary, call [WebDatabaseManager
+        sharedWebDatabaseManager].
+        (+[WebView _setLoadResourcesSerially:]):
+        Updated for the name change from initialize to initializeIfNecessary.
+
 2013-04-23  Antoine Quint  <graouts@apple.com>
 
         Initial advance of text runs should be taken into account

@@ -38,10 +38,13 @@
 
 using namespace WebCore;
 
-void WebPlatformStrategies::initialize()
+void WebPlatformStrategies::initializeIfNecessary()
 {
-    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
+    static WebPlatformStrategies* platformStrategies;
+    if (!platformStrategies) {
+        platformStrategies = new WebPlatformStrategies;
+        setPlatformStrategies(platformStrategies);
+    }
 }
 
 WebPlatformStrategies::WebPlatformStrategies()
