@@ -32,11 +32,11 @@
             name: "mute_button";
             type: IMAGE;
             description { state: "default" 0.0;
+               image.normal: "widget/mediacontrol/mutebutton/mutebutton.png";
                min: 25 25;
             }
             description { state: "mute" 0.0;
                inherit: "default" 0.0;
-               image.normal: "widget/mediacontrol/mutebutton/mutebutton.png";
             }
             description { state: "sound" 0.0;
                inherit: "default" 0.0;

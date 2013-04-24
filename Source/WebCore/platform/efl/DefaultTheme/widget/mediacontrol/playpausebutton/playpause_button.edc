@@ -32,11 +32,11 @@
             name: "playpause_button";
             type: IMAGE;
             description { state: "default" 0.0;
+               image.normal: "widget/mediacontrol/playpausebutton/playbutton.png";
                min: 25 25;
             }
             description { state: "play" 0.0;
                inherit: "default" 0.0;
-               image.normal: "widget/mediacontrol/playpausebutton/playbutton.png";
             }
             description { state: "pause" 0.0;
                inherit: "default" 0.0;

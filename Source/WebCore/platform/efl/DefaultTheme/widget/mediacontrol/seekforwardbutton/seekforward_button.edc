@@ -31,11 +31,11 @@
             name: "seekforward_button";
             type: IMAGE;
             description { state: "default" 0.0;
+               image.normal: "widget/mediacontrol/seekforwardbutton/seekforwardbutton.png";
                min: 25 25;
             }
             description { state: "seekforward" 0.0;
                inherit: "default" 0.0;
-               image.normal: "widget/mediacontrol/seekforwardbutton/seekforwardbutton.png";
             }
          }
       }

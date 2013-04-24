@@ -30,11 +30,11 @@
             name: "toggle_captions_button";
             type: IMAGE;
             description { state: "default" 0.0;
+               image.normal: "widget/mediacontrol/togglecaptionsbutton/closedcaption.png";
                min: 25 25;
             }
             description { state: "show_captions" 0.0;
                inherit: "default" 0.0;
-               image.normal: "widget/mediacontrol/togglecaptionsbutton/closedcaption.png";
             }
             description { state: "hide_captions" 0.0;
                inherit: "default" 0.0;
