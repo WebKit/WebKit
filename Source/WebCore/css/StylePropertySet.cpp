@@ -677,10 +677,8 @@ bool MutableStylePropertySet::setProperty(CSSPropertyID propertyID, const String
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
-    if (value.isEmpty()) {
-        removeProperty(propertyID);
-        return true;
-    }
+    if (value.isEmpty())
+        return removeProperty(propertyID);
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.

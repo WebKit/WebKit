@@ -1,3 +1,19 @@
+2013-04-24  Andreas Kling  <akling@apple.com>
+
+        Setting an inline style property to "" shouldn't cause style recalc unless the property was present.
+        <http://webkit.org/b/115122>
+
+        Reviewed by Antti Koivisto.
+
+        StylePropertySet::setProperty() handles empty strings by removing the property entirely.
+        If there was no property to remove, it shouldn't claim that it changed something, as that
+        will cause the CSSOM wrapper to mark the element for style recalc.
+
+        A common idiom that triggers this is excessive use of { element.style.display = ''; }
+
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::setProperty):
+
 2013-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving word boundaries backwards fails when there is a text node starting with an apostrophe
