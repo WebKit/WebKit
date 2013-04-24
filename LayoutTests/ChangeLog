@@ -1,3 +1,23 @@
+2013-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        Fix invalid test names in jsc-test-list
+        <http://webkit.org/b/115136>
+
+        Reviewed by Geoffrey Garen.
+
+        This shell script finds all the invalid tests listed in
+        LayoutTests/fast/js/jsc-test-list:
+
+            $ for F in `cat LayoutTests/fast/js/jsc-test-list`; do if [ ! -f LayoutTests/$F.html ]; then echo $F; fi; done
+            fast/js/dfg-double-addition-simplify-to-int.html
+            fast/js/dfg-mul-big-integers-with-small-integer-and-bitor
+            fast/js/dfg-mul-big-integers-with-small-integer-and-detect-overflow
+            fast/js/dfg-mul-big-integers-with-small-integer
+            fast/js/dfg-value-to-int32-with-side-effects
+
+        * fast/js/jsc-test-list: Fix invalid test names by removing
+        *.html suffix or stray "s" characters.
+
 2013-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should keep the operand to create_this alive if it's emitting code for create_this

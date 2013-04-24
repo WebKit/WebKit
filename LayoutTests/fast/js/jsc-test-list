@@ -125,7 +125,7 @@ fast/js/dfg-dead-redundant-get-array-length
 fast/js/dfg-dead-speculation
 fast/js/dfg-dead-unreachable-code-with-chain-of-dead-unchecked-nodes
 fast/js/dfg-dead-variable-on-exit
-fast/js/dfg-double-addition-simplify-to-int.html
+fast/js/dfg-double-addition-simplify-to-int
 fast/js/dfg-double-use-of-post-simplification-double-prediction
 fast/js/dfg-double-vote-fuzz
 fast/js/dfg-ensure-array-storage-on-string
@@ -179,9 +179,9 @@ fast/js/dfg-min-backwards-propagation
 fast/js/dfg-min-max
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
-fast/js/dfg-mul-big-integers-with-small-integer-and-bitor
-fast/js/dfg-mul-big-integers-with-small-integer-and-detect-overflow
-fast/js/dfg-mul-big-integers-with-small-integer
+fast/js/dfg-mul-big-integer-with-small-integer-and-bitor
+fast/js/dfg-mul-big-integer-with-small-integer-and-detect-overflow
+fast/js/dfg-mul-big-integer-with-small-integer
 fast/js/dfg-mul-big-integers
 fast/js/dfg-negative-array-index
 fast/js/dfg-obvious-constant-cfa
@@ -223,7 +223,7 @@ fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint32array
 fast/js/dfg-uint8array
 fast/js/dfg-uint8clampedarray
-fast/js/dfg-value-to-int32-with-side-effects
+fast/js/dfg-value-to-int32-with-side-effect
 fast/js/dfg-weak-js-constant-silent-fill
 fast/js/dictionary-no-cache
 fast/js/dictionary-prototype-caching
