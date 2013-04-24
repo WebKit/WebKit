@@ -1,3 +1,15 @@
+2013-04-24  Simon Cooper  <scooper@apple.com>
+
+        <rdar://problem/13614117> Refine the Flash Player profile
+        https://bugs.webkit.org/show_bug.cgi?id=115016
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add some refinements to the Flash Player profile. Make a non-/ home
+        directory work. Fixes that allow file uploading via user selected files.
+
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+
 2013-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebKit2] Add CoordinatedGraphics to the list of platforms in generate-forwarding-headers.pl

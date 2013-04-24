@@ -14,5 +14,16 @@
 
 (allow file-read* file-write*
     (literal "/Library/Application Support/Macromedia/mms.cfg")
+    (home-literal "/Library/Application Support/Macromedia/mms.cfg")
     (home-subpath "/Library/Caches/Adobe/Flash Player")
     (home-subpath "/Library/Preferences/Macromedia/Flash Player"))
+
+(allow file-read*
+    (literal "/Library/PreferencePanes/Flash Player.prefPane")
+    (home-literal "/Library/PreferencePanes/Flash Player.prefPane")
+    (home-regex "/Library/Application Support/Macromedia/ss\.(cfg|cfn|sgn)$"))
+
+(allow file-read* file-write*
+    (mount-relative-regex #"^/\.TemporaryItems/"))
+
+(webkit-powerbox)
