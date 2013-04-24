@@ -1,1 +1,19 @@
+2013-04-24  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Do not clear focus on a node when tapping on form controls
+        https://bugs.webkit.org/show_bug.cgi?id=115055
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Genevieve Mak.
+
+        PR316069
+        To allow for rich text editors to apply styles on an input field
+        or highlighted text, we must maintain focus on the current element
+        when tapping on form elements. Moving the code that clears this
+        context to trigger off TouchHold instead of TouchPress.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::doFatFingers):
+
 == Rolled over to ChangeLog-2013-04-24 ==

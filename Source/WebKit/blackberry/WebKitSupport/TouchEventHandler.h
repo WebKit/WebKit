@@ -36,6 +36,7 @@ public:
     ~TouchEventHandler();
 
     void doFatFingers(const Platform::TouchPoint&);
+    void handleTouchHold();
     void handleTouchPoint(const Platform::TouchPoint&, unsigned modifiers);
     void sendClickAtFatFingersPoint(unsigned modifiers = 0);
 

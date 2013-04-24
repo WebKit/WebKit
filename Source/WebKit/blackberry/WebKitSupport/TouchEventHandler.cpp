@@ -75,13 +75,6 @@ void TouchEventHandler::doFatFingers(const Platform::TouchPoint& point)
     m_webPage->postponeDocumentStyleRecalc();
     m_lastFatFingersResult = FatFingers(m_webPage, point.documentContentPosition(), FatFingers::ClickableElement).findBestPoint();
     m_webPage->resumeDocumentStyleRecalc();
-
-    Node* nodeUnderFatFinger = m_lastFatFingersResult.node();
-    if (nodeUnderFatFinger && nodeUnderFatFinger->document()->frame() != m_webPage->focusedOrMainFrame()) {
-        m_webPage->clearFocusNode();
-        m_webPage->m_selectionHandler->cancelSelection();
-        m_webPage->m_page->focusController()->setFocusedFrame(nodeUnderFatFinger->document()->frame());
-    }
 }
 
 void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
@@ -97,6 +90,18 @@ void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
     PlatformMouseEvent mouseRelease(documentViewportAdjustedPosition, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
 
     m_webPage->handleMouseEvent(mouseRelease);
+}
+
+void TouchEventHandler::handleTouchHold()
+{
+    // Clear and reset focus if the user touch-holds on a different frame.
+    // Special case for highlighting text on a frame not currently under focus [PR 285211].
+    Node* nodeUnderFatFinger = m_lastFatFingersResult.node();
+    if (nodeUnderFatFinger && nodeUnderFatFinger->document()->frame() != m_webPage->focusedOrMainFrame()) {
+        m_webPage->clearFocusNode();
+        m_webPage->m_selectionHandler->cancelSelection();
+        m_webPage->m_page->focusController()->setFocusedFrame(nodeUnderFatFinger->document()->frame());
+    }
 }
 
 void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsigned modifiers)

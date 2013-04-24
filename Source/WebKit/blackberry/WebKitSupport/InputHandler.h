@@ -267,6 +267,7 @@ private:
     int m_minimumSpellCheckingRequestSequence;
 
     OwnPtr<WebCore::SuggestionBoxHandler> m_suggestionDropdownBoxHandler;
+    bool m_elementTouchedIsCrossFrame;
 
     DISABLE_COPY(InputHandler);
 };

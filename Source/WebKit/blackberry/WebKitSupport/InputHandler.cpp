@@ -155,6 +155,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_spellCheckStatusConfirmed(false)
     , m_globalSpellCheckStatus(false)
     , m_minimumSpellCheckingRequestSequence(-1)
+    , m_elementTouchedIsCrossFrame(false)
 {
 }
 
@@ -471,8 +472,10 @@ void InputHandler::focusedNodeChanged()
         // top level parent of this object's content editable state without actually modifying
         // this particular object.
         // Example site: html5demos.com/contentEditable - blur event triggers focus change.
-        if (frame == m_webPage->focusedOrMainFrame() && frame->selection()->start().anchorNode()
-            && frame->selection()->start().anchorNode()->isContentEditable())
+        if (frame == m_webPage->focusedOrMainFrame()
+            && frame->selection()->start().anchorNode()
+            && frame->selection()->start().anchorNode()->isContentEditable()
+            && !m_elementTouchedIsCrossFrame)
                 return;
     }
 
@@ -2640,6 +2643,8 @@ void InputHandler::elementTouched(WebCore::Element* nonShadowElementUnderFatFing
     // Attempt to show all suggestions when the input field is empty and a tap is registered when the element is focused.
     if (isActiveTextEdit() && nonShadowElementUnderFatFinger == m_currentFocusElement)
         showTextInputTypeSuggestionBox(true /* allowEmptyPrefix */);
+
+    m_elementTouchedIsCrossFrame = nonShadowElementUnderFatFinger->document()->frame() !=  m_webPage->focusedOrMainFrame();
 }
 
 }

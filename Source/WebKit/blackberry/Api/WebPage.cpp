@@ -4027,6 +4027,9 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
             d->m_touchEventHandler->drawTapHighlight();
     }
 
+    if (event.isTouchHold())
+        d->m_touchEventHandler->handleTouchHold();
+
     bool handled = false;
 
     if (event.m_type != Platform::TouchEvent::TouchInjected)
