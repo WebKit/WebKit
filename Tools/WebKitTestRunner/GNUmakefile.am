@@ -1,9 +1,9 @@
-BUILT_SOURCES += \
-	generate-webkittestrunner-forwarding-headers
 
-generate-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_WebKitTestRunner_SOURCES)
-	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include gtk
-	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include soup
+stamp-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_WebKitTestRunner_SOURCES)
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include gtk \
+	&& echo timestamp > $(@F)
+
+BUILT_SOURCES += $(top_builddir)/stamp-webkittestrunner-forwarding-headers
 
 if ENABLE_WEBKIT2
 noinst_PROGRAMS += \

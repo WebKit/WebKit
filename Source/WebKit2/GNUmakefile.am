@@ -315,13 +315,12 @@ CLEANFILES += WebKit2-@WEBKITGTK_API_VERSION@.gir WebKit2-@WEBKITGTK_API_VERSION
 endif
 endif
 
-# WebKit2 specific variables
-forwarding_headers := $(GENSOURCES_WEBKIT2)/include
-generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
-	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) gtk
-	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) soup
+stamp-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(webkit2_sources)
+	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(GENSOURCES_WEBKIT2)/include gtk \
+	&& $(PERL) $< $(WebKit2) $(GENSOURCES_WEBKIT2)/include soup \
+	&& echo timestamp > $(@F)
 
-BUILT_SOURCES += generate-webkit2-forwarding-headers
+BUILT_SOURCES += $(top_builddir)/stamp-webkit2-forwarding-headers
 
 $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(libwebkit2gtkinclude_HEADERS)
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \

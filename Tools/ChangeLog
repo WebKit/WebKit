@@ -1,3 +1,17 @@
+2013-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use stamp files for generate-forwarding-headers makefile rules
+        https://bugs.webkit.org/show_bug.cgi?id=115118
+
+        Reviewed by Martin Robinson.
+
+        Use a stamp file for the TestWebKitAPI and WebKitTestRunner
+        forwarding generator rules and don't call it for soup since there
+        aren't soup directories in TestWebKitAPI and WebKitTestRunner.
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * WebKitTestRunner/GNUmakefile.am:
+
 2013-04-24  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Update build dependencies

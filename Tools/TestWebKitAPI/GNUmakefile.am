@@ -1,10 +1,3 @@
-BUILT_SOURCES += \
-	generate-testwebkitapi-forwarding-headers
-wk2_tests_sources = $(shell ls $(srcdir)/Tools/TestWebKitAPI/Tests/WebKit2/*.cpp)
-generate-testwebkitapi-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(wk2_tests_sources)
-	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include gtk
-	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include soup
-
 noinst_LTLIBRARIES += \
 	Libraries/libTestWebKitAPIMain.la
 
@@ -229,6 +222,13 @@ Libraries_libTestWebKitAPIInjectedBundle_la_CXXFLAGS = \
 
 Libraries_libTestWebKitAPIInjectedBundle_la_CFLAGS = \
 	$(global_cflags)
+
+stamp-testwebkitapi-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_TestWebKitAPI_TestWebKit2_SOURCES) $(Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES)
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include gtk \
+	&& echo timestamp > $(@F)
+
+BUILT_SOURCES += $(top_builddir)/stamp-testwebkitapi-forwarding-headers
+
 endif # ENABLE_WEBKIT2
 
 EXTRA_DIST += \
