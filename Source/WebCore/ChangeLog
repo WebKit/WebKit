@@ -1,3 +1,22 @@
+2013-04-24  George Staikos  <gstaikos@rim.com>
+
+        [BlackBerry] Add support for JPEG image quality during encoding.
+        https://bugs.webkit.org/show_bug.cgi?id=105773
+
+        Reviewed by Xan Lopez.
+
+        PR 271611
+        Internally reviewed by Liam Quinn.
+
+        Pass the quality flag into the encoder, with a default of 65
+
+        Covered by existing tests.
+
+        * platform/image-encoders/JPEGImageEncoder.cpp:
+        (WebCore::compressRGBABigEndianToJPEG):
+        * platform/image-encoders/JPEGImageEncoder.h:
+        (WebCore):
+
 2013-04-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align WebCore/platform/graphics/GraphicsContext3D.cpp on ARM
