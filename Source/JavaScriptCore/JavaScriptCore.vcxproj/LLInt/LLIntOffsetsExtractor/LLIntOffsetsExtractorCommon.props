@@ -11,7 +11,7 @@
       <ForcedUsingFiles>%(ForcedUsingFiles)</ForcedUsingFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libicuin.lib;libicuuc.lib;pthreadVC2.lib;winmm.lib;user32.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libicuin.lib;libicuuc.lib;winmm.lib;user32.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>

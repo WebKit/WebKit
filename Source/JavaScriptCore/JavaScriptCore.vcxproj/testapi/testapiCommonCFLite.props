@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CFLite.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;pthreadVC2.lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CFLite.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <ClCompile>

@@ -1,3 +1,23 @@
+2013-04-24  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Remove pthread from Visual Studio files in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=114864
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpCommon.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props:
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props:
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props:
+
 2013-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should keep the operand to create_this alive if it's emitting code for create_this
