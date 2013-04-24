@@ -1,3 +1,9 @@
+2013-04-24  Roger Fong  <roger_fong@apple.com>
+
+        Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.
+
+        * WTF.vcxproj/build-generated-files.sh:
+
 2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Use post-branch store for RefCountedBase::derefBase

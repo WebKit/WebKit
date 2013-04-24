@@ -1,3 +1,9 @@
+2013-04-24  Roger Fong  <roger_fong@apple.com>
+
+        Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.
+
+        * win/tools/vsprops/common.props:
+
 2013-04-23  Antoine Quint  <graouts@apple.com>
 
         Initial advance of text runs should be taken into account

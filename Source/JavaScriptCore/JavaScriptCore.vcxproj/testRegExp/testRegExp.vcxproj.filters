@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\AtomicString.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp" />
+    <ClCompile Include="..\..\testRegExp.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringBuilder.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringBuilder.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringImpl.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\testRegExp.cpp" />
-    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\WTFString.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
   </ItemGroup>

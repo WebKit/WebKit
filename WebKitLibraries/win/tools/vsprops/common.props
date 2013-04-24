@@ -173,7 +173,7 @@ cmd /c
     </ResourceCompile>
     <BuildLog />
     <Link>
-      <AdditionalLibraryDirectories>$(IntDir)lib;$(ConfigurationBuildDir)\lib;$(WEBKIT_LIBRARIES)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IntDir)lib;$(ConfigurationBuildDir)\lib;$(WEBKIT_LIBRARIES)\lib32;$(WEBKIT_LIBRARIES)\lib</AdditionalLibraryDirectories>
       <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
       <CLRUnmanagedCodeCheck>false</CLRUnmanagedCodeCheck>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

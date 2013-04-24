@@ -1,3 +1,16 @@
+2013-04-24  Roger Fong  <roger_fong@apple.com>
+
+        Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCorePreLink.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscPreLink.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj.filters:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiPreLink.cmd:
+
 2013-04-24  Geoffrey Garen  <ggaren@apple.com>
 
         32-bit build fix.
