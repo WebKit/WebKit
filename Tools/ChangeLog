@@ -1,1 +1,18 @@
+2013-04-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] WebKitTestRunner failures due to IconDatabase assertions
+        https://bugs.webkit.org/show_bug.cgi?id=115095
+
+        Reviewed by Antonio Gomes.
+
+        Use different subfolders under DumpRenderTree Temp folder for every
+        functionality (icon database, cache, localstorage, ...). This makes
+        sure there is no conflict between the functionalities.
+
+        In EFL's case, libsoup cache was causing problems for the icon
+        database if sharing the same folder.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 == Rolled over to ChangeLog-2013-04-24 ==
