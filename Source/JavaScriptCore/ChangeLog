@@ -1,3 +1,15 @@
+2013-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should keep the operand to create_this alive if it's emitting code for create_this
+        https://bugs.webkit.org/show_bug.cgi?id=115133
+
+        Reviewed by Mark Hahnenberg.
+        
+        The DFG must model bytecode liveness, or else OSR exit is going to have a really bad time.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-04-24  Roger Fong  <roger_fong@apple.com>
 
         Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.

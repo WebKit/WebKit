@@ -2027,6 +2027,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 ObjectAllocationProfile* allocationProfile = function->tryGetAllocationProfile();
                 if (allocationProfile) {
                     addToGraph(AllocationProfileWatchpoint, OpInfo(function));
+                    // The callee is still live up to this point.
+                    addToGraph(Phantom, callee);
                     set(currentInstruction[1].u.operand,
                         addToGraph(NewObject, OpInfo(allocationProfile->structure())));
                     alreadyEmitted = true;

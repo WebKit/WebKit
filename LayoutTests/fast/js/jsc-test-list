@@ -70,6 +70,7 @@ fast/js/delete-getters-setters
 fast/js/delete-then-put
 fast/js/dfg-abs-backwards-propagation
 fast/js/dfg-add-not-number
+fast/js/dfg-allocation-profile-watch-point-exit
 fast/js/dfg-arguments-alias-escape
 fast/js/dfg-arguments-alias-one-block-osr-exit
 fast/js/dfg-arguments-alias-one-block-overwrite-arguments
