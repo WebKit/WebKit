@@ -1458,10 +1458,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         
         node->setCanExit(true); // Lies! We can do better.
-        if (!forNode(node->child1()).filterByValue(node->function())) {
-            m_isValid = false;
-            break;
-        }
+        forNode(node->child1()).filterByValue(node->function());
         break;
     }
         

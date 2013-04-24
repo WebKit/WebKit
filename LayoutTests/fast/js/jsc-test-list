@@ -105,8 +105,9 @@ fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-and
 fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-typeof
 fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local
 fast/js/dfg-cfg-simplify-redundant-dead-get-local
-fast/js/dfg-check-two-structures
+fast/js/dfg-check-function-change-structure
 fast/js/dfg-check-structure-elimination-for-non-cell
+fast/js/dfg-check-two-structures
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-constant-fold-uncaptured-variable-that-is-later-captured
 fast/js/dfg-convert-this-dom-window

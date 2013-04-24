@@ -290,19 +290,11 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    bool filterByValue(JSValue value)
+    void filterByValue(JSValue value)
     {
-        if (!validate(value))
-            return false;
-        
-        if (!!value && value.isCell())
-            filter(StructureSet(value.asCell()->structure()));
-        else
-            filter(speculationFromValue(value));
-        
-        m_value = value;
-        
-        return true;
+        filter(speculationFromValue(value));
+        if (m_type)
+            m_value = value;
     }
     
     bool validateType(JSValue value) const

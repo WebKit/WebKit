@@ -1,3 +1,42 @@
+2013-04-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA filters CheckFunction in a really weird way, and assumes that the function's structure won't change
+        https://bugs.webkit.org/show_bug.cgi?id=115077
+
+        Reviewed by Oliver Hunt.
+        
+        The filtering did three things that are unusual:
+        
+        1) AbstractValue::filterByValue() assumed that the passed value's structure wouldn't change, in
+           the sense that at it assumed it could use that value's *current* structure to do structure
+           filtering. Filtering by structure only makes sense if you can prove that the given value will
+           always have that structure (for example by either using a watchpoing or emitting code that
+           checks that structure at run-time).
+        
+        2) AbstractValue::filterByValue() and the CheckFunction case in AbstractState::executeEffects()
+           tried to invalidate the CFA based on whether the filtration led to an empty value. This is
+           well-intentioned, but it's not how the CFA currently works. It's inconsistent with other
+           parts of the CFA. We shouldn't introduce this feature into just one kind of filtration and
+           not have it elsewhere.
+        
+        3) The attempt to detect when the value was empty was actually implemented incorrectly. It
+           relied on AbstractValue::validate(). That method says that a concrete value does not belong
+           to the abstract value if it has a different structure. This makes sense for the other place
+           where AbstractValue::validate() is called: during OSR entry, where we are talking about a
+           JSValue that we see *right now*. It doesn't make sense in the CFA, since in the CFA any
+           value we observe in the code is a value whose structure may change when the code starts
+           running, and so we cannot use the value's current structure to infer things about the code
+           when it starts running.
+        
+        I fixed the above problems by (1) changing filterByValue() to not filter the structure, (2)
+        changing filterByValue() and the CheckFunction case to not invalidate the CFA, and (3)
+        making sure that nobody else was misusing AbstractValue::validate() (they weren't).
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filterByValue):
+
 2013-04-23  Oliver Hunt  <oliver@apple.com>
 
         Default ParserError() initialiser doesn't initialise all fields
