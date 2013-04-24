@@ -1,3 +1,13 @@
+2013-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move image decoders, some other GStreamer, Cairo and Soup sources to libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115050
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add the image-decoders directory and its subdirectories to the list of header inclusion directories.
+        List the Cairo, GStreamer and Libsoup cppflags under the cppflags libPlatform uses for compiling its sources.
+
 2013-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up libPlatform.la

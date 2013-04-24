@@ -30,6 +30,14 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/graphics/transforms \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/bmp \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/cairo \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/gif \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/ico \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/jpeg \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/png \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/webp \
 	-I$(srcdir)/Source/WebCore/platform/network \
 	-I$(srcdir)/Source/WebCore/platform/network/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup \
@@ -56,7 +64,10 @@ libPlatform_la_CPPFLAGS = \
 	$(platform_cppflags) \
 	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
-	-fno-strict-aliasing
+	-fno-strict-aliasing \
+	$(CAIRO_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 libPlatformGtk_la_SOURCES = \
 	$(platformgtk_sources)

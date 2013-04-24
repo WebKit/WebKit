@@ -5455,9 +5455,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
 	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
@@ -5536,8 +5533,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/Extensions3D.h \
 	Source/WebCore/platform/graphics/NativeImagePtr.h \
 	Source/WebCore/platform/graphics/cairo/BitmapImageCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
-	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
 	Source/WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/FontCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
@@ -5545,18 +5540,10 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
 	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/PathCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.h \
-	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.h \
-	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
-	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterArrayParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterColorParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterConstants.h \
@@ -5825,25 +5812,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/MainThreadTask.h \
 	Source/WebCore/platform/MIMETypeRegistry.cpp \
 	Source/WebCore/platform/MIMETypeRegistry.h \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.h \
-	Source/WebCore/platform/image-decoders/cairo/ImageDecoderCairo.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.h \
-	Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageReader.h \
-	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
-	Source/WebCore/platform/image-decoders/ImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/ImageDecoder.h \
-	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
-	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/linux/GamepadDeviceLinux.cpp \
 	Source/WebCore/platform/linux/GamepadDeviceLinux.h \
 	Source/WebCore/platform/mediastream/MediaConstraints.h \
@@ -5950,8 +5918,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/CookieStorageSoup.cpp \
 	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
 	Source/WebCore/platform/network/soup/DNSSoup.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
 	Source/WebCore/platform/network/soup/NetworkStorageSessionSoup.cpp \
 	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceError.h \
@@ -5964,8 +5930,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamError.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/Pasteboard.h \
 	Source/WebCore/platform/PasteboardStrategy.h \
 	Source/WebCore/platform/PlatformEvent.cpp \
@@ -6113,6 +6077,38 @@ webcore_platform_sources += \
 	Source/WebCore/platform/WindowsKeyboardCodes.h
 
 platform_sources += \
+	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
+	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
+	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
+	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
+	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.h \
+	Source/WebCore/platform/image-decoders/cairo/ImageDecoderCairo.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.h \
+	Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageReader.h \
+	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
+	Source/WebCore/platform/image-decoders/ImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/ImageDecoder.h \
+	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
+	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/leveldb/LevelDBComparator.h \
 	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
 	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
@@ -6122,6 +6118,10 @@ platform_sources += \
 	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
+	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
+	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
+	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
+	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
 	Source/WebCore/platform/LinkHash.cpp \
