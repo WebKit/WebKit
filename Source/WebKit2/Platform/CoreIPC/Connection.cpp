@@ -624,7 +624,7 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
             // Something went wrong when decoding the message. Encode the message length so we can figure out if this
             // happens for certain message lengths.
             CString messageReceiverName = "<unknown message>";
-            CString messageName = String::format("<message length: %zu bytes>", incomingMessage->length()).utf8();
+            CString messageName = String::format("<message length: %zu bytes>", message->length()).utf8();
 
             m_clientRunLoop->dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, messageReceiverName, messageName));
             return;
