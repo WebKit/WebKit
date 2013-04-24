@@ -1,3 +1,18 @@
+2013-04-24  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][AC] Fix unexpected clear of ClutterContent.
+        https://bugs.webkit.org/show_bug.cgi?id=115099
+
+        Reviewed by Gustavo Noronha Silva.
+
+        adoptGRef doesn't increase a reference count. So if a actor has a valid ClutterContent,
+        it would be cleared unexpectedly by smart pointer when escaping a function.
+
+        No new tests, no functionality changed.
+
+        * platform/graphics/clutter/GraphicsLayerActor.cpp:
+        (graphicsLayerActorUpdateTexture):
+
 2013-04-24  Alberto Garcia  <agarcia@igalia.com>
 
         DOMFileSystemBase: fix multiple definitions in the BlackBerry port

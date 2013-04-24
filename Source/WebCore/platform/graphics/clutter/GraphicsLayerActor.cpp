@@ -249,7 +249,7 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
     ASSERT(priv->layerType != GraphicsLayerClutter::LayerTypeVideoLayer);
 
     ClutterActor* actor = CLUTTER_ACTOR(layer);
-    GRefPtr<ClutterContent> canvas = adoptGRef(clutter_actor_get_content(actor));
+    GRefPtr<ClutterContent> canvas = clutter_actor_get_content(actor);
     if (canvas) {
         // Nothing needs a texture, remove the one we have, if any.
         if (!priv->drawsContent && !priv->surface) {
