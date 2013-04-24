@@ -1486,11 +1486,11 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
     if (isBooleanConstant(node->child1().node())) {
         bool imm = valueOfBooleanConstant(node->child1().node());
         SpeculateBooleanOperand op2(this, node->child2());
-        branch32(condition, JITCompiler::Imm32(JSValue::encode(jsBoolean(imm))), op2.gpr(), taken);
+        branch32(condition, JITCompiler::Imm32(static_cast<int32_t>(JSValue::encode(jsBoolean(imm)))), op2.gpr(), taken);
     } else if (isBooleanConstant(node->child2().node())) {
         SpeculateBooleanOperand op1(this, node->child1());
         bool imm = valueOfBooleanConstant(node->child2().node());
-        branch32(condition, op1.gpr(), JITCompiler::Imm32(JSValue::encode(jsBoolean(imm))), taken);
+        branch32(condition, op1.gpr(), JITCompiler::Imm32(static_cast<int32_t>(JSValue::encode(jsBoolean(imm)))), taken);
     } else {
         SpeculateBooleanOperand op1(this, node->child1());
         SpeculateBooleanOperand op2(this, node->child2());

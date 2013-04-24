@@ -1,3 +1,14 @@
+2013-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        32-bit build fix.
+
+        Unreviewed.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch): Explicitly
+        truncate to 32-bit to avoid compiler warnings. It's safe to truncate
+        because the payload of a boolean is the low bits on both 64-bit and 32-bit.
+
 2013-04-23  Geoffrey Garen  <ggaren@apple.com>
 
         Filled out more cases of branch folding in the DFG
