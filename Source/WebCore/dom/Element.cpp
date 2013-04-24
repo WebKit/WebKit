@@ -280,7 +280,7 @@ PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren()
     return document()->createElement(tagQName(), false);
 }
 
-PassRefPtr<Attr> Element::detachAttribute(size_t index)
+PassRefPtr<Attr> Element::detachAttribute(unsigned index)
 {
     ASSERT(elementData());
 
@@ -302,8 +302,8 @@ void Element::removeAttribute(const QualifiedName& name)
     if (!elementData())
         return;
 
-    size_t index = elementData()->getAttributeItemIndex(name);
-    if (index == notFound)
+    unsigned index = elementData()->getAttributeItemIndex(name);
+    if (index == ElementData::attributeNotFound)
         return;
 
     removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
@@ -781,33 +781,33 @@ void Element::setAttribute(const AtomicString& localName, const AtomicString& va
     synchronizeAttribute(localName);
     const AtomicString& caseAdjustedLocalName = shouldIgnoreAttributeCase(this) ? localName.lower() : localName;
 
-    size_t index = elementData() ? elementData()->getAttributeItemIndex(caseAdjustedLocalName, false) : notFound;
-    const QualifiedName& qName = index != notFound ? attributeItem(index)->name() : QualifiedName(nullAtom, caseAdjustedLocalName, nullAtom);
+    unsigned index = elementData() ? elementData()->getAttributeItemIndex(caseAdjustedLocalName, false) : ElementData::attributeNotFound;
+    const QualifiedName& qName = index != ElementData::attributeNotFound ? attributeItem(index)->name() : QualifiedName(nullAtom, caseAdjustedLocalName, nullAtom);
     setAttributeInternal(index, qName, value, NotInSynchronizationOfLazyAttribute);
 }
 
 void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
     synchronizeAttribute(name);
-    size_t index = elementData() ? elementData()->getAttributeItemIndex(name) : notFound;
+    unsigned index = elementData() ? elementData()->getAttributeItemIndex(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
 }
 
 void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    size_t index = elementData() ? elementData()->getAttributeItemIndex(name) : notFound;
+    unsigned index = elementData() ? elementData()->getAttributeItemIndex(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute);
 }
 
-inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomicString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     if (newValue.isNull()) {
-        if (index != notFound)
+        if (index != ElementData::attributeNotFound)
             removeAttributeInternal(index, inSynchronizationOfLazyAttribute);
         return;
     }
 
-    if (index == notFound) {
+    if (index == ElementData::attributeNotFound) {
         addAttributeInternal(name, newValue, inSynchronizationOfLazyAttribute);
         return;
     }
@@ -1765,8 +1765,8 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData* elementData = ensureUniqueElementData();
 
-    size_t index = elementData->getAttributeItemIndex(attrNode->qualifiedName());
-    if (index != notFound) {
+    unsigned index = elementData->getAttributeItemIndex(attrNode->qualifiedName());
+    if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData->attributeItem(index)->value());
         else
@@ -1801,8 +1801,8 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 
     synchronizeAttribute(attr->qualifiedName());
 
-    size_t index = elementData()->getAttributeItemIndex(attr->qualifiedName());
-    if (index == notFound) {
+    unsigned index = elementData()->getAttributeItemIndex(attr->qualifiedName());
+    if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
@@ -1836,7 +1836,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     setAttribute(parsedName, value);
 }
 
-void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < attributeCount());
 
@@ -1874,8 +1874,8 @@ void Element::removeAttribute(const AtomicString& name)
         return;
 
     AtomicString localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    size_t index = elementData()->getAttributeItemIndex(localName, false);
-    if (index == notFound) {
+    unsigned index = elementData()->getAttributeItemIndex(localName, false);
+    if (index == ElementData::attributeNotFound) {
         if (UNLIKELY(localName == styleAttr) && elementData()->m_styleAttributeIsDirty && isStyledElement())
             static_cast<StyledElement*>(this)->removeAllInlineStyleProperties();
         return;
@@ -3100,7 +3100,7 @@ void UniqueElementData::addAttribute(const QualifiedName& attributeName, const A
     m_attributeVector.append(Attribute(attributeName, value));
 }
 
-void UniqueElementData::removeAttribute(size_t index)
+void UniqueElementData::removeAttribute(unsigned index)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     m_attributeVector.remove(index);
@@ -3125,7 +3125,7 @@ bool ElementData::isEquivalent(const ElementData* other) const
     return true;
 }
 
-size_t ElementData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+unsigned ElementData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     // Continue to checking case-insensitively and/or full namespaced names if necessary:
     for (unsigned i = 0; i < length(); ++i) {
@@ -3141,7 +3141,7 @@ size_t ElementData::getAttributeItemIndexSlowCase(const AtomicString& name, bool
                 return i;
         }
     }
-    return notFound;
+    return attributeNotFound;
 }
 
 Attribute* UniqueElementData::getAttributeItem(const QualifiedName& name)

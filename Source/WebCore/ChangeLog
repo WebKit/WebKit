@@ -1,5 +1,44 @@
 2013-04-24  Andreas Kling  <akling@apple.com>
 
+        ElementData should use 'unsigned' attribute indices.
+        <http://webkit.org/b/115103>
+
+        Reviewed by Antti Koivisto.
+
+        Switch to using 'unsigned' for attribute indices. This gives consistent behavior
+        on 32/64-bit, and the underlying storage is already limited by Vector's 32-bit capacity.
+
+        Added an ElementData::attributeNotFound constant (-1) since we can't use WTF::notFound.
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setSynchronizedLazyAttribute):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::UniqueElementData::removeAttribute):
+        (WebCore::ElementData::getAttributeItemIndexSlowCase):
+        * dom/Element.h:
+        (ElementData):
+        (UniqueElementData):
+        (Element):
+        (WebCore::Element::getAttributeItemIndex):
+        (WebCore::Element::attributeCount):
+        (WebCore::ElementData::length):
+        (WebCore::ElementData::getAttributeItem):
+        (WebCore::ElementData::getAttributeItemIndex):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItemNS):
+        (WebCore::NamedNodeMap::length):
+        * dom/NamedNodeMap.h:
+        (NamedNodeMap):
+
+2013-04-24  Andreas Kling  <akling@apple.com>
+
         ElementData::attributeItem() should bounds-check the index.
         <http://webkit.org/b/115076>
 

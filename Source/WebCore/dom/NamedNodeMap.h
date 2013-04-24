@@ -61,7 +61,7 @@ public:
     PassRefPtr<Node> setNamedItemNS(Node*, ExceptionCode&);
 
     PassRefPtr<Node> item(unsigned index) const;
-    size_t length() const;
+    unsigned length() const;
 
     Element* element() const { return m_element; }
 

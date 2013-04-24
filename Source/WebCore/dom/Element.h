@@ -58,6 +58,8 @@ public:
     // the appropriate subclass type.
     void deref();
 
+    static const unsigned attributeNotFound = static_cast<unsigned>(-1);
+
     void clearClass() const { m_classNames.clear(); }
     void setClass(const AtomicString& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
     const SpaceSplitString& classNames() const { return m_classNames; }
@@ -69,13 +71,13 @@ public:
 
     const StylePropertySet* presentationAttributeStyle() const;
 
-    size_t length() const;
+    unsigned length() const;
     bool isEmpty() const { return !length(); }
 
     const Attribute* attributeItem(unsigned index) const;
     const Attribute* getAttributeItem(const QualifiedName&) const;
-    size_t getAttributeItemIndex(const QualifiedName&) const;
-    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    unsigned getAttributeItemIndex(const QualifiedName&) const;
+    unsigned getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }
@@ -112,7 +114,7 @@ private:
 
     const Attribute* attributeBase() const;
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
-    size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    unsigned getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     PassRefPtr<UniqueElementData> makeUniqueCopy() const;
 };
@@ -144,7 +146,7 @@ public:
 
     // These functions do no error/duplicate checking.
     void addAttribute(const QualifiedName&, const AtomicString&);
-    void removeAttribute(size_t index);
+    void removeAttribute(unsigned index);
 
     Attribute* attributeItem(unsigned index);
     Attribute* getAttributeItem(const QualifiedName&);
@@ -285,11 +287,11 @@ public:
 
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
-    size_t attributeCount() const;
+    unsigned attributeCount() const;
     const Attribute* attributeItem(unsigned index) const;
     const Attribute* getAttributeItem(const QualifiedName&) const;
-    size_t getAttributeItemIndex(const QualifiedName& name) const { return elementData()->getAttributeItemIndex(name); }
-    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
+    unsigned getAttributeItemIndex(const QualifiedName& name) const { return elementData()->getAttributeItemIndex(name); }
+    unsigned getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -329,7 +331,7 @@ public:
     void removeAttribute(const AtomicString& name);
     void removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
-    PassRefPtr<Attr> detachAttribute(size_t index);
+    PassRefPtr<Attr> detachAttribute(unsigned index);
 
     PassRefPtr<Attr> getAttributeNode(const AtomicString& name);
     PassRefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
@@ -684,9 +686,9 @@ private:
     virtual NodeType nodeType() const;
     virtual bool childTypeAllowed(NodeType) const;
 
-    void setAttributeInternal(size_t index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
+    void setAttributeInternal(unsigned index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
-    void removeAttributeInternal(size_t index, SynchronizationOfLazyAttribute);
+    void removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute);
     void attributeChangedFromParserOrByCloning(const QualifiedName&, const AtomicString&, AttributeModificationReason);
 
 #ifndef NDEBUG
@@ -863,7 +865,7 @@ inline const SpaceSplitString& Element::classNames() const
     return elementData()->classNames();
 }
 
-inline size_t Element::attributeCount() const
+inline unsigned Element::attributeCount() const
 {
     ASSERT(elementData());
     return elementData()->length();
@@ -933,7 +935,7 @@ inline bool isShadowHost(const Node* node)
     return node && node->isElementNode() && toElement(node)->shadow();
 }
 
-inline size_t ElementData::length() const
+inline unsigned ElementData::length() const
 {
     if (isUnique())
         return static_cast<const UniqueElementData*>(this)->m_attributeVector.size();
@@ -956,25 +958,25 @@ inline const StylePropertySet* ElementData::presentationAttributeStyle() const
 
 inline const Attribute* ElementData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
-    size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
-    if (index != notFound)
+    unsigned index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
+    if (index != attributeNotFound)
         return attributeItem(index);
     return 0;
 }
 
-inline size_t ElementData::getAttributeItemIndex(const QualifiedName& name) const
+inline unsigned ElementData::getAttributeItemIndex(const QualifiedName& name) const
 {
     const Attribute* attributes = attributeBase();
     for (unsigned i = 0, count = length(); i < count; ++i) {
         if (attributes[i].name().matches(name))
             return i;
     }
-    return notFound;
+    return attributeNotFound;
 }
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+inline unsigned ElementData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     const Attribute* attributes = attributeBase();
     bool doSlowCheck = shouldIgnoreAttributeCase;
@@ -991,7 +993,7 @@ inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool 
 
     if (doSlowCheck)
         return getAttributeItemIndexSlowCase(name, shouldIgnoreAttributeCase);
-    return notFound;
+    return attributeNotFound;
 }
 
 inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name) const
