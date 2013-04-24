@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-class Color;
 class IntRect;
 class TileIndex;
 
@@ -47,7 +46,6 @@ public:
     bool hasTexture() const { return m_texture && m_texture->buffer(); }
 
     void setContents(BlackBerry::Platform::Graphics::Buffer*);
-    void setContentsToColor(const Color&);
     void updateContents(BlackBerry::Platform::Graphics::Buffer*);
     void discardContents();
 

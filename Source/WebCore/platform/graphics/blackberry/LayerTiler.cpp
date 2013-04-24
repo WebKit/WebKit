@@ -382,11 +382,6 @@ void LayerTiler::processTextureJob(const TextureJob& job, TileJobsMap& tileJobsM
         return;
     }
 
-    if (job.m_type == TextureJob::SetContentsToColor) {
-        addTileJob(job.m_index, job, tileJobsMap);
-        return;
-    }
-
     addTileJob(indexOfTile(job.m_dirtyRect.minXMinYCorner()), job, tileJobsMap);
 }
 
@@ -413,9 +408,6 @@ void LayerTiler::addTileJob(const TileIndex& index, const TextureJob& job, TileJ
 void LayerTiler::performTileJob(LayerTile* tile, const TextureJob& job)
 {
     switch (job.m_type) {
-    case TextureJob::SetContentsToColor:
-        tile->setContentsToColor(job.m_color);
-        return;
     case TextureJob::SetContents:
         tile->setContents(job.m_contents);
         {

@@ -44,11 +44,6 @@ void LayerTile::setContents(BlackBerry::Platform::Graphics::Buffer* contents)
     setTexture(textureCacheCompositingThread()->textureForContents(contents));
 }
 
-void LayerTile::setContentsToColor(const Color& color)
-{
-    setTexture(textureCacheCompositingThread()->textureForColor(color));
-}
-
 void LayerTile::updateContents(BlackBerry::Platform::Graphics::Buffer* contents)
 {
     setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents));

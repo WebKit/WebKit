@@ -21,7 +21,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "Color.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "LayerCompositingThreadClient.h"
@@ -75,7 +74,7 @@ public:
 
 private:
     struct TextureJob {
-        enum Type { Unknown, SetContents, SetContentsToColor, UpdateContents, DiscardContents, ResizeContents, DirtyContents };
+        enum Type { Unknown, SetContents, UpdateContents, DiscardContents, ResizeContents, DirtyContents };
 
         TextureJob()
             : m_type(Unknown)
@@ -108,20 +107,10 @@ private:
             ASSERT(contents);
         }
 
-        TextureJob(Type type, const Color& color, const TileIndex& index)
-            : m_type(type)
-            , m_contents(0)
-            , m_color(color)
-            , m_index(index)
-        {
-            ASSERT(type == SetContentsToColor);
-        }
-
         static TextureJob setContents(BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& contentsRect)
         {
             return TextureJob(SetContents, contents, contentsRect);
         }
-        static TextureJob setContentsToColor(const Color& color, const TileIndex& index) { return TextureJob(SetContentsToColor, color, index); }
         static TextureJob updateContents(BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& dirtyRect) { return TextureJob(UpdateContents, contents, dirtyRect); }
         static TextureJob discardContents(const IntRect& dirtyRect) { return TextureJob(DiscardContents, dirtyRect); }
         static TextureJob resizeContents(const IntSize& newSize) { return TextureJob(ResizeContents, newSize); }
@@ -132,7 +121,6 @@ private:
         Type m_type;
         BlackBerry::Platform::Graphics::Buffer* m_contents;
         IntRect m_dirtyRect;
-        Color m_color;
         TileIndex m_index;
     };
 
