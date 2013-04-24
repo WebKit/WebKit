@@ -1,3 +1,10 @@
+2013-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a merge error in r149007 (was missing a null check added in r148777).
+
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::containingBlockForAbsolutePosition):
+
 2013-04-24  Otto Derek Cheung  <otcheung@rim.com>
 
         Battery API won't return updated battery status until client calls didChangeBatteryStatus

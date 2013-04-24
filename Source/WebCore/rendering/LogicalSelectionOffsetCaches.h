@@ -54,17 +54,17 @@ static inline RenderObject* containingBlockForAbsolutePosition(RenderObject* par
     RenderObject* object = parent;
     while (object && !isContainingBlockCandidateForAbsolutelyPositionedObject(object))
         object = object->parent();
-    
+
     // For a relatively positioned inline, return its nearest non-anonymous containing block,
     // not the inline itself, to avoid having a positioned objects list in all RenderInlines
     // and use RenderBlock* as RenderObject::containingBlock's return type.
     // Use RenderBlock::container() to obtain the inline.
-    if (object->isRenderInline())
+    if (object && object->isRenderInline())
         object = object->containingBlock();
-    
+
     while (object && object->isAnonymousBlock())
         object = object->containingBlock();
-    
+
     return object;
 }
 
