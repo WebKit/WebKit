@@ -1,3 +1,20 @@
+2013-04-24  Alberto Garcia  <agarcia@igalia.com>
+
+        DOMFileSystemBase: fix multiple definitions in the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=114950
+
+        Reviewed by Xan Lopez.
+
+        The following  methods are already defined in DOMFileSystemBlackBerry.cpp:
+
+        crackFileSystemURL()
+        createFileSystemURL()
+        isValidType()
+        supportsToURL()
+
+        * Modules/filesystem/DOMFileSystemBase.cpp:
+        (WebCore):
+
 2013-04-24  George Staikos  <gstaikos@rim.com>
 
         [BlackBerry] Add support for JPEG image quality during encoding.
