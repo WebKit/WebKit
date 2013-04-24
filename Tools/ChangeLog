@@ -1,3 +1,14 @@
+2013-04-24  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Fix build error after r148963.
+        https://bugs.webkit.org/show_bug.cgi?id=115126
+
+        Reviewed by Laszlo Gombos.
+
+        Generate forwarding headers for 'CoordinatedGraphics' to generate WKView.h
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2013-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use stamp files for generate-forwarding-headers makefile rules
