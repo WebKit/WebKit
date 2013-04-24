@@ -1006,7 +1006,7 @@ inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name)
 
 inline const Attribute* ElementData::attributeItem(unsigned index) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
+    RELEASE_ASSERT(index < length());
     return attributeBase() + index;
 }
 
