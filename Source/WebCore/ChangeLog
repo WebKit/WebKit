@@ -1,3 +1,128 @@
+2013-04-24  Nico Weber  <thakis@chromium.org>
+
+        Fold RenderThemeMacShared into RenderThemeMac
+        https://bugs.webkit.org/show_bug.cgi?id=115086
+
+        Reviewed by Anders Carlsson.
+
+        No intended functionality change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        (WebCore::RenderThemeMac::supportsControlTints):
+        (WebCore::RenderThemeMac::scrollbarControlSizeForPart):
+        (WebCore::RenderThemeMac::supportsSelectionForegroundColors):
+        (WebCore::RenderThemeMac::supportsClosedCaptioning):
+        (WebCore::RenderThemeMac::updateActiveState):
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver initWithTheme:WebCore::]):
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]):
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:]):
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::~RenderThemeMac):
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor):
+        (WebCore):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMac::platformFocusRingColor):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::toFontWeight):
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::convertNSColorToColor):
+        (WebCore::menuBackgroundColor):
+        (WebCore::RenderThemeMac::platformColorsDidChange):
+        (WebCore::RenderThemeMac::systemColor):
+        (WebCore::RenderThemeMac::usesTestModeFocusRingColor):
+        (WebCore::RenderThemeMac::isControlStyled):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::inflateRect):
+        (WebCore::RenderThemeMac::convertToPaintingRect):
+        (WebCore::RenderThemeMac::updateCheckedState):
+        (WebCore::RenderThemeMac::updateEnabledState):
+        (WebCore::RenderThemeMac::updateFocusedState):
+        (WebCore::RenderThemeMac::updatePressedState):
+        (WebCore::RenderThemeMac::controlSupportsTints):
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::setControlSize):
+        (WebCore::RenderThemeMac::sizeForFont):
+        (WebCore::RenderThemeMac::sizeForSystemFont):
+        (WebCore::RenderThemeMac::setSizeFromFont):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::popupButtonMargins):
+        (WebCore::RenderThemeMac::popupButtonSizes):
+        (WebCore::RenderThemeMac::popupButtonPadding):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::meterSizeForBounds):
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::supportsMeter):
+        (WebCore::RenderThemeMac::levelIndicatorStyleFor):
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+        (WebCore::RenderThemeMac::progressBarSizes):
+        (WebCore::RenderThemeMac::progressBarMargins):
+        (WebCore::RenderThemeMac::minimumProgressBarHeight):
+        (WebCore::RenderThemeMac::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeMac::animationDurationForProgressBar):
+        (WebCore::RenderThemeMac::adjustProgressBarStyle):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::TopGradientInterpolate):
+        (WebCore::BottomGradientInterpolate):
+        (WebCore::MainGradientInterpolate):
+        (WebCore::TrackGradientInterpolate):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::menuListButtonSizes):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::menuListSizes):
+        (WebCore::RenderThemeMac::minimumMenuListSize):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::searchFieldSizes):
+        (WebCore::RenderThemeMac::setSearchFieldSize):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::cancelButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::resultsButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldDecoration):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        (WebCore::RenderThemeMac::sliderTickSize):
+        (WebCore::RenderThemeMac::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        (WebCore::RenderThemeMac::shouldShowPlaceholderWhenFocused):
+        (WebCore::RenderThemeMac::popupButton):
+        (WebCore::RenderThemeMac::search):
+        (WebCore::RenderThemeMac::searchMenuTemplate):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeMac::sliderThumbVertical):
+        (WebCore::RenderThemeMac::textField):
+        (WebCore::RenderThemeMac::fileListNameForWidth):
+        * rendering/RenderThemeMacShared.h: Removed.
+        * rendering/RenderThemeMacShared.mm: Removed.
+
 2013-04-24  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK][AC] Visible rect doesn't update after resizing a window.
