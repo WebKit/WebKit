@@ -1,3 +1,10 @@
+2013-04-24  Andreas Kling  <akling@apple.com>
+
+        Wild build fix attempt.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2013-04-22  Jessie Berlin  <jberlin@apple.com>
 
         Speculative Windows build fix.
