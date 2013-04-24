@@ -1095,7 +1095,6 @@
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
 		CDC382FE17211799008A2FC3 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
-		CDC3830017211799008A2FC3 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDC382F717211506008A2FC3 /* CFNetwork.framework */; };
 		CDC3830117211799008A2FC3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		CDC38307172117DD008A2FC3 /* CookieStorageShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */; };
 		CDC3830817211890008A2FC3 /* WebProcessShim.dylib in Copy WebProcessShim */ = {isa = PBXBuildFile; fileRef = CDC3830617211799008A2FC3 /* WebProcessShim.dylib */; };
@@ -2849,7 +2848,6 @@
 			files = (
 				CDDF622F1728A20D001EC01F /* CoreServices.framework in Frameworks */,
 				CD471F5D1721BC3E00D65CDA /* libWTF.a in Frameworks */,
-				CDC3830017211799008A2FC3 /* CFNetwork.framework in Frameworks */,
 				CDC3830117211799008A2FC3 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,12 @@
 2013-04-24  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed build fix; CFNetwork.framework is the one which Lion
+        refuses to link against.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-04-24  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix; link against CoreServices.framework instead of against
         CoreFoundation.framework directly, to make the linker happy on Lion.
 
