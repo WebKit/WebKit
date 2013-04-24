@@ -9,15 +9,19 @@ function createPageList() {
             var pages = JSON.parse(xhr.responseText);
             if (pages.length)
                 document.getElementById("noPageNotice").style.display = "none";
+
+            var pageList = document.createElement("ol");
             for (var i in pages) {
                 var link = document.createElement("a");
                 var title = pages[i].title ? pages[i].title : ("Page " + (Number(pages[i].id)));
                 var url = pages[i].url;
                 link.appendChild(document.createTextNode(title + (url ? (" [" + url + "]") : "" )));
                 link.setAttribute("href", pages[i].inspectorUrl);
-                document.body.appendChild(link);
-                document.body.appendChild(document.createElement("br"));
+                var pageListItem = document.createElement("li");
+                pageListItem.appendChild(link);
+                pageList.appendChild(pageListItem);
             }
+            document.body.appendChild(pageList);
         }
     };
     xhr.send();
