@@ -1,1 +1,11 @@
+2013-04-24  Mihai Tica  <mitica@adobe.com>
+
+        Fix test style issues following the commit of
+        https://bugs.webkit.org/show_bug.cgi?id=114412
+
+        Unreviewed gardening.
+
+        * css3/compositing/effect-background-blend-mode-color.html:
+        * css3/compositing/effect-background-blend-mode-color2.html:
+
 == Rolled over to ChangeLog-2013-04-24 ==
