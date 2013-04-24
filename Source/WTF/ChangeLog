@@ -1,3 +1,13 @@
+2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use post-branch store for RefCountedBase::derefBase
+        https://bugs.webkit.org/show_bug.cgi?id=115078
+
+        Reviewed by Andreas Kling.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::derefBase): This makes the assembly easier to follow.
+
 2013-04-23  Geoffrey Garen  <ggaren@apple.com>
 
         Filled out more cases of branch folding in bytecode when emitting expressions into a branching context

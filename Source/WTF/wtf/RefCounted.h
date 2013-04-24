@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -139,14 +139,15 @@ protected:
 #endif
 
         ASSERT(m_refCount);
-        if (m_refCount == 1) {
+        unsigned tempRefCount = m_refCount - 1;
+        if (!tempRefCount) {
 #if CHECK_REF_COUNTED_LIFECYCLE
             m_deletionHasBegun = true;
 #endif
             return true;
         }
+        m_refCount = tempRefCount;
 
-        --m_refCount;
 #if CHECK_REF_COUNTED_LIFECYCLE
         // Stop thread verification when the ref goes to 1 because it
         // is safe to be passed to another thread at this point.
