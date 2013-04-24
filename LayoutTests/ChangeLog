@@ -1,3 +1,33 @@
+2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Rebaselining after r148944
+        https://bugs.webkit.org/show_bug.cgi?id=115085
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/table/giantRowspan-expected.txt:
+        * platform/efl/fast/table/giantRowspan2-expected.png:
+        * platform/efl/fast/table/giantRowspan2-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug133756-1-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug133756-1-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug133756-2-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug133756-2-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug220536-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug220536-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug8858-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug8858-expected.txt:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.png:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/efl/tables/mozilla/core/row_span-expected.png:
+        * platform/efl/tables/mozilla/core/row_span-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug23847-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug65372-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+
 2013-04-24  Mihai Tica  <mitica@adobe.com>
 
         Fix test style issues following the commit of
