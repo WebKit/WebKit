@@ -1,5 +1,25 @@
 2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
 
+        Remove wxWebKit #ifdefs from WebCore/plugins
+        https://bugs.webkit.org/show_bug.cgi?id=115080
+
+        Reviewed by Geoffrey Garen.
+
+        * plugins/PluginView.h:
+        (PluginView):
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::nativeWindowFor):
+        (WebCore::cgHandleFor):
+        (WebCore::topLevelOffsetFor):
+        (WebCore::PluginView::platformStart):
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::snapshot):
+
+2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove wxWebKit #ifdefs from WebCore/page
         https://bugs.webkit.org/show_bug.cgi?id=115079
 

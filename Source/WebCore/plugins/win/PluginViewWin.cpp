@@ -29,6 +29,7 @@
 #include "PluginView.h"
 
 #include "BitmapImage.h"
+#include "BitmapInfo.h"
 #include "BridgeJSC.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -71,10 +72,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 
-#if !PLATFORM(WX)
-#include "BitmapInfo.h"
-#endif
-
 #if OS(WINCE)
 #undef LOG_NPERROR
 #define LOG_NPERROR(x)
@@ -97,11 +94,6 @@
 #include <QWindow>
 #endif
 
-#if PLATFORM(WX)
-#include <wx/defs.h>
-#include <wx/window.h>
-#endif
-
 static inline HWND windowHandleForPageClient(PlatformPageClient client)
 {
 #if PLATFORM(GTK)
@@ -116,10 +108,6 @@ static inline HWND windowHandleForPageClient(PlatformPageClient client)
     if (QWindow* window = client->ownerWindow())
         return reinterpret_cast<HWND>(window->winId());
     return 0;
-#elif PLATFORM(WX)
-    if (!client)
-        return 0;
-    return (HWND)client->GetHandle();
 #else
     return client;
 #endif
@@ -762,7 +750,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
-#if !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(GTK) && !PLATFORM(QT) && !OS(WINCE)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
@@ -1013,7 +1001,7 @@ bool PluginView::platformStart()
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
-#if OS(WINDOWS) && (PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WX))
+#if OS(WINDOWS) && (PLATFORM(GTK) || PLATFORM(QT))
         m_window = window;
 #else
         setPlatformWidget(window);
@@ -1056,7 +1044,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(GTK) && !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(GTK) && !OS(WINCE)
     OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {
