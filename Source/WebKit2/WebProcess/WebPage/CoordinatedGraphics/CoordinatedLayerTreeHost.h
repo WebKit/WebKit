@@ -81,6 +81,7 @@ public:
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
+    virtual void pageBackgroundTransparencyChanged() OVERRIDE;
 
     virtual void renderNextFrame();
     virtual void purgeBackingStores();

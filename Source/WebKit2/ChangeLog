@@ -1,3 +1,16 @@
+2013-04-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Build break after r149004
+        https://bugs.webkit.org/show_bug.cgi?id=115066
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged):
+        Added dummy method for new virtual method.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost): Ditto.
+
 2013-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Turn off tiled drawing in the Web Inspector

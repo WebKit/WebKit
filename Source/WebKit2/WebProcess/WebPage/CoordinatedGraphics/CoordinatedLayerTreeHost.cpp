@@ -691,6 +691,10 @@ void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
         m_pageOverlayLayer->deviceOrPageScaleFactorChanged();
 }
 
+void CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
+{
+}
+
 GraphicsLayerFactory* CoordinatedLayerTreeHost::graphicsLayerFactory()
 {
     return this;
