@@ -499,7 +499,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
             string.prepend(iteratorString.characters(), iteratorString.length());
         }
         next = searchFunction(string.data(), string.size(), string.size() - suffixLength, MayHaveMoreContext, needMoreContext);
-        if (next)
+        if (next > 1) // FIXME: This is a work around for https://webkit.org/b/115070. We need to provide more contexts in general case.
             break;
         it.advance();
     }

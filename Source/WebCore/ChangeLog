@@ -1,3 +1,24 @@
+2013-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moving word boundaries backwards fails when there is a text node starting with an apostrophe
+        https://bugs.webkit.org/show_bug.cgi?id=115070
+
+        Reviewed by Alexey Proskuryakov.
+
+        The bug was caused by previousBoundary erroneously assuming that we don't need any more context if a word
+        boundary is found at the beginning of a string. For example, when "I'll" is split into two text nodes,
+        "I" and "'ll", there is a word boundary between "'" and "ll" in "'ll" so we need to examine the whole "I'll".
+
+        Fixed the bug by obtaining more context when the character starts exactly at offset 1 in a text node to
+        work around this bug. In the long term, we probably need to provide Foundation of the entire context since in
+        languages like Hebrew and some of European languages, there could be many accents and combining characters
+        between split into multiple text nodes as one variant is seen in the newly added test case.
+
+        Test: editing/selection/previous-word-boundary-across-text-nodes.html
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary):
+
 2013-04-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not use static string in DiagnosticLoggingKeys
