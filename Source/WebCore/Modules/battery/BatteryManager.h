@@ -52,6 +52,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(levelchange);
 
     void didChangeBatteryStatus(PassRefPtr<Event>, PassRefPtr<BatteryStatus>);
+    void updateBatteryStatus(PassRefPtr<BatteryStatus>);
     void batteryControllerDestroyed() { m_batteryController = 0; }
 
     using RefCounted<BatteryManager>::ref;

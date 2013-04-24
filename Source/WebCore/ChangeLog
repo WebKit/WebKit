@@ -1,3 +1,28 @@
+2013-04-24  Otto Derek Cheung  <otcheung@rim.com>
+
+        Battery API won't return updated battery status until client calls didChangeBatteryStatus
+        https://bugs.webkit.org/show_bug.cgi?id=114891
+
+        Reviewed by Rob Buis.
+
+        The BatteryStatus object in BatteryManager won't get updated until BatteryClient calls
+        didChangeBatteryStatus in BatteryController. Any attempts to call webkitBattery.charged()
+        or other get functions will always return the default values until the next battery status
+        change object gets passed to the controller.
+
+        We need to update the manager when we attach it to the controller, and update all
+        existing managers when the controller receives it's first battery status object.
+
+        * Modules/battery/BatteryController.cpp:
+        (WebCore::BatteryController::addListener):
+        (WebCore::BatteryController::updateBatteryStatus):
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::didChangeBatteryStatus):
+        (WebCore::BatteryManager::updateBatteryStatus):
+        (WebCore):
+        * Modules/battery/BatteryManager.h:
+        (BatteryManager):
+
 2013-04-24  Jacky Jiang  <zhajiang@blackberry.com>
 
         Clean up unused code in ViewportArguments.h

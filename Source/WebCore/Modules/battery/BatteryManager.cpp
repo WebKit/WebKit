@@ -79,8 +79,13 @@ double BatteryManager::level()
 
 void BatteryManager::didChangeBatteryStatus(PassRefPtr<Event> event, PassRefPtr<BatteryStatus> batteryStatus)
 {
-    m_batteryStatus = batteryStatus;
+    updateBatteryStatus(batteryStatus);
     dispatchEvent(event);
+}
+
+void BatteryManager::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus)
+{
+    m_batteryStatus = batteryStatus;
 }
 
 void BatteryManager::suspend(ReasonForSuspension)
