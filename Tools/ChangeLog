@@ -1,3 +1,13 @@
+2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove the Chromium-specific helper from run_webkit_tests.py
+        https://bugs.webkit.org/show_bug.cgi?id=114996
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2013-04-24  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2]: Fix WKViewClientWebProcessCallbacks WK2 API test

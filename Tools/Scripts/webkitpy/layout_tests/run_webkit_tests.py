@@ -99,16 +99,6 @@ def parse_args(args):
     option_group_definitions.append(("Configuration options", configuration_options()))
     option_group_definitions.append(("Printing Options", printing.print_options()))
 
-    # FIXME: These options should move onto the ChromiumPort.
-    option_group_definitions.append(("Chromium-specific Options", [
-        optparse.make_option("--nocheck-sys-deps", action="store_true",
-            default=False,
-            help="Don't check the system dependencies (themes)"),
-        optparse.make_option("--adb-device",
-            action="append", default=[],
-            help="Run Android layout tests on these devices."),
-    ]))
-
     option_group_definitions.append(("EFL-specific Options", [
         optparse.make_option("--webprocess-cmd-prefix", type="string",
             default=False, help="Prefix used when spawning the Web process (Debug mode only)"),
@@ -203,6 +193,10 @@ def parse_args(args):
         optparse.make_option("--ignore-metrics", action="store_true", dest="ignore_metrics",
             default=False, help="Ignore rendering metrics related information from test "
             "output, only compare the structure of the rendertree."),
+        optparse.make_option("--nocheck-sys-deps", action="store_true",
+            default=False,
+            help="Don't check the system dependencies (themes)"),
+
     ]))
 
     option_group_definitions.append(("Testing Options", [
