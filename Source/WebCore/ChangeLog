@@ -1,3 +1,21 @@
+2013-04-24  Andreas Kling  <akling@apple.com>
+
+        CSS attribute selectors cause unnecessary style recalc when setting attribute to same value.
+        <http://webkit.org/b/115116>
+        <rdar://problem/13727709>
+
+        Reviewed by Simon Fraser.
+
+        The logic that dirties the style if there's a relevant attribute selector in the document
+        shouldn't run if the attribute is being overwritten with an identical value.
+        Move this into willModifyAttribute() instead, since we need access to both the old and the new value.
+
+        This reduces unnecessary style recalculation in Mac App Store content.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::willModifyAttribute):
+
 2013-04-24  Jonathan Feldstein <jfeldstein@blackberry.com>
 
         [BlackBerry] Fixes the San Angeles demo on khronos.org

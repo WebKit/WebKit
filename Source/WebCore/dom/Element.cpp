@@ -875,7 +875,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
     else if (name == HTMLNames::pseudoAttr)
         shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
 
-    shouldInvalidateStyle |= testShouldInvalidateStyle && styleResolver->hasSelectorForAttribute(name.localName());
 
     invalidateNodeListCachesInAncestors(&name, this);
 
@@ -2719,6 +2718,11 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
         TreeScope* scope = treeScope();
         if (scope->shouldCacheLabelsByForAttribute())
             updateLabel(scope, oldValue, newValue);
+    }
+
+    if (oldValue != newValue) {
+        if (attached() && document()->styleResolver() && document()->styleResolver()->hasSelectorForAttribute(name.localName()))
+            setNeedsStyleRecalc();
     }
 
     if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
