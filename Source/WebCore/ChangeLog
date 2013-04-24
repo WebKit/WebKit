@@ -1,5 +1,19 @@
 2013-04-24  ChangSeok Oh  <changseok.oh@collabora.com>
 
+        [GTK][AC] Visible rect doesn't update after resizing a window.
+        https://bugs.webkit.org/show_bug.cgi?id=115096
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Once we set actor's a clip rect, we should update the rect when resizing the actor.
+
+        No new tests since no new functionality.
+
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp:
+        (WebCore::GraphicsLayerClutter::setSize):
+
+2013-04-24  ChangSeok Oh  <changseok.oh@collabora.com>
+
         [GTK][AC] Fix unexpected clear of ClutterContent.
         https://bugs.webkit.org/show_bug.cgi?id=115099
 

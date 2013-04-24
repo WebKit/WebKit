@@ -389,7 +389,7 @@ void GraphicsLayerClutter::setSize(const FloatSize& size)
         return;
 
     GraphicsLayer::setSize(size);
-    noteLayerPropertyChanged(GeometryChanged);
+    noteLayerPropertyChanged(masksToBounds() ? GeometryChanged | MasksToBoundsChanged : GeometryChanged);
 }
 void GraphicsLayerClutter::setTransform(const TransformationMatrix& t)
 {
