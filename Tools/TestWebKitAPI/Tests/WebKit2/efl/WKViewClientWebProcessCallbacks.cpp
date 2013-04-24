@@ -101,7 +101,7 @@ static void setViewClient(WKViewRef view, const void* clientInfo)
 
 TEST(WebKit2, WKViewClientWebProcessCallbacks)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("WKViewClientWebProcessCallbacksTest"));
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
 
     PlatformWebView view(context.get());
@@ -115,7 +115,7 @@ TEST(WebKit2, WKViewClientWebProcessCallbacks)
     WKPageLoadURL(view.page(), url.get());
     Util::run(&states.didFinishLoad);
 
-    WKPageTerminate(view.page());
+    WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("Crash").get(), 0);
     Util::run(&states.didCrash);
 
     WKPageReload(view.page());

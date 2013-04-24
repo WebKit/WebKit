@@ -51,6 +51,11 @@ set(test_webcore_BINARIES
     KURL
 )
 
+# In here we list the bundles that are used by our specific WK2 API Tests
+list(APPEND bundle_harness_SOURCES
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks_Bundle.cpp
+)
+
 set(test_webkit2_api_BINARIES
     AboutBlankLoad
     CookieManager
@@ -88,6 +93,7 @@ set(test_webkit2_api_BINARIES
     WKStringJSString
     WKURL
     WillSendSubmitEvent
+    efl/WKViewClientWebProcessCallbacks
 )
 
 # Seccomp filters is an internal API and its symbols
@@ -107,7 +113,6 @@ set(test_webkit2_api_fail_BINARIES
     RestoreSessionStateContainingFormData
     ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
-    #efl/WKViewClientWebProcessCallbacks
 )
 
 # Tests disabled because of missing features on the test harness:

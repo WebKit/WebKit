@@ -1,3 +1,35 @@
+2013-04-24  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][WK2]: Fix WKViewClientWebProcessCallbacks WK2 API test
+        https://bugs.webkit.org/show_bug.cgi?id=114850
+
+        Reviewed by Andreas Kling.
+
+        Revision r148312 fixed WebPageProxy cleanup and also changed the process
+        termination semantics when requested by the user so that a client is not
+        notified of a crash anymore, since there was no crash anyway.
+
+        That change broke WKViewClientWebProcessCallbacks WK2 API test, since it
+        relied on being notified of a crash after calling WKPageTerminate(). As
+        a result of not being notified of such non-existent crash, the test would
+        timeout right after making the terminate call.
+
+        This patch adds an InjectedBundle to be used for simulating a crash, by
+        calling abort() upon receiving a "Crash" message, and thus we are able to
+        keep testing the crash callback.
+
+        This patch also re-enables the WKViewClientWebProcessCallbacks test, which
+        had been disabled in revisions r148858 and r148855, since it was failing.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (WKViewClientWebProcessCallbacksTest):
+        (TestWebKitAPI::WKViewClientWebProcessCallbacksTest::WKViewClientWebProcessCallbacksTest):
+        (TestWebKitAPI::WKViewClientWebProcessCallbacksTest::didReceiveMessage):
+
 2013-04-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] WebKitTestRunner failures due to IconDatabase assertions
