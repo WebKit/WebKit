@@ -1,3 +1,19 @@
+2013-04-24  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary MutableStylePropertySet casts.
+        <http://webkit.org/b/115075>
+
+        Reviewed by Geoffrey Garen.
+
+        Get rid of some now-unneeded static_casts that were left from the StylePropertySet
+        refactoring last weekend.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::setProperty):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+
 2013-04-24  Kangil Han  <kangil.han@samsung.com>
 
         [Minor code cleanup] Remove duplicated condition check

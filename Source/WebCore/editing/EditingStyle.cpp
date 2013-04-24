@@ -648,7 +648,7 @@ TriState EditingStyle::triStateOfStyle(EditingStyle* style) const
 {
     if (!style || !style->m_mutableStyle)
         return FalseTriState;
-    return triStateOfStyle(static_pointer_cast<MutableStylePropertySet>(style->m_mutableStyle)->ensureCSSStyleDeclaration(), DoNotIgnoreTextOnlyProperties);
+    return triStateOfStyle(style->m_mutableStyle->ensureCSSStyleDeclaration(), DoNotIgnoreTextOnlyProperties);
 }
 
 TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties shouldIgnoreTextOnlyProperties) const
@@ -1153,7 +1153,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
             computedStyle->m_mutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
 
         removePropertiesInStyle(computedStyle->m_mutableStyle.get(), styleFromMatchedRules.get());
-        m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), static_pointer_cast<MutableStylePropertySet>(computedStyle->m_mutableStyle)->ensureCSSStyleDeclaration());
+        m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), computedStyle->m_mutableStyle->ensureCSSStyleDeclaration());
     }
 
     // 3. If this element is a span and has display: inline or float: none, remove them unless they are overriden by rules.
