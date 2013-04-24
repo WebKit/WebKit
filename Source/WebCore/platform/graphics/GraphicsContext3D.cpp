@@ -1335,8 +1335,8 @@ ALWAYS_INLINE void FormatConverter::convert()
         }
     } else if (!trivialUnpack && !trivialPack) {
         for (size_t i = 0; i < m_height; ++i) {
-            unpack<SrcFormat>(srcRowStart, reinterpret_cast<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()), m_width);
-            pack<DstFormat, alphaOp>(reinterpret_cast<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()), dstRowStart, m_width);
+            unpack<SrcFormat>(srcRowStart, reinterpret_cast_ptr<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()), m_width);
+            pack<DstFormat, alphaOp>(reinterpret_cast_ptr<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()), dstRowStart, m_width);
             srcRowStart += srcStrideInElements;
             dstRowStart += dstStrideInElements;
         }

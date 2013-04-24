@@ -1,3 +1,13 @@
+2013-04-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align WebCore/platform/graphics/GraphicsContext3D.cpp on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=115036
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore):
+
 2013-04-24  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary MutableStylePropertySet casts.
