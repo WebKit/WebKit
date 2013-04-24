@@ -32,21 +32,156 @@
 using namespace EWKUnitTests;
 
 /**
+ * @brief Unit test for checking set/get of default quota for Web Database databases by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_web_database_default_quota)
+{
+    ASSERT_EQ(1 * 1024 * 1024, ewk_settings_web_database_default_quota_get());
+
+    ewk_settings_web_database_default_quota_set(2 * 1024 * 1024);
+    ASSERT_EQ(2 * 1024 * 1024, ewk_settings_web_database_default_quota_get());
+
+    ewk_settings_web_database_default_quota_set(3 * 1024 * 1024);
+    ASSERT_EQ(3 * 1024 * 1024, ewk_settings_web_database_default_quota_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of directory path where Web Database databases is stored by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_web_database_path)
+{
+#if ENABLE(SQL_DATABASE)
+    ASSERT_STREQ("~/.webkit", ewk_settings_web_database_path_get());
+#else
+    ASSERT_STREQ(0, ewk_settings_web_database_path_get());
+#endif
+
+    ewk_settings_web_database_path_set("~/data/webkitDB");
+#if ENABLE(SQL_DATABASE)
+    ASSERT_STREQ("~/data/webkitDB", ewk_settings_web_database_path_get());
+#else
+    ASSERT_STREQ(0, ewk_settings_web_database_path_get());
+#endif
+
+    ewk_settings_web_database_path_set("~/tmp/webkit");
+#if ENABLE(SQL_DATABASE)    
+    ASSERT_STREQ("~/tmp/webkit", ewk_settings_web_database_path_get());
+#else
+    ASSERT_STREQ(0, ewk_settings_web_database_path_get());
+#endif
+}
+
+/**
+ * @brief Unit test for checking set/get of directory path where the HTML5 local storage indexing database is stored by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_local_storage_path)
+{
+    ASSERT_STREQ("~/.webkit", ewk_settings_local_storage_path_get());
+
+    ewk_settings_local_storage_path_set("~/data/webkitDB");
+    ASSERT_STREQ("~/data/webkitDB", ewk_settings_local_storage_path_get());
+
+    ewk_settings_local_storage_path_set("~/tmp/webkit");
+    ASSERT_STREQ("~/tmp/webkit", ewk_settings_local_storage_path_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of directory path where icon database is stored by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_icon_database_path)
+{
+    ASSERT_STREQ(0, ewk_settings_icon_database_path_get());
+
+    ASSERT_TRUE(ewk_settings_icon_database_path_set("/tmp"));
+    ASSERT_STREQ("/tmp", ewk_settings_icon_database_path_get());
+
+    ASSERT_TRUE(ewk_settings_icon_database_path_set(0));
+    ASSERT_STREQ(0, ewk_settings_icon_database_path_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of path where the HTML5 application cache is stored by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_application_cache_path)
+{
+    ASSERT_STREQ(0, ewk_settings_application_cache_path_get());
+
+    ewk_settings_application_cache_path_set("~/data/webkitApp");
+    ASSERT_STREQ("~/data/webkitApp", ewk_settings_application_cache_path_get());
+
+    ewk_settings_application_cache_path_set("~/tmp/webkitApp");
+    ASSERT_STREQ("~/tmp/webkitApp", ewk_settings_application_cache_path_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of maximum size of the application cache for HTML5 Offline Web Applications by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_application_cache_max_quota)
+{
+    ASSERT_EQ(std::numeric_limits<int64_t>::max(), ewk_settings_application_cache_max_quota_get());
+
+    ewk_settings_application_cache_max_quota_set(3 * 1024 * 1024);
+    ASSERT_EQ(3 * 1024 * 1024, ewk_settings_application_cache_max_quota_get());
+
+    ewk_settings_application_cache_max_quota_set(5 * 1024 * 1024);
+    ASSERT_EQ(5 * 1024 * 1024, ewk_settings_application_cache_max_quota_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of in-memory object cache Enables/Disables status by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_object_cache_enable)
+{
+    ASSERT_TRUE(ewk_settings_object_cache_enable_get());
+
+    ewk_settings_object_cache_enable_set(false);
+    ASSERT_FALSE(ewk_settings_object_cache_enable_get());
+
+    ewk_settings_object_cache_enable_set(true);
+    ASSERT_TRUE(ewk_settings_object_cache_enable_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of Shadow DOM functionality Enables/Disables status by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_shadow_dom_enable)
+{
+    ASSERT_FALSE(ewk_settings_shadow_dom_enable_get());
+
+    ewk_settings_shadow_dom_enable_set(true);
+    ASSERT_TRUE(ewk_settings_shadow_dom_enable_get());
+
+    ewk_settings_shadow_dom_enable_set(false);
+    ASSERT_FALSE(ewk_settings_shadow_dom_enable_get());
+}
+
+/**
+ * @brief Unit test for checking set/get of maximum number of pages in the memory page cache by ewk settings API.
+ */
+TEST_F(EWKTestBase, ewk_settings_page_cache_capacity)
+{
+    ASSERT_EQ(3, ewk_settings_page_cache_capacity_get());
+
+    ewk_settings_page_cache_capacity_set(5);
+    ASSERT_EQ(5, ewk_settings_page_cache_capacity_get());
+}
+
+/**
  * @brief Unit test for checking set/get of css media type by ewk settings API.
  */
 TEST_F(EWKTestBase, ewk_settings_css_media_type)
 {
-    ASSERT_STREQ(ewk_settings_css_media_type_get(), 0);
+    ASSERT_STREQ(0, ewk_settings_css_media_type_get());
 
     ewk_settings_css_media_type_set("handheld");
-    ASSERT_STREQ(ewk_settings_css_media_type_get(), "handheld");
+    ASSERT_STREQ("handheld", ewk_settings_css_media_type_get());
 
     ewk_settings_css_media_type_set("tv");
-    ASSERT_STREQ(ewk_settings_css_media_type_get(), "tv");
+    ASSERT_STREQ("tv", ewk_settings_css_media_type_get());
 
     ewk_settings_css_media_type_set("screen");
-    ASSERT_STREQ(ewk_settings_css_media_type_get(), "screen");
+    ASSERT_STREQ("screen", ewk_settings_css_media_type_get());
 
     ewk_settings_css_media_type_set(0);
-    ASSERT_STREQ(ewk_settings_css_media_type_get(), 0);
+    ASSERT_STREQ(0, ewk_settings_css_media_type_get());
 }
