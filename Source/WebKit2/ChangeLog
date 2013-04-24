@@ -1,3 +1,16 @@
+2013-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebKit2] Add CoordinatedGraphics to the list of platforms in generate-forwarding-headers.pl
+        https://bugs.webkit.org/show_bug.cgi?id=115098
+
+        Reviewed by Martin Robinson.
+
+        r148963 introduced a new WKView.h header in a directory not listed
+        as a platform prefix in generate-forwarding-headers.pl.
+
+        * Scripts/generate-forwarding-headers.pl: Replace unused chromium
+        plaform prefix with CoordinatedGraphics that is used now.
+
 2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Add number to list from remote web inspector.
