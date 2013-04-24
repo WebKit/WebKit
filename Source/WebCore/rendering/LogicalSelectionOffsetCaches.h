@@ -147,7 +147,6 @@ public:
     LogicalSelectionOffsetCaches(RenderBlock* block, const LogicalSelectionOffsetCaches& cache)
         : m_containingBlockForFixedPosition(cache.m_containingBlockForFixedPosition)
         , m_containingBlockForAbsolutePosition(cache.m_containingBlockForAbsolutePosition)
-        , m_parentCache(&cache)
     {
         if (block->canContainFixedPositionObjects())
             m_containingBlockForFixedPosition.setBlock(block, &cache);
@@ -177,7 +176,6 @@ private:
     ContainingBlockInfo m_containingBlockForFixedPosition;
     ContainingBlockInfo m_containingBlockForAbsolutePosition;
     ContainingBlockInfo m_containingBlockForInflowPosition;
-    const LogicalSelectionOffsetCaches* m_parentCache;
 };
 
 } // namespace WebCore
