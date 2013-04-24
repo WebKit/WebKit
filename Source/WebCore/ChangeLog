@@ -1,3 +1,15 @@
+2013-04-24  Kangil Han  <kangil.han@samsung.com>
+
+        [Minor code cleanup] Remove duplicated condition check
+        https://bugs.webkit.org/show_bug.cgi?id=115082
+
+        Reviewed by Andreas Kling.
+
+        areRectsPartiallyAligned() has duplicated condition check, so remove it.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::areRectsPartiallyAligned):
+
 2013-04-24  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Fix build warnings caused by missing images attributes for default buttons
