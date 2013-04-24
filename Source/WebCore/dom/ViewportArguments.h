@@ -72,11 +72,7 @@ struct ViewportArguments {
         ValueDeviceWidth = -2,
         ValueDeviceHeight = -3,
         ValuePortrait = -4,
-        ValueLandscape = -5,
-        ValueDeviceDPI = -6,
-        ValueLowDPI = -7,
-        ValueMediumDPI = -8,
-        ValueHighDPI = -9
+        ValueLandscape = -5
     };
 
     ViewportArguments(Type type = Implicit)
