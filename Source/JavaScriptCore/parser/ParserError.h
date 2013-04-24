@@ -56,6 +56,7 @@ struct ParserError {
     int m_line;
     ParserError()
         : m_type(ErrorNone)
+        , m_syntaxErrorType(SyntaxErrorNone)
         , m_line(-1)
     {
     }

@@ -1,3 +1,16 @@
+2013-04-23  Oliver Hunt  <oliver@apple.com>
+
+        Default ParserError() initialiser doesn't initialise all fields
+        https://bugs.webkit.org/show_bug.cgi?id=115074
+
+        Reviewed by Joseph Pecoraro.
+
+        Only the jsc command prompt depended on this, but we'll fix it to
+        be on the safe side.
+
+        * parser/ParserError.h:
+        (JSC::ParserError::ParserError):
+
 2013-04-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Global constructors should be configurable and not enumerable
