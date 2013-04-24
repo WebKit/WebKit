@@ -854,9 +854,6 @@ compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
 # https://bugs.webkit.org/show_bug.cgi?id=90725
 media/media-blocked-by-beforeload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=90833
-fast/js/global-constructors.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=91505
 platform/mac/plugins/root-object-premature-delete-crash.html
 

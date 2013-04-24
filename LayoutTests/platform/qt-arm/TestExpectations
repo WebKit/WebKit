@@ -78,7 +78,6 @@ fast/dom/constructors-cached.html
 fast/dom/dom-constructors.html
 fast/forms/form-associated-element-crash3.html
 fast/js/custom-constructors.html
-fast/js/global-constructors.html
 fast/js/instanceof-XMLHttpRequest.html
 fast/replaced/outline-replaced-elements.html
 http/tests/security/local-video-poster-from-remote.html
@@ -225,7 +224,6 @@ Bug(_arm) fast/dom/constructed-objects-prototypes.html [ Skip ]
 Bug(_arm) fast/events/constructors/webgl-context-event-constructor.html [ Skip ]
 Bug(_arm) fast/js/constructor-length.html [ Skip ]
 Bug(_arm) fast/js/dfg-inlining-reg-alloc.html [ Skip ]
-Bug(_arm) fast/js/global-constructors.html [ Skip ]
 Bug(_arm) fast/multicol/overflow-content.html [ Skip ]
 Bug(_arm) http/tests/cache/subresource-expiration-1.html [ Skip ]
 Bug(_arm) http/tests/cache/subresource-expiration-2.html [ Skip ]

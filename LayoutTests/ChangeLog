@@ -1,3 +1,13 @@
+2013-04-24  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/js/global-constructors.html was deleted in r149001, removing it from
+        TextExpectations too.
+
+        * platform/mac/TestExpectations:
+        * platform/qt-arm/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2013-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving word boundaries backwards fails when there is a text node starting with an apostrophe

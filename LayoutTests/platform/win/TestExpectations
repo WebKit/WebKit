@@ -2329,7 +2329,6 @@ proximity/create-event-deviceproximity.html
 fast/events/constructors/device-proximity-event-constructor.html
 fast/forms/state-restore-broken-state.html
 fast/html/progress-user-modify.html
-fast/js/global-constructors.html
 fast/multicol/shrink-to-column-height-for-pagination.html
 inspector/device-orientation-success.html
 inspector/geolocation-error.html
