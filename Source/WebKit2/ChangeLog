@@ -1,3 +1,10 @@
+2013-04-24  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; link against CoreServices.framework instead of against
+        CoreFoundation.framework directly, to make the linker happy on Lion.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-04-22  Jer Noble  <jer.noble@apple.com>
 
         WWDC session videos don’t play at developer.apple.com
