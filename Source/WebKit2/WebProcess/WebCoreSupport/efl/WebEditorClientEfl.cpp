@@ -35,6 +35,7 @@
 #include <WebCore/FocusController.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
+#include <WebKit2/Shared/WebCoreArgumentCoders.h>
 
 using namespace WebCore;
 

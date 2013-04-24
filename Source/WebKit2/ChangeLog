@@ -1,1 +1,13 @@
+2013-04-24  Vlad Vasilyeu  <vasvlad@gmail.com>
+
+        --minimal build fails with error: Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h:44:36: error: decode is not a member of WebCore::TextCheckingResult
+        https://bugs.webkit.org/show_bug.cgi?id=114367
+
+        Reviewed by Benjamin Poulain.
+
+        Include WebCoreArgumentCoders.h to WebEditorClientEfl.cpp from
+        WebKit2/Shared/ for successfully building with option --minimal
+
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+
 == Rolled over to ChangeLog-2013-04-24 ==
