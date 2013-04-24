@@ -1,1 +1,33 @@
+2013-04-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Filled out more cases of branch folding in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=115088
+
+        Reviewed by Oliver Hunt.
+
+        No change on the benchmarks we track, but a 3X speedup on a
+        microbenchmark that uses these techniques.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): (!/=)= and (!/=)== can constant
+        fold all types, not just numbers, because true constants have no
+        side effects when type-converted at runtime.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateBoolean): Added support for fixing up
+        boolean uses, like we do for other types like number.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileBooleanCompare): Peephole fuse
+        boolean compare and/or compare-branch, now that we have the types for
+        them.
+
+        * dfg/DFGSpeculativeJIT.h: Updated declarations.
+
 == Rolled over to ChangeLog-2013-04-24 ==

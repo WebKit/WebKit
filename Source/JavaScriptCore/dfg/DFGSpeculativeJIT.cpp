@@ -1469,6 +1469,37 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     jump(notTaken);
 }
 
+void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
+{
+    BlockIndex taken = branchNode->takenBlockIndex();
+    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+
+    // The branch instruction will branch to the taken block.
+    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
+    if (taken == nextBlock()) {
+        condition = JITCompiler::invert(condition);
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    if (isBooleanConstant(node->child1().node())) {
+        bool imm = valueOfBooleanConstant(node->child1().node());
+        SpeculateBooleanOperand op2(this, node->child2());
+        branch32(condition, JITCompiler::Imm32(JSValue::encode(jsBoolean(imm))), op2.gpr(), taken);
+    } else if (isBooleanConstant(node->child2().node())) {
+        SpeculateBooleanOperand op1(this, node->child1());
+        bool imm = valueOfBooleanConstant(node->child2().node());
+        branch32(condition, op1.gpr(), JITCompiler::Imm32(JSValue::encode(jsBoolean(imm))), taken);
+    } else {
+        SpeculateBooleanOperand op1(this, node->child1());
+        SpeculateBooleanOperand op2(this, node->child2());
+        branch32(condition, op1.gpr(), op2.gpr(), taken);
+    }
+
+    jump(notTaken);
+}
+
 void SpeculativeJIT::compilePeepHoleIntegerBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
     BlockIndex taken = branchNode->takenBlockIndex();
@@ -1521,7 +1552,9 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
                 // Use non-peephole comparison, for now.
                 return false;
             }
-            if (node->isBinaryUseKind(ObjectUse))
+            if (node->isBinaryUseKind(BooleanUse))
+                compilePeepHoleBooleanBranch(node, branchNode, condition);
+            else if (node->isBinaryUseKind(ObjectUse))
                 compilePeepHoleObjectEquality(node, branchNode);
             else if (node->child1().useKind() == ObjectUse && node->child2().useKind() == ObjectOrOtherUse)
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child1(), node->child2(), branchNode);
@@ -3499,6 +3532,11 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             return false;
         }
         
+        if (node->isBinaryUseKind(BooleanUse)) {
+            compileBooleanCompare(node, condition);
+            return false;
+        }
+
         if (node->isBinaryUseKind(ObjectUse)) {
             compileObjectEquality(node);
             return false;
@@ -3598,6 +3636,21 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue 
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
     switch (node->binaryUseKind()) {
+    case BooleanUse: {
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+            compilePeepHoleBooleanBranch(node, branchNode, MacroAssembler::Equal);
+            use(node->child1());
+            use(node->child2());
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileBooleanCompare(node, MacroAssembler::Equal);
+        return false;
+    }
+
     case Int32Use: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
@@ -3656,6 +3709,23 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
+}
+
+void SpeculativeJIT::compileBooleanCompare(Node* node, MacroAssembler::RelationalCondition condition)
+{
+    SpeculateBooleanOperand op1(this, node->child1());
+    SpeculateBooleanOperand op2(this, node->child2());
+    GPRTemporary result(this);
+    
+    m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+    
+    // If we add a DataFormatBool, we should use it here.
+#if USE(JSVALUE32_64)
+    booleanResult(result.gpr(), node);
+#else
+    m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+    jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+#endif
 }
 
 void SpeculativeJIT::compileStringEquality(Node* node)

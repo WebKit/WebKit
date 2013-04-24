@@ -679,7 +679,9 @@ private:
     {
         return node->isStronglyProvedConstantIn(inlineCallFrame());
     }
-    
+
+    // Our codegen for constant strict equality performs a bitwise comparison,
+    // so we can only select values that have a consistent bitwise identity.
     bool isConstantForCompareStrictEq(Node* node)
     {
         if (!node->isConstant())
@@ -2432,11 +2434,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (canFold(op1) && canFold(op2)) {
                 JSValue a = valueOfJSConstant(op1);
                 JSValue b = valueOfJSConstant(op2);
-                if (a.isNumber() && b.isNumber()) {
-                    set(currentInstruction[1].u.operand,
-                        getJSConstantForValue(jsBoolean(a.asNumber() == b.asNumber())));
-                    NEXT_OPCODE(op_eq);
-                }
+                set(currentInstruction[1].u.operand,
+                    getJSConstantForValue(jsBoolean(JSValue::equal(m_codeBlock->globalObject()->globalExec(), a, b))));
+                NEXT_OPCODE(op_eq);
             }
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, op1, op2));
             NEXT_OPCODE(op_eq);
@@ -2454,11 +2454,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (canFold(op1) && canFold(op2)) {
                 JSValue a = valueOfJSConstant(op1);
                 JSValue b = valueOfJSConstant(op2);
-                if (a.isNumber() && b.isNumber()) {
-                    set(currentInstruction[1].u.operand,
-                        getJSConstantForValue(jsBoolean(a.asNumber() == b.asNumber())));
-                    NEXT_OPCODE(op_stricteq);
-                }
+                set(currentInstruction[1].u.operand,
+                    getJSConstantForValue(jsBoolean(JSValue::strictEqual(m_codeBlock->globalObject()->globalExec(), a, b))));
+                NEXT_OPCODE(op_stricteq);
             }
             if (isConstantForCompareStrictEq(op1))
                 set(currentInstruction[1].u.operand, addToGraph(CompareStrictEqConstant, op2, op1));
@@ -2475,11 +2473,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (canFold(op1) && canFold(op2)) {
                 JSValue a = valueOfJSConstant(op1);
                 JSValue b = valueOfJSConstant(op2);
-                if (a.isNumber() && b.isNumber()) {
-                    set(currentInstruction[1].u.operand,
-                        getJSConstantForValue(jsBoolean(a.asNumber() != b.asNumber())));
-                    NEXT_OPCODE(op_stricteq);
-                }
+                set(currentInstruction[1].u.operand,
+                    getJSConstantForValue(jsBoolean(!JSValue::equal(m_codeBlock->globalObject()->globalExec(), a, b))));
+                NEXT_OPCODE(op_neq);
             }
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
             NEXT_OPCODE(op_neq);
@@ -2497,11 +2493,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (canFold(op1) && canFold(op2)) {
                 JSValue a = valueOfJSConstant(op1);
                 JSValue b = valueOfJSConstant(op2);
-                if (a.isNumber() && b.isNumber()) {
-                    set(currentInstruction[1].u.operand,
-                        getJSConstantForValue(jsBoolean(a.asNumber() != b.asNumber())));
-                    NEXT_OPCODE(op_stricteq);
-                }
+                set(currentInstruction[1].u.operand,
+                    getJSConstantForValue(jsBoolean(!JSValue::strictEqual(m_codeBlock->globalObject()->globalExec(), a, b))));
+                NEXT_OPCODE(op_nstricteq);
             }
             Node* invertedResult;
             if (isConstantForCompareStrictEq(op1))

@@ -305,6 +305,11 @@ private:
             }
             if (node->op() != CompareEq)
                 break;
+            if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
+                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child2());
+                break;
+            }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child2());
@@ -333,6 +338,11 @@ private:
         }
             
         case CompareStrictEq: {
+            if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
+                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child2());
+                break;
+            }
             if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());

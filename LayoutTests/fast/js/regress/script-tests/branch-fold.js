@@ -52,4 +52,40 @@ function f()
         throw "bad result";
 }
 
+function g(x, y)
+{
+    var i;
+    var limit = 150000;
+
+    for (i = 0; i < limit; ++i) {
+        if (true == false)
+            break;
+        if (true != true)
+            break;
+        if ("start" === "end")
+            break;
+        if (null !== null)
+            break;
+    }
+
+    if (i != limit)
+        throw "bad result";
+
+    for (i = 0; i < limit; ++i) {
+        if (x == false)
+            break;
+        if (x !== true)
+            break;
+        if (x != y)
+            break;
+        if (x !== y)
+            break;
+        x = x == y;
+    }
+
+    if (i != limit)
+        throw "bad result";
+}
+
 f();
+g(true, true);
