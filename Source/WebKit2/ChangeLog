@@ -1,3 +1,16 @@
+2013-04-24  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Build break after r149004
+        https://bugs.webkit.org/show_bug.cgi?id=115091
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::pageBackgroundTransparencyChanged):
+        (WebKit): Add dummy method for new virtual method.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (LayerTreeHostGtk): Ditto.
+
 2013-04-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Build break after r149004

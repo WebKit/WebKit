@@ -424,6 +424,10 @@ void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
     cancelPendingLayerFlush();
 }
 
+void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
+{
+}
+
 void LayerTreeHostGtk::cancelPendingLayerFlush()
 {
     if (!m_layerFlushTimerCallbackId)
