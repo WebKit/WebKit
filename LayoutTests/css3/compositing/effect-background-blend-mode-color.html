@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<script>
+  if (window.testRunner)
+    window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
+
+  if (window.testRunner)
+    window.testRunner.dumpAsText(true);
+</script>
+<style>
+
+li
+{
+  margin: 5px;
+  width: 130px;
+  height: 130px;
+  background: yellow;
+  display: block;
+  float: left;
+}
+
+</style>
+<body style="background-color: green">
+  <ul>
+    <li style="-webkit-background-blend-mode: normal"></li>
+    <li style="-webkit-background-blend-mode: multiply"></li>
+    <li style="-webkit-background-blend-mode: screen"></li>
+    <li style="-webkit-background-blend-mode: overlay"></li>
+    <li style="-webkit-background-blend-mode: darken"></li>
+    <li style="-webkit-background-blend-mode: lighten"></li>
+    <li style="-webkit-background-blend-mode: color-dodge"></li>
+    <li style="-webkit-background-blend-mode: color-burn"></li>
+    <li style="-webkit-background-blend-mode: hard-light"></li>
+    <li style="-webkit-background-blend-mode: soft-light"></li>
+    <li style="-webkit-background-blend-mode: difference"></li>
+    <li style="-webkit-background-blend-mode: exclusion"></li>
+    <li style="-webkit-background-blend-mode: hue"></li>
+    <li style="-webkit-background-blend-mode: saturation"></li>
+    <li style="-webkit-background-blend-mode: color"></li>
+    <li style="-webkit-background-blend-mode: luminosity"></li>
+  </ul>
+</body>
