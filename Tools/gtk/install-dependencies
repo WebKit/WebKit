@@ -93,6 +93,7 @@ function installDependenciesWithApt {
     apt-get install \
         gobject-introspection \
         icon-naming-utils \
+        libegl1-mesa-dev \
         libgcrypt11-dev \
         libgpg-error-dev \
         libp11-kit-dev \
@@ -160,7 +161,8 @@ function installDependenciesWithYum {
         libgpg-error-devel \
         libp11-devel \
         libtiff-devel \
-        libcroco-devel
+        libcroco-devel \
+        mesa-libEGL-devel
 }
 
 checkInstaller

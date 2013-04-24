@@ -1,3 +1,16 @@
+2013-04-24  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Update build dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=115111
+
+        Reviewed by Martin Robinson.
+
+        The install-dependencies script was missing a dependency on EGL,
+        which is expected when building Cairo.
+
+        * gtk/install-dependencies: Added a dependency on libegl1-mesa
+        for both apt and yum.
+
 2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove the Chromium-specific helper from run_webkit_tests.py
