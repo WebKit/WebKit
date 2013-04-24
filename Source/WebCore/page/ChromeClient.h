@@ -339,14 +339,6 @@ public:
     virtual void setPagePopupDriver(PagePopupDriver*) = 0;
     virtual void resetPagePopupDriver() = 0;
 #endif
-    // This function is called whenever a text field <input> is created. The
-    // implementation should return true if it wants to do something in
-    // addTextFieldDecorationsTo().
-    // The argument is always non-0.
-    virtual bool willAddTextFieldDecorationsTo(HTMLInputElement*) { return false; }
-    // The argument is always non-0.
-    virtual void addTextFieldDecorationsTo(HTMLInputElement*) { }
-
     virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
