@@ -1,5 +1,52 @@
 2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
 
+        Remove wxWebKit #ifdefs from WebCore/platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=115081
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/graphics/BitmapImage.h:
+        (BitmapImage):
+        * platform/graphics/Color.h:
+        (Color):
+        * platform/graphics/FloatRect.h:
+        (FloatRect):
+        * platform/graphics/FloatSize.h:
+        (FloatSize):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore):
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/IntPoint.h:
+        (IntPoint):
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        (IntSize):
+        * platform/graphics/NativeImagePtr.h:
+        (WebCore):
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/SimpleFontData.h:
+        (SimpleFontData):
+        (WebCore::SimpleFontData::widthForGlyph):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/transforms/AffineTransform.h:
+        (AffineTransform):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (TransformationMatrix):
+
+2013-04-24  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove wxWebKit #ifdefs from WebCore/plugins
         https://bugs.webkit.org/show_bug.cgi?id=115080
 

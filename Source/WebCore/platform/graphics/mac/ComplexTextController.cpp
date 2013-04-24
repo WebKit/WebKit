@@ -335,11 +335,9 @@ void ComplexTextController::collectComplexTextRuns()
     }
 
     nextIsMissingGlyph = false;
-#if !PLATFORM(WX)
     nextFontData = m_font.fontDataForCombiningCharacterSequence(sequenceStart, curr - sequenceStart, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
     if (!nextFontData)
         nextIsMissingGlyph = true;
-#endif
 
     while (curr < end) {
         fontData = nextFontData;
@@ -362,13 +360,11 @@ void ComplexTextController::collectComplexTextRuns()
         nextIsMissingGlyph = false;
         if (baseCharacter == zeroWidthJoiner)
             nextFontData = fontData;
-#if !PLATFORM(WX)
         else {
             nextFontData = m_font.fontDataForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
             if (!nextFontData)
                 nextIsMissingGlyph = true;
         }
-#endif
 
         if (nextFontData != fontData || nextIsMissingGlyph != isMissingGlyph) {
             int itemStart = static_cast<int>(indexOfFontTransition);

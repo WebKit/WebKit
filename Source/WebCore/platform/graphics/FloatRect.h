@@ -48,10 +48,6 @@ class QRectF;
 QT_END_NAMESPACE
 #endif
 
-#if PLATFORM(WX) && USE(WXGC)
-class wxRect2DDouble;
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -205,11 +201,6 @@ public:
     FloatRect(const QRectF&);
     operator QRectF() const;
     FloatRect normalized() const;
-#endif
-
-#if PLATFORM(WX) && USE(WXGC)
-    FloatRect(const wxRect2DDouble&);
-    operator wxRect2DDouble() const;
 #endif
 
 #if USE(SKIA)

@@ -46,14 +46,6 @@ typedef SkShader* PlatformPatternPtr;
 #elif PLATFORM(QT)
 #include <QBrush>
 typedef QBrush PlatformPatternPtr;
-#elif PLATFORM(WX)
-#if USE(WXGC)
-class wxGraphicsBrush;
-typedef wxGraphicsBrush* PlatformPatternPtr;
-#else
-class wxBrush;
-typedef wxBrush* PlatformPatternPtr;
-#endif // USE(WXGC)
 #elif OS(WINCE)
 typedef void* PlatformPatternPtr;
 #endif

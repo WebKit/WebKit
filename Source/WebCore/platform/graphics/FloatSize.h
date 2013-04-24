@@ -45,7 +45,7 @@ class FloatSize;
 }
 #endif
 
-#if USE(CG) || (PLATFORM(WX) && OS(DARWIN))
+#if USE(CG)
 typedef struct CGSize CGSize;
 #endif
 
@@ -130,7 +130,7 @@ public:
     operator BlackBerry::Platform::FloatSize() const;
 #endif
 
-#if USE(CG) || (PLATFORM(WX) && OS(DARWIN))
+#if USE(CG)
     explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
     operator CGSize() const;
 #endif

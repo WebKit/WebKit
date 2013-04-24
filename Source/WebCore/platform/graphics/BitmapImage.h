@@ -43,10 +43,6 @@ OBJC_CLASS NSImage;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
-#if PLATFORM(WX)
-class wxBitmap;
-#endif
-
 namespace WebCore {
     struct FrameData;
 }
@@ -152,12 +148,6 @@ public:
 #if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))
     static PassRefPtr<BitmapImage> create(HBITMAP);
 #endif
-#if PLATFORM(WX)
-    static PassRefPtr<BitmapImage> create(const wxBitmap& bitmap)
-    {
-        return adoptRef(new BitmapImage(bitmap));
-    }
-#endif
 #if PLATFORM(WIN)
     virtual bool getHBITMAP(HBITMAP);
     virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
@@ -195,9 +185,6 @@ protected:
 
     BitmapImage(PassNativeImagePtr, ImageObserver* = 0);
     BitmapImage(ImageObserver* = 0);
-#if PLATFORM(WX)
-    BitmapImage(const wxBitmap&);
-#endif
 
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator);

@@ -65,10 +65,6 @@ class IntRect;
 typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 #endif
 
-#if PLATFORM(WX)
-class wxRect;
-#endif
-
 #if USE(SKIA)
 struct SkRect;
 struct SkIRect;
@@ -193,11 +189,6 @@ public:
     int distanceSquaredToPoint(const IntPoint& p) const { return differenceToPoint(p).diagonalLengthSquared(); }
 
     IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }
-
-#if PLATFORM(WX)
-    IntRect(const wxRect&);
-    operator wxRect() const;
-#endif
 
 #if PLATFORM(WIN)
     IntRect(const RECT&);

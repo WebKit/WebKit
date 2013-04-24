@@ -45,12 +45,11 @@
 #include "WebCoreSystemInterface.h"
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(WX) && OS(DARWIN))
+#if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #endif
 
-#if (PLATFORM(WIN) && !OS(WINCE)) \
-    || (OS(WINDOWS) && PLATFORM(WX))
+#if (PLATFORM(WIN) && !OS(WINCE))
 #include <usp10.h>
 #endif
 
@@ -151,7 +150,7 @@ public:
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
     void setSpaceWidth(float spaceWidth) { m_spaceWidth = spaceWidth; }
 
-#if USE(CG) || USE(CAIRO) || PLATFORM(WX)
+#if USE(CG) || USE(CAIRO)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
@@ -188,16 +187,13 @@ public:
 #if PLATFORM(MAC)
     const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
     NSFont* getNSFont() const { return m_platformData.font(); }
-#elif (PLATFORM(WX) && OS(DARWIN)) 
-    const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
-    NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(WX) && OS(DARWIN))
+#if PLATFORM(MAC)
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ)
+#if PLATFORM(MAC) || USE(HARFBUZZ)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
@@ -222,7 +218,7 @@ public:
     QRawFont getQtRawFont() const { return m_platformData.rawFont(); }
 #endif
 
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
 #if !OS(WINCE) // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
@@ -231,10 +227,6 @@ public:
     static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
-#endif
-
-#if PLATFORM(WX)
-    wxFont* getWxFont() const { return m_platformData.font(); }
 #endif
 
 private:
@@ -252,8 +244,7 @@ private:
     PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
     PassRefPtr<SimpleFontData> platformCreateScaledFontData(const FontDescription&, float scaleFactor) const;
 
-#if (PLATFORM(WIN) && !OS(WINCE)) \
-    || (OS(WINDOWS) && PLATFORM(WX))
+#if (PLATFORM(WIN) && !OS(WINCE))
     void initGDIFont();
     void platformCommonDestroy();
     FloatRect boundsForGDIGlyph(Glyph glyph) const;
@@ -313,19 +304,19 @@ private:
 
     mutable OwnPtr<DerivedFontData> m_derivedFontData;
 
-#if USE(CG) || USE(CAIRO) || PLATFORM(WX)
+#if USE(CG) || USE(CAIRO)
     float m_syntheticBoldOffset;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(WX) && OS(DARWIN))
+#if PLATFORM(MAC)
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ)
+#if PLATFORM(MAC) || USE(HARFBUZZ)
     mutable OwnPtr<HashMap<String, bool> > m_combiningCharacterSequenceSupport;
 #endif
 
-#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(WIN)
     bool m_isSystemFont;
 #if !OS(WINCE) // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;
@@ -366,7 +357,7 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
         width = m_fontData->widthForSVGGlyph(glyph, m_platformData.size());
 #if ENABLE(OPENTYPE_VERTICAL)
     else if (m_verticalData)
-#if USE(CG) || USE(CAIRO) || PLATFORM(WX)
+#if USE(CG) || USE(CAIRO)
         width = m_verticalData->advanceHeight(this, glyph) + m_syntheticBoldOffset;
 #else
         width = m_verticalData->advanceHeight(this, glyph);

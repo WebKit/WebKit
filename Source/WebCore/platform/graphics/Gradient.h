@@ -54,9 +54,6 @@ typedef cairo_pattern_t* PlatformGradient;
 class SkShader;
 typedef class SkShader* PlatformGradient;
 typedef class SkShader* PlatformPattern;
-#elif PLATFORM(WX)
-class wxGraphicsBrush;
-typedef wxGraphicsBrush* PlatformGradient;
 #elif PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {

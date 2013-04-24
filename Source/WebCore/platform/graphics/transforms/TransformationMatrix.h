@@ -47,11 +47,9 @@ typedef struct CGAffineTransform CGAffineTransform;
 #include <QTransform>
 #elif USE(SKIA)
 #include <SkMatrix.h>
-#elif PLATFORM(WX) && USE(WXGC)
-#include <wx/graphics.h>
 #endif
 
-#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS)) || (PLATFORM(WX) && OS(WINDOWS))
+#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS))
 #if COMPILER(MINGW) && !COMPILER(MINGW64)
 typedef struct _XFORM XFORM;
 #else
@@ -352,11 +350,9 @@ public:
     operator QMatrix4x4() const;
 #elif USE(SKIA)
     operator SkMatrix() const;
-#elif PLATFORM(WX) && USE(WXGC)
-    operator wxGraphicsMatrix() const;
 #endif
 
-#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS)) || (PLATFORM(WX) && OS(WINDOWS))
+#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS))
     operator XFORM() const;
 #endif
 

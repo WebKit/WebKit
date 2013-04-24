@@ -28,10 +28,7 @@
 #ifndef NativeImagePtr_h
 #define NativeImagePtr_h
 
-#if PLATFORM(WX)
-class wxBitmap;
-class wxGraphicsBitmap;
-#elif USE(CG)
+#if USE(CG)
 typedef struct CGImage* CGImageRef;
 #elif PLATFORM(QT)
 #include "NativeImageQt.h"
@@ -58,12 +55,6 @@ namespace WebCore {
 typedef CGImageRef NativeImagePtr;
 #elif PLATFORM(QT)
 typedef QPixmap* NativeImagePtr;
-#elif PLATFORM(WX)
-#if USE(WXGC)
-typedef wxGraphicsBitmap* NativeImagePtr;
-#else
-typedef wxBitmap* NativeImagePtr;
-#endif
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> NativeImagePtr;
 typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;

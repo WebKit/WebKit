@@ -50,10 +50,6 @@ typedef struct _GdkRGBA GdkRGBA;
 #endif
 #endif
 
-#if PLATFORM(WX)
-class wxColour;
-#endif
-
 namespace WebCore {
 
 class Color;
@@ -145,11 +141,6 @@ public:
     Color(const GdkRGBA&);
     operator GdkRGBA() const;
 #endif
-#endif
-
-#if PLATFORM(WX)
-    Color(const wxColour&);
-    operator wxColour() const;
 #endif
 
 #if USE(CG)

@@ -49,25 +49,6 @@ typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
 typedef QPainter PlatformGraphicsContext;
-#elif PLATFORM(WX)
-class wxGCDC;
-class wxWindowDC;
-
-// wxGraphicsContext allows us to support Path, etc.
-// but on some platforms, e.g. Linux, it requires fairly
-// new software.
-#if USE(WXGC)
-// On OS X, wxGCDC is just a typedef for wxDC, so use wxDC explicitly to make
-// the linker happy.
-#ifdef __APPLE__
-    class wxDC;
-    typedef wxDC PlatformGraphicsContext;
-#else
-    typedef wxGCDC PlatformGraphicsContext;
-#endif
-#else
-    typedef wxWindowDC PlatformGraphicsContext;
-#endif
 #elif USE(SKIA)
 namespace WebCore {
 class PlatformContextSkia;
@@ -502,12 +483,6 @@ namespace WebCore {
         bool shouldIncludeChildWindows() const { return false; }
 #endif // PLATFORM(WIN)
 #endif // OS(WINDOWS)
-
-#if PLATFORM(WX)
-        // This is needed because of a bug whereby getting an HDC from a GDI+ context
-        // loses the scale operations applied to the context.
-        FloatSize currentScale(); 
-#endif
 
 #if PLATFORM(QT)
         void pushTransparencyLayerInternal(const QRect&, qreal, QPixmap&);

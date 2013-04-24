@@ -33,6 +33,4 @@
 #include "ImageBufferDataSkia.h"
 #elif OS(WINCE)
 #include "ImageBufferDataWince.h"
-#elif PLATFORM(WX)
-#include "ImageBufferDataWx.h"
 #endif

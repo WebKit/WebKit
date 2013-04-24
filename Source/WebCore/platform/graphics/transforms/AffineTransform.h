@@ -38,8 +38,6 @@ typedef struct CGAffineTransform CGAffineTransform;
 #include <QTransform>
 #elif USE(SKIA)
 #include <SkMatrix.h>
-#elif PLATFORM(WX) && USE(WXGC)
-#include <wx/graphics.h>
 #endif
 
 namespace WebCore {
@@ -176,8 +174,6 @@ public:
     operator QTransform() const;
 #elif USE(SKIA)
     operator SkMatrix() const;
-#elif PLATFORM(WX) && USE(WXGC)
-    operator wxGraphicsMatrix() const;
 #endif
 
     static AffineTransform translation(double x, double y)
