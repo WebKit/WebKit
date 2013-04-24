@@ -1,3 +1,12 @@
+2013-04-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Rebaseline fast/js/constructor-length.html for EFL port after
+        r148997.
+
+        * platform/efl/fast/js/constructor-length-expected.txt:
+
 2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Rebaselining after r148944
