@@ -296,6 +296,7 @@ private:
     void decodedDataDeletionTimerFired(Timer<CachedResource>*);
 
     virtual PurgePriority purgePriority() const { return PurgeDefault; }
+    virtual bool mayTryReplaceEncodedData() const { return true; }
 
     double currentAge() const;
     double freshnessLifetime() const;

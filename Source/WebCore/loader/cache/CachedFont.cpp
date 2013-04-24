@@ -52,6 +52,7 @@ CachedFont::CachedFont(const ResourceRequest& resourceRequest)
     : CachedResource(resourceRequest, FontResource)
     , m_fontData(0)
     , m_loadInitiated(false)
+    , m_hasCreatedFontData(false)
 {
 }
 
@@ -97,7 +98,9 @@ bool CachedFont::ensureCustomFontData()
 {
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
         m_fontData = createFontCustomPlatformData(m_data.get()->sharedBuffer());
-        if (!m_fontData)
+        if (m_fontData)
+            m_hasCreatedFontData = true;
+        else
             setStatus(DecodeError);
     }
     return m_fontData;
@@ -178,6 +181,15 @@ void CachedFont::checkNotify()
     CachedResourceClientWalker<CachedFontClient> w(m_clients);
     while (CachedFontClient* c = w.next())
          c->fontLoaded(this);
+}
+
+bool CachedFont::mayTryReplaceEncodedData() const
+{
+    // If the FontCustomPlatformData has ever been constructed then it still might be in use somewhere.
+    // That platform font object might directly reference the encoded data buffer behind this CachedFont,
+    // so replacing it is unsafe.
+
+    return !m_hasCreatedFontData;
 }
 
 }

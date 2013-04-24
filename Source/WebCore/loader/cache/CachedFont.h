@@ -64,8 +64,11 @@ public:
 
 private:
     virtual void checkNotify();
+    virtual bool mayTryReplaceEncodedData() const OVERRIDE;
+
     FontCustomPlatformData* m_fontData;
     bool m_loadInitiated;
+    bool m_hasCreatedFontData;
 
 #if ENABLE(SVG_FONTS)
     RefPtr<SVGDocument> m_externalSVGDocument;
