@@ -65,8 +65,6 @@ public:
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
 
-    void sendContentAreaScrolledSoon(const FloatSize& scrollDelta);
-
     void setVisibleScrollerThumbRect(const IntRect&);
 
 private:
@@ -123,6 +121,12 @@ private:
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
 
     virtual void notifyContentAreaScrolled(const FloatSize& delta) OVERRIDE;
+
+    // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except
+    // it does it after a zero-delay timer fires. This will prevent us from updating overlay scrollbar 
+    // information during layout.
+    void sendContentAreaScrolled(const FloatSize& scrollDelta);
+    void sendContentAreaScrolledSoon(const FloatSize& scrollDelta);
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 

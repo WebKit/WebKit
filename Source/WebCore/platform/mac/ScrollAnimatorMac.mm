@@ -983,7 +983,12 @@ void ScrollAnimatorMac::notifyContentAreaScrolled(const FloatSize& delta)
     // This function is called when a page is going into the page cache, but the page 
     // isn't really scrolling in that case. We should only pass the message on to the
     // ScrollbarPainterController when we're really scrolling on an active page.
-    if (scrollableArea()->scrollbarsCanBeActive())
+    if (!scrollableArea()->scrollbarsCanBeActive())
+        return;
+
+    if (m_scrollableArea->isHandlingWheelEvent())
+        sendContentAreaScrolled(delta);
+    else
         sendContentAreaScrolledSoon(delta);
 }
 
@@ -1280,13 +1285,18 @@ void ScrollAnimatorMac::sendContentAreaScrolledSoon(const FloatSize& delta)
         m_sendContentAreaScrolledTimer.startOneShot(0);
 }
 
+void ScrollAnimatorMac::sendContentAreaScrolled(const FloatSize& delta)
+{
+    if (supportsContentAreaScrolledInDirection())
+        [m_scrollbarPainterController.get() contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
+    else
+        [m_scrollbarPainterController.get() contentAreaScrolled];
+}
+
 void ScrollAnimatorMac::sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>*)
 {
-    if (supportsContentAreaScrolledInDirection()) {
-        [m_scrollbarPainterController.get() contentAreaScrolledInDirection:NSMakePoint(m_contentAreaScrolledTimerScrollDelta.width(), m_contentAreaScrolledTimerScrollDelta.height())];
-        m_contentAreaScrolledTimerScrollDelta = FloatSize();
-    } else
-        [m_scrollbarPainterController.get() contentAreaScrolled];
+    sendContentAreaScrolled(m_contentAreaScrolledTimerScrollDelta);
+    m_contentAreaScrolledTimerScrollDelta = FloatSize();
 }
 
 void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)

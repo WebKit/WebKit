@@ -257,6 +257,8 @@ public:
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
     void updateCursor();
 
+    bool isHandlingWheelEvent() const { return m_isHandlingWheelEvent; }
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
@@ -494,6 +496,7 @@ private:
     PlatformEvent::Type m_baseEventType;
     bool m_didStartDrag;
     bool m_didLongPressInvokeContextMenu;
+    bool m_isHandlingWheelEvent;
 
 #if ENABLE(CURSOR_VISIBILITY)
     Timer<EventHandler> m_autoHideCursorTimer;

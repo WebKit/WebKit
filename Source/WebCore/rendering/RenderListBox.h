@@ -119,6 +119,7 @@ private:
     virtual int visibleHeight() const OVERRIDE;
     virtual int visibleWidth() const OVERRIDE;
     virtual IntPoint lastKnownMousePosition() const OVERRIDE;
+    virtual bool isHandlingWheelEvent() const OVERRIDE;
     virtual bool shouldSuspendScrollAnimations() const OVERRIDE;
     virtual bool scrollbarsCanBeActive() const OVERRIDE;
 

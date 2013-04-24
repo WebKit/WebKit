@@ -1629,6 +1629,11 @@ IntPoint FrameView::lastKnownMousePosition() const
     return m_frame ? m_frame->eventHandler()->lastKnownMousePosition() : IntPoint();
 }
 
+bool FrameView::isHandlingWheelEvent() const
+{
+    return m_frame ? m_frame->eventHandler()->isHandlingWheelEvent() : false;
+}
+
 bool FrameView::shouldSetCursor() const
 {
     Page* page = frame()->page();

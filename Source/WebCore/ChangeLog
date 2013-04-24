@@ -1,3 +1,64 @@
+2013-04-24  Beth Dakin  <bdakin@apple.com>
+
+        Vertical overlay scrollbar in iframes fades in and out rapidly when you scroll in 
+        a circle
+        https://bugs.webkit.org/show_bug.cgi?id=115124
+        -and corresponding-
+        <rdar://problem/13168957>
+
+        Reviewed by Anders Carlsson.
+
+        With http://trac.webkit.org/changeset/119834 we started calling 
+        ScrollbarPainterController's contentAreaScrolled/contentAreaScrolledInDirection 
+        API on a zero-delay timer instead of calling it right away. This prevented some 
+        crashes that we saw whenever this was called during a layout. However, that delay, 
+        combined with the particulars of contentAreaScrolledInDirection cause this bug 
+        where sometimes the scrollbars in an iframe will fade out very noticeably when 
+        scrolling in a circle.
+
+        This change makes it so we will only use the zero-delay timer if the 
+        ScrollableArea is not currently handling a wheel event. If it IS handling a wheel 
+        event, then we will send the notifications to AppKit right away. I confirmed that 
+        this change did not reintroduce the old crashes. 
+
+        Keep track of whether we are currently handling a wheel event with the new member 
+        variable m_isHandlingWheelEvent.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        (WebCore::EventHandler::isHandlingWheelEvent):
+        (EventHandler):
+
+        To prevent layering violations, the ScrollableArea sub-classes will have to access 
+        this information from the EventHandler.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isHandlingWheelEvent):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::isHandlingWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isHandlingWheelEvent):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isHandlingWheelEvent):
+        * rendering/RenderListBox.h:
+
+        sendContentAreaScrolledSoon() can be private. Also add new function 
+        sendContentAreaScrolled().
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+
+        If the ScrollableArea is handling a wheel event, call 
+        sendContentAreaScrolled(), otherwise call sendContentAreaScrolledSoon()
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolled):
+
+        Re-factored to use sendContentAreaScrolled()
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledTimerFired):
+
 2013-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a merge error in r149007 (was missing a null check added in r148777).

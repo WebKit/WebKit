@@ -2751,6 +2751,11 @@ IntPoint RenderLayer::lastKnownMousePosition() const
     return renderer()->frame() ? renderer()->frame()->eventHandler()->lastKnownMousePosition() : IntPoint();
 }
 
+bool RenderLayer::isHandlingWheelEvent() const
+{
+    return renderer()->frame() ? renderer()->frame()->eventHandler()->isHandlingWheelEvent() : false;
+}
+
 IntRect RenderLayer::rectForHorizontalScrollbar(const IntRect& borderBoxRect) const
 {
     if (!m_hBar)

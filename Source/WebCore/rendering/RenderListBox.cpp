@@ -815,6 +815,14 @@ IntPoint RenderListBox::lastKnownMousePosition() const
     return view->frameView()->lastKnownMousePosition();
 }
 
+bool RenderListBox::isHandlingWheelEvent() const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return false;
+    return view->frameView()->isHandlingWheelEvent();
+}
+
 bool RenderListBox::shouldSuspendScrollAnimations() const
 {
     RenderView* view = this->view();
