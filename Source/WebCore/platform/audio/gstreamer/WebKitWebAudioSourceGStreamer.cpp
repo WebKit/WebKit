@@ -381,7 +381,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 #ifndef GST_API_VERSION_1
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
         GstStructure* structure = gst_caps_get_structure(monoCaps.get(), 0);
-        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(i);
+        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(g_slist_index(channelBufferList, channelBuffer));
         gst_audio_set_channel_positions(structure, &channelPosition);
         gst_buffer_set_caps(channelBuffer, monoCaps.get());
 #endif
