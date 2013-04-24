@@ -52,6 +52,8 @@ class VisiblePosition;
 - (NSString *)accessibilityDescription;
 - (NSString *)accessibilityHelpText;
 
+- (NSString *)ariaLandmarkRoleDescription;
+
 - (id)attachmentView;
 // Used to inform an element when a notification is posted for it. Used by DRT.
 - (void)accessibilityPostedNotification:(NSString *)notificationName;

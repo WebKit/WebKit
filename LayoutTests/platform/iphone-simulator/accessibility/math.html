@@ -75,10 +75,10 @@ if (window.testRunner)
        document.getElementById("group").focus();
        var group = accessibilityController.focusedElement;
        shouldBe("group.childrenCount", "5");
-       shouldBe("group.childAtIndex(0).iphoneLabel", "'AXLabel: Raman scattering study of the '");
-       shouldBe("group.childAtIndex(1).iphoneLabel", "'AXLabel:  F e sub 1  minus x, end subscript. C o sub x, S b sub 2'");
-       shouldBe("group.childAtIndex(2).iphoneLabel", "'AXLabel: and '");
-       shouldBe("group.childAtIndex(3).iphoneLabel", "'AXLabel:   open, 0  less than or equal to x  less than or equal to 1,  close'");
+       shouldBe("group.childAtIndex(0).iphoneLabel", "'AXLabel: Raman scattering study of the'");
+       shouldBe("group.childAtIndex(1).iphoneLabel", "'AXLabel:  F e sub 1  minus x, end subscript. C o sub x, S b sub 2, math'");
+       shouldBe("group.childAtIndex(2).iphoneLabel", "'AXLabel: and'");
+       shouldBe("group.childAtIndex(3).iphoneLabel", "'AXLabel:   open, 0  less than or equal to x  less than or equal to 1,  close, math'");
        shouldBe("group.childAtIndex(4).iphoneLabel", "'AXLabel: single crystals.'");
 
        shouldBeTrue("group.childAtIndex(0).iphoneIsElement");

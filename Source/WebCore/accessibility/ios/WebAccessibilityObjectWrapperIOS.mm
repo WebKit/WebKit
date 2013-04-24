@@ -698,6 +698,16 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return NO;
 }
 
+static void appendStringToResult(NSMutableString *result, NSString *string)
+{
+    ASSERT(result);
+    if (![string length])
+        return;
+    if ([result length])
+        [result appendString:@", "];
+    [result appendString:string];
+}
+
 - (NSString *)accessibilityLabel
 {
     if (![self _prepareAccessibilityCall])
@@ -712,19 +722,20 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     // so concatentation will yield the best result.
     NSString *axTitle = [self accessibilityTitle];
     NSString *axDescription = [self accessibilityDescription];
-    NSUInteger axTitleLength = [axTitle length];
-    NSUInteger axDescriptionLength = [axDescription length];
+    NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
+
+    NSMutableString *result = [NSMutableString string];
+
+    appendStringToResult(result, axTitle);
+    appendStringToResult(result, axDescription);
+    if ([self stringValueShouldBeUsedInLabel]) {
+        NSString *valueLabel = m_object->stringValue();
+        valueLabel = [valueLabel stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        appendStringToResult(result, valueLabel);
+    }
+    appendStringToResult(result, landmarkDescription);
     
-    if (axTitleLength && axDescriptionLength)
-        return [axTitle stringByAppendingFormat:@", %@", axDescription];
-    else if (axTitleLength)
-        return axTitle;
-    else if (axDescriptionLength)
-        return axDescription;
-    else if ([self stringValueShouldBeUsedInLabel])
-        return m_object->stringValue();
-    
-    return nil;
+    return [result length] ? result : nil;
 }
 
 - (AccessibilityTableCell*)tableCellParent

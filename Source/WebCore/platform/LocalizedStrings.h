@@ -158,9 +158,6 @@ namespace WebCore {
     String AXDescriptionListDetailText();
     String AXFooterRoleDescriptionText();
     String AXFileUploadButtonText();
-#if PLATFORM(MAC)
-    String AXARIAContentGroupText(const String& ariaType);
-#endif
     
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();
@@ -202,6 +199,9 @@ namespace WebCore {
     // weekFormatInLDML() returns week and year format in LDML, Unicode
     // technical standard 35, Locale Data Markup Language, e.g. "'Week' ww, yyyy"
     String weekFormatInLDML();
+#endif
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    String AXARIAContentGroupText(const String& ariaType);
 #endif
 
     String missingPluginText();

@@ -517,6 +517,7 @@ String contextMenuItemTagInspectElement()
 
 #endif // ENABLE(CONTEXT_MENUS)
 
+#if !PLATFORM(IOS)
 String searchMenuNoRecentSearchesText()
 {
     return WEB_UI_STRING("No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed");
@@ -586,8 +587,51 @@ String AXFileUploadButtonText()
 {
     return WEB_UI_STRING("file upload button", "accessibility role description for a file upload button");
 }
+    
+String AXButtonActionVerb()
+{
+    return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");
+}
 
-#if PLATFORM(MAC)
+String AXRadioButtonActionVerb()
+{
+    return WEB_UI_STRING("select", "Verb stating the action that will occur when a radio button is clicked, as used by accessibility");
+}
+
+String AXTextFieldActionVerb()
+{
+    return WEB_UI_STRING("activate", "Verb stating the action that will occur when a text field is selected, as used by accessibility");
+}
+
+String AXCheckedCheckBoxActionVerb()
+{
+    return WEB_UI_STRING("uncheck", "Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility");
+}
+
+String AXUncheckedCheckBoxActionVerb()
+{
+    return WEB_UI_STRING("check", "Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility");
+}
+
+String AXLinkActionVerb()
+{
+    return WEB_UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility");
+}
+
+String AXMenuListPopupActionVerb()
+{
+    notImplemented();
+    return "select";
+}
+
+String AXMenuListActionVerb()
+{
+    notImplemented();
+    return "select";
+}
+#endif // !PLATFORM(IOS)
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
 String AXARIAContentGroupText(const String& ariaType)
 {
     if (ariaType == "ARIAApplicationAlert")
@@ -634,49 +678,7 @@ String AXARIAContentGroupText(const String& ariaType)
         return WEB_UI_STRING("math", "An ARIA accessibility group that contains mathematical symbols.");
     return String();
 }
-#endif
-    
-String AXButtonActionVerb()
-{
-    return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");
-}
-
-String AXRadioButtonActionVerb()
-{
-    return WEB_UI_STRING("select", "Verb stating the action that will occur when a radio button is clicked, as used by accessibility");
-}
-
-String AXTextFieldActionVerb()
-{
-    return WEB_UI_STRING("activate", "Verb stating the action that will occur when a text field is selected, as used by accessibility");
-}
-
-String AXCheckedCheckBoxActionVerb()
-{
-    return WEB_UI_STRING("uncheck", "Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility");
-}
-
-String AXUncheckedCheckBoxActionVerb()
-{
-    return WEB_UI_STRING("check", "Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility");
-}
-
-String AXLinkActionVerb()
-{
-    return WEB_UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility");
-}
-
-String AXMenuListPopupActionVerb()
-{
-    notImplemented();
-    return "select";
-}
-
-String AXMenuListActionVerb()
-{
-    notImplemented();
-    return "select";
-}
+#endif // PLATFORM(MAC) || PLATFORM(IOS)
 
 String missingPluginText()
 {

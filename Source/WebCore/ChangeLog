@@ -1,3 +1,40 @@
+2013-04-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WAI-ARIA landmarks no longer speak type of landmark on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=114547
+
+        Reviewed by David Kilzer.
+
+        We want iOS to speak the landmark type.
+        I've moved the landmark role description to the base Mac class and exposed
+        these localized strings to iOS (the ones used to return landmark descriptions).
+
+        I've also updated the accessibilityLabel to account for landmark type, but also
+        handle multiple label sources more gracefully by appending commas, which changed a few
+        tests in minor ways.
+
+        Test: platform/iphone-simulator/accessibility/landmark-type.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase ariaLandmarkRoleDescription]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore):
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+        (WebCore::AXMenuListPopupActionVerb):
+        (WebCore::AXMenuListActionVerb):
+        * platform/LocalizedStrings.h:
+        (WebCore):
+
 2013-04-24  Andreas Kling  <akling@apple.com>
 
         CSS attribute selectors cause unnecessary style recalc when setting attribute to same value.

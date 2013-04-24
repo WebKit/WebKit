@@ -1875,51 +1875,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     NSString* axRole = [self role];
     
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
+        
+        NSString *ariaLandmarkRoleDescription = [self ariaLandmarkRoleDescription];
+        if (ariaLandmarkRoleDescription)
+            return ariaLandmarkRoleDescription;
+        
         switch (m_object->roleValue()) {
-            default:
-                return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
-            case LandmarkApplicationRole:
-                return AXARIAContentGroupText(@"ARIALandmarkApplication");
-            case LandmarkBannerRole:
-                return AXARIAContentGroupText(@"ARIALandmarkBanner");
-            case LandmarkComplementaryRole:
-                return AXARIAContentGroupText(@"ARIALandmarkComplementary");
-            case LandmarkContentInfoRole:
-                return AXARIAContentGroupText(@"ARIALandmarkContentInfo");
-            case LandmarkMainRole:
-                return AXARIAContentGroupText(@"ARIALandmarkMain");
-            case LandmarkNavigationRole:
-                return AXARIAContentGroupText(@"ARIALandmarkNavigation");
-            case LandmarkSearchRole:
-                return AXARIAContentGroupText(@"ARIALandmarkSearch");
-            case ApplicationAlertRole:
-                return AXARIAContentGroupText(@"ARIAApplicationAlert");
-            case ApplicationAlertDialogRole:
-                return AXARIAContentGroupText(@"ARIAApplicationAlertDialog");
-            case ApplicationDialogRole:
-                return AXARIAContentGroupText(@"ARIAApplicationDialog");
-            case ApplicationLogRole:
-                return AXARIAContentGroupText(@"ARIAApplicationLog");
-            case ApplicationMarqueeRole:
-                return AXARIAContentGroupText(@"ARIAApplicationMarquee");
-            case ApplicationStatusRole:
-                return AXARIAContentGroupText(@"ARIAApplicationStatus");
-            case ApplicationTimerRole:
-                return AXARIAContentGroupText(@"ARIAApplicationTimer");
-            case DocumentRole:
-                return AXARIAContentGroupText(@"ARIADocument");
-            case DocumentArticleRole:
-                return AXARIAContentGroupText(@"ARIADocumentArticle");
-            case DocumentMathRole:
-                return AXARIAContentGroupText(@"ARIADocumentMath");
-            case DocumentNoteRole:
-                return AXARIAContentGroupText(@"ARIADocumentNote");
-            case DocumentRegionRole:
-                return AXARIAContentGroupText(@"ARIADocumentRegion");
-            case UserInterfaceTooltipRole:
-                return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
-            case TabPanelRole:
-                return AXARIAContentGroupText(@"ARIATabPanel");
             case DefinitionRole:
                 return AXDefinitionText();
             case DescriptionListTermRole:
@@ -1928,6 +1889,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXDescriptionListDetailText();
             case FooterRole:
                 return AXFooterRoleDescriptionText();
+            default:
+                return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
         }
     }
     

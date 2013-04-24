@@ -292,6 +292,56 @@ static void ConvertPathToScreenSpaceFunction(void* info, const PathElement* elem
     return CGPointZero;
 }
 
+- (NSString *)ariaLandmarkRoleDescription
+{
+    switch (m_object->roleValue()) {
+    case LandmarkApplicationRole:
+        return AXARIAContentGroupText(@"ARIALandmarkApplication");
+    case LandmarkBannerRole:
+        return AXARIAContentGroupText(@"ARIALandmarkBanner");
+    case LandmarkComplementaryRole:
+        return AXARIAContentGroupText(@"ARIALandmarkComplementary");
+    case LandmarkContentInfoRole:
+        return AXARIAContentGroupText(@"ARIALandmarkContentInfo");
+    case LandmarkMainRole:
+        return AXARIAContentGroupText(@"ARIALandmarkMain");
+    case LandmarkNavigationRole:
+        return AXARIAContentGroupText(@"ARIALandmarkNavigation");
+    case LandmarkSearchRole:
+        return AXARIAContentGroupText(@"ARIALandmarkSearch");
+    case ApplicationAlertRole:
+        return AXARIAContentGroupText(@"ARIAApplicationAlert");
+    case ApplicationAlertDialogRole:
+        return AXARIAContentGroupText(@"ARIAApplicationAlertDialog");
+    case ApplicationDialogRole:
+        return AXARIAContentGroupText(@"ARIAApplicationDialog");
+    case ApplicationLogRole:
+        return AXARIAContentGroupText(@"ARIAApplicationLog");
+    case ApplicationMarqueeRole:
+        return AXARIAContentGroupText(@"ARIAApplicationMarquee");
+    case ApplicationStatusRole:
+        return AXARIAContentGroupText(@"ARIAApplicationStatus");
+    case ApplicationTimerRole:
+        return AXARIAContentGroupText(@"ARIAApplicationTimer");
+    case DocumentRole:
+        return AXARIAContentGroupText(@"ARIADocument");
+    case DocumentArticleRole:
+        return AXARIAContentGroupText(@"ARIADocumentArticle");
+    case DocumentMathRole:
+        return AXARIAContentGroupText(@"ARIADocumentMath");
+    case DocumentNoteRole:
+        return AXARIAContentGroupText(@"ARIADocumentNote");
+    case DocumentRegionRole:
+        return AXARIAContentGroupText(@"ARIADocumentRegion");
+    case UserInterfaceTooltipRole:
+        return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
+    case TabPanelRole:
+        return AXARIAContentGroupText(@"ARIATabPanel");
+    default:
+        return nil;
+    }
+}
+
 // This is set by DRT when it wants to listen for notifications.
 static BOOL accessibilityShouldRepostNotifications;
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost
