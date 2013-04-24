@@ -1,3 +1,9 @@
+2013-04-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        <rdar://problem/12952167> 11G56: “AVF Info: …” logged to stdout
+
+        * platform/mac-lion/Skipped: Skipped all tests that were failing due to AVF info being printed.
+
 2013-04-22  David Farler  <dfarler@apple.com>
 
         Skip svg/custom/mask-invalidation.svg on Mac
