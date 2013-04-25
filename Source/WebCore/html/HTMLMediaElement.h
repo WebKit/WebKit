@@ -401,6 +401,7 @@ protected:
         RequireUserGestureForRateChangeRestriction = 1 << 1,
         RequireUserGestureForFullscreenRestriction = 1 << 2,
         RequirePageConsentToLoadMediaRestriction = 1 << 3,
+        RequirePageConsentToResumeMediaRestriction = 1 << 4,
     };
     typedef unsigned BehaviorRestrictions;
     
@@ -408,6 +409,7 @@ protected:
     bool userGestureRequiredForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
     bool userGestureRequiredForFullscreen() const { return m_restrictions & RequireUserGestureForFullscreenRestriction; }
     bool pageConsentRequiredForLoad() const { return m_restrictions & RequirePageConsentToLoadMediaRestriction; }
+    bool pageConsentRequiredForResume() const { return m_restrictions & RequirePageConsentToResumeMediaRestriction; }
     
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }

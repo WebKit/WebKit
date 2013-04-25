@@ -4124,6 +4124,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
     {
         case DocumentWillBecomeInactive:
             stop();
+            addBehaviorRestriction(RequirePageConsentToResumeMediaRestriction);
             break;
         case PageWillBeSuspended:
         case JavaScriptDebuggerPaused:
@@ -4138,7 +4139,14 @@ void HTMLMediaElement::resume()
     LOG(Media, "HTMLMediaElement::resume");
 
     m_inActiveDocument = true;
-    setPausedInternal(false);
+
+    Page* page = document()->page();
+    if (pageConsentRequiredForResume() && page && !page->canStartMedia())
+        document()->addMediaCanStartListener(this);
+    else
+        setPausedInternal(false);
+
+    removeBehaviorRestriction(RequirePageConsentToResumeMediaRestriction);
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED) {
         // Restart the load if it was aborted in the middle by moving the document to the page cache.
@@ -4474,9 +4482,13 @@ void HTMLMediaElement::mediaCanStart()
 {
     LOG(Media, "HTMLMediaElement::mediaCanStart");
 
-    ASSERT(m_isWaitingUntilMediaCanStart);
-    m_isWaitingUntilMediaCanStart = false;
-    loadInternal();
+    ASSERT(m_isWaitingUntilMediaCanStart || m_pausedInternal);
+    if (m_isWaitingUntilMediaCanStart) {
+        m_isWaitingUntilMediaCanStart = false;
+        loadInternal();
+    }
+    if (m_pausedInternal)
+        setPausedInternal(false);
 }
 
 bool HTMLMediaElement::isURLAttribute(const Attribute& attribute) const

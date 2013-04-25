@@ -1,3 +1,22 @@
+2013-04-25  Jer Noble  <jer.noble@apple.com>
+
+        Media elements shouldn't resume playback when a page is restored from the back/forward cache if the WKView isn't in a window
+        https://bugs.webkit.org/show_bug.cgi?id=115191
+
+        Reviewed by Eric Carlson.
+
+        If a page is suspended, then resumed when its WebView or WKView has been removed from a window,
+        the page's media elements will unpause. Check whether media is allowed to start during resume()
+        via Page::canMediaStart() and if not, register for mediaCanStart notifications. Then, in 
+        mediaCanStart() if the media is force-paused, unpause it.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::mediaCanStart):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::pageConsentRequiredForResume):
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(PARSED_STYLE_SHEET_CACHING) and make it always-on.
