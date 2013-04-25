@@ -1,3 +1,23 @@
+2013-04-25  Andreas Kling  <akling@apple.com>
+
+        CSS parser: Add error recovery while parsing @-webkit-keyframes key values.
+        <http://webkit.org/b/115175>
+
+        From Blink r148714 by <apavlov@chromium.org>:
+
+        If not a percentage, "from", or "to" value is used in a key list, the rule is erroneous,
+        and due to the absense of recovery, the parser skips the following, valid CSS rule.
+
+        On a related note, keyframes, whose selectors contain invalid keys, should be discarded
+        altogether, according to <http://www.w3.org/TR/css3-animations/#keyframes>
+
+        Tests: animations/keyframes-invalid-keys.html
+               fast/css/webkit-keyframes-errors.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::rewriteSpecifiers):
+
 2013-04-25  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r147797): Animations slideshows of images on www.thesuperficial.com are slow

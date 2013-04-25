@@ -876,8 +876,13 @@ key:
             $$.fValue = 0;
         else if (str.equalIgnoringCase("to"))
             $$.fValue = 100;
-        else
+        else {
+            $$.unit = 0;
             YYERROR;
+        }
+    }
+    | error {
+        $$.unit = 0;
     }
     ;
 

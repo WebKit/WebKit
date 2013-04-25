@@ -1,3 +1,15 @@
+2013-04-25  Andreas Kling  <akling@apple.com>
+
+        CSS parser: Add error recovery while parsing @-webkit-keyframes key values.
+        <http://webkit.org/b/115175>
+
+        From Blink r148714 by <apavlov@chromium.org>.
+
+        * animations/keyframes-invalid-keys-expected.txt: Added.
+        * animations/keyframes-invalid-keys.html: Added.
+        * fast/css/webkit-keyframes-errors-expected.html: Added.
+        * fast/css/webkit-keyframes-errors.html: Added.
+
 2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip some failing tests after r148996.
