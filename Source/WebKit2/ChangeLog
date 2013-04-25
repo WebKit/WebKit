@@ -1,3 +1,11 @@
+2013-04-25  Jer Noble  <jer.noble@apple.com>
+
+        Further build fixes: correct two more misnames of WebProcessShim.dyld.
+
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebKit::WebContentProcessMainDelegate::doPreInitializationWork):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+
 2013-04-25  Martin Robinson  <mrobinson@igalia.com>
 
         Make gobject-introspection warnings non-fatal
