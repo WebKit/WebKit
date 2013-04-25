@@ -21,6 +21,7 @@
 #ifndef AtomicString_h
 #define AtomicString_h
 
+#include <utility>
 #include <wtf/text/AtomicStringImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -76,12 +77,10 @@ public:
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
-    // FIXME: Instead of explicitly casting to String&& here, we should use std::move, but that requires us to
-    // have a standard library that supports move semantics.
     AtomicString(const AtomicString& other) : m_string(other.m_string) { }
-    AtomicString(AtomicString&& other) : m_string(static_cast<String&&>(other.m_string)) { }
+    AtomicString(AtomicString&& other) : m_string(std::move(other.m_string)) { }
     AtomicString& operator=(const AtomicString& other) { m_string = other.m_string; return *this; }
-    AtomicString& operator=(AtomicString&& other) { m_string = static_cast<String&&>(other.m_string); return *this; }
+    AtomicString& operator=(AtomicString&& other) { m_string = std::move(other.m_string); return *this; }
 #endif
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
