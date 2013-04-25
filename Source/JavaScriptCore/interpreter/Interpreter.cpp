@@ -570,15 +570,11 @@ static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
         return 0;
-#if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
     if (codeBlock->getJITType() == JITCode::DFGJIT)
         return codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex;
 #endif
     return callFrame->bytecodeOffsetForNonDFGCode();
-#else
-    return 0;
-#endif
 }
 
 static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)

@@ -1,3 +1,25 @@
+2013-04-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        JSC: Fix interpreter misbehavior in builds with JIT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115190
+
+        Reviewed by Oliver Hunt.
+
+        Commit http://trac.webkit.org/changeset/147858 modified
+        some details on how JS stack traces are built. The method
+        "getLineNumberForCallFrame", renamed in that changeset to
+        "getBytecodeOffsetForCallFrame" is always returning `0' when
+        JIT is disabled
+
+        How to reproduce:
+         - Build webkit with JIT disabled
+         - Open MiniBrowser, for example, with http://google.com
+         - In a debug build, WebProcess will hit the following ASSERT:
+           Source/JavaScriptCore/bytecode/UnlinkedCodeBlock.cpp:279 ASSERT(low);
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getBytecodeOffsetForCallFrame):
+
 2013-04-25  Oliver Hunt  <oliver@apple.com>
 
         Make checkSyntax take a VM instead of an ExecState
