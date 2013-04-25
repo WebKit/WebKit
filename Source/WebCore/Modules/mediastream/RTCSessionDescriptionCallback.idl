@@ -30,8 +30,7 @@
 
 [
     Conditional=MEDIA_STREAM,
-    Callback
-] interface RTCSessionDescriptionCallback {
+] callback interface RTCSessionDescriptionCallback {
     boolean handleEvent(in RTCSessionDescription sdp);
 };
 

@@ -26,12 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This IDL file is for testing the bindings code generator with an interface
-// that has the "Callback" attribute and for tracking changes in its ouput.
+// This IDL file is for testing the bindings code generator with a callback
+// interface and for tracking changes in its ouput.
 [
     Conditional=SQL_DATABASE,
-    Callback
-] interface TestCallback {
+] callback interface TestCallback {
   boolean callbackWithNoParam();
   boolean callbackWithClass1Param(in Class1 class1Param);
   boolean callbackWithClass2Param(in Class2 class2Param, in DOMString strArg);

@@ -30,7 +30,6 @@
 
 [
     Conditional=FILE_SYSTEM,
-    Callback
-] interface EntriesCallback {
+] callback interface EntriesCallback {
     boolean handleEvent(in EntryArray entries);
 };

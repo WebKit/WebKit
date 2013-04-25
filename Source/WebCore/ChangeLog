@@ -1,3 +1,53 @@
+2013-04-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for Web IDL callback interfaces to the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=115179
+
+        Reviewed by Kentaro Hara.
+
+        Add support in the bindings generator for Web IDL callback interfaces:
+        http://dev.w3.org/2006/webapi/WebIDL/#dfn-callback-interface
+
+        Drop support for the WebKit-specific [Callback] extended attributes
+        on Web IDL interfaces and update existing IDL files to use proper
+        callback interfaces instead.
+
+        No new tests, no behavior change.
+
+        * Modules/filesystem/EntriesCallback.idl:
+        * Modules/filesystem/EntryCallback.idl:
+        * Modules/filesystem/ErrorCallback.idl:
+        * Modules/filesystem/FileCallback.idl:
+        * Modules/filesystem/FileSystemCallback.idl:
+        * Modules/filesystem/FileWriterCallback.idl:
+        * Modules/filesystem/MetadataCallback.idl:
+        * Modules/geolocation/PositionCallback.idl:
+        * Modules/geolocation/PositionErrorCallback.idl:
+        * Modules/mediastream/NavigatorUserMediaErrorCallback.idl:
+        * Modules/mediastream/NavigatorUserMediaSuccessCallback.idl:
+        * Modules/mediastream/RTCErrorCallback.idl:
+        * Modules/mediastream/RTCSessionDescriptionCallback.idl:
+        * Modules/mediastream/RTCStatsCallback.idl:
+        * Modules/notifications/NotificationPermissionCallback.idl:
+        * Modules/quota/StorageErrorCallback.idl:
+        * Modules/quota/StorageQuotaCallback.idl:
+        * Modules/quota/StorageUsageCallback.idl:
+        * Modules/webaudio/AudioBufferCallback.idl:
+        * Modules/webdatabase/DatabaseCallback.idl:
+        * Modules/webdatabase/SQLStatementCallback.idl:
+        * Modules/webdatabase/SQLStatementErrorCallback.idl:
+        * Modules/webdatabase/SQLTransactionCallback.idl:
+        * Modules/webdatabase/SQLTransactionErrorCallback.idl:
+        * Modules/webdatabase/SQLTransactionSyncCallback.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface):
+        * bindings/scripts/IDLParser.pm:
+        (parseCallbackRestOrInterface):
+        * bindings/scripts/test/TestCallback.idl:
+        * dom/RequestAnimationFrameCallback.idl:
+        * dom/StringCallback.idl:
+        * html/VoidCallback.idl:
+
 2013-04-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GStreamer] Add audio/speex MIME type as supported

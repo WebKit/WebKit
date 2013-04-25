@@ -30,7 +30,6 @@
 
 [
     Conditional=FILE_SYSTEM,
-    Callback
-] interface FileWriterCallback {
+] callback interface FileWriterCallback {
     boolean handleEvent(in FileWriter fileWriter);
 };

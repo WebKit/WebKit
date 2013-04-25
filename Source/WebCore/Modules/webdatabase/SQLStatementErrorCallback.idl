@@ -28,7 +28,6 @@
 
 [
     Conditional=SQL_DATABASE,
-    Callback
-] interface SQLStatementErrorCallback {
+] callback interface SQLStatementErrorCallback {
     [Custom] boolean handleEvent(in SQLTransaction transaction, in SQLError error);
 };

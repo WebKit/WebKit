@@ -95,7 +95,7 @@ sub GenerateInterface
     $codeGenerator->LinkOverloadedFunctions($interface);
 
     # Start actual generation
-    if ($interface->extendedAttributes->{"Callback"}) {
+    if ($interface->isCallback) {
         $object->GenerateCallbackHeader($interface);
         $object->GenerateCallbackImplementation($interface);
     } else {

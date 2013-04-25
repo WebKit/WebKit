@@ -30,7 +30,6 @@
 
 [
     Conditional=FILE_SYSTEM,
-    Callback
-] interface FileCallback {
+] callback interface FileCallback {
     boolean handleEvent(in File file);
 };

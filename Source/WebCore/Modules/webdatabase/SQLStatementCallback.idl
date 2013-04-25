@@ -28,7 +28,6 @@
 
 [
     Conditional=SQL_DATABASE,
-    Callback
-] interface SQLStatementCallback {
+] callback interface SQLStatementCallback {
     boolean handleEvent(in SQLTransaction transaction, in SQLResultSet resultSet);
 };

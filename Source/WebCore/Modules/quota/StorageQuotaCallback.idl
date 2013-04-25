@@ -30,7 +30,6 @@
 
 [
     Conditional=QUOTA,
-    Callback
-] interface StorageQuotaCallback {
+] callback interface StorageQuotaCallback {
     boolean handleEvent(in unsigned long long grantedQuotaInBytes);
 };
