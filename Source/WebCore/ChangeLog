@@ -1,3 +1,18 @@
+2013-04-25  Antoine Quint  <graouts@apple.com>
+
+        Glyphs may fail to render when using SVG font
+        https://bugs.webkit.org/show_bug.cgi?id=115193
+
+        Reviewed by Simon Fraser.
+
+        Calling SimpleFontData::applyTransforms() when the font used is
+        an SVG font makes little sense since Core Text doesn’t know or
+        understand SVG fonts and would be passed some other, unrelated
+        platform font.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::applyTransforms):
+
 2013-04-25  Jer Noble  <jer.noble@apple.com>
 
         Media elements shouldn't resume playback when a page is restored from the back/forward cache if the WKView isn't in a window
