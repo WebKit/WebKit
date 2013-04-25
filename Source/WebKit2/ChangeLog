@@ -1,3 +1,22 @@
+2013-04-25  Brady Eidson  <beidson@apple.com>
+
+        Thread safety issues in WKCustomProtocol.
+        <rdar://problem/13247304> and https://bugs.webkit.org/show_bug.cgi?id=115185
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::addCustomProtocol): Protect m_customProtocolMap with its mutex.
+        (WebKit::CustomProtocolManager::removeCustomProtocol): Ditto.
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        (WebKit::CustomProtocolManager::protocolForID): Protect m_customProtocolMap with its mutex, and return
+          a RetainPtr instead of a raw pointer.
+
 2013-04-25  Jer Noble  <jer.noble@apple.com>
 
         Further build fixes: correct two more misnames of WebProcessShim.dyld.

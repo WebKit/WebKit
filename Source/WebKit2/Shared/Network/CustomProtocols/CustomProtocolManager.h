@@ -32,6 +32,7 @@
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <wtf/HashSet.h>
+#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -96,7 +97,11 @@ private:
 #if PLATFORM(MAC)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol> > CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
-    WKCustomProtocol *protocolForID(uint64_t customProtocolID);
+    Mutex m_customProtocolMapMutex;
+    
+    // WKCustomProtocol objects can be removed from the m_customProtocolMap from multiple threads.
+    // We return a RetainPtr here because it is unsafe to return a raw pointer since the object might immediately be destroyed from a different thread.
+    RetainPtr<WKCustomProtocol> protocolForID(uint64_t customProtocolID);
 #endif
 };
 
