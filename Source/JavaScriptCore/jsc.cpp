@@ -626,7 +626,7 @@ static void runInteractive(GlobalObject* globalObject)
                 break;
             source = source + line;
             source = source + '\n';
-            checkSyntax(globalObject->globalExec(), makeSource(source, interpreterName), error);
+            checkSyntax(globalObject->vm(), makeSource(source, interpreterName), error);
             if (!line[0])
                 break;
             add_history(line);

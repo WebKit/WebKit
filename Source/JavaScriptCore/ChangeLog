@@ -1,3 +1,16 @@
+2013-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Make checkSyntax take a VM instead of an ExecState
+
+        RS=Tim
+
+        * jsc.cpp:
+        (runInteractive):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/Completion.h:
+        (JSC):
+
 2013-04-25  Michael Saboff  <msaboff@apple.com>
 
         32 Bit: Crash due to RegExpTest nodes not setting result type to Boolean

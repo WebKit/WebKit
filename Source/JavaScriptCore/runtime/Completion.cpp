@@ -52,12 +52,11 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
     return true;
 }
     
-bool checkSyntax(ExecState* exec, const SourceCode& source, ParserError& error)
+bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
-    JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().identifierTable == wtfThreadData().currentIdentifierTable());
-    VM* vm = &exec->vm();
-    RefPtr<ProgramNode> programNode = parse<ProgramNode>(vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    JSLockHolder lock(vm);
+    RELEASE_ASSERT(vm.identifierTable == wtfThreadData().currentIdentifierTable());
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
     return programNode;
 }
 
