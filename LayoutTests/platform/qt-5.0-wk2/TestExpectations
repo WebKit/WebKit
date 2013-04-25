@@ -663,7 +663,6 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 
 # [Qt] Unidentified pixel failures
-webkit.org/b/99306 animations/3d/state-at-end-event-transform.html [ ImageOnlyFailure ]
 webkit.org/b/99306 animations/additive-transform-animations.html [ ImageOnlyFailure ]
 webkit.org/b/99306 compositing/absolute-position-changed-in-composited-layer.html [ ImageOnlyFailure ]
 webkit.org/b/99306 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
@@ -686,6 +685,7 @@ webkit.org/b/99306 compositing/overflow/fixed-position-ancestor-clip.html [ Imag
 webkit.org/b/99306 compositing/reflections/masked-reflection-on-composited.html [ ImageOnlyFailure ]
 webkit.org/b/99306 compositing/rtl/rtl-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
 webkit.org/b/99306 compositing/transitions/singular-scale-transition.html [ ImageOnlyFailure ]
+webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/filter-change-repaint.html [ ImageOnlyFailure ]
@@ -693,7 +693,6 @@ webkit.org/b/99306 css3/filters/filtered-compositing-descendant.html [ ImageOnly
 webkit.org/b/99306 fast/events/scale-and-scroll-iframe-body.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/events/scale-and-scroll-iframe-window.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/multicol/newmulticol/column-rules-fixed-height.html [ Skip ]
-webkit.org/b/99306 fast/multicol/pagination-h-horizontal-bt.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/multicol/scrolling-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/99306 http/tests/images/png-partial-load-no-alpha.html [ ImageOnlyFailure ]
 webkit.org/b/99306 svg/custom/dasharrayOrigin.svg [ ImageOnlyFailure ]

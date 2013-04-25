@@ -1,5 +1,13 @@
 2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening. Unskip now passing tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
+2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening. Organize expected files after r149095.
 
         * platform/qt-5.0-wk1/editing/deleting/delete-by-word-002-expected.txt: Copied from LayoutTests/platform/qt/editing/deleting/delete-by-word-002-expected.txt.

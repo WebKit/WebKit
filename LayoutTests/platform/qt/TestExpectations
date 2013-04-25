@@ -2505,8 +2505,6 @@ webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failu
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure Pass ]
 
-webkit.org/b/99756 fast/events/touch/touch-slider.html [ Failure ]
-
 # This has always failed on Qt - exposed by bug 89826
 webkit.org/b/94004 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
@@ -2540,13 +2538,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
-
-# [Qt] Unidentified pixel failures
-webkit.org/b/99306 animations/additive-transform-animations.html [ ImageOnlyFailure ]
-webkit.org/b/99306 animations/cross-fade-webkit-mask-box-image.html [ ImageOnlyFailure ]
-webkit.org/b/99306 animations/missing-values-first-keyframe.html [ ImageOnlyFailure ]
-webkit.org/b/99306 animations/missing-values-last-keyframe.html [ ImageOnlyFailure ]
-webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur effect radius is too small on WebKit1, the effect not applied at all on WebKit2.
 
 # REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
@@ -2608,8 +2599,6 @@ webkit.org/b/103769 media/track/track-in-band-cues-added-once.html [ Skip ]
 webkit.org/b/103769 media/track/track-in-band-style.html [ Skip ]
 webkit.org/b/103769 media/track/track-in-band-legacy-api.html [ Skip ]
 webkit.org/b/103769 media/track/track-forced-subtitles-in-band.html [ Skip ]
-
-webkit.org/b/104150 fast/media/implicit-media-all.html [ ImageOnlyFailure ]
 
 # [Qt] new http/tests/xmlhttprequest/post-blob-content-type-sync.html and ~async.html fail since introduced in r136893
 # https://bugs.webkit.org/show_bug.cgi?id=104352
@@ -2693,9 +2682,6 @@ webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Skip ]
 # jack server is not running or cannot be started
 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html
 fast/dom/beforeload/remove-video-in-beforeload-listener.html
-
-# New test fails due to resizeTo not firing an event.
-webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
 
 # [Qt] Two tests hit assertion fail after r140999.
 webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Skip ]
