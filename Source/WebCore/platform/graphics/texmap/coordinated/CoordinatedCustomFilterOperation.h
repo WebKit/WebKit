@@ -51,7 +51,7 @@ public:
 
 private:
     CoordinatedCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
-        : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshType)
+        : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns)
         , m_programID(programID)
     {
     }

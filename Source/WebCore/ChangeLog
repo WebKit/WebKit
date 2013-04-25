@@ -1,3 +1,28 @@
+2013-04-25  Qiankun Miao  <qiankun.miao@intel.com>
+
+        [CSS Shaders] Remove the meshType from the CustomFilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=102529
+
+        Reviewed by Dean Jackson.
+
+        No new tests, no new functionality.
+
+        MeshType can be accessed from program, so remove the m_meshType
+        related code in CustomFilterOperation.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        * platform/graphics/filters/CustomFilterOperation.cpp:
+        (WebCore::CustomFilterOperation::CustomFilterOperation):
+        (WebCore::CustomFilterOperation::blend):
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore::CustomFilterOperation::create):
+        (WebCore::CustomFilterOperation::meshType):
+        (CustomFilterOperation):
+        (WebCore::CustomFilterOperation::operator==):
+        * platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h:
+        (WebCore::CoordinatedCustomFilterOperation::CoordinatedCustomFilterOperation):
+
 2013-04-25  Kent Tamura  <tkent@chromium.org>
 
         Ignore invalid regular expressions for input[pattern].

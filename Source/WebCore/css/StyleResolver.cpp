@@ -3903,7 +3903,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
         return 0;
 
     RefPtr<CustomFilterProgram> program = lookupCustomFilterProgram(vertexShader, fragmentShader, programType, mixSettings, meshType);
-    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshType);
+    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns);
 }
 
 PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
