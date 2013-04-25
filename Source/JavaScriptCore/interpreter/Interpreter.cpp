@@ -119,82 +119,20 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
 {
     const size_t size = stack.size();
 
-    const size_t DEFAULT_REQUIRED_STACK = 1024 * 1024;
-    const size_t DEFAULT_MINIMUM_USEABLE_STACK = 128 * 1024;
-    const size_t DEFAULT_ERROR_MODE_REQUIRED_STACK = 32 * 1024;
+    // We have two separate stack limits, one for regular JS execution, and one
+    // for when we're handling errors. We need the error stack to be smaller
+    // otherwise there would obviously not be any stack left to execute JS in when
+    // there's a stack overflow.
+    //
+    // These sizes were derived from the stack usage of a number of sites when
+    // layout occurs when we've already consumed most of the C stack.
+    const size_t requiredStack = 64 * KB;
+    const size_t errorModeRequiredStack = 32 * KB;
 
-    // Here's the policy in a nutshell:
-    //
-    // 1. If we have a large stack, let JS use as much stack as possible
-    //    but require that we have at least DEFAULT_REQUIRED_STACK capacity
-    //    remaining on the stack:
-    //
-    //    stack grows this way -->   
-    //    ---------------------------------------------------------
-    //    |         ... | <-- DEFAULT_REQUIRED_STACK --> | ...
-    //    ---------------------------------------------------------
-    //    ^             ^
-    //    start         current sp
-    //
-    // 2. In event that we're re-entering the interpreter to handle
-    //    exceptions (in error mode), we'll be a little more generous and
-    //    require less stack capacity for the interpreter to be re-entered.
-    //
-    //    This is needed because we may have just detected an eminent stack
-    //    overflow based on the normally computed required stack capacity.
-    //    However, the normal required capacity far exceeds what is needed
-    //    for exception handling work. Hence, in error mode, we only require
-    //    DEFAULT_ERROR_MODE_REQUIRED_STACK capacity.
-    //
-    //    stack grows this way -->   
-    //    -----------------------------------------------------------------
-    //    |         ... | <-- DEFAULT_ERROR_MODE_REQUIRED_STACK --> | ...
-    //    -----------------------------------------------------------------
-    //    ^             ^
-    //    start         current sp
-    //
-    //    This smaller required capacity also means that we won't re-trigger
-    //    a stack overflow for processing the exception caused by the original
-    //    StackOverflowError.
-    //
-    // 3. If the stack is not large enough, give JS at least a minimum
-    //    amount of useable stack:
-    //
-    //    stack grows this way -->   
-    //    --------------------------------------------------------------------
-    //    | <-- DEFAULT_MINIMUM_USEABLE_STACK --> | <-- requiredCapacity --> |
-    //    --------------------------------------------------------------------
-    //    ^             ^
-    //    start         current sp
-    //
-    //    The minimum useable capacity is DEFAULT_MINIMUM_USEABLE_STACK.
-    //    In this case, the requiredCapacity is whatever is left of the
-    //    total stack capacity after we have give JS its minimum stack
-    //    i.e. requiredCapacity can even be 0 if there's not enough stack.
+    size_t requiredCapacity = m_interpreter.m_errorHandlingModeReentry ? errorModeRequiredStack : requiredStack;
 
-
-    // Policy 1: Normal mode: required = DEFAULT_REQUIRED_STACK.
-    // Policy 2: Error mode: required = DEFAULT_ERROR_MODE_REQUIRED_STACK.
-    size_t requiredCapacity = !m_interpreter.m_errorHandlingModeReentry ?
-        DEFAULT_REQUIRED_STACK : DEFAULT_ERROR_MODE_REQUIRED_STACK;
-
-    size_t useableStack = (requiredCapacity <= size) ?
-        size - requiredCapacity : DEFAULT_MINIMUM_USEABLE_STACK;
-
-    // Policy 3: Ensure the useable stack is not too small:
-    if (useableStack < DEFAULT_MINIMUM_USEABLE_STACK)
-        useableStack = DEFAULT_MINIMUM_USEABLE_STACK;
-
-    // Sanity check: Make sure we do not use more space than the stack's
-    // total capacity:
-    if (useableStack > size)
-        useableStack = size;
-
-    // Re-compute the requiredCapacity based on the adjusted useable stack
-    // size:
-    requiredCapacity = size - useableStack;
-    ASSERT(requiredCapacity < size);
-
+    RELEASE_ASSERT(size > requiredCapacity);
+    
     m_requiredCapacity = requiredCapacity;    
 }
 

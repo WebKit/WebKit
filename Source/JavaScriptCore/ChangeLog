@@ -1,3 +1,15 @@
+2013-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Stack guards are too conservative
+        https://bugs.webkit.org/show_bug.cgi?id=115147
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce the limits and simplify the decision making.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::StackPolicy::StackPolicy):
+
 2013-04-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         JSC: Fix interpreter misbehavior in builds with JIT disabled
