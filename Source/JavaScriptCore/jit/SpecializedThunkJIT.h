@@ -145,6 +145,15 @@ namespace JSC {
         {
             m_calls.append(std::make_pair(call(), function));
         }
+        
+        void callDoubleToDoublePreservingReturn(FunctionPtr function)
+        {
+            if (!isX86())
+                preserveReturnAddressAfterCall(regT3);
+            callDoubleToDouble(function);
+            if (!isX86())
+                restoreReturnAddressBeforeReturn(regT3);
+        }
 
     private:
 

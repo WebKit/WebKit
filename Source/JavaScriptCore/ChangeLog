@@ -1,3 +1,28 @@
+2013-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Special thunks for math functions should work on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=115144
+
+        Reviewed by Gavin Barraclough and Oliver Hunt.
+        
+        The only hard bit here was ensuring that we implemented the very special
+        "cheap C call" convention on ARMv7.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isARMv7s):
+        (JSC):
+        (JSC::isX86):
+        * dfg/DFGCommon.h:
+        * jit/SpecializedThunkJIT.h:
+        (SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::callDoubleToDoublePreservingReturn):
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+
 2013-04-24  Julien Brianceau  <jbrianceau@nds.com>
 
         Misc bugfix and cleaning in sh4 base JIT.

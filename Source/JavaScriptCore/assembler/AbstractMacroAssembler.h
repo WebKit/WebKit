@@ -46,6 +46,24 @@
 
 namespace JSC {
 
+inline bool isARMv7s()
+{
+#if CPU(APPLE_ARMV7S)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool isX86()
+{
+#if CPU(X86_64) || CPU(X86)
+    return true;
+#else
+    return false;
+#endif
+}
+
 class JumpReplacementWatchpoint;
 class LinkBuffer;
 class RepatchBuffer;

@@ -507,7 +507,7 @@ double jsRound(double d)
 }
 
 }
-    
+
 #if CPU(X86_64) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
 
 #define defineUnaryDoubleOpWrapper(function) \
@@ -544,6 +544,30 @@ double jsRound(double d)
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
+#elif CPU(ARM_THUMB2) && COMPILER(GCC) && PLATFORM(IOS)
+
+#define defineUnaryDoubleOpWrapper(function) \
+    asm( \
+        ".text\n" \
+        ".align 2\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        HIDE_SYMBOL(function##Thunk) "\n" \
+        ".thumb\n" \
+        ".thumb_func " THUMB_FUNC_PARAM(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "sub sp, sp, #16\n" \
+        "str lr, [sp, #0]\n" \
+        "vmov r0, r1, d0\n" \
+        "blx " GLOBAL_REFERENCE(function) "\n" \
+        "vmov d0, r0, r1\n" \
+        "ldr lr, [sp, #0]\n" \
+        "add sp, sp, #16\n" \
+        "bx lr\n" \
+    ); \
+    extern "C" { \
+        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 #else
 
 #define defineUnaryDoubleOpWrapper(function) \
@@ -583,7 +607,7 @@ MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
         intResult = jit.jump();
         slowPath.link(&jit);
     }
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(floor));
+    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(floor));
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
     if (jit.supportsFloatingPointTruncate())
         intResult.link(&jit);
@@ -603,7 +627,7 @@ MacroAssemblerCodeRef ceilThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(ceil));
+    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(ceil));
     SpecializedThunkJIT::JumpList doubleResult;
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -636,7 +660,7 @@ MacroAssemblerCodeRef roundThunkGenerator(VM* vm)
         intResult = jit.jump();
         slowPath.link(&jit);
     }
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(jsRound));
+    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(jsRound));
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
     if (jit.supportsFloatingPointTruncate())
         intResult.link(&jit);
@@ -654,7 +678,7 @@ MacroAssemblerCodeRef expThunkGenerator(VM* vm)
     if (!jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(exp));
+    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(exp));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
     return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "exp");
 }
@@ -667,7 +691,7 @@ MacroAssemblerCodeRef logThunkGenerator(VM* vm)
     if (!jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(log));
+    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(log));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
     return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "log");
 }

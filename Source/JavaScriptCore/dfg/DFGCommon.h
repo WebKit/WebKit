@@ -100,24 +100,6 @@ enum RefNodeMode {
     DontRefNode
 };
 
-inline bool isARMv7s()
-{
-#if CPU(APPLE_ARMV7S)
-    return true;
-#else
-    return false;
-#endif
-}
-
-inline bool isX86()
-{
-#if CPU(X86_64) || CPU(X86)
-    return true;
-#else
-    return false;
-#endif
-}
-
 inline bool verboseCompilationEnabled()
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
