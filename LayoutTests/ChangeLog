@@ -1,3 +1,35 @@
+2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added platform specific expected files after r148987.
+
+        * platform/qt/editing/deleting/delete-by-word-002-expected.txt: Added.
+        * platform/qt/editing/deleting/delete-cell-contents-expected.txt: Added.
+        * platform/qt/editing/execCommand/button-expected.txt: Added.
+        * platform/qt/editing/execCommand/createLink-expected.txt: Added.
+        * platform/qt/editing/execCommand/indent-pre-expected.txt: Added.
+        * platform/qt/editing/execCommand/unlink-expected.txt: Added.
+        * platform/qt/editing/input/emacs-ctrl-o-expected.png:
+        * platform/qt/editing/input/emacs-ctrl-o-expected.txt:
+        * platform/qt/editing/inserting/insert-before-link-1-expected.txt: Added.
+        * platform/qt/editing/pasteboard/display-block-on-spans-expected.txt: Added.
+        * platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.png:
+        * platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-list-2-expected.txt: Added.
+        * platform/qt/editing/pasteboard/merge-end-table-2-expected.txt: Added.
+        * platform/qt/editing/pasteboard/page-zoom-expected.txt: Added.
+        * platform/qt/editing/selection/extend-selection-word-expected.txt: Added.
+        * platform/qt/editing/selection/selection-extend-should-not-move-across-caret-on-mac-expected.txt: Added.
+        * platform/qt/editing/style/apply-through-end-of-document-expected.txt: Added.
+        * platform/qt/editing/style/make-text-writing-direction-inline-win-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-across-paragraph-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-in-bold-expected.txt: Added.
+        * platform/qt/editing/style/unbold-in-bold-expected.png:
+        * platform/qt/editing/style/unbold-in-bold-expected.txt:
+        * platform/qt/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt: Added.
+
 2013-04-24  Kent Tamura  <tkent@chromium.org>
 
         Back references don't work in pattern attribute
