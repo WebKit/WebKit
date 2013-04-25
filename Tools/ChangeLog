@@ -1,3 +1,12 @@
+2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove Chromium-specific cases from FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=115169
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove checking chromium from run-webkit-tests
