@@ -165,7 +165,7 @@ public:
         }
 
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant((imm.m_value), scr);
+        m_assembler.loadConstant(imm.m_value, scr);
         m_assembler.andlRegReg(scr, dest);
         releaseScratch(scr);
     }
@@ -213,7 +213,7 @@ public:
         }
 
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant((imm.m_value & 0x1f) , scr);
+        m_assembler.loadConstant(imm.m_value & 0x1f, scr);
         m_assembler.shllRegReg(dest, scr);
         releaseScratch(scr);
     }
@@ -272,10 +272,9 @@ public:
         }
     }
 
-    
-void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if  (src != dest) {
+        if (src != dest) {
             move(imm, dest);
             or32(src, dest);
             return;
@@ -286,7 +285,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if  (src != dest) {
+        if (src != dest) {
             move(imm, dest);
             xor32(src, dest);
             return;
@@ -327,24 +326,6 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         m_assembler.sublRegReg(src, dest);
     }
 
-    void sub32(TrustedImm32 imm, AbsoluteAddress address, RegisterID scratchReg)
-    {
-        RegisterID result = claimScratch();
-
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address.m_ptr), scratchReg);
-        m_assembler.movlMemReg(scratchReg, result);
-
-        if (m_assembler.isImmediate(-imm.m_value))
-            m_assembler.addlImm8r(-imm.m_value, result);
-        else {
-            m_assembler.loadConstant(imm.m_value, scratchReg3);
-            m_assembler.sublRegReg(scratchReg3, result);
-        }
-
-        store32(result, scratchReg);
-        releaseScratch(result);
-    }
-
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         RegisterID result = claimScratch();
@@ -363,24 +344,6 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         store32(result, scratchReg);
         releaseScratch(result);
         releaseScratch(scratchReg);
-    }
-
-    void add32(TrustedImm32 imm, AbsoluteAddress address, RegisterID scratchReg)
-    {
-        RegisterID result = claimScratch();
-
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address.m_ptr), scratchReg);
-        m_assembler.movlMemReg(scratchReg, result);
-
-        if (m_assembler.isImmediate(imm.m_value))
-            m_assembler.addlImm8r(imm.m_value, result);
-        else {
-            m_assembler.loadConstant(imm.m_value, scratchReg3);
-            m_assembler.addlRegReg(scratchReg3, result);
-        }
-
-        store32(result, scratchReg);
-        releaseScratch(result);
     }
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
@@ -466,7 +429,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         if ((srcDest != SH4Registers::r0) || (imm.m_value > 255) || (imm.m_value < 0)) {
             RegisterID scr = claimScratch();
-            m_assembler.loadConstant((imm.m_value), scr);
+            m_assembler.loadConstant(imm.m_value, scr);
             m_assembler.xorlRegReg(scr, srcDest);
             releaseScratch(scr);
             return;
@@ -680,7 +643,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             scr = claimScratch();
         else
             scr = dest;
-        m_assembler.loadConstant((offset), scr);
+        m_assembler.loadConstant(offset, scr);
         m_assembler.addlRegReg(base, scr);
         m_assembler.movlMemReg(scr, dest);
 
@@ -695,20 +658,20 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             return;
         }
 
-        if ((offset > 0) && (offset < 64) && (dest == SH4Registers::r0)) {
+        if ((offset > 0) && (offset <= 15) && (dest == SH4Registers::r0)) {
             m_assembler.movbMemReg(offset, base, dest);
             return;
         }
 
         if (base != dest) {
-            m_assembler.loadConstant((offset), dest);
+            m_assembler.loadConstant(offset, dest);
             m_assembler.addlRegReg(base, dest);
             m_assembler.movbMemReg(dest, dest);
             return;
         }
 
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant((offset), scr);
+        m_assembler.loadConstant(offset, scr);
         m_assembler.addlRegReg(base, scr);
         m_assembler.movbMemReg(scr, dest);
         releaseScratch(scr);
@@ -716,32 +679,8 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     void load8(RegisterID base, int offset, RegisterID dest)
     {
-        if (!offset) {
-            m_assembler.movbMemReg(base, dest);
-            m_assembler.extub(dest, dest);
-            return;
-        }
-
-        if ((offset > 0) && (offset < 64) && (dest == SH4Registers::r0)) {
-            m_assembler.movbMemReg(offset, base, dest);
-            m_assembler.extub(dest, dest);
-            return;
-        }
-
-        if (base != dest) {
-            m_assembler.loadConstant((offset), dest);
-            m_assembler.addlRegReg(base, dest);
-            m_assembler.movbMemReg(dest, dest);
-            m_assembler.extub(dest, dest);
-            return;
-        }
-
-        RegisterID scr = claimScratch();
-        m_assembler.loadConstant((offset), scr);
-        m_assembler.addlRegReg(base, scr);
-        m_assembler.movbMemReg(scr, dest);
+        load8Signed(base, offset, dest);
         m_assembler.extub(dest, dest);
-        releaseScratch(scr);
     }
 
     void load32(RegisterID r0, RegisterID src, RegisterID dst)
@@ -763,14 +702,14 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             return;
         }
 
-        if ((address.offset > 0) && (address.offset < 64) && (dest == SH4Registers::r0)) {
-            m_assembler.movwMemReg(address.offset, address.base, dest);
+        if ((address.offset > 0) && (address.offset <= 30) && (dest == SH4Registers::r0)) {
+            m_assembler.movwMemReg(address.offset >> 1, address.base, dest);
             extuw(dest, dest);
             return;
         }
 
         if (address.base != dest) {
-            m_assembler.loadConstant((address.offset), dest);
+            m_assembler.loadConstant(address.offset, dest);
             m_assembler.addlRegReg(address.base, dest);
             m_assembler.movwMemReg(dest, dest);
             extuw(dest, dest);
@@ -778,7 +717,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         }
 
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant((address.offset), scr);
+        m_assembler.loadConstant(address.offset, scr);
         m_assembler.addlRegReg(address.base, scr);
         m_assembler.movwMemReg(scr, dest);
         extuw(dest, dest);
@@ -910,12 +849,12 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             return;
         }
 
-        if ((offset >=0) && (offset < 64)) {
+        if ((offset >= 0) && (offset < 64)) {
             m_assembler.movlRegMem(src, offset >> 2, base);
             return;
         }
 
-        m_assembler.loadConstant((offset), scr);
+        m_assembler.loadConstant(offset, scr);
         if (scr == SH4Registers::r0) {
             m_assembler.movlRegMemr0(src, base);
             return;
@@ -940,7 +879,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         RegisterID scr = claimScratch();
         RegisterID scr1 = claimScratch();
-        m_assembler.loadConstant((imm.m_value), scr);
+        m_assembler.loadConstant(imm.m_value, scr);
         store32(scr, address.offset, address.base, scr1);
         releaseScratch(scr);
         releaseScratch(scr1);
@@ -962,7 +901,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         RegisterID scr = claimScratch();
         RegisterID scr1 = claimScratch();
-        m_assembler.loadConstant((imm.m_value), scr);
+        m_assembler.loadConstant(imm.m_value, scr);
         m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), scr1);
         m_assembler.movlRegMem(scr, scr1);
         releaseScratch(scr);
@@ -1604,27 +1543,6 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         m_assembler.pushReg(src);
     }
 
-    void push(Address address)
-    {
-        if (!address.offset) {
-            push(address.base);
-            return;
-        }
-
-        if ((address.offset < 0) || (address.offset >= 64)) {
-            RegisterID scr = claimScratch();
-            m_assembler.loadConstant(address.offset, scr);
-            m_assembler.addlRegReg(address.base, scr);
-            m_assembler.movlMemReg(scr, SH4Registers::sp);
-            m_assembler.addlImm8r(-4, SH4Registers::sp);
-            releaseScratch(scr);
-            return;
-        }
-
-        m_assembler.movlMemReg(address.offset >> 2, address.base, SH4Registers::sp);
-        m_assembler.addlImm8r(-4, SH4Registers::sp);
-    }
-
     void push(TrustedImm32 imm)
     {
         RegisterID scr = claimScratch();
@@ -1978,7 +1896,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
-        Jump result;
+        bool result;
 
         move(imm, scratchReg3);
         RegisterID destptr = claimScratch();
@@ -1987,26 +1905,25 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         m_assembler.movlMemReg(destptr, destval);
         if (cond == Overflow) {
             m_assembler.addvlRegReg(scratchReg3, destval);
-            result = branchTrue();
+            result = true;
         } else {
             m_assembler.addlRegReg(scratchReg3, destval);
-
             if (cond == Signed) {
                 m_assembler.cmppz(destval);
-                result = branchFalse();
+                result = false;
             } else if (cond == PositiveOrZero) {
                 m_assembler.cmppz(destval);
-                result = branchTrue();
+                result = true;
             } else {
                 m_assembler.movImm8(0, scratchReg3);
                 m_assembler.cmplRegReg(scratchReg3, destval, SH4Condition(cond));
-                result = (cond == NonZero) ? branchFalse() : branchTrue();
+                result = (cond == Zero);
             }
         }
         m_assembler.movlRegMem(destval, destptr);
         releaseScratch(destval);
         releaseScratch(destptr);
-        return result;
+        return result ? branchTrue() : branchFalse();
     }
 
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
