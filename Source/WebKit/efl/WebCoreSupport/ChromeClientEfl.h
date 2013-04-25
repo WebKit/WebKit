@@ -84,7 +84,7 @@ public:
     virtual void setResizable(bool);
 
     virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message,
-                                     unsigned int lineNumber, const String& sourceID);
+                                     unsigned lineNumber, unsigned columnNumber, const String& sourceID);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
     virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*);

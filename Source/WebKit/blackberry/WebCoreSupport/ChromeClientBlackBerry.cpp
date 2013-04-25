@@ -91,16 +91,16 @@ ChromeClientBlackBerry::ChromeClientBlackBerry(WebPagePrivate* pagePrivate)
 {
 }
 
-void ChromeClientBlackBerry::addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID)
+void ChromeClientBlackBerry::addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID)
 {
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree) {
-        m_webPagePrivate->m_dumpRenderTree->addMessageToConsole(message, lineNumber, sourceID);
+        m_webPagePrivate->m_dumpRenderTree->addMessageToConsole(message, lineNumber, columnNumber, sourceID);
         return;
     }
 #endif
 
-    m_webPagePrivate->m_client->addMessageToConsole(message.characters(), message.length(), sourceID.characters(), sourceID.length(), lineNumber);
+    m_webPagePrivate->m_client->addMessageToConsole(message.characters(), message.length(), sourceID.characters(), sourceID.length(), lineNumber, columnNumber);
 }
 
 void ChromeClientBlackBerry::runJavaScriptAlert(Frame* frame, const String& message)

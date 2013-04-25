@@ -385,7 +385,7 @@ inline static NSString *stringForMessageLevel(MessageLevel level)
     return @"";
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, const String& sourceURL)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, unsigned columnNumber, const String& sourceURL)
 {
     id delegate = [m_webView UIDelegate];
     BOOL respondsToNewSelector = NO;
@@ -406,6 +406,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
         (NSString *)message, @"message",
         [NSNumber numberWithUnsignedInt:lineNumber], @"lineNumber",
+        [NSNumber numberWithUnsignedInt:columnNumber], @"columnNumber",
         (NSString *)sourceURL, @"sourceURL",
         messageSource, @"MessageSource",
         stringForMessageLevel(level), @"MessageLevel",

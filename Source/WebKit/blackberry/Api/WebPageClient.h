@@ -109,7 +109,7 @@ public:
 
     virtual void notifyWindowObjectCleared() = 0;
 
-    virtual void addMessageToConsole(const unsigned short* message, unsigned messageLength, const unsigned short* source, unsigned sourceLength, unsigned lineNumber) = 0;
+    virtual void addMessageToConsole(const unsigned short* message, unsigned messageLength, const unsigned short* source, unsigned sourceLength, unsigned lineNumber, unsigned columnNumber) = 0;
     virtual int showAlertDialog(AlertType) = 0;
 
     virtual BlackBerry::Platform::String serializePageCacheState() const = 0;

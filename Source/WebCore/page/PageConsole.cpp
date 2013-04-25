@@ -137,21 +137,22 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     String url;
     if (document)
         url = document->url().string();
+    // FIXME: <http://webkit.org/b/114319> PageConsole::addMessage should automatically determine column number alongside line number
     unsigned line = 0;
     if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
         ScriptableDocumentParser* parser = document->scriptableDocumentParser();
         if (!parser->isWaitingForScripts() && !parser->isExecutingScript())
             line = parser->lineNumber().oneBasedInt();
     }
-    addMessage(source, level, message, url, line, 0, 0, requestIdentifier);
+    addMessage(source, level, message, url, line, 0, 0, 0, requestIdentifier);
 }
 
 void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(source, level, message, String(), 0, callStack, 0);
+    addMessage(source, level, message, String(), 0, 0, callStack, 0);
 }
 
-void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != ConsoleAPIMessageSource)
         return;
@@ -163,7 +164,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (callStack)
         InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
 
     if (source == CSSMessageSource)
         return;
@@ -171,7 +172,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (page->settings()->privateBrowsingEnabled())
         return;
 
-    page->chrome()->client()->addMessageToConsole(source, level, message, lineNumber, url);
+    page->chrome()->client()->addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
 
     if (!page->settings()->logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;

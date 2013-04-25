@@ -1,3 +1,14 @@
+2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ConsoleMessage should include line and column number where possible
+        https://bugs.webkit.org/show_bug.cgi?id=114929
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::addMessageToConsole):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2013-04-18  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r148545.

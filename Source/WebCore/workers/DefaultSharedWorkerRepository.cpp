@@ -81,8 +81,8 @@ public:
     virtual bool postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String&);
 
     // WorkerReportingProxy
-    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
-    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
+    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL);
 #if ENABLE(INSPECTOR)
     virtual void postMessageToPageInspector(const String&);
     virtual void updateInspectorStateCookie(const String&);
@@ -176,28 +176,29 @@ GroupSettings* SharedWorkerProxy::groupSettings() const
     return 0;
 }
 
-static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)
+static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, int /*columnNumber*/, const String& sourceURL)
 {
+    // FIXME: <http://webkit.org/b/114315> ScriptExecutionContext log exception should include a column number
     context->reportException(errorMessage, lineNumber, sourceURL, 0);
 }
 
-void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL)
+void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
     for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, sourceURL));
+        (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, columnNumber, sourceURL));
 }
 
-static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber)
+static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)
 {
-    document->addConsoleMessage(source, level, message, sourceURL, lineNumber);
+    document->addConsoleMessage(source, level, message, sourceURL, lineNumber, columnNumber);
 }
 
-void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
     for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber));
+        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber, columnNumber));
 }
 
 #if ENABLE(INSPECTOR)

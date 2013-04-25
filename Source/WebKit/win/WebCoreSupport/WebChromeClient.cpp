@@ -334,13 +334,15 @@ void WebChromeClient::setResizable(bool resizable)
     }
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned line, const String& url)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& url)
 {
+    UNUSED_PARAM(columnNumber);
+
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate> uiPrivate;
         if (SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**)&uiPrivate)))
-            uiPrivate->webViewAddMessageToConsole(m_webView, BString(message), line, BString(url), true);
+            uiPrivate->webViewAddMessageToConsole(m_webView, BString(message), lineNumber, BString(url), true);
     }
 }
 

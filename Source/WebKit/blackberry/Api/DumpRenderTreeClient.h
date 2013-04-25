@@ -61,7 +61,7 @@ public:
     virtual void didHandleOnloadEventsForFrame(WebCore::Frame*) = 0;
 
     // ChromeClient delegates
-    virtual void addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID) = 0;
+    virtual void addMessageToConsole(const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;
     virtual void runJavaScriptAlert(const String& message) = 0;
     virtual bool runJavaScriptConfirm(const String& message) = 0;
     virtual String runJavaScriptPrompt(const String& message, const String& defaultValue) = 0;

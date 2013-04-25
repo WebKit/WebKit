@@ -274,8 +274,9 @@ bool ChromeClientEfl::runBeforeUnloadConfirmPanel(const String& message, Frame* 
 }
 
 void ChromeClientEfl::addMessageToConsole(MessageSource, MessageLevel, const String& message,
-                                          unsigned int lineNumber, const String& sourceID)
+                                          unsigned lineNumber, unsigned columnNumber, const String& sourceID)
 {
+    UNUSED_PARAM(columnNumber);
     ewk_view_add_console_message(m_view, message.utf8().data(), lineNumber, sourceID.utf8().data());
 }
 
