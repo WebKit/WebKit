@@ -1,3 +1,33 @@
+2013-04-25  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        EventSource: Synchronous loader callback not handled properly
+        https://bugs.webkit.org/show_bug.cgi?id=115104
+
+        When attempting a cross-origin request towards a non-HTTP URL, an early verification
+        of the protocol scheme will cause didFailAccessControlCheck to be called synchronously
+        before the loader has even finished being created. This special case was not handled
+        properly, since we tried to cancel a non-existing loader, which resulted in a crash.
+        In addition to checking whether a request is in flight before trying to cancel it,
+        this change also schedules the initial creation of the loader to happen asynchronously
+        when an EventSource is constructed, so that a script can register for the error event
+        before it is dispatched (as a result of passing a non-HTTP URL to the constructor).
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/eventsource/eventsource-cors-non-http.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource):
+        (WebCore::EventSource::create):
+        (WebCore::EventSource::scheduleInitialConnect):
+        (WebCore):
+        (WebCore::EventSource::scheduleReconnect):
+        (WebCore::EventSource::connectTimerFired):
+        (WebCore::EventSource::close):
+        (WebCore::EventSource::abortConnectionAttempt):
+        * page/EventSource.h:
+        (EventSource):
+
 2013-04-25  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r148545.

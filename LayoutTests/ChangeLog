@@ -1,3 +1,13 @@
+2013-04-25  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        EventSource: Synchronous loader callback not handled properly
+        https://bugs.webkit.org/show_bug.cgi?id=115104
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/eventsource/eventsource-cors-non-http-expected.txt: Added.
+        * http/tests/eventsource/eventsource-cors-non-http.html: Added.
+
 2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added platform specific expected files after r148987.
