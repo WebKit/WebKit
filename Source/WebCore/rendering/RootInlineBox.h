@@ -38,16 +38,16 @@ class RootInlineBox : public InlineFlowBox {
 public:
     explicit RootInlineBox(RenderBlock*);
 
-    virtual void destroy(RenderArena*);
+    virtual void destroy(RenderArena*) FINAL;
 
-    virtual bool isRootInlineBox() const { return true; }
+    virtual bool isRootInlineBox() const FINAL { return true; }
 
     void detachEllipsisBox(RenderArena*);
 
     RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLineBox); }
     RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLineBox); }
 
-    virtual void adjustPosition(float dx, float dy);
+    virtual void adjustPosition(float dx, float dy) FINAL;
 
     LayoutUnit lineTop() const { return m_lineTop; }
     LayoutUnit lineBottom() const { return m_lineBottom; }
@@ -85,7 +85,7 @@ public:
         m_lineBottomWithLeading = bottomWithLeading;
     }
 
-    virtual RenderLineBoxList* rendererLineBoxes() const;
+    virtual RenderLineBoxList* rendererLineBoxes() const FINAL;
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
     BidiStatus lineBreakBidiStatus() const;
@@ -103,19 +103,19 @@ public:
     // Return the truncatedWidth, the width of the truncated text + ellipsis.
     float placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
     // Return the position of the EllipsisBox or -1.
-    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE;
+    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE FINAL;
 
     using InlineBox::hasEllipsisBox;
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
 
-    virtual void clearTruncation() OVERRIDE;
+    virtual void clearTruncation() OVERRIDE FINAL;
 
     bool isHyphenated() const;
 
-    virtual int baselinePosition(FontBaseline baselineType) const;
-    virtual LayoutUnit lineHeight() const;
+    virtual int baselinePosition(FontBaseline baselineType) const FINAL;
+    virtual LayoutUnit lineHeight() const FINAL;
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
@@ -123,12 +123,12 @@ public:
 #endif
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE FINAL;
 
     using InlineBox::hasSelectedChildren;
     using InlineBox::setHasSelectedChildren;
 
-    virtual RenderObject::SelectionState selectionState();
+    virtual RenderObject::SelectionState selectionState() FINAL;
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
@@ -151,9 +151,9 @@ public:
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
-    virtual void extractLineBoxFromRenderObject();
-    virtual void attachLineBoxToRenderObject();
-    virtual void removeLineBoxFromRenderObject();
+    virtual void extractLineBoxFromRenderObject() FINAL;
+    virtual void attachLineBoxToRenderObject() FINAL;
+    virtual void removeLineBoxFromRenderObject() FINAL;
     
     FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
 

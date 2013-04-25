@@ -27,7 +27,7 @@ namespace WebCore {
 class HitTestRequest;
 class HitTestResult;
 
-class EllipsisBox : public InlineBox {
+class EllipsisBox FINAL : public InlineBox {
 public:
     EllipsisBox(RenderObject* obj, const AtomicString& ellipsisStr, InlineFlowBox* parent,
                 int width, int height, int y, bool firstLine, bool isVertical, InlineBox* markupBox)

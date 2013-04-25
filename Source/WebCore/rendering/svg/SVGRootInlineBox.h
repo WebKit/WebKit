@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SVGInlineTextBox;
 
-class SVGRootInlineBox : public RootInlineBox {
+class SVGRootInlineBox FINAL : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderBlock* block)
         : RootInlineBox(block)

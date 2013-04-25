@@ -1,5 +1,34 @@
 2013-04-25  Andreas Kling  <akling@apple.com>
 
+        Add FINAL decorators to the InlineBox class hierarchy.
+        <http://webkit.org/b/115177>
+
+        Reviewed by Antti Koivisto.
+
+        From Blink r148628 by <cevans@chromium.org>:
+
+        FINAL is a macro in wtf/Compiler.h that does the correct thing if the compiler does not support "final")
+        The approach used is as simple as possible whilst being thorough.
+        So, leaf classes have FINAL applied to the whole class whereas intermediary classes have FINAL applied to relevant methods.
+
+        FINAL allows a compiler to devirtualize call sites and turn them into direct calls. As you might expect, this is perf positive:
+        (clang on Linux):
+        - line_layout.html goes from 120 runs/s -> 123 runs/2, +2.5%
+        - html5-full-render.html goes from 3176ms -> 3162ms, +0.4%
+
+        I have confidence that the former result is statistically significant (as the numbers are very very stable) but not the latter.
+
+        * rendering/EllipsisBox.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.h:
+        * rendering/RootInlineBox.h:
+        * rendering/TrailingFloatsRootInlineBox.h:
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.h:
+
+2013-04-25  Andreas Kling  <akling@apple.com>
+
         CSS parser: Add error recovery while parsing @-webkit-keyframes key values.
         <http://webkit.org/b/115175>
 

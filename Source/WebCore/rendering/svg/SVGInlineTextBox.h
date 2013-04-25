@@ -31,7 +31,7 @@ namespace WebCore {
 class RenderSVGResource;
 class SVGRootInlineBox;
 
-class SVGInlineTextBox : public InlineTextBox {
+class SVGInlineTextBox FINAL : public InlineTextBox {
 public:
     SVGInlineTextBox(RenderObject*);
 
@@ -57,7 +57,7 @@ public:
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
 
-    void dirtyLineBoxes() OVERRIDE;
+    virtual void dirtyLineBoxes() OVERRIDE;
 
     bool startsNewTextChunk() const { return m_startsNewTextChunk; }
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }

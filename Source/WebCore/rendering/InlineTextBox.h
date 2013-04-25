@@ -57,7 +57,7 @@ public:
     {
     }
 
-    virtual void destroy(RenderArena*);
+    virtual void destroy(RenderArena*) FINAL;
 
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
     InlineTextBox* nextTextBox() const { return m_nextTextBox; }
@@ -76,7 +76,7 @@ public:
 
     unsigned short truncation() { return m_truncation; }
 
-    virtual void markDirty(bool dirty = true) OVERRIDE;
+    virtual void markDirty(bool dirty = true) OVERRIDE FINAL;
 
     using InlineBox::hasHyphen;
     using InlineBox::setHasHyphen;
@@ -85,8 +85,8 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    virtual int baselinePosition(FontBaseline) const;
-    virtual LayoutUnit lineHeight() const;
+    virtual int baselinePosition(FontBaseline) const FINAL;
+    virtual LayoutUnit lineHeight() const FINAL;
 
     bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;
 
@@ -125,19 +125,19 @@ public:
     RenderText* textRenderer() const;
 
 private:
-    virtual void deleteLine(RenderArena*);
-    virtual void extractLine();
-    virtual void attachLine();
+    virtual void deleteLine(RenderArena*) FINAL;
+    virtual void extractLine() FINAL;
+    virtual void attachLine() FINAL;
 
 public:
-    virtual RenderObject::SelectionState selectionState();
+    virtual RenderObject::SelectionState selectionState() FINAL;
 
 private:
-    virtual void clearTruncation() { m_truncation = cNoTruncation; }
-    virtual float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE;
+    virtual void clearTruncation() FINAL { m_truncation = cNoTruncation; }
+    virtual float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE FINAL;
 
 public:
-    virtual bool isLineBreak() const;
+    virtual bool isLineBreak() const FINAL;
 
     void setExpansion(int newExpansion)
     {
@@ -147,11 +147,11 @@ public:
     }
 
 private:
-    virtual bool isInlineTextBox() const { return true; }    
+    virtual bool isInlineTextBox() const FINAL { return true; }
 
 public:
-    virtual int caretMinOffset() const;
-    virtual int caretMaxOffset() const;
+    virtual int caretMinOffset() const FINAL;
+    virtual int caretMaxOffset() const FINAL;
 
 private:
     float textPos() const; // returns the x position relative to the left start of the text line.
