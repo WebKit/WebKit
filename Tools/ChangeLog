@@ -1,5 +1,11 @@
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix autocompletion for Benjamin. The Bugzilla email address must come first.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix. Forgot to merge args.
 
         * Scripts/webkitpy/tool/bot/irc_command.py:
