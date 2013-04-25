@@ -1,3 +1,9 @@
+2013-04-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Update a comment, mentioning a newly filed bug.
+
+        * platform/wk2/TestExpectations:
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         ScriptExecutionContext log exception should include a column number
