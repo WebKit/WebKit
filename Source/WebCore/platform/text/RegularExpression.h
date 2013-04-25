@@ -48,6 +48,7 @@ public:
     int searchRev(const String&) const;
 
     int matchedLength() const;
+    bool isValid() const;
 
 private:
     class Private;    

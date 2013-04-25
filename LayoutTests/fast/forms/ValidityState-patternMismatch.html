@@ -57,8 +57,16 @@
 /><input id="mismatch-18" type="text" pattern="foo\\" value="food"
 /><input id="mismatch-19" type="text" pattern="^" value="wrong"
 /><input id="mismatch-20" type="text" pattern="$" value="wrong"
-/><input id="mismatch-21" type="text" pattern="f(o|e)\1" value="foe"
-/><input id="empty-pattern-mismatch" type="text" pattern="" value="Lorem Ipsum"
+/><input id="mismatch-21" type="text" pattern="f(o|e)\1" value="foe"/>
+
+<input id="invalid-01" type="text" pattern=")foo(" value="foo"/>
+<input id="invalid-02" type="text" pattern=")foo(" value="foobar"/>
+<input id="invalid-03" type="text" pattern=")foo(" value=")foo"/>
+<input id="invalid-04" type="text" pattern="foo\" value="foo\"/>
+<input id="invalid-05" type="text" pattern="[0-9" value="1"/>
+<input id="invalid-06" type="text" pattern="[0-9" value="a"/>
+
+<input id="empty-pattern-mismatch" type="text" pattern="" value="Lorem Ipsum"
 /><input id="disabled" pattern="[0-9][A-Z]{3}" value="00AA" disabled /></div>
 <script language="JavaScript" type="text/javascript">
 function patternMismatchFor(id) {
@@ -123,6 +131,13 @@ shouldBeTrue('patternMismatchFor("mismatch-21")');
 
 shouldBeFalse('patternMismatchFor("empty-pattern-match")');
 shouldBeTrue('patternMismatchFor("empty-pattern-mismatch")');
+
+shouldBeFalse('patternMismatchFor("invalid-01")');
+shouldBeFalse('patternMismatchFor("invalid-02")');
+shouldBeFalse('patternMismatchFor("invalid-03")');
+shouldBeFalse('patternMismatchFor("invalid-04")');
+shouldBeFalse('patternMismatchFor("invalid-05")');
+shouldBeFalse('patternMismatchFor("invalid-06")');
 
 shouldBeFalse('patternMismatchFor("disabled")');
 

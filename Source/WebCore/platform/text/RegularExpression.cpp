@@ -176,4 +176,9 @@ void replace(String& string, const RegularExpression& target, const String& repl
     }
 }
 
+bool RegularExpression::isValid() const
+{
+    return d->m_regExpByteCode;
+}
+
 } // namespace WebCore
