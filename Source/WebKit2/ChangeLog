@@ -1,3 +1,17 @@
+2013-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        Page Overlays shouldn't waste time flushing layers if we're not going to use it
+        https://bugs.webkit.org/show_bug.cgi?id=115145
+
+        Reviewed by Simon Fraser.
+
+        Don't flush the page overlay layer when it's installed - it starts out
+        with paintContents=false, so we don't really need a CALayer yet. We'll
+        flush later if need be.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+
 2013-04-24  Jer Noble  <jer.noble@apple.com>
 
         Further unreviewed build fix; CFNetwork.framework is the one which Lion

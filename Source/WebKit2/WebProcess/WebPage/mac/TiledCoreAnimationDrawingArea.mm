@@ -194,7 +194,6 @@ void TiledCoreAnimationDrawingArea::didInstallPageOverlay(PageOverlay* pageOverl
     m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(true);
 
     createPageOverlayLayer(pageOverlay);
-    scheduleCompositingLayerFlush();
 }
 
 void TiledCoreAnimationDrawingArea::didUninstallPageOverlay(PageOverlay* pageOverlay)
