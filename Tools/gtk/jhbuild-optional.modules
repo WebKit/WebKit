@@ -55,12 +55,4 @@
             hash="sha256:bc3108594a01a08bb6d9b538afe995e4fd78634a8356064ee8137d87aad51b2e"/>
   </autotools>
 
-  <autotools id="pango"
-          autogen-sh="configure"
-          autogenargs="--disable-introspection">
-    <branch module="/pub/GNOME/sources/pango/1.32/pango-1.32.3.tar.xz" version="1.32.3"
-            repo="ftp.gnome.org"
-            hash="sha256:19a1a4fa021fcf96261de3cb809295ac06546f2a061c3c623141f2f4989b6a36"/>
-  </autotools>
-
 </moduleset>

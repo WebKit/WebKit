@@ -1,3 +1,15 @@
+2013-04-25  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Remove pango from optional jhbuild dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=115162
+
+        Reviewed by Martin Robinson.
+
+        Pango is not needed since revision r148293 that lowers the pango
+        dependency to 1.30, which is available in most distributions.
+
+        * gtk/jhbuild-optional.modules: Removes description of pango module.
+
 2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove Chromium-specific cases from FeatureList.pm
