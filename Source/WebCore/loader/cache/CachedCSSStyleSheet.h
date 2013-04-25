@@ -56,6 +56,7 @@ namespace WebCore {
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
         virtual PurgePriority purgePriority() const { return PurgeLast; }
+        virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 
     protected:
         virtual void checkNotify();

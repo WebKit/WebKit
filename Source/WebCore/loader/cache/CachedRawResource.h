@@ -61,6 +61,7 @@ private:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
 
     virtual void switchClientsToRevalidatedResource() OVERRIDE;
+    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 
     unsigned long m_identifier;
 

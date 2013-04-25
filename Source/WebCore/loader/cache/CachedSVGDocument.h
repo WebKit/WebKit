@@ -45,6 +45,9 @@ public:
 protected:
     RefPtr<SVGDocument> m_document;
     RefPtr<TextResourceDecoder> m_decoder;
+
+private:
+    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 };
 
 } // namespace WebCore

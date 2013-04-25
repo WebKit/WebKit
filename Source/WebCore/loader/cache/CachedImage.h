@@ -108,6 +108,7 @@ private:
     void checkShouldPaintBrokenImage();
 
     virtual void switchClientsToRevalidatedResource() OVERRIDE;
+    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 
     typedef pair<IntSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;

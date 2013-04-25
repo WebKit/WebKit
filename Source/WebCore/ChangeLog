@@ -1,5 +1,27 @@
 2013-04-24  Brady Eidson  <beidson@apple.com>
 
+        Implementors of CachedResource subclasses should be forced to decide if encoded data can be replaced.
+        https://bugs.webkit.org/show_bug.cgi?id=115140
+
+        Reviewed by Beth Dakin.
+
+        No new tests (No behavior change).
+
+        This makes mayTryReplaceEncodedData() return false in CachedResource, but overrides to true
+        in all CachedResource subclasses besides CachedFont (which already has an implementation).
+
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedShader.h:
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.h:
+
+2013-04-24  Brady Eidson  <beidson@apple.com>
+
         Once a custom font is cached to disk, it starts failing to render until the page is refreshed.
         <rdar://problem/13622998> and https://bugs.webkit.org/show_bug.cgi?id=115131
 

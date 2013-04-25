@@ -52,6 +52,9 @@ namespace WebCore {
 
         String m_sheet;
         RefPtr<TextResourceDecoder> m_decoder;
+
+    private:
+        virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
     };
 
 #endif

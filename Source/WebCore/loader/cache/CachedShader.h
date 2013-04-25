@@ -47,6 +47,8 @@ public:
     void data(PassRefPtr<ResourceBuffer>, bool allDataReceived);
 
 private:
+    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+
     RefPtr<TextResourceDecoder> m_decoder;
     String m_shaderString;
 };
