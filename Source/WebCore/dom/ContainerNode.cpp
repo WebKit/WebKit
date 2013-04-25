@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -831,21 +831,36 @@ void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int chil
     invalidateNodeListCachesInAncestors();
 }
 
+inline static void cloneChildNodesAvoidingDeleteButton(ContainerNode* parent, ContainerNode* clonedParent, HTMLElement* deleteButtonContainerElement)
+{
+    ExceptionCode ec = 0;
+    for (Node* child = parent->firstChild(); child && !ec; child = child->nextSibling()) {
+
+#if ENABLE(DELETION_UI)
+        if (child == deleteButtonContainerElement)
+            continue;
+#else
+        UNUSED_PARAM(deleteButtonContainerElement);
+#endif
+
+        RefPtr<Node> clonedChild = child->cloneNode(false);
+        clonedParent->appendChild(clonedChild, ec);
+
+        if (!ec && child->isContainerNode())
+            cloneChildNodesAvoidingDeleteButton(toContainerNode(child), toContainerNode(clonedChild.get()), deleteButtonContainerElement);
+    }
+}
+
 void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
 #if ENABLE(DELETION_UI)
     HTMLElement* deleteButtonContainerElement = 0;
     if (Frame* frame = document()->frame())
         deleteButtonContainerElement = frame->editor()->deleteButtonController()->containerElement();
+    cloneChildNodesAvoidingDeleteButton(this, clone, deleteButtonContainerElement);
+#else
+    cloneChildNodesAvoidingDeleteButton(this, clone, 0);
 #endif
-    ExceptionCode ec = 0;
-    for (Node* n = firstChild(); n && !ec; n = n->nextSibling()) {
-#if ENABLE(DELETION_UI)
-        if (n == deleteButtonContainerElement)
-            continue;
-#endif
-        clone->appendChild(n->cloneNode(true), ec);
-    }
 }
 
 bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const

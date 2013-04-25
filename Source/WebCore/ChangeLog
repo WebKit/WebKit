@@ -1,5 +1,21 @@
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        cloneChildNodes looks for deleteButtonController in each level of recursion
+        https://bugs.webkit.org/show_bug.cgi?id=115146
+
+        Reviewed by Andreas Kling.
+
+        Obtain the delete button controller upfront, and shallow copy descendents of each child
+        so that we don't look for the delete button controller inside cloneNode called on each child.
+
+        Performance Tests: DOM/CloneNodes.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::cloneChildNodesAvoidingDeleteButon): Extracted.
+        (WebCore::ContainerNode::cloneChildNodes):
+
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         HTMLOptionsCollection's namedItem and name getter should return the first item
         https://bugs.webkit.org/show_bug.cgi?id=115150
 
