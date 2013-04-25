@@ -39,6 +39,7 @@
 #import "PDFPluginPasswordField.h"
 #import "PluginView.h"
 #import "WebContextMessages.h"
+#import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebPage.h"
@@ -46,6 +47,7 @@
 #import "WebProcess.h"
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/Cursor.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
 #import <WebCore/Frame.h>
@@ -570,6 +572,21 @@ NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
     return [NSEvent mouseEventWithType:eventType location:positionInPDFViewCoordinates modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:event.clickCount() pressure:0];
 }
 
+void PDFPlugin::updateCursor(const WebMouseEvent& event, UpdateCursorMode mode)
+{
+    HitTestResult hitTestResult = None;
+
+    PDFSelection *selectionUnderMouse = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(event.position())];
+    if (selectionUnderMouse && [[selectionUnderMouse string] length])
+        hitTestResult = Text;
+
+    if (hitTestResult == m_lastHitTestResult && mode == UpdateIfNeeded)
+        return;
+
+    webFrame()->page()->send(Messages::WebPageProxy::SetCursor(hitTestResult == Text ? iBeamCursor() : pointerCursor()));
+    m_lastHitTestResult = hitTestResult;
+}
+
 bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     PlatformMouseEvent platformEvent = platform(event);
@@ -611,6 +628,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     switch (event.type()) {
     case WebEvent::MouseMove:
         mouseMovedInContentArea();
+        updateCursor(event);
 
         if (targetScrollbar) {
             if (!targetScrollbarForLastMousePosition) {
@@ -666,6 +684,19 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         break;
     }
 
+    return false;
+}
+
+bool PDFPlugin::handleMouseEnterEvent(const WebMouseEvent& event)
+{
+    mouseEnteredContentArea();
+    updateCursor(event, ForceUpdate);
+    return false;
+}
+
+bool PDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
+{
+    mouseExitedContentArea();
     return false;
 }
     

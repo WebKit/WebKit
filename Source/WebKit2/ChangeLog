@@ -1,5 +1,30 @@
 2013-04-24  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Cursor should become an i-beam when over selectable text
+        https://bugs.webkit.org/show_bug.cgi?id=115018
+        <rdar://problem/12645012>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        Add updateCursor(), the UpdateCursorMode and HitTestResult enums, and
+        storage for the last PDF hit test result.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::updateCursor):
+        Hit test the PDF. If there is a word under the cursor, use the I-beam cursor,
+        otherwise, use the default pointer cursor. This approximates PDFKit's behavior,
+        though does not match it precisely in the case of annotations.
+        Only send the cursor update to the UIProcess if it is a change, or if
+        we're explicitly asked to update.
+        (WebKit::PDFPlugin::handleMouseEvent):
+        If we're processing a mouse moved event, update the cursor if needed.
+        (WebKit::PDFPlugin::handleMouseEnterEvent):
+        If the cursor just moved over the PDFPlugin, force-update the cursor,
+        even if it matches the previously-set cursor (because something else
+        likely updated the cursor while it was not over the PDFPlugin).
+
+2013-04-24  Tim Horton  <timothy_horton@apple.com>
+
         Page Overlays shouldn't waste time flushing layers if we're not going to use it
         https://bugs.webkit.org/show_bug.cgi?id=115145
 

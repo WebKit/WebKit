@@ -1,3 +1,13 @@
+2013-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Cursor should become an i-beam when over selectable text
+        https://bugs.webkit.org/show_bug.cgi?id=115018
+        <rdar://problem/12645012>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Export the I-beam and arrow cursors.
+
 2013-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Garbage at the top of http://www.technologyreview.com after scrolling

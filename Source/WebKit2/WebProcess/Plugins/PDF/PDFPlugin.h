@@ -105,6 +105,8 @@ private:
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) OVERRIDE;
     virtual void contentsScaleFactorChanged(float) OVERRIDE;
     virtual bool handleMouseEvent(const WebMouseEvent&) OVERRIDE;
+    virtual bool handleMouseEnterEvent(const WebMouseEvent&) OVERRIDE;
+    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) OVERRIDE;
     virtual bool handleContextMenuEvent(const WebMouseEvent&) OVERRIDE;
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
@@ -140,6 +142,18 @@ private:
 
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
 
+    enum UpdateCursorMode {
+        UpdateIfNeeded,
+        ForceUpdate
+    };
+
+    enum HitTestResult {
+        None,
+        Text
+    };
+
+    void updateCursor(const WebMouseEvent&, UpdateCursorMode = UpdateIfNeeded);
+
     RetainPtr<CALayer> m_containerLayer;
     RetainPtr<CALayer> m_contentLayer;
     RetainPtr<CALayer> m_horizontalScrollbarLayer;
@@ -158,6 +172,8 @@ private:
     String m_temporaryPDFUUID;
 
     String m_lastFoundString;
+
+    HitTestResult m_lastHitTestResult;
     
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 };
