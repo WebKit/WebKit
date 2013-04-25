@@ -1,3 +1,24 @@
+2013-04-25  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
+
+        Sec-WebSocket-Extensions header field must not appear more than once in an HTTP response.
+        https://bugs.webkit.org/show_bug.cgi?id=115128
+
+        Reviewed by Alexey Proskuryakov.
+
+        According to WebSocket specification Sec-WebSocket-Extensions header field
+        must not appear more than once in an HTTP response. It is ok if it appears
+        more than once in client request. Also add a check for invalid UTF-8
+        characters when parsing Sec-WebSocket-Extensions quoted string.
+
+        Test: http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header.html
+
+        * Modules/websockets/WebSocketExtensionParser.cpp:
+        (WebCore::WebSocketExtensionParser::consumeQuotedString): Return false if there is
+        invalid character in the quoted string being parsed.
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readHTTPHeaders): Check if Sec-WebSocket-Extensions
+        appears more than once in header response. Abort handshake if it does.
+
 2013-04-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         REGRESSION(r148758): Remove WTFLogAlways call from IconLoader.

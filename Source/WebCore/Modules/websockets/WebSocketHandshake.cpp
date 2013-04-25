@@ -465,6 +465,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
 
     AtomicString name;
     String value;
+    bool sawSecWebSocketExtensionsHeaderField = false;
     bool sawSecWebSocketAcceptHeaderField = false;
     bool sawSecWebSocketProtocolHeaderField = false;
     const char* p = start;
@@ -478,13 +479,16 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         if (name.isEmpty())
             break;
 
-        // Sec-WebSocket-Extensions may be split. We parse and check the
-        // header value every time the header appears.
         if (equalIgnoringCase("sec-websocket-extensions", name)) {
+            if (sawSecWebSocketExtensionsHeaderField) {
+                m_failureReason = "The Sec-WebSocket-Extensions header MUST NOT appear more than once in an HTTP response";
+                return 0;
+            }
             if (!m_extensionDispatcher.processHeaderValue(value)) {
                 m_failureReason = m_extensionDispatcher.failureReason();
                 return 0;
             }
+            sawSecWebSocketExtensionsHeaderField = true;
         } else if (equalIgnoringCase("Sec-WebSocket-Accept", name)) {
             if (sawSecWebSocketAcceptHeaderField) {
                 m_failureReason = "The Sec-WebSocket-Accept header MUST NOT appear more than once in an HTTP response";

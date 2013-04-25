@@ -92,6 +92,8 @@ bool WebSocketExtensionParser::consumeQuotedString()
     if (m_current >= m_end || *m_current != '"')
         return false;
     m_currentToken = String::fromUTF8(buffer.data(), buffer.size());
+    if (m_currentToken.isNull())
+        return false;
     ++m_current;
     return true;
 }
