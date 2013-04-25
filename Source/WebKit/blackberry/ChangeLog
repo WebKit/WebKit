@@ -1,3 +1,17 @@
+2013-04-25  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Selection overlay on non-composited iframes are incorrectly positioned.
+        https://bugs.webkit.org/show_bug.cgi?id=115197
+
+        Reviewed by Rob Buis.
+
+        When drawing the selection overlay, the rects to
+        paint when selecting text on non-composited sub-frames
+        need to be adjusted by the frame position.
+
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::paintContents):
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(PARSED_STYLE_SHEET_CACHING) and make it always-on.
