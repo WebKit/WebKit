@@ -1,5 +1,12 @@
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Forgot to merge args.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi.execute):
+
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         webkitbot should recognize its own nickname in greetings.
         https://bugs.webkit.org/show_bug.cgi?id=115196
 

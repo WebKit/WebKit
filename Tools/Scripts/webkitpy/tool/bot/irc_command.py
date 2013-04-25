@@ -114,7 +114,7 @@ class Hi(IRCCommand):
     help_string = "Retrieves a random quip from Bugzilla."
 
     def execute(self, nick, args, tool, sheriff):
-        if len(args) and re.match(r'webkitbot_*\s*!\s*', args[0]):
+        if len(args) and re.match(r'webkitbot_*\s*!\s*', ' '.join(args)):
             return "%s: hi %s!" % (nick, nick)
         quips = tool.bugs.quips()
         quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
