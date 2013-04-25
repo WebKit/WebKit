@@ -1,3 +1,19 @@
+2013-04-25  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix: Fix the name of DyldInterpose.h in
+        SecItemShimLibrary.mm, fix the name of WebProcessShim.dyld in
+        WebContentServiceEntryPoint.mm, and stop linking against libWTF.a
+        directly (which means removing ASSERTs from
+        CookieStorageShimLibrary.cpp).
+
+        * Shared/mac/CookieStorageShimLibrary.cpp:
+        (WebKit::shimCFHTTPCookieStorageCopyRequestHeaderFieldsForURL):
+        (WebKit::WebKitCookieStorageShimInitialize):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+        * WebProcess/mac/SecItemShimLibrary.mm:
+
 2013-04-24  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Cursor should become an i-beam when over selectable text

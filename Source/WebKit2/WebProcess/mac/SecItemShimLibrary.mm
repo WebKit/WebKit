@@ -24,7 +24,7 @@
  */
 #import "SecItemShimLibrary.h"
 
-#import "DYLDInterpose.h"
+#import "DyldInterpose.h"
 #import <Security/SecItem.h>
 #import <wtf/Platform.h>
 

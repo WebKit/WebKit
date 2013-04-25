@@ -59,7 +59,6 @@ static CFDictionaryRef shimCFHTTPCookieStorageCopyRequestHeaderFieldsForURL(CFAl
             break;
 
         // Protect against accidental recursion:
-        ASSERT(ShimProtector::count() == 1);
         if (ShimProtector::count() > 1)
             break;
 
@@ -83,7 +82,6 @@ void WebKitCookieStorageShimInitialize(const CookieStorageShimCallbacks& callbac
     // only allow it to be initialized once.
     static int initialized = 0;
     if (!OSAtomicCompareAndSwapInt(0, 1, &initialized)) {
-        ASSERT_NOT_REACHED();
         return;
     }
 

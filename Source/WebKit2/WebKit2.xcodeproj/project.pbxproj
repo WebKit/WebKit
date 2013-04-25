@@ -1086,7 +1086,6 @@
 		C5E1AFED16B21017006CC1F2 /* WebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9A16ACCE9900316DE2 /* WebArchive.h */; };
 		C5E1AFEE16B21025006CC1F2 /* WebArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9E16ACD47800316DE2 /* WebArchiveResource.cpp */; };
 		C5E1AFEF16B21029006CC1F2 /* WebArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9F16ACD47800316DE2 /* WebArchiveResource.h */; };
-		CD471F5D1721BC3E00D65CDA /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD471F5C1721BC3E00D65CDA /* libWTF.a */; };
 		CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */; };
 		CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */; };
 		CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */; };
@@ -2847,7 +2846,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDDF622F1728A20D001EC01F /* CoreServices.framework in Frameworks */,
-				CD471F5D1721BC3E00D65CDA /* libWTF.a in Frameworks */,
 				CDC3830117211799008A2FC3 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
