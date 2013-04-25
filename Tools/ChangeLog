@@ -1,3 +1,15 @@
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitbot should recognize its own nickname in greetings.
+        https://bugs.webkit.org/show_bug.cgi?id=115196
+
+        Reviewed by Andreas Kling.
+
+        Make webkitbot recognize other forms of its nick. Also be tolerant of spaces between the nick and !.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi.execute):
+
 2013-04-25  Xavier Castano  <xcastanho@igalia.com>
 
         [GTK] Tools/gtk/install-dependencies added ragel dependency
