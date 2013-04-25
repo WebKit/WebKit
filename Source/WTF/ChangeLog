@@ -1,3 +1,15 @@
+2013-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Stack guards are too conservative
+        https://bugs.webkit.org/show_bug.cgi?id=115147
+
+        Reviewed by Mark Hahnenberg.
+
+        Use getrlimit on darwin to get the stack size for the main thread.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(PARSED_STYLE_SHEET_CACHING) and make it always-on.

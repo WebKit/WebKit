@@ -79,7 +79,17 @@ void StackBounds::initialize()
 {
     pthread_t thread = pthread_self();
     m_origin = pthread_get_stackaddr_np(thread);
-    m_bound = static_cast<char*>(m_origin) - pthread_get_stacksize_np(thread);
+    size_t size = 0;
+    if (pthread_main_np()) {
+        // FIXME: <rdar://problem/13741204>
+        // pthread_get_size lies to us when we're the main thread, use get_rlimit instead
+        rlimit limit;
+        getrlimit(RLIMIT_STACK, &limit);
+        size = limit.rlim_cur;
+    } else
+        size = pthread_get_stacksize_np(thread);
+
+    m_bound = static_cast<char*>(m_origin) - size;
 }
 
 #elif OS(QNX)
