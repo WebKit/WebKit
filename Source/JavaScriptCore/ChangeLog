@@ -1,3 +1,21 @@
+2013-04-25  Julien Brianceau  <jbrianceau@nds.com>
+
+        REGRESSION(r137994): Random crashes occur with SH4 JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=115167.
+
+        Reviewed by Oliver Hunt.
+
+        Since r137994, uncommited pages could be inside the area of memory in
+        parameter of the cacheFlush function. That's why we have to flush each
+        page separately to avoid a fail of the whole flush, if an uncommited page
+        is in the area.
+
+        This patch is very similar to changeset 145194 made for ARMv7 architecture,
+        see https://bugs.webkit.org/show_bug.cgi?id=111441 for further information.
+
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::cacheFlush):
+
 2013-04-24  Mark Lam  <mark.lam@apple.com>
 
         Add watchdog timer polling for the DFG.
