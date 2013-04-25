@@ -104,6 +104,8 @@ public:
     void addOverlay(WebCore::LayerCompositingThread*);
     void removeOverlay(WebCore::LayerCompositingThread*);
 
+    void findFixedElementRect(WebCore::LayerCompositingThread*, WebCore::IntRect&);
+
 protected:
     WebPageCompositorPrivate(WebPagePrivate*, WebPageCompositorClient*);
 

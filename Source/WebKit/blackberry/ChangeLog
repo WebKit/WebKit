@@ -1,3 +1,34 @@
+2013-04-25  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Make scroll position adjustment work with pages with fixed position elements.
+        https://bugs.webkit.org/show_bug.cgi?id=115178
+
+        Reviewed by Rob Buis.
+
+        PR 308796
+
+        Currently the position WebPage::adjustDocumentScrollPosition adjusts is the top
+        left point of the viewport.
+        On the page with fixed position elements, we want it to adjust the position beneath
+        the fixed elements so it can be always visible.
+
+        The basic idea is:
+        1.  Detect if there are fixed position elements before going through ProximityDetector.
+        2.  If the fixed element exists, calculate its the size and the actual visible position
+            beneath it.
+        3.  Pass the position to ProximityDetector. Then according to the new position we get,
+            calculate the top left position of the viewport (final scroll position).
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::fixedElementSizeDelta):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::findFixedElementRect):
+        (WebKit):
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+
 2013-04-25  Mike Lattanzio  <mlattanzio@blackberry.com>
 
         [BlackBerry] Enable balanced page group load deferrer behaviour.

@@ -332,6 +332,7 @@ public:
     void inspectCurrentContextElement();
 
     Platform::IntPoint adjustDocumentScrollPosition(const Platform::IntPoint& documentScrollPosition, const Platform::IntRect& documentPaddingRect);
+    Platform::IntSize fixedElementSizeDelta();
 
     // FIXME: Needs API review on this header. See PR #120402.
     void notifyPagePause();

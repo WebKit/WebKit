@@ -5238,6 +5238,21 @@ Platform::IntPoint WebPage::adjustDocumentScrollPosition(const Platform::IntPoin
     return d->m_proximityDetector->findBestPoint(documentScrollPosition, documentPaddingRect);
 }
 
+Platform::IntSize WebPage::fixedElementSizeDelta()
+{
+    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+
+    // Traverse the layer tree and find the fixed element rect if there is one.
+    IntRect fixedElementRect;
+    if (d->compositor() && d->compositor()->rootLayer())
+        d->compositor()->findFixedElementRect(d->compositor()->rootLayer(), fixedElementRect);
+
+    // Ignore the fixed element if it is not at the top of page.
+    if (!fixedElementRect.isEmpty() && !fixedElementRect.y())
+        return Platform::IntSize(0, fixedElementRect.height());
+    return Platform::IntSize();
+}
+
 bool WebPagePrivate::compositorDrawsRootLayer() const
 {
     if (!m_mainFrame)
