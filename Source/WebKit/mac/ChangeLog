@@ -1,3 +1,15 @@
+2013-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix for smart compliers.
+
+        Reviewed by Tim Horton.
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:] returns an NSDictionary,
+        not a NSMutableDictionary.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::updateSpellingUIWithGrammarString):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible

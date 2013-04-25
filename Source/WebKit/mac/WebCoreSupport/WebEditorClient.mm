@@ -889,7 +889,7 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
     }
     NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
     NSString* grammarUserDescription = grammarDetail.userDescription;
-    NSMutableDictionary* grammarDetailDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections, NSGrammarCorrections, nil];
+    NSDictionary* grammarDetailDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections, NSGrammarCorrections, nil];
     
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict];
 }
