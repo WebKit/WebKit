@@ -1244,7 +1244,7 @@ public:
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
     // (specifically, in this case, 0).
-    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID)
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID, bool negZeroCheck = true)
     {
         m_assembler.vcvt_s32_f64(ARMRegisters::SD0 << 1, src);
         m_assembler.vmov_arm32(dest, ARMRegisters::SD0 << 1);
@@ -1254,7 +1254,8 @@ public:
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, ARMRegisters::SD0));
 
         // If the result is zero, it might have been -0.0, and 0.0 equals to -0.0
-        failureCases.append(branchTest32(Zero, dest));
+        if (negZeroCheck)
+            failureCases.append(branchTest32(Zero, dest));
     }
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)

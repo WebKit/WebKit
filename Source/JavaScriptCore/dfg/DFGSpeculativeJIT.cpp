@@ -2395,7 +2395,8 @@ void SpeculativeJIT::compileDoubleAsInt32(Node* node)
     GPRReg resultGPR = result.gpr();
 
     JITCompiler::JumpList failureCases;
-    m_jit.branchConvertDoubleToInt32(valueFPR, resultGPR, failureCases, scratchFPR);
+    bool negZeroCheck = !nodeCanIgnoreNegativeZero(node->arithNodeFlags());
+    m_jit.branchConvertDoubleToInt32(valueFPR, resultGPR, failureCases, scratchFPR, negZeroCheck);
     forwardSpeculationCheck(Overflow, JSValueRegs(), 0, failureCases, ValueRecovery::inFPR(valueFPR));
 
     integerResult(resultGPR, node);
@@ -2908,12 +2909,12 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
                 speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, eax.gpr(), TrustedImm32(-2147483647-1)));
             m_jit.assembler().cdq();
             m_jit.assembler().idivl_r(scratchGPR);
-            // Check that we're not about to create negative zero.
-            // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
-            JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-            numeratorPositive.link(&m_jit);
-            
+            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                // Check that we're not about to create negative zero.
+                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+                numeratorPositive.link(&m_jit);
+            }
             if (op1SaveGPR != op1Gpr)
                 unlock(op1SaveGPR);
 
@@ -2921,7 +2922,7 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
             return;
         }
     }
-#elif CPU(APPLE_ARMV7S)
+#elif CPU(APPLE_ARMV7S) || CPU(ARM_THUMB2)
     if (isInt32Constant(node->child2().node())) {
         int32_t divisor = valueOfInt32Constant(node->child2().node());
         if (divisor > 0 && hasOneBitSet(divisor)) { // If power of 2 then just mask
@@ -2937,6 +2938,12 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
             m_jit.assembler().it(ARMv7Assembler::ConditionLT);
             m_jit.assembler().neg(resultGPR, resultGPR);
 
+            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                // Check that we're not about to create negative zero.
+                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
+                numeratorPositive.link(&m_jit);
+            }
             integerResult(resultGPR, node);
             return;
         }
@@ -3000,11 +3007,12 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     if (op2TempGPR != InvalidGPRReg)
         unlock(op2TempGPR);
 
-    // Check that we're not about to create negative zero.
-    // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
-    JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-    numeratorPositive.link(&m_jit);
+    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        // Check that we're not about to create negative zero.
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+        numeratorPositive.link(&m_jit);
+    }
     
     if (op1SaveGPR != op1GPR)
         unlock(op1SaveGPR);
@@ -3029,7 +3037,7 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
         // Check that we're not about to create negative zero.
         JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
+        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
         numeratorPositive.link(&m_jit);
     }
 
@@ -3048,8 +3056,14 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     FPRTemporary scratch(this);
     GPRTemporary intResult(this);
     JITCompiler::JumpList failureCases;
-    m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr());
+    m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr(), false);
     speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
+    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        // Check that we're not about to create negative zero.
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1GPR, TrustedImm32(0));
+        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, intResult.gpr()));
+        numeratorPositive.link(&m_jit);
+    }
     
     integerResult(intResult.gpr(), node);
 #endif // CPU(X86) || CPU(X86_64)
@@ -3296,7 +3310,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         else {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchNeg32(MacroAssembler::Overflow, result.gpr()));
             if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, result.gpr()));
+                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, result.gpr()));
         }
 
         integerResult(result.gpr(), node);

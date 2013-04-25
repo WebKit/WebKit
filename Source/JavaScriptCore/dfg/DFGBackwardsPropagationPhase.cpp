@@ -66,14 +66,15 @@ private:
         if (!m_graph.isNumberConstant(node))
             return false;
         double value = m_graph.valueOfNumberConstant(node);
-        return !value && 1.0 / value < 0.0;
+        return (value || 1.0 / value > 0.0);
     }
     
-    bool isNotZero(Node* node)
+    bool isNotPosZero(Node* node)
     {
         if (!m_graph.isNumberConstant(node))
             return false;
-        return !!m_graph.valueOfNumberConstant(node);
+        double value = m_graph.valueOfNumberConstant(node);
+        return (value || 1.0 / value < 0.0);
     }
 
     // Tests if the absolute value is strictly less than the power of two.
@@ -247,7 +248,7 @@ private:
         }
             
         case ArithSub: {
-            if (isNotZero(node->child1().node()) || isNotZero(node->child2().node()))
+            if (isNotNegZero(node->child1().node()) || isNotPosZero(node->child2().node()))
                 flags &= ~NodeNeedsNegZero;
             if (!isWithinPowerOfTwo<32>(node->child1()) && !isWithinPowerOfTwo<32>(node->child2()))
                 flags |= NodeUsedAsNumber;

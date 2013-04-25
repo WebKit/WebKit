@@ -1104,7 +1104,7 @@ public:
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
     // (specifically, in this case, 0).
-    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID)
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID, bool negZeroCheck = true)
     {
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
@@ -1114,7 +1114,8 @@ public:
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, fpTempRegister));
 
         // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
-        failureCases.append(branchTest32(Zero, dest));
+        if (negZeroCheck)
+            failureCases.append(branchTest32(Zero, dest));
     }
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)

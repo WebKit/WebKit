@@ -1,3 +1,44 @@
+2013-04-25  Roman Zhuykov  <zhroma@ispras.ru>
+
+        Fix problems with processing negative zero on DFG.
+        https://bugs.webkit.org/show_bug.cgi?id=113862
+
+        Reviewed by Filip Pizlo.
+
+        Fix NodeNeedsNegZero flag propagation in BackwardPropagationPhase.
+        Function arithNodeFlags should not mask NodeNeedsNegZero flag for ArithNegate and DoubleAsInt32
+        nodes and this flag should be always used to decide where we need to generate nezative-zero checks.
+        Remove unnecessary negative-zero checks from integer ArithDiv on ARM.
+        Also remove such checks from integer ArithMod on ARM and X86, and make them always to
+        check not only "modulo_result == 0" but also "dividend < 0".
+        Generate faster code for case when ArithMod operation divisor is constant power of 2 on ARMv7
+        in the same way as on ARMv7s, and add negative-zero checks into this code when needed.
+        Change speculationCheck ExitKind from Overflow to NegativeZero where applicable.
+ 
+        This shows 30% speedup of math-spectral-norm, and 5% speedup
+        on SunSpider overall on ARMv7 Linux.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchConvertDoubleToInt32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchConvertDoubleToInt32):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchConvertDoubleToInt32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isNotNegZero):
+        (JSC::DFG::BackwardsPropagationPhase::isNotPosZero):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+
 2013-04-25  Oliver Hunt  <oliver@apple.com>
 
         Stack guards are too conservative

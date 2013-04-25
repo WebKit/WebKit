@@ -2629,13 +2629,14 @@ public:
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
     // (specifically, in this case, 0).
-    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp)
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp, bool negZeroCheck = true)
     {
         m_assembler.cvtwd(fpTempRegister, src);
         m_assembler.mfc1(dest, fpTempRegister);
 
         // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
-        failureCases.append(branch32(Equal, dest, MIPSRegisters::zero));
+        if (negZeroCheck)
+            failureCases.append(branch32(Equal, dest, MIPSRegisters::zero));
 
         // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
         convertInt32ToDouble(dest, fpTemp);

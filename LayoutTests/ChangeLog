@@ -1,3 +1,22 @@
+2013-04-25  Roman Zhuykov  <zhroma@ispras.ru>
+
+        Arithmetic operations with negative zero should be optimized correclty.
+        https://bugs.webkit.org/show_bug.cgi?id=113862
+
+        Reviewed by Filip Pizlo.
+        * fast/js/regress/negative-zero-divide-expected.txt: Added.
+        * fast/js/regress/negative-zero-divide.html: Added.
+        * fast/js/regress/negative-zero-modulo-expected.txt: Added.
+        * fast/js/regress/negative-zero-modulo.html: Added.
+        * fast/js/regress/negative-zero-negate-expected.txt: Added.
+        * fast/js/regress/negative-zero-negate.html: Added.
+        * fast/js/regress/script-tests/negative-zero-divide.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/negative-zero-modulo.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/negative-zero-negate.js: Added.
+        (foo):
+
 2013-04-25  Kent Tamura  <tkent@chromium.org>
 
         Ignore invalid regular expressions for input[pattern].
