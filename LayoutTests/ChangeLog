@@ -1,3 +1,13 @@
+2013-04-24  Kent Tamura  <tkent@chromium.org>
+
+        Back references don't work in pattern attribute
+        https://bugs.webkit.org/show_bug.cgi?id=105875
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/forms/ValidityState-patternMismatch-expected.txt:
+        * fast/forms/ValidityState-patternMismatch.html:
+
 2013-04-24  Roger Fong  <roger_fong@apple.com>
 
         Roll out AppleWin re-baselines from r149088.

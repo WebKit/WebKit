@@ -43,7 +43,7 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     // Empty values can't be mismatched
     if (rawPattern.isNull() || value.isEmpty())
         return false;
-    String pattern = "^(" + rawPattern + ")$";
+    String pattern = "^(?:" + rawPattern + ")$";
     int matchLength = 0;
     int valueLength = value.length();
     int matchOffset = RegularExpression(pattern, TextCaseSensitive).match(value, 0, &matchLength);

@@ -1,3 +1,19 @@
+2013-04-24  Kent Tamura  <tkent@chromium.org>
+
+        Back references don't work in pattern attribute
+        https://bugs.webkit.org/show_bug.cgi?id=105875
+
+        Reviewed by Geoffrey Garen.
+
+        This imports a part of Blink r148951.
+
+        Tests: Update fast/forms/ValidityState-patternMismatch.html
+
+        * html/BaseTextInputType.cpp:
+        (WebCore::BaseTextInputType::patternMismatch):
+        Don't use capturing parentheses. They affected back references in
+        pattern attribute values.
+
 2013-04-24  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Cursor should become an i-beam when over selectable text
