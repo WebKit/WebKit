@@ -1,3 +1,11 @@
+2013-04-25  Andreas Kling  <akling@apple.com>
+
+        Remove ENABLE(PARSED_STYLE_SHEET_CACHING) and make it always-on.
+
+        Rubber-stamped by Anders Koivisto.
+
+        * wtf/FeatureDefines.h:
+
 2013-04-25  peavo@outlook.com  <peavo@outlook.com>
 
         [Windows] Compile fix.

@@ -300,7 +300,6 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 
     CSSParserContext parserContext(document(), baseURL, charset);
 
-#if ENABLE(PARSED_STYLE_SHEET_CACHING)
     if (RefPtr<StyleSheetContents> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext)) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
@@ -314,7 +313,6 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
         notifyLoadedSheetAndAllCriticalSubresources(false);
         return;
     }
-#endif
 
     RefPtr<StyleSheetContents> styleSheet = StyleSheetContents::create(href, parserContext);
 
@@ -328,10 +326,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     styleSheet->notifyLoadedSheet(cachedStyleSheet);
     styleSheet->checkLoaded();
 
-#if ENABLE(PARSED_STYLE_SHEET_CACHING)
     if (styleSheet->isCacheable())
         const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet);
-#endif
 }
 
 bool HTMLLinkElement::styleSheetIsLoading() const
