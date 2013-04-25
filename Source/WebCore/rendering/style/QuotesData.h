@@ -38,7 +38,7 @@ public:
     // FIXME: this should be an operator==.
     static bool equals(const QuotesData*, const QuotesData*);
 
-    void addPair(const std::pair<String, String> quotePair);
+    void addPair(const std::pair<String, String>& quotePair);
     const String getOpenQuote(int index) const;
     const String getCloseQuote(int index) const;
 

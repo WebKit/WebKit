@@ -1,3 +1,17 @@
+2013-04-24  Kangil Han  <kangil.han@samsung.com>
+
+        Function parameter quotePair can be passed by reference
+        https://bugs.webkit.org/show_bug.cgi?id=115089
+
+        Reviewed by Alexey Proskuryakov.
+
+        Minor performance patch.
+
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::addPair):
+        * rendering/style/QuotesData.h:
+        (QuotesData):
+
 2013-04-24  Brady Eidson  <beidson@apple.com>
 
         Implementors of CachedResource subclasses should be forced to decide if encoded data can be replaced.

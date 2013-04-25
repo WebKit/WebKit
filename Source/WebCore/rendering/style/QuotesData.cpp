@@ -39,7 +39,7 @@ PassRefPtr<QuotesData> QuotesData::create(String open1, String close1, String op
     return data;
 }
 
-void QuotesData::addPair(std::pair<String, String> quotePair)
+void QuotesData::addPair(const std::pair<String, String>& quotePair)
 {
     m_quotePairs.append(quotePair);
 }
