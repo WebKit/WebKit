@@ -1,3 +1,16 @@
+2013-04-25  Xavier Castano  <xcastanho@igalia.com>
+
+        [GTK] Tools/gtk/install-dependencies added ragel dependency
+        https://bugs.webkit.org/show_bug.cgi?id=115163
+
+        Reviewed by Xan Lopez.
+
+        The install-dependencies script was missing a dependency on ragel
+        which is expected when building HarfBuzz.
+
+        * gtk/install-dependencies: Added a dependency on ragel for both
+        apt and yum.
+
 2013-04-25  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Remove pango from optional jhbuild dependencies

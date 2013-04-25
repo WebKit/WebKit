@@ -98,7 +98,8 @@ function installDependenciesWithApt {
         libgpg-error-dev \
         libp11-kit-dev \
         libtiff4-dev \
-        libcroco3-dev
+        libcroco3-dev \
+        ragel
 }
 
 function installDependenciesWithYum {
@@ -162,7 +163,8 @@ function installDependenciesWithYum {
         libp11-devel \
         libtiff-devel \
         libcroco-devel \
-        mesa-libEGL-devel
+        mesa-libEGL-devel \
+        ragel
 }
 
 checkInstaller
