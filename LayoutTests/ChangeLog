@@ -1,3 +1,17 @@
+2013-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Garbage at the top of http://www.technologyreview.com after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=114825
+
+        Reviewed by Tim Horton.
+        
+        Test that sets visibility:hidden on an element with some complex
+        configuration of layer children, and dumps the layer tree to check
+        that the contents are not marked as opaque.
+
+        * compositing/contents-opaque/visibility-hidden-expected.txt: Added.
+        * compositing/contents-opaque/visibility-hidden.html: Added.
+
 2013-04-24  David Kilzer  <ddkilzer@apple.com>
 
         Fix invalid test names in jsc-test-list

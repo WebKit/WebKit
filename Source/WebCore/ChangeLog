@@ -1,5 +1,25 @@
 2013-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Garbage at the top of http://www.technologyreview.com after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=114825
+
+        Reviewed by Tim Horton.
+
+        Garbage pixels are caused by GraphicsLayerCA setting a layer to be opaque,
+        but then not painting anything into it. On this page, the element is
+        toggled to be visibility:hidden on scrolling, but RenderLayer::backgroundIsKnownToBeOpaqueInRect()
+        failed to consider that as something that can cause backgrounds not to be opaque.
+        
+        For the bug to happen, some subtle interactions with r142012 come into play
+        for the layer to remain visible, hence the slightly complex testcase.
+        
+        Test: compositing/contents-opaque/visibility-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::backgroundIsKnownToBeOpaqueInRect):
+
+2013-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         Dump layer opaqueness in the Compositing log output
         https://bugs.webkit.org/show_bug.cgi?id=115132
 

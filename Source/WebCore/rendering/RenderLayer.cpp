@@ -5564,6 +5564,10 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (paintsWithTransparency(PaintBehaviorNormal))
         return false;
 
+    ASSERT(!m_visibleContentStatusDirty);
+    if (!hasVisibleContent())
+        return false;
+
 #if ENABLE(CSS_FILTERS)
     if (paintsWithFilters() && renderer()->style()->filter().hasFilterThatAffectsOpacity())
         return false;
