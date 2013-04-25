@@ -67,7 +67,8 @@
 #if OS(WINCE)
 #include <cmnintrin.h>
 #else
-#include <intrin.h>
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
 #endif
 #include <windows.h>
 #elif OS(QNX)
