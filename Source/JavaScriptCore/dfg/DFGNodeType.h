@@ -264,7 +264,11 @@ namespace JSC { namespace DFG {
     /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
     /* this point, but execution does continue in the basic block - just in a */\
     /* different compiler. */\
-    macro(ForceOSRExit, NodeMustGenerate)
+    macro(ForceOSRExit, NodeMustGenerate) \
+    \
+    /* Checks the watchdog timer. If the timer has fired, we OSR exit to the */ \
+    /* baseline JIT to redo the watchdog timer check, and service the timer. */ \
+    macro(CheckWatchdogTimer, NodeMustGenerate) \
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

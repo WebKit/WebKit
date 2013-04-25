@@ -4770,6 +4770,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CheckWatchdogTimer:
+        speculationCheck(
+            WatchdogTimerFired, JSValueRegs(), 0,
+            m_jit.branchTest8(
+                JITCompiler::NonZero,
+                JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog.timerDidFireAddress())));
+        break;
+
     case Phantom:
         DFG_NODE_DO_TO_CHILDREN(m_jit.graph(), node, speculate);
         noResult(node);

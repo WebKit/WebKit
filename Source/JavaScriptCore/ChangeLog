@@ -1,3 +1,44 @@
+2013-04-24  Mark Lam  <mark.lam@apple.com>
+
+        Add watchdog timer polling for the DFG.
+        https://bugs.webkit.org/show_bug.cgi?id=115134.
+
+        Reviewed by Geoffrey Garen.
+
+        The strategy is to add a speculation check to the DFG generated code to
+        test if the watchdog timer has fired or not. If the watchdog timer has
+        fired, the generated code will do an OSR exit to the baseline JIT, and
+        let it handle servicing the watchdog timer.
+
+        If the watchdog is not enabled, this speculation check will not be
+        emitted.
+
+        * API/tests/testapi.c:
+        (currentCPUTime_callAsFunction):
+        (extendTerminateCallback):
+        (main):
+        - removed try/catch statements so that we can test the watchdog on the DFG.
+        - added JS bindings to a native currentCPUTime() function so that the timeout
+          tests can be more accurate.
+        - also shortened the time values so that the tests can complete sooner.
+
+        * bytecode/ExitKind.h:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+
 2013-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         Special thunks for math functions should work on ARMv7

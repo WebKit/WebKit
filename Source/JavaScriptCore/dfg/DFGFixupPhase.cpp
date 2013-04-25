@@ -859,6 +859,7 @@ private:
         case GarbageValue:
         case CountExecution:
         case ForceOSRExit:
+        case CheckWatchdogTimer:
             break;
 #else
         default:

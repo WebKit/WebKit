@@ -1068,6 +1068,18 @@ static double currentCPUTime()
     return time;
 }
 
+static JSValueRef currentCPUTime_callAsFunction(JSContextRef ctx, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(functionObject);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
+
+    ASSERT(JSContextGetGlobalContext(ctx) == context);
+    return JSValueMakeNumber(ctx, currentCPUTime());
+}
+
 bool shouldTerminateCallbackWasCalled = false;
 static bool shouldTerminateCallback(JSContextRef ctx, void* context)
 {
@@ -1093,7 +1105,7 @@ static bool extendTerminateCallback(JSContextRef ctx, void* context)
     extendTerminateCallbackCalled++;
     if (extendTerminateCallbackCalled == 1) {
         JSContextGroupRef contextGroup = JSContextGetGroup(ctx);
-        JSContextGroupSetExecutionTimeLimit(contextGroup, 2, extendTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, .200f, extendTerminateCallback, 0);
         return false;
     }
     return true;
@@ -1749,22 +1761,55 @@ int main(int argc, char* argv[])
     }
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
+    JSStringRef currentCPUTimeStr = JSStringCreateWithUTF8CString("currentCPUTime");
+    JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr, currentCPUTime_callAsFunction);
+    JSObjectSetProperty(context, globalObject, currentCPUTimeStr, currentCPUTimeFunction, kJSPropertyAttributeNone, NULL); 
+    JSStringRelease(currentCPUTimeStr);
+
     /* Test script timeout: */
-    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, shouldTerminateCallback, 0);
+    JSContextGroupSetExecutionTimeLimit(contextGroup, .10f, shouldTerminateCallback, 0);
     {
-        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
         double startTime;
         double endTime;
         exception = NULL;
+        shouldTerminateCallbackWasCalled = false;
         startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
         endTime = currentCPUTime();
 
-        if (((endTime - startTime) < 2) && shouldTerminateCallbackWasCalled)
+        if (((endTime - startTime) < .150f) && shouldTerminateCallbackWasCalled)
             printf("PASS: script timed out as expected.\n");
         else {
-            if (!((endTime - startTime) < 2))
+            if (!((endTime - startTime) < .150f))
+                printf("FAIL: script did not timed out as expected.\n");
+            if (!shouldTerminateCallbackWasCalled)
+                printf("FAIL: script timeout callback was not called.\n");
+            failed = true;
+        }
+
+        if (!exception) {
+            printf("FAIL: TerminationExecutionException was not thrown.\n");
+            failed = true;
+        }
+    }
+
+    /* Test the script timeout's TerminationExecutionException should NOT be catchable: */
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 0.10f, shouldTerminateCallback, 0);
+    {
+        const char* loopForeverScript = "var startTime = currentCPUTime(); try { while (true) { if (currentCPUTime() - startTime > .150) break; } } catch(e) { }";
+        JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
+        double startTime;
+        double endTime;
+        exception = NULL;
+        shouldTerminateCallbackWasCalled = false;
+        startTime = currentCPUTime();
+        v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        endTime = currentCPUTime();
+
+        if (((endTime - startTime) >= .150f) || !shouldTerminateCallbackWasCalled) {
+            if (!((endTime - startTime) < .150f))
                 printf("FAIL: script did not timed out as expected.\n");
             if (!shouldTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
@@ -1772,7 +1817,7 @@ int main(int argc, char* argv[])
         }
 
         if (exception)
-            printf("PASS: TerminationExecutionException was not catchable.\n");
+            printf("PASS: TerminationExecutionException was not catchable as expected.\n");
         else {
             printf("FAIL: TerminationExecutionException was caught.\n");
             failed = true;
@@ -1780,9 +1825,9 @@ int main(int argc, char* argv[])
     }
 
     /* Test script timeout cancellation: */
-    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, cancelTerminateCallback, 0);
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 0.10f, cancelTerminateCallback, 0);
     {
-        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
         double startTime;
         double endTime;
@@ -1791,10 +1836,10 @@ int main(int argc, char* argv[])
         v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
         endTime = currentCPUTime();
 
-        if (((endTime - startTime) >= 2) && cancelTerminateCallbackWasCalled && !exception)
+        if (((endTime - startTime) >= .150f) && cancelTerminateCallbackWasCalled && !exception)
             printf("PASS: script timeout was cancelled as expected.\n");
         else {
-            if (((endTime - startTime) < 2) || exception)
+            if (((endTime - startTime) < .150) || exception)
                 printf("FAIL: script timeout was not cancelled.\n");
             if (!cancelTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
@@ -1803,9 +1848,9 @@ int main(int argc, char* argv[])
     }
 
     /* Test script timeout extension: */
-    JSContextGroupSetExecutionTimeLimit(contextGroup, 1, extendTerminateCallback, 0);
+    JSContextGroupSetExecutionTimeLimit(contextGroup, 0.100f, extendTerminateCallback, 0);
     {
-        const char* loopForeverScript = "startTime = Date.now(); try { while (true) { if (Date.now() - startTime > 5000) break; } } catch(e) { }";
+        const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .500) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
         double startTime;
         double endTime;
@@ -1816,12 +1861,12 @@ int main(int argc, char* argv[])
         endTime = currentCPUTime();
         deltaTime = endTime - startTime;
 
-        if ((deltaTime >= 3) && (deltaTime < 5) && (extendTerminateCallbackCalled == 2) && exception)
+        if ((deltaTime >= .300f) && (deltaTime < .500f) && (extendTerminateCallbackCalled == 2) && exception)
             printf("PASS: script timeout was extended as expected.\n");
         else {
-            if (deltaTime < 2)
+            if (deltaTime < .200f)
                 printf("FAIL: script timeout was not extended as expected.\n");
-            else if (deltaTime >= 5)
+            else if (deltaTime >= .500f)
                 printf("FAIL: script did not timeout.\n");
 
             if (extendTerminateCallbackCalled < 1)
@@ -1830,7 +1875,7 @@ int main(int argc, char* argv[])
                 printf("FAIL: script timeout callback was not called after timeout extension.\n");
 
             if (!exception)
-                printf("FAIL: TerminationExecutionException was caught during timeout extension test.\n");
+                printf("FAIL: TerminationExecutionException was not thrown during timeout extension test.\n");
 
             failed = true;
         }

@@ -1538,6 +1538,10 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         m_isValid = false;
         break;
             
+    case CheckWatchdogTimer:
+        node->setCanExit(true);
+        break;
+            
     case Phantom:
     case InlineStart:
     case Nop:

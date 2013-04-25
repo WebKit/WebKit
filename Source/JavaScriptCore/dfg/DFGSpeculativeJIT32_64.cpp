@@ -4926,6 +4926,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CheckWatchdogTimer:
+        speculationCheck(
+            WatchdogTimerFired, JSValueRegs(), 0,
+            m_jit.branchTest8(
+                JITCompiler::NonZero,
+                JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog.timerDidFireAddress())));
+        break;
+
     case CountExecution:
         m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node->executionCounter()->address()));
         break;

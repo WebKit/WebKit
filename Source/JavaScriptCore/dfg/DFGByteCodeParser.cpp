@@ -3285,9 +3285,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (!m_inlineStackTop->m_caller)
                 m_currentBlock->isOSRTarget = true;
 
-            // Emit a phantom node to ensure that there is a placeholder node for this bytecode
-            // op.
-            addToGraph(Phantom);
+            if (m_vm->watchdog.isEnabled())
+                addToGraph(CheckWatchdogTimer);
+            else {
+                // Emit a phantom node to ensure that there is a placeholder
+                // node for this bytecode op.
+                addToGraph(Phantom);
+            }
             
             NEXT_OPCODE(op_loop_hint);
         }

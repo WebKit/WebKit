@@ -526,6 +526,7 @@ private:
         case Phantom:
         case PutGlobalVar:
         case PutGlobalVarCheck:
+        case CheckWatchdogTimer:
             break;
             
         // These gets ignored because it doesn't do anything.

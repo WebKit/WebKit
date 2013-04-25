@@ -79,11 +79,8 @@ void Watchdog::setTimeLimit(VM& vm, double limit,
     // timeout value, then any existing JITted code will have the appropriate
     // polling checks. Hence, there is no need to re-do this flushing.
     if (!wasEnabled) {
-        // For now, we only support this feature when the DFG JIT is disabled.
-        Options::useDFGJIT() = false;
-
-        // And if we've previously compiled any functions, we need to deopt
-        // them because they don't habe the needed polling checks yet.
+        // And if we've previously compiled any functions, we need to revert
+        // them because they don't have the needed polling checks yet.
         vm.releaseExecutableMemory();
     }
 
