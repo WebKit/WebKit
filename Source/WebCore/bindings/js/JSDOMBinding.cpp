@@ -33,6 +33,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include <interpreter/Interpreter.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
@@ -146,33 +147,47 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
         return;
 
     Interpreter::ErrorHandlingMode mode(exec);
-    String errorMessage = exception.toString(exec)->value(exec);
-    int lineNumber = 0;
-    String exceptionSourceURL;
 
-    RefCountedArray<StackFrame> stackTrace = exec->vm().exceptionStack;
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture));
     exec->clearException();
     exec->clearSupplementaryExceptionInfo();
-
-    if (exception.isObject()) {
-        JSObject* exceptionObject = exception.toObject(exec);
-        lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
-        exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec)->value(exec);
-    } else if (stackTrace.size()) {
-        lineNumber = stackTrace[0].line();
-        exceptionSourceURL = stackTrace[0].friendlySourceURL();
-    }
-
-    if (ExceptionBase* exceptionBase = toExceptionBase(exception))
-        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
         if (!window->impl()->isCurrentlyDisplayedInFrame())
             return;
     }
+
+    int lineNumber = 0;
+    int columnNumber = 0;
+    String exceptionSourceURL;
+    if (callStack->size()) {
+        const ScriptCallFrame& frame = callStack->at(0);
+        lineNumber = frame.lineNumber();
+        columnNumber = frame.columnNumber();
+        exceptionSourceURL = frame.sourceURL();
+    } else {
+        // There may not be an exceptionStack for a <script> SyntaxError. Fallback to getting at least the line and sourceURL from the exception.
+        JSObject* exceptionObject = exception.toObject(exec);
+        JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
+        lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
+        JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
+        exceptionSourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
+    }
+
+    String errorMessage;
+    if (ExceptionBase* exceptionBase = toExceptionBase(exception))
+        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
+    else {
+        // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
+        // If this is a custon exception object, call toString on it to try and get a nice string representation for the exception.
+        errorMessage = exception.toString(exec)->value(exec);
+        exec->clearException();
+        exec->clearSupplementaryExceptionInfo();
+    }
+
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
-    scriptExecutionContext->reportException(errorMessage, lineNumber, exceptionSourceURL, 0, cachedScript);
+    scriptExecutionContext->reportException(errorMessage, lineNumber, columnNumber, exceptionSourceURL, callStack->size() ? callStack : 0, cachedScript);
 }
 
 void reportCurrentException(ExecState* exec)

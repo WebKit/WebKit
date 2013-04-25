@@ -1,3 +1,42 @@
+2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ScriptExecutionContext log exception should include a column number
+        https://bugs.webkit.org/show_bug.cgi?id=114315
+
+        Reviewed by Oliver Hunt.
+
+        Test: inspector/console/console-exception-stack-traces.html
+
+        * bindings/js/ScriptCallStackFactory.h:
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStackFromException):
+        Generate a ScriptCallStack from an exception. Use the vm.exceptionStack
+        if available, and fallback to the exception object where needed.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        Always include a non-empty call stack with exceptions.
+        Where not provided, fallback to the exception object.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::logExceptionToConsole):
+        * dom/ScriptExecutionContext.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::PendingException::PendingException):
+        (ScriptExecutionContext::PendingException):
+        (WebCore::ScriptExecutionContext::reportException):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::logExceptionToConsole):
+        * workers/SharedWorkerContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::logExceptionToConsole):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::performTask):
+        Plumb columnNumber through as needed.
+
 2013-04-25  Gregg Tavares  <gman@chromium.org>
 
         Fix build files so WebGLDebugXXX extensions can be used if enabled.

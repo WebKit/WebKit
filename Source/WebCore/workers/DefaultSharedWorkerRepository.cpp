@@ -176,10 +176,9 @@ GroupSettings* SharedWorkerProxy::groupSettings() const
     return 0;
 }
 
-static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, int /*columnNumber*/, const String& sourceURL)
+static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    // FIXME: <http://webkit.org/b/114315> ScriptExecutionContext log exception should include a column number
-    context->reportException(errorMessage, lineNumber, sourceURL, 0);
+    context->reportException(errorMessage, lineNumber, columnNumber, sourceURL, 0);
 }
 
 void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)

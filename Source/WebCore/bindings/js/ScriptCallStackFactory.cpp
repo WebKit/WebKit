@@ -90,6 +90,35 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
     return ScriptCallStack::create(frames);
 }
 
+PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::JSValue& exception, size_t maxStackSize)
+{
+    Vector<ScriptCallFrame> frames;
+    RefCountedArray<StackFrame> stackTrace = exec->vm().exceptionStack;
+    for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
+        if (!stackTrace[i].callee && frames.size())
+            break;
+
+        String functionName = stackTrace[i].friendlyFunctionName(exec);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, stackTrace[i].line(), stackTrace[i].column()));
+    }
+
+    // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
+    // Fallback to getting at least the line and sourceURL from the exception if it has values and the exceptionStack doesn't.
+    if (frames.size() > 0) {
+        const ScriptCallFrame& firstCallFrame = frames.first();
+        JSObject* exceptionObject = exception.toObject(exec);
+        if (exception.isObject() && firstCallFrame.sourceURL().isEmpty()) {
+            JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
+            int lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
+            JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
+            String exceptionSourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
+            frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, lineNumber, 0);
+        }
+    }
+
+    return ScriptCallStack::create(frames);
+}
+
 PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec)
 {
     size_t maxStackSize = 1;

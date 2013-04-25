@@ -1,3 +1,26 @@
+2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ScriptExecutionContext log exception should include a column number
+        https://bugs.webkit.org/show_bug.cgi?id=114315
+
+        Reviewed by Oliver Hunt.
+
+        * inspector/console/console-exception-stack-traces-expected.txt: Added.
+        * inspector/console/console-exception-stack-traces.html: Added.
+        Verifies that exceptions have stack traces and match a console.trace stack.
+
+        * http/tests/inspector-enabled/console-exception-while-no-inspector-expected.txt: Removed.
+        * http/tests/inspector-enabled/console-exception-while-no-inspector.html: Removed.
+        We now save exception backtraces even if the inspector is not open.
+
+        * fast/dom/javascript-url-exception-isolation-expected.txt
+        * fast/events/remove-target-with-shadow-in-drag-expected.txt
+        * fast/events/set-attribute-listener-window-onerror-crash-expected.txt
+        * inspector-protocol/media-query-listener-exception-expected.txt:
+        * inspector/console/console-uncaught-exception-expected.txt:
+        * inspector/console/console-uncaught-exception-in-eval-expected.txt:
+        Update results that now include backtraces or different data. Most better, some worse.
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLOptionsCollection's namedItem and name getter should return the first item

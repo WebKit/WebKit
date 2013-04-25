@@ -78,11 +78,10 @@ SharedWorkerThread* SharedWorkerContext::thread()
     return static_cast<SharedWorkerThread*>(Base::thread());
 }
 
-void SharedWorkerContext::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void SharedWorkerContext::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack> callStack)
 {
-    // FIXME: <http://webkit.org/b/114315> ScriptExecutionContext log exception should include a column number
-    WorkerContext::logExceptionToConsole(errorMessage, sourceURL, lineNumber, callStack);
-    addMessageToWorkerConsole(JSMessageSource, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, 0, callStack);
+    WorkerContext::logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack);
+    addMessageToWorkerConsole(JSMessageSource, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, columnNumber, callStack);
 }
 
 } // namespace WebCore

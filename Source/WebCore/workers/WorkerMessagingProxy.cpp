@@ -138,10 +138,8 @@ private:
         // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
 
         bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(m_errorMessage, m_sourceURL, m_lineNumber));
-        if (!errorHandled) {
-            // FIXME: <http://webkit.org/b/114315> ScriptExecutionContext log exception should include a column number
-            context->reportException(m_errorMessage, m_lineNumber, m_sourceURL, 0);
-        }
+        if (!errorHandled)
+            context->reportException(m_errorMessage, m_lineNumber, m_columnNumber, m_sourceURL, 0);
     }
 
     String m_errorMessage;
