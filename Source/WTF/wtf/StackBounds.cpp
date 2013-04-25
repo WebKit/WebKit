@@ -79,7 +79,7 @@ void StackBounds::initialize()
 {
     pthread_t thread = pthread_self();
     m_origin = pthread_get_stackaddr_np(thread);
-    size_t size = 0;
+    rlim_t size = 0;
     if (pthread_main_np()) {
         // FIXME: <rdar://problem/13741204>
         // pthread_get_size lies to us when we're the main thread, use get_rlimit instead
