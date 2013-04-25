@@ -1,5 +1,26 @@
 2013-04-25  Andreas Kling  <akling@apple.com>
 
+        SVG: Fix viewBox animations on shapes with non-scaling-stroke.
+        <http://webkit.org/b/115173>
+
+        From Blink r149058 by <pdr@chromium.org>:
+
+        Previously hasAttribute() to determine if a viewBox was set in the transform
+        code for non-scaling-strokes. hasAttribute() should not be used in this case,
+        as it will return false if the attribute is not set but the value is animating.
+
+        This patch switches to checking if the viewBox is empty instead of checking for
+        the presence of the attribute.
+
+        Test: svg/stroke/animated-non-scaling-stroke.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::hasEmptyViewBox):
+
+2013-04-25  Andreas Kling  <akling@apple.com>
+
         Remove isPluginElement hack in Document::setFocusedNode()
         <http://webkit.org/b/115171>
 

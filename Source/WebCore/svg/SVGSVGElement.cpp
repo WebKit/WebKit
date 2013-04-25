@@ -437,7 +437,7 @@ SVGTransform SVGSVGElement::createSVGTransformFromMatrix(const SVGMatrix& matrix
 AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const
 {
     AffineTransform viewBoxTransform;
-    if (hasAttribute(SVGNames::viewBoxAttr)) {
+    if (!hasEmptyViewBox()) {
         FloatSize size = currentViewportSize();
         viewBoxTransform = viewBoxToViewTransform(size.width(), size.height());
     }
