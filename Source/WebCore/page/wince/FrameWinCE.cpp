@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "FloatRect.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLIFrameElement.h"
