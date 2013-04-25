@@ -1,3 +1,13 @@
+2013-04-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Make gobject-introspection warnings non-fatal
+        https://bugs.webkit.org/show_bug.cgi?id=115184
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Make it so that gobject-introspection errors do not fail the buld
+        until we get to a point where gobject-introspection gives consistent warnings.
+
 2013-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebViewGroup to WebKit2 GTK+ API
