@@ -16,16 +16,12 @@ debug("Confirm that the option named 'test' is accessible from the options colle
 shouldBeEqualToString("select1.options.namedItem('test').toString()", "[object HTMLOptionElement]");
 shouldBeEqualToString("select1.options.namedItem('test').value", "Value");
 
-debug("Confirm that both options named 'test' are accessible from the options collection");
-shouldBe("select2.options.namedItem('test').length", "2");
-shouldBeEqualToString("select2.options.namedItem('test').toString()", "[object NodeList]");
-shouldBeEqualToString("select2.options.namedItem('test')[0].value", "Value1");
-shouldBeEqualToString("select2.options.namedItem('test')[1].value", "Value2");
+debug("Confirm that the options collection returns the first option when there are multiple options named 'test'");
+shouldBeEqualToString("select2.namedItem('test').toString()", "[object HTMLOptionElement]");
+shouldBeEqualToString("select2.namedItem('test').value", "Value1");
 
-shouldBe("select2.options.test.length", "2");
-shouldBeEqualToString("select2.options.test.toString()", "[object NodeList]");
-shouldBeEqualToString("select2.options.test[0].value", "Value1");
-shouldBeEqualToString("select2.options.test[1].value", "Value2");
+shouldBeEqualToString("select2.options.test.toString()", "[object HTMLOptionElement]");
+shouldBeEqualToString("select2.options.test.value", "Value1");
 
 // Clean up after ourselves
 document.body.removeChild(select1);

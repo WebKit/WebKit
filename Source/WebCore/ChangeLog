@@ -1,3 +1,24 @@
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLOptionsCollection's namedItem and name getter should return the first item
+        https://bugs.webkit.org/show_bug.cgi?id=115150
+
+        Reviewed by Andreas Kling.
+
+        Following the resolution in http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2012-December/038355.html,
+        the spefication has been updated to only return the first item when there are multiple items of the same name
+        in HTMLOptionsCollection; this new behavior matches that of Firefox and Opera (Presto).
+
+        Implement this new behavior to remove the custom binding code and use the fast path in namedItem and name
+        getter of HTMLOptionsCollection. (Obtaining all items for a given name is expensive!).
+
+        Tests: fast/dom/HTMLSelectElement/named-options.html
+               fast/dom/html-collections-named-getter.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore): Removed the custom bindings for name getter and namedItem.
+        * html/HTMLOptionsCollection.idl:
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible

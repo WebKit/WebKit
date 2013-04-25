@@ -65,10 +65,7 @@ shouldBe("elements = [createElementWithId('option', 'foo'), createElementWithId(
     + "     select.appendChild(elements[0]); select.options.length", "1");
 shouldBe("select.options['foo']", "elements[0]");
 shouldBe("select.appendChild(elements[1]); select.options.length", "2");
-shouldBe("select.options['foo'].toString()", "'[object NodeList]'");
-shouldBe("select.options['foo'].length", "2");
-shouldBe("select.options['foo'][0]", "elements[0]");
-shouldBe("select.options['foo'][1]", "elements[1]");
+shouldBe("select.options['foo']", "elements[0]");
 shouldBe("select.removeChild(elements[0]); select.options['foo']", "elements[1]");
 shouldBe("select.innerHTML = ''; select.options.length", "0");
 shouldBe("removeTestElements(); form.elements.length", "0");

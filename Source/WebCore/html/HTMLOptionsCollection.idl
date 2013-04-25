@@ -21,14 +21,13 @@
 [
     JSGenerateToNativeObject,
     CustomIndexedSetter,
-    NamedGetter,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;
     [CustomSetter] attribute unsigned long length
         setter raises (DOMException);
 
-    [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
+    Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
 
     [Custom] void add(in [Optional=DefaultIsUndefined] HTMLOptionElement option, 
                       in [Optional] unsigned long index)

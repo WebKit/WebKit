@@ -37,10 +37,7 @@ PASS elements = [createElementWithId('option', 'foo'), createElementWithId('opti
      select.appendChild(elements[0]); select.options.length is 1
 PASS select.options['foo'] is elements[0]
 PASS select.appendChild(elements[1]); select.options.length is 2
-PASS select.options['foo'].toString() is '[object NodeList]'
-PASS select.options['foo'].length is 2
-PASS select.options['foo'][0] is elements[0]
-PASS select.options['foo'][1] is elements[1]
+PASS select.options['foo'] is elements[0]
 PASS select.removeChild(elements[0]); select.options['foo'] is elements[1]
 PASS select.innerHTML = ''; select.options.length is 0
 PASS removeTestElements(); form.elements.length is 0
