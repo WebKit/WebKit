@@ -64,7 +64,11 @@
 #include <wtf/UnusedParam.h>
 
 #if OS(WINDOWS)
+#if OS(WINCE)
+#include <cmnintrin.h>
+#else
 #include <intrin.h>
+#endif
 #include <windows.h>
 #elif OS(QNX)
 #include <atomic.h>

@@ -1,3 +1,9 @@
+2013-04-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r148888.
+
+        * wtf/Atomics.h: WinCE version of intrin.h is called cmnintrin.h.
+
 2013-04-24  Roger Fong  <roger_fong@apple.com>
 
         Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.
