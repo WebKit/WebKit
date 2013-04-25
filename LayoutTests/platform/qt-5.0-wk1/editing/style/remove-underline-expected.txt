@@ -20,4 +20,4 @@ execTypeCharacterCommand: <u>xxxxxx xxxxxx xxx</u><span id="test"></span>
 execTypeCharacterCommand: <u>xxxxxx xxxxxx xxxx</u><span id="test"></span>
 execTypeCharacterCommand: <u>xxxxxx xxxxxx xxxxx</u><span id="test"></span>
 execTypeCharacterCommand: <u>xxxxxx xxxxxx xxxxxx</u><span id="test"></span>
-execUnderlineCommand: <u>xxxxxx </u>xxxxxx<u> xxxxxx</u><span id="test"></span>
+execUnderlineCommand: <u>xxxxxx </u>xxxxxx <u>xxxxxx</u><span id="test"></span>

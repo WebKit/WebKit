@@ -1,3 +1,52 @@
+2013-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Organize expected files after r149095.
+
+        * platform/qt-5.0-wk1/editing/deleting/delete-by-word-002-expected.txt: Copied from LayoutTests/platform/qt/editing/deleting/delete-by-word-002-expected.txt.
+        * platform/qt-5.0-wk1/editing/deleting/delete-cell-contents-expected.txt: Copied from LayoutTests/platform/qt/editing/deleting/delete-cell-contents-expected.txt.
+        * platform/qt-5.0-wk1/editing/execCommand/button-expected.txt: Copied from LayoutTests/platform/qt/editing/execCommand/button-expected.txt.
+        * platform/qt-5.0-wk1/editing/execCommand/createLink-expected.txt: Copied from LayoutTests/platform/qt/editing/execCommand/createLink-expected.txt.
+        * platform/qt-5.0-wk1/editing/execCommand/indent-pre-expected.txt: Copied from LayoutTests/platform/qt/editing/execCommand/indent-pre-expected.txt.
+        * platform/qt-5.0-wk1/editing/execCommand/unlink-expected.txt: Copied from LayoutTests/platform/qt/editing/execCommand/unlink-expected.txt.
+        * platform/qt-5.0-wk1/editing/input/emacs-ctrl-o-expected.txt: Copied from LayoutTests/platform/qt/editing/input/emacs-ctrl-o-expected.txt.
+        * platform/qt-5.0-wk1/editing/inserting/insert-before-link-1-expected.txt: Copied from LayoutTests/platform/qt/editing/inserting/insert-before-link-1-expected.txt.
+        * platform/qt-5.0-wk1/editing/pasteboard/display-block-on-spans-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/display-block-on-spans-expected.txt.
+        * platform/qt-5.0-wk1/editing/pasteboard/emacs-cntl-y-001-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.txt.
+        * platform/qt-5.0-wk1/editing/pasteboard/merge-end-list-2-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/merge-end-list-2-expected.txt.
+        * platform/qt-5.0-wk1/editing/pasteboard/merge-end-table-2-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/merge-end-table-2-expected.txt.
+        * platform/qt-5.0-wk1/editing/pasteboard/page-zoom-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/page-zoom-expected.txt.
+        * platform/qt-5.0-wk1/editing/selection/extend-selection-word-expected.txt: Copied from LayoutTests/platform/qt/editing/selection/extend-selection-word-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/apply-through-end-of-document-expected.txt: Copied from LayoutTests/platform/qt/editing/style/apply-through-end-of-document-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/remove-underline-across-paragraph-expected.txt: Copied from LayoutTests/platform/qt/editing/style/remove-underline-across-paragraph-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Copied from LayoutTests/platform/qt/editing/style/remove-underline-across-paragraph-in-bold-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/remove-underline-expected.txt: Copied from LayoutTests/platform/qt/editing/style/remove-underline-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/remove-underline-from-stylesheet-expected.txt: Copied from LayoutTests/platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/remove-underline-in-bold-expected.txt: Copied from LayoutTests/platform/qt/editing/style/remove-underline-in-bold-expected.txt.
+        * platform/qt-5.0-wk1/editing/style/unbold-in-bold-expected.txt: Copied from LayoutTests/platform/qt/editing/style/unbold-in-bold-expected.txt.
+        * platform/qt-5.0-wk1/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt: Copied from LayoutTests/platform/qt/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt.
+        * platform/qt/editing/deleting/delete-by-word-002-expected.txt:
+        * platform/qt/editing/deleting/delete-cell-contents-expected.txt:
+        * platform/qt/editing/execCommand/button-expected.txt:
+        * platform/qt/editing/execCommand/createLink-expected.txt:
+        * platform/qt/editing/execCommand/indent-pre-expected.txt:
+        * platform/qt/editing/execCommand/unlink-expected.txt:
+        * platform/qt/editing/input/emacs-ctrl-o-expected.txt:
+        * platform/qt/editing/inserting/insert-before-link-1-expected.txt:
+        * platform/qt/editing/pasteboard/display-block-on-spans-expected.txt:
+        * platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-list-2-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-table-2-expected.txt:
+        * platform/qt/editing/pasteboard/page-zoom-expected.txt:
+        * platform/qt/editing/selection/extend-selection-word-expected.txt:
+        * platform/qt/editing/style/apply-through-end-of-document-expected.txt:
+        * platform/qt/editing/style/remove-underline-across-paragraph-expected.txt:
+        * platform/qt/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * platform/qt/editing/style/remove-underline-expected.txt:
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt:
+        * platform/qt/editing/style/remove-underline-in-bold-expected.txt:
+        * platform/qt/editing/style/unbold-in-bold-expected.txt:
+        * platform/qt/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt:
+
 2013-04-25  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         EventSource: Synchronous loader callback not handled properly

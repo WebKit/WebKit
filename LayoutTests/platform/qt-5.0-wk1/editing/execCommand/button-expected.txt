@@ -3,5 +3,5 @@ You should see "hello, world WebKit" inside the button and "world" should be bol
 | <button>
 |   "hello, "
 |   <b>
-|     "<#selection-anchor>world<#selection-focus>"
-|   " WebKit"
+|     "<#selection-anchor>world <#selection-focus>"
+|   "WebKit"

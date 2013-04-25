@@ -68,7 +68,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -80,11 +80,11 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 78x28
           RenderText {#text} at (14,14) size 78x28
             text run at (14,14) width 78: "xxxxxx "
-        RenderText {#text} at (92,14) size 72x28
-          text run at (92,14) width 72: "xxxxxx"
-        RenderInline {B} at (0,0) size 78x28
-          RenderText {#text} at (164,14) size 78x28
-            text run at (164,14) width 78: " xxxxxx"
+        RenderText {#text} at (92,14) size 78x28
+          text run at (92,14) width 78: "xxxxxx "
+        RenderInline {B} at (0,0) size 72x28
+          RenderText {#text} at (170,14) size 72x28
+            text run at (170,14) width 72: "xxxxxx"
         RenderInline {SPAN} at (0,0) size 0x28
 selection start: position 0 of child 1 {#text} of child 1 {DIV} of body
-selection end:   position 6 of child 1 {#text} of child 1 {DIV} of body
+selection end:   position 7 of child 1 {#text} of child 1 {DIV} of body
