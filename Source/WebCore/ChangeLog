@@ -1,3 +1,15 @@
+2013-04-25  Alberto Garcia  <agarcia@igalia.com>
+
+        Add definition of GlyphBufferGlyph for BlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=115183
+
+        Reviewed by Xan Lopez.
+
+        BlackBerry uses an unsigned int.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         ScriptExecutionContext log exception should include a column number

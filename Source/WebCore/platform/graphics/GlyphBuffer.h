@@ -54,6 +54,8 @@ typedef cairo_glyph_t GlyphBufferGlyph;
 typedef wchar_t GlyphBufferGlyph;
 #elif PLATFORM(QT)
 typedef quint32 GlyphBufferGlyph;
+#elif PLATFORM(BLACKBERRY)
+typedef unsigned GlyphBufferGlyph;
 #else
 typedef Glyph GlyphBufferGlyph;
 #endif
