@@ -330,9 +330,9 @@ PASS: math
       AXRoleDescription: 
       
 PASS: meter
-      AXRole: 
+      AXRole: AXProgressIndicator
       AXSubrole: 
-      AXRoleDescription: 
+      AXRoleDescription: progress indicator
       
 PASS: nav
       AXRole: AXGroup

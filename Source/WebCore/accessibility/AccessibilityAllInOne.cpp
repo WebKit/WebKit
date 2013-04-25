@@ -36,6 +36,7 @@
 #include "AccessibilityMediaControls.cpp"
 #include "AccessibilityNodeObject.cpp"
 #include "AccessibilityObject.cpp"
+#include "AccessibilityProgressIndicator.cpp"
 #include "AccessibilityRenderObject.cpp"
 #include "AccessibilitySVGRoot.cpp"
 #include "AccessibilityScrollView.cpp"

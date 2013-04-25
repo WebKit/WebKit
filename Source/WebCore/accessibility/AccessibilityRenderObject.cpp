@@ -224,9 +224,13 @@ AccessibilityObject* AccessibilityRenderObject::firstChild() const
     
     RenderObject* firstChild = firstChildConsideringContinuation(m_renderer);
 
-    if (!firstChild)
-        return 0;
-    
+    // If an object can't have children, then it is using this method to help
+    // calculate some internal property (like its description).
+    // In this case, it should check the Node level for children in case they're
+    // not rendered (like a <meter> element).
+    if (!firstChild && !canHaveChildren())
+        return AccessibilityNodeObject::firstChild();
+
     return axObjectCache()->getOrCreate(firstChild);
 }
 
@@ -237,9 +241,9 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
     RenderObject* lastChild = lastChildConsideringContinuation(m_renderer);
 
-    if (!lastChild)
-        return 0;
-    
+    if (!lastChild && !canHaveChildren())
+        return AccessibilityNodeObject::lastChild();
+
     return axObjectCache()->getOrCreate(lastChild);
 }
 

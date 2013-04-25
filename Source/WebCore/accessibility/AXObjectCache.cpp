@@ -63,10 +63,12 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderMeter.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
@@ -297,6 +299,10 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
         if (cssBox->isProgress())
             return AccessibilityProgressIndicator::create(toRenderProgress(cssBox));
 #endif
+#if ENABLE(METER_ELEMENT)
+        if (cssBox->isMeter())
+            return AccessibilityProgressIndicator::create(toRenderMeter(cssBox));
+#endif
 
         // input type=range
         if (cssBox->isSlider())
@@ -355,7 +361,13 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
     bool inCanvasSubtree = node->parentElement()->isInCanvasSubtree();
     bool isHidden = !node->renderer() && isNodeAriaVisible(node);
-    if (!inCanvasSubtree && !isHidden)
+
+    bool insideMeterElement = false;
+#if ENABLE(METER_ELEMENT)
+    insideMeterElement = isHTMLMeterElement(node->parentElement());
+#endif
+    
+    if (!inCanvasSubtree && !isHidden && !insideMeterElement)
         return 0;
 
     RefPtr<AccessibilityObject> newObj = createFromNode(node);

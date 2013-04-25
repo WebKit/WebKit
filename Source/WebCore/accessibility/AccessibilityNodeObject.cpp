@@ -386,6 +386,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case StaticTextRole:
     case ListBoxOptionRole:
     case ScrollBarRole:
+    case ProgressIndicatorRole:
         return false;
     default:
         return true;
@@ -1232,6 +1233,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case MenuItemRole:
     case RadioButtonRole:
     case TabRole:
+    case ProgressIndicatorRole:
         useTextUnderElement = true;
         break;
     default:

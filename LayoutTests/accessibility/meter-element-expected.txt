@@ -1,0 +1,51 @@
+This tests that the 
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Meter1
+AXRole: AXProgressIndicator
+AXTitle: 6 blocks used (out of 8 total)
+AXDescription: 
+
+
+Meter2
+AXRole: AXProgressIndicator
+AXTitle: 75%
+AXDescription: 
+
+
+Meter3
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+
+Meter4
+AXRole: AXProgressIndicator
+AXTitle: 12cm
+AXDescription: 
+
+
+Meter5
+AXRole: AXProgressIndicator
+AXTitle: 2cm
+AXDescription: 
+
+
+Meter6
+AXRole: AXProgressIndicator
+AXTitle: 12cm
+AXDescription: 
+
+
+Meter7
+AXRole: AXProgressIndicator
+AXTitle: 2cm
+AXDescription: 
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

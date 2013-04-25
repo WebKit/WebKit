@@ -1,3 +1,15 @@
+2013-04-25  Chris Fleizach  <cfleizach@apple.com>
+
+        <meter> element not exposed to accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=109023
+
+        Reviewed by Tim Horton.
+
+        * accessibility/meter-element-expected.txt: Added.
+        * accessibility/meter-element.html: Added.
+        * platform/mac/accessibility/role-subrole-roledescription-expected.txt:
+        * platform/mac/accessibility/role-subrole-roledescription.html:
+
 2013-04-25  Roman Zhuykov  <zhroma@ispras.ru>
 
         Arithmetic operations with negative zero should be optimized correclty.
