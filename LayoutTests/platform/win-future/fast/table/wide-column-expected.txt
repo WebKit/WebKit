@@ -1,0 +1,11 @@
+layer at (0,0) size 1614x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderTable {TABLE} at (0,0) size 1606x56
+        RenderTableSection {TBODY} at (0,0) size 1606x56
+          RenderTableRow {TR} at (0,2) size 1606x52
+            RenderTableCell {TD} at (2,2) size 1602x52 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1600x50
+              RenderText {#text} at (0,0) size 0x0

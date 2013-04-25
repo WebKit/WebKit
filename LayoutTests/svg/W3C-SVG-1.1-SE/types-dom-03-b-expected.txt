@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,15) size 470x345
-      RenderSVGText {text} at (10,15) size 342x18 contains 1 chunk(s)
+      RenderSVGText {text} at (10,15) size 342x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 342x18
           chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 11.00: "T"
           chunk 1 text run 2 at (19.29,30.00) startOffset 1 endOffset 3 width 19.01: "es"
@@ -20,12 +20,12 @@ layer at (0,0) size 480x360
           chunk 1 text run 12 at (286.39,30.00) startOffset 34 endOffset 35 width 12.01: "V"
           chunk 1 text run 13 at (297.64,30.00) startOffset 35 endOffset 40 width 54.04: "GLoad"
       RenderSVGRect {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
-      RenderSVGText {text} at (1000,985) size 32x18 contains 1 chunk(s)
+      RenderSVGText {text} at (1000,985) size 32x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 32x18
           chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 1 width 12.01: "A"
           chunk 1 text run 2 at (1012.08,1000.00) startOffset 1 endOffset 3 width 19.01: "bc"
     RenderSVGContainer {g} at (10,314) size 227x33
-      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
