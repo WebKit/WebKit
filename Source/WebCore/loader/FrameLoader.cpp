@@ -3319,9 +3319,8 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::loadProgressingStatusChanged()
 {
-    bool isLoadProgressing = m_frame->page()->progress()->isLoadProgressing();
     FrameView* view = m_frame->page()->mainFrame()->view();
-    view->updateLayerFlushThrottlingInAllFrames(isLoadProgressing);
+    view->updateLayerFlushThrottlingInAllFrames();
     view->adjustTiledBackingCoverage();
 }
 

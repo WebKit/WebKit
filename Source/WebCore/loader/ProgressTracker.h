@@ -59,7 +59,7 @@ public:
     long long totalPageAndResourceBytesToLoad() const { return m_totalPageAndResourceBytesToLoad; }
     long long totalBytesReceived() const { return m_totalBytesReceived; }
 
-    bool isLoadProgressing() const;
+    bool isMainLoadProgressing() const;
 
 private:
     ProgressTracker();

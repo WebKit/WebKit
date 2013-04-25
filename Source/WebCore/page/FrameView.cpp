@@ -56,6 +56,7 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "OverflowEvent.h"
+#include "ProgressTracker.h"
 #include "RenderArena.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
@@ -2319,15 +2320,14 @@ void FrameView::endDisableRepaints()
     m_disableRepaints--;
 }
 
-void FrameView::updateLayerFlushThrottlingInAllFrames(bool isLoadProgressing)
+void FrameView::updateLayerFlushThrottlingInAllFrames()
 {
 #if USE(ACCELERATED_COMPOSITING)
+    bool isMainLoadProgressing = m_frame->page()->progress()->isMainLoadProgressing();
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
         if (RenderView* renderView = frame->contentRenderer())
-            renderView->compositor()->setLayerFlushThrottlingEnabled(isLoadProgressing);
+            renderView->compositor()->setLayerFlushThrottlingEnabled(isMainLoadProgressing);
     }
-#else
-    UNUSED_PARAM(isLoadProgressing);
 #endif
 }
 

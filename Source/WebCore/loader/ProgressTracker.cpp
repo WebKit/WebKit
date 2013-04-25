@@ -283,8 +283,13 @@ unsigned long ProgressTracker::createUniqueIdentifier()
     return ++s_uniqueIdentifier;
 }
 
-bool ProgressTracker::isLoadProgressing() const
+bool ProgressTracker::isMainLoadProgressing() const
 {
+    if (!m_originatingProgressFrame)
+        return false;
+    // See if the load originated from a subframe.
+    if (m_originatingProgressFrame->tree()->parent())
+        return false;
     return m_progressValue && m_progressValue < finalProgressValue && m_heartbeatsWithNoProgress < loadStalledHeartbeatCount;
 }
 
