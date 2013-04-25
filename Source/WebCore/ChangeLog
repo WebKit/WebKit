@@ -1,3 +1,16 @@
+2013-04-25  Andreas Kling  <akling@apple.com>
+
+        Remove isPluginElement hack in Document::setFocusedNode()
+        <http://webkit.org/b/115171>
+
+        From Blink r148800 by <tkent@chromium.org>:
+
+        This hack is no longer necessary because r147591 made isFocusable for plugin
+        elements work correctly.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+
 2013-04-25  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         EventSource: Synchronous loader callback not handled properly
