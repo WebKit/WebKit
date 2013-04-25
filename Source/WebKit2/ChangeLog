@@ -1,3 +1,25 @@
+2013-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Rename DecidePolicyForResponse message to DecidePolicyForResponseSync
+        https://bugs.webkit.org/show_bug.cgi?id=115207
+
+        Reviewed by Beth Dakin.
+
+        In preparation for adding a new async DecidePolicyForResponse message,
+        rename the current one to DecidePolicyForResponseSync. Also split out the async part
+        into a separate WebPageProxy::decidePolicyForResponse member function.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible

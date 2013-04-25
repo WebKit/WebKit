@@ -268,7 +268,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_canRunModal(false)
     , m_isInPrintingMode(false)
     , m_isPerformingDOMPrintOperation(false)
-    , m_inDecidePolicyForResponse(false)
+    , m_inDecidePolicyForResponseSync(false)
     , m_decidePolicyForResponseRequest(0)
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
@@ -1449,7 +1449,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
 #if ENABLE(NETWORK_PROCESS)
     // FIXME (NetworkProcess): Instead of canceling the load and then starting a separate download, we should
     // just convert the connection to a download connection. See <rdar://problem/12890184>.
-    if (m_inDecidePolicyForResponse && action == PolicyDownload && m_process->context()->usesNetworkProcess()) {
+    if (m_inDecidePolicyForResponseSync && action == PolicyDownload && m_process->context()->usesNetworkProcess()) {
         action = PolicyIgnore;
 
         m_process->context()->download(this, *m_decidePolicyForResponseRequest);
@@ -1472,7 +1472,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
 
     // If we received a policy decision while in decidePolicyForResponse the decision will
     // be sent back to the web process by decidePolicyForResponse.
-    if (m_inDecidePolicyForResponse) {
+    if (m_inDecidePolicyForResponseSync) {
         m_syncMimeTypePolicyActionIsValid = true;
         m_syncMimeTypePolicyAction = action;
         m_syncMimeTypePolicyDownloadID = downloadID;
@@ -2496,7 +2496,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
@@ -2507,19 +2507,24 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(response.url());
-    
+
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-
-    ASSERT(!m_inDecidePolicyForResponse);
-
-    m_inDecidePolicyForResponse = true;
-    m_decidePolicyForResponseRequest = &request;
-    m_syncMimeTypePolicyActionIsValid = false;
 
     if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, listener.get(), userData.get()))
         listener->use();
+}
 
-    m_inDecidePolicyForResponse = false;
+void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+{
+    ASSERT(!m_inDecidePolicyForResponseSync);
+
+    m_inDecidePolicyForResponseSync = true;
+    m_decidePolicyForResponseRequest = &request;
+    m_syncMimeTypePolicyActionIsValid = false;
+
+    decidePolicyForResponse(frameID, response, request, listenerID, decoder);
+
+    m_inDecidePolicyForResponseSync = false;
     m_decidePolicyForResponseRequest = 0;
 
     // Check if we received a policy decision already. If we did, we can just pass it back.
