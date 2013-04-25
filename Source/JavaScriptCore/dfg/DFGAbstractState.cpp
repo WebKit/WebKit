@@ -997,8 +997,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
             
     case RegExpExec:
-    case RegExpTest:
         forNode(node).makeTop();
+        break;
+
+    case RegExpTest:
+        forNode(node).set(SpecBoolean);
         break;
             
     case Jump:
