@@ -4215,7 +4215,7 @@ BlackBerry::Platform::String WebPage::forcedTextEncoding()
 void WebPage::setForcedTextEncoding(const BlackBerry::Platform::String& encoding)
 {
     if (!encoding.empty() && d->focusedOrMainFrame() && d->focusedOrMainFrame()->loader() && d->focusedOrMainFrame()->loader())
-        return d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
+        d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
 }
 
 bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
