@@ -52,6 +52,8 @@
 #include "JSWebGLCompressedTextureATC.h"
 #include "JSWebGLCompressedTexturePVRTC.h"
 #include "JSWebGLCompressedTextureS3TC.h"
+#include "JSWebGLDebugRendererInfo.h"
+#include "JSWebGLDebugShaders.h"
 #include "JSWebGLDepthTexture.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLLoseContext.h"

@@ -1,3 +1,17 @@
+2013-04-25  Gregg Tavares  <gman@chromium.org>
+
+        Fix build files so WebGLDebugXXX extensions can be used if enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=113976
+
+        Reviewed by Dean Jackson.
+
+        No new tests as no new functionality.
+
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         cloneChildNodes looks for deleteButtonController in each level of recursion

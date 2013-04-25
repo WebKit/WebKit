@@ -803,6 +803,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLContextAttributes.h \
 	DerivedSources/WebCore/JSWebGLContextEvent.cpp \
 	DerivedSources/WebCore/JSWebGLContextEvent.h \
+	DerivedSources/WebCore/JSWebGLDebugRendererInfo.cpp \
+	DerivedSources/WebCore/JSWebGLDebugRendererInfo.h \
+	DerivedSources/WebCore/JSWebGLDebugShaders.cpp \
+	DerivedSources/WebCore/JSWebGLDebugShaders.h \
 	DerivedSources/WebCore/JSWebGLDepthTexture.cpp \
 	DerivedSources/WebCore/JSWebGLDepthTexture.h \
 	DerivedSources/WebCore/JSWebGLFramebuffer.cpp \
@@ -1581,6 +1585,8 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
 	$(WebCore)/html/canvas/WebGLContextAttributes.idl \
 	$(WebCore)/html/canvas/WebGLContextEvent.idl \
+	$(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
+	$(WebCore)/html/canvas/WebGLDebugShaders.idl \
 	$(WebCore)/html/canvas/WebGLDepthTexture.idl \
 	$(WebCore)/html/canvas/WebGLFramebuffer.idl \
 	$(WebCore)/html/canvas/WebGLLoseContext.idl \

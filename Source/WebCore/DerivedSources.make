@@ -418,6 +418,8 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
     $(WebCore)/html/canvas/WebGLContextAttributes.idl \
     $(WebCore)/html/canvas/WebGLContextEvent.idl \
+    $(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
+    $(WebCore)/html/canvas/WebGLDebugShaders.idl \
     $(WebCore)/html/canvas/WebGLDepthTexture.idl \
     $(WebCore)/html/canvas/WebGLFramebuffer.idl \
     $(WebCore)/html/canvas/WebGLLoseContext.idl \
