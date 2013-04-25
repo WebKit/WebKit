@@ -1,3 +1,15 @@
+2013-04-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Animated opacity does not trigger accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=115107
+
+        Reviewed by Simon Fraser.
+
+        We should trigger compositing on animated opacity as it is always faster on Qt.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        VideoTrigger removed because we have already disabled AC for video in qwebsettings.
+
 2013-04-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK1] MemoryCache is not cleaned by default

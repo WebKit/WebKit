@@ -1,3 +1,16 @@
+2013-04-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Animated opacity does not trigger accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=115107
+
+        Reviewed by Simon Fraser.
+
+        Add extra option to also trigger compositing on animated opacity.
+
+        * page/ChromeClient.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+
 2013-04-25  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
 
         Sec-WebSocket-Extensions header field must not appear more than once in an HTTP response.

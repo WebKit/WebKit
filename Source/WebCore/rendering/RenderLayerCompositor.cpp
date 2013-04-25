@@ -2107,7 +2107,8 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
         return false;
 
     if (AnimationController* animController = renderer->animation()) {
-        return (animController->isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity) && inCompositingMode())
+        return (animController->isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
+                && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
 #if ENABLE(CSS_FILTERS)
 #if !PLATFORM(MAC) || (!PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
             // <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below

@@ -279,6 +279,7 @@ public:
         AnimationTrigger = 1 << 4,
         FilterTrigger = 1 << 5,
         ScrollableInnerFrameTrigger = 1 << 6,
+        AnimatedOpacityTrigger = 1 << 7,
         AllTriggers = 0xFFFFFFFF
     };
     typedef unsigned CompositingTriggerFlags;
