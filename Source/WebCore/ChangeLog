@@ -1,3 +1,16 @@
+2013-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Dump layer opaqueness in the Compositing log output
+        https://bugs.webkit.org/show_bug.cgi?id=115132
+
+        Reviewed by Tim Horton.
+
+        It's useful to see whether we consider layers to be opaque in the Compositing
+        log channel output, so dump it.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+
 2013-04-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add efl to JSInspectorFrontendHost::port()

@@ -626,8 +626,9 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
         m_secondaryBackingStoreBytes += backing->backingStoreMemoryEstimate();
     }
 
-    LOG(Compositing, "%*p %dx%d %.2fKB (%s) %s\n", 12 + depth * 2, layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
+    LOG(Compositing, "%*p %dx%d %.2fKB %s(%s) %s\n", 12 + depth * 2, layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
         backing->backingStoreMemoryEstimate() / 1024,
+        backing->graphicsLayer()->contentsOpaque() ? "opaque " : "",
         logReasonsForCompositing(layer), layer->name().utf8().data());
 }
 #endif
