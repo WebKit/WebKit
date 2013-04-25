@@ -1,3 +1,17 @@
+2013-04-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        REGRESSION(r148758): Remove WTFLogAlways call from IconLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=115182
+
+        Reviewed by Dan Bernstein.
+
+        The call added in r148758 was apparently a leftover from some debugging
+        session, and it makes the Interactive/window-resize.html performance
+        test randomly fail on Qt and EFL due to WTFLogAlways writing to stderr.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+
 2013-04-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for Web IDL callback interfaces to the bindings generator

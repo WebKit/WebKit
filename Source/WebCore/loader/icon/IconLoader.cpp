@@ -98,7 +98,6 @@ void IconLoader::notifyFinished(CachedResource* resource)
 
     static const char pdfMagicNumber[] = "%PDF";
     static unsigned pdfMagicNumberLength = sizeof(pdfMagicNumber) - 1;
-    WTFLogAlways("%d\n", pdfMagicNumberLength);
     if (data && data->size() >= pdfMagicNumberLength && !memcmp(data->data(), pdfMagicNumber, pdfMagicNumberLength)) {
         LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", resource->url().string().ascii().data());
         data = 0;
