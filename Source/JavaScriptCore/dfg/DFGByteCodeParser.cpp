@@ -3277,7 +3277,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Baseline->DFG OSR jumps between loop hints. The DFG assumes that Baseline->DFG
             // OSR can only happen at basic block boundaries. Assert that these two statements
             // are compatible.
-            ASSERT_UNUSED(blockBegin, m_currentIndex == blockBegin);
+            RELEASE_ASSERT(m_currentIndex == blockBegin);
             
             // We never do OSR into an inlined code block. That could not happen, since OSR
             // looks up the code block that is the replacement for the baseline JIT code

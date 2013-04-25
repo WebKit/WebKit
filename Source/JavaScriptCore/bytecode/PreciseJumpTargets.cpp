@@ -99,6 +99,9 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
         case op_check_has_instance:
             out.append(bytecodeOffset + current[4].u.operand);
             break;
+        case op_loop_hint:
+            out.append(bytecodeOffset);
+            break;
         default:
             break;
         }

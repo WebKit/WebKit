@@ -1,3 +1,18 @@
+2013-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        PreciseJumpTargets should treat loop_hint as a jump target
+        https://bugs.webkit.org/show_bug.cgi?id=115209
+
+        Reviewed by Mark Hahnenberg.
+        
+        I didn't add a test but I turned this into a release assertion. Running Octane is enough
+        to trigger it.
+
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::computePreciseJumpTargets):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-04-25  Roman Zhuykov  <zhroma@ispras.ru>
 
         Fix problems with processing negative zero on DFG.
