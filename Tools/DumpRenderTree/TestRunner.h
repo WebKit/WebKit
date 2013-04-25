@@ -41,6 +41,13 @@
 class TestRunner : public RefCounted<TestRunner> {
 public:
     static PassRefPtr<TestRunner> create(const std::string& testPathOrURL, const std::string& expectedPixelHash);
+
+    static const unsigned viewWidth;
+    static const unsigned viewHeight;
+
+    static const unsigned w3cSVGViewWidth;
+    static const unsigned w3cSVGViewHeight;
+
     ~TestRunner();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
@@ -329,9 +336,6 @@ public:
 
     void setShouldPaintBrokenImage(bool);
     bool shouldPaintBrokenImage() const { return m_shouldPaintBrokenImage; }
-
-    static const unsigned maxViewWidth;
-    static const unsigned maxViewHeight;
 
     void setTextDirection(JSStringRef);
     const std::string& titleTextDirection() const { return m_titleTextDirection; }

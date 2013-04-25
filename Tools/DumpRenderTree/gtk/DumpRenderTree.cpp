@@ -747,8 +747,8 @@ static void runTest(const string& inputLine)
     bool isSVGW3CTest = (testURL.find("svg/W3C-SVG-1.1") != string::npos);
     GtkAllocation size;
     size.x = size.y = 0;
-    size.width = isSVGW3CTest ? 480 : TestRunner::maxViewWidth;
-    size.height = isSVGW3CTest ? 360 : TestRunner::maxViewHeight;
+    size.width = isSVGW3CTest ? TestRunner::w3cSVGViewWidth : TestRunner::viewWidth;
+    size.height = isSVGW3CTest ? TestRunner::w3cSVGViewHeight : TestRunner::viewHeight;
     gtk_window_resize(GTK_WINDOW(window), size.width, size.height);
     gtk_widget_size_allocate(container, &size);
 
@@ -1067,7 +1067,7 @@ static WebKitWebView* webViewCreate(WebKitWebView*, WebKitWebFrame*);
 
 static gboolean webInspectorShowWindow(WebKitWebInspector*, gpointer data)
 {
-    gtk_window_set_default_size(GTK_WINDOW(webInspectorWindow), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(webInspectorWindow), TestRunner::viewWidth, TestRunner::viewHeight);
     gtk_widget_show_all(webInspectorWindow);
     return TRUE;
 }

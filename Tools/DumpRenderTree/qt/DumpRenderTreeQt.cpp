@@ -427,7 +427,7 @@ DumpRenderTree::DumpRenderTree()
     DumpRenderTreeSupportQt::webPageSetGroupName(pageAdapter(), "org.webkit.qt.DumpRenderTree");
 
     m_mainView->setContextMenuPolicy(Qt::NoContextMenu);
-    m_mainView->resize(QSize(TestRunnerQt::maxViewWidth, TestRunnerQt::maxViewHeight));
+    m_mainView->resize(QSize(TestRunner::viewWidth, TestRunner::viewHeight));
 
     // clean up cache by resetting quota.
     qint64 quota = webPage()->settings()->offlineWebApplicationCacheQuota();
@@ -625,8 +625,8 @@ void DumpRenderTree::open(const QUrl& url)
 
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
-    int width = isW3CTest ? 480 : TestRunnerQt::maxViewWidth;
-    int height = isW3CTest ? 360 : TestRunnerQt::maxViewHeight;
+    int width = isW3CTest ? TestRunner::w3cSVGViewWidth : TestRunner::viewWidth;
+    int height = isW3CTest ? TestRunner::w3cSVGViewHeight : TestRunner::viewHeight;
     m_mainView->resize(QSize(width, height));
     m_page->setPreferredContentsSize(QSize());
     m_page->setViewportSize(QSize(width, height));

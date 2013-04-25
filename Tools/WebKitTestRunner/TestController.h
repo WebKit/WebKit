@@ -46,6 +46,12 @@ class TestController {
 public:
     static TestController& shared();
 
+    static const unsigned viewWidth;
+    static const unsigned viewHeight;
+
+    static const unsigned w3cSVGViewWidth;
+    static const unsigned w3cSVGViewHeight;
+
     TestController(int argc, const char* argv[]);
     ~TestController();
 

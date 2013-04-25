@@ -127,20 +127,16 @@ void TestInvocation::setCustomTimeout(int timeout)
     m_timeout = timeout;
 }
 
-static const unsigned w3cSVGWidth = 480;
-static const unsigned w3cSVGHeight = 360;
-static const unsigned normalWidth = 800;
-static const unsigned normalHeight = 600;
-
 static void sizeWebViewForCurrentTest(const char* pathOrURL)
 {
     bool isSVGW3CTest = strstr(pathOrURL, "svg/W3C-SVG-1.1") || strstr(pathOrURL, "svg\\W3C-SVG-1.1");
 
     if (isSVGW3CTest)
-        TestController::shared().mainWebView()->resizeTo(w3cSVGWidth, w3cSVGHeight);
+        TestController::shared().mainWebView()->resizeTo(TestController::w3cSVGViewWidth, TestController::w3cSVGViewHeight);
     else
-        TestController::shared().mainWebView()->resizeTo(normalWidth, normalHeight);
+        TestController::shared().mainWebView()->resizeTo(TestController::viewWidth, TestController::viewHeight);
 }
+
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");

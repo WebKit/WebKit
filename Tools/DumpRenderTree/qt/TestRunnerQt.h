@@ -68,9 +68,6 @@ public:
 
     void reset();
 
-    static const unsigned int maxViewWidth;
-    static const unsigned int maxViewHeight;
-
     void setTimeout(int timeout) { m_timeout = timeout; }
     void setShouldTimeout(bool flag) { m_shouldTimeout = flag; }
 

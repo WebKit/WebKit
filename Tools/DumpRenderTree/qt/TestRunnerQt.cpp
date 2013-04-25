@@ -774,9 +774,6 @@ void TestRunnerQt::setAudioData(const QByteArray& audioData)
     m_audioDump = true;
 }
 
-const unsigned TestRunnerQt::maxViewWidth = 800;
-const unsigned TestRunnerQt::maxViewHeight = 600;
-
 // --- JSC C API stubs
 
 void TestRunner::addDisallowedURL(JSStringRef url)

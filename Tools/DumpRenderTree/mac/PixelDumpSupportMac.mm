@@ -184,8 +184,8 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
 
 PassRefPtr<BitmapContext> createPagedBitmapContext()
 {
-    int pageWidthInPixels = TestRunner::maxViewWidth;
-    int pageHeightInPixels = TestRunner::maxViewHeight;
+    int pageWidthInPixels = TestRunner::viewWidth;
+    int pageHeightInPixels = TestRunner::viewHeight;
     int numberOfPages = [mainFrame numberOfPagesWithPageWidth:pageWidthInPixels pageHeight:pageHeightInPixels];
     size_t rowBytes = 0;
     void* buffer = 0;

@@ -58,9 +58,6 @@ extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
 extern StorageTrackerDelegate* storageDelegate;
 
-extern const unsigned maxViewHeight;
-extern const unsigned maxViewWidth;
-
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
 bool shouldSetWaitToDumpWatchdog();
 

@@ -931,11 +931,11 @@ static void sizeWebViewForCurrentTest()
     unsigned width;
     unsigned height;
     if (isSVGW3CTest) {
-        width = 480;
-        height = 360;
+        width = TestRunner::w3cSVGViewWidth;
+        height = TestRunner::w3cSVGViewHeight;
     } else {
-        width = TestRunner::maxViewWidth;
-        height = TestRunner::maxViewHeight;
+        width = TestRunner::viewWidth;
+        height = TestRunner::viewHeight;
     }
 
     ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
@@ -1190,8 +1190,8 @@ WindowToWebViewMap& windowToWebViewMap()
 
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 {
-    unsigned maxViewWidth = TestRunner::maxViewWidth;
-    unsigned maxViewHeight = TestRunner::maxViewHeight;
+    unsigned maxViewWidth = TestRunner::viewWidth;
+    unsigned maxViewHeight = TestRunner::viewHeight;
     HWND hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
       -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, GetModuleHandle(0), 0);
 

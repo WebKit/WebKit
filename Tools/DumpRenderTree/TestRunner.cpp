@@ -44,6 +44,12 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 
+const unsigned TestRunner::viewWidth = 800;
+const unsigned TestRunner::viewHeight = 600;
+
+const unsigned TestRunner::w3cSVGViewWidth = 480;
+const unsigned TestRunner::w3cSVGViewHeight = 360;
+
 TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash)
     : m_disallowIncreaseForApplicationCacheQuota(false)
     , m_dumpApplicationCacheDelegateCallbacks(false)
@@ -2236,6 +2242,3 @@ void TestRunner::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
 {
     m_shouldPaintBrokenImage = shouldPaintBrokenImage;
 }
-
-const unsigned TestRunner::maxViewWidth = 800;
-const unsigned TestRunner::maxViewHeight = 600;

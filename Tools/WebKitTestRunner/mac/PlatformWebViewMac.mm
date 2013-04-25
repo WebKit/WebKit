@@ -124,7 +124,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     WKTypeRef useTiledDrawingValue = options ? WKDictionaryGetItemForKey(options, useTiledDrawingKey.get()) : NULL;
     bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
 
-    NSRect rect = NSMakeRect(0, 0, 800, 600);
+    NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
     m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef useTiledDrawing:useTiledDrawing];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
@@ -141,6 +141,10 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
+    NSRect windowFrame = [m_window frame];
+    windowFrame.size.width = width;
+    windowFrame.size.height = height;
+    [m_window setFrame:windowFrame display:YES];
     [m_view setFrame:NSMakeRect(0, 0, width, height)];
 }
 

@@ -158,7 +158,7 @@ Evas_Object* DumpRenderTreeChrome::createInspectorView()
     Evas_Object* mainFrame = ewk_view_frame_main_get(inspectorView);
     evas_object_smart_callback_add(mainFrame, "load,finished", onInspectorFrameLoadFinished, 0);
 
-    evas_object_resize(inspectorView, TestRunner::maxViewWidth, TestRunner::maxViewHeight);
+    evas_object_resize(inspectorView, TestRunner::viewWidth, TestRunner::viewHeight);
     evas_object_show(inspectorView);
     evas_object_focus_set(inspectorView, true);
 
@@ -212,7 +212,7 @@ bool DumpRenderTreeChrome::initialize()
 
     evas_object_name_set(m_mainView, "m_mainView");
     evas_object_move(m_mainView, 0, 0);
-    evas_object_resize(m_mainView, 800, 600);
+    evas_object_resize(m_mainView, TestRunner::viewWidth, TestRunner::viewHeight);
     evas_object_layer_set(m_mainView, EVAS_LAYER_MAX);
     evas_object_show(m_mainView);
     evas_object_focus_set(m_mainView, EINA_TRUE);

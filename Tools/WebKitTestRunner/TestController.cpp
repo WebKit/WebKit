@@ -63,6 +63,12 @@
 
 namespace WTR {
 
+const unsigned TestController::viewWidth = 800;
+const unsigned TestController::viewHeight = 600;
+
+const unsigned TestController::w3cSVGViewWidth = 480;
+const unsigned TestController::w3cSVGViewHeight = 360;
+
 // defaultLongTimeout + defaultShortTimeout should be less than 80,
 // the default timeout value of the test harness so we can detect an
 // unresponsive web process.
@@ -589,7 +595,7 @@ bool TestController::resetStateToConsistentValues()
     // EFL use a real window while other ports such as Qt don't.
     // In EFL, we need to resize the window to the original size after calls to window.resizeTo.
     WKRect rect = m_mainWebView->windowFrame();
-    m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, 800, 600));
+    m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, TestController::viewWidth, TestController::viewHeight));
 #endif
 
     // Reset notification permissions

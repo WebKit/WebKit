@@ -1,3 +1,50 @@
+2013-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Pixel tests in SVG are all broken in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=114218
+
+        Reviewed by Darin Adler.
+        
+        Window snapshots in WebKitTestRunner on Mac are window-sized
+        (800x600), which is wrong for the W3C SVG tests that require a
+        480x360 snapshot.
+        
+        Fix by resizing the window, as well as the web view in
+        PlatformWebView::resizeTo() so that window snapshots are correctly
+        sized.
+        
+        Also do some drive-by cleanup of the window size constants in both
+        DRT and WTR to remove magic numbers, and make the code more similar.
+        
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::setShouldPaintBrokenImage):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webInspectorShowWindow):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (sizeWebViewForCurrentTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createPagedBitmapContext):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (DumpRenderTree::DumpRenderTree):
+        (DumpRenderTree::open):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sizeWebViewForCurrentTest):
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::sizeWebViewForCurrentTest):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+
 2013-04-24  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Fix build error after r148963.

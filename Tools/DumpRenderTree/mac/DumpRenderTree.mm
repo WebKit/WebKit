@@ -522,7 +522,7 @@ static void registerMockScrollbars()
 
 WebView *createWebViewAndOffscreenWindow()
 {
-    NSRect rect = NSMakeRect(0, 0, TestRunner::maxViewWidth, TestRunner::maxViewHeight);
+    NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
     WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
         
     [webView setUIDelegate:uiDelegate];
@@ -1105,9 +1105,9 @@ static void sizeWebViewForCurrentTest()
     // W3C SVG tests expect to be 480x360
     bool isSVGW3CTest = (gTestRunner->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
     if (isSVGW3CTest)
-        [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
+        [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::w3cSVGViewWidth, TestRunner::w3cSVGViewHeight)];
     else
-        [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::maxViewWidth, TestRunner::maxViewHeight)];
+        [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::viewWidth, TestRunner::viewHeight)];
 }
 
 static const char *methodNameStringForFailedTest()
