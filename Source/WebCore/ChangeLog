@@ -1,3 +1,16 @@
+2013-04-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove OS(WINCE) from AccessibilityObject.h
+        https://bugs.webkit.org/show_bug.cgi?id=115192
+
+        Reviewed by Andreas Kling.
+
+        Use the same files like the the other PLATFORM(WIN) ports use.
+
+        * PlatformWinCE.cmake:
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+
 2013-04-25  Alberto Garcia  <agarcia@igalia.com>
 
         Add definition of GlyphBufferGlyph for BlackBerry

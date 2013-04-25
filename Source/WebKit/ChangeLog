@@ -1,3 +1,14 @@
+2013-04-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove OS(WINCE) from AccessibilityObject.h
+        https://bugs.webkit.org/show_bug.cgi?id=115192
+
+        Reviewed by Andreas Kling.
+
+        Use the same files like the the other PLATFORM(WIN) ports use.
+
+        * PlatformWinCE.cmake:
+
 2013-04-24  Jessie Berlin  <jberlin@apple.com>
 
         Assertion failure (crash in release) attempting to delete database storage in WK1 without

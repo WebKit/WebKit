@@ -1,4 +1,5 @@
 list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
     "${WEBCORE_DIR}/platform/graphics/wince"
     "${WEBCORE_DIR}/platform/graphics/win"

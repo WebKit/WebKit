@@ -1,4 +1,5 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/platform/wince"
     "${WEBCORE_DIR}/platform/win"
     "${WEBCORE_DIR}/platform/graphics/wince"
@@ -16,6 +17,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    accessibility/win/AccessibilityObjectWin.cpp
+
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
     page/wince/FrameWinCE.cpp
