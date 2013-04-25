@@ -1435,6 +1435,7 @@ static HashSet<String> mimeTypeCache()
         "audio/opus",
         "audio/qcelp",
         "audio/riff-midi",
+        "audio/speex",
         "audio/wav",
         "audio/webm",
         "audio/x-ac3",

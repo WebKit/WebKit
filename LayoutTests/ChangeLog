@@ -1,3 +1,20 @@
+2013-04-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GStreamer] Add audio/speex MIME type as supported
+        https://bugs.webkit.org/show_bug.cgi?id=115032
+
+        Reviewed by Philippe Normand.
+
+        Speex (http://www.speex.org) streams can be embedded into Ogg
+        Ogg containers, so add a check for it in the test case.
+
+        * media/media-can-play-ogg-expected.txt:
+        * media/media-can-play-ogg.html:
+        * platform/blackberry/media/media-can-play-ogg-expected.txt:
+        * platform/mac/media/media-can-play-ogg-expected.txt:
+        * platform/qt-linux/media/media-can-play-ogg-expected.txt:
+        * platform/win/media/media-can-play-ogg-expected.txt:
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         CSS parser: Add error recovery while parsing @-webkit-keyframes key values.

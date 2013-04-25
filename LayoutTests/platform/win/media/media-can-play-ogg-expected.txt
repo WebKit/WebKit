@@ -6,6 +6,7 @@ EXPECTED (video.canPlayType('audio/ogg') == 'maybe') OK
 EXPECTED (video.canPlayType('video/ogg') == 'maybe') OK
 EXPECTED (video.canPlayType('audio/ogg; codecs=vorbis') == 'probably') OK
 EXPECTED (video.canPlayType('audio/ogg; codecs=opus') == 'probably'), OBSERVED '' FAIL
+EXPECTED (video.canPlayType('audio/ogg; codecs=speex') == 'probably'), OBSERVED '' FAIL
 EXPECTED (video.canPlayType('video/ogg; codecs=theora') == 'probably') OK
 EXPECTED (video.canPlayType('video/ogg; codecs=theora,vorbis') == 'probably') OK
 END OF TEST

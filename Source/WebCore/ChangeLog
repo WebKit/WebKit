@@ -1,3 +1,23 @@
+2013-04-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GStreamer] Add audio/speex MIME type as supported
+        https://bugs.webkit.org/show_bug.cgi?id=115032
+
+        Reviewed by Philippe Normand.
+
+        GStreamer has support for the Speex codec (http://www.speex.org).
+        Speex streams may be embedded in a Ogg container, or standalone.
+        The case of the Ogg container is already covered by the "*/ogg"
+        MIME types declared as supported by the GStreamer media playing
+        code, but for standalone streams to work, "audio/speex" has to
+        be added.
+
+        With this, and the needed GStreamer plugin installed, the GTK+
+        launcher is able to correctly play Speex streams served with
+        "Content-type: audio/speex".
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         Add FINAL decorators to the InlineBox class hierarchy.
