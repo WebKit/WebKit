@@ -1,3 +1,17 @@
+2013-04-25  Mike Lattanzio  <mlattanzio@blackberry.com>
+
+        [BlackBerry] Enable balanced page group load deferrer behaviour.
+        https://bugs.webkit.org/show_bug.cgi?id=115189
+
+        Reviewed by Rob Buis.
+
+        Prevent a possible deadlock by enabling balanced deferrers.
+        Internally reviewed by: Joe Mason
+        PR 329986
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible
