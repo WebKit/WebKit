@@ -1,3 +1,15 @@
+2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the HeapGraphSerializer unit test
+        https://bugs.webkit.org/show_bug.cgi?id=115231
+
+        Reviewed by Andreas Kling.
+
+        Remove the HeapGraphSerializer unit test. The code it was testing was removed in r148921,
+        specifically the Source/WebCore/inspector/HeapGraphSerializer.(cpp|h) files.
+
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp: Removed.
+
 2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove support for Chromium from build/update scripts
