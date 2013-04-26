@@ -1,3 +1,16 @@
+2013-04-26  Konrad Piascik  <kpiascik@blackberry.com>
+
+        Web Inspector: Crash due to null items from getDOMStorageItems
+        https://bugs.webkit.org/show_bug.cgi?id=115176
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests to check that if local and session storage are empty
+        that they still work corerctly.
+
+        * inspector/storage-panel-dom-storage-empty-expected.txt: Added.
+        * inspector/storage-panel-dom-storage-empty.html: Added.
+
 2013-04-26  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] media/track/track-mode.html sometimes trigger InvalidStateError

@@ -118,8 +118,11 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
 {
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
-    if (!storageArea)
+    if (!storageArea) {
+        if (errorString)
+            *errorString = "No StorageArea for given storageId";
         return;
+    }
 
     RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > > storageItems = TypeBuilder::Array<TypeBuilder::Array<String> >::create();
 

@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function clearDOMStorage()
+{
+    localStorage.clear();
+    sessionStorage.clear();
+}
+
+function test()
+{
+    WebInspector.showPanel("resources");
+
+    InspectorTest.evaluateInPage("clearDOMStorage()", function(result) {
+        InspectorTest.addResult("Populated local and session storage");
+    });
+    function name(storage)
+    {
+        return storage.isLocalStorage ? "Local storage" : "Session storage";
+    }
+
+    function dumpDataGridContent(dataGrid)
+    {
+        var nodes = dataGrid.rootNode().children;
+        var rows = [];
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
+            rows.push(node._data.key + node._data.value);
+        }
+        rows.sort();
+        InspectorTest.addResult("KeyValue pairs: " + rows.join(''));
+    }
+
+    InspectorTest.runAfterPendingDispatches(function() {
+        var storages = WebInspector.domStorageModel.storages();
+        if (storages) {
+            for (var i = 0; i < storages.length; i++) {
+                var storage = storages[i];
+                WebInspector.panels.resources._showDOMStorage(storage);
+                InspectorTest.addResult("Did show: " + name(storage));
+            }
+        } else
+            InspectorTest.addResult("FAIL: no DOM storages found.");
+
+        InspectorTest.runAfterPendingDispatches(function() {
+            var storages = WebInspector.domStorageModel.storages();
+            for (var i = 0; i < storages.length; i++) {
+                var storage = storages[i];
+                InspectorTest.addResult(name(storage) + " content: ");
+                var view = WebInspector.panels.resources._domStorageViews.get(storage);
+                dumpDataGridContent(view._dataGrid);
+            }
+            InspectorTest.addResult("DONE");
+            InspectorTest.completeTest();
+        });
+    });
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that storage panel is present and that it contains no data for local and session DOM storages.
+</p>
+
+</body>
+</html>

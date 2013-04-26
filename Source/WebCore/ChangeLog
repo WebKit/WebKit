@@ -1,3 +1,21 @@
+2013-04-26  Konrad Piascik  <kpiascik@blackberry.com>
+
+        Web Inspector: Crash due to null items from getDOMStorageItems
+        https://bugs.webkit.org/show_bug.cgi?id=115176
+
+        Reviewed by Joseph Pecoraro.
+
+        findStorageArea was returning a null storageArea causing the items
+        input paramater to not be set.  This was happening without any error
+        being set at all.  Set an error to prevent a crash when we try to
+        convert the result to a JSON string.
+
+        Added tests to check if session and local storage are empty that
+        they are still functional.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+
 2013-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Remove the remaining Skia #ifdefs
