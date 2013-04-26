@@ -24,6 +24,7 @@ fast/js/array-slow-put
 fast/js/array-sort-small-sparse-array-with-large-length
 fast/js/array-sort-numericCompare
 fast/js/array-sort-reentrance
+fast/js/array-sort-sparse
 fast/js/array-splice
 fast/js/array-tostring-and-join
 fast/js/array-type-speculation
@@ -33,6 +34,7 @@ fast/js/bitops-type-tag
 fast/js/boolean-argument-prediction
 fast/js/boxed-double-to-int
 fast/js/break-ASI
+fast/js/cached-call-uninitialized-arguments
 fast/js/call-apply-crash
 fast/js/caller-property
 fast/js/char-at
@@ -135,6 +137,7 @@ fast/js/dfg-float32-array-nan
 fast/js/dfg-float32array
 fast/js/dfg-float64array
 fast/js/dfg-flush-get-local
+fast/js/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop
 fast/js/dfg-get-by-val-clobber
 fast/js/dfg-get-by-val-getter-cse
 fast/js/dfg-getter-throw
@@ -177,6 +180,7 @@ fast/js/dfg-intrinsic-unused-this
 fast/js/dfg-max-backwards-propagation
 fast/js/dfg-min-backwards-propagation
 fast/js/dfg-min-max
+fast/js/dfg-mispredict-variable-but-prove-int
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
 fast/js/dfg-mul-big-integer-with-small-integer-and-bitor
@@ -196,10 +200,13 @@ fast/js/dfg-put-by-id-prototype-check
 fast/js/dfg-put-scoped-var-backward-flow
 fast/js/dfg-putbyval-cfa-clobber
 fast/js/dfg-redundant-load-of-captured-variable-proven-constant
+fast/js/dfg-resolve-global-polymorphic-non-dictionary
+fast/js/dfg-resolve-global-specific-dictionary
 fast/js/dfg-side-effect-assignment-osr-exit
 fast/js/dfg-sqrt-backwards-propagation
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
+fast/js/dfg-tear-off-function-dot-arguments
 fast/js/dfg-to-string-bad-toString
 fast/js/dfg-to-string-bad-valueOf
 fast/js/dfg-to-string-int-or-string
@@ -217,12 +224,14 @@ fast/js/dfg-to-string-valueOf-in-string
 fast/js/dfg-uint16array
 fast/js/dfg-uint32-to-number-in-middle-of-copy-propagation
 fast/js/dfg-uint32-to-number-on-captured-variable
+fast/js/dfg-uint32-to-number-skip-then-exit
 fast/js/dfg-uint32-to-number
 fast/js/dfg-uint32array-overflow-constant
 fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint32array
 fast/js/dfg-uint8array
 fast/js/dfg-uint8clampedarray
+fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias
 fast/js/dfg-value-to-int32-with-side-effect
 fast/js/dfg-weak-js-constant-silent-fill
 fast/js/dictionary-no-cache
@@ -231,6 +240,7 @@ fast/js/do-while-semicolon
 fast/js/duplicate-param-crash
 fast/js/duplicate-param-gc-crash
 fast/js/equality
+fast/js/eval-and-with
 fast/js/eval-cache-crash
 fast/js/eval-throw-return
 fast/js/eval-var-decl
@@ -254,6 +264,7 @@ fast/js/function-apply-many-args
 fast/js/function-apply
 fast/js/function-call-aliased
 fast/js/function-call-register-allocation
+fast/js/function-constructor-error
 fast/js/function-constructor-newline-after-brace
 fast/js/function-constructor-single-line-comment
 fast/js/function-declaration-statement
@@ -277,6 +288,7 @@ fast/js/ignored-result-null-comparison-crash
 fast/js/ignored-result-ref-crash
 fast/js/instance-of-immediates
 fast/js/instanceof-operator
+fast/js/integer-division-neg2tothe32-by-neg1
 fast/js/integer-extremes
 fast/js/interpreter-no-activation
 fast/js/invalid-callframe-during-unwind
@@ -296,10 +308,12 @@ fast/js/mod-crash
 fast/js/modify-non-references
 fast/js/multiline-comment-newline
 fast/js/named-function-expression
+fast/js/names
 fast/js/nested-functions
 fast/js/new-array-double-with-holes
 fast/js/no-semi-insertion-at-end-of-script
 fast/js/number-cell-reuse
+fast/js/number-parsing-crash
 fast/js/number-toExponential
 fast/js/number-toString
 fast/js/numeric-compare
@@ -328,6 +342,7 @@ fast/js/preventExtensions
 fast/js/primitive-method-this
 fast/js/primitive-property-access-edge-cases
 fast/js/property-getters-and-setters
+fast/js/property-iteration
 fast/js/propertyIsEnumerable
 fast/js/prototypes
 fast/js/read-modify-eval
@@ -380,6 +395,7 @@ fast/js/strict-throw-type-error
 fast/js/string-capitalization
 fast/js/string-from-char-code
 fast/js/string-index-overflow
+fast/js/string-localeCompare
 fast/js/string-property-deletion
 fast/js/string-property-iteration
 fast/js/string-slice-abnormal-values
@@ -402,6 +418,7 @@ fast/js/typeof-codegen-crash
 fast/js/typeof-constant-string
 fast/js/unexpected-constant-crash
 fast/js/unmatching-argument-count
+fast/js/var-declarations-zero-width
 fast/js/var-shadows-arg-crash
 fast/js/var-shadows-arg-gc-crash
 fast/js/vardecl-blocks-init
