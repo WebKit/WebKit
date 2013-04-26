@@ -1,3 +1,13 @@
+2013-04-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] media/track/track-mode.html sometimes trigger InvalidStateError
+        https://bugs.webkit.org/show_bug.cgi?id=115045
+
+        Reviewed by Alexey Proskuryakov.
+
+        * media/track/track-mode.html: Don't assume that the video element is ready for seeking
+            after a 100ms timeout.
+
 2013-04-26  David Kilzer  <ddkilzer@apple.com>
 
         Sort jsc-test-list

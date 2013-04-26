@@ -45,14 +45,23 @@
                 consoleWrite("<b>++ 'disabled'</b>");
                 setMode("disabled");
 
+                waitForEvent('cuechange', cuechange);
+                video.addEventListener('playing', playing);
                 video.src = findMediaFile("video", "../content/test");
                 video.play();
-                // Wait for end of first cue (no events should fire while track is disabled).
-                setTimeout(testHiddenAndShowing, 100);
+
                 consoleWrite("++ 0 events expected while mode = disabled");
                 consoleWrite("");
             }
             
+            function playing()
+            {
+                video.removeEventListener('playing', playing);
+
+                // Play past the end of the first cue, no events should fire because track is disabled.
+                setTimeout(testHiddenAndShowing, 100);
+            }
+
             function testHiddenAndShowing()
             {
                 video.pause();
@@ -64,20 +73,19 @@
                 consoleWrite("<b>++ 'showing'</b>");
                 setMode("showing");
 
-                consoleWrite("++ at least " + textTrack.cues.length + " events expected while mode = showing");
+                consoleWrite("<b>++ at least " + textTrack.cues.length + " events expected while mode = showing</b>");
                 video.play();
             }
             
-            waitForEvent('cuechange',
-                function (event)
-                {
-                    cueCount++;
-                    if (cueCount == textTrack.cues.length)
-                        endTest();
-
+            function cuechange(event)
+            {
+                cueCount++;
+                if (cueCount == textTrack.cues.length) {
+                    endTest();
+                    video.pause();
                 }
-            );
-            
+            }
+
         </script>
     </head>
     <body>
