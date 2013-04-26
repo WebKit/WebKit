@@ -1,3 +1,35 @@
+2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enable Web Audio layout tests on WK2, provide platform-specific expected output
+        https://bugs.webkit.org/show_bug.cgi?id=114513
+
+        Reviewed by Philippe Normand.
+
+        Unskip the Web Audio layout tests for GTK WK2 and generate platform-specific baselines for the tests.
+        The audio baselines are not audibly different from the generic baselines, but it can be expected that
+        different backends won't produce the same binary output.
+
+        The remaining failures are marked as such in the TestExpectations, each failure having the appropriate
+        bug handle covering the issue. The tests are still skipped for GTK WK1 as DumpRenderTree is still missing
+        infrastructure support for running these tests.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/webaudio/audiobuffersource-loop-points-expected.wav: Added.
+        * platform/gtk/webaudio/audiobuffersource-playbackrate-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/wav/24bit-44khz-expected.wav: Added.
+        * platform/gtk/webaudio/oscillator-custom-expected.wav: Added.
+        * platform/gtk/webaudio/oscillator-sawtooth-expected.wav: Added.
+        * platform/gtk/webaudio/oscillator-sine-expected.wav: Added.
+        * platform/gtk/webaudio/oscillator-square-expected.wav: Added.
+        * platform/gtk/webaudio/oscillator-triangle-expected.wav: Added.
+
 2013-04-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Unreviewed gardnering. Unskip passing test.

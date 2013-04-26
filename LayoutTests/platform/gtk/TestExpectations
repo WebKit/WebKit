@@ -257,14 +257,6 @@ webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Pass 
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
 
-# For now, Web Audio API is disabled
-webkit.org/b/67187 webaudio [ Skip ]
-webkit.org/b/67187 webkit.org/b/102258 inspector-protocol/nmi-webaudio.html [ Skip ]
-webkit.org/b/67187 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
-
-# These tests include proprietary codecs.
-webkit.org/b/67187 webaudio/codec-tests
-
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
 
@@ -319,6 +311,8 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 # Mediastream implementation is not complete yet.
 webkit.org/b/79203 fast/mediastream [ Skip ]
 webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
+webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
+webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.
 webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]
@@ -1361,6 +1355,15 @@ webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
 webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
+
+webkit.org/b/105296 webaudio/delaynode-max-nondefault-delay.html [ Failure ]
+webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure ]
+webkit.org/b/105296 webaudio/delaynode-scheduling.html [ Failure ]
+
+webkit.org/b/105299 webaudio/javascriptaudionode.html [ Failure ]
+
+webkit.org/b/105535 inspector-protocol/nmi-webaudio.html [ Failure ]
+webkit.org/b/105535 inspector-protocol/nmi-webaudio-leak-test.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
