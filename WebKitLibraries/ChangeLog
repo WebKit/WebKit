@@ -1,3 +1,12 @@
+2013-04-25  Chris Fleizach  <cfleizach@apple.com>
+
+        WEB SPEECH: language support does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=115119
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitSystemInterface.h:
+
 2013-04-24  Roger Fong  <roger_fong@apple.com>
 
         Have VS2010 WebKit solution look in WebKit_Libraries/lib32 for dependencies.

@@ -154,6 +154,9 @@ void InitWebCoreSystemInterface(void)
     INIT(SetRequestStorageSession);
 #endif
 
+#if PLATFORM(MAC)
+    INIT(SpeechSynthesisGetVoiceIdentifiers);
+#endif
     INIT(GetAXTextMarkerTypeID);
     INIT(GetAXTextMarkerRangeTypeID);
     INIT(CreateAXTextMarker);

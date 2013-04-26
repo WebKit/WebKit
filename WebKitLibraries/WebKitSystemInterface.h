@@ -84,7 +84,9 @@ CFTypeRef WKCopyAXTextMarkerRangeEnd(CFTypeRef range);
 void WKAccessibilityHandleFocusChanged(void);
 AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
-
+    
+NSArray *WKSpeechSynthesisGetVoiceIdentifiers(void);
+    
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
 BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 

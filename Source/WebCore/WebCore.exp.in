@@ -1941,6 +1941,7 @@ _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetMetadataURL
 _wkSignedPublicKeyAndChallengeString
+_wkSpeechSynthesisGetVoiceIdentifiers
 _wkUnregisterUniqueIdForElement
 _wkWindowSetAlpha
 _wkWindowSetScaledFrame

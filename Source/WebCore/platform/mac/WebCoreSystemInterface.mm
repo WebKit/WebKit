@@ -164,6 +164,10 @@ NSCursor *(*wkCursor)(const char*);
 
 #endif
 
+#if PLATFORM(MAC)
+NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
+#endif
+
 void (*wkUnregisterUniqueIdForElement)(id element);
 void (*wkAccessibilityHandleFocusChanged)(void);
 CFTypeID (*wkGetAXTextMarkerTypeID)(void);

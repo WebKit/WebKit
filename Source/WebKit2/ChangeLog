@@ -1,3 +1,13 @@
+2013-04-24  Chris Fleizach  <cfleizach@apple.com>
+
+        WEB SPEECH: language support does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=115119
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-04-25  Anders Carlsson  <andersca@apple.com>
 
         Rename DecidePolicyForResponse message to DecidePolicyForResponseSync

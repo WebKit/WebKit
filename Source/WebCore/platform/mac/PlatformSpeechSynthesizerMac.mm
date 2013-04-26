@@ -28,6 +28,7 @@
 
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
+#include "WebCoreSystemInterface.h"
 #include <AppKit/NSSpeechSynthesizer.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -210,7 +211,7 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
     NSString *defaultVoiceURI = [NSSpeechSynthesizer defaultVoice];
-    NSArray *availableVoices = [NSSpeechSynthesizer availableVoices];
+    NSArray *availableVoices = wkSpeechSynthesisGetVoiceIdentifiers();
     NSUInteger count = [availableVoices count];
     for (NSUInteger k = 0; k < count; k++) {
         NSString *voiceName = [availableVoices objectAtIndex:k];

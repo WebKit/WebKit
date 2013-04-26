@@ -273,6 +273,10 @@ extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 extern NSCursor *(*wkCursor)(const char*);
 
 #endif
+    
+#if PLATFORM(MAC)
+extern NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
+#endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);
 extern void (*wkAccessibilityHandleFocusChanged)(void);    

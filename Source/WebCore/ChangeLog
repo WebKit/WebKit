@@ -1,5 +1,20 @@
 2013-04-25  Chris Fleizach  <cfleizach@apple.com>
 
+        WEB SPEECH: language support does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=115119
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make the Mac platform synthesizer have access to all the voices installed on the system.
+
+        * WebCore.exp.in:
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+2013-04-25  Chris Fleizach  <cfleizach@apple.com>
+
         <meter> element not exposed to accessibility
         https://bugs.webkit.org/show_bug.cgi?id=109023
         rdar://problem/13658964
