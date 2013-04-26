@@ -363,6 +363,7 @@ fast/css/variables/inherited-values.html
 fast/css/variables/inline-styles.html
 fast/css/variables/redefinition.html
 fast/css/variables/shorthand.html
+fast/css/variables/transform-test.html  
 fast/css/variables/use-before-defined.html
 fast/css/variables/var-inside-box-reflect.html
 fast/css/variables/var-inside-pair.html
@@ -786,6 +787,8 @@ editing/selection/mixed-editability-10.html
 
 # [Qt] editing/selection/select-out-of-editable.html times out after r141792.
 webkit.org/b/108942 editing/selection/select-out-of-editable.html [ Skip ]
+
+webkit.org/b/115261 editing/selection/selection-in-iframe-removed-crash.html [ Skip ]
 
 # ============================================================================= #
 # Failing editing/spelling tests
