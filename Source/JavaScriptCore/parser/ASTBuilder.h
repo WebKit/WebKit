@@ -344,9 +344,16 @@ public:
         return result;
     }
 
+    StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, int start, int end)
+    {
+        IfNode* result = new (m_vm) IfNode(location, condition, trueBlock);
+        result->setLoc(start, end, location.charPosition);
+        return result;
+    }
+
     StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, StatementNode* falseBlock, int start, int end)
     {
-        IfElseNode* result = new (m_vm) IfElseNode(location, condition, trueBlock, falseBlock);
+        IfNode* result = new (m_vm) IfElseNode(location, condition, trueBlock, falseBlock);
         result->setLoc(start, end, location.charPosition);
         return result;
     }

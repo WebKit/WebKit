@@ -26,11 +26,10 @@
 #include "ASTBuilder.h"
 #include "CodeBlock.h"
 #include "Debugger.h"
-#include "JSCJSValueInlines.h"
+#include "VM.h"
 #include "Lexer.h"
 #include "NodeInfo.h"
 #include "SourceProvider.h"
-#include "VM.h"
 #include <utility>
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>
@@ -1012,7 +1011,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     failIfFalse(trueBlock);
 
     if (!match(ELSE))
-        return context.createIfStatement(ifLocation, condition, trueBlock, 0, start, end);
+        return context.createIfStatement(ifLocation, condition, trueBlock, start, end);
 
     Vector<TreeExpression> exprStack;
     Vector<pair<int, int> > posStack;
@@ -1057,7 +1056,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         posStack.removeLast();
         JSTokenLocation elseLocation = tokenLocationStack.last();
         tokenLocationStack.removeLast();
-        statementStack.append(context.createIfStatement(elseLocation, condition, trueBlock, 0, pos.first, pos.second));
+        statementStack.append(context.createIfStatement(elseLocation, condition, trueBlock, pos.first, pos.second));
     }
 
     while (!exprStack.isEmpty()) {

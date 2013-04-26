@@ -800,7 +800,7 @@ inline TriState JSValue::pureToBoolean() const
     if (isDouble())
         return (asDouble() > 0.0 || asDouble() < 0.0) ? TrueTriState : FalseTriState; // false for NaN
     if (isCell())
-        return asCell()->pureToBoolean();
+        return MixedTriState;
     return isTrue() ? TrueTriState : FalseTriState;
 }
 

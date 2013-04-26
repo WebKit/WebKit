@@ -553,7 +553,6 @@ namespace JSC {
         CodeType codeType() const { return m_codeType; }
 
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
-        bool shouldEmitDebugHooks() { return m_shouldEmitDebugHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
 
@@ -647,6 +646,8 @@ namespace JSC {
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body);
         }
 
+        JSString* addStringConstant(const Identifier&);
+
         void addLineInfo(unsigned lineNo)
         {
             m_codeBlock->addLineInfo(instructions().size(), lineNo - m_scopeNode->firstLine());
@@ -655,8 +656,6 @@ namespace JSC {
         RegisterID* emitInitLazyRegister(RegisterID*);
 
     public:
-        JSString* addStringConstant(const Identifier&);
-
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 
         SharedSymbolTable& symbolTable() { return *m_symbolTable; }

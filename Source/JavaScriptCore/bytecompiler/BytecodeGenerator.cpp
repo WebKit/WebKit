@@ -1628,7 +1628,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     bool hadVariableExpression = false;
     if (length) {
         for (ElementNode* n = elements; n; n = n->next()) {
-            if (!n->value()->isConstant()) {
+            if (!n->value()->isNumber() && !n->value()->isString()) {
                 hadVariableExpression = true;
                 break;
             }
@@ -1644,8 +1644,12 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
             JSValue* constantBuffer = m_codeBlock->constantBuffer(constantBufferIndex).data();
             unsigned index = 0;
             for (ElementNode* n = elements; index < length; n = n->next()) {
-                ASSERT(n->value()->isConstant());
-                constantBuffer[index++] = static_cast<ConstantNode*>(n->value())->jsValue(*this);
+                if (n->value()->isNumber())
+                    constantBuffer[index++] = jsNumber(static_cast<NumberNode*>(n->value())->value());
+                else {
+                    ASSERT(n->value()->isString());
+                    constantBuffer[index++] = addStringConstant(static_cast<StringNode*>(n->value())->value());
+                }
             }
             emitOpcode(op_new_array_buffer);
             instructions().append(dst->index());
@@ -2361,7 +2365,7 @@ RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* 
 void BytecodeGenerator::emitThrowReferenceError(const String& message)
 {
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, message)))->index());
+    instructions().append(addConstantValue(jsString(vm(), message))->index());
     instructions().append(true);
 }
 
@@ -2519,7 +2523,7 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
     if (!isStrictMode())
         return;
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
+    instructions().append(addConstantValue(jsString(vm(), StrictModeReadonlyPropertyWriteError))->index());
     instructions().append(false);
 }
 
