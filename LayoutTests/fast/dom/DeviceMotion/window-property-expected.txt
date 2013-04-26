@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS typeof window.DeviceMotionEvent == 'object' is true
 PASS typeof window.DeviceMotionEvent == 'function' is false
-PASS hasDeviceMotionEventProperty() is true
+PASS window.propertyIsEnumerable('DeviceMotionEvent') is false
 PASS 'DeviceMotionEvent' in window is true
 PASS window.hasOwnProperty('DeviceMotionEvent') is true
 PASS typeof window.ondevicemotion == 'object' is true

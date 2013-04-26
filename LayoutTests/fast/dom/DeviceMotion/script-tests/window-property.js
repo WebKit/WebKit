@@ -1,17 +1,8 @@
 description("Tests that the window.DeviceMotionEvent and window.ondevicemotion properties are present.");
 
-function hasDeviceMotionEventProperty()
-{
-    for (var property in window) {
-        if (property == "DeviceMotionEvent")
-            return true;
-    }
-    return false;
-}
-
 shouldBeTrue("typeof window.DeviceMotionEvent == 'object'");
 shouldBeFalse("typeof window.DeviceMotionEvent == 'function'");
-shouldBeTrue("hasDeviceMotionEventProperty()");
+shouldBeFalse("window.propertyIsEnumerable('DeviceMotionEvent')");
 shouldBeTrue("'DeviceMotionEvent' in window");
 shouldBeTrue("window.hasOwnProperty('DeviceMotionEvent')");
 
