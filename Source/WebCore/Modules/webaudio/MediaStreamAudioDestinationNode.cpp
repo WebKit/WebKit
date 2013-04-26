@@ -44,7 +44,7 @@ PassRefPtr<MediaStreamAudioDestinationNode> MediaStreamAudioDestinationNode::cre
 }
 
 MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContext* context, size_t numberOfChannels)
-    : AudioBasicInspectorNode(context, context->sampleRate())
+    : AudioBasicInspectorNode(context, context->sampleRate(), numberOfChannels)
     , m_mixBus(numberOfChannels, ProcessingSizeInFrames)
 {
     setNodeType(NodeTypeMediaStreamAudioDestination);

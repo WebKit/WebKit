@@ -1,3 +1,22 @@
+2013-04-26  Andreas Kling  <akling@apple.com>
+
+        Web Audio: Remove reduplicative addInput() in AnalyserNode.
+        <http://webkit.org/b/115244>
+
+        From Blink r149155 by <james.wei@intel.com>:
+
+        The parent class BasicInspectorNode already called addInput() and addOutput().
+        So it is reduplicative to call them in AnalyserNode.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        (AudioBasicInspectorNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+
 2013-04-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Mouseenter and mouseleave events not supported

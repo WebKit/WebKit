@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-AudioBasicInspectorNode::AudioBasicInspectorNode(AudioContext* context, float sampleRate)
+AudioBasicInspectorNode::AudioBasicInspectorNode(AudioContext* context, float sampleRate, unsigned outputChannelCount)
     : AudioNode(context, sampleRate)
     , m_needAutomaticPull(false)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
+    addOutput(adoptPtr(new AudioNodeOutput(this, outputChannelCount)));
 }
 
 // We override pullInputs() as an optimization allowing this node to take advantage of in-place processing,
