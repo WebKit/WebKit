@@ -1,5 +1,21 @@
 2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
 
+        [BlackBerry] Should check if it's cached resource before download
+        https://bugs.webkit.org/show_bug.cgi?id=115101
+
+        Reviewed by Rob Buis.
+
+        Since main resource maybe cached, if user want to save the resource, we first check
+        if it's cached. If yes, don't need to initiate a fresh load again, but get the
+        cached resource data out to save.
+
+        RIM bug# 324003, internally reviewed by Charles Wei.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload):
+
+2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
+
         [BlackBerry] Clean up load interface in WebPage
         https://bugs.webkit.org/show_bug.cgi?id=113267
 
