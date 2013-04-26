@@ -1,3 +1,22 @@
+2013-04-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Plugin process broken due to a missing symbol
+        https://bugs.webkit.org/show_bug.cgi?id=114901
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Work around the missing symbols in the WebKitPluginProcess by specifying the required libraries
+        multiple times in the program's LDADD list. Libtool fights fiercely to avoid duplicate static library
+        references among the linker arguments (even if using the --preserve-dup-deps flag) so the required libraries
+        are specified in various ways.
+
+        The unresolved symbols in object files are no longer ignored as this can lead to further trouble (for instance
+        this patch also adds a few missing source files to the list of WebKitPluginProcess sources). The Freetype and
+        gamepad dependencies' libraries are also added to the binary's LDADD list.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am: Add a few missing files to the build.
+
 2013-04-24  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH: language support does not work as expected

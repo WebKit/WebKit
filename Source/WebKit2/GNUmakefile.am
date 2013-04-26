@@ -649,23 +649,63 @@ Programs_WebKitPluginProcess_SOURCES = \
 
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
-	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libWebCore.la
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
+# FIXME: Due to layer violations and circular dependencies all these libraries have to be specified multiple times
+# when invoking the linker. This ensures any undefined symbols are resolved when linking. See wkb.ug/114901 for more detail.
+# First time around these libraries are simply listed by their file name that's later resolved to the path of the *.a archive
+# (i.e. .libs/libPlatformGtk2.a) by libtool.
+Programs_WebKitPluginProcess_LDADD += \
+	libPlatformGtk2.la \
+	libWebCoreGtk2.la \
+	libPlatform.la \
+	libWebCorePlatform.la \
+	libWebCore.la \
+	libWebCoreModules.la \
+	libWebKit2Platform.la
+if ENABLE_INDEXED_DATABASE
+Programs_WebKitPluginProcess_LDADD += \
+	libLevelDB.la
+endif
+if USE_OPENGL
+Programs_WebKitPluginProcess_LDADD += \
+	libANGLE.la
+endif
 if ENABLE_SVG
 Programs_WebKitPluginProcess_LDADD += \
 	libWebCoreSVG.la
 endif
 
+# FIXME: Second time around all the libraries are relisted, this time in the -lNAME form. Listed items are resolved into the
+# absolute paths to the *.a archive (i.e. $(abs_builddir)/.libs.libPlatformGtk2.a) by libtool.
 Programs_WebKitPluginProcess_LDADD += \
-	libPlatform.la \
-	libPlatformGtk2.la \
-	libWebCoreModules.la \
-	libWebCoreGtk2.la \
-	libWebCorePlatform.la \
-	libWebKit2Platform.la \
+	-lPlatformGtk2 -lWebCoreGtk2 -lPlatform -lWebCorePlatform -lWebCore -lWebCoreModules
+if ENABLE_INDEXED_DATABASE
+Programs_WebKitPluginProcess_LDADD += \
+	-lLevelDB
+endif
+if USE_OPENGL
+Programs_WebKitPluginProcess_LDADD += \
+	-lANGLE
+endif
+if ENABLE_SVG
+Programs_WebKitPluginProcess_LDADD += \
+	-lWebCoreSVG
+endif
+
+# FIXME: To make the matter worse, these four libraries are again required to be listed for linking. This time they're added by
+# specifying the symbolic link that points back to the ./lib*.la libtool archives which are again resolved into paths to the
+# *.a archives (i.e. .libs/libPlatformGtk2.la) by libtool. Phony targets are added for these files to prevent Automake to try
+# to build them as these symlinks are just a byproduct of libtool.
+.PHONY : .libs/libPlatformGtk2.la .libs/libWebCoreGtk2.la .libs/libPlatform.la .libs/libWebCorePlatform.la
+Programs_WebKitPluginProcess_LDADD += \
+	.libs/libPlatformGtk2.la .libs/libWebCoreGtk2.la .libs/libPlatform.la .libs/libWebCorePlatform.la
+
+Programs_WebKitPluginProcess_LDADD += \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
+	$(FREETYPE_LIBS) \
+	$(GAMEPAD_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -688,13 +728,6 @@ Programs_WebKitPluginProcess_LDADD += \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
-
-# libWebCore and libWebCoreModules have circular dependencies that only seem to
-# be a problem when linking the plugin process; we don't really care about
-# modules for the plugin process, though, so to work around that we ignore
-# internal unresolved symbols
-Programs_WebKitPluginProcess_LDFLAGS = \
-	-Wl,--unresolved-symbols=ignore-in-object-files
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
