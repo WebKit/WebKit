@@ -38,15 +38,15 @@ public:
     HTMLMeterElement* meterElement() const;
     virtual void updateFromElement();
 
-private:    
+    double valueRatio() const;
+
+private:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-
-    double valueRatio() const;
 };
 
 inline RenderMeter* toRenderMeter(RenderObject* object)

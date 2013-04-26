@@ -1,3 +1,18 @@
+2013-04-26  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
+
+        Change RenderMeter::valueRatio() visibility to public
+        https://bugs.webkit.org/show_bug.cgi?id=115266
+
+        This function is currently unused.
+        However, it is necessary to implement a RenderTheme capable of rendering Meter elements.
+
+        Reviewed by Alexis Menard.
+
+        No new tests, because no behaviour is changed.
+
+        * rendering/RenderMeter.h:
+        (RenderMeter):
+
 2013-04-26  Timothy Hatcher  <timothy@apple.com>
 
         Add Runtime.parse to the Inspector protocol.
