@@ -1,3 +1,30 @@
+2013-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Inspector window is often blank when opened
+        https://bugs.webkit.org/show_bug.cgi?id=115220
+
+        Reviewed by Tim Horton.
+        
+        After disabling tiled scrolling and accelerated drawing in r149006, the
+        Inspector window was often missing its content after opening. This only
+        happened when the user has a preference on disk to use accelerated drawing
+        in the Inspector.
+        
+        The missing content was caused by a failure to connect the correct contextID
+        for remote layer hosting. On window creation, we hook up a context using
+        WindowServer layer hosting (the default), but then switch back to app-hosted
+        layers for the Inspector window. This switching happens in didUpdateBackingStoreState(),
+        but that can be re-entered via its call to sendUpdateBackingStoreState(). In
+        that cause, on unwinding the stack it would call enterAcceleratedCompositingMode()
+        with a stale layerTreeContext.
+        
+        Fix by moving the code that exits/enters accelerated compositing mode to before
+        the call to sendUpdateBackingStoreState() that can cause re-entrancy. That avoids
+        use of a possibly stale layerTreeContext.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+
 2013-04-26  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes under ResourceHandle::continueDidReceiveResponse when loading blobs
