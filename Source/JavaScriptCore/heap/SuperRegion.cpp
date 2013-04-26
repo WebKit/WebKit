@@ -49,7 +49,9 @@ SuperRegion::SuperRegion()
 
 SuperRegion::~SuperRegion()
 {
+#if ENABLE(SUPER_REGION)
     m_reservation.deallocate();
+#endif
 }
 
 void* SuperRegion::getAlignedBase(PageReservation& reservation)
