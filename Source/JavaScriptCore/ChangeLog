@@ -1,3 +1,15 @@
+2013-04-26  Julien Brianceau  <jbrianceau@nds.com>
+
+        Fix SH4 build broken since r149159.
+        https://bugs.webkit.org/show_bug.cgi?id=115229
+
+        Add BranchTruncateType enum in SH4 port and handle it in branchTruncateDoubleToInt32.
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchTruncateDoubleToInt32):
+
 2013-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         SuperRegion doesn't call deallocate() on its PageReservation

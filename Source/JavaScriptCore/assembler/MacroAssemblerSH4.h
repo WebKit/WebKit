@@ -1518,16 +1518,17 @@ public:
         releaseScratch(addressTempRegister);
     }
 
-    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
+    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
         m_assembler.ftrcdrmfpul(src);
         m_assembler.stsfpulReg(dest);
         m_assembler.loadConstant(0x7fffffff, scratchReg3);
-        m_assembler.cmplRegReg(dest, scratchReg3, SH4Condition(Equal));
+        m_assembler.cmplRegReg(dest, scratchReg3, SH4Condition(branchType == BranchIfTruncateFailed ? Equal : NotEqual));
         m_assembler.ensureSpace(m_assembler.maxInstructionSize + 14, sizeof(uint32_t));
         m_assembler.branch(BT_OPCODE, 2);
         m_assembler.addlImm8r(1, scratchReg3);
-        m_assembler.cmplRegReg(dest, scratchReg3, SH4Condition(Equal));
+        m_assembler.cmplRegReg(dest, scratchReg3, SH4Condition(branchType == BranchIfTruncateFailed ? Equal : NotEqual));
         return branchTrue();
     }
 
