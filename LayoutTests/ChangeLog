@@ -1,3 +1,9 @@
+2013-04-26  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Unreviewed gardnering. Unskip passing test.
+
+        * platform/gtk/TestExpectations: Unskip http/tests/inspector/compiler-source-mapping-debug.html
+
 2013-04-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Mouseenter and mouseleave events not supported

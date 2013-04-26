@@ -939,7 +939,6 @@ webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Miss
 webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Failure ]
 webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Failure ]
 webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
-webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Timeout ]
 
 # JSC doesn't support heap profiling
 webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Failure ]
