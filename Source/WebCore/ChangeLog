@@ -1,3 +1,29 @@
+2013-04-26  Zalan Bujtas  <zalan@apple.com>
+
+        use-after-free removing a frame from its parent in a beforeload event of an OBJECT element
+        https://bugs.webkit.org/show_bug.cgi?id=113964
+
+        Object elements have the tendecny to modify or even fully remove 
+        the containing Document inside beforeload callback. While Document is removed, 
+        RenderArena gets destroyed. Retained RenderWidgets fails to function with NULL arena.
+        
+        Protect RendereArena from getting wiped out, when Document is removed 
+        during FrameView::updateWidget(). 
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/frames/crash-remove-iframe-during-object-beforeload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        * dom/Document.h:
+        (Document):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidgets):
+        * rendering/RenderArena.h:
+        (RenderArena):
+        (WebCore::RenderArena::create):
+
 2013-04-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Optimize function and interface object length computation in bindings generator

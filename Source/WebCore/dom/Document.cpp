@@ -2070,7 +2070,7 @@ void Document::attach()
     ASSERT(!m_axObjectCache || this != topDocument());
 
     if (!m_renderArena)
-        m_renderArena = adoptPtr(new RenderArena);
+        m_renderArena = RenderArena::create();
     
     // Create the rendering tree
     setRenderer(new (m_renderArena.get()) RenderView(this));

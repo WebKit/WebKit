@@ -1,3 +1,14 @@
+2013-04-26  Zalan Bujtas  <zalan@apple.com>
+
+        use-after-free removing a frame from its parent in a beforeload event of an OBJECT element
+        https://bugs.webkit.org/show_bug.cgi?id=113964
+
+        Reviewed by Antti Koivisto.
+
+        * fast/frames/crash-remove-iframe-during-object-beforeload-expected.txt: Added.
+        * fast/frames/crash-remove-iframe-during-object-beforeload.html: Added.
+        * fast/frames/resources/remove-this-during-object-beforeload.html: Added.
+
 2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable Web Audio layout tests on WK2, provide platform-specific expected output
