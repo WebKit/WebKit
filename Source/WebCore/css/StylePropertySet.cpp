@@ -657,12 +657,12 @@ bool StylePropertySet::propertyIsImportant(CSSPropertyID propertyID) const
     return true;
 }
 
-CSSPropertyID StylePropertySet::getPropertyShorthand(CSSPropertyID propertyID) const
+String StylePropertySet::getPropertyShorthand(CSSPropertyID propertyID) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
-        return CSSPropertyInvalid;
-    return propertyAt(foundPropertyIndex).shorthandID();
+        return String();
+    return getPropertyNameString(propertyAt(foundPropertyIndex).shorthandID());
 }
 
 bool StylePropertySet::isPropertyImplicit(CSSPropertyID propertyID) const

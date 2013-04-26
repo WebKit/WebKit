@@ -88,7 +88,7 @@ public:
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     String getPropertyValue(CSSPropertyID) const;
     bool propertyIsImportant(CSSPropertyID) const;
-    CSSPropertyID getPropertyShorthand(CSSPropertyID) const;
+    String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
 
     PassRefPtr<MutableStylePropertySet> copyBlockProperties() const;

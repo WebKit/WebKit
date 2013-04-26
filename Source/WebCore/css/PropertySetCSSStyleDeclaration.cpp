@@ -190,10 +190,7 @@ String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& proper
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
-    CSSPropertyID shorthandID = m_propertySet->getPropertyShorthand(propertyID);
-    if (!shorthandID)
-        return String();
-    return getPropertyNameString(shorthandID);
+    return m_propertySet->getPropertyShorthand(propertyID);
 }
 
 bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyName)

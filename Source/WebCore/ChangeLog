@@ -1,3 +1,20 @@
+2013-04-25  Andreas Kling  <akling@apple.com>
+
+        StylePropertySet::getPropertyShorthand() should return a String.
+        <http://webkit.org/b/115213>
+
+        Reviewed by Anders Carlsson.
+
+        Return a String directly from getPropertyShorthand() instead of forcing clients
+        to call getPropertyNameString().
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyShorthand):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyShorthand):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+
 2013-04-25  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH: language support does not work as expected
