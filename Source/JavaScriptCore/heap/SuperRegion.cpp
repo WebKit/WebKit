@@ -47,6 +47,11 @@ SuperRegion::SuperRegion()
 #endif
 }
 
+SuperRegion::~SuperRegion()
+{
+    m_reservation.deallocate();
+}
+
 void* SuperRegion::getAlignedBase(PageReservation& reservation)
 {
     for (char* current = static_cast<char*>(reservation.base()); current < static_cast<char*>(reservation.base()) + Region::s_regionSize; current += pageSize()) {

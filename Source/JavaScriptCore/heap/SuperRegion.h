@@ -37,6 +37,7 @@ class VM;
 class SuperRegion : public WTF::MetaAllocator {
 public:
     SuperRegion();
+    virtual ~SuperRegion();
 
 protected:
     virtual void* allocateNewSpace(size_t&);

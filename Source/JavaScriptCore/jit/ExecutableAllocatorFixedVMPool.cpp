@@ -72,6 +72,8 @@ public:
             startOfFixedExecutableMemoryPool = reinterpret_cast<uintptr_t>(m_reservation.base());
         }
     }
+
+    virtual ~FixedVMPoolExecutableAllocator();
     
 protected:
     virtual void* allocateNewSpace(size_t&)
@@ -127,6 +129,11 @@ ExecutableAllocator::ExecutableAllocator(VM&)
 
 ExecutableAllocator::~ExecutableAllocator()
 {
+}
+
+FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
+{
+    m_reservation.deallocate();
 }
 
 bool ExecutableAllocator::isValid() const

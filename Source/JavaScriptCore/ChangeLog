@@ -1,3 +1,23 @@
+2013-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        SuperRegion doesn't call deallocate() on its PageReservation
+        https://bugs.webkit.org/show_bug.cgi?id=115208
+
+        Reviewed by Geoffrey Garen.
+
+        It should. This doesn't cause us to leak physical memory, but it does cause us to leak virtual 
+        address space (and probably mach ports), which is also bad :-( FixedVMPoolExecutableAllocator 
+        also has this bug, but it doesn't matter much because there's only one instance of that class 
+        throughout the entire lifetime of the process, whereas each VM has its own SuperRegion. 
+
+        * heap/SuperRegion.cpp:
+        (JSC::SuperRegion::~SuperRegion):
+        * heap/SuperRegion.h:
+        (SuperRegion):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator):
+
 2013-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG doesn't support to_jsnumber
