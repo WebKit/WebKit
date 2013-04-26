@@ -96,6 +96,7 @@ private:
     void didFinishLoading(uint64_t customProtocolID);
 
     HashSet<String> m_registeredSchemes;
+    Mutex m_registeredSchemesMutex;
     ChildProcess* m_childProcess;
     RefPtr<WorkQueue> m_messageQueue;
 
