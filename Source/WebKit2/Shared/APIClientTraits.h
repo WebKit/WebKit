@@ -80,7 +80,7 @@ template<> struct APIClientTraits<WKBundlePageEditorClient> {
 };
 
 template<> struct APIClientTraits<WKContextClient> {
-    static const size_t interfaceSizesByVersion[2];
+    static const size_t interfaceSizesByVersion[1];
 };
 
 template<> struct APIClientTraits<WKContextInjectedBundleClient> {

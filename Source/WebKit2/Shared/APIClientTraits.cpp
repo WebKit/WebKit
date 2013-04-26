@@ -91,7 +91,6 @@ const size_t APIClientTraits<WKBundlePageUIClient>::interfaceSizesByVersion[] = 
 };
 
 const size_t APIClientTraits<WKContextClient>::interfaceSizesByVersion[] = {
-    offsetof(WKContextClient, plugInInformationBecameAvailable),
     sizeof(WKContextClient)
 };
 

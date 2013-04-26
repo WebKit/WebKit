@@ -51,13 +51,11 @@ struct WKContextClient {
     // Version 0.
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
     WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
-
-    // Version 1.
-    WKContextPlugInInformationBecameAvailableCallback                         plugInInformationBecameAvailable;
+    WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
 };
 typedef struct WKContextClient WKContextClient;
 
-enum { kWKContextClientCurrentVersion = 1 };
+enum { kWKContextClientCurrentVersion = 0 };
 
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
