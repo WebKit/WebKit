@@ -75,13 +75,12 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
 {
     blobRegistry().registerBlobURL(url, srcURL);
     SandboxExtensionMap::iterator iter = m_sandboxExtensions.find(srcURL.string());
-    if (iter != m_sandboxExtensions.end()) {
+    if (iter != m_sandboxExtensions.end())
         m_sandboxExtensions.add(url.string(), iter->value);
 
-        ASSERT(m_blobsForConnection.contains(connection));
-        ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
-        m_blobsForConnection.find(connection)->value.add(url);
-    }
+    ASSERT(m_blobsForConnection.contains(connection));
+    ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
+    m_blobsForConnection.find(connection)->value.add(url);
 }
 
 void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::KURL& url)
