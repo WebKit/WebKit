@@ -37,12 +37,18 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorValues.h"
+#include "JSDOMWindowBase.h"
+#include <parser/ParserError.h>
+#include <parser/SourceCode.h>
+#include <runtime/Completion.h>
+#include <runtime/JSLock.h>
 #include <wtf/PassRefPtr.h>
-
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "ScriptDebugServer.h"
 #endif
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -75,6 +81,43 @@ static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(Scrip
     return presentState;
 }
 #endif
+
+static PassRefPtr<TypeBuilder::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
+{
+    RefPtr<TypeBuilder::Runtime::ErrorRange> result = TypeBuilder::Runtime::ErrorRange::create()
+        .setStartOffset(tokenLocation.startOffset)
+        .setEndOffset(tokenLocation.endOffset);
+    return result.release();
+}
+
+void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, TypeBuilder::Runtime::SyntaxErrorType::Enum* result, TypeBuilder::OptOutput<String>* message, RefPtr<TypeBuilder::Runtime::ErrorRange>& range)
+{
+    VM* vm = JSDOMWindowBase::commonVM();
+    JSLockHolder lock(vm);
+
+    ParserError error;
+    checkSyntax(*vm, JSC::makeSource(expression), error);
+
+    switch (error.m_syntaxErrorType) {
+    case ParserError::SyntaxErrorNone:
+        *result = TypeBuilder::Runtime::SyntaxErrorType::None;
+        break;
+    case ParserError::SyntaxErrorIrrecoverable:
+        *result = TypeBuilder::Runtime::SyntaxErrorType::Irrecoverable;
+        break;
+    case ParserError::SyntaxErrorUnterminatedLiteral:
+        *result = TypeBuilder::Runtime::SyntaxErrorType::Unterminated_literal;
+        break;
+    case ParserError::SyntaxErrorRecoverable:
+        *result = TypeBuilder::Runtime::SyntaxErrorType::Recoverable;
+        break;
+    }
+
+    if (error.m_syntaxErrorType != ParserError::SyntaxErrorNone) {
+        *message = error.m_message;
+        range = buildErrorRangeObject(error.m_token.m_location);
+    }
+}
 
 void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
 {

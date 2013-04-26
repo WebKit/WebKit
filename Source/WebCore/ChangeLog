@@ -1,3 +1,21 @@
+2013-04-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add Runtime.parse to the Inspector protocol.
+
+        This will be used to parse console expressions for errors
+        before evaluating them fully.
+
+        https://webkit.org/b/115242
+
+        Reviewed by Oliver Hunt.
+
+        * ForwardingHeaders/parser/ParserError.h: Added.
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::parse):
+        * inspector/InspectorRuntimeAgent.h:
+        (InspectorRuntimeAgent):
+
 2013-04-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the copyright years after r149057

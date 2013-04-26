@@ -663,10 +663,36 @@
                     { "name": "name", "type": "string", "description": "Human readable name describing given context.", "hidden": true},
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the owning frame." }
                 ]
+            },
+            {
+                "id": "SyntaxErrorType",
+                "type": "string",
+                "enum": ["none", "irrecoverable", "unterminated-literal", "recoverable"],
+                "description": "Syntax error type: \"none\" for no error, \"irrecoverable\" for unrecoverable errors, \"unterminated-literal\" for when there is an unterminated literal, \"recoverable\" for when the expression is unfinished but valid so far."
+            },
+            {
+                "id": "ErrorRange",
+                "type": "object",
+                "description": "Range of an error in source code.",
+                "properties": [
+                    { "name": "startOffset", "type": "integer", "description": "Start offset of range (inclusive)." },
+                    { "name": "endOffset", "type": "integer", "description": "End offset of range (exclusive)." }
+                ]
             }
-
         ],
         "commands": [
+            {
+                "name": "parse",
+                "parameters": [
+                    { "name": "source", "type": "string", "description": "Source code to parse." }
+                ],
+                "returns": [
+                    { "name": "result", "$ref": "SyntaxErrorType", "description": "Parse result." },
+                    { "name": "message", "type": "string", "optional": true, "description": "Parse error message." },
+                    { "name": "range", "$ref": "ErrorRange", "optional": true, "description": "Range in the source where the error occurred." }
+                ],
+                "description": "Parses JavaScript source code for errors."
+            },
             {
                 "name": "evaluate",
                 "parameters": [

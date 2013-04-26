@@ -141,6 +141,7 @@ EXPORTS
     ?charactersToUIntStrict@WTF@@YAIPB_WIPA_NH@Z
     ?charactersWithNullTermination@String@WTF@@QAEPB_WXZ
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@@Z
+    ?checkSyntax@JSC@@YA_NAAVVM@1@ABVSourceCode@1@AAUParserError@1@@Z
     ?checkSyntax@JSC@@YA_NPAVExecState@1@ABVSourceCode@1@PAVJSValue@1@@Z
     ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@VCrashOnOverflow@WTF@@@2@@Z
     ?className@JSObject@JSC@@SA?AVString@WTF@@PBV12@@Z
