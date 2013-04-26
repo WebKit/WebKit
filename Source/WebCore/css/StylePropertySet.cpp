@@ -1030,14 +1030,8 @@ String StylePropertySet::asText() const
 void MutableStylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
 {
     unsigned size = other->propertyCount();
-    for (unsigned n = 0; n < size; ++n) {
-        PropertyReference toMerge = other->propertyAt(n);
-        CSSProperty* old = findCSSPropertyWithID(toMerge.id());
-        if (old)
-            setProperty(toMerge.toCSSProperty(), old);
-        else
-            appendPrefixingVariantProperty(toMerge.toCSSProperty());
-    }
+    for (unsigned i = 0; i < size; ++i)
+        addParsedProperty(other->propertyAt(i).toCSSProperty());
 }
 
 void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const

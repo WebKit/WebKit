@@ -1,3 +1,22 @@
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copy and paste can strip !important CSS rules due to a bug in mergeStyleFromRules
+        https://bugs.webkit.org/show_bug.cgi?id=115217
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by mergeStyleFromRules overriding "important" style rules with "unimportant" inline styles.
+        Fixed the bug by using addParsedProperty, which respects !important, in MutableStylePropertySet's
+        mergeAndOverrideOnConflict, which was only used in editing code. Now that we've fixed this function, we can use
+        it in ViewportStyleResolver::addViewportRule as well.
+
+        Test: editing/pasteboard/copy-paste-with-important-rules.html
+
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::mergeAndOverrideOnConflict): Fixed to respect !important.
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::addViewportRule): Use mergeAndOverrideOnConflict now that the code is identical.
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         StylePropertySet::getPropertyShorthand() should return a String.
