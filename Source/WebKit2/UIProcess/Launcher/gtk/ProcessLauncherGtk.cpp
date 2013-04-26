@@ -43,6 +43,7 @@
 
 #if OS(LINUX)
 #include <sys/prctl.h>
+#include <sys/socket.h>
 #endif
 
 #ifdef SOCK_SEQPACKET

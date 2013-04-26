@@ -1,3 +1,12 @@
+2013-04-26  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Compilation of ProcessLauncherGtk.cpp fails due to unresolved symbols
+        https://bugs.webkit.org/show_bug.cgi?id=115240
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp: Includes sys/socket.h if OS is Linux
+
 2013-04-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Plugin process broken due to a missing symbol
