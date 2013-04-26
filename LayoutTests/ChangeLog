@@ -1,3 +1,75 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. More rebaselines for mac after disabling sub-pixel layout.
+
+        * platform/mac/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+        * platform/mac/editing/selection/collapse-selection-in-bidi-expected.txt: Added.
+        * platform/mac/editing/selection/drag-start-event-client-x-y-expected.txt: Added.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt: Added.
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Added.
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt: Added.
+        * platform/mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        * platform/mac/fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.txt: Added.
+        * platform/mac/fast/css/getComputedStyle/getComputedStyle-margin-percentage-expected.txt: Added.
+        * platform/mac/fast/events/document-elementFromPoint-expected.txt: Added.
+        * platform/mac/fast/flexbox/flex-hang-expected.txt: Added.
+        * platform/mac/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt: Added.
+        * platform/mac/fast/images/repaint-subrect-grid-expected.txt: Added.
+        * platform/mac/fast/images/zoomed-img-size-expected.txt: Added.
+        * platform/mac/fast/multicol/break-properties-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/break-properties-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/break-properties-expected.txt: Added.
+        * platform/mac/fast/parser/style-script-head-test-expected.txt: Added.
+        * platform/mac/fast/reflections/reflection-with-zoom-expected.txt: Added.
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.txt: Added.
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.txt: Added.
+        * platform/mac/http/tests/misc/acid3-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/mac/svg/as-image/svg-non-integer-scaled-image-expected.txt: Added.
+        * platform/mac/svg/custom/fractional-rects-expected.txt: Added.
+        * platform/mac/svg/custom/js-update-container-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt: Added.
+        * platform/mac/svg/custom/viewBox-hit-expected.txt: Added.
+        * platform/mac/svg/hixie/text/001-expected.txt: Added.
+        * platform/mac/svg/hixie/text/003a-expected.txt:
+        * platform/mac/svg/text/small-fonts-2-expected.txt:
+        * platform/mac/svg/text/text-hkern-expected.txt: Added.
+        * platform/mac/svg/text/text-viewbox-rescale-expected.txt: Added.
+        * platform/mac/svg/wicd/sizing-flakiness-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-image-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-object-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug83786-expected.txt: Added.
+
 2013-04-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Rebaseline a bunch of tests and run optimize-baselines after disabling sub-pixel layout on mac.
