@@ -48,11 +48,6 @@
 #endif
 #endif
 
-#if PLATFORM(WX)
-#include <wx/defs.h>
-#include <wx/file.h>
-#endif
-
 #if USE(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
 typedef struct __CFBundle* CFBundleRef;
 typedef const struct __CFData* CFDataRef;
@@ -133,9 +128,6 @@ typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
 // avoid using Windows headers in headers.  We'd rather move this into the .cpp.
 const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
-#elif PLATFORM(WX)
-typedef wxFile* PlatformFileHandle;
-const PlatformFileHandle invalidPlatformFileHandle = 0;
 #else
 typedef int PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = -1;

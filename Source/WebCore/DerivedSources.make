@@ -660,9 +660,6 @@ DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
 JS_DOM_HEADERS=$(filter-out JSMediaQueryListListener.h JSEventListener.h, $(DOM_CLASSES:%=JS%.h))
 
 WEB_DOM_HEADERS :=
-ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
-WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h WebDOMEventTarget.h, $(DOM_CLASSES:%=WebDOM%.h))
-endif # BUILDING_WX
 
 all : \
     $(SUPPLEMENTAL_DEPENDENCY_FILE) \
@@ -1059,13 +1056,6 @@ InjectedScriptCanvasModuleSource.h : InjectedScriptCanvasModuleSource.js
 	perl $(WebCore)/inspector/xxd.pl InjectedScriptCanvasModuleSource_js $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js InjectedScriptCanvasModuleSource.h
 
 -include $(JS_DOM_HEADERS:.h=.dep)
-
-ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
-CPP_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorCPP.pm
-
-WebDOM%.h : %.idl $(CPP_BINDINGS_SCRIPTS)
-	$(call generator_script, $(CPP_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_CPP" --generator CPP --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
-endif # BUILDING_WX
 
 # ------------------------
 

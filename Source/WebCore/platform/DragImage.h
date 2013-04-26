@@ -41,8 +41,6 @@ class QPixmap;
 QT_END_NAMESPACE
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
-#elif PLATFORM(WX)
-class wxDragImage;
 #elif PLATFORM(GTK)
 typedef struct _cairo_surface cairo_surface_t;
 #endif
@@ -62,8 +60,6 @@ namespace WebCore {
     typedef QPixmap* DragImageRef;
 #elif PLATFORM(WIN)
     typedef HBITMAP DragImageRef;
-#elif PLATFORM(WX)
-    typedef wxDragImage* DragImageRef;
 #elif PLATFORM(GTK)
     typedef cairo_surface_t* DragImageRef;
 #elif PLATFORM(EFL) || PLATFORM(BLACKBERRY)

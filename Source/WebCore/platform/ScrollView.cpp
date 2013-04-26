@@ -1331,7 +1331,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(WX) && !PLATFORM(EFL)
+#if !PLATFORM(EFL)
 
 void ScrollView::platformInit()
 {
@@ -1343,7 +1343,7 @@ void ScrollView::platformDestroy()
 
 #endif
 
-#if !PLATFORM(WX) && !PLATFORM(QT) && !PLATFORM(MAC)
+#if !PLATFORM(QT) && !PLATFORM(MAC)
 
 void ScrollView::platformAddChild(Widget*)
 {
@@ -1371,7 +1371,7 @@ void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle)
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(WX)
+#if !PLATFORM(MAC)
 
 void ScrollView::platformSetScrollbarModes()
 {

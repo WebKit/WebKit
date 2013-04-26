@@ -39,8 +39,6 @@ OBJC_CLASS NSMenuItem;
 #elif PLATFORM(GTK)
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkAction GtkAction;
-#elif PLATFORM(WX)
-class wxMenuItem;
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -181,22 +179,6 @@ namespace WebCore {
     typedef NSMenuItem* PlatformMenuItemDescription;
 #elif PLATFORM(GTK)
     typedef GtkMenuItem* PlatformMenuItemDescription;
-#elif PLATFORM(WX)
-    struct PlatformMenuItemDescription {
-        PlatformMenuItemDescription()
-            : type(ActionType),
-              action(ContextMenuItemTagNoAction),
-              checked(false),
-              enabled(true)
-        {}
-
-        ContextMenuItemType type;
-        ContextMenuAction action;
-        String title;
-        wxMenu * subMenu;
-        bool checked;
-        bool enabled;
-    };
 #else
     typedef void* PlatformMenuItemDescription;
 #endif

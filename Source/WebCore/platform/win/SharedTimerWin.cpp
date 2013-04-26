@@ -33,13 +33,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 
-// Note: wx headers set defines that affect the configuration of windows.h
-// so we must include the wx header first to get unicode versions of functions,
-// etc.
-#if PLATFORM(WX)
-#include <wx/wx.h>
-#endif
-
 #include "WindowsExtras.h"
 #include <mmsystem.h>
 

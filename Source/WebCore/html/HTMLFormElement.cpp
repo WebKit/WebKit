@@ -56,11 +56,6 @@
 #include "ValidityState.h"
 #include <limits>
 
-#if PLATFORM(WX)
-#include <wx/defs.h>
-#include <wx/filename.h>
-#endif
-
 using namespace std;
 
 namespace WebCore {

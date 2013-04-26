@@ -86,12 +86,6 @@
 
 #endif
 
-// On MSW, wx headers need to be included before windows.h is.
-// The only way we can always ensure this is if we include wx here.
-#if PLATFORM(WX)
-#include <wx/defs.h>
-#endif
-
 #include <wtf/DisallowCType.h>
 
 #if COMPILER(MSVC)

@@ -1,3 +1,37 @@
+2013-04-26  Andreas Kling  <akling@apple.com>
+
+        Remove wxWebKit from WebCore.
+        <http://webkit.org/b/115255>
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make:
+        * WebCorePrefix.h:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::port):
+        * config.h:
+        * html/HTMLFormElement.cpp:
+        * platform/ContextMenu.h:
+        (ContextMenu):
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FileSystem.h:
+        * platform/PlatformExportMacros.h:
+        * platform/PlatformKeyboardEvent.h:
+        (PlatformKeyboardEvent):
+        * platform/PlatformMenuDescription.h:
+        * platform/PlatformMouseEvent.h:
+        (PlatformMouseEvent):
+        * platform/PlatformWheelEvent.h:
+        (PlatformWheelEvent):
+        * platform/ScrollView.cpp:
+        * platform/ScrollView.h:
+        (ScrollView):
+        * platform/Widget.h:
+        * platform/win/SharedTimerWin.cpp:
+
 2013-04-26  Zalan Bujtas  <zalan@apple.com>
 
         use-after-free removing a frame from its parent in a beforeload event of an OBJECT element

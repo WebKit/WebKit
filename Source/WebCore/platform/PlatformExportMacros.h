@@ -48,7 +48,7 @@
 
 #else // !USE(EXPORT_MACROS)
 
-#if OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
+#if OS(WINDOWS) && !COMPILER(GCC)
 
 #if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
 #define WEBKIT_EXPORTDATA __declspec(dllexport)

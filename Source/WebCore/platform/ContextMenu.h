@@ -81,11 +81,6 @@ namespace WebCore {
         void setPlatformDescription(PlatformMenuDescription);
 
         PlatformMenuDescription releasePlatformDescription();
-
-#if PLATFORM(WX)
-        static ContextMenuItem* itemWithId(int);
-#endif
-
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
     private:

@@ -68,11 +68,6 @@ typedef QObject* PlatformWidget;
 typedef void* PlatformWidget;
 #endif
 
-#if PLATFORM(WX)
-class wxWindow;
-typedef wxWindow* PlatformWidget;
-#endif
-
 #if PLATFORM(EFL)
 #if USE(EO)
 typedef struct _Eo Evas_Object;

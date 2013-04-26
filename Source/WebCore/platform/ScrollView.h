@@ -39,10 +39,6 @@
 @protocol WebCoreFrameScrollView;
 #endif
 
-#if PLATFORM(WX)
-class wxScrollWinEvent;
-#endif
-
 namespace WebCore {
 
 class HostWindow;
@@ -412,16 +408,6 @@ public:
 private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
-
-#if PLATFORM(WX)
-public:
-    virtual void setPlatformWidget(wxWindow*);
-    void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);
-private:
-    class ScrollViewPrivate;
-    ScrollViewPrivate* m_data;
-#endif
-
 }; // class ScrollView
 
 inline ScrollView* toScrollView(Widget* widget)

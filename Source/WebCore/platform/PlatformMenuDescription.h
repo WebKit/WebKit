@@ -34,8 +34,6 @@ OBJC_CLASS NSMutableArray;
 #include <qlist.h>
 #elif PLATFORM(GTK)
 typedef struct _GtkMenu GtkMenu;
-#elif PLATFORM(WX)
-class wxMenu;
 #endif
 
 namespace WebCore {
@@ -48,8 +46,6 @@ namespace WebCore {
     typedef const QList<ContextMenuItem>* PlatformMenuDescription;
 #elif PLATFORM(GTK)
     typedef GtkMenu* PlatformMenuDescription;
-#elif PLATFORM(WX)
-    typedef wxMenu* PlatformMenuDescription;
 #else
     typedef void* PlatformMenuDescription;
 #endif

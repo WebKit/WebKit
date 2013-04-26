@@ -77,8 +77,6 @@ JSValue JSInspectorFrontendHost::port(ExecState* execState)
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("qt")));
 #elif PLATFORM(GTK)
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("gtk")));
-#elif PLATFORM(WX)
-    DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("wx")));
 #elif PLATFORM(EFL)
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("efl")));
 #else
