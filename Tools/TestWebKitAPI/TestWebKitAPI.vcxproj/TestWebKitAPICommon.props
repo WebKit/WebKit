@@ -6,10 +6,10 @@
   <ItemDefinitionGroup>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>CFNetwork.lib;CoreFoundation.lib;WebKit.lib;JavaScriptCore.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CFNetwork$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;WebKit$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;gtest$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir)..\win;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\private;$(WebKit_Source)\ThirdParty\gtest\include;$(WebKit_Libraries)\include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir)..\win;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\private;..\..\..\Source\ThirdParty\gtest\include;$(WebKit_Libraries)\include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>

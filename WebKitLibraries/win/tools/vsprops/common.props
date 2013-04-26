@@ -2,11 +2,13 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
     <CONFIGURATIONBUILDDIR>$(WEBKIT_OUTPUTDIR)\$(Configuration)</CONFIGURATIONBUILDDIR>
+    <DEBUGSUFFIX>
+    </DEBUGSUFFIX>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir>$(ConfigurationBuildDir)\bin\</OutDir>
-    <IntDir>$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <OutDir>$(ConfigurationBuildDir)\bin32\</OutDir>
+    <IntDir>$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
@@ -69,7 +71,6 @@ set INPUTDIR=$(InputDir)
 set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
-set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
@@ -105,7 +106,6 @@ set INPUTDIR=$(InputDir)
 set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
-set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
@@ -141,7 +141,6 @@ set INPUTDIR=$(InputDir)
 set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
-set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
@@ -173,7 +172,7 @@ cmd /c
     </ResourceCompile>
     <BuildLog />
     <Link>
-      <AdditionalLibraryDirectories>$(IntDir)lib;$(ConfigurationBuildDir)\lib;$(WEBKIT_LIBRARIES)\lib32;$(WEBKIT_LIBRARIES)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IntDir)lib32;$(ConfigurationBuildDir)\lib32;$(WEBKIT_LIBRARIES)\lib32</AdditionalLibraryDirectories>
       <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
       <CLRUnmanagedCodeCheck>false</CLRUnmanagedCodeCheck>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -196,7 +195,7 @@ cmd /c
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <CLRThreadAttribute>DefaultThreadingAttribute</CLRThreadAttribute>
-      <ImportLibrary>$(ConfigurationBuildDir)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(ConfigurationBuildDir)\lib32\$(TargetName).lib</ImportLibrary>
     </Link>
     <Bscmake />
     <Xdcmake />
@@ -213,6 +212,10 @@ cmd /c
   <ItemGroup>
     <BuildMacro Include="CONFIGURATIONBUILDDIR">
       <Value>$(CONFIGURATIONBUILDDIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="DEBUGSUFFIX">
+      <Value>$(DEBUGSUFFIX)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

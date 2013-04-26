@@ -1,3 +1,14 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * win/tools/WinTools.make:
+        * win/tools/scripts/auto-version2010.sh:
+        * win/tools/scripts/feature-defines2010.sh:
+        * win/tools/vsprops/common.props:
+        * win/tools/vsprops/debugsuffix.props:
+
 2013-04-25  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH: language support does not work as expected

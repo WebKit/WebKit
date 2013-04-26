@@ -9,11 +9,10 @@ install:
 	set WebKit_Libraries=$(SRCROOT)\AppleInternal
 	set WebKit_OutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
-    set WebKit_Source=$(SRCROOT)\..
 	devenv "WebKit.submit.sln" /rebuild $(BUILDSTYLE)
-	-xcopy "%ConfigurationBuildDir%\bin\*.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-	xcopy "%ConfigurationBuildDir%\bin\*.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-	-xcopy "%ConfigurationBuildDir%\bin\*.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+	-xcopy "%ConfigurationBuildDir%\bin32\*.exe" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+	xcopy "%ConfigurationBuildDir%\bin32\*.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+	-xcopy "%ConfigurationBuildDir%\bin32\*.dll" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
 	xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
-	xcopy "%ConfigurationBuildDir%\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y
-	xcopy "%ConfigurationBuildDir%\bin\WebKit.resources\*" "$(DSTROOT)\AppleInternal\bin\WebKit.resources" /e/v/i/h/y
+	xcopy "%ConfigurationBuildDir%\lib32\*" "$(DSTROOT)\AppleInternal\lib32\" /e/v/i/h/y
+	xcopy "%ConfigurationBuildDir%\bin32\WebKit.resources\*" "$(DSTROOT)\AppleInternal\bin32\WebKit.resources" /e/v/i/h/y

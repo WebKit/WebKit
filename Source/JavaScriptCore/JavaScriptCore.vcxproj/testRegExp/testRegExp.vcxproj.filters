@@ -5,13 +5,13 @@
     <ClCompile Include="..\..\testRegExp.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringBuilder.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp">
-      <Filter>wtf/text</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp">
       <Filter>wtf/text</Filter>
     </ClCompile>
   </ItemGroup>

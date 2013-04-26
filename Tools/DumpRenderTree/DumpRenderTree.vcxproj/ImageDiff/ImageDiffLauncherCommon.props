@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)ImageDiff.exe</OutputFile>
+      <OutputFile>$(OutDir)ImageDiff$(DebugSuffix).exe</OutputFile>
       <SubSystem>Console</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)Launcher.pdb</ProgramDatabaseFile>
     </Link>

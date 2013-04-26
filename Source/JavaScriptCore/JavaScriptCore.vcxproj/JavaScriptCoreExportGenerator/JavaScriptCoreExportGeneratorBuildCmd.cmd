@@ -2,7 +2,7 @@
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 cmd /c
 
-set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj/JavaScriptCoreExportGenerator
+set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj32/JavaScriptCoreExportGenerator
 
 echo Generating export definitions
 del /F /Q "%GeneratorDirectory%/DerivedSources/JavaScriptCorGenerator.cpp"

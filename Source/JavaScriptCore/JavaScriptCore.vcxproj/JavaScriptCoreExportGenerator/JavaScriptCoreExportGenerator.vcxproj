@@ -76,7 +76,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="JavaScriptCoreExportGeneratorDebug.props" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\debugsuffix.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -125,6 +125,7 @@
     </ClCompile>
     <Link />
     <Link />
+    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <ClCompile>
@@ -152,7 +153,7 @@
     <None Include="make-export-file-generator" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\JavaScriptCoreExportGenerator\DerivedSources\JavaScriptCoreExportGenerator.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\JavaScriptCoreExportGenerator\DerivedSources\JavaScriptCoreExportGenerator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

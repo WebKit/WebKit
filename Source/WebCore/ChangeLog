@@ -24,6 +24,41 @@
 
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinCairoDebug.props:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinCairoRelease.props:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinCommon.props:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinDebug.props:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinPostBuild.cmd:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinProduction.props:
+        * WebCore.vcxproj/QTMovieWin/QTMovieWinRelease.props:
+        * WebCore.vcxproj/WebCore.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.vcxproj/WebCoreDebug.props:
+        * WebCore.vcxproj/WebCoreDebugWinCairo.props:
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj:
+        * WebCore.vcxproj/WebCoreGeneratedCommon.props:
+        * WebCore.vcxproj/WebCoreGeneratedDebug.props:
+        * WebCore.vcxproj/WebCoreGeneratedDebugWinCairo.props:
+        * WebCore.vcxproj/WebCoreGeneratedProduction.props:
+        * WebCore.vcxproj/WebCoreGeneratedRelease.props:
+        * WebCore.vcxproj/WebCoreGeneratedReleaseWinCairo.props:
+        * WebCore.vcxproj/WebCoreProduction.props:
+        * WebCore.vcxproj/WebCoreRelease.props:
+        * WebCore.vcxproj/WebCoreReleaseWinCairo.props:
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+        * WebCore.vcxproj/build-generated-files.sh:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd:
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Disable sub-pixel layout on mac.
         https://bugs.webkit.org/show_bug.cgi?id=114999.
 

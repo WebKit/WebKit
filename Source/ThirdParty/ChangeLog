@@ -1,3 +1,10 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-04-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the WebKit copy of GLU and the file using it

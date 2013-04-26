@@ -13,16 +13,16 @@ install:
     xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
     devenv "JavaScriptCore.submit.sln" /clean $(BUILDSTYLE)
     devenv "JavaScriptCore.submit.sln" /build $(BUILDSTYLE)
-    -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore_debug.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore_debug.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\jsc.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\jsc_debug.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\jsc.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin\jsc_debug.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.dll" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.dll" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\jsc.exe" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\jsc_debug.exe" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\jsc.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\jsc_debug.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
     xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y    
-    xcopy "%ConfigurationBuildDir%\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y    
-    xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.resources\*" "$(DSTROOT)\AppleInternal\bin\JavaScriptCore.resources" /e/v/i/h/y
-    -mkdir "$(DSTROOT)\AppleInternal\Sources\JavaScriptCore"
-    xcopy "%ConfigurationBuildDir%\obj\JavaScriptCore\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources\JavaScriptCore" /e/v/i/h/y
+    xcopy "%ConfigurationBuildDir%\lib32\*" "$(DSTROOT)\AppleInternal\lib32\" /e/v/i/h/y    
+    xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.resources\*" "$(DSTROOT)\AppleInternal\bin32\JavaScriptCore.resources" /e/v/i/h/y
+    -mkdir "$(DSTROOT)\AppleInternal\Sources32\JavaScriptCore"
+    xcopy "%ConfigurationBuildDir%\obj32\JavaScriptCore\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources32\JavaScriptCore" /e/v/i/h/y

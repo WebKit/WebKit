@@ -80,7 +80,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="LLIntOffsetsExtractorDebug.props" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\debugsuffix.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -89,19 +89,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
+    <Link />
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

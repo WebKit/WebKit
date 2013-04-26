@@ -1,3 +1,46 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj:
+        * WebKit.vcxproj/Interfaces/InterfacesCommon.props:
+        * WebKit.vcxproj/Interfaces/InterfacesDebug.props:
+        * WebKit.vcxproj/Interfaces/InterfacesDebugWinCairo.props:
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd:
+        * WebKit.vcxproj/Interfaces/InterfacesProduction.props:
+        * WebKit.vcxproj/Interfaces/InterfacesRelease.props:
+        * WebKit.vcxproj/Interfaces/InterfacesReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKit.make:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKitApple.props:
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.vcxproj/WebKit/WebKitDebug.props:
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props:
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitProduction.props:
+        * WebKit.vcxproj/WebKit/WebKitRelease.props:
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebug.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebugWinCairo.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPostBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorProduction.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorRelease.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDCommon.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebug.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebugWinCairo.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDProduction.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDRelease.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDReleaseWinCairo.props:
+
 2013-04-25  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(PARSED_STYLE_SHEET_CACHING) and make it always-on.

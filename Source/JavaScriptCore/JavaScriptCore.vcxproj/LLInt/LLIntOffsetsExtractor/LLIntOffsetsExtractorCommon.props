@@ -5,13 +5,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\;../../../;../../../os-win32/;../../../assembler/;../../../API/;../../../parser/;../../../heap/;../../../runtime/;../../../bytecode/;../../../interpreter/;../../../debugger/;../../../bytecompiler/;../../../profiler;../../../jit/;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj32\JavaScriptCore\DerivedSources\;../../../;../../../os-win32/;../../../assembler/;../../../API/;../../../parser/;../../../heap/;../../../runtime/;../../../bytecode/;../../../interpreter/;../../../debugger/;../../../bytecompiler/;../../../profiler;../../../jit/;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STD_C;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <ForcedUsingFiles>%(ForcedUsingFiles)</ForcedUsingFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libicuin.lib;libicuuc.lib;winmm.lib;user32.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;winmm.lib;WTF$(DebugSuffix).lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>

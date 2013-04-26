@@ -5,8 +5,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CFNetwork.lib;CoreFoundation.lib;CoreGraphics.lib;QTMovieWin.lib;WebKitSystemInterface.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>QTMovieWin.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>CFNetwork$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;CoreGraphics$(DebugSuffix).lib;WebKitSystemInterface$(DebugSuffix).lib;QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>

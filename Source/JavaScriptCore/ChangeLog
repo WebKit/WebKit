@@ -1,5 +1,75 @@
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCF.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebug.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebugCFLite.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorBuildCmd.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorDebug.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPreBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorProduction.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedDebug.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedProduction.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCorePostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCorePreLink.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreProduction.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreReleaseCFLite.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorProduction.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props:
+        * JavaScriptCore.vcxproj/build-generated-files.sh:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj:
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscDebug.props:
+        * JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscPreLink.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscProduction.props:
+        * JavaScriptCore.vcxproj/jsc/jscRelease.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj.filters:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpDebug.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpProduction.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpRelease.props:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props:
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props:
+        * JavaScriptCore.vcxproj/testapi/testapiDebug.props:
+        * JavaScriptCore.vcxproj/testapi/testapiDebugCFLite.props:
+        * JavaScriptCore.vcxproj/testapi/testapiPreLink.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiProduction.props:
+        * JavaScriptCore.vcxproj/testapi/testapiRelease.props:
+        * JavaScriptCore.vcxproj/testapi/testapiReleaseCFLite.props:
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Disable sub-pixel layout on mac.
         https://bugs.webkit.org/show_bug.cgi?id=114999.
 

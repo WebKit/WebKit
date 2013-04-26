@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CoreFoundation.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreFoundation$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

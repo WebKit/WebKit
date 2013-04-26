@@ -7,12 +7,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\;..\..\tools\;..\..\runtime\;..\..\llint\;..\..\jit\;..\..\disassembler\;..\..\heap\;..\..\debugger\;..\..\assembler\;..\..\profiler\;..\..\interpreter\;..\..\bytecode\;..\..\dfg\;..\..\bytecompiler\;..\..\parser\;..\..\API\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\private\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\;..\..\tools\;..\..\runtime\;..\..\llint\;..\..\jit\;..\..\disassembler\;..\..\heap\;..\..\debugger\;..\..\assembler\;..\..\profiler\;..\..\interpreter\;..\..\bytecode\;..\..\dfg\;..\..\bytecompiler\;..\..\parser\;..\..\API\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\private\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\obj32\JavaScriptCore\DerivedSources\;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>

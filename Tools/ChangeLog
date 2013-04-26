@@ -1,3 +1,69 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeApple.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebugWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePostBuild.cmd:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeReleaseWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiff.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebugWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffReleaseWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.def:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj.filters:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginRelease.props:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin_debug.def: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommon.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebug.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebugWinCairo.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIProduction.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIRelease.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIReleaseWinCairo.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCommon.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherDebug.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibDebug.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibProduction.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibRelease.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherProduction.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherRelease.props:
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj:
+        * win/AssembleBuildLogs/AssembleLogs.cmd:
+        * win/record-memory/record-memory.vcxproj:
+        * win/record-memory/record-memoryDebug.props:
+        * win/record-memory/record-memoryDebugWinCairo.props:
+        * win/record-memory/record-memoryProduction.props:
+        * win/record-memory/record-memoryRelease.props:
+        * win/record-memory/record-memoryReleaseWinCairo.props:
+
 2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Clean up the TestWebKitAPI GNUmakefile.am

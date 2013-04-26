@@ -1851,57 +1851,6 @@
       <Filter>yarr</Filter>
     </ClInclude>
     <ClInclude Include="..\config.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DatePrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HeaderDetection.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSONObject.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\Lexer.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\LLIntAssembly.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\NumberConstructor.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\NumberPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ObjectPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\StringConstructor.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\RegExpJitTables.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\PrototypeMap.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -1926,11 +1875,61 @@
     <ClInclude Include="..\API\JSAPIWrapperObject.h">
       <Filter>API</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\DatePrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\HeaderDetection.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSONObject.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\Lexer.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\NumberConstructor.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ObjectPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\NumberPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\LLIntAssembly.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpJitTables.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\StringConstructor.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />
     <None Include="JavaScriptCorePostBuild.cmd" />
     <None Include="JavaScriptCorePreBuild.cmd" />
-    <None Include="copy-files.cmd" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,3 @@
-LIBRARY	"npTestNetscapePlugin"
-
 EXPORTS
         NP_GetEntryPoints   @1
         NP_Initialize       @2

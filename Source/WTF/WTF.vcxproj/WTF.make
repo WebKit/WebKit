@@ -12,4 +12,4 @@ install:
     devenv "WTF.submit.sln" /clean $(BUILDSTYLE)
     devenv "WTF.submit.sln" /build $(BUILDSTYLE)
     xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y    
-    xcopy "%ConfigurationBuildDir%\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y    
+    xcopy "%ConfigurationBuildDir%\lib32\*" "$(DSTROOT)\AppleInternal\lib32\" /e/v/i/h/y    

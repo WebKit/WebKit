@@ -5,7 +5,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\cg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>CoreGraphics.lib;CoreFoundation.lib;CFNetwork.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreGraphics$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;CFNetwork$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>

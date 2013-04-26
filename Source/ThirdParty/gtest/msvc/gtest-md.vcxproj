@@ -61,44 +61,44 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools32\vsprops\debugsuffix.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\lib\</OutDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gtest</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">gtest</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">gtest</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">gtest</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">gtest</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">gtest</TargetName>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gtest$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">gtest$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">gtest$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">gtest$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">gtest$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">gtest$(DebugSuffix)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,7 +111,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)gtest.lib</OutputFile>
+      <OutputFile>$(OutDir)gtest$(DebugSuffix).lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
@@ -139,7 +139,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)gtest.lib</OutputFile>
+      <OutputFile>$(OutDir)gtest$(DebugSuffix).lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -16,11 +16,11 @@ XDSTROOT=`cygpath -m -s "$XDSTROOT"`
 XDSTROOT=`cygpath -u "$XDSTROOT"`
 export XDSTROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32"
 
 cd "${BUILT_PRODUCTS_DIR}/JavaScriptCore/DerivedSources"
 
 ##############################################################################
 # Step 3: Build LLIntOffsetsExtractor
 
-/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor.exe" "LLIntAssembly.h" || exit 1
+/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "LLIntAssembly.h" || exit 1

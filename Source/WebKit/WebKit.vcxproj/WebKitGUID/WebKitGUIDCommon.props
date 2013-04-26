@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(ConfigurationBuildDir)\lib\</OutDir>
+    <OutDir>$(ConfigurationBuildDir)\lib32\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile />

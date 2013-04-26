@@ -53,11 +53,11 @@ SDKROOT=`cygpath -m -s "$SDKROOT"`
 SDKROOT=`cygpath -u "$SDKROOT"`
 export SDKROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj/WebCore"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32/WebCore"
 
 mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 
 export WebCore="${XSRCROOT}"
-export FEATURE_DEFINES=`$SDKROOT/tools/scripts/feature-defines2010.sh $SDKROOT $3`
+export FEATURE_DEFINES=`$SDKROOT/tools32/scripts/feature-defines2010.sh $SDKROOT $3`
 make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1

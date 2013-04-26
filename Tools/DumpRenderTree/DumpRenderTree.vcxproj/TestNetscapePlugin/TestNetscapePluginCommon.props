@@ -10,7 +10,6 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)\np$(ProjectName).dll</OutputFile>
       <ModuleDefinitionFile>TestNetscapePlugin.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

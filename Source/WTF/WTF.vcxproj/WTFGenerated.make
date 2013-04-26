@@ -1,6 +1,6 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
-    bash build-generated-files.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)"
+    bash build-generated-files.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)"
 !IF "$(OFFICIAL_BUILD)"!="1"
     bash -c "python work-around-vs-dependency-tracking-bugs.py"
 !ENDIF

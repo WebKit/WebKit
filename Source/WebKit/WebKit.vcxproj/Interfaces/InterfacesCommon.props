@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\obj\WebKit\DerivedSources;../../win/Interfaces;$(IntDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\obj32\WebKit\DerivedSources;../../win/Interfaces;$(IntDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
@@ -18,9 +18,9 @@
   <ItemDefinitionGroup>
     <Midl>
       <GenerateStublessProxies>false</GenerateStublessProxies>
-      <OutputDirectory>$(ConfigurationBuildDir)\obj\WebKit\$(ProjectName)</OutputDirectory>
+      <OutputDirectory>$(ConfigurationBuildDir)\obj32\WebKit\$(ProjectName)</OutputDirectory>
       <DllDataFileName>dlldata.c</DllDataFileName>
-      <TypeLibraryName>$(ConfigurationBuildDir)\lib\WebKit.tlb</TypeLibraryName>
+      <TypeLibraryName>$(ConfigurationBuildDir)\lib32\WebKit.tlb</TypeLibraryName>
       <ValidateAllParameters>true</ValidateAllParameters>
     </Midl>
   </ItemDefinitionGroup>

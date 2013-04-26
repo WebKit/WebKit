@@ -1,8 +1,8 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
-    bash build-LLIntAssembly.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)"
+    bash build-LLIntAssembly.sh "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)"
     -del "%ConfigurationBuildDir%\buildfailed"
 
 clean:
     -del "%ConfigurationBuildDir%\buildfailed"
-    -del /s /q "%ConfigurationBuildDir%\obj\JavaScriptCore\DerivedSources\LLIntAssembly.h"
+    -del /s /q "%ConfigurationBuildDir%\obj32\JavaScriptCore\DerivedSources\LLIntAssembly.h"

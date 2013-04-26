@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)DumpRenderTree.exe</OutputFile>
+      <OutputFile>$(OutDir)DumpRenderTree$(DebugSuffix).exe</OutputFile>
       <SubSystem>Console</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)Launcher.pdb</ProgramDatabaseFile>
     </Link>

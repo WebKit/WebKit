@@ -1,3 +1,24 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * WTF.vcxproj/WTF.make:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTFCommon.props:
+        * WTF.vcxproj/WTFDebug.props:
+        * WTF.vcxproj/WTFGenerated.make:
+        * WTF.vcxproj/WTFGenerated.vcxproj:
+        * WTF.vcxproj/WTFGeneratedCommon.props:
+        * WTF.vcxproj/WTFGeneratedDebug.props:
+        * WTF.vcxproj/WTFGeneratedProduction.props:
+        * WTF.vcxproj/WTFGeneratedRelease.props:
+        * WTF.vcxproj/WTFProduction.props:
+        * WTF.vcxproj/WTFRelease.props:
+        * WTF.vcxproj/build-generated-files.sh:
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+        (react_to_vsprops_changes):
+
 2013-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Remove the remaining Skia #ifdefs

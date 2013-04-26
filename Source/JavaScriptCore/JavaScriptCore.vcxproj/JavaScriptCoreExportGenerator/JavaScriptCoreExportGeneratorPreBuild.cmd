@@ -2,7 +2,7 @@
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 
 echo Preparing generator output directory...
-set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj/JavaScriptCoreExportGenerator
+set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj32/JavaScriptCoreExportGenerator
 mkdir "%GeneratorDirectory%" 2>NUL
 mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 

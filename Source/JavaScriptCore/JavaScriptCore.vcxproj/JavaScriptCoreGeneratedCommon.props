@@ -5,10 +5,7 @@
   <PropertyGroup />
   <PropertyGroup />
   <PropertyGroup />
-  <PropertyGroup Label="Configuration">
-    <OutDir>$(ConfigurationBuildDir)\bin\</OutDir>
-    <IntDir>$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
-  </PropertyGroup>
+  <PropertyGroup Label="Configuration" />
   <ItemDefinitionGroup />
   <ItemGroup />
 </Project>

@@ -5,7 +5,7 @@
     <DebugSuffix>_debug</DebugSuffix>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
+    <TargetName>$(TargetName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

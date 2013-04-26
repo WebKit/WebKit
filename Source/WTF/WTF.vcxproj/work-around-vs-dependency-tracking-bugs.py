@@ -17,10 +17,10 @@ def main():
 
 
 def react_to_vsprops_changes():
-    vsprops_directory = os.path.join(WEBKIT_LIBRARIES, 'tools', 'vsprops')
+    vsprops_directory = os.path.join(WEBKIT_LIBRARIES, 'tools32', 'vsprops')
     newest_vsprops_time = mtime_of_newest_file_matching_glob(os.path.join(vsprops_directory, '*.props'))
 
-    obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj')
+    obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj32')
 
     # Visual Studio isn't smart enough to figure out it needs to rebuild these file types when
     # .vsprops files change (even if we touch wtf/Platform.h below), so we delete them to force them
