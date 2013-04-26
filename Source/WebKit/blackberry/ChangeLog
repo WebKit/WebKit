@@ -1,3 +1,19 @@
+2013-04-26  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Check for valid element in elementTouched
+        https://bugs.webkit.org/show_bug.cgi?id=115205
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Genevieve Mak.
+
+        PR 331546
+        We might receive a null ptr from nodeAsElementIfApplicable which
+        is passed in here. Check to make sure it's valid before using.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::elementTouched):
+
 2013-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Remove the remaining Skia #ifdefs

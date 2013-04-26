@@ -2644,7 +2644,9 @@ void InputHandler::elementTouched(WebCore::Element* nonShadowElementUnderFatFing
     if (isActiveTextEdit() && nonShadowElementUnderFatFinger == m_currentFocusElement)
         showTextInputTypeSuggestionBox(true /* allowEmptyPrefix */);
 
-    m_elementTouchedIsCrossFrame = nonShadowElementUnderFatFinger->document()->frame() !=  m_webPage->focusedOrMainFrame();
+    m_elementTouchedIsCrossFrame = nonShadowElementUnderFatFinger
+        && nonShadowElementUnderFatFinger->document()
+        && nonShadowElementUnderFatFinger->document()->frame() != m_webPage->focusedOrMainFrame();
 }
 
 }
