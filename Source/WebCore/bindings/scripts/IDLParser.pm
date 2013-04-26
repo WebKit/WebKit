@@ -51,6 +51,7 @@ struct( domInterface => {
     constructors => '@', # Constructors, list of 'domFunction'
     isException => '$', # Used for exception interfaces
     isCallback => '$', # Used for callback interfaces
+    isPartial => '$', # Used for partial interfaces
 });
 
 # Used to represent domInterface contents (name of method, signature)
@@ -529,7 +530,9 @@ sub parsePartialDefinition
 
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
-        return $self->parsePartialInterface($extendedAttributeList);
+        my $interface = $self->parseInterface($extendedAttributeList);
+        $interface->isPartial(1);
+        return $interface;
     }
     if ($next->value() eq "dictionary") {
         return $self->parsePartialDictionary($extendedAttributeList);

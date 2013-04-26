@@ -19,8 +19,7 @@
 
 [
     Conditional=NETWORK_INFO,
-    Supplemental=Navigator
-] interface NavigatorNetworkInfoConnection {
+] partial interface Navigator {
     readonly attribute NetworkInfoConnection webkitConnection;
 };
 

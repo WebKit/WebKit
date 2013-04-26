@@ -52,9 +52,9 @@ my %supplementalDependencies;
 my %supplementals;
 foreach my $idlFile (@idlFiles) {
     my $fullPath = Cwd::realpath($idlFile);
-    my $supplemental = getSupplementalFromIDLFile($fullPath);
-    if ($supplemental) {
-        $supplementalDependencies{$fullPath} = $supplemental;
+    my $partialInterfaceName = getPartialInterfaceNameFromIDLFile($fullPath);
+    if ($partialInterfaceName) {
+        $supplementalDependencies{$fullPath} = $partialInterfaceName;
     }
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     $interfaceNameToIdlFile{$interfaceName} = $fullPath;
@@ -62,7 +62,7 @@ foreach my $idlFile (@idlFiles) {
     $supplementals{$fullPath} = [];
 }
 
-# Resolves [Supplemental=XXX] dependencies.
+# Resolves partial interfaces dependencies.
 foreach my $idlFile (keys %supplementalDependencies) {
     my $baseFile = $supplementalDependencies{$idlFile};
     my $targetIdlFile = $interfaceNameToIdlFile{$baseFile};
@@ -110,7 +110,7 @@ if ($supplementalMakefileDeps) {
 }
 
 
-sub getSupplementalFromIDLFile
+sub getPartialInterfaceNameFromIDLFile
 {
     my $idlFile = shift;
 
@@ -119,12 +119,7 @@ sub getSupplementalFromIDLFile
     close FILE;
 
     my $fileContents = join('', @lines);
-    while ($fileContents =~ /\[(.*?)\] interface (\w+)/gs) {
-        my @attributes = split(',', $1);
-        foreach (@attributes) {
-            if (/Supplemental=(\w+)/) {
-                return $1;
-            }
-        }
+    if ($fileContents =~ /partial\s+interface\s+(\w+)/gs) {
+        return $1;
     }
 }

@@ -25,8 +25,7 @@
 
 [
     Conditional=QUOTA,
-    Supplemental=DOMWindow
-] interface DOMWindowQuota {
+] partial interface DOMWindow {
     readonly attribute StorageInfo webkitStorageInfo;
 };
 

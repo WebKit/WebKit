@@ -26,8 +26,7 @@
 
 [
     Conditional=WEB_SOCKETS,
-    Supplemental=DOMWindow
-] interface DOMWindowWebSocket {
+] partial interface DOMWindow {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute CloseEventConstructor CloseEvent;
     [CustomGetter] attribute WebSocketConstructor WebSocket; // Usable with the new operator

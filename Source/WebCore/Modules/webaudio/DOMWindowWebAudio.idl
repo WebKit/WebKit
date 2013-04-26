@@ -26,8 +26,7 @@
 
 [
     Conditional=WEB_AUDIO,
-    Supplemental=DOMWindow
-] interface DOMWindowWebAudio {
+] partial interface DOMWindow {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     [CustomGetter] attribute AudioContextConstructor webkitAudioContext;
     attribute OfflineAudioContextConstructor webkitOfflineAudioContext;

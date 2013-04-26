@@ -99,7 +99,6 @@ ReplaceableConstructor
 ReturnNewObject
 SkipVTableValidation
 StrictTypeChecking
-Supplemental=*
 SuppressToJSObject
 TransferList=*
 TreatNullAs=NullString

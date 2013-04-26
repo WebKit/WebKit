@@ -30,8 +30,7 @@
 // changes in its ouput.
 [
     Conditional=Condition11|Condition12,
-    Supplemental=TestInterface
-] interface TestSupplemental {
+] partial interface TestInterface {
     static readonly attribute long supplementalStaticReadOnlyAttr;
     static attribute DOMString supplementalStaticAttr;
     readonly attribute DOMString supplementalStr1;

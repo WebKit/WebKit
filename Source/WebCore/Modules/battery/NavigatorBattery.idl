@@ -19,8 +19,7 @@
 
 [
     Conditional=BATTERY_STATUS,
-    Supplemental=Navigator
-] interface NavigatorBattery {
+] partial interface Navigator {
     readonly attribute BatteryManager webkitBattery;
 };
 

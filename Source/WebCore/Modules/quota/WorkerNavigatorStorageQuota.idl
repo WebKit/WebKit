@@ -19,8 +19,7 @@
 
 [
     Conditional=QUOTA,
-    Supplemental=WorkerNavigator
-] interface WorkerNavigatorStorageQuota {
+] partial interface WorkerNavigator {
     readonly attribute StorageQuota webkitTemporaryStorage;
     readonly attribute StorageQuota webkitPersistentStorage;
 };

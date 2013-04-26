@@ -26,8 +26,7 @@
 
 [
     Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
-    Supplemental=WorkerContext
-] interface WorkerContextNotifications {
+] partial interface WorkerContext {
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
     readonly attribute NotificationCenter webkitNotifications;
 #endif

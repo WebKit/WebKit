@@ -19,8 +19,7 @@
 
 [
     Conditional=GAMEPAD,
-    Supplemental=Navigator
-] interface NavigatorGamepad {
+] partial interface Navigator {
     GamepadList webkitGetGamepads();
 };
 

@@ -26,8 +26,7 @@
 
 [
     Conditional=WEB_SOCKETS,
-    Supplemental=WorkerContext
-] interface WorkerContextWebSocket {
+] partial interface WorkerContext {
     [CustomGetter] attribute WebSocketConstructor WebSocket; // Usable with the new operator
 };
 

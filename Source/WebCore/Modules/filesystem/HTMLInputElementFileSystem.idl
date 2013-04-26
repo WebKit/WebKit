@@ -30,8 +30,7 @@
 
 [
     Conditional=FILE_SYSTEM,
-    Supplemental=HTMLInputElement
-] interface HTMLInputElementFileSystem {
+] partial interface HTMLInputElement {
     [CallWith=ScriptExecutionContext] readonly attribute EntryArray webkitEntries;
 };
 

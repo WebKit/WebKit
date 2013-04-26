@@ -30,7 +30,6 @@
 
 [
     Conditional=PAGE_POPUP,
-    Supplemental=DOMWindow
-] interface DOMWindowPagePopup {
+] partial interface DOMWindow {
     readonly attribute PagePopupController pagePopupController;
 };

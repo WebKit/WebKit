@@ -1,3 +1,53 @@
+2013-04-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for Web IDL partial interfaces to the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=115228
+
+        Reviewed by Kentaro Hara.
+
+        Add support for Web IDL partial interfaces to the bindings generator:
+        http://dev.w3.org/2006/webapi/WebIDL/#dfn-partial-interface
+
+        Also drop support for the the WebKit-specific [Supplemental] extended
+        attribute and use partial interfaces instead in existing IDL files.
+
+        No new tests, no behavior change.
+
+        * Modules/battery/NavigatorBattery.idl:
+        * Modules/filesystem/DOMWindowFileSystem.idl:
+        * Modules/filesystem/DataTransferItemFileSystem.idl:
+        * Modules/filesystem/HTMLInputElementFileSystem.idl:
+        * Modules/filesystem/WorkerContextFileSystem.idl:
+        * Modules/gamepad/NavigatorGamepad.idl:
+        * Modules/geolocation/NavigatorGeolocation.idl:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl:
+        * Modules/indexeddb/WorkerContextIndexedDatabase.idl:
+        * Modules/mediastream/DOMWindowMediaStream.idl:
+        * Modules/mediastream/NavigatorMediaStream.idl:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.idl:
+        * Modules/networkinfo/NavigatorNetworkInfoConnection.idl:
+        * Modules/notifications/DOMWindowNotifications.idl:
+        * Modules/notifications/WorkerContextNotifications.idl:
+        * Modules/quota/DOMWindowQuota.idl:
+        * Modules/quota/NavigatorStorageQuota.idl:
+        * Modules/quota/WorkerNavigatorStorageQuota.idl:
+        * Modules/speech/DOMWindowSpeech.idl:
+        * Modules/speech/DOMWindowSpeechSynthesis.idl:
+        * Modules/vibration/NavigatorVibration.idl:
+        * Modules/webaudio/DOMWindowWebAudio.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/WorkerContextWebDatabase.idl:
+        * Modules/websockets/DOMWindowWebSocket.idl:
+        * Modules/websockets/WorkerContextWebSocket.idl:
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parsePartialDefinition):
+        * bindings/scripts/generate-bindings.pl:
+        * bindings/scripts/preprocess-idls.pl:
+        (getPartialInterfaceNameFromIDLFile):
+        * bindings/scripts/test/TestSupplemental.idl:
+        * page/DOMWindowPagePopup.idl:
+
 2013-04-25  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Hit testing is broken for absolutely positioned regions that have overflow: hidden
