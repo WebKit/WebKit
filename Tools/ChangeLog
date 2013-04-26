@@ -1,5 +1,16 @@
 2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
 
+        Remove support for Chromium from api-test
+        https://bugs.webkit.org/show_bug.cgi?id=115211
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/build-api-tests:
+        * Scripts/run-api-tests:
+        (isSupportedPlatform):
+
+2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
+
         Get rid of Chromium in build-dumprendertree
         https://bugs.webkit.org/show_bug.cgi?id=115212
 

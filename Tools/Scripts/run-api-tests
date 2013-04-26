@@ -65,7 +65,6 @@ Usage: $programName [options] [suite or test prefixes]
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
-  --chromium            Run the Chromium port on Mac/Win/Linux
 EOF
 
 GetOptions(
@@ -82,18 +81,6 @@ if ($showHelp) {
 }
 
 setConfiguration();
-
-# When running TestWebKitAPI for Chromium on Android, defer to the test runner in
-# Chromium as we can't execute the binary locally.
-if (isChromiumAndroid()) {
-    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--exit_code', '--out-directory', sourceDir() . '/out', '-s', 'TestWebKitAPI');
-    if (configuration() eq "Release") {
-        push @runTestCommand, '--release';
-    }
-
-    chdir(sourceDir() . '/Source/WebKit/chromium') or die $!;
-    exit exitStatus(system(@runTestCommand));
-}
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 
@@ -112,7 +99,7 @@ exit runTestsBySuite(@testsToRun, $verbose);
 
 sub isSupportedPlatform()
 {
-    return isAppleMacWebKit() || isAppleWinWebKit() || isChromium();
+    return isAppleMacWebKit() || isAppleWinWebKit();
 }
 
 sub dumpTestsBySuite(\@)
