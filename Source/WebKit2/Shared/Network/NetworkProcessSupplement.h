@@ -26,17 +26,15 @@
 #ifndef NetworkProcessSupplement_h
 #define NetworkProcessSupplement_h
 
+#include "ChildProcessSupplement.h"
+
 namespace WebKit {
 
 struct NetworkProcessCreationParameters;
 
-class NetworkProcessSupplement {
+class NetworkProcessSupplement : public ChildProcessSupplement {
 #if ENABLE(NETWORK_PROCESS)
 public:
-    virtual ~NetworkProcessSupplement()
-    {
-    }
-
     virtual void initialize(const NetworkProcessCreationParameters&)
     {
     }

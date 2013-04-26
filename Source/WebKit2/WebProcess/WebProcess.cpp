@@ -229,6 +229,11 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 #if USE(SECURITY_FRAMEWORK)
     SecItemShim::shared().initializeConnection(connection);
 #endif
+    
+    WebProcessSupplementMap::const_iterator it = m_supplements.begin();
+    WebProcessSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->initializeConnection(connection);
 
     m_webConnection = WebConnectionToUIProcess::create(this);
 }

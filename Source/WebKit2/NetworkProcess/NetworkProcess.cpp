@@ -174,6 +174,11 @@ void NetworkProcess::initializeConnection(CoreIPC::Connection* connection)
 #if USE(SECURITY_FRAMEWORK)
     SecItemShim::shared().initializeConnection(connection);
 #endif
+
+    NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
+    NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->initializeConnection(connection);
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()

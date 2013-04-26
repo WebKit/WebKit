@@ -35,6 +35,9 @@
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
 		26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
+		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
+		290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */; };
+		290F427B172A23A500939FF0 /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4279172A23A500939FF0 /* TestProtocol.mm */; };
 		2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2943BE84161DFEB800999E3D /* UserContentTest.mm */; };
 		29AB8AA1164C735800D49BEC /* CustomProtocolsTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */; };
 		29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
@@ -232,6 +235,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
 				C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */,
 				C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
@@ -302,6 +306,10 @@
 		26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CancelLoadFromResourceLoadDelegate.html; sourceTree = "<group>"; };
 		26F1B44215CA434F00D1E4BF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = WTF/AtomicString.cpp; sourceTree = "<group>"; };
 		26F1B44315CA434F00D1E4BF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringImpl.cpp; path = WTF/StringImpl.cpp; sourceTree = "<group>"; };
+		290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-protocol-sync-xhr.html"; sourceTree = "<group>"; };
+		290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomProtocolsSyncXHRTest.mm; sourceTree = "<group>"; };
+		290F4279172A23A500939FF0 /* TestProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestProtocol.mm; sourceTree = "<group>"; };
+		290F427A172A23A500939FF0 /* TestProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestProtocol.h; sourceTree = "<group>"; };
 		2943BE84161DFEB800999E3D /* UserContentTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserContentTest.mm; path = WebKit2ObjC/UserContentTest.mm; sourceTree = "<group>"; };
 		29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolsTest.mm; path = WebKit2ObjC/CustomProtocolsTest.mm; sourceTree = "<group>"; };
 		29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestBrowsingContextLoadDelegate.mm; sourceTree = "<group>"; };
@@ -598,6 +606,7 @@
 			isa = PBXGroup;
 			children = (
 				29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */,
+				290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */,
 				2943BE84161DFEB800999E3D /* UserContentTest.mm */,
 				BC3C4C7D14587AA60025FB62 /* WKBrowsingContextGroupTest.mm */,
 				BC3C4C7014575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm */,
@@ -745,6 +754,7 @@
 			children = (
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
+				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
@@ -779,6 +789,8 @@
 				C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */,
 				29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */,
 				29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */,
+				290F427A172A23A500939FF0 /* TestProtocol.h */,
+				290F4279172A23A500939FF0 /* TestProtocol.mm */,
 				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
 				C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */,
 			);
@@ -1022,6 +1034,7 @@
 				1ADBEFAE130C689C00D61D19 /* ForceRepaint.cpp in Sources */,
 				BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */,
 				BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */,
+				290F427B172A23A500939FF0 /* TestProtocol.mm in Sources */,
 				1AA9E55914980A9900001A8A /* Functional.cpp in Sources */,
 				C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */,
 				F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
@@ -1104,6 +1117,7 @@
 				FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */,
 				520BCF4D141EB09E00937EA8 /* WebArchive.cpp in Sources */,
 				0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,
+				290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */,
 				C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */,
 				51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */,
 				37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,

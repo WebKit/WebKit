@@ -28,9 +28,10 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
-#include "MessageReceiver.h"
+#include "Connection.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
+#include "WorkQueue.h"
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +57,7 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::MessageReceiver {
+class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
 public:
     explicit CustomProtocolManager(ChildProcess*);
@@ -75,6 +76,9 @@ public:
 #endif
 
 private:
+    // ChildProcessSupplement
+    void initializeConnection(CoreIPC::Connection*) OVERRIDE;
+
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
@@ -93,6 +97,7 @@ private:
 
     HashSet<String> m_registeredSchemes;
     ChildProcess* m_childProcess;
+    RefPtr<WorkQueue> m_messageQueue;
 
 #if PLATFORM(MAC)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol> > CustomProtocolMap;

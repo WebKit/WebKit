@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,46 @@
  */
 
 #import "config.h"
-#import "Test.h"
-
-#import "PlatformUtilities.h"
-#import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
-#import <WebKit2/WebKit2.h>
 
-static bool testFinished = false;
+static NSString *testScheme = @"test";
 
-namespace TestWebKitAPI {
+@implementation TestProtocol
 
-TEST(WebKit2CustomProtocolsTest, MainResource)
++ (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    [NSURLProtocol registerClass:[TestProtocol class]];
-    [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
-
-    WKProcessGroup *processGroup = [[WKProcessGroup alloc] init];
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
-    WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
-    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        testFinished = true;
-    }];
-    [wkView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://test", [TestProtocol scheme]]]]];
-
-    Util::run(&testFinished);
+    return [[[request URL] scheme] caseInsensitiveCompare:testScheme] == NSOrderedSame;
 }
 
-} // namespace TestWebKitAPI
++ (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
+{
+    return request;
+}
+
++ (BOOL)requestIsCacheEquivalent:(NSURLRequest *)a toRequest:(NSURLRequest *)b
+{
+    return NO;
+}
+
++ (NSString *)scheme
+{
+    return testScheme;
+}
+
+- (void)startLoading
+{
+    EXPECT_TRUE([[[[self request] URL] scheme] isEqualToString:testScheme]);
+    
+    NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[[self request] URL] MIMEType:@"text/html" expectedContentLength:[data length] textEncodingName:nil];
+    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    [[self client] URLProtocol:self didLoadData:data];
+    [[self client] URLProtocolDidFinishLoading:self];
+    [response release];
+}
+
+- (void)stopLoading
+{
+}
+
+@end

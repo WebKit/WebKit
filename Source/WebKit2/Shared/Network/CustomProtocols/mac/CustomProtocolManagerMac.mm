@@ -116,19 +116,26 @@ const char* CustomProtocolManager::supplementName()
 
 CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
+    , m_messageQueue(WorkQueue::create("com.apple.WebKit.CustomProtocolManager"))
 {
-    m_childProcess->addMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), this);
-
     ASSERT(!sharedCustomProtocolManager);
     sharedCustomProtocolManager = this;
+}
+
+void CustomProtocolManager::initializeConnection(CoreIPC::Connection* connection)
+{
+    connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
 }
 
 void CustomProtocolManager::initialize(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(NETWORK_PROCESS)
     ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
-    if (parameters.usesNetworkProcess)
+    if (parameters.usesNetworkProcess) {
+        m_childProcess->connection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
+        m_messageQueue = nullptr;
         return;
+    }
 #endif
 
     [NSURLProtocol registerClass:[WKCustomProtocol class]];

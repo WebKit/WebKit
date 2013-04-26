@@ -295,6 +295,7 @@
 		1CBC945E16515ED200D68AAE /* DockBottom.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBC945D16515ED200D68AAE /* DockBottom.pdf */; };
 		1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */; };
 		1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */; };
+		290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */; };
 		293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EBEA91627D9C9005F89F1 /* WKDOMText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		293EBEAC1627D9C9005F89F1 /* WKDOMText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */; };
 		29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1719,6 +1720,7 @@
 		1CB75C931701E880009F809F /* DockRight.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockRight.pdf; path = Resources/DockRight.pdf; sourceTree = "<group>"; };
 		1CBC945D16515ED200D68AAE /* DockBottom.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockBottom.pdf; path = Resources/DockBottom.pdf; sourceTree = "<group>"; };
 		1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
+		290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessSupplement.h; sourceTree = "<group>"; };
 		293EBEA91627D9C9005F89F1 /* WKDOMText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMText.h; sourceTree = "<group>"; };
 		293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMText.mm; sourceTree = "<group>"; };
 		29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInBrowserContextControllerPrivate.h; sourceTree = "<group>"; };
@@ -3204,6 +3206,7 @@
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
 				E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */,
 				E1513C65166EABB200149FCB /* ChildProcessProxy.h */,
+				290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				5136183B163126DA00A99DDE /* ConnectionStack.cpp */,
 				5136183C163126DA00A99DDE /* ConnectionStack.h */,
@@ -5617,6 +5620,7 @@
 				5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */,
 				BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */,
 				BCDDB317124EBD130048D13C /* WKBase.h in Headers */,
+				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
 				BCBAAC73144E619E0053F82F /* WKBrowsingContextController.h in Headers */,
 				BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */,
 				3788A05C14743C90006319E5 /* WKBrowsingContextControllerPrivate.h in Headers */,

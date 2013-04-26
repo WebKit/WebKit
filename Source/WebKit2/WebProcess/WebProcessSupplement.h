@@ -26,16 +26,14 @@
 #ifndef WebProcessSupplement_h
 #define WebProcessSupplement_h
 
+#include "ChildProcessSupplement.h"
+
 namespace WebKit {
 
 struct WebProcessCreationParameters;
 
-class WebProcessSupplement {
+class WebProcessSupplement : public ChildProcessSupplement {
 public:
-    virtual ~WebProcessSupplement()
-    {
-    }
-
     virtual void initialize(const WebProcessCreationParameters&)
     {
     }

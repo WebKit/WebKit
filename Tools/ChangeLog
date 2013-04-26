@@ -1,3 +1,29 @@
+2013-04-25  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Loading a resource from a custom protocol in a synchronous XHR times out
+        https://bugs.webkit.org/show_bug.cgi?id=115223
+
+        Reviewed by Darin Adler.
+
+        Added an API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm: Added.
+        (TestWebKitAPI::TEST): Tested that a synchronous XHR does not time out
+        when it loads a request with a custom protocol.
+        * TestWebKitAPI/Tests/WebKit2/custom-protocol-sync-xhr.html: Added.
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm: Moved the
+        NSURLProtocol subclass to TestProtocol.{h, mm} and did some
+        miscellaneous cleanup.
+        * TestWebKitAPI/mac/TestProtocol.h: Copied from Source/WebKit2/WebProcess/WebProcessSupplement.h.
+        * TestWebKitAPI/mac/TestProtocol.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm.
+        (+[TestProtocol canInitWithRequest:]):
+        (+[TestProtocol canonicalRequestForRequest:]):
+        (+[TestProtocol requestIsCacheEquivalent:toRequest:]):
+        (+[TestProtocol scheme]):
+        (-[TestProtocol startLoading]):
+        (-[TestProtocol stopLoading]):
+
 2013-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Remove the remaining Skia #ifdefs

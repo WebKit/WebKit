@@ -1,3 +1,53 @@
+2013-04-25  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Loading a resource from a custom protocol in a synchronous XHR times out
+        https://bugs.webkit.org/show_bug.cgi?id=115223
+
+        Reviewed by Darin Adler.
+
+        When WebKit performs a synchronous load on the Mac, it spins a nested
+        run loop in a mode that only accepts input from the NSURLConnection
+        performing the load. When the load is for a custom protocol in WebKit2,
+        we proxy it to the UI process via CoreIPC messages, but the response
+        messages from the UI process are never processed as long as the run
+        loop is in a non-common mode (and we wouldn't want to process messages
+        that could re-enter WebCore in the middle of loading, anyway). Since
+        these messages never make it back to the NSURLConnection handling the
+        request, the connection eventually times out.
+
+        Fix this by using a work queue to handle custom protocol messages in
+        the networking process. The work queue can process incoming custom
+        protocol messages while the main thread is blocked.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection): Called
+        initializeConnection() on all the NetworkProcess's supplements.
+        * Shared/ChildProcessSupplement.h: Added a base class for
+        NetworkProcessSupplement and WebProcessSupplement which defines
+        initializeConnection and provides an empty default implementation.
+        (WebKit::ChildProcessSupplement::~ChildProcessSupplement):
+        (WebKit::ChildProcessSupplement::initializeConnection):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::CustomProtocolManager): Instantiated a
+        work queue for message processing.
+        (WebKit::CustomProtocolManager::initializeConnection): Added the work
+        queue as a message receiver on the CoreIPC connection.
+        (WebKit::CustomProtocolManager::initialize): If we're in the web
+        process and the network process is being used, unregister and destroy
+        the work queue we previously created. It'd be better to not create it
+        in the first place, but we have to register our work queue with the
+        CoreIPC connection before it is established, which is before the UI
+        process has told us whether the network process is in use.
+        * Shared/Network/NetworkProcessSupplement.h: Inherited from
+        ChildProcessSupplement.
+        * WebKit2.xcodeproj/project.pbxproj: Added ChildProcessSupplement.h.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection): Called
+        initializeConnection() on all the WebProcess's supplements.
+        * WebProcess/WebProcessSupplement.h: Inherited from
+        ChildProcessSupplement.
+
 2013-04-26  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Compilation of ProcessLauncherGtk.cpp fails due to unresolved symbols

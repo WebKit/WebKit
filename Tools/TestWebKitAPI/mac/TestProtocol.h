@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Test.h"
+#ifndef TestProtocol_h
+#define TestProtocol_h
 
-#import "PlatformUtilities.h"
-#import "TestBrowsingContextLoadDelegate.h"
-#import "TestProtocol.h"
-#import <WebKit2/WebKit2.h>
-
-static bool testFinished = false;
-
-namespace TestWebKitAPI {
-
-TEST(WebKit2CustomProtocolsTest, MainResource)
-{
-    [NSURLProtocol registerClass:[TestProtocol class]];
-    [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
-
-    WKProcessGroup *processGroup = [[WKProcessGroup alloc] init];
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
-    WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
-    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        testFinished = true;
-    }];
-    [wkView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://test", [TestProtocol scheme]]]]];
-
-    Util::run(&testFinished);
+@interface TestProtocol : NSURLProtocol {
 }
++ (NSString *)scheme;
+@end
 
-} // namespace TestWebKitAPI
+#endif // TestProtocol_h

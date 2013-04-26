@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,46 @@
  */
 
 #import "config.h"
+#import "JavaScriptTest.h"
 #import "Test.h"
 
 #import "PlatformUtilities.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
-#import <WebKit2/WebKit2.h>
+#import <WebKit2/WKBrowsingContextGroupPrivate.h>
+#import <WebKit2/WKPreferencesPrivate.h>
+#import <WebKit2/WKRetainPtr.h>
+#import <WebKit2/WKString.h>
+#import <WebKit2/WKViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2CustomProtocolsTest, MainResource)
+TEST(WebKit2CustomProtocolsTest, SyncXHR)
 {
     [NSURLProtocol registerClass:[TestProtocol class]];
     [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
 
-    WKProcessGroup *processGroup = [[WKProcessGroup alloc] init];
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
-    WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
-    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        testFinished = true;
-    }];
-    [wkView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://test", [TestProtocol scheme]]]]];
+    RetainPtr<WKProcessGroup> processGroup(AdoptNS, [[WKProcessGroup alloc] init]);
+    RetainPtr<WKBrowsingContextGroup> browsingContextGroup(AdoptNS, [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
 
-    Util::run(&testFinished);
+    // Allow file URLs to load non-file resources
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
+    WKPageGroupSetPreferences(browsingContextGroup.get()._pageGroupRef, preferences.get());
+
+    RetainPtr<WKView> wkView(AdoptNS, [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+     RetainPtr<TestBrowsingContextLoadDelegate> delegate(AdoptNS, [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+         EXPECT_JS_EQ(wkView.get().pageRef, "window._testResult", "PASS");
+         testFinished = true;
+    }]);
+    wkView.get().browsingContextController.loadDelegate = delegate.get();
+
+    WKPageLoadURL(wkView.get().pageRef, Util::createURLForResource("custom-protocol-sync-xhr", "html"));
+
+    TestWebKitAPI::Util::run(&testFinished);
 }
 
 } // namespace TestWebKitAPI
