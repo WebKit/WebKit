@@ -8,14 +8,14 @@
 (shared-preferences-read-write "com.microsoft.silverlight")
 
 (allow file-write-create
-    (home-literal "/Library/Application Support/Microsoft"))
+    (home-library-literal "/Application Support/Microsoft"))
 
 (allow file-read* file-write*
     ;; Sigh, mode 777 in /Library.
     (subpath "/Library/Application Support/Microsoft/PlayReady")
-    (home-subpath "/Library/Application Support/Microsoft/PlayReady")
-    (home-subpath "/Library/Application Support/Microsoft/Silverlight")
-    (home-subpath "/Library/Caches/TemporaryItems"))
+    (home-library-subpath "/Application Support/Microsoft/PlayReady")
+    (home-library-subpath "/Application Support/Microsoft/Silverlight")
+    (home-library-subpath "/Caches/TemporaryItems"))
 
 ;; FIXME: <rdar://problem/13636078>
 (allow ipc-posix-shm*

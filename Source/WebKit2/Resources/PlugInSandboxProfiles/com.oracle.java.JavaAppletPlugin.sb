@@ -19,13 +19,13 @@
 (shared-preferences-read-write "com.oracle.javadeployment.plist")
 
 (allow file-read* file-write*
-    (home-subpath "/Library/Saved Application State/net.java.openjdk.cmd.savedState")
-    (home-subpath "/Library/Application Support/Oracle/Java/Deployment")
-    (home-subpath "/Library/Caches/Java"))
+    (home-library-subpath "/Saved Application State/net.java.openjdk.cmd.savedState")
+    (home-library-subpath "/Application Support/Oracle/Java/Deployment")
+    (home-library-subpath "/Caches/Java"))
 
 (allow file-write-create
-    (home-literal "/Library/Application Support/Oracle")
-    (home-literal "/Library/Application Support/Oracle/Java"))
+    (home-library-literal "/Application Support/Oracle")
+    (home-library-literal "/Application Support/Oracle/Java"))
 
 (allow network-bind network-outbound (subpath (param "DARWIN_USER_TEMP_DIR")))
 

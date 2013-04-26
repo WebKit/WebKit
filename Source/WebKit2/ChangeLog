@@ -1,3 +1,26 @@
+2013-04-26  Simon Cooper  <scooper@apple.com>
+
+        Permit ~/Library or ~/Library/Preferences to be symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=115142
+        <rdar://problem/12953603>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pass in two new parameters which are the resolved paths to ~/Library
+        and ~/Library/Preferences. Added new expansion functions and
+        substituted the new functions for home-regex, home-subpath and
+        home-literal for places referencing resources in "~/Library" or
+        "~/Library/Preferences".
+
+        * Resources/PlugInSandboxProfiles/com.apple.QuickTime Plugin.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2013-04-26  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] WKContextClient doesn't need to be versioned yet

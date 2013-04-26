@@ -22,7 +22,7 @@
 (allow file-read*
     (subpath "/Library/KerberosPlugins/GSSAPI")
     (literal "/Library/Preferences/edu.mit.Kerberos")
-    (home-literal "/Library/Preferences/edu.mit.Kerberos"))
+    (home-library-preferences-literal "/edu.mit.Kerberos"))
 
 (allow file-read*
     (literal "/private/etc/services"))

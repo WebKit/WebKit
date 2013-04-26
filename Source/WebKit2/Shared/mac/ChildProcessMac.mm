@@ -139,6 +139,15 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 
     sandboxParameters.addPathParameter("HOME_DIR", pwd.pw_dir);
 
+    String path = String::fromUTF8(pwd.pw_dir);
+    path.append("/Library");
+
+    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", fileSystemRepresentation(path).data());
+
+    path.append("/Preferences");
+
+    sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", fileSystemRepresentation(path).data());
+
     switch (sandboxParameters.mode()) {
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:
     case SandboxInitializationParameters::UseOverrideSandboxProfilePath: {
