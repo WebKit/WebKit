@@ -146,10 +146,6 @@ void FilterEffect::apply()
     if (platformApplyOpenCL())
         return;
 #endif
-#if USE(SKIA)
-    if (platformApplySkia())
-        return;
-#endif
     platformApplySoftware();
 }
 

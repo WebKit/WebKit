@@ -606,7 +606,6 @@ void GraphicsContext::clip(const IntRect& rect)
 }
 #endif
 
-#if !USE(SKIA)
 void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
@@ -621,7 +620,6 @@ void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
     path.addRoundedRect(rect);
     clip(path);
 }
-#endif
 
 void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
 {
@@ -740,7 +738,7 @@ BlendMode GraphicsContext::blendModeOperation() const
     return m_state.blendMode;
 }
 
-#if !USE(CG) && !USE(SKIA)
+#if !USE(CG)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
@@ -748,7 +746,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 }
 #endif
 
-#if !PLATFORM(QT) && !USE(CAIRO) && !USE(SKIA)
+#if !PLATFORM(QT) && !USE(CAIRO)
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }
@@ -760,7 +758,7 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 }
 #endif
 
-#if !USE(SKIA) && !USE(CG) && !USE(CAIRO)
+#if !USE(CG) && !USE(CAIRO)
 bool GraphicsContext::isAcceleratedContext() const
 {
     return false;
@@ -863,7 +861,7 @@ void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
     strokePath(path);
 }
 
-#if !USE(CG) && !USE(SKIA) // append && !USE(MYPLATFORM) here to optimize ellipses on your platform.
+#if !USE(CG)
 void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
 {
     if (paintingDisabled())

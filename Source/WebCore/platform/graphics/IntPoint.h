@@ -61,11 +61,6 @@ class IntPoint;
 typedef struct _Evas_Point Evas_Point;
 #endif
 
-#if USE(SKIA)
-struct SkPoint;
-struct SkIPoint;
-#endif
-
 namespace WebCore {
 
 class IntPoint {
@@ -142,12 +137,6 @@ public:
 #elif PLATFORM(EFL)
     explicit IntPoint(const Evas_Point&);
     operator Evas_Point() const;
-#endif
-
-#if USE(SKIA)
-    IntPoint(const SkIPoint&);
-    operator SkIPoint() const;
-    operator SkPoint() const;
 #endif
 
 private:

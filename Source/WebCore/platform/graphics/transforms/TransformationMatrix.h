@@ -45,8 +45,6 @@ typedef struct CGAffineTransform CGAffineTransform;
 #elif PLATFORM(QT)
 #include <QMatrix4x4>
 #include <QTransform>
-#elif USE(SKIA)
-#include <SkMatrix.h>
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS))
@@ -348,8 +346,6 @@ public:
 #elif PLATFORM(QT)
     operator QTransform() const;
     operator QMatrix4x4() const;
-#elif USE(SKIA)
-    operator SkMatrix() const;
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS))

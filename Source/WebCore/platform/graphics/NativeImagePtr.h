@@ -38,11 +38,6 @@ class QPixmap;
 QT_END_NAMESPACE
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
-#elif USE(SKIA)
-#include "NativeImageSkia.h"
-namespace WebCore {
-class NativeImageSkia;
-}
 #elif OS(WINCE)
 #include "SharedBitmap.h"
 #endif
@@ -58,16 +53,13 @@ typedef QPixmap* NativeImagePtr;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> NativeImagePtr;
 typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;
-#elif USE(SKIA)
-typedef RefPtr<NativeImageSkia> NativeImagePtr;
-typedef PassRefPtr<NativeImageSkia> PassNativeImagePtr;
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #elif PLATFORM(BLACKBERRY)
 typedef void* NativeImagePtr;
 #endif
 
-#if !USE(SKIA) && !USE(CAIRO)
+#if !USE(CAIRO)
 typedef NativeImagePtr PassNativeImagePtr;
 #endif
 

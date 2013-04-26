@@ -68,10 +68,6 @@ public:
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
-#if USE(SKIA)
-    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
-#endif
-
 protected:
     virtual bool requiresValidPreMultipliedPixels() OVERRIDE { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
 

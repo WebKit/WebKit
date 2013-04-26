@@ -36,8 +36,6 @@ typedef struct CGAffineTransform CGAffineTransform;
 #include <cairo.h>
 #elif PLATFORM(QT)
 #include <QTransform>
-#elif USE(SKIA)
-#include <SkMatrix.h>
 #endif
 
 namespace WebCore {
@@ -172,8 +170,6 @@ public:
     operator cairo_matrix_t() const;
 #elif PLATFORM(QT)
     operator QTransform() const;
-#elif USE(SKIA)
-    operator SkMatrix() const;
 #endif
 
     static AffineTransform translation(double x, double y)

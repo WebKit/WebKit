@@ -49,12 +49,6 @@ typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
 typedef QPainter PlatformGraphicsContext;
-#elif USE(SKIA)
-namespace WebCore {
-class PlatformContextSkia;
-typedef PlatformContextSkia GraphicsContextPlatformPrivate;
-}
-typedef WebCore::PlatformContextSkia PlatformGraphicsContext;
 #elif OS(WINCE)
 typedef struct HDC__ PlatformGraphicsContext;
 #else
@@ -89,9 +83,7 @@ namespace WebCore {
     class AffineTransform;
     class DrawingBuffer;
     class Generator;
-#if !USE(SKIA)
     class GraphicsContextPlatformPrivate;
-#endif
     class ImageBuffer;
     class IntRect;
     class RoundedRect;

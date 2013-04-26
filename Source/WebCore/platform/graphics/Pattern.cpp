@@ -40,10 +40,6 @@ Pattern::Pattern(PassRefPtr<Image> image, bool repeatX, bool repeatY)
     : m_tileImage(image)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
-#if USE(SKIA)
-    , m_pattern(0)
-    , m_externalMemoryAllocated(0)
-#endif
 {
     ASSERT(m_tileImage);
 }
@@ -59,7 +55,6 @@ void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransf
     setPlatformPatternSpaceTransform();
 }
 
-#if !USE(SKIA)
 void Pattern::platformDestroy()
 {
 }
@@ -67,6 +62,5 @@ void Pattern::platformDestroy()
 void Pattern::setPlatformPatternSpaceTransform()
 {
 }
-#endif
 
 }

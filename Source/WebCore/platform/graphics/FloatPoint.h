@@ -58,10 +58,6 @@ class QPointF;
 QT_END_NAMESPACE
 #endif
 
-#if USE(SKIA)
-struct SkPoint;
-#endif
-
 namespace WebCore {
 
 class AffineTransform;
@@ -168,11 +164,6 @@ public:
 #if PLATFORM(BLACKBERRY)
     FloatPoint(const BlackBerry::Platform::FloatPoint&);
     operator BlackBerry::Platform::FloatPoint() const;
-#endif
-
-#if USE(SKIA)
-    operator SkPoint() const;
-    FloatPoint(const SkPoint&);
 #endif
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;

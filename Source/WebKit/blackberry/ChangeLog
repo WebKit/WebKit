@@ -1,3 +1,13 @@
+2013-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove the remaining Skia #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=114886
+
+        Reviewed by Benjamin Poulain.
+
+        * Api/WebPage.cpp: Remove Skia #ifdef references.
+        * WebCoreSupport/AboutDataUseFeatures.in: Ditto.
+
 2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Should check if it's cached resource before download

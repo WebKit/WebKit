@@ -32,9 +32,6 @@
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformWindow.h>
-#if USE(SKIA)
-#include <SkDevice.h>
-#endif
 #include <wtf/MD5.h>
 #include <wtf/Vector.h>
 
@@ -62,30 +59,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
     const Platform::IntSize& windowSize = window->viewportSize();
     unsigned char* data = new unsigned char[windowSize.width() * windowSize.height() * 4];
 
-#if USE(SKIA)
-    // We need to force a synchronous update to the window or we may get an empty bitmap.
-    // For example, running DRT with one test case that finishes before the screen is updated.
-    window->post(windowRect);
-
-    SkBitmap bitmap;
-    bitmap.setConfig(SkBitmap::kARGB_8888_Config, windowSize.width(), windowSize.height());
-    bitmap.allocPixels();
-    bitmap.eraseARGB(0, 0, 0, 0);
-
-    SkCanvas canvas(bitmap);
-    backingStore->drawContents(&canvas, windowRect, windowSize);
-
-    // Read that SkBitmap rather than change it. So use false on accessBitmap.
-    const SkBitmap& contentsBitmap = canvas.getDevice()->accessBitmap(false/*changePixels*/);
-    contentsBitmap.lockPixels();
-
-    const unsigned char* windowPixels = 0;
-    if (!contentsBitmap.empty()) {
-        windowPixels = static_cast<const unsigned char*>(contentsBitmap.getPixels());
-        if (windowPixels)
-            memcpy(data, windowPixels, windowSize.width() * windowSize.height() * 4);
-    }
-#else
     BlackBerry::Platform::Graphics::Buffer* buffer = BlackBerry::Platform::Graphics::createBuffer(windowSize, BlackBerry::Platform::Graphics::AlwaysBacked);
     BlackBerry::Platform::Graphics::Drawable* drawable = BlackBerry::Platform::Graphics::lockBufferDrawable(buffer);
     if (drawable) {
@@ -95,7 +68,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
         BlackBerry::Platform::Graphics::releaseBufferDrawable(buffer);
     }
     BlackBerry::Platform::Graphics::destroyBuffer(buffer);
-#endif
     return BitmapContext::createByAdoptingData(data, windowSize.width(), windowSize.height());
 }
 

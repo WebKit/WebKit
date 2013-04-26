@@ -80,10 +80,6 @@ typedef void* PlatformGraphicsContext3D;
 typedef void* PlatformGraphicsSurface3D;
 #endif
 
-#if PLATFORM(BLACKBERRY) && USE(SKIA)
-class GrContext;
-#endif
-
 // These are currently the same among all implementations.
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 const Platform3DObject NullPlatform3DObject = 0;
@@ -495,9 +491,6 @@ public:
 #elif PLATFORM(BLACKBERRY)
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
-#if USE(SKIA)
-    GrContext* grContext();
-#endif
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
 #endif
@@ -919,10 +912,7 @@ public:
         // needs to lock the resources or relevant data if needed and returns true upon success
         bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
 
-#if USE(SKIA)
-        RefPtr<NativeImageSkia> m_nativeImage;
-        RefPtr<NativeImageSkia> m_skiaImage;
-#elif USE(CAIRO)
+#if USE(CAIRO)
         ImageSource* m_decoder;
         RefPtr<cairo_surface_t> m_imageSurface;
 #elif USE(CG)

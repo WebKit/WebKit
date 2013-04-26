@@ -98,14 +98,13 @@ void ImageBuffer::convertToLuminanceMask()
     genericConvertToLuminanceMask();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && !USE(SKIA) && !USE(CAIRO) && !PLATFORM(BLACKBERRY)
+#if USE(ACCELERATED_COMPOSITING) && !USE(CAIRO) && !PLATFORM(BLACKBERRY)
 PlatformLayer* ImageBuffer::platformLayer() const
 {
     return 0;
 }
 #endif
 
-#if !USE(SKIA)
 bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool)
 {
     return false;
@@ -115,6 +114,5 @@ PassOwnPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size,
 {
     return create(size, resolutionScale, colorSpace, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
 }
-#endif
 
 }

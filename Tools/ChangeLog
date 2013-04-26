@@ -1,3 +1,13 @@
+2013-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove the remaining Skia #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=114886
+
+        Reviewed by Benjamin Poulain.
+
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp:
+        (createBitmapContextFromWebView): Remove Skia #ifdef references.
+
 2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Clean up load interface in WebPage

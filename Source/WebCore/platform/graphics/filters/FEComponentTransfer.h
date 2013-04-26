@@ -79,10 +79,6 @@ public:
     void setAlphaFunction(const ComponentTransferFunction&);
 
     virtual void platformApplySoftware();
-#if USE(SKIA)
-    virtual bool platformApplySkia();
-    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
-#endif
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

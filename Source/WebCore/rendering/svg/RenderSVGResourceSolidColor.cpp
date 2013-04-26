@@ -29,10 +29,6 @@
 #include "RenderStyle.h"
 #include "SVGRenderSupport.h"
 
-#if USE(SKIA)
-#include "PlatformContextSkia.h"
-#endif
-
 namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceSolidColor::s_resourceType = SolidColorResourceType;

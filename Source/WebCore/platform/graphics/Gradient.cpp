@@ -240,7 +240,7 @@ void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTra
     invalidateHash();
 }
 
-#if !USE(SKIA) && !USE(CAIRO) && !PLATFORM(BLACKBERRY)
+#if !USE(CAIRO) && !PLATFORM(BLACKBERRY)
 void Gradient::setPlatformGradientSpaceTransform(const AffineTransform&)
 {
 }

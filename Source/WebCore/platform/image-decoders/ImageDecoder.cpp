@@ -138,8 +138,6 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaO
     return 0;
 }
 
-#if !USE(SKIA)
-
 ImageFrame::ImageFrame()
     : m_hasAlpha(false)
     , m_status(FrameEmpty)
@@ -225,8 +223,6 @@ void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
 }
-
-#endif
 
 namespace {
 

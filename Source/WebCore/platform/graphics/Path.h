@@ -42,9 +42,6 @@ namespace WebCore {
 class CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
-#elif USE(SKIA)
-class SkPath;
-typedef SkPath PlatformPath;
 #elif OS(WINCE)
 namespace WebCore {
     class PlatformPath;

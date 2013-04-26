@@ -49,10 +49,6 @@ public:
     bool setValues(const Vector<float>&);
 
     virtual void platformApplySoftware();
-#if USE(SKIA)
-    virtual bool platformApplySkia();
-    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
-#endif
 #if ENABLE(OPENCL)
     virtual bool platformApplyOpenCL();
 #endif

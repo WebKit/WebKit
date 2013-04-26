@@ -142,7 +142,7 @@ void SVGImage::drawForContainer(GraphicsContext* context, const FloatSize contai
     setImageObserver(observer);
 }
 
-#if USE(SKIA) || USE(CAIRO)
+#if USE(CAIRO)
 // Passes ownership of the native image to the caller so PassNativeImagePtr needs
 // to be a smart pointer type.
 PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()

@@ -156,10 +156,6 @@
 #include "MediaPlayerPrivateBlackBerry.h"
 #endif
 
-#if USE(SKIA)
-#include "PlatformContextSkia.h"
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "FrameLayers.h"
 #include "WebPageCompositorClient.h"
