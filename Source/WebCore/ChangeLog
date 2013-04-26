@@ -1,5 +1,19 @@
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Uninflate caret rect.
+        http://bugs.webkit.org/show_bug.cgi?id=114997.
+        <rdar://problem/12629007>.
+
+        Reviewed by Timothy Horton.
+
+        Inflation was causing painting errors with focus rings.
+        It is no longer needed after disabling subpixel layout.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::repaintCaretForLocalRect):
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed build fix.
 
         * platform/LayoutUnit.h:
