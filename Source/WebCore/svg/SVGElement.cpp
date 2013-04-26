@@ -317,6 +317,10 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
         setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, name, value));
     else if (name == onmousedownAttr)
         setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, name, value));
+    else if (name == onmouseenterAttr)
+        setAttributeEventListener(eventNames().mouseenterEvent, createAttributeEventListener(this, name, value));
+    else if (name == onmouseleaveAttr)
+        setAttributeEventListener(eventNames().mouseleaveEvent, createAttributeEventListener(this, name, value));
     else if (name == onmousemoveAttr)
         setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, name, value));
     else if (name == onmouseoutAttr)

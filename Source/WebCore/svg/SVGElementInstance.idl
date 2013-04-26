@@ -62,6 +62,8 @@
     attribute [NotEnumerable] EventListener onkeyup;
     attribute [NotEnumerable] EventListener onload;
     attribute [NotEnumerable] EventListener onmousedown;
+    attribute [NotEnumerable] EventListener onmouseenter;
+    attribute [NotEnumerable] EventListener onmouseleave;
     attribute [NotEnumerable] EventListener onmousemove;
     attribute [NotEnumerable] EventListener onmouseout;
     attribute [NotEnumerable] EventListener onmouseover;

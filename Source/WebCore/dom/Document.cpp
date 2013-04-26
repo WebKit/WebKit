@@ -3051,7 +3051,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     renderView()->hitTest(request, result);
 
     if (!request.readOnly())
-        updateHoverActiveState(request, result.innerElement());
+        updateHoverActiveState(request, result.innerElement(), &event);
 
     return MouseEventWithHitTestResults(event, result);
 }
@@ -5901,7 +5901,7 @@ static RenderObject* nearestCommonHoverAncestor(RenderObject* obj1, RenderObject
     return 0;
 }
 
-void Document::updateHoverActiveState(const HitTestRequest& request, Element* innerElement)
+void Document::updateHoverActiveState(const HitTestRequest& request, Element* innerElement, const PlatformMouseEvent* event)
 {
     ASSERT(!request.readOnly());
 
@@ -5970,6 +5970,26 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     Vector<RefPtr<Node>, 32> nodesToRemoveFromChain;
     Vector<RefPtr<Node>, 32> nodesToAddToChain;
 
+    // mouseenter and mouseleave events are only dispatched if there is a capturing eventhandler on an ancestor
+    // or a normal eventhandler on the element itself (they don't bubble).
+    // This optimization is necessary since these events can cause O(n²) capturing event-handler checks.
+    bool hasCapturingMouseEnterListener = false;
+    bool hasCapturingMouseLeaveListener = false;
+    if (event && newHoverNode != oldHoverNode.get()) {
+        for (Node* curr = newHoverNode; curr; curr = curr->parentOrShadowHostNode()) {
+            if (curr->hasCapturingEventListeners(eventNames().mouseenterEvent)) {
+                hasCapturingMouseEnterListener = true;
+                break;
+            }
+        }
+        for (Node* curr = oldHoverNode.get(); curr; curr = curr->parentOrShadowHostNode()) {
+            if (curr->hasCapturingEventListeners(eventNames().mouseleaveEvent)) {
+                hasCapturingMouseLeaveListener = true;
+                break;
+            }
+        }
+    }
+
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
@@ -5990,14 +6010,25 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     }
 
     size_t removeCount = nodesToRemoveFromChain.size();
-    for (size_t i = 0; i < removeCount; ++i)
+    for (size_t i = 0; i < removeCount; ++i) {
         nodesToRemoveFromChain[i]->setHovered(false);
+        if (event && (hasCapturingMouseLeaveListener || nodesToRemoveFromChain[i]->hasEventListeners(eventNames().mouseleaveEvent)))
+            nodesToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoverNode);
+    }
 
+    bool sawCommonAncestor = false;
     size_t addCount = nodesToAddToChain.size();
     for (size_t i = 0; i < addCount; ++i) {
         if (allowActiveChanges)
             nodesToAddToChain[i]->setActive(true);
-        nodesToAddToChain[i]->setHovered(true);
+        if (ancestor && nodesToAddToChain[i] == ancestor->node())
+            sawCommonAncestor = true;
+        if (!sawCommonAncestor) {
+            // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.
+            nodesToAddToChain[i]->setHovered(true);
+            if (event && (hasCapturingMouseEnterListener || nodesToAddToChain[i]->hasEventListeners(eventNames().mouseenterEvent)))
+                nodesToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoverNode.get());
+        }
     }
 
     updateStyleIfNeeded();

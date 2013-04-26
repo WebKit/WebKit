@@ -50,6 +50,7 @@ public:
 
     bool isEmpty() const { return m_entries.isEmpty(); }
     bool contains(const AtomicString& eventType) const;
+    bool containsCapturing(const AtomicString& eventType) const;
 
     void clear();
     bool add(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

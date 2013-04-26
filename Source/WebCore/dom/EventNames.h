@@ -89,6 +89,8 @@ namespace WebCore {
     macro(loadstart) \
     macro(message) \
     macro(mousedown) \
+    macro(mouseenter) \
+    macro(mouseleave) \
     macro(mousemove) \
     macro(mouseout) \
     macro(mouseover) \

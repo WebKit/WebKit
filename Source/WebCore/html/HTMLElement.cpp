@@ -226,6 +226,8 @@ AtomicString HTMLElement::eventNameForAttributeName(const QualifiedName& attrNam
         attributeNameToEventNameMap.set(oncontextmenuAttr.localName(), eventNames().contextmenuEvent);
         attributeNameToEventNameMap.set(ondblclickAttr.localName(), eventNames().dblclickEvent);
         attributeNameToEventNameMap.set(onmousedownAttr.localName(), eventNames().mousedownEvent);
+        attributeNameToEventNameMap.set(onmouseenterAttr.localName(), eventNames().mouseenterEvent);
+        attributeNameToEventNameMap.set(onmouseleaveAttr.localName(), eventNames().mouseleaveEvent);
         attributeNameToEventNameMap.set(onmousemoveAttr.localName(), eventNames().mousemoveEvent);
         attributeNameToEventNameMap.set(onmouseoutAttr.localName(), eventNames().mouseoutEvent);
         attributeNameToEventNameMap.set(onmouseoverAttr.localName(), eventNames().mouseoverEvent);

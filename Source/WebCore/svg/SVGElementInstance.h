@@ -116,6 +116,8 @@ public:
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keyup);
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), load);
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousedown);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseenter);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseleave);
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousemove);
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseout);
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseover);

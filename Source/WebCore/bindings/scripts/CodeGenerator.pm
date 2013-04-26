@@ -67,6 +67,7 @@ my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
 
 my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick" => 1,
                                "onerror" => 1, "onload" => 1, "onmousedown" => 1,
+                               "onmouseenter" => 1, "onmouseleave" => 1,
                                "onmousemove" => 1, "onmouseout" => 1, "onmouseover" => 1,
                                "onmouseup" => 1, "onresize" => 1, "onscroll" => 1,
                                "onunload" => 1);

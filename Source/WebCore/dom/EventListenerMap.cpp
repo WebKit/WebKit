@@ -78,6 +78,20 @@ bool EventListenerMap::contains(const AtomicString& eventType) const
     return false;
 }
 
+bool EventListenerMap::containsCapturing(const AtomicString& eventType) const
+{
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType) {
+            const EventListenerVector* vector = m_entries[i].second.get();
+            for (unsigned j = 0; j < vector->size(); ++j) {
+                if (vector->at(j).useCapture)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 void EventListenerMap::clear()
 {
     assertNoActiveIterators();

@@ -1,0 +1,9 @@
+mouseenter on outer1
+mouseenter on inner1
+mouseleave on inner1
+mouseenter on inner3
+mouseenter on inner2
+mouseleave on inner3
+mouseleave on inner2
+mouseleave on outer1
+

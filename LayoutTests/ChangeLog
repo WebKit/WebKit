@@ -1,3 +1,17 @@
+2013-04-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Mouseenter and mouseleave events not supported
+        https://bugs.webkit.org/show_bug.cgi?id=18930
+
+        Reviewed by David Hyatt.
+
+        To new tests that mouseenter and mouseleave works in both bubbling and capture phase.
+
+        * fast/events/mouseenter-mouseleave-capture-expected.txt: Added.
+        * fast/events/mouseenter-mouseleave-capture.html: Added.
+        * fast/events/mouseenter-mouseleave-expected.txt: Added.
+        * fast/events/mouseenter-mouseleave.html: Added.
+
 2013-04-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Qt] REGRESSION(r149001): It made two fast/dom/DeviceMotion tests fail.

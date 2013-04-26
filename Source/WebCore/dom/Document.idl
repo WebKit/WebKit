@@ -290,6 +290,8 @@
     [NotEnumerable] attribute EventListener onkeyup;
     [NotEnumerable] attribute EventListener onload;
     [NotEnumerable] attribute EventListener onmousedown;
+    [NotEnumerable] attribute EventListener onmouseenter;
+    [NotEnumerable] attribute EventListener onmouseleave;
     [NotEnumerable] attribute EventListener onmousemove;
     [NotEnumerable] attribute EventListener onmouseout;
     [NotEnumerable] attribute EventListener onmouseover;

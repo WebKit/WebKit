@@ -246,6 +246,8 @@
     attribute EventListener onloadstart;
     attribute EventListener onmessage;
     attribute EventListener onmousedown;
+    attribute EventListener onmouseenter;
+    attribute EventListener onmouseleave;
     attribute EventListener onmousemove;
     attribute EventListener onmouseout;
     attribute EventListener onmouseover;
