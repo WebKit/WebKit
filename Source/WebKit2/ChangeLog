@@ -1,3 +1,31 @@
+2013-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add methods to add a user style sheet to the WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=99081
+
+        Reviewed by Carlos Garcia Campos, Gustavo Noronha Silva, and Benjamin Poulain.
+
+        Add methods to WebKitWebViewGroup to add and remove user style sheets.
+        This allows clients to inject style sheets into pages with a set of
+        rules for when those style sheets apply.
+
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        (toImmutableArray): Added this helper which converts the GList* parameters into
+        ImmutableArrays for use with the WebKit2 internal API.
+        (webkit_web_view_group_add_user_style_sheet): Added new API for adding a style sheet.
+        (webkit_web_view_group_remove_all_user_style_sheets): Add new API for clearing out all style sheets.
+        * UIProcess/API/gtk/WebKitWebViewGroup.h: Added new method declarations.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Added new API to the documentation.
+        * UIProcess/API/gtk/tests/TestWebKitWebViewGroup.cpp: Added a test for the new API.
+        (isStyleSheetInjectedForURLAtPath): Function to check whether the style sheet has been injected for a given URL.
+        (fillURLListFromPaths): Helper which converts paths passed via varargs into a whitelist or blacklist.
+        (removeOldInjectedStyleSheetsAndResetLists): Function to start afresh.
+        (testWebViewGroupInjectedStyleSheet): The actual test.
+        (serverCallback): Server callback for use with the test. We cannot use loadHTML or
+        loadAlternateHTML, because that checks the whitelist and blacklist against about:blank.
+        (beforeAll): Initialize the server and new test.
+        (afterAll): Clean up the server.
+
 2013-04-26  Simon Cooper  <scooper@apple.com>
 
         Permit ~/Library or ~/Library/Preferences to be symlinks
