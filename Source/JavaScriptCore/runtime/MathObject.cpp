@@ -52,6 +52,7 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState*);
 
 }
 
@@ -81,6 +82,7 @@ const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, ExecState::math
   sin           mathProtoFuncSin               DontEnum|Function 1
   sqrt          mathProtoFuncSqrt              DontEnum|Function 1
   tan           mathProtoFuncTan               DontEnum|Function 1
+  imul          mathProtoFuncIMul              DontEnum|Function 2
 @end
 */
 
@@ -276,6 +278,15 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState* exec)
 {
     return JSValue::encode(jsDoubleNumber(tan(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState* exec)
+{
+    int32_t left = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
+    int32_t right = exec->argument(1).toInt32(exec);
+    return JSValue::encode(jsNumber(left * right));
 }
 
 #if PLATFORM(IOS) && CPU(ARM_THUMB2)

@@ -428,7 +428,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).set(SpecInt32);
         break;
     }
-        
+
     case Int32ToDouble:
     case ForwardInt32ToDouble: {
         JSValue child = forNode(node->child1()).value();
@@ -553,6 +553,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+        break;
+    }
+
+    case ArithIMul: {
+        forNode(node).set(SpecInt32);
         break;
     }
         

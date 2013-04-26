@@ -1600,6 +1600,17 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         
         return true;
     }
+
+    case IMulIntrinsic: {
+        if (argumentCountIncludingThis != 3)
+            return false;
+        int leftOperand = registerOffset + argumentToOperand(1);
+        int rightOperand = registerOffset + argumentToOperand(2);
+        Node* left = getToInt32(leftOperand);
+        Node* right = getToInt32(rightOperand);
+        setIntrinsicResult(usesResult, resultOperand, addToGraph(ArithIMul, left, right));
+        return true;
+    }
         
     default:
         return false;

@@ -105,6 +105,7 @@ namespace JSC { namespace DFG {
     macro(ArithSub, NodeResultNumber | NodeMustGenerate) \
     macro(ArithNegate, NodeResultNumber | NodeMustGenerate) \
     macro(ArithMul, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithIMul, NodeResultInt32 | NodeMustGenerate) \
     macro(ArithDiv, NodeResultNumber | NodeMustGenerate) \
     macro(ArithMod, NodeResultNumber | NodeMustGenerate) \
     macro(ArithAbs, NodeResultNumber | NodeMustGenerate) \

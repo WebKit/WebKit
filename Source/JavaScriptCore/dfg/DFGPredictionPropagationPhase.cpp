@@ -164,7 +164,8 @@ private:
         case BitXor:
         case BitRShift:
         case BitLShift:
-        case BitURShift: {
+        case BitURShift:
+        case ArithIMul: {
             changed |= setPrediction(SpecInt32);
             break;
         }

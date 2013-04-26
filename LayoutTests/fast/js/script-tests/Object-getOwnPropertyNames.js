@@ -66,7 +66,7 @@ var expectedPropertyNamesSet = {
     "RegExp.prototype": "['compile', 'constructor', 'exec', 'global', 'ignoreCase', 'lastIndex', 'multiline', 'source', 'test', 'toString']",
     "Error": "['length', 'name', 'prototype']",
     "Error.prototype": "['constructor', 'message', 'name', 'toString']",
-    "Math": "['E', 'LN10', 'LN2', 'LOG10E', 'LOG2E', 'PI', 'SQRT1_2', 'SQRT2', 'abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max', 'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan']",
+    "Math": "['E', 'LN10', 'LN2', 'LOG10E', 'LOG2E', 'PI', 'SQRT1_2', 'SQRT2', 'abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'imul', 'log', 'max', 'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan']",
     "JSON": "['parse', 'stringify']"
 };
 

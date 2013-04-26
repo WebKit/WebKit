@@ -100,7 +100,8 @@ private:
         case BitXor:
         case BitRShift:
         case BitLShift:
-        case BitURShift: {
+        case BitURShift:
+        case ArithIMul: {
             fixIntEdge(node->child1());
             fixIntEdge(node->child2());
             break;

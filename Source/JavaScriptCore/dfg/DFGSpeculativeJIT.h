@@ -1968,6 +1968,7 @@ public:
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
+    void compileArithIMul(Node*);
 #if CPU(X86) || CPU(X86_64)
     void compileIntegerArithDivForX86(Node*);
 #elif CPU(APPLE_ARMV7S)

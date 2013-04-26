@@ -768,6 +768,39 @@ MacroAssemblerCodeRef powThunkGenerator(VM* vm)
     return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "pow");
 }
 
+MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
+{
+    SpecializedThunkJIT jit(2);
+    MacroAssembler::Jump nonIntArg0Jump;
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntArg0Jump);
+    SpecializedThunkJIT::Label doneLoadingArg0(&jit);
+    MacroAssembler::Jump nonIntArg1Jump;
+    jit.loadInt32Argument(1, SpecializedThunkJIT::regT1, nonIntArg1Jump);
+    SpecializedThunkJIT::Label doneLoadingArg1(&jit);
+    jit.mul32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT0);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+
+    if (jit.supportsFloatingPointTruncate()) {
+        nonIntArg0Jump.link(&jit);
+        jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+        jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::BranchIfTruncateSuccessful).linkTo(doneLoadingArg0, &jit);
+        jit.xor32(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0);
+        jit.jump(doneLoadingArg0);
+    } else
+        jit.appendFailure(nonIntArg0Jump);
+
+    if (jit.supportsFloatingPointTruncate()) {
+        nonIntArg1Jump.link(&jit);
+        jit.loadDoubleArgument(1, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT1);
+        jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT1, SpecializedThunkJIT::BranchIfTruncateSuccessful).linkTo(doneLoadingArg1, &jit);
+        jit.xor32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT1);
+        jit.jump(doneLoadingArg1);
+    } else
+        jit.appendFailure(nonIntArg1Jump);
+
+    return jit.finalize(*vm, vm->jitStubs->ctiNativeCall(vm), "imul");
+}
+
 }
 
 #endif // ENABLE(JIT)

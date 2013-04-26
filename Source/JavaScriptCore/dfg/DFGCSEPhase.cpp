@@ -1059,6 +1059,7 @@ private:
         case ArithSub:
         case ArithNegate:
         case ArithMul:
+        case ArithIMul:
         case ArithMod:
         case ArithDiv:
         case ArithAbs:

@@ -283,6 +283,7 @@ sub output() {
             $intrinsic = "RoundIntrinsic" if ($key eq "round");
             $intrinsic = "ExpIntrinsic" if ($key eq "exp");
             $intrinsic = "LogIntrinsic" if ($key eq "log");
+            $intrinsic = "IMulIntrinsic" if ($key eq "imul");
         }
         if ($name eq "arrayPrototypeTable") {
             $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");

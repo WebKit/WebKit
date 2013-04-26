@@ -2182,6 +2182,10 @@ void SpeculativeJIT::compile(Node* node)
         compileArithMul(node);
         break;
 
+    case ArithIMul:
+        compileArithIMul(node);
+        break;
+
     case ArithDiv: {
         switch (node->binaryUseKind()) {
         case Int32Use: {

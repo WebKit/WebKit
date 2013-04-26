@@ -192,7 +192,8 @@ private:
         case BitXor:
         case BitRShift:
         case BitLShift:
-        case BitURShift: {
+        case BitURShift:
+        case ArithIMul: {
             flags |= NodeUsedAsInt;
             flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
             node->child1()->mergeFlags(flags);

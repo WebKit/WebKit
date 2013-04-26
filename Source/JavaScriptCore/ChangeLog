@@ -1,3 +1,51 @@
+2013-04-24  Oliver Hunt  <oliver@apple.com>
+
+        Add support for Math.imul
+        https://bugs.webkit.org/show_bug.cgi?id=115143
+
+        Reviewed by Filip Pizlo.
+
+        Add support for Math.imul, a thunk generator for Math.imul,
+        and an intrinsic.
+
+        Fairly self explanatory set of changes, DFG intrinsics simply
+        leverages the existing ValueToInt32 nodes.
+
+        * create_hash_table:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithIMul):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/ThunkGenerators.cpp:
+        (JSC::imulThunkGenerator):
+        (JSC):
+        * jit/ThunkGenerators.h:
+        (JSC):
+        * runtime/Intrinsic.h:
+        * runtime/MathObject.cpp:
+        (JSC):
+        (JSC::mathProtoFuncIMul):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+
 2013-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/148999

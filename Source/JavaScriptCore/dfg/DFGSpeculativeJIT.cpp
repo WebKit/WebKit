@@ -3332,6 +3332,20 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         return;
     }
 }
+void SpeculativeJIT::compileArithIMul(Node* node)
+{
+    SpeculateIntegerOperand op1(this, node->child1());
+    SpeculateIntegerOperand op2(this, node->child2());
+    GPRTemporary result(this);
+
+    GPRReg reg1 = op1.gpr();
+    GPRReg reg2 = op2.gpr();
+
+    m_jit.move(reg1, result.gpr());
+    m_jit.mul32(reg2, result.gpr());
+    integerResult(result.gpr(), node);
+    return;
+}
 
 void SpeculativeJIT::compileArithMul(Node* node)
 {

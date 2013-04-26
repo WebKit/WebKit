@@ -395,6 +395,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return expThunkGenerator;
     case LogIntrinsic:
         return logThunkGenerator;
+    case IMulIntrinsic:
+        return imulThunkGenerator;
     default:
         return 0;
     }

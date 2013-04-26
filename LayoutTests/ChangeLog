@@ -1,3 +1,31 @@
+2013-04-24  Oliver Hunt  <oliver@apple.com>
+
+        Add support for Math.imul
+        https://bugs.webkit.org/show_bug.cgi?id=115143
+
+        Reviewed by Filip Pizlo.
+
+        Add a bunch of tests for Math.imul
+
+        * fast/js/Object-getOwnPropertyNames-expected.txt:
+        * fast/js/imul-expected.txt: Added.
+        * fast/js/imul.html: Added.
+        * fast/js/regress/imul-double-only-expected.txt: Added.
+        * fast/js/regress/imul-double-only.html: Added.
+        * fast/js/regress/imul-int-only-expected.txt: Added.
+        * fast/js/regress/imul-int-only.html: Added.
+        * fast/js/regress/imul-mixed-expected.txt: Added.
+        * fast/js/regress/imul-mixed.html: Added.
+        * fast/js/regress/script-tests/imul-double-only.js: Added.
+        (f):
+        * fast/js/regress/script-tests/imul-int-only.js: Added.
+        (f):
+        * fast/js/regress/script-tests/imul-mixed.js: Added.
+        (f):
+        * fast/js/script-tests/Object-getOwnPropertyNames.js:
+        * fast/js/script-tests/imul.js: Added.
+        (testIMul):
+
 2013-04-25  Chris Fleizach  <cfleizach@apple.com>
 
         <meter> element not exposed to accessibility
