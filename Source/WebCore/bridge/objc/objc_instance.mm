@@ -289,6 +289,9 @@ JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
                 case ObjcUnsignedShortType:
                     [invocation setArgument:&value.shortValue atIndex:i];
                     break;
+                case ObjcBoolType:
+                    [invocation setArgument:&value.booleanValue atIndex:i];
+                    break;
                 case ObjcIntType:
                 case ObjcUnsignedIntType:
                     [invocation setArgument:&value.intValue atIndex:i];

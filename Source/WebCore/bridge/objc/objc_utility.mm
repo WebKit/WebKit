@@ -113,6 +113,9 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
         case ObjcUnsignedShortType:
             result.shortValue = (short)d;
             break;
+        case ObjcBoolType:
+            result.booleanValue = (bool)d;
+            break;
         case ObjcIntType:
         case ObjcUnsignedIntType:
             result.intValue = (int)d;
@@ -206,6 +209,8 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
             return jsNumber(*(short*)buffer);
         case ObjcUnsignedShortType:
             return jsNumber(*(unsigned short*)buffer);
+        case ObjcBoolType:
+            return jsBoolean(*(bool*)buffer);
         case ObjcIntType:
             return jsNumber(*(int*)buffer);
         case ObjcUnsignedIntType:
@@ -261,6 +266,9 @@ ObjcValueType objcValueTypeForType(const char *type)
             case _C_USHT:
                 objcValueType = ObjcUnsignedShortType;
                 break;
+            case _C_BOOL:
+                objcValueType = ObjcBoolType;
+                break;
             case _C_INT:
                 objcValueType = ObjcIntType;
                 break;
@@ -291,7 +299,8 @@ ObjcValueType objcValueTypeForType(const char *type)
             default:
                 // Unhandled type. We don't handle C structs, unions, etc.
                 // FIXME: throw an exception?
-                ASSERT_NOT_REACHED();
+                WTFLogAlways("Unhandled ObjC type specifier: \"%c\" used in ObjC bridge.", typeChar);
+                RELEASE_ASSERT_NOT_REACHED();
         }
 
         if (objcValueType != ObjcInvalidType)

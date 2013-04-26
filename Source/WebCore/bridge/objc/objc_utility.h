@@ -64,6 +64,7 @@ typedef enum {
     ObjcUnsignedLongLongType,
     ObjcFloatType,
     ObjcDoubleType,
+    ObjcBoolType,
     ObjcInvalidType
 } ObjcValueType;
 

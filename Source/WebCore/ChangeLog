@@ -1,3 +1,20 @@
+2013-04-26  Michael Saboff  <msaboff@apple.com>
+
+        WebCore ObjC bridge is missing support for bool type
+        https://bugs.webkit.org/show_bug.cgi?id=115276
+
+        Reviewed by Geoffrey Garen.
+
+        Added code to handle conversion between ObjC and JS booleans.
+
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeObjcMethod):
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue):
+        (JSC::Bindings::convertObjcValueToValue):
+        (JSC::Bindings::objcValueTypeForType):
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Disable sub-pixel layout on mac.
