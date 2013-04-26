@@ -46,7 +46,7 @@ namespace JSC { namespace DFG {
     /* Marker to indicate that an operation was optimized entirely and all that is left */\
     /* is to make one node alias another. CSE will later usually eliminate this node, */\
     /* though it may choose not to if it would corrupt predictions (very rare). */\
-    macro(Identity, NodeResultJS | NodeDoesNotExit) \
+    macro(Identity, NodeResultJS) \
     \
     /* Nodes for handling functions (both as call and as construct). */\
     macro(ConvertThis, NodeResultJS) \

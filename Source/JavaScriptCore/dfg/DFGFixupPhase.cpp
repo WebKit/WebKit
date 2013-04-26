@@ -792,9 +792,22 @@ private:
             setUseKindAndUnboxIfProfitable<CellUse>(node->child2());
             break;
         }
-            
+
+        case Phantom:
+        case Identity: {
+            switch (node->child1().useKind()) {
+            case NumberUse:
+                if (node->child1()->shouldSpeculateIntegerForArithmetic())
+                    node->child1().setUseKind(Int32Use);
+                break;
+            default:
+                break;
+            }
+            observeUseKindOnEdge(node->child1());
+            break;
+        }
+
         case GetArrayLength:
-        case Identity:
         case Nop:
         case Phi:
         case ForwardInt32ToDouble:
@@ -810,7 +823,6 @@ private:
 #if !ASSERT_DISABLED    
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
-        case Phantom:
         case JSConstant:
         case WeakJSConstant:
         case GetLocal:
@@ -1246,9 +1258,19 @@ private:
         return true;
 #endif
     }
-    
+
     template<UseKind useKind>
     void observeUseKindOnNode(Node* node)
+    {
+        observeUseKindOnNode(node, useKind);
+    }
+
+    void observeUseKindOnEdge(Edge edge)
+    {
+        observeUseKindOnNode(edge.node(), edge.useKind());
+    }
+
+    void observeUseKindOnNode(Node* node, UseKind useKind)
     {
         if (node->op() != GetLocal)
             return;

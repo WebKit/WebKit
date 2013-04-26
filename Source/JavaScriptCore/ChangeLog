@@ -1,3 +1,37 @@
+2013-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG doesn't support to_jsnumber
+        https://bugs.webkit.org/show_bug.cgi?id=115129
+
+        Reviewed by Geoffrey Garen.
+        
+        Based on Oliver's patch. Implements to_jsnumber as Identity(Number:@thingy), and then does
+        an optimization in Fixup to turn Identity(Number:) into Identity(Int32:) if the predictions
+        tell us to. Identity is later turned into Phantom.
+        
+        Also fixed BackPropMask, which appeared to have NodeDoesNotExit included in it. That's
+        wrong; NodeDoesNotExit is not a backward propagation property.
+        
+        Also fixed Identity to be marked as CanExit (i.e. not NodeDoesNotExit).
+        
+        This more than doubles the FPS on ammo.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::observeUseKindOnEdge):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
 2013-04-24  Oliver Hunt  <oliver@apple.com>
 
         Add support for Math.imul

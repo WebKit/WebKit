@@ -3377,6 +3377,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_typeof);
         }
 
+        case op_to_jsnumber: {
+            set(currentInstruction[1].u.operand,
+                addToGraph(Identity, Edge(get(currentInstruction[2].u.operand), NumberUse)));
+            NEXT_OPCODE(op_to_jsnumber);
+        }
+
         default:
             // Parse failed! This should not happen because the capabilities checker
             // should have caught it.

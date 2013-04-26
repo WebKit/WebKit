@@ -53,7 +53,7 @@ namespace JSC { namespace DFG {
 #define NodeMayOverflow           0x080
 #define NodeMayNegZero            0x100
                                 
-#define NodeBackPropMask         0x3E00
+#define NodeBackPropMask         0x1E00
 #define NodeUseBottom            0x0000
 #define NodeUsedAsNumber         0x0200 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
 #define NodeNeedsNegZero         0x0400 // The result of this computation may be used in a context that observes -0.

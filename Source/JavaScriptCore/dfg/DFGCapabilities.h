@@ -183,6 +183,7 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_put_to_base_variable:
     case op_put_to_base:
     case op_typeof:
+    case op_to_jsnumber:
         return CanCompile;
         
     case op_call_varargs:
