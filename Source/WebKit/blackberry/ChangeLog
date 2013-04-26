@@ -1,3 +1,17 @@
+2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Clean up load interface in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=113267
+
+        Reviewed by Rob Buis.
+
+        Remove unused loadExtended(), combine load() and download() api in WebPage.
+        RIM Bug# 315535, internally reviewed by Joe Mason.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::load):
+        * Api/WebPage.h:
+
 2013-04-25  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Selection overlay on non-composited iframes are incorrectly positioned.

@@ -222,7 +222,10 @@ void DumpRenderTree::runTest(const String& url, const String& imageHash)
         fwrite(m_currentTest->utf8().data(), 1, m_currentTest->utf8().length(), current);
         fclose(current);
     }
-    m_page->load(url, BlackBerry::Platform::String::emptyString(), false);
+    BlackBerry::Platform::NetworkRequest request;
+    STATIC_LOCAL_STRING(s_get, "GET");
+    request.setRequestUrl(url, s_get);
+    m_page->load(request);
 }
 
 void DumpRenderTree::doneDrt()

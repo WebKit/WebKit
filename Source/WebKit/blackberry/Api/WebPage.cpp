@@ -725,16 +725,6 @@ void WebPagePrivate::load(const BlackBerry::Platform::String& url, const BlackBe
     m_mainFrame->loader()->load(FrameLoadRequest(m_mainFrame, request));
 }
 
-void WebPage::load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, bool isInitial, bool needReferer, bool forceDownload)
-{
-    d->load(url, networkToken, "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, isInitial, false, needReferer, forceDownload);
-}
-
-void WebPage::loadExtended(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool mustHandleInternally)
-{
-    d->load(url, networkToken, method, cachePolicy, data, dataLength, headers, headersLength, false, mustHandleInternally, false, false, "");
-}
-
 void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerry::Platform::String& overrideContentType)
 {
     BlackBerry::Platform::String fileUrl(path);
@@ -746,7 +736,7 @@ void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerr
     d->load(fileUrl, BlackBerry::Platform::String::emptyString(), BlackBerry::Platform::String("GET", 3), Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, false, false, overrideContentType.c_str());
 }
 
-void WebPage::download(const Platform::NetworkRequest& request)
+void WebPage::load(const Platform::NetworkRequest& request, bool needReferer, bool forceDownload)
 {
     vector<const char*> headers;
     Platform::NetworkRequest::HeaderList& list = request.getHeaderListRef();
@@ -754,7 +744,7 @@ void WebPage::download(const Platform::NetworkRequest& request)
         headers.push_back(list[i].first.c_str());
         headers.push_back(list[i].second.c_str());
     }
-    d->load(request.getUrlRef(), BlackBerry::Platform::String::emptyString(), "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, headers.empty() ? 0 : &headers[0], headers.size(), false, false, false, true, "", request.getSuggestedSaveName().c_str());
+    d->load(request.getUrlRef(), BlackBerry::Platform::String::emptyString(), "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, headers.empty() ? 0 : &headers[0], headers.size(), false, false, needReferer, forceDownload, BlackBerry::Platform::String::emptyString(), request.getSuggestedSaveName());
 }
 
 void WebPagePrivate::loadString(const BlackBerry::Platform::String& string, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& contentType, const BlackBerry::Platform::String& failingURL)

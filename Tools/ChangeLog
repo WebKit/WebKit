@@ -1,3 +1,16 @@
+2013-04-26  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Clean up load interface in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=113267
+
+        Reviewed by Rob Buis.
+
+        Update DumpRenderTree with change of load() interface in WebPage.
+        RIM Bug# 315535, internally reviewed by Joe Mason.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::runTest):
+
 2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the HeapGraphSerializer unit test

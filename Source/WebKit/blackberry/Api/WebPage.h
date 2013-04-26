@@ -88,15 +88,11 @@ public:
 
     WebPageClient* client() const;
 
-    void load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, bool isInitial = false, bool needReferer = false, bool forceDownload = false);
-
-    void loadExtended(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy = Platform::NetworkRequest::UseProtocolCachePolicy, const char* data = 0, size_t dataLength = 0, const char* const* headers = 0, size_t headersLength = 0, bool mustHandleInternally = false);
-
     void loadFile(const BlackBerry::Platform::String& path, const BlackBerry::Platform::String& overrideContentType = "");
 
     void loadString(const BlackBerry::Platform::String&, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& contentType = "text/html", const BlackBerry::Platform::String& failingURL = BlackBerry::Platform::String::emptyString());
 
-    void download(const Platform::NetworkRequest&);
+    void load(const Platform::NetworkRequest&, bool needReferer = false, bool forceDownload = false);
 
     bool executeJavaScript(const BlackBerry::Platform::String& script, JavaScriptDataType& returnType, BlackBerry::Platform::String& returnValue);
 
