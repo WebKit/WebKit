@@ -1,3 +1,18 @@
+2013-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Clean up the TestWebKitAPI GNUmakefile.am
+        https://bugs.webkit.org/show_bug.cgi?id=115233
+
+        Reviewed by Martin Robinson.
+
+        Specify unconditional, non-installable program targets in one declaration. Only conditionally specify
+        WebKit2-specific targets, not the complete target setups (i.e. targets' sources, cppflags listings etc.).
+        Add missing unit test source files to the TestWTF program, namely HashSet.cpp and MetaAllocator.cpp.
+        Specify the TestWTF program's CXXFLAGS to be the same as the global cxxflags as the source files need to
+        be compiled with the -fno-rtti flag that's present in the global_cxxflags variable.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-04-25  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Loading a resource from a custom protocol in a synchronous XHR times out

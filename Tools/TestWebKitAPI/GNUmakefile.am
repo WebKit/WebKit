@@ -20,12 +20,21 @@ Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
 	$(GTK_CFLAGS)
 
 noinst_PROGRAMS += \
-	Programs/TestWebKitAPI/TestWTF
+	Programs/TestWebKitAPI/TestWTF \
+	Programs/TestWebKitAPI/TestGtk
+
+if ENABLE_WEBKIT2
+noinst_PROGRAMS += \
+	Programs/TestWebKitAPI/TestWebKit2
+endif # ENABLE_WEBKIT2
 
 Programs_TestWebKitAPI_TestWTF_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
 	$(GLIB_LIBS) \
 	$(CAIRO_CFLAGS)
+
+Programs_TestWebKitAPI_TestWTF_CXXFLAGS = \
+	$(global_cxxflags)
 
 Programs_TestWebKitAPI_TestWTF_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
@@ -44,10 +53,12 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/Functional.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/HashMap.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/HashSet.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/IntegerToStringConversion.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/ListHashSet.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MathExtras.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MediaTime.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/MetaAllocator.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/RedBlackTree.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/SaturatedArithmeticOperations.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/StringBuilder.cpp \
@@ -55,13 +66,10 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/StringOperators.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/TemporaryChange.cpp \
-	Tools/TestWebKitAPI/Tests/WTF/VectorBasic.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/Vector.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/VectorBasic.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/VectorReverse.cpp \
 	Tools/TestWebKitAPI/WTFStringUtilities.h
-
-noinst_PROGRAMS += \
-	Programs/TestWebKitAPI/TestGtk
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
@@ -95,10 +103,6 @@ Programs_TestWebKitAPI_TestGtk_SOURCES = \
 	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
 	Tools/TestWebKitAPI/config.h \
 	Tools/TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp
-
-if ENABLE_WEBKIT2
-noinst_PROGRAMS += \
-	Programs/TestWebKitAPI/TestWebKit2
 
 Programs_TestWebKitAPI_TestWebKit2_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
@@ -173,8 +177,10 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKString.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp
 
+if ENABLE_WEBKIT2
 noinst_LTLIBRARIES += \
 	Libraries/libTestWebKitAPIInjectedBundle.la
+endif # ENABLE_WEBKIT2
 
 Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/InjectedBundleController.cpp \
@@ -227,8 +233,8 @@ stamp-testwebkitapi-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-h
 	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include gtk \
 	&& echo timestamp > $(@F)
 
+if ENABLE_WEBKIT2
 BUILT_SOURCES += $(top_builddir)/stamp-testwebkitapi-forwarding-headers
-
 endif # ENABLE_WEBKIT2
 
 EXTRA_DIST += \
