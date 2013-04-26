@@ -234,6 +234,11 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
+    // FIXME: Remove this check once BlobResourceHandle implements didReceiveResponseAsync correctly.
+    // Currently, it does not wait for response, so the load is likely to finish before continueDidReceiveResponse.
+    if (!m_handle)
+        return;
+
     m_handle->continueDidReceiveResponse();
 }
 
