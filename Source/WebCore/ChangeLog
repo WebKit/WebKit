@@ -1,3 +1,33 @@
+2013-04-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] in-band cues sometimes have incorrect duration
+        https://bugs.webkit.org/show_bug.cgi?id=115200
+
+        Reviewed by Jer Noble.
+
+        No new tests, this is not possible to test in DRT.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::addGenericCue): Don't add completed cues to the map.
+        (WebCore::InbandTextTrack::removeGenericCue): Log when a cue is removed from the track.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF): Initialize m_pendingCueStatus.
+        (WebCore::InbandTextTrackPrivateAVF::processCue): Never call update() on a cue that is delivered
+            while seeking.
+        (WebCore::InbandTextTrackPrivateAVF::beginSeeking): Flush all incomplete cues, remember that 
+            we are seeking.
+        (WebCore::InbandTextTrackPrivateAVF::resetCueValues): 
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seek): Call track->beginSeeking() instead of resetCueValues().
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Call track->endSeeking().
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::kind): Include class name in Kind enum values to 
+            avoid compile error.
+
 2013-04-26  Andreas Kling  <akling@apple.com>
 
         Remove wxWebKit from WebCore.

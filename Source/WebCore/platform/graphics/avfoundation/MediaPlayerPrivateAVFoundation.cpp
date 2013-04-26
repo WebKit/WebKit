@@ -268,11 +268,8 @@ void MediaPlayerPrivateAVFoundation::seek(float time)
         return;
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    // Forget any partially accumulated cue data as the seek could be to a time outside of the cue's
-    // range, which will mean that the next cue delivered will result in the current cue getting the
-    // incorrect duration.
     if (currentTrack())
-        currentTrack()->resetCueValues();
+        currentTrack()->beginSeeking();
 #endif
     
     LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %f", this, time);
@@ -596,6 +593,11 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
+
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    if (currentTrack())
+        currentTrack()->endSeeking();
+#endif
 
     m_seekTo = MediaPlayer::invalidTime();
     updateStates();

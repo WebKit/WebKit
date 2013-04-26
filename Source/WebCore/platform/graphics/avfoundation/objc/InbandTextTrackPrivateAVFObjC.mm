@@ -96,28 +96,28 @@ void InbandTextTrackPrivateAVFObjC::disconnect()
 InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
 {
     if (!m_mediaSelectionOption)
-        return None;
+        return InbandTextTrackPrivate::None;
 
     NSString *mediaType = [m_mediaSelectionOption mediaType];
     
     if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
-        return Captions;
+        return InbandTextTrackPrivate::Captions;
     if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
 
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
-            return Forced;
+            return InbandTextTrackPrivate::Forced;
 
         // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
         // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return Captions;
+            return InbandTextTrackPrivate::Captions;
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
-            return Captions;
+            return InbandTextTrackPrivate::Captions;
         
-        return Subtitles;
+        return InbandTextTrackPrivate::Subtitles;
     }
 
-    return Captions;
+    return InbandTextTrackPrivate::Captions;
 }
 
 bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const

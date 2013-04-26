@@ -232,7 +232,8 @@ void InbandTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate, PassRe
         return;
     }
 
-    m_cueMap.add(cueData.get(), cue.get());
+    if (cueData->status() != GenericCueData::Complete)
+        m_cueMap.add(cueData.get(), cue.get());
 
     addCue(cue);
 }
@@ -252,9 +253,10 @@ void InbandTextTrack::updateGenericCue(InbandTextTrackPrivate*, GenericCueData* 
 void InbandTextTrack::removeGenericCue(InbandTextTrackPrivate*, GenericCueData* cueData)
 {
     RefPtr<TextTrackCueGeneric> cue = m_cueMap.find(cueData);
-    if (cue)
+    if (cue) {
+        LOG(Media, "InbandTextTrack::removeGenericCue removing cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
         removeCue(cue.get(), IGNORE_EXCEPTION);
-    else
+    } else
         m_cueMap.remove(cueData);
 }
 

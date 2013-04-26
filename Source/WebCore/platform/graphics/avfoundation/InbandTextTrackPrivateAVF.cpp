@@ -89,9 +89,10 @@ AVFInbandTrackParent::~AVFInbandTrackParent()
 
 InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner)
     : m_owner(owner)
+    , m_pendingCueStatus(None)
     , m_index(0)
-    , m_havePartialCue(false)
     , m_hasBeenReported(false)
+    , m_seeking(false)
 {
 }
 
@@ -332,8 +333,10 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 {
     if (!client())
         return;
-    
-    if (m_havePartialCue) {
+
+    LOG(Media, "InbandTextTrackPrivateAVF::processCue - %li cues at time %.2f\n", CFArrayGetCount(attributedStrings), time);
+
+    if (m_pendingCueStatus != None) {
         // Cues do not have an explicit duration, they are displayed until the next "cue" (which might be empty) is emitted.
         m_currentCueEndTime = time;
 
@@ -341,11 +344,17 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
             for (size_t i = 0; i < m_cues.size(); i++) {
                 GenericCueData* cueData = m_cues[i].get();
 
-                cueData->setEndTime(m_currentCueEndTime);
-                cueData->setStatus(GenericCueData::Complete);
+                if (m_pendingCueStatus == Valid) {
+                    cueData->setEndTime(m_currentCueEndTime);
+                    cueData->setStatus(GenericCueData::Complete);
 
-                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) -  updating cue: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
-                client()->updateGenericCue(this, cueData);
+                    LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - updating cue: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
+                    client()->updateGenericCue(this, cueData);
+                } else {
+                    // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
+                    // see every cue, so DO NOT update cue duration while seeking.
+                    LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - ignoring cue delivered during seek: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
+                }
             }
         } else
             LOG(Media, "InbandTextTrackPrivateAVF::processCue negative length cue(s) ignored: start=%.2f, end=%.2f\n", m_currentCueStartTime, m_currentCueEndTime);
@@ -375,7 +384,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 
         m_currentCueStartTime = time;
         cueData->setStartTime(m_currentCueStartTime);
-        cueData->setEndTime(numeric_limits<double>::infinity()); // duration
+        cueData->setEndTime(numeric_limits<double>::infinity());
         
         // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
         // set CSS "left".
@@ -387,8 +396,17 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
         cueData->setStatus(GenericCueData::Partial);
         client()->addGenericCue(this, cueData.release());
 
-        m_havePartialCue = true;
+        m_pendingCueStatus = seeking() ? DeliveredDuringSeek : Valid;
     }
+}
+
+void InbandTextTrackPrivateAVF::beginSeeking()
+{
+    // Forget any partially accumulated cue data as the seek could be to a time outside of the cue's
+    // range, which will mean that the next cue delivered will result in the current cue getting the
+    // incorrect duration.
+    resetCueValues();
+    m_seeking = true;
 }
 
 void InbandTextTrackPrivateAVF::disconnect()
@@ -399,7 +417,7 @@ void InbandTextTrackPrivateAVF::disconnect()
 
 void InbandTextTrackPrivateAVF::resetCueValues()
 {
-    if (m_havePartialCue && !m_currentCueEndTime)
+    if (m_currentCueEndTime && m_cues.size())
         LOG(Media, "InbandTextTrackPrivateAVF::resetCueValues flushing data for cues: start=%.2f\n", m_currentCueStartTime);
 
     if (client()) {
@@ -408,7 +426,7 @@ void InbandTextTrackPrivateAVF::resetCueValues()
     }
 
     m_cues.resize(0);
-    m_havePartialCue = false;
+    m_pendingCueStatus = None;
     m_currentCueStartTime = 0;
     m_currentCueEndTime = 0;
 }

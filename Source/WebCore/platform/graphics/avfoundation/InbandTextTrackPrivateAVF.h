@@ -59,6 +59,10 @@ public:
     void processCue(CFArrayRef, double);
     void resetCueValues();
 
+    void beginSeeking();
+    void endSeeking() { m_seeking = false; }
+    bool seeking() const { return m_seeking; }
+
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
 
@@ -68,11 +72,18 @@ protected:
     double m_currentCueEndTime;
 
     Vector<RefPtr<GenericCueData> > m_cues;
-
     AVFInbandTrackParent* m_owner;
+
+    enum PendingCueStatus {
+        None,
+        DeliveredDuringSeek,
+        Valid
+    };
+    PendingCueStatus m_pendingCueStatus;
+
     int m_index;
-    bool m_havePartialCue;
     bool m_hasBeenReported;
+    bool m_seeking;
 };
 
 } // namespace WebCore
