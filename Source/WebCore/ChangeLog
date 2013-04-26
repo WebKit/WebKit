@@ -1,3 +1,26 @@
+2013-04-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Optimize function and interface object length computation in bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=115247
+
+        Reviewed by Kentaro Hara.
+
+        Introduce new GetFunctionLength() function that efficiently compute the length
+        of a function (i.e. its number of mandatory parameters).
+
+        We now call GetFunctionLength() instead of GenerateFunctionParametersCheck()
+        whenever we care only interested in the function length and not the actual
+        expression for checking the parameters. This is much more efficient as
+        GenerateFunctionParametersCheck() does a lot more processing than we need in
+        this case.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFunctionLength):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+
 2013-04-26  Andreas Kling  <akling@apple.com>
 
         Web Audio: Remove reduplicative addInput() in AnalyserNode.

@@ -1320,6 +1320,22 @@ sub GenerateParametersCheckExpression
     return ($res, keys %usedArguments);
 }
 
+# As per Web IDL specification, the length of a function Object is
+# its number of mandatory parameters.
+sub GetFunctionLength
+{
+  my $function = shift;
+
+  my $numMandatoryParams = 0;
+  foreach my $parameter (@{$function->parameters}) {
+    # Abort as soon as we find the first optional parameter as no mandatory
+    # parameter can follow an optional one.
+    last if $parameter->extendedAttributes->{"Optional"};
+    $numMandatoryParams++;
+  }
+  return $numMandatoryParams;
+}
+
 sub GenerateFunctionParametersCheck
 {
     my $function = shift;
@@ -1622,8 +1638,8 @@ sub GenerateImplementation
             my $functionName = GetFunctionName($className, $function);
             push(@hashValue1, $functionName);
 
-            my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($function);
-            push(@hashValue2, $numMandatoryParams);
+            my $functionLength = GetFunctionLength($function);
+            push(@hashValue2, $functionLength);
 
             my @specials = ();
             push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
@@ -1686,8 +1702,8 @@ sub GenerateImplementation
         my $functionName = GetFunctionName($className, $function);
         push(@hashValue1, $functionName);
 
-        my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($function);
-        push(@hashValue2, $numMandatoryParams);
+        my $functionLength = GetFunctionLength($function);
+        push(@hashValue2, $functionLength);
 
         my @specials = ();
         push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
@@ -4161,19 +4177,19 @@ sub GenerateConstructorHelperMethods
     my $generatingNamedConstructor = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
-    my $leastNumMandatoryParams = $interface->extendedAttributes->{"ConstructorParameters"};
-    if (!defined $leastNumMandatoryParams) {
+    my $leastConstructorLength = $interface->extendedAttributes->{"ConstructorParameters"};
+    if (!defined $leastConstructorLength) {
         if ($codeGenerator->IsConstructorTemplate($interface, "Event") || $codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
-            $leastNumMandatoryParams = 1;
+            $leastConstructorLength = 1;
         } elsif ($interface->extendedAttributes->{"Constructor"}) {
             my @constructors = @{$interface->constructors};
-            $leastNumMandatoryParams = 255;
+            $leastConstructorLength = 255;
             foreach my $constructor (@constructors) {
-                my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($constructor);
-                $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
+                my $constructorLength = GetFunctionLength($constructor);
+                $leastConstructorLength = $constructorLength if ($constructorLength < $leastConstructorLength);
             }
         } else {
-            $leastNumMandatoryParams = 0;
+            $leastConstructorLength = 0;
         }
     }
 
@@ -4214,7 +4230,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
         push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(${leastNumMandatoryParams}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastNumMandatoryParams;
+    push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
     push(@$outputArray, "}\n\n");
 
     if (!$generatingNamedConstructor) {
