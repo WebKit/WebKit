@@ -24,6 +24,7 @@
 #define WTF_RefPtr_h
 
 #include <algorithm>
+#include <utility>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassRefPtr.h>
 
@@ -42,6 +43,11 @@ namespace WTF {
         ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
         ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(m_ptr); }
         template<typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { refIfNotNull(m_ptr); }
+
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+        ALWAYS_INLINE RefPtr(RefPtr&& o) : m_ptr(o.release().leakRef()) { }
+        template<typename U> RefPtr(RefPtr<U>&& o) : m_ptr(o.release().leakRef()) { }
+#endif
 
         // See comments in PassRefPtr.h for an explanation of why this takes a const reference.
         template<typename U> RefPtr(const PassRefPtr<U>&);
@@ -77,7 +83,10 @@ namespace WTF {
 #endif
         template<typename U> RefPtr& operator=(const RefPtr<U>&);
         template<typename U> RefPtr& operator=(const PassRefPtr<U>&);
-
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+        RefPtr& operator=(RefPtr&&);
+        template<typename U> RefPtr& operator=(RefPtr<U>&&);
+#endif
         void swap(RefPtr&);
 
         static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
@@ -142,7 +151,21 @@ namespace WTF {
         derefIfNotNull(ptr);
         return *this;
     }
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& o)
+    {
+        RefPtr<T> ptr = std::move(o);
+        swap(ptr);
+        return *this;
+    }
 
+    template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<U>&& o)
+    {
+        RefPtr<T> ptr = std::move(o);
+        swap(ptr);
+        return *this;
+    }
+#endif
     template<class T> inline void RefPtr<T>::swap(RefPtr<T>& o)
     {
         std::swap(m_ptr, o.m_ptr);
