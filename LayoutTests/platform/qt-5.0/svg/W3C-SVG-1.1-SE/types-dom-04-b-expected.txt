@@ -1,0 +1,147 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (10,15) size 430x274
+      RenderSVGText {text} at (10,15) size 298x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 298x18
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 11.00: "T"
+          chunk 1 text run 2 at (19.29,30.00) startOffset 1 endOffset 3 width 19.01: "es"
+          chunk 1 text run 3 at (38.24,30.00) startOffset 3 endOffset 11 width 51.01: "ting liv"
+          chunk 1 text run 4 at (88.88,30.00) startOffset 11 endOffset 21 width 85.05: "eness of S"
+          chunk 1 text run 5 at (173.17,30.00) startOffset 21 endOffset 22 width 12.01: "V"
+          chunk 1 text run 6 at (184.42,30.00) startOffset 22 endOffset 35 width 123.03: "G DOM objects"
+      RenderSVGContainer {g} at (90,40) size 350x249 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(500.00,0.00)}]
+        RenderSVGRect {rect} at (420,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=60.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,63) size 159x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 159x15
+            chunk 1 text run 1 at (70.00,75.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,75.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,75.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,75.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,75.00) startOffset 9 endOffset 20 width 83.24: "edNumberLis"
+            chunk 1 text run 6 at (224.88,75.00) startOffset 20 endOffset 21 width 3.89: "t"
+        RenderSVGRect {rect} at (390,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=90.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,93) size 131x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 131x14
+            chunk 1 text run 1 at (70.00,105.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,105.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,105.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,105.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,105.00) startOffset 9 endOffset 16 width 50.60: "edLengt"
+            chunk 1 text run 6 at (192.23,105.00) startOffset 16 endOffset 17 width 7.78: "h"
+        RenderSVGRect {rect} at (360,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=120.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,123) size 152x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 152x14
+            chunk 1 text run 1 at (70.00,135.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,135.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,135.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,135.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,135.00) startOffset 9 endOffset 16 width 50.60: "edLengt"
+            chunk 1 text run 6 at (192.23,135.00) startOffset 16 endOffset 20 width 25.68: "hLis"
+            chunk 1 text run 7 at (217.87,135.00) startOffset 20 endOffset 21 width 3.89: "t"
+        RenderSVGRect {rect} at (330,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=150.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,153) size 124x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 124x14
+            chunk 1 text run 1 at (70.00,165.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,165.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,165.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,165.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,165.00) startOffset 9 endOffset 16 width 51.37: "edAngle"
+        RenderSVGRect {rect} at (300,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=180.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,183) size 116x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 116x14
+            chunk 1 text run 1 at (70.00,195.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,195.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,195.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,195.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,195.00) startOffset 9 endOffset 12 width 25.68: "edR"
+            chunk 1 text run 6 at (167.19,195.00) startOffset 12 endOffset 15 width 18.68: "ect"
+        RenderSVGRect {rect} at (270,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=210.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,213) size 172x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 172x14
+            chunk 1 text run 1 at (70.00,225.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,225.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,225.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,225.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,225.00) startOffset 9 endOffset 12 width 24.12: "edT"
+            chunk 1 text run 6 at (164.51,225.00) startOffset 12 endOffset 13 width 4.66: "r"
+            chunk 1 text run 7 at (169.11,225.00) startOffset 13 endOffset 17 width 26.46: "ansf"
+            chunk 1 text run 8 at (195.43,225.00) startOffset 17 endOffset 23 width 42.00: "ormLis"
+            chunk 1 text run 9 at (237.38,225.00) startOffset 23 endOffset 24 width 3.89: "t"
+        RenderSVGRect {rect} at (240,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=240.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,243) size 219x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 219x15
+            chunk 1 text run 1 at (70.00,255.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,255.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,255.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,255.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,255.00) startOffset 9 endOffset 13 width 29.57: "edPr"
+            chunk 1 text run 6 at (171.09,255.00) startOffset 13 endOffset 17 width 27.23: "eser"
+            chunk 1 text run 7 at (198.73,255.00) startOffset 17 endOffset 18 width 7.00: "v"
+            chunk 1 text run 8 at (205.44,255.00) startOffset 18 endOffset 26 width 60.69: "eAspectR"
+            chunk 1 text run 9 at (265.92,255.00) startOffset 26 endOffset 30 width 22.57: "atio"
+        RenderSVGRect {rect} at (210,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=270.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,273) size 139x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 139x14
+            chunk 1 text run 1 at (70.00,285.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,285.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,285.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,285.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,285.00) startOffset 9 endOffset 18 width 66.93: "edBoolean"
+        RenderSVGRect {rect} at (180,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=300.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,303) size 124x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 124x14
+            chunk 1 text run 1 at (70.00,315.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,315.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,315.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,315.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,315.00) startOffset 9 endOffset 12 width 24.91: "edS"
+            chunk 1 text run 6 at (166.54,315.00) startOffset 12 endOffset 14 width 8.55: "tr"
+            chunk 1 text run 7 at (175.11,315.00) startOffset 14 endOffset 17 width 18.68: "ing"
+        RenderSVGRect {rect} at (150,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=330.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,333) size 167x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 167x14
+            chunk 1 text run 1 at (70.00,345.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,345.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,345.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,345.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,345.00) startOffset 9 endOffset 17 width 64.58: "edEnumer"
+            chunk 1 text run 6 at (206.19,345.00) startOffset 17 endOffset 22 width 30.35: "ation"
+        RenderSVGRect {rect} at (120,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=360.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,363) size 131x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 131x14
+            chunk 1 text run 1 at (70.00,375.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,375.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,375.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,375.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,375.00) startOffset 9 endOffset 14 width 31.14: "edInt"
+            chunk 1 text run 6 at (172.62,375.00) startOffset 14 endOffset 18 width 28.01: "eger"
+        RenderSVGRect {rect} at (90,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=390.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,393) size 138x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 138x14
+            chunk 1 text run 1 at (70.00,405.00) startOffset 0 endOffset 1 width 9.34: "S"
+            chunk 1 text run 2 at (78.75,405.00) startOffset 1 endOffset 2 width 9.34: "V"
+            chunk 1 text run 3 at (87.50,405.00) startOffset 2 endOffset 3 width 10.89: "G"
+            chunk 1 text run 4 at (98.31,405.00) startOffset 3 endOffset 9 width 43.57: "Animat"
+            chunk 1 text run 5 at (141.68,405.00) startOffset 9 endOffset 17 width 65.35: "edNumber"
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+        RenderSVGText {text} at (10,-15) size 34x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 34x22
+            chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 1 width 10.01: "a"
+            chunk 1 text run 2 at (20.01,0.00) startOffset 1 endOffset 2 width 10.01: "b"
+            chunk 1 text run 3 at (30.02,0.00) startOffset 2 endOffset 3 width 9.00: "c"
+        RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=100.00]
+        RenderSVGResourceMarker {marker} [id="marker"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=60.00]
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id=""] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="4.00, 5.00" seed="0.00" numOctaves="1" stitchTiles="0"]
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

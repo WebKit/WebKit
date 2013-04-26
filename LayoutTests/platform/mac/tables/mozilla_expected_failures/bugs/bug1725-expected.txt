@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 440x24
                     RenderTableCell {TD} at (2,2) size 217x24 [r=0 c=0 rs=1 cs=1]
                       RenderButton {INPUT} at (3,3) size 97x18 [bgcolor=#C0C0C0]
-                        RenderBlock (anonymous) at (8,2) size 81x14
+                        RenderBlock (anonymous) at (8,2) size 81x13
                           RenderText at (0,0) size 81x13
                             text run at (0,0) width 81: "Submit Criteria"
                     RenderTableCell {TD} at (221,4) size 217x20 [r=0 c=1 rs=1 cs=1]

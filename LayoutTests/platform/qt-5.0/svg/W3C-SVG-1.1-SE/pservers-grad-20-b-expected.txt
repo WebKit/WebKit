@@ -1,0 +1,44 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (49,81) size 376x173
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="grad"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+      RenderSVGContainer {g} at (49,81) size 146x146 [transform={m=((0.30,0.00)(0.00,0.30)) t=(50.00,100.00)}]
+        RenderSVGPath {path} at (50,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (68,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (119,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (68,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
+        RenderSVGRect {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+      RenderSVGText {text} at (69,235) size 102x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 102x18
+          chunk 1 (middle anchor) text run 1 at (69.04,250.00) startOffset 0 endOffset 1 width 16.99: "W"
+          chunk 1 (middle anchor) text run 2 at (86.02,250.00) startOffset 1 endOffset 3 width 9.00: "it"
+          chunk 1 (middle anchor) text run 3 at (94.96,250.00) startOffset 3 endOffset 6 width 20.02: "h f"
+          chunk 1 (middle anchor) text run 4 at (114.82,250.00) startOffset 6 endOffset 12 width 47.02: "allbac"
+          chunk 1 (middle anchor) text run 5 at (161.96,250.00) startOffset 12 endOffset 13 width 9.00: "k"
+      RenderSVGContainer {g} at (279,81) size 146x146 [transform={m=((0.30,0.00)(0.00,0.30)) t=(280.00,100.00)}]
+        RenderSVGPath {path} at (280,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (298,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (349,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
+        RenderSVGPath {path} at (298,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
+        RenderSVGRect {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+      RenderSVGText {text} at (286,235) size 127x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 127x18
+          chunk 1 (middle anchor) text run 1 at (286.53,250.00) startOffset 0 endOffset 1 width 16.99: "W"
+          chunk 1 (middle anchor) text run 2 at (303.51,250.00) startOffset 1 endOffset 3 width 9.00: "it"
+          chunk 1 (middle anchor) text run 3 at (312.45,250.00) startOffset 3 endOffset 9 width 45.04: "hout f"
+          chunk 1 (middle anchor) text run 4 at (357.33,250.00) startOffset 9 endOffset 15 width 47.02: "allbac"
+          chunk 1 (middle anchor) text run 5 at (404.47,250.00) startOffset 15 endOffset 16 width 9.00: "k"
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

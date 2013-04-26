@@ -1,0 +1,19 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (200,140) size 80x80
+      RenderSVGContainer {g} at (200,140) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,180.00)}]
+        RenderSVGContainer {g} at (200,140) size 80x80
+          RenderSVGEllipse {circle} at (200,140) size 80x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=40.00]
+        RenderSVGContainer {g} at (200,140) size 80x80 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(0.00,0.00)}]
+          RenderSVGEllipse {circle} at (200,140) size 80x80 [fill={[type=SOLID] [color=#00FF00]}] [cx=0.00] [cy=0.00] [r=40.00]
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                               RenderTableCell {TD} at (2,2) size 135x40 [r=0 c=0 rs=1 cs=1]
                                 RenderBlock {FORM} at (1,1) size 133x22
                                   RenderButton {INPUT} at (2,2) size 129x18 [bgcolor=#C0C0C0]
-                                    RenderBlock (anonymous) at (8,2) size 113x14
+                                    RenderBlock (anonymous) at (8,2) size 113x13
                                       RenderText at (0,0) size 113x13
                                         text run at (0,0) width 113: "ApplyForThisPosition"
                                   RenderText {#text} at (0,0) size 0x0

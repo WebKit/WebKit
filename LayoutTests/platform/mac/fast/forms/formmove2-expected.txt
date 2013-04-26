@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x19
-        RenderBlock {INPUT} at (2,3) size 13x13
-        RenderBlock {INPUT} at (20,3) size 13x13
+        RenderBlock {INPUT} at (2,3) size 12x13
+        RenderBlock {INPUT} at (18,3) size 12x13
       RenderBlock (anonymous) at (0,35) size 784x36
         RenderText {#text} at (0,0) size 777x36
           text run at (0,0) width 777: "There should be two elements in the first form and one in the second. The count in form one is 2, and the count in form two"
