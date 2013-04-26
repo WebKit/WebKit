@@ -1,3 +1,45 @@
+2013-04-26  Anders Carlsson  <andersca@apple.com>
+
+        Downloads need to be converted from the NSURLConnection, not canceled and restarted, when using the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115277
+        <rdar://problem/12890184>
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        Ask the download manager to convert the main resource load to a download.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        Add new message.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::handle):
+        Add getter.
+
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (dispatchOnMainThread):
+        Helper function that ensures that a given block is called on the main thread.
+
+        (-[WKDownloadAsDelegate downloadDidBegin:]):
+        (-[WKDownloadAsDelegate download:didReceiveAuthenticationChallenge:]):
+        (-[WKDownloadAsDelegate download:didReceiveResponse:]):
+        (-[WKDownloadAsDelegate download:didReceiveDataOfLength:]):
+        (-[WKDownloadAsDelegate download:shouldDecodeSourceDataOfMIMEType:]):
+        (-[WKDownloadAsDelegate download:decideDestinationWithSuggestedFilename:]):
+        (-[WKDownloadAsDelegate download:didCreateDestination:]):
+        (-[WKDownloadAsDelegate downloadDidFinish:]):
+        (-[WKDownloadAsDelegate download:didFailWithError:]):
+        Use dispatchOnMainThread.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Remove code that cancels the current load and starts a new download.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        Send the ConvertMainResourceLoadToDownload message to the network process.
+
 2013-04-25  Roger Fong  <roger_fong@apple.com>
 
         Disable sub-pixel layout on mac.

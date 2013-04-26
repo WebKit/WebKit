@@ -30,6 +30,7 @@
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/ResourceHandleClient.h>
 #import <WebCore/ResourceResponse.h>
 #import "DataReference.h"
 #import "WebPage.h"
@@ -126,6 +127,17 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
 
 @implementation WKDownloadAsDelegate
 
+// FIXME: It would be nice if these callbacks wouldn't have to be invoked on the main thread.
+static void dispatchOnMainThread(void (^block)())
+{
+    if (isMainThread()) {
+        block();
+        return;
+    }
+
+    dispatch_sync(dispatch_get_main_queue(), block);
+}
+
 - (id)initWithDownload:(WebKit::Download*)download
 {
     self = [super init];
@@ -143,8 +155,10 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
 
 - (void)downloadDidBegin:(NSURLDownload *)download
 {
-    if (_download)
-        _download->didStart();
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didStart();
+    });
 }
 
 - (NSURLRequest *)download:(NSURLDownload *)download willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
@@ -161,8 +175,10 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
 
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (_download)
-        _download->didReceiveAuthenticationChallenge(core(challenge));
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didReceiveAuthenticationChallenge(core(challenge));
+    });
 }
 
 - (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -178,8 +194,10 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
 
 - (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
-    if (_download)
-        _download->didReceiveResponse(response);
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didReceiveResponse(response);
+    });
 }
 
 - (void)download:(NSURLDownload *)download willResumeWithResponse:(NSURLResponse *)response fromByte:(long long)startingByte
@@ -190,50 +208,65 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
 
 - (void)download:(NSURLDownload *)download didReceiveDataOfLength:(NSUInteger)length
 {
-    if (_download)
-        _download->didReceiveData(length);
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didReceiveData(length);
+    });
 }
 
 - (BOOL)download:(NSURLDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)encodingType
 {
-    if (_download)
-        return _download->shouldDecodeSourceDataOfMIMEType(encodingType);
+    __block BOOL returnValue;
+    dispatchOnMainThread(^{
+        if (_download)
+            returnValue = _download->shouldDecodeSourceDataOfMIMEType(encodingType);
+        else
+            returnValue = YES;
+    });
 
-    return YES;
+    return returnValue;;
 }
 
 - (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename
 {
-    String destination;
-    bool allowOverwrite;
-    if (_download)
-        destination = _download->decideDestinationWithSuggestedFilename(filename, allowOverwrite);
+    dispatchOnMainThread(^{
+        String destination;
+        bool allowOverwrite;
+        if (_download)
+            destination = _download->decideDestinationWithSuggestedFilename(filename, allowOverwrite);
 
-    if (!destination.isNull())
-        [download setDestination:destination allowOverwrite:allowOverwrite];
+        if (!destination.isNull())
+            [download setDestination:destination allowOverwrite:allowOverwrite];
+    });
 }
 
 - (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path
 {
-    if (_download)
-        _download->didCreateDestination(path);
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didCreateDestination(path);
+    });
 }
 
 - (void)downloadDidFinish:(NSURLDownload *)download
 {
-    if (_download)
-        _download->didFinish();
+    dispatchOnMainThread(^{
+        if (_download)
+            _download->didFinish();
+    });
 }
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
-    if (!_download)
-        return;
+    dispatchOnMainThread(^{
+        if (!_download)
+            return;
 
-    RetainPtr<NSData> resumeData = [download resumeData];
-    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
+        RetainPtr<NSData> resumeData = [download resumeData];
+        CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
 
-    _download->didFail(error, dataReference);
+        _download->didFail(error, dataReference);
+    });
 }
 
 @end

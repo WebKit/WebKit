@@ -163,6 +163,15 @@ void NetworkConnectionToWebProcess::startDownload(bool privateBrowsingEnabled, u
     NetworkProcess::shared().downloadManager().startDownload(downloadID, request);
 }
 
+void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, const ResourceRequest& request, const ResourceResponse& response)
+{
+    NetworkResourceLoader* loader = m_networkResourceLoaders.get(mainResourceLoadIdentifier).get();
+    NetworkProcess::shared().downloadManager().convertHandleToDownload(downloadID, loader->handle(), request, response);
+
+    // Unblock the URL connection operation queue.
+    loader->handle()->continueDidReceiveResponse();
+}
+
 void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
 {
     result = WebCore::cookiesForDOM(storageSession(privateBrowsingEnabled), firstParty, url);

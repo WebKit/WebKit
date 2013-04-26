@@ -1446,16 +1446,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     if (!isValid())
         return;
 
-#if ENABLE(NETWORK_PROCESS)
-    // FIXME (NetworkProcess): Instead of canceling the load and then starting a separate download, we should
-    // just convert the connection to a download connection. See <rdar://problem/12890184>.
-    if (m_inDecidePolicyForResponseSync && action == PolicyDownload && m_process->context()->usesNetworkProcess()) {
-        action = PolicyIgnore;
-
-        m_process->context()->download(this, *m_decidePolicyForResponseRequest);
-    }
-#endif
-
     if (action == PolicyIgnore)
         clearPendingAPIRequestURL();
 

@@ -258,7 +258,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
 
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        // FIXME: Handle this case.
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(documentLoader->mainResourceLoader()->identifier(), policyDownloadID, request, response), 0);
         return;
     }
 #endif

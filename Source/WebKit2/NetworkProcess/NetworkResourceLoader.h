@@ -60,7 +60,9 @@ public:
     // Used by MessageSender.
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const;
-    
+
+    WebCore::ResourceHandle* handle() const { return m_handle.get(); }
+
     virtual void start() OVERRIDE;
     virtual void connectionToWebProcessDidClose() OVERRIDE;
         
