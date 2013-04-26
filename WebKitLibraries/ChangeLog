@@ -1,5 +1,11 @@
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Disable sub-pixel-layout on Apple Windows port.
+
+        * win/tools/vsprops/FeatureDefines.props:
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
         Make the DebugSuffix configuration use _debug dependencies.
 
