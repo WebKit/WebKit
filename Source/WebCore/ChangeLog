@@ -1,3 +1,14 @@
+2013-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer-backed WebViews don't repaint content outside the visible area
+        https://bugs.webkit.org/show_bug.cgi?id=115275
+
+        Reviewed by Beth Dakin.
+
+        Export ScrollView::setPaintsEntireContents(bool).
+
+        * WebCore.exp.in:
+
 2013-04-26  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
 
         Change RenderMeter::valueRatio() visibility to public

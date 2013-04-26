@@ -3153,6 +3153,16 @@ static void setMenuTargets(NSMenu* menu)
     return [[self _webView] drawsBackground];
 }
 
+- (void)setLayer:(CALayer *)layer
+{
+    if (Frame* frame = core([self _frame])) {
+        if (FrameView* view = frame->view())
+            view->setPaintsEntireContents(layer);
+    }
+
+    [super setLayer:layer];
+}
+
 #if !LOG_DISABLED
 - (void)setNeedsDisplay:(BOOL)flag
 {
