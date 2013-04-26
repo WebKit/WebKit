@@ -1,3 +1,15 @@
+2013-04-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Assert in JSC::Heap::unprotect when closing facebook.com web site
+        https://bugs.webkit.org/show_bug.cgi?id=115058
+
+        Reviewed by Darin Adler.
+
+        Grab a JSLock before calling RootObject::invalidate().
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+
 2013-04-26  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] in-band cues sometimes have incorrect duration

@@ -82,6 +82,7 @@ ScriptController::~ScriptController()
     disconnectPlatformScriptObjects();
 
     if (m_cacheableBindingRootObject) {
+        JSLockHolder lock(JSDOMWindowBase::commonVM());
         m_cacheableBindingRootObject->invalidate();
         m_cacheableBindingRootObject = 0;
     }
