@@ -49,8 +49,6 @@
 #include <stdint.h>
 #include <time.h>
 
-#elif PLATFORM(WX)
-#include <wx/datetime.h>
 #elif PLATFORM(EFL)
 #include <Ecore.h>
 #else
@@ -235,14 +233,6 @@ double currentTime()
     GTimeVal now;
     g_get_current_time(&now);
     return static_cast<double>(now.tv_sec) + static_cast<double>(now.tv_usec / 1000000.0);
-}
-
-#elif PLATFORM(WX)
-
-double currentTime()
-{
-    wxDateTime now = wxDateTime::UNow();
-    return (double)now.GetTicks() + (double)(now.GetMillisecond() / 1000.0);
 }
 
 #elif PLATFORM(EFL)

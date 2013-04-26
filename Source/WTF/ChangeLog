@@ -1,3 +1,23 @@
+2013-04-26  Andreas Kling  <akling@apple.com>
+
+        Remove wxWebKit from WTF.
+        <http://webkit.org/b/115249>
+
+        Reviewed by Antti Koivisto.
+
+        * wscript: Removed.
+        * wtf/ArrayBufferView.h:
+        (ArrayBufferView):
+        * wtf/CurrentTime.cpp:
+        * wtf/DisallowCType.h:
+        * wtf/ExportMacros.h:
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+        * wtf/text/WTFString.h:
+        (String):
+        * wtf/wx/MainThreadWx.cpp: Removed.
+        * wtf/wx/StringWx.cpp: Removed.
+
 2013-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/148999

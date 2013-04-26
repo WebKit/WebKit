@@ -38,10 +38,6 @@ class QString;
 QT_END_NAMESPACE
 #endif
 
-#if PLATFORM(WX)
-class wxString;
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -429,11 +425,6 @@ public:
     WTF_EXPORT_STRING_API String(const QString&);
     WTF_EXPORT_STRING_API String(const QStringRef&);
     WTF_EXPORT_STRING_API operator QString() const;
-#endif
-
-#if PLATFORM(WX)
-    WTF_EXPORT_PRIVATE String(const wxString&);
-    WTF_EXPORT_PRIVATE operator wxString() const;
 #endif
 
 #if PLATFORM(BLACKBERRY)
