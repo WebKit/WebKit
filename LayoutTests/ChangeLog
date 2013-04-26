@@ -1,5 +1,13 @@
 2013-04-26  David Kilzer  <ddkilzer@apple.com>
 
+        Sort jsc-test-list
+
+        $ sort -f -o LayoutTests/fast/js/jsc-test-list LayoutTests/fast/js/jsc-test-list 
+
+        * fast/js/jsc-test-list: Sort case-insensitively.
+
+2013-04-26  David Kilzer  <ddkilzer@apple.com>
+
         Upstream iOS changes to jsc-test-list
 
         Reviewed by Michael Saboff.
