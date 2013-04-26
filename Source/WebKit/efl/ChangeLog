@@ -1,3 +1,15 @@
+2013-04-26  Jose Lejin PJ  <jose.lejin@gmail.com>
+
+        [EFL] Add unit test cases for ewk_settings APIs
+        https://bugs.webkit.org/show_bug.cgi?id=114897
+
+        Reviewed by Gyuyoung Kim.
+
+        Added unit tests for ewk_settings APIs.
+
+        * tests/test_ewk_setting.cpp:
+        (TEST_F):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible
