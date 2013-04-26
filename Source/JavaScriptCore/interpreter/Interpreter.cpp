@@ -567,8 +567,14 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
             }
         } else if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
             CodeOrigin origin;
-            if (!callerCodeBlock->codeOriginForReturn(callFrame->returnPC(), origin))
-                RELEASE_ASSERT_NOT_REACHED();
+            if (!callerCodeBlock->codeOriginForReturn(callFrame->returnPC(), origin)) {
+                // This should not be possible, but we're seeing cases where it does happen
+                // CallFrame already has robustness against bogus stack walks, so
+                // we'll extend that to here as well.
+                ASSERT_NOT_REACHED();
+                caller = 0;
+                return 0;
+            }
             bytecodeOffset = origin.bytecodeIndex;
             if (InlineCallFrame* icf = origin.inlineCallFrame) {
                 FunctionExecutable* executable = static_cast<FunctionExecutable*>(icf->executable.get());

@@ -1,3 +1,16 @@
+2013-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Make stack tracing more robust
+        https://bugs.webkit.org/show_bug.cgi?id=115272
+
+        Reviewed by Geoffrey Garen.
+
+        CallFrame already handles stack walking confusion robustly,
+        so we should make sure that the actual walk handles that as well.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+
 2013-04-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION(r149165): It made many tests crash on 32 bit
