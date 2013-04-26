@@ -1,5 +1,16 @@
 2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
 
+        Remove support for Chromium from build/update scripts
+        https://bugs.webkit.org/show_bug.cgi?id=115218
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-webkit:
+        (writeCongrats):
+        * Scripts/update-webkit:
+
+2013-04-25  Seokju Kwon  <seokju.kwon@gmail.com>
+
         Remove support for Chromium from api-test
         https://bugs.webkit.org/show_bug.cgi?id=115211
 
