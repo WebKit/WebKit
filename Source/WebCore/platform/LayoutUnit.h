@@ -110,11 +110,11 @@ public:
 #else
     LayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
     LayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    LayoutUnit(unsigned value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    LayoutUnit(unsigned long long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = value; }
-    LayoutUnit(unsigned long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = value; }
-    LayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    LayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    LayoutUnit(unsigned value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
+    LayoutUnit(unsigned long long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = clampTo<int>(value); }
+    LayoutUnit(unsigned long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = clampTo<int>(value); }
+    LayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
+    LayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
 #endif
 
     static LayoutUnit fromFloatCeil(float value)

@@ -1,3 +1,10 @@
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix.
+
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::LayoutUnit):
+
 2013-04-26  Michael Saboff  <msaboff@apple.com>
 
         WebCore ObjC bridge is missing support for bool type
