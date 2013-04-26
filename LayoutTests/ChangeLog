@@ -1,3 +1,15 @@
+2013-04-25  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Hit testing is broken for absolutely positioned regions that have overflow: hidden
+        https://bugs.webkit.org/show_bug.cgi?id=113874
+
+        Reviewed by David Hyatt.
+
+        Add test for hit-testing of border of an out-of-flow region with overflow: hidden.
+
+        * fast/regions/hit-test-abspos-overflow-region-expected.txt: Added.
+        * fast/regions/hit-test-abspos-overflow-region.html: Added.
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copy and paste can strip !important CSS rules due to a bug in mergeStyleFromRules

@@ -1,3 +1,23 @@
+2013-04-25  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Hit testing is broken for absolutely positioned regions that have overflow: hidden
+        https://bugs.webkit.org/show_bug.cgi?id=113874
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/hit-test-abspos-overflow-region.html
+
+        When a region is an out-of-flow positioned object with an overflow clip, we need
+        to make sure that hit testing works also for cases other than foreground (content)
+        hit testing. This patch moves the previous hit testing code, that delegated foreground
+        hit testing to the region's flow thread hit testing, into the hitTestContent method,
+        now that RenderRegion is RenderBlock based.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::hitTestContents):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copy and paste can strip !important CSS rules due to a bug in mergeStyleFromRules

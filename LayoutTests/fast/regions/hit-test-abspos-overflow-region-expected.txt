@@ -1,0 +1,6 @@
+Test that hit-testing of out-of-flow regions with overflow: hidden works properly
+
+To manually test, move the mouse over the blue border. It should change its color to green.
+
+PASS
+
