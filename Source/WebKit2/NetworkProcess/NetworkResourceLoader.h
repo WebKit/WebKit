@@ -111,8 +111,6 @@ private:
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
 
-    void scheduleCleanupOnMainThread();
-    static void performCleanups(void*);
     void cleanup();
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);

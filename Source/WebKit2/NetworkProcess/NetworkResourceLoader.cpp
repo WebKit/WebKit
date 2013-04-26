@@ -90,47 +90,6 @@ void NetworkResourceLoader::start()
     m_handle = ResourceHandle::create(m_networkingContext.get(), request(), this, false /* defersLoading */, contentSniffingPolicy() == SniffContent);
 }
 
-static bool performCleanupsCalled = false;
-
-static Mutex& requestsToCleanupMutex()
-{
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
-    return mutex;
-}
-
-static HashSet<NetworkResourceLoader*>& requestsToCleanup()
-{
-    DEFINE_STATIC_LOCAL(HashSet<NetworkResourceLoader*>, requests, ());
-    return requests;
-}
-
-void NetworkResourceLoader::scheduleCleanupOnMainThread()
-{
-    MutexLocker locker(requestsToCleanupMutex());
-
-    requestsToCleanup().add(this);
-    if (!performCleanupsCalled) {
-        performCleanupsCalled = true;
-        callOnMainThread(NetworkResourceLoader::performCleanups, 0);
-    }
-}
-
-void NetworkResourceLoader::performCleanups(void*)
-{
-    ASSERT(performCleanupsCalled);
-
-    Vector<NetworkResourceLoader*> requests;
-    {
-        MutexLocker locker(requestsToCleanupMutex());
-        copyToVector(requestsToCleanup(), requests);
-        requestsToCleanup().clear();
-        performCleanupsCalled = false;
-    }
-    
-    for (size_t i = 0; i < requests.size(); ++i)
-        requests[i]->cleanup();
-}
-
 void NetworkResourceLoader::cleanup()
 {
     ASSERT(isMainThread());
@@ -158,16 +117,6 @@ void NetworkResourceLoader::connectionToWebProcessDidClose()
     if (m_handle)
         return;
 
-#if !ASSERT_DISABLED
-    // Since there's no handle, this loader should never have been started, and therefore it should never be in the
-    // set of loaders to cleanup on the main thread.
-    // Let's make sure that's true.
-    {
-        MutexLocker locker(requestsToCleanupMutex());
-        ASSERT(!requestsToCleanup().contains(this));
-    }
-#endif
-
     cleanup();
 }
 
@@ -194,7 +143,7 @@ void NetworkResourceLoader::abortInProgressLoad()
 
     m_handle->cancel();
 
-    scheduleCleanupOnMainThread();
+    cleanup();
 }
 
 void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle*, const ResourceResponse& response)
@@ -248,7 +197,7 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
     invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     
-    scheduleCleanupOnMainThread();
+    cleanup();
 }
 
 void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
@@ -257,7 +206,7 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
     invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
-    scheduleCleanupOnMainThread();
+    cleanup();
 }
 
 void NetworkResourceLoader::willSendRequestAsync(ResourceHandle*, const ResourceRequest& request, const ResourceResponse& redirectResponse)
