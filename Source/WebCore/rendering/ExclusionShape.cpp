@@ -90,13 +90,13 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape* basicShape, float logicalBoxWidth, float logicalBoxHeight, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(basicShape);
 
     bool horizontalWritingMode = isHorizontalWritingMode(writingMode);
-    float boxWidth = horizontalWritingMode ? logicalBoxWidth : logicalBoxHeight;
-    float boxHeight = horizontalWritingMode ? logicalBoxHeight : logicalBoxWidth;
+    float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
+    float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
     OwnPtr<ExclusionShape> exclusionShape;
 
     switch (basicShape->type()) {
@@ -113,7 +113,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         FloatSize cornerRadii(
             radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth),
             radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight));
-        FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxHeight, writingMode);
+        FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
 
         exclusionShape = createExclusionRectangle(logicalBounds, physicalSizeToLogical(cornerRadii, writingMode));
         break;
@@ -124,7 +124,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         float centerX = floatValueForLength(circle->centerX(), boxWidth);
         float centerY = floatValueForLength(circle->centerY(), boxHeight);
         float radius = floatValueForLength(circle->radius(), std::min(boxHeight, boxWidth));
-        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxHeight, writingMode);
+        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
         exclusionShape = createExclusionCircle(logicalCenter, radius);
         break;
@@ -136,7 +136,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         float centerY = floatValueForLength(ellipse->centerY(), boxHeight);
         float radiusX = floatValueForLength(ellipse->radiusX(), boxWidth);
         float radiusY = floatValueForLength(ellipse->radiusY(), boxHeight);
-        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxHeight, writingMode);
+        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
         FloatSize logicalRadii = physicalSizeToLogical(FloatSize(radiusX, radiusY), writingMode);
 
         exclusionShape = createExclusionEllipse(logicalCenter, logicalRadii);
@@ -153,7 +153,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),
                 floatValueForLength(values.at(i + 1), boxHeight));
-            (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxHeight, writingMode);
+            (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
 
         exclusionShape = createExclusionPolygon(vertices.release(), polygon->windRule());
@@ -164,8 +164,6 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         ASSERT_NOT_REACHED();
     }
 
-    exclusionShape->m_logicalBoxWidth = logicalBoxWidth;
-    exclusionShape->m_logicalBoxHeight = logicalBoxHeight;
     exclusionShape->m_writingMode = writingMode;
     exclusionShape->m_margin = floatValueForLength(margin, 0);
     exclusionShape->m_padding = floatValueForLength(padding, 0);

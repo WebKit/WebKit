@@ -68,17 +68,17 @@ public:
     {
     }
 
-    virtual FloatRect shapeMarginLogicalBoundingBox() const OVERRIDE { return shapeMarginBounds(); }
-    virtual FloatRect shapePaddingLogicalBoundingBox() const OVERRIDE { return shapePaddingBounds(); }
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(shapeMarginBounds()); }
+    virtual LayoutRect shapePaddingLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(shapePaddingBounds()); }
     virtual bool isEmpty() const OVERRIDE { return m_bounds.isEmpty(); }
-    virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
-    virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
-    virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float&) const OVERRIDE;
+    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
+    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
+    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
+private:
     FloatRoundedRect shapeMarginBounds() const;
     FloatRoundedRect shapePaddingBounds() const;
 
-private:
     FloatRoundedRect m_bounds;
     mutable FloatRoundedRect m_marginBounds;
     mutable FloatRoundedRect m_paddingBounds;

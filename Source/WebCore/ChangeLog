@@ -1,3 +1,44 @@
+2013-04-26  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] ExclusionShape bounding box methods should return LayoutRects
+        https://bugs.webkit.org/show_bug.cgi?id=115117
+
+        Reviewed by Dirk Schulze.
+
+        Redefined the ExclusionShape API in terms of LayoutUnits, instead of floats: all of the
+        ExclusionShape methods now have LayoutUnit parameters and return LayoutUnit values.
+        This is more natural, since the callers work exclusively in LayoutUnits.
+
+        This is strictly a refactoring, no new tests were needed.
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::ExclusionPolygon::getExcludedIntervals):
+        (WebCore::ExclusionPolygon::getIncludedIntervals):
+        (WebCore::ExclusionPolygon::firstIncludedIntervalLogicalTop):
+        * rendering/ExclusionPolygon.h:
+        * rendering/ExclusionRectangle.cpp:
+        (WebCore::ExclusionRectangle::getExcludedIntervals):
+        (WebCore::ExclusionRectangle::getIncludedIntervals):
+        (WebCore::ExclusionRectangle::firstIncludedIntervalLogicalTop):
+        * rendering/ExclusionRectangle.h:
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ExclusionShape::createExclusionShape):
+        * rendering/ExclusionShape.h:
+        (LineSegment):
+        (ExclusionShape):
+        * rendering/ExclusionShapeInfo.cpp:
+        (WebCore):
+        (WebCore::::computedShape):
+        * rendering/ExclusionShapeInfo.h:
+        (WebCore):
+        (WebCore::ExclusionShapeInfo::shapeLogicalTop):
+        (WebCore::ExclusionShapeInfo::shapeLogicalBottom):
+        (ExclusionShapeInfo):
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::adjustLogicalLineTop):
+        * rendering/ExclusionShapeInsideInfo.h:
+        * rendering/ExclusionShapeOutsideInfo.h:
+
 2013-04-26  Jer Noble  <jer.noble@apple.com>
 
         Nil-check the results of -[AVPlayerItemVideoOutput copyPixelBufferForItemTime:itemTimeForDisplay:].

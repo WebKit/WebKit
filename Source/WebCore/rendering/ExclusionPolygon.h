@@ -91,17 +91,17 @@ public:
     {
     }
 
-    virtual FloatRect shapeMarginLogicalBoundingBox() const OVERRIDE { return shapeMarginBounds().boundingBox(); }
-    virtual FloatRect shapePaddingLogicalBoundingBox() const OVERRIDE { return shapePaddingBounds().boundingBox(); }
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(shapeMarginBounds().boundingBox()); }
+    virtual LayoutRect shapePaddingLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(shapePaddingBounds().boundingBox()); }
     virtual bool isEmpty() const OVERRIDE { return m_polygon.isEmpty(); }
-    virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
-    virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
-    virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float&) const OVERRIDE;
+    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
+    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
+    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
+private:
     const FloatPolygon& shapeMarginBounds() const;
     const FloatPolygon& shapePaddingBounds() const;
 
-private:
     FloatPolygon m_polygon;
     mutable OwnPtr<FloatPolygon> m_marginBounds;
     mutable OwnPtr<FloatPolygon> m_paddingBounds;

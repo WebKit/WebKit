@@ -102,7 +102,7 @@ public:
     bool needsRemoval() { return m_needsRemoval; }
 
 protected:
-    virtual FloatRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
+    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
 
 private:
     ExclusionShapeInsideInfo(const RenderBlock* renderer)

@@ -345,14 +345,14 @@ static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, floa
     sortExclusionIntervals(result);
 }
 
-void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
+void ExclusionPolygon::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatPolygon& polygon = shapeMarginBounds();
     if (polygon.isEmpty())
         return;
 
     float y1 = logicalTop;
-    float y2 = y1 + logicalHeight;
+    float y2 = logicalTop + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
@@ -373,14 +373,14 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeigh
     }
 }
 
-void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
+void ExclusionPolygon::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatPolygon& polygon = shapePaddingBounds();
     if (polygon.isEmpty())
         return;
 
     float y1 = logicalTop;
-    float y2 = y1 + logicalHeight;
+    float y2 = logicalTop + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
@@ -425,24 +425,28 @@ static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
     return false;
 }
 
-bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
+bool ExclusionPolygon::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
+    float minIntervalTop = minLogicalIntervalTop;
+    float minIntervalHeight = minLogicalIntervalSize.height();
+    float minIntervalWidth = minLogicalIntervalSize.width();
+
     const FloatPolygon& polygon = shapePaddingBounds();
     const FloatRect boundingBox = polygon.boundingBox();
-    if (minLogicalIntervalSize.width() > boundingBox.width())
+    if (minIntervalWidth > boundingBox.width())
         return false;
 
-    float minY = std::max(boundingBox.y(), minLogicalIntervalTop);
-    float maxY = minY + minLogicalIntervalSize.height();
+    float minY = std::max(boundingBox.y(), minIntervalTop);
+    float maxY = minY + minIntervalHeight;
 
     if (maxY > boundingBox.maxY())
         return false;
 
     Vector<const FloatPolygonEdge*> edges;
-    polygon.overlappingEdges(minLogicalIntervalTop, boundingBox.maxY(), edges);
+    polygon.overlappingEdges(minIntervalTop, boundingBox.maxY(), edges);
 
-    float dx = minLogicalIntervalSize.width() / 2;
-    float dy = minLogicalIntervalSize.height() / 2;
+    float dx = minIntervalWidth / 2;
+    float dy = minIntervalHeight / 2;
     Vector<OffsetPolygonEdge> offsetEdges;
 
     for (unsigned i = 0; i < edges.size(); ++i) {
@@ -476,7 +480,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 offsetEdges.append(offsetEdgeBuffer[j]);
     }
 
-    offsetEdges.append(OffsetPolygonEdge(polygon, minLogicalIntervalTop, FloatSize(0, dy)));
+    offsetEdges.append(OffsetPolygonEdge(polygon, minIntervalTop, FloatSize(0, dy)));
 
     FloatPoint offsetEdgesIntersection;
     FloatRect firstFitRect;
@@ -489,7 +493,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 FloatRect potentialFirstFitRect(potentialFirstFitLocation, minLogicalIntervalSize);
                 if ((offsetEdges[i].basis() == OffsetPolygonEdge::LineTop
                     || offsetEdges[j].basis() == OffsetPolygonEdge::LineTop
-                    || potentialFirstFitLocation.y() >= minLogicalIntervalTop)
+                    || potentialFirstFitLocation.y() >= minIntervalTop)
                     && (!firstFitFound || aboveOrToTheLeft(potentialFirstFitRect, firstFitRect))
                     && polygon.contains(offsetEdgesIntersection)
                     && firstFitRectInPolygon(polygon, potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
@@ -501,7 +505,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
     }
 
     if (firstFitFound)
-        result = firstFitRect.y();
+        result = LayoutUnit::fromFloatCeil(firstFitRect.y());
     return firstFitFound;
 }
 

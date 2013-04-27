@@ -52,7 +52,7 @@ public:
     static bool isEnabledFor(const RenderBox*);
 
 protected:
-    virtual FloatRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
+    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
 
 private:
     ExclusionShapeOutsideInfo(const RenderBox* renderer) : ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>(renderer) { }

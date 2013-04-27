@@ -55,9 +55,8 @@ bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
     if (!shape || m_lineHeight <= 0 || logicalLineTop() > shapeLogicalBottom())
         return false;
 
-    float floatNewLineTop;
-    if (shape->firstIncludedIntervalLogicalTop(m_shapeLineTop, FloatSize(minSegmentWidth, m_lineHeight), floatNewLineTop)) {
-        LayoutUnit newLineTop = floatLogicalTopToLayoutUnit(floatNewLineTop);
+    LayoutUnit newLineTop;
+    if (shape->firstIncludedIntervalLogicalTop(m_shapeLineTop, LayoutSize(minSegmentWidth, m_lineHeight), newLineTop)) {
         if (newLineTop > m_shapeLineTop) {
             m_shapeLineTop = newLineTop;
             return true;

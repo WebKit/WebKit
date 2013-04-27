@@ -64,7 +64,7 @@ private:
     }
 };
 
-template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(LayoutUnit, LayoutUnit, SegmentList&) const>
 class ExclusionShapeInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -87,8 +87,8 @@ public:
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
     void clearSegments() { m_segments.clear(); }
 
-    LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShapeLogicalBoundingBox().y()) + logicalTopOffset(); }
-    LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShapeLogicalBoundingBox().maxY()) + logicalTopOffset(); }
+    LayoutUnit shapeLogicalTop() const { return computedShapeLogicalBoundingBox().y() + logicalTopOffset(); }
+    LayoutUnit shapeLogicalBottom() const { return computedShapeLogicalBoundingBox().maxY() + logicalTopOffset(); }
     LayoutUnit shapeLogicalLeft() const { return computedShapeLogicalBoundingBox().x() + logicalLeftOffset(); }
     LayoutUnit shapeLogicalRight() const { return computedShapeLogicalBoundingBox().maxX() + logicalLeftOffset(); }
     LayoutUnit shapeLogicalWidth() const { return computedShapeLogicalBoundingBox().width(); }
@@ -110,11 +110,7 @@ protected:
     ExclusionShapeInfo(const RenderType* renderer): m_renderer(renderer) { }
 
     const ExclusionShape* computedShape() const;
-    virtual FloatRect computedShapeLogicalBoundingBox() const = 0;
-
-    // Use ceil and floor to ensure that the returned LayoutUnit value is within the shape's bounds.
-    LayoutUnit floatLogicalTopToLayoutUnit(float logicalTop) const { return LayoutUnit::fromFloatCeil(logicalTop); }
-    LayoutUnit floatLogicalBottomToLayoutUnit(float logicalBottom) const { return LayoutUnit::fromFloatFloor(logicalBottom); }
+    virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
 
     LayoutUnit logicalTopOffset() const;
     LayoutUnit logicalLeftOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderStart() + m_renderer->paddingStart() : LayoutUnit(); }

@@ -101,14 +101,14 @@ FloatRoundedRect ExclusionRectangle::shapeMarginBounds() const
     return m_marginBounds;
 }
 
-void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
+void ExclusionRectangle::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatRoundedRect& bounds = shapeMarginBounds();
     if (bounds.isEmpty())
         return;
 
     float y1 = logicalTop;
-    float y2 = y1 + logicalHeight;
+    float y2 = logicalTop + logicalHeight;
 
     if (y2 < bounds.y() || y1 >= bounds.maxY())
         return;
@@ -133,14 +133,14 @@ void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHei
     result.append(LineSegment(x1, x2));
 }
 
-void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
+void ExclusionRectangle::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatRoundedRect& bounds = shapePaddingBounds();
     if (bounds.isEmpty())
         return;
 
     float y1 = logicalTop;
-    float y2 = y1 + logicalHeight;
+    float y2 = logicalTop + logicalHeight;
 
     if (y1 < bounds.y() || y2 > bounds.maxY())
         return;
@@ -178,14 +178,18 @@ void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalHei
     result.append(LineSegment(x1, x2));
 }
 
-bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
+bool ExclusionRectangle::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
+    float minIntervalTop = minLogicalIntervalTop;
+    float minIntervalHeight = minLogicalIntervalSize.height();
+    float minIntervalWidth = minLogicalIntervalSize.width();
+
     const FloatRoundedRect& bounds = shapePaddingBounds();
-    if (bounds.isEmpty() || minLogicalIntervalSize.width() > bounds.width())
+    if (bounds.isEmpty() || minIntervalWidth > bounds.width())
         return false;
 
-    float minY = std::max(bounds.y(), minLogicalIntervalTop);
-    float maxY = minY + minLogicalIntervalSize.height();
+    float minY = std::max(bounds.y(), minIntervalTop);
+    float maxY = minY + minIntervalHeight;
 
     if (maxY > bounds.maxY())
         return false;
@@ -200,22 +204,22 @@ bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalInterva
 
     float centerY = bounds.y() + bounds.height() / 2;
     bool minCornerDefinesX = fabs(centerY - minY) > fabs(centerY - maxY);
-    bool intervalFitsWithinCorners = minLogicalIntervalSize.width() + 2 * bounds.rx() <= bounds.width();
-    FloatPoint cornerIntercept = bounds.cornerInterceptForWidth(minLogicalIntervalSize.width());
+    bool intervalFitsWithinCorners = minIntervalWidth + 2 * bounds.rx() <= bounds.width();
+    FloatPoint cornerIntercept = bounds.cornerInterceptForWidth(minIntervalWidth);
 
     if (intervalOverlapsMinCorner && (!intervalOverlapsMaxCorner || minCornerDefinesX)) {
         if (intervalFitsWithinCorners || bounds.y() + cornerIntercept.y() < minY) {
             result = minY;
             return true;
         }
-        if (minLogicalIntervalSize.height() < bounds.height() - (2 * cornerIntercept.y())) {
-            result = bounds.y() + cornerIntercept.y();
+        if (minIntervalHeight < bounds.height() - (2 * cornerIntercept.y())) {
+            result = LayoutUnit::fromFloatCeil(bounds.y() + cornerIntercept.y());
             return true;
         }
     }
 
     if (intervalOverlapsMaxCorner && (!intervalOverlapsMinCorner || !minCornerDefinesX)) {
-        if (intervalFitsWithinCorners || minY <=  bounds.maxY() - cornerIntercept.y() - minLogicalIntervalSize.height()) {
+        if (intervalFitsWithinCorners || minY <=  bounds.maxY() - cornerIntercept.y() - minIntervalHeight) {
             result = minY;
             return true;
         }

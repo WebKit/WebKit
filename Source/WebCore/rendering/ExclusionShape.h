@@ -31,7 +31,7 @@
 #define ExclusionShape_h
 
 #include "BasicShapes.h"
-#include "FloatRect.h"
+#include "LayoutRect.h"
 #include "WritingMode.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -45,8 +45,8 @@ struct LineSegment {
     {
     }
 
-    float logicalLeft;
-    float logicalRight;
+    LayoutUnit logicalLeft;
+    LayoutUnit logicalRight;
 };
 
 typedef Vector<LineSegment> SegmentList;
@@ -59,23 +59,23 @@ typedef Vector<LineSegment> SegmentList;
 
 class ExclusionShape {
 public:
-    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, float logicalBoxWidth, float logicalBoxHeight, WritingMode, Length margin, Length padding);
+    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
 
     virtual ~ExclusionShape() { }
 
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const = 0;
+    virtual LayoutRect shapePaddingLogicalBoundingBox() const = 0;
+    virtual bool isEmpty() const = 0;
+    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
+    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
+    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const = 0;
+
+protected:
     float shapeMargin() const { return m_margin; }
     float shapePadding() const { return m_padding; }
-    virtual FloatRect shapeMarginLogicalBoundingBox() const = 0;
-    virtual FloatRect shapePaddingLogicalBoundingBox() const = 0;
-    virtual bool isEmpty() const = 0;
-    virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
-    virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
-    virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const = 0;
 
 private:
     WritingMode m_writingMode;
-    float m_logicalBoxWidth;
-    float m_logicalBoxHeight;
     float m_margin;
     float m_padding;
 };

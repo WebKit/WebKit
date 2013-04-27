@@ -39,7 +39,7 @@
 #include "RenderStyle.h"
 
 namespace WebCore {
-template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(LayoutUnit, LayoutUnit, SegmentList&) const>
 const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::computedShape() const
 {
     if (ExclusionShape* exclusionShape = m_shape.get())
@@ -50,12 +50,12 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter
 
     ASSERT(shape);
 
-    m_shape = ExclusionShape::createExclusionShape(shape, m_shapeLogicalWidth, m_shapeLogicalHeight, m_renderer->style()->writingMode(), m_renderer->style()->shapeMargin(), m_renderer->style()->shapePadding());
+    m_shape = ExclusionShape::createExclusionShape(shape, LayoutSize(m_shapeLogicalWidth, m_shapeLogicalHeight), m_renderer->style()->writingMode(), m_renderer->style()->shapeMargin(), m_renderer->style()->shapePadding());
     ASSERT(m_shape);
     return m_shape.get();
 }
 
-template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(LayoutUnit, LayoutUnit, SegmentList&) const>
 LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::logicalTopOffset() const
 {
     LayoutUnit logicalTopOffset = m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderBefore() + m_renderer->paddingBefore() : LayoutUnit();
@@ -65,7 +65,7 @@ LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::logicalT
     return logicalTopOffset;
 }
 
-template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(LayoutUnit, LayoutUnit, SegmentList&) const>
 bool ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     ASSERT(lineHeight >= 0);
