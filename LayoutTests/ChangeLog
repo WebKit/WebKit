@@ -1,5 +1,12 @@
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Skipping some more tests that still need rebaselining after disabling subpixel layout on mac.
+        http://bugs.webkit.org/show_bug.cgi?id=115292
+
+        * TestExpectations:
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Skipping some tests that still need rebaselining after disabling subpixel layout on mac.
         http://bugs.webkit.org/show_bug.cgi?id=115292
 
