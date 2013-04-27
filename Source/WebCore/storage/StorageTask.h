@@ -26,6 +26,7 @@
 #ifndef StorageTask_h
 #define StorageTask_h
 
+#include <wtf/Functional.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
@@ -38,10 +39,11 @@ namespace WebCore {
     class StorageTask {
         WTF_MAKE_NONCOPYABLE(StorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, ReleaseFastMallocFreeMemory, TerminateThread };
+        enum Type { Dispatch, AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, ReleaseFastMallocFreeMemory, TerminateThread };
 
         ~StorageTask();
 
+        static PassOwnPtr<StorageTask> createDispatch(const Function<void()>& function) { return adoptPtr(new StorageTask(Dispatch, function)); }
         static PassOwnPtr<StorageTask> createImport(StorageAreaSync* area) { return adoptPtr(new StorageTask(AreaImport, area)); }
         static PassOwnPtr<StorageTask> createSync(StorageAreaSync* area) { return adoptPtr(new StorageTask(AreaSync, area)); }
         static PassOwnPtr<StorageTask> createDeleteEmptyDatabase(StorageAreaSync* area) { return adoptPtr(new StorageTask(DeleteEmptyDatabase, area)); }
@@ -55,6 +57,7 @@ namespace WebCore {
         void performTask();
 
     private:
+        StorageTask(Type, const Function<void()>&);
         StorageTask(Type, StorageAreaSync*);
         StorageTask(Type, StorageThread*);
         StorageTask(Type, const String& originIdentifier);
@@ -62,6 +65,7 @@ namespace WebCore {
         explicit StorageTask(Type);
 
         Type m_type;
+        Function<void ()> m_function;
         StorageAreaSync* m_area;
         StorageThread* m_thread;
         String m_originIdentifier;

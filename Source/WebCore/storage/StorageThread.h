@@ -26,6 +26,7 @@
 #ifndef StorageThread_h
 #define StorageThread_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
@@ -46,6 +47,8 @@ namespace WebCore {
         bool start();
         void terminate();
         void scheduleTask(PassOwnPtr<StorageTask>);
+
+        void dispatch(const Function<void()>&);
 
         // Background thread part of the terminate procedure.
         void performTerminate();

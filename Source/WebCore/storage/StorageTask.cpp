@@ -32,6 +32,16 @@
 
 namespace WebCore {
 
+StorageTask::StorageTask(Type type, const Function<void()>& function)
+    : m_type(type)
+    , m_function(function)
+    , m_area(0)
+    , m_thread(0)
+{
+    ASSERT(!m_function.isNull());
+    ASSERT(m_type == Dispatch);
+}
+
 StorageTask::StorageTask(Type type, StorageAreaSync* area)
     : m_type(type)
     , m_area(area)
@@ -84,6 +94,9 @@ StorageTask::~StorageTask()
 void StorageTask::performTask()
 {
     switch (m_type) {
+        case Dispatch:
+            m_function();
+            break;
         case AreaImport:
             m_area->performImport();
             break;

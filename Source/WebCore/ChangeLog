@@ -1,3 +1,22 @@
+2013-04-27  Anders Carlsson  <andersca@apple.com>
+
+        Add StorageThread::dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=115308
+
+        Reviewed by Andreas Kling.
+
+        StorageThread::dispatch takes a Function<void ()> and runs it on the storage thread. This will be used to eventually get rid of StorageTask.
+
+        * storage/StorageTask.cpp:
+        (WebCore::StorageTask::StorageTask):
+        (WebCore::StorageTask::performTask):
+        * storage/StorageTask.h:
+        (WebCore::StorageTask::createDispatch):
+        * storage/StorageThread.cpp:
+        (WebCore::StorageThread::dispatch):
+        * storage/StorageThread.h:
+        (StorageThread):
+
 2013-04-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r147261): Audio controls background not displayed after loading audio file

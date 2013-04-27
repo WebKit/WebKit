@@ -90,6 +90,11 @@ void StorageThread::scheduleTask(PassOwnPtr<StorageTask> task)
     m_queue.append(task);
 }
 
+void StorageThread::dispatch(const Function<void()>& function)
+{
+    scheduleTask(StorageTask::createDispatch(function));
+}
+
 void StorageThread::terminate()
 {
     ASSERT(isMainThread());
