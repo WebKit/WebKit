@@ -1586,7 +1586,7 @@ public:
 #if OS(LINUX)
         // Flush each page separately, otherwise the whole flush will fail if an uncommited page is in the area.
         unsigned currentPage = reinterpret_cast<unsigned>(code) & ~(pageSize() - 1);
-        unsigned lastPage = (reinterpret_cast<unsigned>(code) + size) & ~(pageSize() - 1);
+        unsigned lastPage = (reinterpret_cast<unsigned>(code) + size - 1) & ~(pageSize() - 1);
         do {
 #if defined CACHEFLUSH_D_L2
             syscall(__NR_cacheflush, currentPage, pageSize(), CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);

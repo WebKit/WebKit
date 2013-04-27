@@ -1,3 +1,13 @@
+2013-04-27  Julien Brianceau  <jbrianceau@nds.com>
+
+        REGRESSION(r149114): cache flush for SH4 arch may flush an extra page.
+        https://bugs.webkit.org/show_bug.cgi?id=115305
+
+        Reviewed by Andreas Kling.
+
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::cacheFlush):
+
 2013-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Re-landing <http://trac.webkit.org/changeset/148999>
