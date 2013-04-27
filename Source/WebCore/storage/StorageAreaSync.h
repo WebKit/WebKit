@@ -34,75 +34,75 @@
 
 namespace WebCore {
 
-    class Frame;
-    class StorageAreaImpl;
-    class StorageSyncManager;
+class Frame;
+class StorageAreaImpl;
+class StorageSyncManager;
 
-    class StorageAreaSync : public RefCounted<StorageAreaSync> {
-    public:
-        static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
-        ~StorageAreaSync();
+class StorageAreaSync : public RefCounted<StorageAreaSync> {
+public:
+    static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
+    ~StorageAreaSync();
 
-        void scheduleFinalSync();
-        void blockUntilImportComplete();
+    void scheduleFinalSync();
+    void blockUntilImportComplete();
 
-        void scheduleItemForSync(const String& key, const String& value);
-        void scheduleClear();
-        void scheduleCloseDatabase();
+    void scheduleItemForSync(const String& key, const String& value);
+    void scheduleClear();
+    void scheduleCloseDatabase();
 
-        void scheduleSync();
+    void scheduleSync();
 
-    private:
-        StorageAreaSync(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
+private:
+    StorageAreaSync(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
 
-        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
-        Timer<StorageAreaSync> m_syncTimer;
-        HashMap<String, String> m_changedItems;
-        bool m_itemsCleared;
+    Timer<StorageAreaSync> m_syncTimer;
+    HashMap<String, String> m_changedItems;
+    bool m_itemsCleared;
 
-        bool m_finalSyncScheduled;
+    bool m_finalSyncScheduled;
 
-        RefPtr<StorageAreaImpl> m_storageArea;
-        RefPtr<StorageSyncManager> m_syncManager;
+    RefPtr<StorageAreaImpl> m_storageArea;
+    RefPtr<StorageSyncManager> m_syncManager;
 
-        // The database handle will only ever be opened and used on the background thread.
-        SQLiteDatabase m_database;
+    // The database handle will only ever be opened and used on the background thread.
+    SQLiteDatabase m_database;
 
     // The following members are subject to thread synchronization issues.
-    public:
-        // Called from the background thread
-        void performImport();
-        void performSync();
-        void deleteEmptyDatabase();
+public:
+    // Called from the background thread
+    void performImport();
+    void performSync();
+    void deleteEmptyDatabase();
 
-    private:
-        enum OpenDatabaseParamType {
-          CreateIfNonExistent,
-          SkipIfNonExistent
-        };
-
-        void syncTimerFired(Timer<StorageAreaSync>*);
-        void openDatabase(OpenDatabaseParamType openingStrategy);
-        void sync(bool clearItems, const HashMap<String, String>& items);
-
-        const String m_databaseIdentifier;
-
-        Mutex m_syncLock;
-        HashMap<String, String> m_itemsPendingSync;
-        bool m_clearItemsWhileSyncing;
-        bool m_syncScheduled;
-        bool m_syncInProgress;
-        bool m_databaseOpenFailed;
-        
-        bool m_syncCloseDatabase;
-
-        mutable Mutex m_importLock;
-        mutable ThreadCondition m_importCondition;
-        mutable bool m_importComplete;
-        void markImported();
-        void migrateItemTableIfNeeded();
+private:
+    enum OpenDatabaseParamType {
+      CreateIfNonExistent,
+      SkipIfNonExistent
     };
+
+    void syncTimerFired(Timer<StorageAreaSync>*);
+    void openDatabase(OpenDatabaseParamType openingStrategy);
+    void sync(bool clearItems, const HashMap<String, String>& items);
+
+    const String m_databaseIdentifier;
+
+    Mutex m_syncLock;
+    HashMap<String, String> m_itemsPendingSync;
+    bool m_clearItemsWhileSyncing;
+    bool m_syncScheduled;
+    bool m_syncInProgress;
+    bool m_databaseOpenFailed;
+
+    bool m_syncCloseDatabase;
+
+    mutable Mutex m_importLock;
+    mutable ThreadCondition m_importCondition;
+    mutable bool m_importComplete;
+    void markImported();
+    void migrateItemTableIfNeeded();
+};
 
 } // namespace WebCore
 
