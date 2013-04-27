@@ -2196,35 +2196,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         // === Increment/Decrement opcodes ===
 
-        case op_pre_inc: {
+        case op_inc: {
             unsigned srcDst = currentInstruction[1].u.operand;
             Node* op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
-            NEXT_OPCODE(op_pre_inc);
+            NEXT_OPCODE(op_inc);
         }
 
-        case op_post_inc: {
-            unsigned result = currentInstruction[1].u.operand;
-            unsigned srcDst = currentInstruction[2].u.operand;
-            ASSERT(result != srcDst); // Required for assumptions we make during OSR.
-            Node* op = get(srcDst);
-            setPair(result, op, srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
-            NEXT_OPCODE(op_post_inc);
-        }
-
-        case op_pre_dec: {
+        case op_dec: {
             unsigned srcDst = currentInstruction[1].u.operand;
             Node* op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithSub, op, one())));
-            NEXT_OPCODE(op_pre_dec);
-        }
-
-        case op_post_dec: {
-            unsigned result = currentInstruction[1].u.operand;
-            unsigned srcDst = currentInstruction[2].u.operand;
-            Node* op = get(srcDst);
-            setPair(result, op, srcDst, makeSafe(addToGraph(ArithSub, op, one())));
-            NEXT_OPCODE(op_post_dec);
+            NEXT_OPCODE(op_dec);
         }
 
         // === Arithmetic operations ===
@@ -3377,10 +3360,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_typeof);
         }
 
-        case op_to_jsnumber: {
+        case op_to_number: {
             set(currentInstruction[1].u.operand,
                 addToGraph(Identity, Edge(get(currentInstruction[2].u.operand), NumberUse)));
-            NEXT_OPCODE(op_to_jsnumber);
+            NEXT_OPCODE(op_to_number);
         }
 
         default:

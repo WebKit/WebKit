@@ -1,3 +1,94 @@
+2013-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Cleaned up pre/post inc/dec in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=115222
+
+        Reviewed by Filip Pizlo.
+
+        A few related changes here:
+
+        (*) Removed post_inc and post_dec. The two-result form was awkward to
+        reason about. Being explicit about the intermediate mov and to_number
+        reduces DFG overhead, removes some fragile ASSERTs from the DFG, and
+        fixes a const bug. Plus, we get to blow away 262 lines of code.
+
+        (*) Renamed pre_inc and pre_dec to inc and dec, since there's only one
+        version now.
+
+        (*) Renamed to_jsnumber to to_number, to match the ECMA name.
+
+        (*) Tightened up the codegen and runtime support for to_number.
+
+
+        * JavaScriptCore.order: Order!
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitInc):
+        (JSC::BytecodeGenerator::emitDec):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitToNumber):
+        (BytecodeGenerator): Removed post_inc and post_dec.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitPreIncOrDec): Updated for rename.
+
+        (JSC::emitPostIncOrDec): Issue an explicit mov and to_number when needed.
+        These are rare, and they boil away in the DFG.
+
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve): For const, use an explicit mov instead
+        of any special forms. This fixes a bug where we would do string
+        add/subtract instead of number.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emitSlow_op_dec):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emitSlow_op_dec): Removed post_inc/dec, and updated for renames.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emitSlow_op_to_number): Removed a test for number cells. There's
+        no such thing!
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_number): Use LowestTag to avoid making assumptions
+        about the lowest valued tag.
+
+        (JSC::JIT::emitSlow_op_to_number): Updated for renames.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/NodeConstructors.h:
+        (JSC::UnaryPlusNode::UnaryPlusNode): Removed post_inc/dec, and updated for renames.
+
+        * runtime/Operations.cpp:
+        (JSC::jsIsObjectType): Removed a test for number cells. There's
+        no such thing!
+
 2013-04-27  Julien Brianceau  <jbrianceau@nds.com>
 
         REGRESSION(r149114): cache flush for SH4 arch may flush an extra page.

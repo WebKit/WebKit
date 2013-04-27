@@ -1436,7 +1436,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_pre_inc)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_inc)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
@@ -2823,7 +2823,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_pre_dec)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_dec)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
@@ -2907,21 +2907,6 @@ DEFINE_STUB_FUNCTION(int, op_jtrue)
     bool result = src1.toBoolean(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_inc)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue v = stackFrame.args[0].jsValue();
-
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    double number = v.toNumber(callFrame);
-    CHECK_FOR_EXCEPTION_AT_END();
-
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number + 1);
-    return JSValue::encode(jsNumber(number));
 }
 
 DEFINE_STUB_FUNCTION(int, op_eq)
@@ -3127,21 +3112,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_mod)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_dec)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue v = stackFrame.args[0].jsValue();
-
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    double number = v.toNumber(callFrame);
-    CHECK_FOR_EXCEPTION_AT_END();
-
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number - 1);
-    return JSValue::encode(jsNumber(number));
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_urshift)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -3331,7 +3301,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_nstricteq)
     return JSValue::encode(jsBoolean(result));
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_to_jsnumber)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_to_number)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 

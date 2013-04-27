@@ -1016,34 +1016,18 @@ RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, R
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitPreInc(RegisterID* srcDst)
+RegisterID* BytecodeGenerator::emitInc(RegisterID* srcDst)
 {
-    emitOpcode(op_pre_inc);
+    emitOpcode(op_inc);
     instructions().append(srcDst->index());
     return srcDst;
 }
 
-RegisterID* BytecodeGenerator::emitPreDec(RegisterID* srcDst)
+RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
 {
-    emitOpcode(op_pre_dec);
+    emitOpcode(op_dec);
     instructions().append(srcDst->index());
     return srcDst;
-}
-
-RegisterID* BytecodeGenerator::emitPostInc(RegisterID* dst, RegisterID* srcDst)
-{
-    emitOpcode(op_post_inc);
-    instructions().append(dst->index());
-    instructions().append(srcDst->index());
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitPostDec(RegisterID* dst, RegisterID* srcDst)
-{
-    emitOpcode(op_post_dec);
-    instructions().append(dst->index());
-    instructions().append(srcDst->index());
-    return dst;
 }
 
 RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)

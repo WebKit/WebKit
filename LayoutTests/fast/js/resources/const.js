@@ -160,3 +160,31 @@ with1Result = with1();
 shouldBe("with1Result", "5");
 with2Result = with2();
 shouldBe("with2Result", "5");
+
+(function () {
+    function shouldBe(aDescription, a, b)
+    {
+        if (a === b) {
+            testPassed("PASS: " + aDescription + " should be " + b + " and is.");
+            return;
+        }
+
+        testFailed("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+    }
+
+    (function() {
+        const x = "1";
+        shouldBe("++x", ++x, 2);
+        shouldBe("--x", --x, 0);
+        shouldBe("x", x, "1");
+        shouldBe("x++", x++, 1);
+        shouldBe("x", x, "1");
+    })();
+    (function() {
+        const x = 1;
+        shouldBe("++x", ++x, 2);
+        shouldBe("x", x, 1);
+        shouldBe("x++", x++, 1);
+        shouldBe("x", x, 1);
+    })();
+})();

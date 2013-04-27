@@ -454,63 +454,31 @@ macro preOp(arithmeticOperation, slowPath)
     dispatch(2)
 end
 
-_llint_op_pre_inc:
+_llint_op_inc:
     preOp(
         macro (value, slow) baddio 1, value, slow end,
         _llint_slow_path_pre_inc)
 
 
-_llint_op_pre_dec:
+_llint_op_dec:
     preOp(
         macro (value, slow) bsubio 1, value, slow end,
         _llint_slow_path_pre_dec)
 
 
-macro postOp(arithmeticOperation, slowPath)
-    traceExecution()
-    loadisFromInstruction(2, t0)
-    loadisFromInstruction(1, t1)
-    loadq [cfr, t0, 8], t2
-    bieq t0, t1, .done
-    bqb t2, tagTypeNumber, .slow
-    move t2, t3
-    arithmeticOperation(t3, .slow)
-    orq tagTypeNumber, t3
-    storeq t2, [cfr, t1, 8]
-    storeq t3, [cfr, t0, 8]
-.done:
-    dispatch(3)
-
-.slow:
-    callSlowPath(slowPath)
-    dispatch(3)
-end
-
-_llint_op_post_inc:
-    postOp(
-        macro (value, slow) baddio 1, value, slow end,
-        _llint_slow_path_post_inc)
-
-
-_llint_op_post_dec:
-    postOp(
-        macro (value, slow) bsubio 1, value, slow end,
-        _llint_slow_path_post_dec)
-
-
-_llint_op_to_jsnumber:
+_llint_op_to_number:
     traceExecution()
     loadisFromInstruction(2, t0)
     loadisFromInstruction(1, t1)
     loadConstantOrVariable(t0, t2)
-    bqaeq t2, tagTypeNumber, .opToJsnumberIsImmediate
-    btqz t2, tagTypeNumber, .opToJsnumberSlow
-.opToJsnumberIsImmediate:
+    bqaeq t2, tagTypeNumber, .opToNumberIsImmediate
+    btqz t2, tagTypeNumber, .opToNumberSlow
+.opToNumberIsImmediate:
     storeq t2, [cfr, t1, 8]
     dispatch(3)
 
-.opToJsnumberSlow:
-    callSlowPath(_llint_slow_path_to_jsnumber)
+.opToNumberSlow:
+    callSlowPath(_llint_slow_path_to_number)
     dispatch(3)
 
 

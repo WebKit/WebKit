@@ -684,18 +684,12 @@ void JIT::emit_op_nstricteq(Instruction* currentInstruction)
     compileOpStrictEq(currentInstruction, OpNStrictEq);
 }
 
-void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
+void JIT::emit_op_to_number(Instruction* currentInstruction)
 {
     int srcVReg = currentInstruction[2].u.operand;
     emitGetVirtualRegister(srcVReg, regT0);
     
-    Jump wasImmediate = emitJumpIfImmediateInteger(regT0);
-
-    emitJumpSlowCaseIfNotJSCell(regT0, srcVReg);
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    addSlowCase(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(NumberType)));
-    
-    wasImmediate.link(this);
+    addSlowCase(emitJumpIfNotImmediateNumber(regT0));
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -1139,12 +1133,11 @@ void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCase
     compileOpCallSlowCase(op_construct, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCaseIfNotJSCell(iter, currentInstruction[2].u.operand);
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_to_jsnumber);
+    JITStubCall stubCall(this, cti_op_to_number);
     stubCall.addArgument(regT0);
     stubCall.call(currentInstruction[1].u.operand);
 }

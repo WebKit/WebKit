@@ -582,88 +582,48 @@ _llint_op_nstricteq:
     strictEq(macro (left, right, result) cineq left, right, result end, _llint_slow_path_nstricteq)
 
 
-_llint_op_pre_inc:
+_llint_op_inc:
     traceExecution()
     loadi 4[PC], t0
-    bineq TagOffset[cfr, t0, 8], Int32Tag, .opPreIncSlow
+    bineq TagOffset[cfr, t0, 8], Int32Tag, .opIncSlow
     loadi PayloadOffset[cfr, t0, 8], t1
-    baddio 1, t1, .opPreIncSlow
+    baddio 1, t1, .opIncSlow
     storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(2)
 
-.opPreIncSlow:
+.opIncSlow:
     callSlowPath(_llint_slow_path_pre_inc)
     dispatch(2)
 
 
-_llint_op_pre_dec:
+_llint_op_dec:
     traceExecution()
     loadi 4[PC], t0
-    bineq TagOffset[cfr, t0, 8], Int32Tag, .opPreDecSlow
+    bineq TagOffset[cfr, t0, 8], Int32Tag, .opDecSlow
     loadi PayloadOffset[cfr, t0, 8], t1
-    bsubio 1, t1, .opPreDecSlow
+    bsubio 1, t1, .opDecSlow
     storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(2)
 
-.opPreDecSlow:
+.opDecSlow:
     callSlowPath(_llint_slow_path_pre_dec)
     dispatch(2)
 
 
-_llint_op_post_inc:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 4[PC], t1
-    bineq TagOffset[cfr, t0, 8], Int32Tag, .opPostIncSlow
-    bieq t0, t1, .opPostIncDone
-    loadi PayloadOffset[cfr, t0, 8], t2
-    move t2, t3
-    baddio 1, t3, .opPostIncSlow
-    storei Int32Tag, TagOffset[cfr, t1, 8]
-    storei t2, PayloadOffset[cfr, t1, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-.opPostIncDone:
-    dispatch(3)
-
-.opPostIncSlow:
-    callSlowPath(_llint_slow_path_post_inc)
-    dispatch(3)
-
-
-_llint_op_post_dec:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 4[PC], t1
-    bineq TagOffset[cfr, t0, 8], Int32Tag, .opPostDecSlow
-    bieq t0, t1, .opPostDecDone
-    loadi PayloadOffset[cfr, t0, 8], t2
-    move t2, t3
-    bsubio 1, t3, .opPostDecSlow
-    storei Int32Tag, TagOffset[cfr, t1, 8]
-    storei t2, PayloadOffset[cfr, t1, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-.opPostDecDone:
-    dispatch(3)
-
-.opPostDecSlow:
-    callSlowPath(_llint_slow_path_post_dec)
-    dispatch(3)
-
-
-_llint_op_to_jsnumber:
+_llint_op_to_number:
     traceExecution()
     loadi 8[PC], t0
     loadi 4[PC], t1
     loadConstantOrVariable(t0, t2, t3)
-    bieq t2, Int32Tag, .opToJsnumberIsInt
-    biaeq t2, EmptyValueTag, .opToJsnumberSlow
-.opToJsnumberIsInt:
+    bieq t2, Int32Tag, .opToNumberIsInt
+    biaeq t2, LowestTag, .opToNumberSlow
+.opToNumberIsInt:
     storei t2, TagOffset[cfr, t1, 8]
     storei t3, PayloadOffset[cfr, t1, 8]
     dispatch(3)
 
-.opToJsnumberSlow:
-    callSlowPath(_llint_slow_path_to_jsnumber)
+.opToNumberSlow:
+    callSlowPath(_llint_slow_path_to_number)
     dispatch(3)
 
 

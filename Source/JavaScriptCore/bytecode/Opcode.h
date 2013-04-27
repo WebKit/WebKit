@@ -67,11 +67,9 @@ namespace JSC {
     macro(op_greater, 4) \
     macro(op_greatereq, 4) \
     \
-    macro(op_pre_inc, 2) \
-    macro(op_pre_dec, 2) \
-    macro(op_post_inc, 3) \
-    macro(op_post_dec, 3) \
-    macro(op_to_jsnumber, 3) \
+    macro(op_inc, 2) \
+    macro(op_dec, 2) \
+    macro(op_to_number, 3) \
     macro(op_negate, 3) \
     macro(op_add, 5) \
     macro(op_mul, 5) \

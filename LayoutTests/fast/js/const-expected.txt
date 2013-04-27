@@ -55,6 +55,15 @@ PASS tryCatch1Result is 5
 PASS tryCatch2Result is 5
 PASS with1Result is 5
 PASS with2Result is 5
+PASS PASS: ++x should be 2 and is.
+PASS PASS: --x should be 0 and is.
+PASS PASS: x should be 1 and is.
+PASS PASS: x++ should be 1 and is.
+PASS PASS: x should be 1 and is.
+PASS PASS: ++x should be 2 and is.
+PASS PASS: x should be 1 and is.
+PASS PASS: x++ should be 1 and is.
+PASS PASS: x should be 1 and is.
 PASS successfullyParsed is true
 
 TEST COMPLETE

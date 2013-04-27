@@ -629,65 +629,7 @@ void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEnt
     }
 }
 
-void JIT::emit_op_post_inc(Instruction* currentInstruction)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    emitGetVirtualRegister(srcDst, regT0);
-    move(regT0, regT1);
-    emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT1));
-    emitFastArithIntToImmNoCheck(regT1, regT1);
-    emitPutVirtualRegister(srcDst, regT1);
-    emitPutVirtualRegister(result);
-    if (canBeOptimizedOrInlined())
-        killLastResultRegister();
-}
-
-void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_post_inc);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(Imm32(srcDst));
-    stubCall.call(result);
-}
-
-void JIT::emit_op_post_dec(Instruction* currentInstruction)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    emitGetVirtualRegister(srcDst, regT0);
-    move(regT0, regT1);
-    emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT1));
-    emitFastArithIntToImmNoCheck(regT1, regT1);
-    emitPutVirtualRegister(srcDst, regT1);
-    emitPutVirtualRegister(result);
-    if (canBeOptimizedOrInlined())
-        killLastResultRegister();
-}
-
-void JIT::emitSlow_op_post_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_post_dec);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(Imm32(srcDst));
-    stubCall.call(result);
-}
-
-void JIT::emit_op_pre_inc(Instruction* currentInstruction)
+void JIT::emit_op_inc(Instruction* currentInstruction)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -698,7 +640,7 @@ void JIT::emit_op_pre_inc(Instruction* currentInstruction)
     emitPutVirtualRegister(srcDst);
 }
 
-void JIT::emitSlow_op_pre_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -706,12 +648,12 @@ void JIT::emitSlow_op_pre_inc(Instruction* currentInstruction, Vector<SlowCaseEn
     linkSlowCase(iter);
     emitGetVirtualRegister(srcDst, regT0);
     notImm.link(this);
-    JITStubCall stubCall(this, cti_op_pre_inc);
+    JITStubCall stubCall(this, cti_op_inc);
     stubCall.addArgument(regT0);
     stubCall.call(srcDst);
 }
 
-void JIT::emit_op_pre_dec(Instruction* currentInstruction)
+void JIT::emit_op_dec(Instruction* currentInstruction)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -722,7 +664,7 @@ void JIT::emit_op_pre_dec(Instruction* currentInstruction)
     emitPutVirtualRegister(srcDst);
 }
 
-void JIT::emitSlow_op_pre_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -730,7 +672,7 @@ void JIT::emitSlow_op_pre_dec(Instruction* currentInstruction, Vector<SlowCaseEn
     linkSlowCase(iter);
     emitGetVirtualRegister(srcDst, regT0);
     notImm.link(this);
-    JITStubCall stubCall(this, cti_op_pre_dec);
+    JITStubCall stubCall(this, cti_op_dec);
     stubCall.addArgument(regT0);
     stubCall.call(srcDst);
 }

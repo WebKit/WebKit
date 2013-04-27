@@ -90,7 +90,7 @@ bool jsIsObjectType(CallFrame* callFrame, JSValue v)
         return v.isNull();
 
     JSType type = v.asCell()->structure()->typeInfo().type();
-    if (type == NumberType || type == StringType)
+    if (type == StringType)
         return false;
     if (type >= ObjectType) {
         if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))

@@ -95,10 +95,8 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_rshift:
     case op_lshift:
     case op_urshift:
-    case op_pre_inc:
-    case op_post_inc:
-    case op_pre_dec:
-    case op_post_dec:
+    case op_inc:
+    case op_dec:
     case op_add:
     case op_sub:
     case op_negate:
@@ -183,7 +181,7 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_put_to_base_variable:
     case op_put_to_base:
     case op_typeof:
-    case op_to_jsnumber:
+    case op_to_number:
         return CanCompile;
         
     case op_call_varargs:

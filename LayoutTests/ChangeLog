@@ -1,3 +1,14 @@
+2013-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Cleaned up pre/post inc/dec in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=115222
+
+        Reviewed by Filip Pizlo.
+
+        * fast/js/const-expected.txt:
+        * fast/js/resources/const.js: Added tests for some const cases we used
+        to get wrong.
+
 2013-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Re-landing <http://trac.webkit.org/changeset/148999>

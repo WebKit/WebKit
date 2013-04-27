@@ -602,23 +602,7 @@ LLINT_SLOW_PATH_DECL(slow_path_pre_dec)
     LLINT_RETURN(jsNumber(LLINT_OP(1).jsValue().toNumber(exec) - 1));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_post_inc)
-{
-    LLINT_BEGIN();
-    double result = LLINT_OP(2).jsValue().toNumber(exec);
-    LLINT_OP(2) = jsNumber(result + 1);
-    LLINT_RETURN(jsNumber(result));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_post_dec)
-{
-    LLINT_BEGIN();
-    double result = LLINT_OP(2).jsValue().toNumber(exec);
-    LLINT_OP(2) = jsNumber(result - 1);
-    LLINT_RETURN(jsNumber(result));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_to_jsnumber)
+LLINT_SLOW_PATH_DECL(slow_path_to_number)
 {
     LLINT_BEGIN();
     LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toNumber(exec)));

@@ -449,83 +449,7 @@ void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEnt
     stubCall.call(dst);
 }
 
-// PostInc (i++)
-
-void JIT::emit_op_post_inc(Instruction* currentInstruction)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    emitLoad(srcDst, regT1, regT0);
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-
-    if (dst == srcDst) // x = x++ is a noop for ints.
-        return;
-
-    move(regT0, regT2);
-    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT2));
-    emitStoreInt32(srcDst, regT2, true);
-
-    emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_inc));
-    if (canBeOptimizedOrInlined())
-        unmap();
-}
-
-void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter); // int32 check
-    if (dst != srcDst)
-        linkSlowCase(iter); // overflow check
-
-    JITStubCall stubCall(this, cti_op_post_inc);
-    stubCall.addArgument(srcDst);
-    stubCall.addArgument(TrustedImm32(srcDst));
-    stubCall.call(dst);
-}
-
-// PostDec (i--)
-
-void JIT::emit_op_post_dec(Instruction* currentInstruction)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    emitLoad(srcDst, regT1, regT0);
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-
-    if (dst == srcDst) // x = x-- is a noop for ints.
-        return;
-
-    move(regT0, regT2);
-    addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT2));
-    emitStoreInt32(srcDst, regT2, true);
-
-    emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_dec));
-    if (canBeOptimizedOrInlined())
-        unmap();
-}
-
-void JIT::emitSlow_op_post_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned srcDst = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter); // int32 check
-    if (dst != srcDst)
-        linkSlowCase(iter); // overflow check
-
-    JITStubCall stubCall(this, cti_op_post_dec);
-    stubCall.addArgument(srcDst);
-    stubCall.addArgument(TrustedImm32(srcDst));
-    stubCall.call(dst);
-}
-
-// PreInc (++i)
-
-void JIT::emit_op_pre_inc(Instruction* currentInstruction)
+void JIT::emit_op_inc(Instruction* currentInstruction)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -533,24 +457,22 @@ void JIT::emit_op_pre_inc(Instruction* currentInstruction)
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
-    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_pre_inc));
+    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_inc));
 }
 
-void JIT::emitSlow_op_pre_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // overflow check
 
-    JITStubCall stubCall(this, cti_op_pre_inc);
+    JITStubCall stubCall(this, cti_op_inc);
     stubCall.addArgument(srcDst);
     stubCall.call(srcDst);
 }
 
-// PreDec (--i)
-
-void JIT::emit_op_pre_dec(Instruction* currentInstruction)
+void JIT::emit_op_dec(Instruction* currentInstruction)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
@@ -558,17 +480,17 @@ void JIT::emit_op_pre_dec(Instruction* currentInstruction)
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
-    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_pre_dec));
+    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_dec));
 }
 
-void JIT::emitSlow_op_pre_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // overflow check
 
-    JITStubCall stubCall(this, cti_op_pre_dec);
+    JITStubCall stubCall(this, cti_op_dec);
     stubCall.addArgument(srcDst);
     stubCall.call(srcDst);
 }

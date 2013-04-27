@@ -979,7 +979,7 @@ void JIT::emit_op_pop_scope(Instruction*)
     JITStubCall(this, cti_op_pop_scope).call();
 }
 
-void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
+void JIT::emit_op_to_number(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
@@ -987,21 +987,21 @@ void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
 
     Jump isInt32 = branch32(Equal, regT1, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+    addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
     isInt32.link(this);
 
     if (src != dst)
         emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_jsnumber), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_number), dst, regT1, regT0);
 }
 
-void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_to_jsnumber);
+    JITStubCall stubCall(this, cti_op_to_number);
     stubCall.addArgument(regT1, regT0);
     stubCall.call(dst);
 }

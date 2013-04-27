@@ -709,10 +709,8 @@ namespace JSC {
         void emit_op_not(Instruction*);
         void emit_op_nstricteq(Instruction*);
         void emit_op_pop_scope(Instruction*);
-        void emit_op_post_dec(Instruction*);
-        void emit_op_post_inc(Instruction*);
-        void emit_op_pre_dec(Instruction*);
-        void emit_op_pre_inc(Instruction*);
+        void emit_op_dec(Instruction*);
+        void emit_op_inc(Instruction*);
         void emit_op_profile_did_call(Instruction*);
         void emit_op_profile_will_call(Instruction*);
         void emit_op_push_name_scope(Instruction*);
@@ -744,7 +742,7 @@ namespace JSC {
         void emit_op_tear_off_arguments(Instruction*);
         void emit_op_throw(Instruction*);
         void emit_op_throw_static_error(Instruction*);
-        void emit_op_to_jsnumber(Instruction*);
+        void emit_op_to_number(Instruction*);
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
         void emit_op_urshift(Instruction*);
@@ -789,17 +787,15 @@ namespace JSC {
         void emitSlow_op_new_object(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_not(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_nstricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_post_dec(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_post_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_pre_dec(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_pre_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_dec(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_init_global_const_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_rshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_stricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_to_number(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
 

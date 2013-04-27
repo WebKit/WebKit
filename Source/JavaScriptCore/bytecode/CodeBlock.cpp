@@ -837,26 +837,18 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             printBinaryOp(out, exec, location, it, "greatereq");
             break;
         }
-        case op_pre_inc: {
+        case op_inc: {
             int r0 = (++it)->u.operand;
             out.printf("[%4d] pre_inc\t\t %s", location, registerName(exec, r0).data());
             break;
         }
-        case op_pre_dec: {
+        case op_dec: {
             int r0 = (++it)->u.operand;
             out.printf("[%4d] pre_dec\t\t %s", location, registerName(exec, r0).data());
             break;
         }
-        case op_post_inc: {
-            printUnaryOp(out, exec, location, it, "post_inc");
-            break;
-        }
-        case op_post_dec: {
-            printUnaryOp(out, exec, location, it, "post_dec");
-            break;
-        }
-        case op_to_jsnumber: {
-            printUnaryOp(out, exec, location, it, "to_jsnumber");
+        case op_to_number: {
+            printUnaryOp(out, exec, location, it, "to_number");
             break;
         }
         case op_negate: {

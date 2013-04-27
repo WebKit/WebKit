@@ -360,7 +360,7 @@ namespace JSC {
     }
 
     inline UnaryPlusNode::UnaryPlusNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : UnaryOpNode(location, ResultType::numberType(), expr, op_to_jsnumber)
+        : UnaryOpNode(location, ResultType::numberType(), expr, op_to_number)
     {
     }
 
