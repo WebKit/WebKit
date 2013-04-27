@@ -29,7 +29,6 @@
 #include "SQLiteDatabase.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ class Frame;
 class StorageAreaImpl;
 class StorageSyncManager;
 
-class StorageAreaSync : public RefCounted<StorageAreaSync> {
+class StorageAreaSync : public ThreadSafeRefCounted<StorageAreaSync> {
 public:
     static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
     ~StorageAreaSync();

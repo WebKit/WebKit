@@ -87,7 +87,7 @@ bool StorageSyncManager::scheduleImport(PassRefPtr<StorageAreaSync> area)
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(StorageTask::createImport(area.get()));
+        m_thread->dispatch(bind(&StorageAreaSync::performImport, area));
     return m_thread;
 }
 
@@ -96,7 +96,7 @@ void StorageSyncManager::scheduleSync(PassRefPtr<StorageAreaSync> area)
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(StorageTask::createSync(area.get()));
+        m_thread->dispatch(bind(&StorageAreaSync::performSync, area));
 }
 
 void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync> area)
@@ -104,7 +104,7 @@ void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(StorageTask::createDeleteEmptyDatabase(area.get()));
+        m_thread->dispatch(bind(&StorageAreaSync::deleteEmptyDatabase, area));
 }
 
 } // namespace WebCore

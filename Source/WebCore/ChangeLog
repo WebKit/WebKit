@@ -1,5 +1,25 @@
 2013-04-27  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of more uses of StorageTask
+        https://bugs.webkit.org/show_bug.cgi?id=115311
+
+        Reviewed by Dean Jackson.
+
+        Make StorageAreaSync derive from ThreadSafeRefCounted as well, since it's passed between threads.
+
+        * storage/StorageAreaSync.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        (WebCore::StorageSyncManager::scheduleDeleteEmptyDatabase):
+        * storage/StorageTask.cpp:
+        (WebCore::StorageTask::StorageTask):
+        (WebCore::StorageTask::performTask):
+        * storage/StorageTask.h:
+        (StorageTask):
+
+2013-04-27  Anders Carlsson  <andersca@apple.com>
+
         Indent StorageAreaSync to match the style guidelines.
 
         Rubber-stamped by Andreas Kling.

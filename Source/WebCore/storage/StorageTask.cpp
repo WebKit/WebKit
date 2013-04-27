@@ -35,23 +35,13 @@ namespace WebCore {
 StorageTask::StorageTask(Type type, const Function<void()>& function)
     : m_type(type)
     , m_function(function)
-    , m_area(0)
 {
     ASSERT(!m_function.isNull());
     ASSERT(m_type == Dispatch);
 }
 
-StorageTask::StorageTask(Type type, StorageAreaSync* area)
-    : m_type(type)
-    , m_area(area)
-{
-    ASSERT(m_area);
-    ASSERT(m_type == AreaImport || m_type == AreaSync || m_type == DeleteEmptyDatabase);
-}
-
 StorageTask::StorageTask(Type type, const String& originIdentifier)
     : m_type(type)
-    , m_area(0)
     , m_originIdentifier(originIdentifier)
 {
     ASSERT(m_type == DeleteOrigin);
@@ -59,7 +49,6 @@ StorageTask::StorageTask(Type type, const String& originIdentifier)
 
 StorageTask::StorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
     : m_type(type)
-    , m_area(0)
     , m_originIdentifier(originIdentifier)
     , m_databaseFilename(databaseFilename)
 {
@@ -76,20 +65,11 @@ void StorageTask::performTask()
         case Dispatch:
             m_function();
             break;
-        case AreaImport:
-            m_area->performImport();
-            break;
-        case AreaSync:
-            m_area->performSync();
-            break;
         case SetOriginDetails:
             StorageTracker::tracker().syncSetOriginDetails(m_originIdentifier, m_databaseFilename);
             break;
         case DeleteOrigin:
             StorageTracker::tracker().syncDeleteOrigin(m_originIdentifier);
-            break;
-        case DeleteEmptyDatabase:
-            m_area->deleteEmptyDatabase();
             break;
     }
 }
