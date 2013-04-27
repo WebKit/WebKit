@@ -1,5 +1,11 @@
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
+        Disable sub-pixel-layout on Apple Windows port, VS2005 edition.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
         Disable sub-pixel-layout on Apple Windows port.
 
         * win/tools/vsprops/FeatureDefines.props:

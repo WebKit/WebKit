@@ -363,7 +363,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_SUBPIXEL_LAYOUT"
-		Value="ENABLE_SUBPIXEL_LAYOUT"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
