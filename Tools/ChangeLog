@@ -1,3 +1,11 @@
+2013-04-27  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed Intel bots fix after r149231.
+
+        * efl/jhbuild.modules: Disable the libxml Python bindings since the
+        bots don't have Python's development files installed. libxml should
+        detect this kind of thing better.
+
 2013-04-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break using jhbuild on ubuntu 13.04

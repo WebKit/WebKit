@@ -294,7 +294,9 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libxml2">
+  <autotools id="libxml2"
+             autogen-sh="configure"
+             autogenargs="--without-python">
     <branch module="/libxml2/libxml2-2.9.1.tar.gz" version="2.9.1"
             repo="xmlsoft.org"
             hash="sha256:fd3c64cb66f2c4ea27e934d275904d92cec494a8e8405613780cbc8a71680fdb"
