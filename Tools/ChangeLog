@@ -1,3 +1,13 @@
+2013-04-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        delete-stale-build-files does not clear .d files
+        http://bugs.webkit.org/show_bug.cgi?id=115293
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/delete-stale-build-files:
+        (main): Add .d to the file type list
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
