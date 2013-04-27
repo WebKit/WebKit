@@ -1,3 +1,16 @@
+2013-04-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break using jhbuild on ubuntu 13.04
+        https://bugs.webkit.org/show_bug.cgi?id=115225
+
+        Reviewed by Gyuyoung Kim.
+
+        libxslt in Ubuntu 13.04 requires libxml 2.9.0 or higher and
+        libxml 2.9.0 has a bug to make regression which r138422 mentioned.
+        So this patch bumped libxml version to 2.9.1.
+
+        * efl/jhbuild.modules:
+
 2013-04-26  Jeffrey Pfau  <jpfau@apple.com>
 
         delete-stale-build-files does not clear .d files
