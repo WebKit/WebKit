@@ -1,3 +1,18 @@
+2013-04-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Regression tests that reference a non-local resource crash with NetworkProcess enabled
+        https://bugs.webkit.org/show_bug.cgi?id=115290
+
+        Reviewed by Sam Weinig.
+
+        Covered by fast/dom/icon-url-change.html and many other existing tests.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::remove): Handle this case. Architecturally, it
+        would be better if SubresourceLoad::create just created an object an didn't do
+        further checks before returning a pointer, but changing that is beyond the scope
+        of the fix.
+
 2013-04-26  Yael Aharon  <yael.aharon@intel.com>
 
         [WK2][EFL] Build break after r149212

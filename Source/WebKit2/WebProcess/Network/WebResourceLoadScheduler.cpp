@@ -163,12 +163,14 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
         return;
     }
     
+    RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
+    // Loader may not be registered if we created it, but haven't scheduled yet (a bundle client can decide to cancel such request via willSendRequest).
+    if (!loader)
+        return;
+
     // FIXME (NetworkProcess): We should only tell the NetworkProcess to remove load identifiers for ResourceLoaders that were never started.
     // If a resource load was actually started within the NetworkProcess then the NetworkProcess handles clearing out the identifier.
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
-    
-    RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
-    ASSERT(loader);
 
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
