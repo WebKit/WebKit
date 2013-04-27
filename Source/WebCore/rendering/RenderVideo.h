@@ -83,6 +83,8 @@ private:
 
     void updatePlayer();
 
+    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const OVERRIDE;
+
     LayoutSize m_cachedImageSize;
 };
 

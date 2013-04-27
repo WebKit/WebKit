@@ -1,3 +1,26 @@
+2013-04-26  Jer Noble  <jer.noble@apple.com>
+
+        Video playback has corruption on the edges of the video
+        https://bugs.webkit.org/show_bug.cgi?id=115216
+
+        Reviewed by Simon Fraser.
+
+        Test: media/video-poster-background.html
+
+        RenderImage correctly answers foregroundIsKnownToBeOpaqueInRect() method
+        when a poster image is displayed, but once the video begins playing and
+        the poster image is no longer displayed, RenderImage will continue to
+        answer 'true' even when the video does not occupy the entire render box.
+        Override foregroundIsKnownToBeOpaqueInRect() in order to more correctly
+        answer the question for the video layer.
+
+        * rendering/RenderImage.h: Make foregroundIsKnownToBeOpaqueInRect() protected
+            (vs. private).
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::foregroundIsKnownToBeOpaqueInRect): Added. Return
+            true if the rect parameter is entirely contained by the video box.
+        * rendering/RenderVideo.h:
+
 2013-04-26  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] ExclusionShape bounding box methods should return LayoutRects

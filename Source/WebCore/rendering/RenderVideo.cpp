@@ -339,6 +339,14 @@ LayoutUnit RenderVideo::offsetHeight() const
 }
 #endif
 
+bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
+{
+    if (videoElement()->shouldDisplayPosterImage())
+        return RenderImage::foregroundIsKnownToBeOpaqueInRect(localRect, maxDepthToTest);
+
+    return videoBox().contains(enclosingIntRect(localRect));
+}
+
 } // namespace WebCore
 
 #endif

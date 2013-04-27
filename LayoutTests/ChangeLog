@@ -1,3 +1,14 @@
+2013-04-26  Jer Noble  <jer.noble@apple.com>
+
+        Video playback has corruption on the edges of the video
+        https://bugs.webkit.org/show_bug.cgi?id=115216
+
+        Reviewed by Simon Fraser.
+
+        * media/content/test.jpg: Added.
+        * media/video-poster-background-expected.html: Added.
+        * media/video-poster-background.html: Added.
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping some more tests that still need rebaselining after disabling subpixel layout on mac.

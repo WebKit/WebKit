@@ -65,6 +65,7 @@ protected:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual RenderBox* embeddedContentBox() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
+    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const OVERRIDE;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
@@ -88,7 +89,6 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
 
-    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const OVERRIDE;
     virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE;
 
     virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
