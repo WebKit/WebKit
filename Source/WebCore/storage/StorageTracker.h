@@ -79,7 +79,6 @@ public:
 
 private:
     explicit StorageTracker(const String& storagePath);
-    static void scheduleTask(void*);
 
     void internalInitialize();
 

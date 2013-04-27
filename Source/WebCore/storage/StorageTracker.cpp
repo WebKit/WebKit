@@ -302,23 +302,15 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         m_originSet.add(originIdentifier);
     }
 
-    OwnPtr<StorageTask> task = StorageTask::createSetOriginDetails(originIdentifier.isolatedCopy(), databaseFile);
+    Function<void ()> function = bind(&StorageTracker::syncSetOriginDetails, this, originIdentifier.isolatedCopy(), databaseFile.isolatedCopy());
 
     if (isMainThread()) {
         ASSERT(m_thread);
-        m_thread->scheduleTask(task.release());
-    } else 
-        callOnMainThread(scheduleTask, reinterpret_cast<void*>(task.leakPtr()));
-}
-
-void StorageTracker::scheduleTask(void* taskIn)
-{
-    ASSERT(isMainThread());
-    ASSERT(StorageTracker::tracker().m_thread);
-    
-    OwnPtr<StorageTask> task = adoptPtr(reinterpret_cast<StorageTask*>(taskIn));
-
-    StorageTracker::tracker().m_thread->scheduleTask(task.release());
+        m_thread->dispatch(function);
+    } else {
+        // FIXME: This weird ping-ponging was done to fix a deadlock. We should figure out a cleaner way to avoid it instead.
+        callOnMainThread(bind(&StorageThread::dispatch, m_thread.get(), function));
+    }
 }
 
 void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const String& databaseFile)
@@ -483,8 +475,8 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
         willDeleteOrigin(originId);
         m_originSet.remove(originId);
     }
-    
-    m_thread->scheduleTask(StorageTask::createDeleteOrigin(originId));
+
+    m_thread->dispatch(bind(&StorageTracker::syncDeleteOrigin, this, originId.isolatedCopy()));
 }
 
 void StorageTracker::syncDeleteOrigin(const String& originIdentifier)

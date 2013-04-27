@@ -40,21 +40,6 @@ StorageTask::StorageTask(Type type, const Function<void()>& function)
     ASSERT(m_type == Dispatch);
 }
 
-StorageTask::StorageTask(Type type, const String& originIdentifier)
-    : m_type(type)
-    , m_originIdentifier(originIdentifier)
-{
-    ASSERT(m_type == DeleteOrigin);
-}
-
-StorageTask::StorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
-    : m_type(type)
-    , m_originIdentifier(originIdentifier)
-    , m_databaseFilename(databaseFilename)
-{
-    ASSERT(m_type == SetOriginDetails);
-}
-
 StorageTask::~StorageTask()
 {
 }
@@ -64,12 +49,6 @@ void StorageTask::performTask()
     switch (m_type) {
         case Dispatch:
             m_function();
-            break;
-        case SetOriginDetails:
-            StorageTracker::tracker().syncSetOriginDetails(m_originIdentifier, m_databaseFilename);
-            break;
-        case DeleteOrigin:
-            StorageTracker::tracker().syncDeleteOrigin(m_originIdentifier);
             break;
     }
 }

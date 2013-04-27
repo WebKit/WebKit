@@ -38,25 +38,19 @@ namespace WebCore {
     class StorageTask {
         WTF_MAKE_NONCOPYABLE(StorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Type { Dispatch, SetOriginDetails, DeleteOrigin };
+        enum Type { Dispatch };
 
         ~StorageTask();
 
         static PassOwnPtr<StorageTask> createDispatch(const Function<void()>& function) { return adoptPtr(new StorageTask(Dispatch, function)); }
-        static PassOwnPtr<StorageTask> createSetOriginDetails(const String& originIdentifier, const String& databaseFilename) { return adoptPtr(new StorageTask(SetOriginDetails, originIdentifier, databaseFilename)); }
-        static PassOwnPtr<StorageTask> createDeleteOrigin(const String& originIdentifier) { return adoptPtr(new StorageTask(DeleteOrigin, originIdentifier)); }
 
         void performTask();
 
     private:
         StorageTask(Type, const Function<void()>&);
-        StorageTask(Type, const String& originIdentifier);
-        StorageTask(Type, const String& originIdentifier, const String& databaseFilename);
 
         Type m_type;
         Function<void ()> m_function;
-        String m_originIdentifier;
-        String m_databaseFilename;
     };
 
 } // namespace WebCore
