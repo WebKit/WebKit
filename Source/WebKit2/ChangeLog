@@ -1,3 +1,19 @@
+2013-04-26  Yael Aharon  <yael.aharon@intel.com>
+
+        [WK2][EFL] Build break after r149212
+        https://bugs.webkit.org/show_bug.cgi?id=115294
+
+        Reviewed by Simon Fraser.
+        r144672 bumped up the revision of WKContextClient API, and introduced a version array
+        APIClientTraits<WKContextClient>::interfaceSizesByVersion .
+        In r149212, the version was bumped back down and the version array was emptied but not removed.
+        This causes a warning "array subscript is below array bounds", and in EFL the warning is
+        treated as error.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+
 2013-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add methods to add a user style sheet to the WebKit2 GTK+ API
