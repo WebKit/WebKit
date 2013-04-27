@@ -1,3 +1,18 @@
+2013-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Re-landing <http://trac.webkit.org/changeset/148999>
+
+            Filled out more cases of branch folding in bytecode when emitting
+            expressions into a branching context
+            https://bugs.webkit.org/show_bug.cgi?id=115057
+
+            Reviewed by Phil Pizlo.
+
+        Added a more exhaustive correctness test.
+
+        * fast/js/branch-fold-correctness-expected.txt: Added.
+        * fast/js/branch-fold-correctness.html: Added.
+
 2013-04-26  Jer Noble  <jer.noble@apple.com>
 
         Video playback has corruption on the edges of the video

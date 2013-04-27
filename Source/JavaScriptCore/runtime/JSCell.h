@@ -96,6 +96,7 @@ public:
     JS_EXPORT_PRIVATE JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
     bool toBoolean(ExecState*) const;
+    TriState pureToBoolean() const;
     JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
     JS_EXPORT_PRIVATE JSObject* toObject(ExecState*, JSGlobalObject*) const;
 

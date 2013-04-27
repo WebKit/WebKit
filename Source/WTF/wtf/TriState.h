@@ -34,6 +34,11 @@ enum TriState {
     MixedTriState
 };
 
+inline TriState triState(bool boolean)
+{
+    return static_cast<TriState>(boolean);
+}
+
 }
 
 using WTF::TriState;

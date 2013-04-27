@@ -1,3 +1,16 @@
+2013-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Re-landing <http://trac.webkit.org/changeset/148999>
+
+            Filled out more cases of branch folding in bytecode when emitting
+            expressions into a branching context
+            https://bugs.webkit.org/show_bug.cgi?id=115057
+
+            Reviewed by Phil Pizlo.
+
+        We can't fold the number == 1 case to boolean because all non-zero numbers
+        down-cast to true, but only 1 is == to true.
+
 2013-04-26  Filip Pizlo  <fpizlo@apple.com>
 
         Correct indentation of SymbolTable.h

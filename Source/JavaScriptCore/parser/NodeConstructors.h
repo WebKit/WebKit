@@ -60,25 +60,30 @@ namespace JSC {
     {
     }
 
+    inline ConstantNode::ConstantNode(const JSTokenLocation& location, ResultType resultType)
+        : ExpressionNode(location, resultType)
+    {
+    }
+
     inline NullNode::NullNode(const JSTokenLocation& location)
-        : ExpressionNode(location, ResultType::nullType())
+        : ConstantNode(location, ResultType::nullType())
     {
     }
 
     inline BooleanNode::BooleanNode(const JSTokenLocation& location, bool value)
-        : ExpressionNode(location, ResultType::booleanType())
+        : ConstantNode(location, ResultType::booleanType())
         , m_value(value)
     {
     }
 
     inline NumberNode::NumberNode(const JSTokenLocation& location, double value)
-        : ExpressionNode(location, ResultType::numberType())
+        : ConstantNode(location, JSValue(value).isInt32() ? ResultType::numberTypeIsInt32() : ResultType::numberType())
         , m_value(value)
     {
     }
 
     inline StringNode::StringNode(const JSTokenLocation& location, const Identifier& value)
-        : ExpressionNode(location, ResultType::stringType())
+        : ConstantNode(location, ResultType::stringType())
         , m_value(value)
     {
     }
@@ -631,15 +636,10 @@ namespace JSC {
     {
     }
     
-    inline IfNode::IfNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock)
+    inline IfElseNode::IfElseNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
         : StatementNode(location)
         , m_condition(condition)
         , m_ifBlock(ifBlock)
-    {
-    }
-
-    inline IfElseNode::IfElseNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
-        : IfNode(location, condition, ifBlock)
         , m_elseBlock(elseBlock)
     {
     }

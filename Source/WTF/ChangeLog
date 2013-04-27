@@ -1,3 +1,17 @@
+2013-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Filled out more cases of branch folding in bytecode when emitting expressions into a branching context
+        https://bugs.webkit.org/show_bug.cgi?id=115057
+
+        Reviewed by Filip Pizlo.
+
+        Added a helper constructor for TriState so clients can make one without
+        branching or making assumptions about the integer values of TriStates.
+
+        * wtf/TriState.h:
+        (WTF::triState):
+        (WTF):
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.

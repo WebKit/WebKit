@@ -92,40 +92,31 @@ RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& 
     return generator.newTemporary();
 }
 
-// ------------------------------ NullNode -------------------------------------
+// ------------------------------ ConstantNode ----------------------------------
 
-RegisterID* NullNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+void ConstantNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
 {
-    if (dst == generator.ignoredResult())
-        return 0;
-    return generator.emitLoad(dst, jsNull());
+    TriState value = jsValue(generator).pureToBoolean();
+    if (value == MixedTriState)
+        ExpressionNode::emitBytecodeInConditionContext(generator, trueTarget, falseTarget, fallThroughMode);
+    else if (value == TrueTriState && fallThroughMode == FallThroughMeansFalse)
+        generator.emitJump(trueTarget);
+    else if (value == FalseTriState && fallThroughMode == FallThroughMeansTrue)
+        generator.emitJump(falseTarget);
+
+    // All other cases are unconditional fall-throughs, like "if (true)".
 }
 
-// ------------------------------ BooleanNode ----------------------------------
-
-RegisterID* BooleanNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* ConstantNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitLoad(dst, m_value);
+    return generator.emitLoad(dst, jsValue(generator));
 }
 
-// ------------------------------ NumberNode -----------------------------------
-
-RegisterID* NumberNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+JSValue StringNode::jsValue(BytecodeGenerator& generator) const
 {
-    if (dst == generator.ignoredResult())
-        return 0;
-    return generator.emitLoad(dst, m_value);
-}
-
-// ------------------------------ StringNode -----------------------------------
-
-RegisterID* StringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
-{
-    if (dst == generator.ignoredResult())
-        return 0;
-    return generator.emitLoad(dst, m_value);
+    return generator.addStringConstant(m_value);
 }
 
 // ------------------------------ RegExpNode -----------------------------------
@@ -1042,6 +1033,64 @@ RegisterID* BinaryOpNode::emitStrcat(BytecodeGenerator& generator, RegisterID* d
     return generator.emitStrcat(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get(), temporaryRegisters.size());
 }
 
+void BinaryOpNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
+{
+    TriState branchCondition;
+    ExpressionNode* branchExpression;
+    tryFoldToBranch(generator, branchCondition, branchExpression);
+
+    if (branchCondition == MixedTriState)
+        ExpressionNode::emitBytecodeInConditionContext(generator, trueTarget, falseTarget, fallThroughMode);
+    else if (branchCondition == TrueTriState)
+        generator.emitNodeInConditionContext(branchExpression, trueTarget, falseTarget, fallThroughMode);
+    else
+        generator.emitNodeInConditionContext(branchExpression, falseTarget, trueTarget, invert(fallThroughMode));
+}
+
+static inline bool canFoldToBranch(OpcodeID opcodeID, ExpressionNode* branchExpression, JSValue constant)
+{
+    ResultType expressionType = branchExpression->resultDescriptor();
+
+    if (expressionType.definitelyIsBoolean() && constant.isBoolean())
+        return true;
+    else if (expressionType.definitelyIsBoolean() && constant.isInt32() && (constant.asInt32() == 0 || constant.asInt32() == 1))
+        return opcodeID == op_eq || opcodeID == op_neq; // Strict equality is false in the case of type mismatch.
+    else if (expressionType.isInt32() && constant.isInt32() && constant.asInt32() == 0)
+        return true;
+
+    return false;
+}
+
+void BinaryOpNode::tryFoldToBranch(BytecodeGenerator& generator, TriState& branchCondition, ExpressionNode*& branchExpression)
+{
+    branchCondition = MixedTriState;
+    branchExpression = 0;
+
+    ConstantNode* constant = 0;
+    if (m_expr1->isConstant()) {
+        constant = static_cast<ConstantNode*>(m_expr1);
+        branchExpression = m_expr2;
+    } else if (m_expr2->isConstant()) {
+        constant = static_cast<ConstantNode*>(m_expr2);
+        branchExpression = m_expr1;
+    }
+
+    if (!constant)
+        return;
+    ASSERT(branchExpression);
+
+    OpcodeID opcodeID = this->opcodeID();
+    JSValue value = constant->jsValue(generator);
+    bool canFoldToBranch = JSC::canFoldToBranch(opcodeID, branchExpression, value);
+    if (!canFoldToBranch)
+        return;
+
+    if (opcodeID == op_eq || opcodeID == op_stricteq)
+        branchCondition = triState(value.pureToBoolean());
+    else if (opcodeID == op_neq || opcodeID == op_nstricteq)
+        branchCondition = triState(!value.pureToBoolean());
+}
+
 RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     OpcodeID opcodeID = this->opcodeID();
@@ -1504,41 +1553,71 @@ void VarStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     generator.emitNode(m_expr);
 }
 
-// ------------------------------ IfNode ---------------------------------------
+// ------------------------------ IfElseNode ---------------------------------------
 
-void IfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+static inline StatementNode* singleStatement(StatementNode* statementNode)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), charPosition());
-    
-    RefPtr<Label> afterThen = generator.newLabel();
-
-    RefPtr<Label> beforeThen = generator.newLabel();
-    generator.emitNodeInConditionContext(m_condition, beforeThen.get(), afterThen.get(), FallThroughMeansTrue);
-    generator.emitLabel(beforeThen.get());
-
-    generator.emitNode(dst, m_ifBlock);
-    generator.emitLabel(afterThen.get());
+    if (statementNode->isBlock())
+        return static_cast<BlockNode*>(statementNode)->singleStatement();
+    return statementNode;
 }
 
-// ------------------------------ IfElseNode ---------------------------------------
+bool IfElseNode::tryFoldBreakAndContinue(BytecodeGenerator& generator, StatementNode* ifBlock,
+    Label*& trueTarget, FallThroughMode& fallThroughMode)
+{
+    StatementNode* singleStatement = JSC::singleStatement(ifBlock);
+    if (!singleStatement)
+        return false;
+
+    if (singleStatement->isBreak()) {
+        BreakNode* breakNode = static_cast<BreakNode*>(singleStatement);
+        Label* target = breakNode->trivialTarget(generator);
+        if (!target)
+            return false;
+        trueTarget = target;
+        fallThroughMode = FallThroughMeansFalse;
+        return true;
+    }
+
+    if (singleStatement->isContinue()) {
+        ContinueNode* continueNode = static_cast<ContinueNode*>(singleStatement);
+        Label* target = continueNode->trivialTarget(generator);
+        if (!target)
+            return false;
+        trueTarget = target;
+        fallThroughMode = FallThroughMeansFalse;
+        return true;
+    }
+
+    return false;
+}
 
 void IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), charPosition());
     
+    RefPtr<Label> beforeThen = generator.newLabel();
     RefPtr<Label> beforeElse = generator.newLabel();
     RefPtr<Label> afterElse = generator.newLabel();
 
-    RefPtr<Label> beforeThen = generator.newLabel();
-    generator.emitNodeInConditionContext(m_condition, beforeThen.get(), beforeElse.get(), FallThroughMeansTrue);
+    Label* trueTarget = beforeThen.get();
+    Label* falseTarget = beforeElse.get();
+    FallThroughMode fallThroughMode = FallThroughMeansTrue;
+    bool didFoldIfBlock = tryFoldBreakAndContinue(generator, m_ifBlock, trueTarget, fallThroughMode);
+
+    generator.emitNodeInConditionContext(m_condition, trueTarget, falseTarget, fallThroughMode);
     generator.emitLabel(beforeThen.get());
 
-    generator.emitNode(dst, m_ifBlock);
-    generator.emitJump(afterElse.get());
+    if (!didFoldIfBlock) {
+        generator.emitNode(dst, m_ifBlock);
+        if (m_elseBlock)
+            generator.emitJump(afterElse.get());
+    }
 
     generator.emitLabel(beforeElse.get());
 
-    generator.emitNode(dst, m_elseBlock);
+    if (m_elseBlock)
+        generator.emitNode(dst, m_elseBlock);
 
     generator.emitLabel(afterElse.get());
 }
@@ -1700,6 +1779,20 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ContinueNode ---------------------------------
 
+Label* ContinueNode::trivialTarget(BytecodeGenerator& generator)
+{
+    if (generator.shouldEmitDebugHooks())
+        return 0;
+
+    LabelScope* scope = generator.continueTarget(m_ident);
+    ASSERT(scope);
+
+    if (generator.scopeDepth() != scope->scopeDepth())
+        return 0;
+
+    return scope->continueTarget();
+}
+
 void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), charPosition());
@@ -1712,6 +1805,20 @@ void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 }
 
 // ------------------------------ BreakNode ------------------------------------
+
+Label* BreakNode::trivialTarget(BytecodeGenerator& generator)
+{
+    if (generator.shouldEmitDebugHooks())
+        return 0;
+
+    LabelScope* scope = generator.breakTarget(m_ident);
+    ASSERT(scope);
+
+    if (generator.scopeDepth() != scope->scopeDepth())
+        return 0;
+
+    return scope->breakTarget();
+}
 
 void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {

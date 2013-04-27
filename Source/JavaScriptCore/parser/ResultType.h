@@ -62,6 +62,11 @@ namespace JSC {
             return (m_type & TypeBits) == TypeMaybeString;
         }
 
+        bool definitelyIsBoolean()
+        {
+            return (m_type & TypeBits) == TypeMaybeBool;
+        }
+
         bool mightBeNumber()
         {
             return m_type & TypeMaybeNumber;
