@@ -104,7 +104,7 @@ void StorageThread::terminate()
     if (!m_threadID)
         return;
 
-    m_queue.append(StorageTask::createTerminate(this));
+    m_queue.append(StorageTask::createDispatch(bind(&StorageThread::performTerminate, this)));
     waitForThreadCompletion(m_threadID);
     ASSERT(m_queue.killed());
     m_threadID = 0;
@@ -119,9 +119,9 @@ void StorageThread::performTerminate()
 void StorageThread::releaseFastMallocFreeMemoryInAllThreads()
 {
     HashSet<StorageThread*>& threads = activeStorageThreads();
-    HashSet<StorageThread*>::iterator end = threads.end();
-    for (HashSet<StorageThread*>::iterator it = threads.begin(); it != end; ++it)
-        (*it)->scheduleTask(StorageTask::createReleaseFastMallocFreeMemory());
+
+    for (HashSet<StorageThread*>::iterator it = threads.begin(), end = threads.end(); it != end; ++it)
+        (*it)->dispatch(bind(WTF::releaseFastMallocFreeMemory));
 }
 
 }

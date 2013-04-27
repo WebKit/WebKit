@@ -34,12 +34,11 @@
 namespace WebCore {
 
     class StorageAreaSync;
-    class StorageThread;
 
     class StorageTask {
         WTF_MAKE_NONCOPYABLE(StorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Type { Dispatch, AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, ReleaseFastMallocFreeMemory, TerminateThread };
+        enum Type { Dispatch, AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, DeleteOrigin };
 
         ~StorageTask();
 
@@ -47,27 +46,20 @@ namespace WebCore {
         static PassOwnPtr<StorageTask> createImport(StorageAreaSync* area) { return adoptPtr(new StorageTask(AreaImport, area)); }
         static PassOwnPtr<StorageTask> createSync(StorageAreaSync* area) { return adoptPtr(new StorageTask(AreaSync, area)); }
         static PassOwnPtr<StorageTask> createDeleteEmptyDatabase(StorageAreaSync* area) { return adoptPtr(new StorageTask(DeleteEmptyDatabase, area)); }
-        static PassOwnPtr<StorageTask> createOriginIdentifiersImport() { return adoptPtr(new StorageTask(ImportOrigins)); }
         static PassOwnPtr<StorageTask> createSetOriginDetails(const String& originIdentifier, const String& databaseFilename) { return adoptPtr(new StorageTask(SetOriginDetails, originIdentifier, databaseFilename)); }
         static PassOwnPtr<StorageTask> createDeleteOrigin(const String& originIdentifier) { return adoptPtr(new StorageTask(DeleteOrigin, originIdentifier)); }
-        static PassOwnPtr<StorageTask> createDeleteAllOrigins() { return adoptPtr(new StorageTask(DeleteAllOrigins)); }
-        static PassOwnPtr<StorageTask> createReleaseFastMallocFreeMemory() { return adoptPtr(new StorageTask(ReleaseFastMallocFreeMemory)); }
-        static PassOwnPtr<StorageTask> createTerminate(StorageThread* thread) { return adoptPtr(new StorageTask(TerminateThread, thread)); }
 
         void performTask();
 
     private:
         StorageTask(Type, const Function<void()>&);
         StorageTask(Type, StorageAreaSync*);
-        StorageTask(Type, StorageThread*);
         StorageTask(Type, const String& originIdentifier);
         StorageTask(Type, const String& originIdentifier, const String& databaseFilename);
-        explicit StorageTask(Type);
 
         Type m_type;
         Function<void ()> m_function;
         StorageAreaSync* m_area;
-        StorageThread* m_thread;
         String m_originIdentifier;
         String m_databaseFilename;
     };

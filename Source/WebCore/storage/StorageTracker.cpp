@@ -168,7 +168,7 @@ void StorageTracker::importOriginIdentifiers()
     ASSERT(isMainThread());
     ASSERT(m_thread);
 
-    m_thread->scheduleTask(StorageTask::createOriginIdentifiersImport());
+    m_thread->dispatch(bind(&StorageTracker::syncImportOriginIdentifiers, this));
 }
 
 void StorageTracker::notifyFinishedImportingOriginIdentifiersOnMainThread(void*)
@@ -387,8 +387,8 @@ void StorageTracker::deleteAllOrigins()
     }
 
     PageGroup::clearLocalStorageForAllOrigins();
-    
-    m_thread->scheduleTask(StorageTask::createDeleteAllOrigins());
+
+    m_thread->dispatch(bind(&StorageTracker::syncDeleteAllOrigins, this));
 }
     
 void StorageTracker::syncDeleteAllOrigins()

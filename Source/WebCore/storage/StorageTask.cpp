@@ -36,7 +36,6 @@ StorageTask::StorageTask(Type type, const Function<void()>& function)
     : m_type(type)
     , m_function(function)
     , m_area(0)
-    , m_thread(0)
 {
     ASSERT(!m_function.isNull());
     ASSERT(m_type == Dispatch);
@@ -45,33 +44,14 @@ StorageTask::StorageTask(Type type, const Function<void()>& function)
 StorageTask::StorageTask(Type type, StorageAreaSync* area)
     : m_type(type)
     , m_area(area)
-    , m_thread(0)
 {
     ASSERT(m_area);
     ASSERT(m_type == AreaImport || m_type == AreaSync || m_type == DeleteEmptyDatabase);
 }
 
-StorageTask::StorageTask(Type type, StorageThread* thread)
-    : m_type(type)
-    , m_area(0)
-    , m_thread(thread)
-{
-    ASSERT(m_thread);
-    ASSERT(m_type == TerminateThread);
-}
-
-StorageTask::StorageTask(Type type)
-    : m_type(type)
-    , m_area(0)
-    , m_thread(0)
-{
-    ASSERT(m_type == ImportOrigins || m_type == DeleteAllOrigins || m_type == ReleaseFastMallocFreeMemory);
-}
-
 StorageTask::StorageTask(Type type, const String& originIdentifier)
     : m_type(type)
     , m_area(0)
-    , m_thread(0)
     , m_originIdentifier(originIdentifier)
 {
     ASSERT(m_type == DeleteOrigin);
@@ -80,7 +60,6 @@ StorageTask::StorageTask(Type type, const String& originIdentifier)
 StorageTask::StorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
     : m_type(type)
     , m_area(0)
-    , m_thread(0)
     , m_originIdentifier(originIdentifier)
     , m_databaseFilename(databaseFilename)
 {
@@ -106,23 +85,11 @@ void StorageTask::performTask()
         case SetOriginDetails:
             StorageTracker::tracker().syncSetOriginDetails(m_originIdentifier, m_databaseFilename);
             break;
-        case ImportOrigins:
-            StorageTracker::tracker().syncImportOriginIdentifiers();
-            break;
-        case DeleteAllOrigins:
-            StorageTracker::tracker().syncDeleteAllOrigins();
-            break;
         case DeleteOrigin:
             StorageTracker::tracker().syncDeleteOrigin(m_originIdentifier);
             break;
         case DeleteEmptyDatabase:
             m_area->deleteEmptyDatabase();
-            break;
-        case ReleaseFastMallocFreeMemory:
-            WTF::releaseFastMallocFreeMemory();
-            break;
-        case TerminateThread:
-            m_thread->performTerminate();
             break;
     }
 }

@@ -35,36 +35,36 @@
 
 namespace WebCore {
 
-    class StorageAreaSync;
-    class StorageTask;
+class StorageAreaSync;
+class StorageTask;
 
-    class StorageThread {
-        WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        static PassOwnPtr<StorageThread> create();
-        ~StorageThread();
+class StorageThread {
+    WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassOwnPtr<StorageThread> create();
+    ~StorageThread();
 
-        bool start();
-        void terminate();
-        void scheduleTask(PassOwnPtr<StorageTask>);
+    bool start();
+    void terminate();
+    void scheduleTask(PassOwnPtr<StorageTask>);
 
-        void dispatch(const Function<void()>&);
+    void dispatch(const Function<void()>&);
 
-        // Background thread part of the terminate procedure.
-        void performTerminate();
+    static void releaseFastMallocFreeMemoryInAllThreads();
 
-        static void releaseFastMallocFreeMemoryInAllThreads();
+private:
+    StorageThread();
 
-    private:
-        StorageThread();
+    // Called on background thread.
+    static void threadEntryPointCallback(void*);
+    void threadEntryPoint();
 
-        // Called on background thread.
-        static void threadEntryPointCallback(void*);
-        void threadEntryPoint();
+    // Background thread part of the terminate procedure.
+    void performTerminate();
 
-        ThreadIdentifier m_threadID;
-        MessageQueue<StorageTask> m_queue;
-    };
+    ThreadIdentifier m_threadID;
+    MessageQueue<StorageTask> m_queue;
+};
 
 } // namespace WebCore
 
