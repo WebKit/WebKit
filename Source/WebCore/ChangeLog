@@ -1,3 +1,18 @@
+2013-04-26  Jer Noble  <jer.noble@apple.com>
+
+        Nil-check the results of -[AVPlayerItemVideoOutput copyPixelBufferForItemTime:itemTimeForDisplay:].
+        https://bugs.webkit.org/show_bug.cgi?id=115265
+
+        Reviewed by Eric Carlson.
+
+        copyPixelBufferForItemTime:itemTimeForDisplay: can return nil, even
+        when hasNewPixelBufferForItemTime: returns YES. Check the results
+        before passing the buffer on to VTPixelTransferSessionTransferImage()
+        which does not NULL-check its parameters.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer):
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Uninflate caret rect.

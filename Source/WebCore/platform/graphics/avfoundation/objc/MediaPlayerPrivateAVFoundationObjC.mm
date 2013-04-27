@@ -1125,6 +1125,8 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
         return 0;
 
     RetainPtr<CVPixelBufferRef> buffer = adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+    if (!buffer)
+        return 0;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     // Create a VTPixelTransferSession, if necessary, as we cannot guarantee timely delivery of ARGB pixels.
