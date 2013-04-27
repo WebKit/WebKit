@@ -1,3 +1,18 @@
+2013-04-27  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r147261): Audio controls background not displayed after loading audio file
+        https://bugs.webkit.org/show_bug.cgi?id=115221
+
+        Reviewed by Darin Adler.
+
+        As in r147261, set a flex-shrink: 0 to avoid shrinking the media controls panel
+        below the specified height.
+
+        No new tests; fixes the media/media-document-audio-repaint.html test.
+
+        * css/mediaControlsQuickTime.css:
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+
 2013-04-26  Jer Noble  <jer.noble@apple.com>
 
         Video playback has corruption on the edges of the video

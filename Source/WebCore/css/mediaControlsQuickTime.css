@@ -34,6 +34,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-appearance: media-controls-background;
     overflow: visible;
     height: 25px;
+    -webkit-flex-shrink: 0;
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
