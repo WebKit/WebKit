@@ -380,6 +380,7 @@ void TestRunner::setAudioData(JSContextRef context, JSValueRef data)
     WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(InjectedBundle::shared().bundle(), context, data));
     InjectedBundle::shared().setAudioResult(audioData.get());
     m_whatToDump = Audio;
+    m_dumpPixels = false;
 }
 
 unsigned TestRunner::windowCount()

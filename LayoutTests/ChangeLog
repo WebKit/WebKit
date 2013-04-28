@@ -1,3 +1,30 @@
+2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WKTR] Tests dumping audio data shouldn't dump pixels
+        https://bugs.webkit.org/show_bug.cgi?id=115270
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the now-unnecessary pixel baselines for audio tests that were used on the EFL WK2 platform.
+
+        * platform/efl-wk2/webaudio/audiobuffersource-expected.png: Removed.
+        * platform/efl-wk2/webaudio/audiobuffersource-loop-points-expected.png: Removed.
+        * platform/efl-wk2/webaudio/audiobuffersource-multi-channels-expected.png: Removed.
+        * platform/efl-wk2/webaudio/audiobuffersource-playbackrate-expected.png: Removed.
+        * platform/efl-wk2/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.png: Removed.
+        * platform/efl-wk2/webaudio/codec-tests/wav/24bit-22khz-resample-expected.png: Removed.
+        * platform/efl-wk2/webaudio/codec-tests/wav/24bit-44khz-expected.png: Removed.
+        * platform/efl-wk2/webaudio/gain-expected.png: Removed.
+        * platform/efl-wk2/webaudio/mixing-expected.png: Removed.
+        * platform/efl-wk2/webaudio/oscillator-custom-expected.png: Removed.
+        * platform/efl-wk2/webaudio/oscillator-sawtooth-expected.png: Removed.
+        * platform/efl-wk2/webaudio/oscillator-sine-expected.png: Removed.
+        * platform/efl-wk2/webaudio/oscillator-square-expected.png: Removed.
+        * platform/efl-wk2/webaudio/oscillator-triangle-expected.png: Removed.
+        * platform/efl-wk2/webaudio/up-mixing-mono-51-expected.png: Removed.
+        * platform/efl-wk2/webaudio/up-mixing-mono-stereo-expected.png: Removed.
+        * platform/efl-wk2/webaudio/up-mixing-stereo-51-expected.png: Removed.
+
 2013-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pressing mouse button inside a dragstart event causes a crash

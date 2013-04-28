@@ -1,3 +1,17 @@
+2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WKTR] Tests dumping audio data shouldn't dump pixels
+        https://bugs.webkit.org/show_bug.cgi?id=115270
+
+        Reviewed by Benjamin Poulain.
+
+        Prevent dumping the pixel output when Web Audio tests are dumping output data
+        as the testing output. Pixel output in these tests has no real meaning and is
+        as such unnecessary.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAudioData):
+
 2013-04-27  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed Intel bots fix after r149231.
