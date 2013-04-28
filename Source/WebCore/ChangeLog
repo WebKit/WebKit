@@ -1,3 +1,22 @@
+2013-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        WebGL shouldn't allocate a "length" Identifier just to move some numbers around
+        https://bugs.webkit.org/show_bug.cgi?id=115317
+
+        Reviewed by Dean Jackson.
+
+        Saw this while debugging an ammo.js bug.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::setWebGLArrayWithTypedArrayArgument):
+        (WebCore::setWebGLArrayHelper):
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        (WebCore::constructArrayBufferView):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toVector): Use the pre-computed "length" identifier instead of
+        allocating a new one for each vector operation. There are lots more
+        optimizations we could do here. This is a start.
+
 2013-04-27  Anders Carlsson  <andersca@apple.com>
 
         Remove two more StorageTask types

@@ -429,7 +429,7 @@ bool toVector(JSC::ExecState* exec, JSC::JSValue value, Vector<T, inlineCapacity
         return false;
 
     JSC::JSObject* object = asObject(value);
-    int32_t length = object->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
+    int32_t length = object->get(exec, exec->vm().propertyNames->length).toInt32(exec);
 
     if (!vector.tryReserveCapacity(length))
         return false;
