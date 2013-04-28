@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
-#if USE(GSTREAMER)
 #include "VideoSinkGStreamer.h"
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 #include "GRefPtrGStreamer.h"
 #include "GStreamerVersioning.h"
 #include "IntSize.h"
@@ -432,4 +432,4 @@ GstElement* webkitVideoSinkNew()
 }
 #endif
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

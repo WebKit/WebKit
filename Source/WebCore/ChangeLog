@@ -1,3 +1,9 @@
+2013-04-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix when disabling video and video-track.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+
 2013-04-27  Geoffrey Garen  <ggaren@apple.com>
 
         WebGL shouldn't allocate a "length" Identifier just to move some numbers around
