@@ -1,3 +1,19 @@
+2013-04-28  Dean Jackson  <dino@apple.com>
+
+        [Mac] Disable canvas backing store scaling (HIGH_DPI_CANVAS)
+        https://bugs.webkit.org/show_bug.cgi?id=115310
+
+        Reviewed by Simon Fraser.
+
+        Disable the automatic pixel doubling in canvas backing stores on high
+        dpi devices. This will potentially make canvases look worse of high dpi
+        displays, but only if they were ignoring devicePixelRatio. Since the
+        majority of high dpi displays *do not* auto-double (including mobile
+        devices and other desktop browsers), this provides consistency and less
+        chance of unnecessary memory use.
+
+        * Configurations/FeatureDefines.xcconfig: Remove ENABLE_HIGH_DPI_CANVAS_macosx.
+
 2013-04-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of [Callback] IDL extended attribute for parameters
