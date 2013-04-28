@@ -1,3 +1,16 @@
+2013-04-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Pressing mouse button inside a dragstart event causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=115296
+
+        Reviewed by Darin Adler.
+
+        Added a regression test. While the bug report involves opening inspector and setting a breakpoint,
+        a simpler reduction that uses eventSender significantly reduces the complexity.
+
+        * fast/events/mousedown-inside-dragstart-should-not-cause-crash-expected.txt: Added.
+        * fast/events/mousedown-inside-dragstart-should-not-cause-crash.html: Added.
+
 2013-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Cleaned up pre/post inc/dec in bytecode
