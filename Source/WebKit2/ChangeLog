@@ -1,3 +1,30 @@
+2013-04-28  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Adopt new API for detecting window occlusion
+        https://bugs.webkit.org/show_bug.cgi?id=115334
+
+        Reviewed by Simon Fraser.
+
+        Switch off of WKSI for window occlusion and use the new NSWindowDidChangeOcclusionState notification
+        instead.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView viewWillMoveToWindow:]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidOrderOnScreen:]):
+        (-[WKView _windowDidChangeOcclusionState:]):
+        (-[WKView _setIsWindowOccluded:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView windowOcclusionDetectionEnabled]):
+        (-[WKView setWindowOcclusionDetectionEnabled:]):
+        Only compile occlusion detection code where supported and remove calls to register/deregister
+        for detection callbacks, now that NSWindow will handle that for us. We also no longer need to
+        track all the WKViews, as that was only required to lookup the view that matched the window number
+        returned from the occlusion callback.
+
 2013-04-26  Anders Carlsson  <andersca@apple.com>
 
         Use OwnPtr<PluginControllerProxy> for storing plug-in controllers in WebProcessConnection
