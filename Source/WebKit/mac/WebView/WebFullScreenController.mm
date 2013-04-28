@@ -232,7 +232,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
-        _webViewPlaceholder.adoptNS([[NSView alloc] init]);
+        _webViewPlaceholder = adoptNS([[NSView alloc] init]);
         [_webViewPlaceholder.get() setLayer:[CALayer layer]];
         [_webViewPlaceholder.get() setWantsLayer:YES];
     }

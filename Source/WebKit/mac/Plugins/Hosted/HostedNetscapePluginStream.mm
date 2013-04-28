@@ -55,7 +55,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, hostedNetscapePluginStreamC
 HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstanceProxy* instance, uint32_t streamID, NSURLRequest *request)
     : m_instance(instance)
     , m_streamID(streamID)
-    , m_request(AdoptNS, [request mutableCopy])
+    , m_request(adoptNS([request mutableCopy]))
     , m_requestURL([request URL])
     , m_frameLoader(0)
 {

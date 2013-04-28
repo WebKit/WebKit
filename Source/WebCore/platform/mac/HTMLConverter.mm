@@ -1664,7 +1664,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
     NSUInteger stringLength = 0;
-    RetainPtr<NSMutableDictionary> attrs(AdoptNS, [[NSMutableDictionary alloc] init]);
+    RetainPtr<NSMutableDictionary> attrs = adoptNS([[NSMutableDictionary alloc] init]);
 
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         RefPtr<Range> currentTextRange = it.range();
@@ -1707,7 +1707,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 
-        RetainPtr<NSString> substring(AdoptNS, [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(it.characters()) length:currentTextLength freeWhenDone:NO]);
+        RetainPtr<NSString> substring = adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(it.characters()) length:currentTextLength freeWhenDone:NO]);
         [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:substring.get()];
         [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];
         stringLength += currentTextLength;

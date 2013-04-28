@@ -163,7 +163,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
         }
 #if ENABLE(BLOB)
         if (nextInput.m_fileStart > 0) {
-            RetainPtr<CFNumberRef> position(AdoptCF, CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart));
+            RetainPtr<CFNumberRef> position = adoptCF(CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart));
             CFReadStreamSetProperty(form->currentStream, kCFStreamPropertyFileCurrentOffset, position.get());
         }
         form->currentStreamRangeLength = nextInput.m_fileLength;

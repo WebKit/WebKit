@@ -114,7 +114,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     NSString *pluginHostAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
 
-    RetainPtr<CFStringRef> localization(AdoptCF, WKCopyCFLocalizationPreferredName(NULL));
+    RetainPtr<CFStringRef> localization = adoptCF(WKCopyCFLocalizationPreferredName(NULL));
     
     NSDictionary *launchProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       pluginHostAppExecutablePath, @"pluginHostPath",
@@ -225,7 +225,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     if (!hostProxy)
         return 0;
 
-    RetainPtr<NSMutableDictionary> properties(AdoptNS, [[NSMutableDictionary alloc] init]);
+    RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
     
     if (mimeType)
         [properties.get() setObject:mimeType forKey:@"mimeType"];

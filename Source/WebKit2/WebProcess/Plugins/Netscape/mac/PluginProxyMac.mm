@@ -51,7 +51,7 @@ PlatformLayer* PluginProxy::pluginLayer()
     if (!m_pluginLayer && m_remoteLayerClientID) {
         // Create a layer with flipped geometry and add the real plug-in layer as a sublayer
         // so the coordinate system will match the event coordinate system.
-        m_pluginLayer.adoptNS([[CALayer alloc] init]);
+        m_pluginLayer = adoptNS([[CALayer alloc] init]);
         [m_pluginLayer.get() setGeometryFlipped:YES];
 
         if (m_isRestartedProcess) {

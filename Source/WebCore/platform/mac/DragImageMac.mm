@@ -68,7 +68,7 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     if (!image)
         return nil;
 
-    RetainPtr<NSImage> dissolvedImage(AdoptNS, [[NSImage alloc] initWithSize:[image.get() size]]);
+    RetainPtr<NSImage> dissolvedImage = adoptNS([[NSImage alloc] initWithSize:[image.get() size]]);
     
     [dissolvedImage.get() lockFocus];
     [image.get() drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositeCopy fraction:delta];
@@ -93,7 +93,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, RespectImageOrientatio
             // Construct a correctly-rotated copy of the image to use as the drag image.
             FloatRect destRect(FloatPoint(), sizeRespectingOrientation);
 
-            RetainPtr<NSImage> rotatedDragImage(AdoptNS, [[NSImage alloc] initWithSize:(NSSize)(sizeRespectingOrientation)]);
+            RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(sizeRespectingOrientation)]);
             [rotatedDragImage.get() lockFocus];
 
             // ImageOrientation uses top-left coordinates, need to flip to bottom-left, apply...
@@ -108,7 +108,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, RespectImageOrientatio
             transform = CGAffineTransformTranslate(transform, 0, destRect.height());
             transform = CGAffineTransformScale(transform, 1, -1);
 
-            RetainPtr<NSAffineTransform> cocoaTransform(AdoptNS, [[NSAffineTransform alloc] init]);
+            RetainPtr<NSAffineTransform> cocoaTransform = adoptNS([[NSAffineTransform alloc] init]);
             [cocoaTransform.get() setTransformStruct:*(NSAffineTransformStruct*)&transform];
             [cocoaTransform.get() concat];
 
@@ -119,7 +119,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, RespectImageOrientatio
         }
     }
 
-    RetainPtr<NSImage> dragImage(AdoptNS, [image->getNSImage() copy]);
+    RetainPtr<NSImage> dragImage = adoptNS([image->getNSImage() copy]);
     [dragImage.get() setSize:(NSSize)size];
     return dragImage;
 }

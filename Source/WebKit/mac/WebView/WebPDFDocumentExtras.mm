@@ -104,7 +104,7 @@ NSArray *allScriptsInPDFDocument(PDFDocument *document)
         RetainPtr<CFDataRef> data;
         if (CGPDFDictionaryGetStream(javaScriptAction, "JS", &stream)) {
             CGPDFDataFormat format;
-            data.adoptCF(CGPDFStreamCopyData(stream, &format));
+            data = adoptCF(CGPDFStreamCopyData(stream, &format));
             if (!data)
                 continue;
             bytes = CFDataGetBytePtr(data.get());

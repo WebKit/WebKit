@@ -47,7 +47,7 @@ static void proxyAutoConfigurationResultCallback(void *context, CFArrayRef proxi
     Vector<ProxyServer>* proxyServers = (Vector<ProxyServer>*)context;
     if (!proxies) {
         ASSERT(error);
-        RetainPtr<CFStringRef> errorDescriptionCF(AdoptCF, CFErrorCopyDescription(error));
+        RetainPtr<CFStringRef> errorDescriptionCF = adoptCF(CFErrorCopyDescription(error));
         String errorDescription(errorDescriptionCF.get());
         LOG(Network, "Failed to process proxy auto-configuration file with error: %s", errorDescription.utf8().data());
         return;
@@ -81,7 +81,7 @@ static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef pr
                 continue;
 
             CFStreamClientContext context = { 0, (void*)&proxyServers, 0, 0, 0 };
-            RetainPtr<CFRunLoopSourceRef> runLoopSource(AdoptCF, CFNetworkExecuteProxyAutoConfigurationURL(scriptURL, url, proxyAutoConfigurationResultCallback, &context));
+            RetainPtr<CFRunLoopSourceRef> runLoopSource = adoptCF(CFNetworkExecuteProxyAutoConfigurationURL(scriptURL, url, proxyAutoConfigurationResultCallback, &context));
 
             CFStringRef privateRunLoopMode = CFSTR("com.apple.WebKit.ProxyAutoConfiguration");
             CFTimeInterval timeout = 5;
@@ -121,12 +121,12 @@ static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef pr
 
 static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL& url)
 {
-    RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, CFNetworkCopySystemProxySettings());
+    RetainPtr<CFDictionaryRef> proxySettings = adoptCF(CFNetworkCopySystemProxySettings());
     if (!proxySettings)
         return;
 
-    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
-    RetainPtr<CFArrayRef> proxiesForURL(AdoptCF, CFNetworkCopyProxiesForURL(cfURL.get(), proxySettings.get()));
+    RetainPtr<CFURLRef> cfURL = adoptCF(url.createCFURL());
+    RetainPtr<CFArrayRef> proxiesForURL = adoptCF(CFNetworkCopyProxiesForURL(cfURL.get(), proxySettings.get()));
     if (!proxiesForURL)
         return;
 

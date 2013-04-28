@@ -134,7 +134,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         Class previewViewClass = PDFViewController::pdfPreviewViewClass();
         ASSERT(previewViewClass);
 
-        _pdfPreviewView.adoptNS([[previewViewClass alloc] initWithFrame:frame]);
+        _pdfPreviewView = adoptNS([[previewViewClass alloc] initWithFrame:frame]);
         [_pdfPreviewView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [self addSubview:_pdfPreviewView.get()];
 
@@ -403,7 +403,7 @@ PassOwnPtr<PDFViewController> PDFViewController::create(WKView *wkView)
 
 PDFViewController::PDFViewController(WKView *wkView)
     : m_wkView(wkView)
-    , m_wkPDFView(AdoptNS, [[WKPDFView alloc] initWithFrame:[m_wkView bounds] PDFViewController:this])
+    , m_wkPDFView(adoptNS([[WKPDFView alloc] initWithFrame:[m_wkView bounds] PDFViewController:this]))
     , m_pdfView([m_wkPDFView.get() pdfView])
 {
     [m_wkView addSubview:m_wkPDFView.get()];
@@ -432,18 +432,18 @@ static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::Data
     // http://developer.apple.com/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_ps_convert/chapter_16_section_1.html
     
     CGPSConverterCallbacks callbacks = { 0, 0, 0, 0, 0, 0, 0, 0 };    
-    RetainPtr<CGPSConverterRef> converter(AdoptCF, CGPSConverterCreate(0, &callbacks, 0));
+    RetainPtr<CGPSConverterRef> converter = adoptCF(CGPSConverterCreate(0, &callbacks, 0));
     ASSERT(converter);
 
-    RetainPtr<NSData> nsData(AdoptNS, [[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(dataReference.data()) length:dataReference.size() freeWhenDone:NO]);   
+    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(dataReference.data()) length:dataReference.size() freeWhenDone:NO]);   
 
-    RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithCFData((CFDataRef)nsData.get()));
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)nsData.get()));
     ASSERT(provider);
 
-    RetainPtr<CFMutableDataRef> result(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
+    RetainPtr<CFMutableDataRef> result = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
     ASSERT(result);
     
-    RetainPtr<CGDataConsumerRef> consumer(AdoptCF, CGDataConsumerCreateWithCFData(result.get()));
+    RetainPtr<CGDataConsumerRef> consumer = adoptCF(CGDataConsumerCreateWithCFData(result.get()));
     ASSERT(consumer);
     
     CGPSConverterConvert(converter.get(), provider.get(), consumer.get(), 0);
@@ -463,11 +463,11 @@ void PDFViewController::setPDFDocumentData(const String& mimeType, const String&
         m_suggestedFilename = String(suggestedFilename + ".pdf");
     } else {
         // Make sure to copy the data.
-        m_pdfData.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
+        m_pdfData = adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
         m_suggestedFilename = suggestedFilename;
     }
 
-    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)m_pdfData.get()]);
+    RetainPtr<PDFDocument> pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:(NSData *)m_pdfData.get()]);
     [m_wkPDFView.get() setDocument:pdfDocument.get()];
 }
 

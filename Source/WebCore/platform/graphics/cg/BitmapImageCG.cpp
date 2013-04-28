@@ -114,7 +114,7 @@ void BitmapImage::checkForSolidColor()
     // Currently we only check for solid color in the important special case of a 1x1 image.
     if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
         unsigned char pixel[4]; // RGBA
-        RetainPtr<CGContextRef> bmap(AdoptCF, CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
+        RetainPtr<CGContextRef> bmap = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
             kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
         if (!bmap)
             return;
@@ -158,7 +158,7 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
         if (CGImageRef currFrame = frameAtIndex(i))
             CFArrayAppendValue(array, currFrame);
     }
-    return RetainPtr<CFArrayRef>(AdoptCF, array);
+    return adoptCF(array);
 }
 
 void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)

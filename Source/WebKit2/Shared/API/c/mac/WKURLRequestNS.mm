@@ -33,7 +33,7 @@ using namespace WebKit;
 
 WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 {
-    RetainPtr<NSURLRequest> copiedURLRequest(AdoptNS, [urlRequest copy]);
+    RetainPtr<NSURLRequest> copiedURLRequest = adoptNS([urlRequest copy]);
     RefPtr<WebURLRequest> request = WebURLRequest::create(copiedURLRequest.get());
     return toAPI(request.release().leakRef());
 }

@@ -166,7 +166,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     // Create the WebGLLayer
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer.adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:this]);
+        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:this]);
 #ifndef NDEBUG
         [m_webGLLayer.get() setName:@"WebGL Layer"];
 #endif    

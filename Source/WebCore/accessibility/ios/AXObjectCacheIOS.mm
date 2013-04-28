@@ -45,7 +45,7 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
 {
-    RetainPtr<AccessibilityObjectWrapper> wrapper(AdoptNS, [[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
+    RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
     obj->setWrapper(wrapper.get());
 }
 

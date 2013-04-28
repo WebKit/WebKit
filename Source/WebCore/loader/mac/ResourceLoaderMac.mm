@@ -53,7 +53,7 @@ CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCach
     if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
         return 0;
 
-    RetainPtr<NSCachedURLResponse> nsCachedResponse(AdoptNS, [[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
+    RetainPtr<NSCachedURLResponse> nsCachedResponse = adoptNS([[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
     return [frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), nsCachedResponse.get()) _CFCachedURLResponse];
 }
 

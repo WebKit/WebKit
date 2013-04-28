@@ -205,7 +205,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
     const ShadowData* shadow = style->textShadow();
     if (shadow) {
-        RetainPtr<NSShadow> s(AdoptNS, [[NSShadow alloc] init]);
+        RetainPtr<NSShadow> s = adoptNS([[NSShadow alloc] init]);
         [s.get() setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
         [s.get() setShadowBlurRadius:shadow->radius()];
         [s.get() setShadowColor:nsColor(shadow->color())];

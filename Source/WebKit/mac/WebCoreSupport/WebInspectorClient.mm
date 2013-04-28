@@ -126,7 +126,7 @@ using namespace WebCore;
 
 WebInspectorClient::WebInspectorClient(WebView *webView)
     : m_webView(webView)
-    , m_highlighter(AdoptNS, [[WebNodeHighlighter alloc] initWithInspectedWebView:webView])
+    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:webView]))
     , m_frontendPage(0)
     , m_frontendClient(0)
 {
@@ -140,13 +140,13 @@ void WebInspectorClient::inspectorDestroyed()
 
 InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
-    RetainPtr<WebInspectorWindowController> windowController(AdoptNS, [[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
+    RetainPtr<WebInspectorWindowController> windowController = adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
     OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings()));
     m_frontendClient = frontendClient.get();
-    RetainPtr<WebInspectorFrontend> webInspectorFrontend(AdoptNS, [[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
+    RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
     return this;

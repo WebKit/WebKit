@@ -136,7 +136,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
     [m_view.get() handleAcceptedAlternativeText:acceptedReplacement];
     m_view.clear();
     if (acceptedReplacement)
-        m_resultForDismissal.adoptNS([acceptedReplacement copy]);
+        m_resultForDismissal = adoptNS([acceptedReplacement copy]);
 }
 
 #endif //USE(AUTOCORRECTION_PANEL)

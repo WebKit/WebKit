@@ -57,7 +57,7 @@ static size_t putBytesNowhere(void*, const void*, size_t count)
 static CGContextRef createScratchContext()
 {
     CGDataConsumerCallbacks callbacks = { putBytesNowhere, 0 };
-    RetainPtr<CGDataConsumerRef> consumer(AdoptCF, CGDataConsumerCreate(0, &callbacks));
+    RetainPtr<CGDataConsumerRef> consumer = adoptCF(CGDataConsumerCreate(0, &callbacks));
     CGContextRef context = CGPDFContextCreate(consumer.get(), 0, 0);
 
     CGFloat black[4] = { 0, 0, 0, 1 };
@@ -148,7 +148,7 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
         return false;
 
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
-    RetainPtr<CGMutablePathRef> path(AdoptCF, copyCGPathClosingSubpaths(m_path));
+    RetainPtr<CGMutablePathRef> path = adoptCF(copyCGPathClosingSubpaths(m_path));
     bool ret = CGPathContainsPoint(path.get(), 0, point, rule == RULE_EVENODD ? true : false);
     return ret;
 }

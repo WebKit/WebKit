@@ -383,7 +383,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    RetainPtr<CFStringRef> cfLocalization(AdoptCF, WKCopyCFLocalizationPreferredName(NULL));
+    RetainPtr<CFStringRef> cfLocalization = adoptCF(WKCopyCFLocalizationPreferredName(NULL));
     CString localization = String(cfLocalization.get()).utf8();
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];

@@ -55,13 +55,13 @@ bool InjectedBundle::load(APIObject* initializationUserData)
         m_sandboxExtension = 0;
     }
     
-    RetainPtr<CFStringRef> injectedBundlePathStr(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
+    RetainPtr<CFStringRef> injectedBundlePathStr = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
     if (!injectedBundlePathStr) {
         WTFLogAlways("InjectedBundle::load failed - Could not create the path string.\n");
         return false;
     }
     
-    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
+    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
     if (!bundleURL) {
         WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.\n");
         return false;

@@ -1091,7 +1091,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
 
             // The plug-in gives us a retained layer.
-            _pluginLayer.adoptNS((CALayer *)value);
+            _pluginLayer = adoptNS((CALayer *)value);
 
             BOOL accleratedCompositingEnabled = false;
 #if USE(ACCELERATED_COMPOSITING)
@@ -1101,9 +1101,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 // FIXME: This code can be shared between WebHostedNetscapePluginView and WebNetscapePluginView.
                 // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
                 // in order to get the coordinate system right.
-                RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.leakRef());
+                RetainPtr<CALayer> realPluginLayer = adoptNS(_pluginLayer.leakRef());
                 
-                _pluginLayer.adoptNS([[CALayer alloc] init]);
+                _pluginLayer = adoptNS([[CALayer alloc] init]);
                 _pluginLayer.get().bounds = realPluginLayer.get().bounds;
                 _pluginLayer.get().geometryFlipped = YES;
 
@@ -1336,7 +1336,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!self)
         return nil;
  
-    _pendingFrameLoads.adoptNS([[NSMutableDictionary alloc] init]);
+    _pendingFrameLoads = adoptNS([[NSMutableDictionary alloc] init]);
     
     // load the plug-in if it is not already loaded
     if (![pluginPackage load]) {
@@ -1605,7 +1605,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
         RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create([NSURLRequest requestWithURL:URL], plugin, [JSPluginRequest sendNotification], [JSPluginRequest notifyData]);
         
-        RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
+        RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:URL 
                                                                              MIMEType:@"text/plain" 
                                                                 expectedContentLength:[JSData length]
                                                                      textEncodingName:nil]);

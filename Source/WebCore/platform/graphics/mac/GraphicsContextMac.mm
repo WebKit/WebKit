@@ -74,7 +74,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     offset += radius;
     CGColorRef colorRef = color.isValid() ? cachedCGColor(color, ColorSpaceDeviceRGB) : 0;
 
-    RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
+    RetainPtr<CGMutablePathRef> focusRingPath = adoptCF(CGPathCreateMutable());
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
@@ -187,7 +187,7 @@ CGColorSpaceRef linearRGBColorSpaceRef()
         return linearSRGBSpace;
 
     RetainPtr<NSString> iccProfilePath = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linearSRGB" ofType:@"icc"];
-    RetainPtr<NSData> iccProfileData(AdoptNS, [[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
+    RetainPtr<NSData> iccProfileData = adoptNS([[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
 
     if (iccProfileData)
         linearSRGBSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());

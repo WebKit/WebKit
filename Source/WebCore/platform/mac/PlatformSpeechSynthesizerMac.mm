@@ -243,7 +243,7 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
     if (!m_platformSpeechWrapper)
-        m_platformSpeechWrapper.adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
+        m_platformSpeechWrapper = adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
     
     [m_platformSpeechWrapper.get() speakUtterance:utterance.get()];
 }

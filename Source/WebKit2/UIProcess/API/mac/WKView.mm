@@ -310,7 +310,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (WKBrowsingContextController *)browsingContextController
 {
     if (!_data->_browsingContextController)
-        _data->_browsingContextController.adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:[self pageRef]]);
+        _data->_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:[self pageRef]]);
     return _data->_browsingContextController.get();
 }
 
@@ -2742,7 +2742,7 @@ static void windowBecameOccluded(uint32_t, void* data, uint32_t dataLength, void
     if (rootLayer) {
         if (!_data->_layerHostingView) {
             // Create an NSView that will host our layer tree.
-            _data->_layerHostingView.adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
+            _data->_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
             [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
 
@@ -2897,7 +2897,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
-    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
     
     [types.get() addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
     [pasteboard declareTypes:types.get() owner:self];
@@ -2979,8 +2979,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     RetainPtr<NSData> data;
     
     if (_data->_promisedImage) {
-        data.adoptNS(_data->_promisedImage->data()->createNSData());
-        wrapper.adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+        data = adoptNS(_data->_promisedImage->data()->createNSData());
+        wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
         [wrapper.get() setPreferredFilename:_data->_promisedFilename];
     }
     
@@ -3065,7 +3065,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (WKFullScreenWindowController*)fullScreenWindowController
 {
     if (!_data->_fullScreenWindowController) {
-        _data->_fullScreenWindowController.adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow]]);
+        _data->_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow]]);
         [_data->_fullScreenWindowController.get() setWebView:self];
     }
     return _data->_fullScreenWindowController.get();
@@ -3084,7 +3084,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     // The sink does two things: 1) Tells us if the responder went unhandled, and
     // 2) prevents any NSBeep; we don't ever want to beep here.
-    RetainPtr<WKResponderChainSink> sink(AdoptNS, [[WKResponderChainSink alloc] initWithResponderChain:self]);
+    RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:self]);
     [super doCommandBySelector:selector];
     [sink.get() detach];
     return ![sink.get() didReceiveUnhandledCommand];
@@ -3272,7 +3272,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     } else {
         // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
         // printing), this function should return nil.
-        RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
+        RetainPtr<WKPrintingView> printingView = adoptNS([[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
         // NSPrintOperation takes ownership of the view.
         NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
         [printOperation setCanSpawnSeparateThread:YES];

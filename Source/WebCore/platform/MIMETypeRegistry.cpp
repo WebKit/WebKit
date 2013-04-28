@@ -194,10 +194,10 @@ typedef HashMap<String, Vector<String>*, CaseFoldingHash> MediaMIMETypeMap;
 static void initializeSupportedImageMIMETypes()
 {
 #if USE(CG)
-    RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageSourceCopyTypeIdentifiers());
+    RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
-        RetainPtr<CFStringRef> supportedType(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
+        RetainPtr<CFStringRef> supportedType = adoptCF(reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
         String mimeType = MIMETypeForImageSourceType(supportedType.get());
         if (!mimeType.isEmpty()) {
             supportedImageMIMETypes->add(mimeType);
@@ -281,10 +281,10 @@ static void initializeSupportedImageMIMETypesForEncoding()
 
 #if USE(CG)
 #if PLATFORM(MAC)
-    RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageDestinationCopyTypeIdentifiers());
+    RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageDestinationCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
-        RetainPtr<CFStringRef> supportedType(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
+        RetainPtr<CFStringRef> supportedType = adoptCF(reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
         String mimeType = MIMETypeForImageSourceType(supportedType.get());
         if (!mimeType.isEmpty())
             supportedImageMIMETypesForEncoding->add(mimeType);

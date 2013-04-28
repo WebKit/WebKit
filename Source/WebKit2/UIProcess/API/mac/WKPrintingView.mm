@@ -536,8 +536,8 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr<NSData> pdfData(AdoptNS, [[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
-        _printedPagesPDFDocument.adoptNS([[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
+        RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
+        _printedPagesPDFDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
     }
 
     unsigned printedPageNumber = [self _pageForRect:nsRect] - [self _firstPrintedPageNumber];

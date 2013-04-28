@@ -47,12 +47,12 @@ namespace WebCore {
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 {
     // Check if this UTI has a MIME type.
-    RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
+    RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
     if (mimeType)
         return mimeType.get();
 
     // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
-    RetainPtr<CFDictionaryRef> decl(AdoptCF, UTTypeCopyDeclaration(uti));
+    RetainPtr<CFDictionaryRef> decl = adoptCF(UTTypeCopyDeclaration(uti));
     if (!decl)
         return nil;
     CFTypeRef value = CFDictionaryGetValue(decl.get(), kUTTypeConformsToKey);

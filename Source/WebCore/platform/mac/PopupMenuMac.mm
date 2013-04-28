@@ -96,13 +96,13 @@ void PopupMenuMac::populate()
                 [attributes setObject:font forKey:NSFontAttributeName];
             }
 
-            RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
+            RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
             [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
             NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
             [paragraphStyle.get() setBaseWritingDirection:writingDirection];
             if (style.hasTextDirectionOverride()) {
-                RetainPtr<NSNumber> writingDirectionValue(AdoptNS, [[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
-                RetainPtr<NSArray> writingDirectionArray(AdoptNS, [[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+                RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
+                RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
             [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
@@ -184,7 +184,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     
     RefPtr<PopupMenuMac> protector(this);
 
-    RetainPtr<NSView> dummyView(AdoptNS, [[NSView alloc] initWithFrame:r]);
+    RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:r]);
     [view addSubview:dummyView.get()];
     location = [dummyView.get() convertPoint:location fromView:view];
     

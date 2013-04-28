@@ -63,8 +63,8 @@ AudioFileReader::AudioFileReader(const char* filePath)
     , m_audioFileID(0)
     , m_extAudioFileRef(0)
 {
-    RetainPtr<CFStringRef> filePathString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, filePath, kCFStringEncodingUTF8));
-    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePathString.get(), kCFURLPOSIXPathStyle, false));
+    RetainPtr<CFStringRef> filePathString = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, filePath, kCFStringEncodingUTF8));
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePathString.get(), kCFURLPOSIXPathStyle, false));
     if (!url)
         return;
 

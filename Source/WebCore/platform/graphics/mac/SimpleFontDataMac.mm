@@ -55,7 +55,7 @@ namespace WebCore {
 static bool fontHasVerticalGlyphs(CTFontRef ctFont)
 {
     // The check doesn't look neat but this is what AppKit does for vertical writing...
-    RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
+    RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
     CFIndex numTables = CFArrayGetCount(tableTags.get());
     for (CFIndex index = 0; index < numTables; ++index) {
         CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
@@ -81,11 +81,11 @@ static NSString *webFallbackFontFamily(void)
 
 const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *key) const
 {
-    if (key && !CFEqual(RetainPtr<CFStringRef>(AdoptCF, CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort"))) {
+    if (key && !CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort"))) {
         if (!m_derivedFontData)
             m_derivedFontData = DerivedFontData::create(isCustomFont());
         if (!m_derivedFontData->compositeFontReferences)
-            m_derivedFontData->compositeFontReferences.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, NULL));
+            m_derivedFontData->compositeFontReferences = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, NULL));
         else {
             const SimpleFontData* found = static_cast<const SimpleFontData*>(CFDictionaryGetValue(m_derivedFontData->compositeFontReferences.get(), static_cast<const void *>(key)));
             if (found)
@@ -237,14 +237,14 @@ void SimpleFontData::platformCharWidthInit()
     m_avgCharWidth = 0;
     m_maxCharWidth = 0;
     
-    RetainPtr<CFDataRef> os2Table(AdoptCF, copyFontTableForTag(m_platformData, 'OS/2'));
+    RetainPtr<CFDataRef> os2Table = adoptCF(copyFontTableForTag(m_platformData, 'OS/2'));
     if (os2Table && CFDataGetLength(os2Table.get()) >= 4) {
         const UInt8* os2 = CFDataGetBytePtr(os2Table.get());
         SInt16 os2AvgCharWidth = os2[2] * 256 + os2[3];
         m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_fontMetrics.unitsPerEm()) * m_platformData.m_size;
     }
 
-    RetainPtr<CFDataRef> headTable(AdoptCF, copyFontTableForTag(m_platformData, 'head'));
+    RetainPtr<CFDataRef> headTable = adoptCF(copyFontTableForTag(m_platformData, 'head'));
     if (headTable && CFDataGetLength(headTable.get()) >= 42) {
         const UInt8* head = CFDataGetBytePtr(headTable.get());
         ushort uxMin = head[36] * 256 + head[37];
@@ -399,10 +399,10 @@ bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters
     if (!addResult.isNewEntry)
         return addResult.iterator->value;
 
-    RetainPtr<CGFontRef> cgFont(AdoptCF, CTFontCopyGraphicsFont(platformData().ctFont(), 0));
+    RetainPtr<CGFontRef> cgFont = adoptCF(CTFontCopyGraphicsFont(platformData().ctFont(), 0));
 
     ProviderInfo info = { characters, length, getCFStringAttributes(0, platformData().orientation()) };
-    RetainPtr<CTLineRef> line(AdoptCF, wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
+    RetainPtr<CTLineRef> line = adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
     CFIndex runCount = CFArrayGetCount(runArray);
@@ -412,7 +412,7 @@ bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
         CFDictionaryRef runAttributes = CTRunGetAttributes(ctRun);
         CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
-        RetainPtr<CGFontRef> runCGFont(AdoptCF, CTFontCopyGraphicsFont(runFont, 0));
+        RetainPtr<CGFontRef> runCGFont = adoptCF(CTFontCopyGraphicsFont(runFont, 0));
         if (!CFEqual(runCGFont.get(), cgFont.get()))
             return false;
     }

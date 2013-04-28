@@ -67,7 +67,7 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 void ResourceRequest::updateNSURLRequest()
 {
     if (m_cfRequest)
-        m_nsRequest.adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
+        m_nsRequest = adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
 }
 
 #else
@@ -200,7 +200,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 #endif
 
-    m_nsRequest.adoptNS(nsRequest);
+    m_nsRequest = adoptNS(nsRequest);
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()
@@ -232,7 +232,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         }
     }
 
-    m_nsRequest.adoptNS(nsRequest);
+    m_nsRequest = adoptNS(nsRequest);
 }
 
 void ResourceRequest::updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest)
@@ -252,7 +252,7 @@ void ResourceRequest::applyWebArchiveHackForMail()
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     updatePlatformRequest();
-    m_nsRequest.adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
+    m_nsRequest = adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
     
 #endif // USE(CFNETWORK)

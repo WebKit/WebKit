@@ -235,7 +235,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 {
     Vector<TextCheckingResult> results;
 
-    RetainPtr<NSString> textString(AdoptNS, [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO]);
+    RetainPtr<NSString> textString = adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO]);
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString .get()
                                                                           range:NSMakeRange(0, length)
                                                                           types:checkingTypes | NSTextCheckingTypeOrthography
@@ -353,7 +353,7 @@ void TextChecker::updateSpellingUIWithMisspelledWord(int64_t, const String& miss
 
 void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    RetainPtr<NSMutableArray> corrections(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> corrections = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < grammarDetail.guesses.size(); ++i) {
         NSString *guess = grammarDetail.guesses[i];
         [corrections.get() addObject:guess];
@@ -361,7 +361,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
 
     NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
     NSString *grammarUserDescription = grammarDetail.userDescription;
-    RetainPtr<NSDictionary> grammarDetailDict(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections.get(), NSGrammarCorrections, nil]);
+    RetainPtr<NSDictionary> grammarDetailDict = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections.get(), NSGrammarCorrections, nil]);
 
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
 }

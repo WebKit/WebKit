@@ -158,59 +158,59 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         RetainPtr<CFArrayRef> array;
         if (!decode(decoder, array))
             return false;
-        result.adoptCF(array.leakRef());
+        result = adoptCF(array.leakRef());
         return true;
     }
     case CFBoolean: {
         RetainPtr<CFBooleanRef> boolean;
         if (!decode(decoder, boolean))
             return false;
-        result.adoptCF(boolean.leakRef());
+        result = adoptCF(boolean.leakRef());
         return true;
     }
     case CFData: {
         RetainPtr<CFDataRef> data;
         if (!decode(decoder, data))
             return false;
-        result.adoptCF(data.leakRef());
+        result = adoptCF(data.leakRef());
         return true;
     }
     case CFDate: {
         RetainPtr<CFDateRef> date;
         if (!decode(decoder, date))
             return false;
-        result.adoptCF(date.leakRef());
+        result = adoptCF(date.leakRef());
         return true;
     }
     case CFDictionary: {
         RetainPtr<CFDictionaryRef> dictionary;
         if (!decode(decoder, dictionary))
             return false;
-        result.adoptCF(dictionary.leakRef());
+        result = adoptCF(dictionary.leakRef());
         return true;
     }
     case CFNull:
-        result.adoptCF(kCFNull);
+        result = adoptCF(kCFNull);
         return true;
     case CFNumber: {
         RetainPtr<CFNumberRef> number;
         if (!decode(decoder, number))
             return false;
-        result.adoptCF(number.leakRef());
+        result = adoptCF(number.leakRef());
         return true;
     }
     case CFString: {
         RetainPtr<CFStringRef> string;
         if (!decode(decoder, string))
             return false;
-        result.adoptCF(string.leakRef());
+        result = adoptCF(string.leakRef());
         return true;
     }
     case CFURL: {
         RetainPtr<CFURLRef> url;
         if (!decode(decoder, url))
             return false;
-        result.adoptCF(url.leakRef());
+        result = adoptCF(url.leakRef());
         return true;
     }
 #if USE(SECURITY_FRAMEWORK)
@@ -218,14 +218,14 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         RetainPtr<SecCertificateRef> certificate;
         if (!decode(decoder, certificate))
             return false;
-        result.adoptCF(certificate.leakRef());
+        result = adoptCF(certificate.leakRef());
         return true;
     }
     case SecKeychainItem: {
         RetainPtr<SecKeychainItemRef> keychainItem;
         if (!decode(decoder, keychainItem))
             return false;
-        result.adoptCF(keychainItem.leakRef());
+        result = adoptCF(keychainItem.leakRef());
         return true;
     }
 #endif
@@ -262,7 +262,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFArrayRef>& result)
     if (!decoder.decode(size))
         return false;
 
-    RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
     for (size_t i = 0; i < size; ++i) {
         RetainPtr<CFTypeRef> element;
@@ -272,7 +272,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFArrayRef>& result)
         CFArrayAppendValue(array.get(), element.get());
     }
 
-    result.adoptCF(array.leakRef());
+    result = adoptCF(array.leakRef());
     return true;
 }
 
@@ -287,7 +287,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFBooleanRef>& result)
     if (!decoder.decode(boolean))
         return false;
 
-    result.adoptCF(boolean ? kCFBooleanTrue : kCFBooleanFalse);
+    result = adoptCF(boolean ? kCFBooleanTrue : kCFBooleanFalse);
     return true;
 }
 
@@ -305,7 +305,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDataRef>& result)
     if (!decoder.decode(dataReference))
         return false;
 
-    result.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
+    result = adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
     return true;
 }
 
@@ -320,7 +320,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDateRef>& result)
     if (!decoder.decode(absoluteTime))
         return false;
 
-    result.adoptCF(CFDateCreate(0, absoluteTime));
+    result = adoptCF(CFDateCreate(0, absoluteTime));
     return true;
 }
 
@@ -354,7 +354,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDictionaryRef>& result)
     if (!decoder.decode(size))
         return false;
 
-    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     for (uint64_t i = 0; i < size; ++i) {
         // Try to decode the key name.
         RetainPtr<CFStringRef> key;
@@ -368,7 +368,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDictionaryRef>& result)
         CFDictionarySetValue(dictionary.get(), key.get(), value.get());
     }
 
-    result.adoptCF(dictionary.leakRef());
+    result = adoptCF(dictionary.leakRef());
     return true;
 }
 
@@ -448,7 +448,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFNumberRef>& result)
 
     ASSERT(dataReference.data());
     CFNumberRef number = CFNumberCreate(0, numberType, dataReference.data());
-    result.adoptCF(number);
+    result = adoptCF(number);
 
     return true;
 }
@@ -489,7 +489,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
     if (!string)
         return false;
 
-    result.adoptCF(string);
+    result = adoptCF(string);
     return true;
 }
 
@@ -532,14 +532,14 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
     if (!url)
         return false;
 
-    result.adoptCF(url);
+    result = adoptCF(url);
     return true;
 }
 
 #if USE(SECURITY_FRAMEWORK)
 void encode(ArgumentEncoder& encoder, SecCertificateRef certificate)
 {
-    RetainPtr<CFDataRef> data(AdoptCF, SecCertificateCopyData(certificate));
+    RetainPtr<CFDataRef> data = adoptCF(SecCertificateCopyData(certificate));
     encode(encoder, data.get());
 }
 
@@ -549,7 +549,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
     if (!decode(decoder, data))
         return false;
 
-    result.adoptCF(SecCertificateCreateWithData(0, data.get()));
+    result = adoptCF(SecCertificateCreateWithData(0, data.get()));
     return true;
 }
 
@@ -572,7 +572,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
     if (SecKeychainItemCopyFromPersistentReference(data.get(), &item) != errSecSuccess || !item)
         return false;
     
-    result.adoptCF(item);
+    result = adoptCF(item);
     return true;
 }
 #endif

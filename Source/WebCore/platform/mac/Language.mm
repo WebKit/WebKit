@@ -61,7 +61,7 @@ static String httpStyleLanguageCode(NSString *languageCode)
     ASSERT(isMainThread());
 
     // Look up the language code using CFBundle.
-    RetainPtr<CFStringRef> preferredLanguageCode(AdoptCF, wkCopyCFLocalizationPreferredName((CFStringRef)languageCode));
+    RetainPtr<CFStringRef> preferredLanguageCode = adoptCF(wkCopyCFLocalizationPreferredName((CFStringRef)languageCode));
 
     if (preferredLanguageCode)
         languageCode = (NSString *)preferredLanguageCode.get();
@@ -71,7 +71,7 @@ static String httpStyleLanguageCode(NSString *languageCode)
 
     // Turn a '_' into a '-' if it appears after a 2-letter language code.
     if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
-        RetainPtr<NSMutableString> mutableLanguageCode(AdoptNS, [lowercaseLanguageCode mutableCopy]);
+        RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([lowercaseLanguageCode mutableCopy]);
         [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
         return mutableLanguageCode.get();
     }
@@ -91,7 +91,7 @@ Vector<String> platformUserPreferredLanguages()
         useCachedPreferredLanguages = YES;
         userPreferredLanguages.clear();
 
-        RetainPtr<CFArrayRef> languages(AdoptCF, CFLocaleCopyPreferredLanguages());
+        RetainPtr<CFArrayRef> languages = adoptCF(CFLocaleCopyPreferredLanguages());
         CFIndex languageCount = CFArrayGetCount(languages.get());
         if (!languageCount)
             userPreferredLanguages.append("en");

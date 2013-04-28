@@ -72,7 +72,7 @@ static inline RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
 static void populateSetting(const String& key, String* setting)
 {
     RetainPtr<CFStringRef> preferencesKey = createKeyForPreferences(key);
-    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
 
     if (!value)
         return;

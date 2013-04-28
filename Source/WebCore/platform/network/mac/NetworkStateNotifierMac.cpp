@@ -38,9 +38,9 @@ void NetworkStateNotifier::updateState()
     // Assume that we're offline until proven otherwise.
     m_isOnLine = false;
     
-    RetainPtr<CFStringRef> str(AdoptCF, SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
+    RetainPtr<CFStringRef> str = adoptCF(SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
     
-    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, SCDynamicStoreCopyValue(m_store.get(), str.get()));
+    RetainPtr<CFPropertyListRef> propertyList = adoptCF(SCDynamicStoreCopyValue(m_store.get(), str.get()));
     
     if (!propertyList)
         return;
@@ -61,9 +61,9 @@ void NetworkStateNotifier::updateState()
         if (CFStringFind(interface, CFSTR("lo"), kCFCompareAnchored).location != kCFNotFound)
             continue;
 
-        RetainPtr<CFStringRef> key(AdoptCF, SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interface, kSCEntNetIPv4));
+        RetainPtr<CFStringRef> key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interface, kSCEntNetIPv4));
 
-        RetainPtr<CFArrayRef> keyList(AdoptCF, SCDynamicStoreCopyKeyList(m_store.get(), key.get()));
+        RetainPtr<CFArrayRef> keyList = adoptCF(SCDynamicStoreCopyKeyList(m_store.get(), key.get()));
     
         if (keyList && CFArrayGetCount(keyList.get())) {
             m_isOnLine = true;
@@ -101,29 +101,29 @@ NetworkStateNotifier::NetworkStateNotifier()
 {
     SCDynamicStoreContext context = { 0, this, 0, 0, 0 };
     
-    m_store.adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), dynamicStoreCallback, &context));
+    m_store = adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), dynamicStoreCallback, &context));
     if (!m_store)
         return;
 
-    RetainPtr<CFRunLoopSourceRef> configSource(AdoptCF, SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0));
+    RetainPtr<CFRunLoopSourceRef> configSource = adoptCF(SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0));
     if (!configSource)
         return;
 
     CFRunLoopAddSource(CFRunLoopGetMain(), configSource.get(), kCFRunLoopCommonModes);
     
-    RetainPtr<CFMutableArrayRef> keys(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    RetainPtr<CFMutableArrayRef> patterns(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> keys = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> patterns = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
     RetainPtr<CFStringRef> key;
     RetainPtr<CFStringRef> pattern;
 
-    key.adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4));
+    key = adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4));
     CFArrayAppendValue(keys.get(), key.get());
 
-    pattern.adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4));
+    pattern = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4));
     CFArrayAppendValue(patterns.get(), pattern.get());
 
-    key.adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetDNS));
+    key = adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetDNS));
     CFArrayAppendValue(keys.get(), key.get());
 
     SCDynamicStoreSetNotificationKeys(m_store.get(), keys.get(), patterns.get());

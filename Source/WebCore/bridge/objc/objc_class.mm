@@ -107,7 +107,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
     CString jsName = name.ascii();
     JSNameConversionBuffer buffer;
     convertJSMethodNameToObjc(jsName, buffer);
-    RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
+    RetainPtr<CFStringRef> methodName = adoptCF(CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
 
     Method* methodPtr = 0;
     ClassStructPtr thisClass = _isa;
@@ -159,7 +159,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     ClassStructPtr thisClass = _isa;
 
     CString jsName = name.ascii();
-    RetainPtr<CFStringRef> fieldName(AdoptCF, CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
+    RetainPtr<CFStringRef> fieldName = adoptCF(CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
     id attributes = [targetObject attributeKeys];
     if (attributes) {

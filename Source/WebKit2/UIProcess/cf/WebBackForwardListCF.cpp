@@ -74,7 +74,7 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         return createEmptySessionHistoryDictionary();
     }
 
-    RetainPtr<CFMutableArrayRef> entries(AdoptCF, CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> entries = adoptCF(CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
 
     // We may need to update the current index to account for entries that are filtered by the callback.
     CFIndex currentIndex = m_currentIndex;
@@ -103,12 +103,12 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
 
         // FIXME: This uses the CoreIPC data encoding format, which means that whenever we change the CoreIPC encoding we need to bump the CurrentSessionStateDataVersion
         // constant in WebPageProxyCF.cpp. The CoreIPC data format is meant to be an implementation detail, and not something that should be written to disk.
-        RetainPtr<CFDataRef> entryData(AdoptCF, CFDataCreate(kCFAllocatorDefault, m_entries[i]->backForwardData().data(), m_entries[i]->backForwardData().size()));
+        RetainPtr<CFDataRef> entryData = adoptCF(CFDataCreate(kCFAllocatorDefault, m_entries[i]->backForwardData().data(), m_entries[i]->backForwardData().size()));
         
         const void* keys[4] = { SessionHistoryEntryURLKey(), SessionHistoryEntryTitleKey(), SessionHistoryEntryOriginalURLKey(), SessionHistoryEntryDataKey() };
         const void* values[4] = { url.get(), title.get(), originalURL.get(), entryData.get() };
 
-        RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFDictionaryRef> entryDictionary = adoptCF(CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
         
@@ -129,7 +129,7 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
     }
 
     if (hasCurrentIndex) {
-        RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberCFIndexType, &currentIndex));
+        RetainPtr<CFNumberRef> currentIndexNumber = adoptCF(CFNumberCreate(0, kCFNumberCFIndexType, &currentIndex));
         const void* keys[3] = { SessionHistoryVersionKey(), SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
         const void* values[3] = { SessionHistoryCurrentVersion(), currentIndexNumber.get(), entries.get() };
  

@@ -199,7 +199,7 @@ void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar
 
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     : m_player(player)
-    , m_objcObserver(AdoptNS, [[WebCoreMovieObserver alloc] initWithCallback:this])
+    , m_objcObserver(adoptNS([[WebCoreMovieObserver alloc] initWithCallback:this]))
     , m_seekTo(-1)
     , m_seekTimer(this, &MediaPlayerPrivateQTKit::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
@@ -353,7 +353,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
         return;
     
     NSError *error = nil;
-    m_qtMovie.adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
+    m_qtMovie = adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
     
     if (!m_qtMovie)
         return;
@@ -444,7 +444,7 @@ void MediaPlayerPrivateQTKit::createQTMovieView()
     // delay callbacks as we *will* get notifications during setup
     [m_objcObserver.get() setDelayCallbacks:YES];
 
-    m_qtMovieView.adoptNS([[QTMovieView alloc] init]);
+    m_qtMovieView = adoptNS([[QTMovieView alloc] init]);
     setSize(m_player->size());
     NSView* parentView = 0;
 #if PLATFORM(MAC)
@@ -484,7 +484,7 @@ void MediaPlayerPrivateQTKit::createQTVideoRenderer(QTVideoRendererMode renderer
     LOG(Media, "MediaPlayerPrivateQTKit::createQTVideoRenderer(%p)", this);
     destroyQTVideoRenderer();
 
-    m_qtVideoRenderer.adoptNS([[QTVideoRendererClass() alloc] init]);
+    m_qtVideoRenderer = adoptNS([[QTVideoRendererClass() alloc] init]);
     if (!m_qtVideoRenderer)
         return;
     
@@ -527,7 +527,7 @@ void MediaPlayerPrivateQTKit::createQTMovieLayer()
     ASSERT(supportsAcceleratedRendering());
     
     if (!m_qtVideoLayer) {
-        m_qtVideoLayer.adoptNS([[QTMovieLayer alloc] init]);
+        m_qtVideoLayer = adoptNS([[QTMovieLayer alloc] init]);
         if (!m_qtVideoLayer)
             return;
 
@@ -927,7 +927,7 @@ void MediaPlayerPrivateQTKit::setPreservesPitch(bool preservesPitch)
     if ([[m_qtMovie.get() attributeForKey:QTMovieRateChangesPreservePitchAttribute] boolValue] == preservesPitch)
         return;
 
-    RetainPtr<NSDictionary> movieAttributes(AdoptNS, [[m_qtMovie.get() movieAttributes] mutableCopy]);
+    RetainPtr<NSDictionary> movieAttributes = adoptNS([[m_qtMovie.get() movieAttributes] mutableCopy]);
     ASSERT(movieAttributes);
     [movieAttributes.get() setValue:[NSNumber numberWithBool:preservesPitch] forKey:QTMovieRateChangesPreservePitchAttribute];
     m_timeToRestore = currentTime();
@@ -1449,10 +1449,10 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
     int count = [fileTypes count];
     for (int n = 0; n < count; n++) {
         CFStringRef ext = reinterpret_cast<CFStringRef>([fileTypes objectAtIndex:n]);
-        RetainPtr<CFStringRef> uti(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
+        RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
         if (!uti)
             continue;
-        RetainPtr<CFStringRef> mime(AdoptCF, UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+        RetainPtr<CFStringRef> mime = adoptCF(UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
         if (mime)
             cache.add(mime.get());
 

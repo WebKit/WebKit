@@ -57,7 +57,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
     if (m_popup)
         [m_popup.get() removeAllItems];
     else {
-        m_popup.adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popup.get() setUsesItemFromMenu:NO];
         [m_popup.get() setAutoenablesItems:NO];
     }
@@ -71,20 +71,20 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
             [m_popup.get() addItemWithTitle:@""];
             NSMenuItem *menuItem = [m_popup.get() lastItem];
 
-            RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
+            RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
             NSWritingDirection writingDirection = items[i].m_textDirection == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
             [paragraphStyle.get() setBaseWritingDirection:writingDirection];
             [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
-            RetainPtr<NSMutableDictionary> attributes(AdoptNS, [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+            RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
                 paragraphStyle.get(), NSParagraphStyleAttributeName,
                 font, NSFontAttributeName,
             nil]);
             if (items[i].m_hasTextDirectionOverride) {
-                RetainPtr<NSNumber> writingDirectionValue(AdoptNS, [[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
-                RetainPtr<NSArray> writingDirectionArray(AdoptNS, [[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+                RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
+                RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
                 [attributes.get() setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
-            RetainPtr<NSAttributedString> string(AdoptNS, [[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);
+            RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);
 
             [menuItem setAttributedTitle:string.get()];
             // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
@@ -130,7 +130,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     } else
         location = NSMakePoint(NSMinX(rect) + popUnderHorizontalAdjust, NSMaxY(rect) + popUnderVerticalAdjust);  
 
-    RetainPtr<NSView> dummyView(AdoptNS, [[NSView alloc] initWithFrame:rect]);
+    RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
     [m_webView addSubview:dummyView.get()];
     location = [dummyView.get() convertPoint:location fromView:m_webView];
 

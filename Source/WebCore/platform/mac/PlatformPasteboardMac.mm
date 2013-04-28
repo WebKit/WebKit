@@ -113,7 +113,7 @@ void PlatformPasteboard::copy(const String& fromPasteboard)
 
 void PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 {
-    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < pasteboardTypes.size(); ++i)
         [types.get() addObject:pasteboardTypes[i]];
 
@@ -127,7 +127,7 @@ void PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
         return;
     }
 
-    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < pasteboardTypes.size(); ++i)
         [types.get() addObject:pasteboardTypes[i]];
 
@@ -141,7 +141,7 @@ void PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const
 
 void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
 {
-    RetainPtr<NSMutableArray> paths(AdoptNS, [[NSMutableArray alloc] init]);    
+    RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);    
     for (size_t i = 0; i < pathnames.size(); ++i)
         [paths.get() addObject: [NSArray arrayWithObject:pathnames[i]]];
     [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];

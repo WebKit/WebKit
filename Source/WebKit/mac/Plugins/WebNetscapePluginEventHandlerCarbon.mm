@@ -390,7 +390,7 @@ void WebNetscapePluginEventHandlerCarbon::startTimers(bool throttleTimers)
     CFTimeInterval interval = !throttleTimers ? NullEventIntervalActive : NullEventIntervalNotActive;    
     
     CFRunLoopTimerContext context = { 0, this, NULL, NULL, NULL };
-    m_nullEventTimer.adoptCF(CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + interval, interval,
+    m_nullEventTimer = adoptCF(CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + interval, interval,
                                                    0, 0, nullEventTimerFired, &context));
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_nullEventTimer.get(), kCFRunLoopDefaultMode);
 }

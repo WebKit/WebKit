@@ -88,10 +88,10 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 {
     WKConnection *connection = (WKConnection *)clientInfo;
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
-        RetainPtr<NSString> nsMessageName = adoptNS((NSString *)WKStringCopyCFString(kCFAllocatorDefault, messageName));
+        RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
         RetainPtr<id> nsMessageBody = ((ObjCObjectGraph*)messageBody)->rootObject();
 
-        [connection.delegate connection:connection didReceiveMessageWithName:nsMessageName.get() body:nsMessageBody.get()];
+        [connection.delegate connection:connection didReceiveMessageWithName:(NSString *)nsMessageName.get() body:nsMessageBody.get()];
     }
 }
 

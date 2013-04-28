@@ -127,7 +127,7 @@ PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
 
 PageClientImpl::PageClientImpl(WKView* wkView)
     : m_wkView(wkView)
-    , m_undoTarget(AdoptNS, [[WKEditorUndoTargetObjC alloc] init])
+    , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(adoptPtr(new AlternativeTextUIController))
 #endif
@@ -282,7 +282,7 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
 {
     RefPtr<WebEditCommandProxy> command = prpCommand;
 
-    RetainPtr<WKEditCommandObjC> commandObjC(AdoptNS, [[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
     String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_wkView undoManager];
@@ -314,7 +314,7 @@ bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, Vect
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
 {
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
-    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
+    RetainPtr<NSImage> dragNSImage = adoptNS([[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
 
     [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }

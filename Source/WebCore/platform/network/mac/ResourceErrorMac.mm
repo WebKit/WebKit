@@ -39,7 +39,7 @@ namespace WebCore {
 
 static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceErrorBase& resourceError)
 {
-    RetainPtr<NSMutableDictionary> userInfo(AdoptNS, [[NSMutableDictionary alloc] init]);
+    RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
     if (!resourceError.localizedDescription().isEmpty())
         [userInfo.get() setValue:resourceError.localizedDescription() forKey:NSLocalizedDescriptionKey];
@@ -50,7 +50,7 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
         [userInfo.get() setValue:cocoaURL.get() forKey:@"NSErrorFailingURLKey"];
     }
 
-    return RetainPtr<NSError>(AdoptNS, [[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);
+    return adoptNS([[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);
 }
 
 #if USE(CFNETWORK)
@@ -76,8 +76,8 @@ NSError *ResourceError::nsError() const
 
     if (m_platformError) {
         CFErrorRef error = m_platformError.get();
-        RetainPtr<NSDictionary> userInfo(AdoptCF, (NSDictionary *) CFErrorCopyUserInfo(error));
-        m_platformNSError.adoptNS([[NSError alloc] initWithDomain:(NSString *)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:userInfo.get()]);
+        RetainPtr<NSDictionary> userInfo = adoptCF((NSDictionary *) CFErrorCopyUserInfo(error));
+        m_platformNSError = adoptNS([[NSError alloc] initWithDomain:(NSString *)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:userInfo.get()]);
         return m_platformNSError.get();
     }
 

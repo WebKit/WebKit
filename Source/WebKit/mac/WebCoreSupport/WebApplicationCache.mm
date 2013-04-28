@@ -80,7 +80,7 @@ using namespace WebCore;
     
     HashSet<RefPtr<SecurityOrigin> >::const_iterator end = coreOrigins.end();
     for (HashSet<RefPtr<SecurityOrigin> >::const_iterator it = coreOrigins.begin(); it != end; ++it) {
-        RetainPtr<WebSecurityOrigin> webOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:(*it).get()]);
+        RetainPtr<WebSecurityOrigin> webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:(*it).get()]);
         [webOrigins addObject:webOrigin.get()];
     }
     

@@ -93,7 +93,7 @@ ProtectionSpaceAuthenticationScheme ProtectionSpace::authenticationScheme() cons
 bool ProtectionSpace::receivesCredentialSecurely() const
 {
 #if USE(CFNETWORK) && !PLATFORM(MAC)
-    RetainPtr<CFURLProtectionSpaceRef> cfSpace(AdoptCF, createCF(*this));
+    RetainPtr<CFURLProtectionSpaceRef> cfSpace = adoptCF(createCF(*this));
     return cfSpace && CFURLProtectionSpaceReceivesCredentialSecurely(cfSpace.get());
 #else
     return (m_serverType == ProtectionSpaceServerHTTPS || 

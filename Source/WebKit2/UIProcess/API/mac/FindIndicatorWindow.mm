@@ -148,7 +148,7 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
 
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:windowFrameRect styleMask:NSBorderlessWindowMask];
     
-    m_findIndicatorWindow.adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect 
+    m_findIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect 
                                                               styleMask:NSBorderlessWindowMask 
                                                                 backing:NSBackingStoreBuffered
                                                                   defer:NO]);
@@ -157,7 +157,7 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
     [m_findIndicatorWindow.get() setOpaque:NO];
     [m_findIndicatorWindow.get() setIgnoresMouseEvents:YES];
 
-    RetainPtr<WKFindIndicatorView> findIndicatorView(AdoptNS, [[WKFindIndicatorView alloc] _initWithFindIndicator:m_findIndicator]);
+    RetainPtr<WKFindIndicatorView> findIndicatorView = adoptNS([[WKFindIndicatorView alloc] _initWithFindIndicator:m_findIndicator]);
     [m_findIndicatorWindow.get() setContentView:findIndicatorView.get()];
 
     [[m_wkView window] addChildWindow:m_findIndicatorWindow.get() ordered:NSWindowAbove];
@@ -166,7 +166,7 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
     if (animate) {
         // Start the bounce animation.
         m_bounceAnimationContext = WKWindowBounceAnimationContextCreate(m_findIndicatorWindow.get());
-        m_bounceAnimation.adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
+        m_bounceAnimation = adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
                                                                                     animationDuration:bounceAnimationDuration
                                                                             animationProgressCallback:&FindIndicatorWindow::bounceAnimationCallback
                                                                               animationDidEndCallback:&FindIndicatorWindow::bounceAnimationDidEnd]);
@@ -206,7 +206,7 @@ void FindIndicatorWindow::startFadeOutTimerFired()
 {
     ASSERT(!m_fadeOutAnimation);
     
-    m_fadeOutAnimation.adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
+    m_fadeOutAnimation = adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
                                                                                    animationDuration:fadeOutAnimationDuration
                                                                            animationProgressCallback:&FindIndicatorWindow::fadeOutAnimationCallback
                                                                              animationDidEndCallback:&FindIndicatorWindow::fadeOutAnimationDidEnd]);

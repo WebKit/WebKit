@@ -89,15 +89,15 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
 #if PLATFORM(MAC)
         // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
         // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
-        RetainPtr<CFDataRef> data(AdoptCF, this->data()->createCFData());
-        RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+        RetainPtr<CFDataRef> data = adoptCF(this->data()->createCFData());
+        RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
 #else
         // Create a CGDataProvider to wrap the SharedBuffer.
         // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
         // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
         // is a requirement for using the GetBytePointer callback.
         CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, 0 };
-        RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateDirect(this->data(), this->data()->size(), &providerCallbacks));
+        RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(this->data(), this->data()->size(), &providerCallbacks));
 #endif
         m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
         setCurrentPage(0);

@@ -4516,7 +4516,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
     // Use a visited set so we don't loop indefinitely when walking crazy key loops.
     // AppKit uses such sets internally and we want our loop to be as robust as its loops.
-    RetainPtr<CFMutableSetRef> visitedViews(AdoptCF, CFSetCreateMutable(0, 0, 0));
+    RetainPtr<CFMutableSetRef> visitedViews = adoptCF(CFSetCreateMutable(0, 0, 0));
     CFSetAddValue(visitedViews.get(), result);
 
     NSView *previousView = self;

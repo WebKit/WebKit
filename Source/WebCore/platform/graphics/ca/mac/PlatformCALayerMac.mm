@@ -214,7 +214,7 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         }
 
         if (layerClass)
-            m_layer.adoptNS([[layerClass alloc] init]);
+            m_layer = adoptNS([[layerClass alloc] init]);
     }
     
     // Save a pointer to 'this' in the CALayer
@@ -434,7 +434,7 @@ void PlatformCALayer::addAnimationForKey(const String& key, PlatformCAAnimation*
     // Add the delegate
     if (!m_delegate) {
         WebAnimationDelegate* webAnimationDelegate = [[WebAnimationDelegate alloc] init];
-        m_delegate.adoptNS(webAnimationDelegate);
+        m_delegate = adoptNS(webAnimationDelegate);
         [webAnimationDelegate setOwner:this];
     }
     
@@ -680,8 +680,8 @@ void PlatformCALayer::setBackgroundColor(const Color& value)
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setBackgroundColor:color.get()];
@@ -710,8 +710,8 @@ void PlatformCALayer::setBorderColor(const Color& value)
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setBorderColor:color.get()];

@@ -162,9 +162,9 @@ PlatformCAAnimation::PlatformCAAnimation(AnimationType type, const String& keyPa
     : m_type(type)
 {
     if (type == Basic)
-        m_animation.adoptNS([[CABasicAnimation animationWithKeyPath:keyPath] retain]);
+        m_animation = adoptNS([[CABasicAnimation animationWithKeyPath:keyPath] retain]);
     else
-        m_animation.adoptNS([[CAKeyframeAnimation animationWithKeyPath:keyPath] retain]);
+        m_animation = adoptNS([[CAKeyframeAnimation animationWithKeyPath:keyPath] retain]);
 }
 
 PlatformCAAnimation::PlatformCAAnimation(PlatformAnimationRef animation)

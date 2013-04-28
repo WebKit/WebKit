@@ -100,7 +100,7 @@ void SynchronousLoaderClient::didFail(ResourceHandle*, const ResourceError& erro
 #if USE(CFNETWORK)
 ResourceError SynchronousLoaderClient::platformBadResponseError()
 {
-    RetainPtr<CFErrorRef> cfError(AdoptCF, CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
+    RetainPtr<CFErrorRef> cfError = adoptCF(CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
     return cfError.get();
 }
 #endif

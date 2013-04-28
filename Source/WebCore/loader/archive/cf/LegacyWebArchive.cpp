@@ -70,22 +70,22 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
         // The property list representation of a null/empty WebResource has the following 3 objects stored as nil.
         // FIXME: 0 is not serializable. Presumably we need to use kCFNull here instead for compatibility.
         // FIXME: But why do we need to support a resource of 0? Who relies on that?
-        RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, CFDictionaryCreateMutable(0, 3, 0, 0));
+        RetainPtr<CFMutableDictionaryRef> propertyList = adoptCF(CFDictionaryCreateMutable(0, 3, 0, 0));
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, 0);
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceURLKey, 0);
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceMIMETypeKey, 0);
         return propertyList;
     }
     
-    RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, CFDictionaryCreateMutable(0, 6, 0, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFMutableDictionaryRef> propertyList = adoptCF(CFDictionaryCreateMutable(0, 6, 0, &kCFTypeDictionaryValueCallBacks));
     
     // Resource data can be empty, but must be represented by an empty CFDataRef
     SharedBuffer* data = resource->data();
     RetainPtr<CFDataRef> cfData;
     if (data)
-        cfData.adoptCF(data->createCFData());
+        cfData = adoptCF(data->createCFData());
     else
-        cfData.adoptCF(CFDataCreate(0, 0, 0));
+        cfData = adoptCF(CFDataCreate(0, 0, 0));
     CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, cfData.get());
     
     // Resource URL cannot be null
@@ -122,7 +122,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
 
 RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Archive* archive)
 {
-    RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, CFDictionaryCreateMutable(0, 3, 0, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFMutableDictionaryRef> propertyList = adoptCF(CFDictionaryCreateMutable(0, 3, 0, &kCFTypeDictionaryValueCallBacks));
     
     RetainPtr<CFDictionaryRef> mainResourceDict = createPropertyListRepresentation(archive->mainResource(), MainResource);
     ASSERT(mainResourceDict);
@@ -130,7 +130,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
         return 0;
     CFDictionarySetValue(propertyList.get(), LegacyWebArchiveMainResourceKey, mainResourceDict.get());
 
-    RetainPtr<CFMutableArrayRef> subresourcesArray(AdoptCF, CFArrayCreateMutable(0, archive->subresources().size(), &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> subresourcesArray = adoptCF(CFArrayCreateMutable(0, archive->subresources().size(), &kCFTypeArrayCallBacks));
     const Vector<RefPtr<ArchiveResource> >& subresources(archive->subresources());
     for (unsigned i = 0; i < subresources.size(); ++i) {
         RetainPtr<CFDictionaryRef> subresource = createPropertyListRepresentation(subresources[i].get(), Subresource);
@@ -142,7 +142,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
     if (CFArrayGetCount(subresourcesArray.get()))
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveSubresourcesKey, subresourcesArray.get());
 
-    RetainPtr<CFMutableArrayRef> subframesArray(AdoptCF, CFArrayCreateMutable(0, archive->subframeArchives().size(), &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> subframesArray = adoptCF(CFArrayCreateMutable(0, archive->subframeArchives().size(), &kCFTypeArrayCallBacks));
     const Vector<RefPtr<Archive> >& subframeArchives(archive->subframeArchives());
     for (unsigned i = 0; i < subframeArchives.size(); ++i) {
         RetainPtr<CFDictionaryRef> subframeArchive = createPropertyListRepresentation(subframeArchives[i].get());
@@ -268,13 +268,13 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const KURL&, SharedBuffer*
     if (!data)
         return 0;
         
-    RetainPtr<CFDataRef> cfData(AdoptCF, data->createCFData());
+    RetainPtr<CFDataRef> cfData = adoptCF(data->createCFData());
     if (!cfData)
         return 0;
         
     CFStringRef errorString = 0;
     
-    RetainPtr<CFDictionaryRef> plist(AdoptCF, static_cast<CFDictionaryRef>(CFPropertyListCreateFromXMLData(0, cfData.get(), kCFPropertyListImmutable, &errorString)));
+    RetainPtr<CFDictionaryRef> plist = adoptCF(static_cast<CFDictionaryRef>(CFPropertyListCreateFromXMLData(0, cfData.get(), kCFPropertyListImmutable, &errorString)));
     if (!plist) {
 #ifndef NDEBUG
         const char* cError = errorString ? CFStringGetCStringPtr(errorString, kCFStringEncodingUTF8) : "unknown error";
@@ -385,12 +385,12 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
         return 0;
     }
 
-    RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithAllocatedBuffers(0, 0));
+    RetainPtr<CFWriteStreamRef> stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
 
     CFWriteStreamOpen(stream.get());
     CFPropertyListWriteToStream(propertyList.get(), stream.get(), kCFPropertyListBinaryFormat_v1_0, 0);
 
-    RetainPtr<CFDataRef> plistData(AdoptCF, static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
+    RetainPtr<CFDataRef> plistData = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
     ASSERT(plistData);
 
     CFWriteStreamClose(stream.get());

@@ -149,7 +149,7 @@ String displayNameForLanguageLocale(const String& localeName)
 {
 #if PLATFORM(MAC)
     if (!localeName.isNull() && !localeName.isEmpty()) {
-        RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());
+        RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCopyCurrent());
         return CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, localeName.createCFString().get());
     }
 #endif

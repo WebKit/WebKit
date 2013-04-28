@@ -48,7 +48,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     if (!nsImage)
         return 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return RetainPtr<NSCursor>(AdoptNS, [[NSCursor alloc] initWithImage:nsImage hotSpot:hotSpot]);
+    return adoptNS([[NSCursor alloc] initWithImage:nsImage hotSpot:hotSpot]);
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
@@ -56,8 +56,8 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
 static RetainPtr<NSCursor> createNamedCursor(const char* name, int x, int y)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    RetainPtr<NSString> resourceName(AdoptNS, [[NSString alloc] initWithUTF8String:name]);
-    RetainPtr<NSImage> cursorImage(AdoptNS, [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreCursorBundle class]] pathForResource:resourceName.get() ofType:@"png"]]);
+    RetainPtr<NSString> resourceName = adoptNS([[NSString alloc] initWithUTF8String:name]);
+    RetainPtr<NSImage> cursorImage = adoptNS([[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreCursorBundle class]] pathForResource:resourceName.get() ofType:@"png"]]);
     
     RetainPtr<NSCursor> cursor;
 

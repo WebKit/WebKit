@@ -79,7 +79,7 @@ CFURLRef KURL::createCFURL() const
 #if !(PLATFORM(QT) && USE(QTKIT))
 String KURL::fileSystemPath() const
 {
-    RetainPtr<CFURLRef> cfURL(AdoptCF, createCFURL());
+    RetainPtr<CFURLRef> cfURL = adoptCF(createCFURL());
     if (!cfURL)
         return String();
 
@@ -88,7 +88,7 @@ String KURL::fileSystemPath() const
 #else
     CFURLPathStyle pathStyle = kCFURLPOSIXPathStyle;
 #endif
-    return RetainPtr<CFStringRef>(AdoptCF, CFURLCopyFileSystemPath(cfURL.get(), pathStyle)).get();
+    return adoptCF(CFURLCopyFileSystemPath(cfURL.get(), pathStyle)).get();
 }
 #endif
 

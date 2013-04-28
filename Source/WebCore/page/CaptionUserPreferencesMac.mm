@@ -172,7 +172,7 @@ bool CaptionUserPreferencesMac::userPrefersCaptions() const
     if (captionSetting || testingMode() || !MediaAccessibilityLibrary())
         return captionSetting;
     
-    RetainPtr<CFArrayRef> captioningMediaCharacteristics(AdoptCF, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
+    RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get());
 }
 
@@ -182,7 +182,7 @@ bool CaptionUserPreferencesMac::userPrefersSubtitles() const
     if (subtitlesSetting || testingMode() || !MediaAccessibilityLibrary())
         return subtitlesSetting;
     
-    RetainPtr<CFArrayRef> captioningMediaCharacteristics(AdoptCF, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
+    RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
@@ -213,7 +213,7 @@ void CaptionUserPreferencesMac::captionPreferencesChanged()
 String CaptionUserPreferencesMac::captionsWindowCSS() const
 {
     MACaptionAppearanceBehavior behavior;
-    RetainPtr<CGColorRef> color(AdoptCF, MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
 
     Color windowColor(color.get());
     if (!windowColor.isValid())
@@ -244,7 +244,7 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
 
     MACaptionAppearanceBehavior behavior;
 
-    RetainPtr<CGColorRef> color(AdoptCF, MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
     Color backgroundColor(color.get());
     if (!backgroundColor.isValid())
         backgroundColor = defaultBackgroundColor;
@@ -272,7 +272,7 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
 Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const
 {
     MACaptionAppearanceBehavior behavior;
-    RetainPtr<CGColorRef> color(AdoptCF, MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior));
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior));
     Color textColor(color.get());
     if (!textColor.isValid())
         // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
@@ -395,11 +395,11 @@ String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     
-    RetainPtr<CTFontDescriptorRef> font(AdoptCF, MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
+    RetainPtr<CTFontDescriptorRef> font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
     if (!font)
         return emptyString();
 
-    RetainPtr<CFTypeRef> name(AdoptCF, CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
+    RetainPtr<CFTypeRef> name = adoptCF(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
     if (!name)
         return emptyString();
     
@@ -463,7 +463,7 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     }
 
     CFIndex languageCount = 0;
-    RetainPtr<CFArrayRef> languages(AdoptCF, MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
+    RetainPtr<CFArrayRef> languages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
     if (languages)
         languageCount = CFArrayGetCount(languages.get());
 
@@ -561,22 +561,22 @@ static String trackDisplayName(TextTrack* track)
     String label = track->label();
     String trackLanguageIdentifier = track->language();
 
-    RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());
-    RetainPtr<CFStringRef> localeIdentifier(AdoptCF, CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
-    RetainPtr<CFStringRef> languageCF(AdoptCF, CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
+    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCopyCurrent());
+    RetainPtr<CFStringRef> localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
+    RetainPtr<CFStringRef> languageCF = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
     if (!label.isEmpty()) {
         if (language.isEmpty() || label.contains(language))
             displayName.append(label);
         else {
-            RetainPtr<CFDictionaryRef> localeDict(AdoptCF, CFLocaleCreateComponentsFromLocaleIdentifier(kCFAllocatorDefault, localeIdentifier.get()));
+            RetainPtr<CFDictionaryRef> localeDict = adoptCF(CFLocaleCreateComponentsFromLocaleIdentifier(kCFAllocatorDefault, localeIdentifier.get()));
             if (localeDict) {
                 CFStringRef countryCode = 0;
                 String countryName;
                 
                 CFDictionaryGetValueIfPresent(localeDict.get(), kCFLocaleCountryCode, (const void **)&countryCode);
                 if (countryCode) {
-                    RetainPtr<CFStringRef> countryNameCF(AdoptCF, CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleCountryCode, countryCode));
+                    RetainPtr<CFStringRef> countryNameCF = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleCountryCode, countryCode));
                     countryName = countryNameCF.get();
                 }
                 

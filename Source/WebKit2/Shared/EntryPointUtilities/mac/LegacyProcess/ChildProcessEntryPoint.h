@@ -88,7 +88,7 @@ int ChildProcessMain(int argc, char** argv)
 
         // FIXME: This should be moved to ChildProcessMac if it is still necessary.
         String localization = commandLine["localization"];
-        RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
+        RetainPtr<CFStringRef> cfLocalization = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
         if (cfLocalization)
             WKSetDefaultLocalization(cfLocalization.get());
 

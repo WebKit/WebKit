@@ -88,8 +88,8 @@ CFDataRef BitmapImage::getTIFFRepresentation()
 
     unsigned numValidFrames = images.size();
     
-    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> destination(AdoptCF, CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, numValidFrames, 0));
+    RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, numValidFrames, 0));
 
     if (!destination)
         return 0;
@@ -112,7 +112,7 @@ NSImage* BitmapImage::getNSImage()
     if (!data)
         return 0;
     
-    m_nsImage.adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
+    m_nsImage = adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage.get();
 }
 

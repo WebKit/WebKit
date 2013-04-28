@@ -48,10 +48,10 @@ static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
     ref(); // Balanced by deref in releaseBitmapContextData.
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreateWithData(data(),
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(),
         m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(),
         bitmapInfo(m_flags), releaseBitmapContextData, this));
 
@@ -75,14 +75,14 @@ void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 {
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(graphicsContext->platformContext()));
+    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
     return image;
 }
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
 {
     ref(); // Balanced by deref in releaseDataProviderData.
-    RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithData(this, data(), sizeInBytes(), releaseDataProviderData));
+    RetainPtr<CGDataProvider> dataProvider = adoptCF(CGDataProviderCreateWithData(this, data(), sizeInBytes(), releaseDataProviderData));
     return createCGImage(dataProvider.get());
 }
 
@@ -90,8 +90,8 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 {
     ASSERT_ARG(dataProvider, dataProvider);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

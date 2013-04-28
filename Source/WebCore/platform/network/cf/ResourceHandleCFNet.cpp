@@ -128,7 +128,7 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
             RetainPtr<CFStringRef> lastHTTPMethod = handle->lastHTTPMethod().createCFString();
             RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
             if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
-                RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(0, cfRequest));
+                RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(0, cfRequest));
                 wkSetRequestStorageSession(handle->storageSession(), mutableRequest.get());
                 CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
@@ -382,7 +382,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     RetainPtr<CFMutableDictionaryRef> sslProps;
 
     if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host().lower())) {
-        sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredCertificates, kCFBooleanTrue);
@@ -392,7 +392,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     HashMap<String, RetainPtr<CFDataRef> >::iterator clientCert = clientCerts().find(firstRequest().url().host().lower());
     if (clientCert != clientCerts().end()) {
         if (!sslProps)
-            sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 #if PLATFORM(WIN)
         wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->value).get());
 #endif
@@ -436,7 +436,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     RetainPtr<CFDictionaryRef> propertiesDictionary = adoptCF(CFDictionaryCreate(0, (const void**)&kCFURLConnectionSocketStreamProperties, (const void**)&streamProperties, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFRelease(streamProperties);
 
-    d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), propertiesDictionary.get()));
+    d->m_connection = adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), propertiesDictionary.get()));
 }
 
 bool ResourceHandle::start()
@@ -569,7 +569,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     // Store the credential back, possibly adding it as a default for this directory.
                     CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
+                RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
                 CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
                 return;
             }
@@ -610,7 +610,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         // Manage per-session credentials internally, because once NSURLCredentialPersistencePerSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceNone);
-        RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(webCredential));
+        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
         
         KURL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
@@ -619,7 +619,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
     } else {
-        RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
+        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
     }
 
@@ -793,7 +793,7 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
     for (index = 0; index < count; index++)
         totalSize += CFDataGetLength(static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index)));
 
-    RetainPtr<CFMutableDataRef> mergedData(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, totalSize));
+    RetainPtr<CFMutableDataRef> mergedData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, totalSize));
     for (index = 0; index < count; index++) {
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index));
         CFDataAppendBytes(mergedData.get(), CFDataGetBytePtr(data), CFDataGetLength(data));

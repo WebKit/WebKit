@@ -1,3 +1,20 @@
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/RunLoopTimerCF.cpp:
+        (WTF::RunLoopTimerBase::start):
+        * wtf/SchedulePair.h:
+        (WTF::SchedulePair::SchedulePair):
+        * wtf/SchedulePairMac.mm:
+        (WTF::SchedulePair::SchedulePair):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault):
+        Use adoptCF free function.
+
 2013-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Filled out more cases of branch folding in bytecode when emitting expressions into a branching context

@@ -340,7 +340,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailProvisionalLoad:withError:)]) {
-        RetainPtr<CFErrorRef> cfError(AdoptCF, WKErrorCopyCFError(kCFAllocatorDefault, error));
+        RetainPtr<CFErrorRef> cfError = adoptCF(WKErrorCopyCFError(kCFAllocatorDefault, error));
         [browsingContext.loadDelegate browsingContextControllerDidFailProvisionalLoad:browsingContext withError:(NSError *)cfError.get()];
     }
 }
@@ -372,7 +372,7 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailLoad:withError:)]) {
-        RetainPtr<CFErrorRef> cfError(AdoptCF, WKErrorCopyCFError(kCFAllocatorDefault, error));
+        RetainPtr<CFErrorRef> cfError = adoptCF(WKErrorCopyCFError(kCFAllocatorDefault, error));
         [browsingContext.loadDelegate browsingContextControllerDidFailLoad:browsingContext withError:(NSError *)cfError.get()];
     }
 }

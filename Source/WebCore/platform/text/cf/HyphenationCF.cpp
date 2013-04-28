@@ -38,7 +38,7 @@ namespace WebCore {
 template<>
 RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey()
 {
-    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCopyCurrent());
+    RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCopyCurrent());
 
     return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }
@@ -64,7 +64,7 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), length, kCFAllocatorNull));
+    RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), length, kCFAllocatorNull));
 
     RetainPtr<CFLocaleRef> locale = cfLocaleCache().get(localeIdentifier);
     ASSERT(locale);

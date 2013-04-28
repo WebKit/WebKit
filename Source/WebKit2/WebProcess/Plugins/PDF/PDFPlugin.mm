@@ -231,11 +231,11 @@ PassRefPtr<PDFPlugin> PDFPlugin::create(WebFrame* frame)
 
 PDFPlugin::PDFPlugin(WebFrame* frame)
     : SimplePDFPlugin(frame)
-    , m_containerLayer(AdoptNS, [[CALayer alloc] init])
-    , m_contentLayer(AdoptNS, [[CALayer alloc] init])
-    , m_scrollCornerLayer(AdoptNS, [[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this])
-    , m_pdfLayerController(AdoptNS, [[pdfLayerControllerClass() alloc] init])
-    , m_pdfLayerControllerDelegate(AdoptNS, [[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this])
+    , m_containerLayer(adoptNS([[CALayer alloc] init]))
+    , m_contentLayer(adoptNS([[CALayer alloc] init]))
+    , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]))
+    , m_pdfLayerController(adoptNS([[pdfLayerControllerClass() alloc] init]))
+    , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 {
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
@@ -284,10 +284,10 @@ PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientatio
 {
     RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar) {
-        m_horizontalScrollbarLayer.adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
+        m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer.get() addSublayer:m_horizontalScrollbarLayer.get()];
     } else {
-        m_verticalScrollbarLayer.adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
+        m_verticalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer.get() addSublayer:m_verticalScrollbarLayer.get()];
     }
     didAddScrollbar(widget.get(), orientation);
@@ -312,7 +312,7 @@ void PDFPlugin::pdfDocumentDidLoad()
 {
     addArchiveResource();
     
-    RetainPtr<PDFDocument> document(AdoptNS, [[pdfDocumentClass() alloc] initWithData:rawData()]);
+    RetainPtr<PDFDocument> document = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
 
     setPDFDocument(document);
 
@@ -894,7 +894,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
             continue;
 
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
-            RetainPtr<NSString> plainTextString(AdoptNS, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
         } else {
             RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);

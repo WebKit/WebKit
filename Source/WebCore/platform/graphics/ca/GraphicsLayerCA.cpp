@@ -789,7 +789,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
             // CoreGraphics renders images tagged with DeviceRGB using the color space of the main display. When we hand such
             // images to CA we need to tag them similarly so CA rendering matches CG rendering.
             static CGColorSpaceRef genericRGB = CGDisplayCopyColorSpace(kCGDirectMainDisplay);
-            m_pendingContentsImage.adoptCF(CGImageCreateCopyWithColorSpace(m_pendingContentsImage.get(), genericRGB));
+            m_pendingContentsImage = adoptCF(CGImageCreateCopyWithColorSpace(m_pendingContentsImage.get(), genericRGB));
         }
 #endif
         m_contentsLayerPurpose = ContentsLayerForImage;

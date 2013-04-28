@@ -1,3 +1,158 @@
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        This change was done by a global replace followed by compiling and inspecting for
+        cases that needed to be tweaked by hand.
+
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintBitmapContext):
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::load):
+        (WebKit::Module::platformFunctionPointer):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        (WKURLResponseCreateWithNSURLResponse):
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.h:
+        (WebKit::ChildProcessMain):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginArchitecture):
+        (WebKit::contentsOfPropertyListAtURL):
+        (WebKit::getMIMETypesFromPluginBundle):
+        (WebKit::getStringListResource):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::Handle::tryWrapInSharedBuffer):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        (CoreIPC::encode):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::makeCGImageCopy):
+        (WebKit::ShareableBitmap::makeCGImage):
+        (WebKit::ShareableBitmap::createCGImage):
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::decode):
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit::PlatformCertificateInfo::dump):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        (WebKit::FindIndicatorWindow::startFadeOutTimerFired):
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView initWithFrame:PDFViewController:]):
+        (WebKit::PDFViewController::PDFViewController):
+        (WebKit::convertPostScriptDataSourceToPDF):
+        (WebKit::PDFViewController::setPDFDocumentData):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::setDragImage):
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        * UIProcess/API/mac/WKConnection.mm:
+        (didReceiveMessage):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView drawRect:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView browsingContextController]):
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+        (-[WKView _setPromisedData:WebCore::withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:WebCore::forPasteboard:]):
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKView fullScreenWindowController]):
+        (-[WKView _executeSavedCommandBySelector:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::createProcess):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::getMIMETypeForExtension):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::beginModal):
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/cf/WebPreferencesCF.cpp:
+        (WebKit::cfStringFromWebCoreString):
+        (WebKit::setStringValueIfInUserDefaults):
+        (WebKit::setBoolValueIfInUserDefaults):
+        (WebKit::setUInt32ValueIfInUserDefaults):
+        (WebKit::setDoubleValueIfInUserDefaults):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::resetScrolledRect):
+        (WebKit::BackingStore::backingStoreContext):
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::populate):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::load):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::updatePluginLayer):
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginLayer):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::createScrollbar):
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (getAllScriptsInPDFDocument):
+        (WebKit::SimplePDFPlugin::pdfDocumentDidLoad):
+        (WebKit::SimplePDFPlugin::streamDidReceiveData):
+        (WebKit::SimplePDFPlugin::manualStreamDidReceiveData):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNames):
+        (WebKit::WebResourceCacheManager::clearCFURLCacheForHostNames):
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::createNSError):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        (WebKit::cachedResponseForURL):
+        (WebKit::WebPage::drawPagesToPDFFromPDFDocument):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+        Use adoptCF and adoptNS free functions.
+
 2013-04-27  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13757007> Crashes in NetworkResourceLoader::didReceiveResponseAsync

@@ -52,7 +52,7 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
     const void* values[2];
     CFIndex numValues = 0;
 
-    RetainPtr<CFDictionaryRef> sessionHistoryDictionary(AdoptCF, m_backForwardList->createCFDictionaryRepresentation(filter, context));
+    RetainPtr<CFDictionaryRef> sessionHistoryDictionary = adoptCF(m_backForwardList->createCFDictionaryRepresentation(filter, context));
     if (sessionHistoryDictionary) {
         keys[numValues] = SessionHistoryKey();
         values[numValues] = sessionHistoryDictionary.get();
@@ -75,9 +75,9 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
     if (!numValues)
         return 0;
 
-    RetainPtr<CFDictionaryRef> stateDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, numValues, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFDictionaryRef> stateDictionary = adoptCF(CFDictionaryCreate(0, keys, values, numValues, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFWriteStreamRef> writeStream(AdoptCF, CFWriteStreamCreateWithAllocatedBuffers(0, 0));
+    RetainPtr<CFWriteStreamRef> writeStream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
     if (!writeStream)
         return 0;
     
@@ -87,7 +87,7 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
     if (!CFPropertyListWriteToStream(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0))
         return 0;
         
-    RetainPtr<CFDataRef> stateCFData(AdoptCF, (CFDataRef)CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten));
+    RetainPtr<CFDataRef> stateCFData = adoptCF((CFDataRef)CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten));
 
     CFIndex length = CFDataGetLength(stateCFData.get());
     Vector<unsigned char> stateVector(length + sizeof(UInt32));
@@ -117,10 +117,10 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
         return;
     }
     
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, webData->bytes() + sizeof(UInt32), webData->size() - sizeof(UInt32)));
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(0, webData->bytes() + sizeof(UInt32), webData->size() - sizeof(UInt32)));
 
     CFStringRef propertyListError = 0;
-    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateFromXMLData(0, data.get(), kCFPropertyListImmutable, &propertyListError));
+    RetainPtr<CFPropertyListRef> propertyList = adoptCF(CFPropertyListCreateFromXMLData(0, data.get(), kCFPropertyListImmutable, &propertyListError));
     if (propertyListError) {
         CFRelease(propertyListError);
         LOG(SessionState, "Could not read session state property list");
@@ -190,7 +190,7 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& 
     RetainPtr<CFMutableArrayRef> items;
 
     if (size_t size = searchItems.size()) {
-        items.adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
+        items = adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
         for (size_t i = 0; i < size; ++i)
             CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
     }
@@ -205,7 +205,7 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& search
     ASSERT(!name.isEmpty());
 
     searchItems.clear();
-    RetainPtr<CFArrayRef> items(AdoptCF, reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
+    RetainPtr<CFArrayRef> items = adoptCF(reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
 
     if (!items || CFGetTypeID(items.get()) != CFArrayGetTypeID())
         return;

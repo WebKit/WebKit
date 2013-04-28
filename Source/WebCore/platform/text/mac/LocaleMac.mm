@@ -62,7 +62,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
     if (equalIgnoringCase(currentLocaleLanguage, localeLanguage))
         return currentLocale;
     // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
-     return RetainPtr<NSLocale>(AdoptNS, [[NSLocale alloc] initWithLocaleIdentifier:locale]);
+     return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
 }
 
 PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
@@ -83,14 +83,14 @@ static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCa
 
 LocaleMac::LocaleMac(NSLocale* locale)
     : m_locale(locale)
-    , m_gregorianCalendar(AdoptNS, [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar])
+    , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]))
     , m_didInitializeNumberData(false)
 {
     NSArray* availableLanguages = [NSLocale ISOLanguageCodes];
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
     NSString* language = [m_locale.get() objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
-        m_locale.adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()]);
+        m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()]);
     [m_gregorianCalendar.get() setLocale:m_locale.get()];
 }
 
@@ -308,12 +308,12 @@ void LocaleMac::initializeLocaleData()
         return;
     m_didInitializeNumberData = true;
 
-    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
+    RetainPtr<NSNumberFormatter> formatter = adoptNS([[NSNumberFormatter alloc] init]);
     [formatter.get() setLocale:m_locale.get()];
     [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter.get() setUsesGroupingSeparator:NO];
 
-    RetainPtr<NSNumber> sampleNumber(AdoptNS, [[NSNumber alloc] initWithDouble:9876543210]);
+    RetainPtr<NSNumber> sampleNumber = adoptNS([[NSNumber alloc] initWithDouble:9876543210]);
     String nineToZero([formatter.get() stringFromNumber:sampleNumber.get()]);
     if (nineToZero.length() != 10)
         return;

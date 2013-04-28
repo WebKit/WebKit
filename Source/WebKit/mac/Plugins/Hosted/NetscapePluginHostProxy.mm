@@ -105,18 +105,18 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     
     // FIXME: We should use libdispatch for this.
     CFMachPortContext context = { 0, this, 0, 0, 0 };
-    m_deadNameNotificationPort.adoptCF(CFMachPortCreate(0, deadNameNotificationCallback, &context, 0));
+    m_deadNameNotificationPort = adoptCF(CFMachPortCreate(0, deadNameNotificationCallback, &context, 0));
 
     mach_port_t previous;
     mach_port_request_notification(mach_task_self(), pluginHostPort, MACH_NOTIFY_DEAD_NAME, 0, 
                                    CFMachPortGetPort(m_deadNameNotificationPort.get()), MACH_MSG_TYPE_MAKE_SEND_ONCE, &previous);
     ASSERT(previous == MACH_PORT_NULL);
     
-    RetainPtr<CFRunLoopSourceRef> deathPortSource(AdoptCF, CFMachPortCreateRunLoopSource(0, m_deadNameNotificationPort.get(), 0));
+    RetainPtr<CFRunLoopSourceRef> deathPortSource = adoptCF(CFMachPortCreateRunLoopSource(0, m_deadNameNotificationPort.get(), 0));
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
     
-    m_clientPortSource.adoptCF(WKCreateMIGServerSource((mig_subsystem_t)&WKWebKitPluginClient_subsystem, m_clientPort));
+    m_clientPortSource = adoptCF(WKCreateMIGServerSource((mig_subsystem_t)&WKWebKitPluginClient_subsystem, m_clientPort));
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), kCFRunLoopDefaultMode);
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSEventTrackingRunLoopMode);
 }
@@ -230,7 +230,7 @@ void NetscapePluginHostProxy::beginModal()
     ASSERT(!m_placeholderWindow);
     ASSERT(!m_activationObserver);
     
-    m_placeholderWindow.adoptNS([[WebPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    m_placeholderWindow = adoptNS([[WebPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationWillBecomeActiveNotification object:NSApp queue:nil
                                                                          usingBlock:^(NSNotification *){ applicationDidBecomeActive(); }];
@@ -515,7 +515,7 @@ kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID,
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    RetainPtr<CFDataRef> result(AdoptCF, CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength));
+    RetainPtr<CFDataRef> result = adoptCF(CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength));
     instanceProxy->setCurrentReply(requestID, new NetscapePluginInstanceProxy::BooleanAndDataReply(returnValue, result));
     
     return KERN_SUCCESS;

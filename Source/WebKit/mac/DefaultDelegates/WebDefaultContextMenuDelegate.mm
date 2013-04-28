@@ -90,7 +90,7 @@
             break;
         case WebMenuItemTagSearchWeb: {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-            RetainPtr<CFStringRef> searchProviderName(AdoptCF, WKCopyDefaultSearchProviderDisplayName());
+            RetainPtr<CFStringRef> searchProviderName = adoptCF(WKCopyDefaultSearchProviderDisplayName());
             title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
 #else
             title = UI_STRING_INTERNAL("Search with Google", "Search with Google context menu item");

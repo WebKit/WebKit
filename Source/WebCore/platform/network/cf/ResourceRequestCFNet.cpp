@@ -113,7 +113,7 @@ CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) c
 static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHeaderMap& requestHeaders) 
 {
     // Remove existing headers first, as some of them may no longer be present in the map.
-    RetainPtr<CFDictionaryRef> oldHeaderFields(AdoptCF, CFURLRequestCopyAllHTTPHeaderFields(request));
+    RetainPtr<CFDictionaryRef> oldHeaderFields = adoptCF(CFURLRequestCopyAllHTTPHeaderFields(request));
     CFIndex oldHeaderFieldCount = CFDictionaryGetCount(oldHeaderFields.get());
     if (oldHeaderFieldCount) {
         Vector<CFStringRef> oldHeaderFieldNames(oldHeaderFieldCount);
@@ -130,8 +130,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 {
     CFMutableURLRequestRef cfRequest;
 
-    RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookies(AdoptCF, ResourceRequest::firstPartyForCookies().createCFURL());
+    RetainPtr<CFURLRef> url = adoptCF(ResourceRequest::url().createCFURL());
+    RetainPtr<CFURLRef> firstPartyForCookies = adoptCF(ResourceRequest::firstPartyForCookies().createCFURL());
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
@@ -154,7 +154,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
-    RetainPtr<CFMutableArrayRef> encodingFallbacks(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
+    RetainPtr<CFMutableArrayRef> encodingFallbacks = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
     for (unsigned i = 0; i != fallbackCount; ++i) {
         RetainPtr<CFStringRef> encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
         CFStringEncoding encoding = CFStringConvertIANACharSetNameToEncoding(encodingName.get());
@@ -164,7 +164,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     setContentDispositionEncodingFallbackArray(cfRequest, encodingFallbacks.get());
 
     if (m_cfRequest) {
-        RetainPtr<CFHTTPCookieStorageRef> cookieStorage(AdoptCF, CFURLRequestCopyHTTPCookieStorage(m_cfRequest.get()));
+        RetainPtr<CFHTTPCookieStorageRef> cookieStorage = adoptCF(CFURLRequestCopyHTTPCookieStorage(m_cfRequest.get()));
         if (cookieStorage)
             CFURLRequestSetHTTPCookieStorage(cfRequest, cookieStorage.get());
         CFURLRequestSetHTTPCookieStorageAcceptPolicy(cfRequest, CFURLRequestGetHTTPCookieStorageAcceptPolicy(m_cfRequest.get()));
@@ -175,12 +175,12 @@ void ResourceRequest::doUpdatePlatformRequest()
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
         CString utf8String = partition.utf8();
-        RetainPtr<CFStringRef> partitionValue(AdoptCF, CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
+        RetainPtr<CFStringRef> partitionValue = adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
         _CFURLRequestSetProtocolProperty(cfRequest, wkCachePartitionKey(), partitionValue.get());
     }
 #endif
 
-    m_cfRequest.adoptCF(cfRequest);
+    m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(MAC)
     updateNSURLRequest();
 #endif
@@ -190,8 +190,8 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 {
     CFMutableURLRequestRef cfRequest;
 
-    RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookies(AdoptCF, ResourceRequest::firstPartyForCookies().createCFURL());
+    RetainPtr<CFURLRef> url = adoptCF(ResourceRequest::url().createCFURL());
+    RetainPtr<CFURLRef> firstPartyForCookies = adoptCF(ResourceRequest::firstPartyForCookies().createCFURL());
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
@@ -216,7 +216,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         }
     }
 
-    m_cfRequest.adoptCF(cfRequest);
+    m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(MAC)
     updateNSURLRequest();
 #endif
@@ -255,7 +255,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
     m_responseContentDispositionEncodingFallbackArray.clear();
-    RetainPtr<CFArrayRef> encodingFallbacks(AdoptCF, copyContentDispositionEncodingFallbackArray(m_cfRequest.get()));
+    RetainPtr<CFArrayRef> encodingFallbacks = adoptCF(copyContentDispositionEncodingFallbackArray(m_cfRequest.get()));
     if (encodingFallbacks) {
         CFIndex count = CFArrayGetCount(encodingFallbacks.get());
         for (CFIndex i = 0; i < count; ++i) {
@@ -266,7 +266,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
 #if ENABLE(CACHE_PARTITIONING)
-    RetainPtr<CFStringRef> cachePartition(AdoptCF, static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkCachePartitionKey())));
+    RetainPtr<CFStringRef> cachePartition = adoptCF(static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkCachePartitionKey())));
     if (cachePartition)
         m_cachePartition = cachePartition.get();
 #endif
@@ -298,7 +298,7 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 
     CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
     wkSetRequestStorageSession(storageSession, cfRequest);
-    m_cfRequest.adoptCF(cfRequest);
+    m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(MAC)
     updateNSURLRequest();
 #endif

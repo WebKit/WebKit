@@ -102,7 +102,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformCALayer* platformCALayer, cons
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
-    RetainPtr<NSMutableArray> array(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     
     for (unsigned i = 0; i < filters.size(); ++i) {
         String filterName = String::format("filter_%d", i);
@@ -116,8 +116,8 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformCALayer* platformCALayer, cons
 
             CGFloat components[4];
             op->color().getRGBA(components[0], components[1], components[2], components[3]);
-            RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-            RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+            RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+            RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
             [layer setShadowColor:color.get()];
             [layer setShadowRadius:op->stdDeviation()];
             [layer setShadowOpacity:1];
@@ -348,7 +348,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(operation);
             amount = op->amount();
         }
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
         break;
     }
     case FilterOperation::SEPIA: {
@@ -376,7 +376,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
                                                       Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], amount)
                                                       Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0]; break; // inputBVector
         }
-        value.adoptNS(rowVector);
+        value = adoptNS(rowVector);
 #endif
         break;
     }
@@ -389,7 +389,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
         
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
         break;
     }
     case FilterOperation::HUE_ROTATE: {
@@ -401,7 +401,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
         amount = deg2rad(amount);
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
         break;
     }
     case FilterOperation::INVERT: {
@@ -429,7 +429,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         case 2: rowVector = [[CIVector alloc] initWithX:0 Y:0 Z:multiplier W:0]; break; // inputBVector
         case 3: rowVector = [[CIVector alloc] initWithX:amount Y:amount Z:amount W:0]; break; // inputBiasVector
         }
-        value.adoptNS(rowVector);
+        value = adoptNS(rowVector);
 #endif
         break;
     }
@@ -446,7 +446,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
         
-        value.adoptNS([[CIVector alloc] initWithX:0 Y:0 Z:0 W:amount]);
+        value = adoptNS([[CIVector alloc] initWithX:0 Y:0 Z:0 W:amount]);
 #endif
         break;
     }
@@ -470,7 +470,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         case 1: rowVector = [[CIVector alloc] initWithX:0 Y:amount Z:0 W:0]; break; // inputGVector
         case 2: rowVector = [[CIVector alloc] initWithX:0 Y:0 Z:amount W:0]; break; // inputBVector
         }
-        value.adoptNS(rowVector);
+        value = adoptNS(rowVector);
 #endif
         break;
     }
@@ -488,7 +488,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
 
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
 #endif
         break;
     }
@@ -502,7 +502,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = floatValueForLength(op->stdDeviation(), 0);
         }
         
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
         break;
     }
     default:

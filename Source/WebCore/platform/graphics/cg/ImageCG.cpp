@@ -58,9 +58,9 @@ RetainPtr<CGImageRef> Image::imageWithColorSpace(CGImageRef originalImage, Color
     case ColorSpaceDeviceRGB:
         return originalImage;
     case ColorSpaceSRGB:
-        return RetainPtr<CGImageRef>(AdoptCF, CGImageCreateCopyWithColorSpace(originalImage, sRGBColorSpaceRef()));
+        return adoptCF(CGImageCreateCopyWithColorSpace(originalImage, sRGBColorSpaceRef()));
     case ColorSpaceLinearRGB:
-        return RetainPtr<CGImageRef>(AdoptCF, CGImageCreateCopyWithColorSpace(originalImage, linearRGBColorSpaceRef()));
+        return adoptCF(CGImageCreateCopyWithColorSpace(originalImage, linearRGBColorSpaceRef()));
     }
 
     ASSERT_NOT_REACHED();
@@ -107,7 +107,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen
         // because sub-images are only used for border-image, which only renders when the image is fully decoded.
         ASSERT(h == height());
-        subImage.adoptCF(CGImageCreateWithImageInRect(tileImage, tileRect));
+        subImage = adoptCF(CGImageCreateWithImageInRect(tileImage, tileRect));
     }
 
     // Adjust the color space.
@@ -129,16 +129,16 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
     // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
     matrix = CGAffineTransformTranslate(matrix, 0, size().height() - h);
-    RetainPtr<CGPatternRef> pattern(AdoptCF, CGPatternCreate(subImage.get(), CGRectMake(0, 0, tileRect.width(), tileRect.height()),
+    RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreate(subImage.get(), CGRectMake(0, 0, tileRect.width(), tileRect.height()),
                                              matrix, tileRect.width(), tileRect.height(), 
                                              kCGPatternTilingConstantSpacing, true, &patternCallbacks));
     if (!pattern)
         return;
 
-    RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
+    RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
     
     CGFloat alpha = 1;
-    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreateWithPattern(patternSpace.get(), pattern.get(), &alpha));
+    RetainPtr<CGColorRef> color = adoptCF(CGColorCreateWithPattern(patternSpace.get(), pattern.get(), &alpha));
     CGContextSetFillColorSpace(context, patternSpace.get());
 
     // FIXME: Really want a public API for this.  It is just CGContextSetBaseCTM(context, CGAffineTransformIdentiy).

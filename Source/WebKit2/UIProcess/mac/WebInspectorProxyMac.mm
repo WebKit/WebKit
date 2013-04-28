@@ -276,15 +276,15 @@ void WebInspectorProxy::createInspectorWindow()
     [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
     WKNSWindowMakeBottomCornersSquare(window);
 
-    m_inspectorWindow.adoptNS(window);
+    m_inspectorWindow = adoptNS(window);
 
     NSView *contentView = [window contentView];
 
     static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02192400; // 537.36.0
     static bool supportsDockToRight = NSVersionOfLinkTimeLibrary("Safari") >= firstVersionOfSafariWithDockToRightSupport;
 
-    m_dockBottomButton.adoptNS(createDockButton(@"DockBottom"));
-    m_dockRightButton.adoptNS(createDockButton(@"DockRight"));
+    m_dockBottomButton = adoptNS(createDockButton(@"DockBottom"));
+    m_dockRightButton = adoptNS(createDockButton(@"DockRight"));
 
     m_dockBottomButton.get().target = m_inspectorProxyObjCAdapter.get();
     m_dockBottomButton.get().action = @selector(attachBottom:);
@@ -368,12 +368,12 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    m_inspectorView.adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(page()->process()->context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
+    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(page()->process()->context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
     ASSERT(m_inspectorView);
 
     [m_inspectorView.get() setDrawsBackground:NO];
 
-    m_inspectorProxyObjCAdapter.adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
+    m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
 
     WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
 

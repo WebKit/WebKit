@@ -119,7 +119,7 @@ void WebResourceCacheManager::clearCacheForOrigin(const SecurityOriginData& orig
 
 #if USE(CFURLCACHE)
     if (resourceCachesToClear != InMemoryResourceCachesOnly) { 
-        RetainPtr<CFMutableArrayRef> hostArray(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+        RetainPtr<CFMutableArrayRef> hostArray = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
         CFArrayAppendValue(hostArray.get(), origin->host().createCFString().get());
 
         clearCFURLCacheForHostNames(hostArray.get());

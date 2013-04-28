@@ -158,7 +158,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
         range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
     
     NSAttributedString* attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
+    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
     
@@ -178,7 +178,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
 void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     NSAttributedString* attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
+    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
     
@@ -473,7 +473,7 @@ static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRef
         return 0;
 
     if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
-        RetainPtr<NSString> markupString(AdoptNS, [[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
+        RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
         // FIXME: seems poor form to do this as a side effect of getting a document fragment
         if (DocumentLoader* loader = frame->loader()->documentLoader())
             loader->addAllArchiveResources(coreArchive.get());

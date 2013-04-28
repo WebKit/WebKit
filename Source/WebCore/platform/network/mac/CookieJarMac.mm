@@ -40,7 +40,7 @@ namespace WebCore {
 static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
 {
     NSUInteger count = [unfilteredCookies count];
-    RetainPtr<NSMutableArray> filteredCookies(AdoptNS, [[NSMutableArray alloc] initWithCapacity:count]);
+    RetainPtr<NSMutableArray> filteredCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:count]);
 
     for (NSUInteger i = 0; i < count; ++i) {
         NSHTTPCookie *cookie = (NSHTTPCookie *)[unfilteredCookies objectAtIndex:i];

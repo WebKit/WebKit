@@ -70,7 +70,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
     [archiver finishEncoding];
     [archiver release];
     
-    return RetainPtr<CFDataRef>(AdoptCF, responseData);
+    return adoptCF(responseData);
 }
 
 }

@@ -54,7 +54,7 @@ PlatformClockCM::PlatformClockCM()
 {
     CMClockRef rawClockPtr = 0;
     CMAudioDeviceClockCreate(kCFAllocatorDefault, NULL, &rawClockPtr);
-    RetainPtr<CMClockRef> clock(AdoptCF, rawClockPtr);
+    RetainPtr<CMClockRef> clock = adoptCF(rawClockPtr);
     initializeWithTimingSource(clock.get());
 }
 
@@ -69,7 +69,7 @@ void PlatformClockCM::initializeWithTimingSource(CMClockRef clock)
 {
     CMTimebaseRef rawTimebasePtr = 0;
     CMTimebaseCreateWithMasterClock(kCFAllocatorDefault, clock, &rawTimebasePtr);
-    m_timebase.adoptCF(rawTimebasePtr);
+    m_timebase = adoptCF(rawTimebasePtr);
 }
 
 void PlatformClockCM::setCurrentTime(double time)

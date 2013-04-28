@@ -116,7 +116,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 
     RetainPtr<CGColorSpaceRef> imageColorSpace = colorSpace;
     if (!imageColorSpace)
-        imageColorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
+        imageColorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
     CGRect layerBounds = CGRectIntegral([self bounds]);
     

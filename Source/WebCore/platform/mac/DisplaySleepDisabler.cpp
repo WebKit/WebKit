@@ -37,7 +37,7 @@ DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
     : m_disableDisplaySleepAssertion(0)
 {
 #if !PLATFORM(IOS)
-    RetainPtr<CFStringRef> reasonCF(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
     IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
 #else
     UNUSED_PARAM(reason);

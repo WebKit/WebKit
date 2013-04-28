@@ -152,7 +152,7 @@ static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMe
                 [wrapper release];
             }
 
-            result.append(RetainPtr<NSMenuItem>(AdoptNS, menuItem));
+            result.append(adoptNS(menuItem));
             break;
         }
         case SeparatorType:
@@ -168,7 +168,7 @@ static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMe
             [menuItem setSubmenu:menu];
             [menu release];
 
-            result.append(RetainPtr<NSMenuItem>(AdoptNS, menuItem));
+            result.append(adoptNS(menuItem));
             
             break;
         }
@@ -189,7 +189,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
     if (m_popup)
         [m_popup.get() removeAllItems];
     else {
-        m_popup.adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popup.get() setUsesItemFromMenu:NO];
         [m_popup.get() setAutoenablesItems:NO];
     }

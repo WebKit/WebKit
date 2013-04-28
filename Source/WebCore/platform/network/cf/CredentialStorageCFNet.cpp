@@ -43,8 +43,8 @@ namespace WebCore {
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpaceCF(AdoptCF, createCF(protectionSpace));
-    RetainPtr<CFURLCredentialRef> credentialCF(AdoptCF, wkCopyCredentialFromCFPersistentStorage(protectionSpaceCF.get()));
+    RetainPtr<CFURLProtectionSpaceRef> protectionSpaceCF = adoptCF(createCF(protectionSpace));
+    RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(wkCopyCredentialFromCFPersistentStorage(protectionSpaceCF.get()));
     return core(credentialCF.get());
 }
 

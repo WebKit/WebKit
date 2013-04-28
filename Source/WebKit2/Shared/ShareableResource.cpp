@@ -86,8 +86,8 @@ PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() cons
         return 0;
     }
 
-    RetainPtr<CFAllocatorRef> deallocator(AdoptCF, createShareableResourceDeallocator(resource.get()));
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
+    RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(resource.get()));
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
 
     return SharedBuffer::wrapCFData(data.get());
 }

@@ -51,15 +51,15 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
     // as it doesn't necessarily look up the actual external IP. Also, if DNS returns a fake internal address,
     // local caches may keep it even after re-connecting to another network.
 
-    RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, CFNetworkCopySystemProxySettings());
+    RetainPtr<CFDictionaryRef> proxySettings = adoptCF(CFNetworkCopySystemProxySettings());
     if (!proxySettings)
         return false;
 
     static CFURLRef httpCFURL = KURL(ParsedURLString, "http://example.com/").createCFURL();
     static CFURLRef httpsCFURL = KURL(ParsedURLString, "https://example.com/").createCFURL();
 
-    RetainPtr<CFArrayRef> httpProxyArray(AdoptCF, CFNetworkCopyProxiesForURL(httpCFURL, proxySettings.get()));
-    RetainPtr<CFArrayRef> httpsProxyArray(AdoptCF, CFNetworkCopyProxiesForURL(httpsCFURL, proxySettings.get()));
+    RetainPtr<CFArrayRef> httpProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpCFURL, proxySettings.get()));
+    RetainPtr<CFArrayRef> httpsProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpsCFURL, proxySettings.get()));
 
     CFIndex httpProxyCount = CFArrayGetCount(httpProxyArray.get());
     CFIndex httpsProxyCount = CFArrayGetCount(httpsProxyArray.get());

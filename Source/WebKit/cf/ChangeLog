@@ -1,3 +1,13 @@
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (populateSetting): Use adoptCF.
+
 2013-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Provide a user default that can be used to disable docking of the Web Inspector.

@@ -81,9 +81,9 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         }
     } else {
         // We ask CoreText for possible vertical variant glyphs
-        RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buffer, bufferLength, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(0, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
-        RetainPtr<CTLineRef> line(AdoptCF, CTLineCreateWithAttributedString(attributedString.get()));
+        RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buffer, bufferLength, kCFAllocatorNull));
+        RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(0, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
+        RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
 
         CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
         CFIndex runCount = CFArrayGetCount(runArray);
@@ -98,7 +98,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 
         // For the CGFont comparison in the loop, use the CGFont that Core Text assigns to the CTFont. This may
         // be non-CFEqual to fontData->platformData().cgFont().
-        RetainPtr<CGFontRef> cgFont(AdoptCF, CTFontCopyGraphicsFont(fontData->platformData().ctFont(), 0));
+        RetainPtr<CGFontRef> cgFont = adoptCF(CTFontCopyGraphicsFont(fontData->platformData().ctFont(), 0));
 
         for (CFIndex r = 0; r < runCount && !done ; ++r) {
             // CTLine could map characters over multiple fonts using its own font fallback list.
@@ -108,7 +108,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 
             CFDictionaryRef attributes = CTRunGetAttributes(ctRun);
             CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(attributes, kCTFontAttributeName));
-            RetainPtr<CGFontRef> runCGFont(AdoptCF, CTFontCopyGraphicsFont(runFont, 0));
+            RetainPtr<CGFontRef> runCGFont = adoptCF(CTFontCopyGraphicsFont(runFont, 0));
             // Use CGFont here as CFEqual for CTFont counts all attributes for font.
             bool gotBaseFont = CFEqual(cgFont.get(), runCGFont.get());
             if (gotBaseFont || fontData->platformData().isCompositeFontReference()) {

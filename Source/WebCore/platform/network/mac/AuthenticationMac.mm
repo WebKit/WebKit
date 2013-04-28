@@ -142,24 +142,24 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
 
 NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
 {
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpace(AdoptCF, createCF(coreSpace));
+    RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreSpace));
     return [[[NSURLProtectionSpace alloc] _initWithCFURLProtectionSpace:protectionSpace.get()] autorelease];
 }
 
 NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {
     AuthenticationClient* authClient = coreChallenge.authenticationClient();
-    RetainPtr<WebCoreAuthenticationClientAsChallengeSender> challengeSender(AdoptNS, [[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:authClient]);
+    RetainPtr<WebCoreAuthenticationClientAsChallengeSender> challengeSender = adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:authClient]);
     RetainPtr<CFURLAuthChallengeRef> authChallenge = coreChallenge.cfURLAuthChallengeRef();
     if (!authChallenge)
-        authChallenge.adoptCF(createCF(coreChallenge));
+        authChallenge = adoptCF(createCF(coreChallenge));
     [challengeSender.get() setCFChallenge:authChallenge.get()];
     return [[NSURLAuthenticationChallenge _authenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
 }
 
 NSURLCredential *mac(const Credential& coreCredential)
 {
-    RetainPtr<CFURLCredentialRef> credential(AdoptCF, createCF(coreCredential));
+    RetainPtr<CFURLCredentialRef> credential = adoptCF(createCF(coreCredential));
     return [[[NSURLCredential alloc] _initWithCFURLCredential:credential.get()] autorelease];
 }
 
@@ -192,9 +192,9 @@ AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *c
 void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* client)
 {
     if (client) {
-        m_sender.adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:client]);
+        m_sender = adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:client]);
         if (m_nsChallenge)
-            m_nsChallenge.adoptNS([[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_nsChallenge.get() sender:m_sender.get()]);
+            m_nsChallenge = adoptNS([[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_nsChallenge.get() sender:m_sender.get()]);
     } else {
         if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
             [(WebCoreAuthenticationClientAsChallengeSender *)m_sender.get() detachClient];

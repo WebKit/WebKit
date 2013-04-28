@@ -39,7 +39,7 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typese
     if (!addResult.isNewEntry)
         return attributesDictionary.get();
 
-    attributesDictionary.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFMutableDictionaryRef mutableAttributes = (CFMutableDictionaryRef)attributesDictionary.get();
 
     CFDictionarySetValue(mutableAttributes, kCTFontAttributeName, platformData().ctFont());

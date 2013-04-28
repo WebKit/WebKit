@@ -1,3 +1,305 @@
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        This change was done by a global replace followed by compiling and inspecting for
+        cases that needed to be tweaked by hand.
+
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::attachWrapper):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::attachWrapper):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::methodNamed):
+        (JSC::Bindings::ObjcClass::fieldNamed):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::ObjcField):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        * history/cf/HistoryPropertyList.cpp:
+        (WebCore::HistoryPropertyListWriter::releaseData):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::createFileURLForApplicationCacheResource):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation):
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::rawDataRepresentation):
+        * loader/archive/cf/LegacyWebArchiveMac.mm:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponse):
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::CaptionUserPreferencesMac::userPrefersCaptions):
+        (WebCore::CaptionUserPreferencesMac::userPrefersSubtitles):
+        (WebCore::CaptionUserPreferencesMac::captionsWindowCSS):
+        (WebCore::CaptionUserPreferencesMac::captionsBackgroundCSS):
+        (WebCore::CaptionUserPreferencesMac::captionsTextColor):
+        (WebCore::CaptionUserPreferencesMac::captionsDefaultFontCSS):
+        (WebCore::CaptionUserPreferencesMac::preferredLanguages):
+        (WebCore::trackDisplayName):
+        * platform/Language.cpp:
+        (WebCore::displayNameForLanguageLocale):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::imageTitle):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::AudioFileReader):
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::fileSystemPath):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        (WebCore::LayerFlushScheduler::schedule):
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::PlatformCAAnimation):
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::filterValueForOperation):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::PlatformCALayer):
+        (PlatformCALayer::addAnimationForKey):
+        (PlatformCALayer::setBackgroundColor):
+        (PlatformCALayer::setBorderColor):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::getCGImageArray):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::cachedCGColor):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createIOSurface):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::CGImageEncodeToData):
+        (WebCore::CGImageToDataURL):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageDataToDataURL):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::imageWithColorSpace):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::orientationAtIndex):
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::createScratchContext):
+        (WebCore::Path::contains):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::createFeatureSettingDictionary):
+        (WebCore::cascadeToLastResortFontDescriptor):
+        (WebCore::cascadeToLastResortAndDisableSwashesFontDescriptor):
+        (WebCore::FontPlatformData::ctFont):
+        (WebCore::FontPlatformData::description):
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (-[WebCascadeList objectAtIndex:]):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::linearRGBColorSpaceRef):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::getTIFFRepresentation):
+        (WebCore::BitmapImage::getNSImage):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieView):
+        (WebCore::MediaPlayerPrivateQTKit::createQTVideoRenderer):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::setPreservesPitch):
+        (WebCore::addFileTypesToCache):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::SimpleFontData::getCFStringAttributes):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::fontHasVerticalGlyphs):
+        (WebCore::SimpleFontData::getCompositeFontReferenceFontData):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::ContentFilter::ContentFilter):
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor):
+        (WebCore::createNamedCursor):
+        * platform/mac/DisplaySleepDisabler.cpp:
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+        * platform/mac/Language.mm:
+        (WebCore::httpStyleLanguageCode):
+        (WebCore::platformUserPreferredLanguages):
+        * platform/mac/LocalizedStringsMac.cpp:
+        (WebCore::localizedString):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::getDataSelection):
+        (WebCore::Pasteboard::writeSelectionForTypes):
+        (WebCore::fragmentFromWebArchive):
+        * platform/mac/PlatformClockCM.mm:
+        (PlatformClockCM::PlatformClockCM):
+        (PlatformClockCM::initializeWithTimingSource):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::addTypes):
+        (WebCore::PlatformPasteboard::setTypes):
+        (WebCore::PlatformPasteboard::setPathnamesForType):
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::PlatformSpeechSynthesizer::speak):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenuMac::populate):
+        (WebCore::PopupMenuMac::show):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        * platform/mac/WebCoreNSStringExtras.mm:
+        (stringEncodingForResource):
+        * platform/network/ProtectionSpace.cpp:
+        (WebCore::ProtectionSpace::receivesCredentialSecurely):
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::platformBadResponseError):
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::overrideCookieStorage):
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        (WebCore::proxyAutoConfigurationResultCallback):
+        (WebCore::processProxyServers):
+        (WebCore::addProxyServersForURL):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::platformLazyInit):
+        (WebCore::ResourceError::cfError):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::handleDataArray):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::setHeaderFields):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::executePACFileURL):
+        (WebCore::SocketStreamHandle::chooseProxy):
+        (WebCore::SocketStreamHandle::createStreams):
+        (WebCore::SocketStreamHandle::addCONNECTCredentials):
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        (WebCore::AuthenticationChallenge::setAuthenticationClient):
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::filterCookies):
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::updateState):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::createNSErrorFromResourceErrorBase):
+        (WebCore::ResourceError::nsError):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse):
+        (WebCore::ResourceResponse::nsURLResponse):
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::mimeTypeFromUTITree):
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForNullKey):
+        (WebCore::lastHyphenLocation):
+        * platform/text/mac/HyphenationMac.mm:
+        (WebCore::::createValueForKey):
+        (WebCore::lastHyphenLocation):
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::determineLocale):
+        (WebCore::LocaleMac::LocaleMac):
+        (WebCore::LocaleMac::initializeLocaleData):
+        * platform/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WebCore::textBreakLocalePreference):
+        (WebCore::canonicalLanguageIdentifier):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::popupButton):
+        (WebCore::RenderThemeMac::search):
+        (WebCore::RenderThemeMac::searchMenuTemplate):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeMac::sliderThumbVertical):
+        (WebCore::RenderThemeMac::textField):
+        Use adoptNS and adoptCF free functions.
+
 2013-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pressing mouse button inside a dragstart event causes a crash

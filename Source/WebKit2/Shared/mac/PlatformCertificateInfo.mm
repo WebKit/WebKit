@@ -82,7 +82,7 @@ void PlatformCertificateInfo::dump() const
     NSLog(@"PlatformCertificateInfo\n");
     NSLog(@"  Entries: %d\n", entries);
     for (unsigned i = 0; i < entries; ++i) {
-        RetainPtr<CFStringRef> summary(AdoptCF, SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
+        RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
         NSLog(@"  %@", (NSString *)summary.get());
     }
 }

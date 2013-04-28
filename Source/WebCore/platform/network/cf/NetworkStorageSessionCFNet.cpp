@@ -72,7 +72,7 @@ void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
     ASSERT(isMainThread());
     // FIXME: Why don't we retain it? The only caller is an API method that takes cookie storage as a raw argument.
-    cookieStorageOverride().adoptCF(cookieStorage);
+    cookieStorageOverride() = adoptCF(cookieStorage);
 }
 
 CFHTTPCookieStorageRef overridenCookieStorage()

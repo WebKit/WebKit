@@ -1127,7 +1127,7 @@ void NetscapePlugin::updatePluginLayer()
     if (m_pluginReturnsNonretainedLayer)
         m_pluginLayer = reinterpret_cast<CALayer *>(value);
     else
-        m_pluginLayer.adoptNS(reinterpret_cast<CALayer *>(value));
+        m_pluginLayer = adoptNS(reinterpret_cast<CALayer *>(value));
 
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists) &&
         !m_isTransparent)

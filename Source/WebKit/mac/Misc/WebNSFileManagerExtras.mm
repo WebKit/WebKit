@@ -98,9 +98,9 @@ static void *setMetaData(void* context)
 
 - (NSString *)_webkit_startupVolumeName
 {
-    RetainPtr<DASessionRef> session(AdoptCF, DASessionCreate(kCFAllocatorDefault));
-    RetainPtr<DADiskRef> disk(AdoptCF, DADiskCreateFromVolumePath(kCFAllocatorDefault, session.get(), (CFURLRef)[NSURL fileURLWithPath:@"/"]));
-    RetainPtr<CFDictionaryRef> diskDescription(AdoptCF, DADiskCopyDescription(disk.get()));
+    RetainPtr<DASessionRef> session = adoptCF(DASessionCreate(kCFAllocatorDefault));
+    RetainPtr<DADiskRef> disk = adoptCF(DADiskCreateFromVolumePath(kCFAllocatorDefault, session.get(), (CFURLRef)[NSURL fileURLWithPath:@"/"]));
+    RetainPtr<CFDictionaryRef> diskDescription = adoptCF(DADiskCopyDescription(disk.get()));
     RetainPtr<NSString> diskName = (NSString *)CFDictionaryGetValue(diskDescription.get(), kDADiskDescriptionVolumeNameKey);
     return WebCFAutorelease(diskName.leakRef());
 }

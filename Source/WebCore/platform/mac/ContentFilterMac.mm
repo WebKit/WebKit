@@ -39,7 +39,7 @@ PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response
 }
 
 ContentFilter::ContentFilter(const ResourceResponse& response)
-    : m_platformContentFilter(AdoptNS, wkFilterCreateInstance(response.nsURLResponse()))
+    : m_platformContentFilter(adoptNS(wkFilterCreateInstance(response.nsURLResponse())))
 {
     ASSERT(m_platformContentFilter);
 }

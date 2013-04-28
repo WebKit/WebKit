@@ -98,15 +98,15 @@ using namespace WebCore;
     
     _pluginPackage = pluginPackage;
     _element = element;
-    _sourceURL.adoptNS([URL copy]);
-    _baseURL.adoptNS([baseURL copy]);
-    _MIMEType.adoptNS([MIME copy]);
+    _sourceURL = adoptNS([URL copy]);
+    _baseURL = adoptNS([baseURL copy]);
+    _MIMEType = adoptNS([MIME copy]);
 
     // Enable "kiosk mode" when instantiating the QT plug-in inside of Dashboard. See <rdar://problem/6878105>
     if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.dashboard.client"] &&
         [_pluginPackage.get() bundleIdentifier] == "com.apple.QuickTime Plugin.plugin") {
-        RetainPtr<NSMutableArray> mutableKeys(AdoptNS, [keys mutableCopy]);
-        RetainPtr<NSMutableArray> mutableValues(AdoptNS, [values mutableCopy]);
+        RetainPtr<NSMutableArray> mutableKeys = adoptNS([keys mutableCopy]);
+        RetainPtr<NSMutableArray> mutableValues = adoptNS([values mutableCopy]);
 
         [mutableKeys.get() addObject:@"kioskmode"];
         [mutableValues.get() addObject:@"true"];
@@ -488,7 +488,7 @@ using namespace WebCore;
     [snapshot unlockFocus];
     _snapshotting = NO;
     
-    _cachedSnapshot.adoptNS(snapshot);
+    _cachedSnapshot = adoptNS(snapshot);
 }
 
 - (void)clearCachedSnapshot
@@ -921,7 +921,7 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
             authenticationMethod = NSURLAuthenticationMethodHTTPDigest;
     }
     
-    RetainPtr<NSURLProtectionSpace> protectionSpace(AdoptNS, [[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
+    RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
     
     NSURLCredential *credential = mac(CredentialStorage::get(core(protectionSpace.get())));
     if (!credential)

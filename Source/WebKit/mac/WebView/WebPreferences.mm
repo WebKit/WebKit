@@ -219,8 +219,8 @@ public:
         return nil;
 
     _private = new WebPreferencesPrivate;
-    _private->values.adoptNS([[NSMutableDictionary alloc] init]);
-    _private->identifier.adoptNS([anIdentifier copy]);
+    _private->values = adoptNS([[NSMutableDictionary alloc] init]);
+    _private->identifier = adoptNS([anIdentifier copy]);
     _private->automaticallyDetectsCacheModel = YES;
 
     [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
@@ -256,9 +256,9 @@ public:
         }
 
         if ([identifier isKindOfClass:[NSString class]])
-            _private->identifier.adoptNS([identifier copy]);
+            _private->identifier = adoptNS([identifier copy]);
         if ([values isKindOfClass:[NSDictionary class]])
-            _private->values.adoptNS([values mutableCopy]); // ensure dictionary is mutable
+            _private->values = adoptNS([values mutableCopy]); // ensure dictionary is mutable
 
         LOG(Encoding, "Identifier = %@, Values = %@\n", _private->identifier.get(), _private->values.get());
     } @catch(id) {

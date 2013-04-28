@@ -61,7 +61,7 @@ Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
     Vector<String> pluginPaths;
 
-    RetainPtr<CFStringRef> directoryCFString(AdoptCF, safeCreateCFString(directory));
+    RetainPtr<CFStringRef> directoryCFString = adoptCF(safeCreateCFString(directory));
     
     NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:(NSString *)directoryCFString.get() error:nil];
     for (NSString *filename in filenames)
@@ -167,7 +167,7 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
     // strength reduced into the callsite once we can safely convert String
     // to CFStringRef off the main thread.
 
-    RetainPtr<CFStringRef> extensionCFString(AdoptCF, safeCreateCFString(extension));
+    RetainPtr<CFStringRef> extensionCFString = adoptCF(safeCreateCFString(extension));
     return WKGetMIMETypeForExtension((NSString *)extensionCFString.get());
 }
 

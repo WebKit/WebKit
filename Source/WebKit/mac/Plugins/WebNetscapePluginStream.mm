@@ -154,7 +154,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     , m_isTerminated(false)
     , m_newStreamSuccessful(false)
     , m_frameLoader(0)
-    , m_request(AdoptNS, [request mutableCopy])
+    , m_request(adoptNS([request mutableCopy]))
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
 {
@@ -544,7 +544,7 @@ void WebNetscapePluginStream::deliverData()
             NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
             [newDeliveryData appendBytes:(char *)[m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
             
-            m_deliveryData.adoptNS(newDeliveryData);
+            m_deliveryData = adoptNS(newDeliveryData);
         } else {
             [m_deliveryData.get() setLength:0];
             if (m_reason != WEB_REASON_NONE) 
@@ -572,7 +572,7 @@ void WebNetscapePluginStream::deliverDataToFile(NSData *data)
             return;
         }
 
-        m_path.adoptNS([[NSString stringWithUTF8String:temporaryFileName] retain]);
+        m_path = adoptNS([[NSString stringWithUTF8String:temporaryFileName] retain]);
         free(temporaryFileName);
     }
 
@@ -617,7 +617,7 @@ void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const 
     
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData.adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
+            m_deliveryData = adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
         [m_deliveryData.get() appendData:data];
         deliverData();
     }

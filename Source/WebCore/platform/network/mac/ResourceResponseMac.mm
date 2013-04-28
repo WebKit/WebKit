@@ -63,7 +63,7 @@ void ResourceResponse::initNSURLResponse() const
 
     // FIXME: This creates a very incomplete NSURLResponse, which does not even have a status code.
 
-    m_nsResponse.adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+    m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
 }
 
 #if USE(CFNETWORK)
@@ -80,7 +80,7 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
         return nil;
 
     if (!m_nsResponse)
-        m_nsResponse.adoptNS([[NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()] retain]);
+        m_nsResponse = adoptNS([[NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()] retain]);
 
     return m_nsResponse.get();
 }
@@ -148,7 +148,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
 
-            RetainPtr<NSString> httpStatusLine(AdoptNS, wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
+            RetainPtr<NSString> httpStatusLine = adoptNS(wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
             if (httpStatusLine)
                 m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
             else

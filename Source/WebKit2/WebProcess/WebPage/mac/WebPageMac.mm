@@ -573,12 +573,12 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
 
     NSAttributedString *nsAttributedString = [WebHTMLConverter editingAttributedStringFromRange:range];
 
-    RetainPtr<NSMutableAttributedString> scaledNSAttributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
     [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
-        RetainPtr<NSMutableDictionary> scaledAttributes(AdoptNS, [attributes mutableCopy]);
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
 
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
         if (font) {
@@ -717,7 +717,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 
 static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const KURL& url)
 {
-    RetainPtr<NSMutableURLRequest> request(AdoptNS, [[NSMutableURLRequest alloc] initWithURL:url]);
+    RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
     [request.get() setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
 
     if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame()->loader()->networkingContext()->storageSession().platformSession())
@@ -988,7 +988,7 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
         if (page >= pageCount)
             break;
 
-        RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFDictionaryRef> pageInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
         CGPDFContextBeginPage(context, pageInfo.get());
         drawPDFPage(pdfDocument, page, context, printInfo.pageSetupScaleFactor, CGSizeMake(printInfo.availablePaperWidth, printInfo.availablePaperHeight));

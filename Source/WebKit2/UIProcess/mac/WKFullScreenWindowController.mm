@@ -217,7 +217,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
 
     CGWindowID windowID = [[_webView window] windowNumber];
-    RetainPtr<CGImageRef> webViewContents(AdoptCF, CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
+    RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
 
     // Using the returned CGImage directly would result in calls to the WindowServer every time
     // the image was painted. Instead, copy the image data into our own process to eliminate that
@@ -239,7 +239,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
-        _webViewPlaceholder.adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
+        _webViewPlaceholder = adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
         [_webViewPlaceholder.get() setAction:@selector(cancelOperation:)];
     }
     [_webViewPlaceholder.get() setTarget:nil];
@@ -525,7 +525,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     NSRect screenFrame = [[[self window] screen] frame];
     NSRect initialWindowFrame = windowFrameFromApparentFrames(screenFrame, _initialFrame, _finalFrame);
     
-    _scaleAnimation.adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:initialWindowFrame finalFrame:screenFrame]);
+    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:initialWindowFrame finalFrame:screenFrame]);
     
     [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
     [_scaleAnimation.get() setCurrentProgress:0];
@@ -555,7 +555,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
         [_fadeAnimation.get() setWindow:nil];
     }
 
-    _fadeAnimation.adoptNS([[WebWindowFadeAnimation alloc] initWithDuration:duration 
+    _fadeAnimation = adoptNS([[WebWindowFadeAnimation alloc] initWithDuration:duration 
                                                                      window:_backgroundWindow.get() 
                                                                initialAlpha:currentAlpha 
                                                                  finalAlpha:1]);
@@ -585,7 +585,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     NSRect initialWindowFrame = windowFrameFromApparentFrames(screenFrame, _initialFrame, _finalFrame);
 
     NSRect currentFrame = _scaleAnimation ? [_scaleAnimation.get() currentFrame] : [[self window] frame];
-    _scaleAnimation.adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:currentFrame finalFrame:initialWindowFrame]);
+    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:currentFrame finalFrame:initialWindowFrame]);
 
     [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
     [_scaleAnimation.get() setCurrentProgress:0];
@@ -602,7 +602,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
         [_fadeAnimation.get() stopAnimation];
         [_fadeAnimation.get() setWindow:nil];
     }
-    _fadeAnimation.adoptNS([[WebWindowFadeAnimation alloc] initWithDuration:duration 
+    _fadeAnimation = adoptNS([[WebWindowFadeAnimation alloc] initWithDuration:duration 
                                                                      window:_backgroundWindow.get() 
                                                                initialAlpha:currentAlpha 
                                                                  finalAlpha:0]);

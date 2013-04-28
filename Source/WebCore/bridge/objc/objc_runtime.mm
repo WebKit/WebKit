@@ -76,7 +76,7 @@ NSMethodSignature* ObjcMethod::getMethodSignature() const
 
 ObjcField::ObjcField(Ivar ivar) 
     : _ivar(ivar)
-    , _name(AdoptCF, CFStringCreateWithCString(0, ivar_getName(_ivar), kCFStringEncodingASCII))
+    , _name(adoptCF(CFStringCreateWithCString(0, ivar_getName(_ivar), kCFStringEncodingASCII)))
 {
 }
 

@@ -73,7 +73,7 @@ static PlatformMenuItemDescription createPlatformMenuItemDescription(ContextMenu
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
 {
-    m_platformDescription.adoptNS(createPlatformMenuItemDescription(type, action, title, true, false));
+    m_platformDescription = adoptNS(createPlatformMenuItemDescription(type, action, title, true, false));
 
     if (subMenu)
         setSubMenu(subMenu);
@@ -81,12 +81,12 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
 {
-    m_platformDescription.adoptNS(createPlatformMenuItemDescription(type, action, title, enabled, checked));
+    m_platformDescription = adoptNS(createPlatformMenuItemDescription(type, action, title, enabled, checked));
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, Vector<ContextMenuItem>& subMenuItems)
 {
-    m_platformDescription.adoptNS(createPlatformMenuItemDescription(SubmenuType, action, title, enabled, checked));
+    m_platformDescription = adoptNS(createPlatformMenuItemDescription(SubmenuType, action, title, enabled, checked));
     
     setSubMenu(subMenuItems);
 }

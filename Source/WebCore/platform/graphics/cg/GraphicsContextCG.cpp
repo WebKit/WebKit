@@ -558,11 +558,11 @@ void GraphicsContext::applyStrokePattern()
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.strokePattern->createPlatformPattern(userToBaseCTM));
+    RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.strokePattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
         return;
 
-    RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
+    RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
     CGContextSetStrokeColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
@@ -574,11 +574,11 @@ void GraphicsContext::applyFillPattern()
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.fillPattern->createPlatformPattern(userToBaseCTM));
+    RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.fillPattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
         return;
 
-    RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
+    RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
     CGContextSetFillColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
@@ -1393,7 +1393,7 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     if (paintingDisabled())
         return;
 
-    RetainPtr<CFURLRef> urlRef(AdoptCF, link.createCFURL());
+    RetainPtr<CFURLRef> urlRef = adoptCF(link.createCFURL());
     if (!urlRef)
         return;
 

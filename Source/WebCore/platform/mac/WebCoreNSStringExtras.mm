@@ -92,7 +92,7 @@ CFStringEncoding stringEncodingForResource(Handle resource)
     if (error != noErr)
         return NSMacOSRomanStringEncoding;
     
-    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateFromFSRef(NULL, &fref));
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateFromFSRef(NULL, &fref));
     if (!url)
         return NSMacOSRomanStringEncoding;
 
@@ -104,7 +104,7 @@ CFStringEncoding stringEncodingForResource(Handle resource)
         return NSMacOSRomanStringEncoding;
     
     NSString *directoryName = [[path stringByDeletingPathExtension] lastPathComponent];
-    RetainPtr<CFStringRef> locale(AdoptCF, CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName));
+    RetainPtr<CFStringRef> locale = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName));
     if (!locale)
         return NSMacOSRomanStringEncoding;
 

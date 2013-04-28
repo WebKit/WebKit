@@ -35,7 +35,7 @@ namespace WebKit {
 
 static RetainPtr<CFStringRef> cfStringFromWebCoreString(const String& string)
 {
-    return RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(string.characters()), string.length()));
+    return RetainPtr<CFStringRef> = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(string.characters()), string.length()));
 }
 
 static inline RetainPtr<CFStringRef> makeKey(const String& identifier, const String& baseKey)
@@ -45,7 +45,7 @@ static inline RetainPtr<CFStringRef> makeKey(const String& identifier, const Str
 
 static void setStringValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
 {
-    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
     if (!value)
         return;
     if (CFGetTypeID(value.get()) != CFStringGetTypeID())
@@ -56,7 +56,7 @@ static void setStringValueIfInUserDefaults(const String& identifier, const Strin
 
 static void setBoolValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
 {
-    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
     if (!value)
         return;
     if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
@@ -67,7 +67,7 @@ static void setBoolValueIfInUserDefaults(const String& identifier, const String&
 
 static void setUInt32ValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
 {
-    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
     if (!value)
         return;
     if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
@@ -81,7 +81,7 @@ static void setUInt32ValueIfInUserDefaults(const String& identifier, const Strin
 
 static void setDoubleValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
 {
-    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
     if (!value)
         return;
     if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
@@ -128,7 +128,7 @@ void WebPreferences::platformUpdateUInt32ValueForKey(const String& key, uint32_t
     if (!m_identifier)
         return;
 
-    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberSInt32Type, &value));
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(0, kCFNumberSInt32Type, &value));
     CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 
@@ -137,7 +137,7 @@ void WebPreferences::platformUpdateDoubleValueForKey(const String& key, double v
     if (!m_identifier)
         return;
 
-    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberDoubleType, &value));
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(0, kCFNumberDoubleType, &value));
     CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 
@@ -146,7 +146,7 @@ void WebPreferences::platformUpdateFloatValueForKey(const String& key, float val
     if (!m_identifier)
         return;
 
-    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberFloatType, &value));
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(0, kCFNumberFloatType, &value));
     CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 

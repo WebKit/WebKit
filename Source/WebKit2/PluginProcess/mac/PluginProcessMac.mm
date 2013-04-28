@@ -399,7 +399,7 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
 
     sandboxParameters.addPathParameter("PLUGIN_PATH", m_pluginPath);
 
-    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    RetainPtr<CFStringRef> cachePath = adoptCF(WKCopyFoundationCacheDirectory());
     sandboxParameters.addPathParameter("NSURL_CACHE_DIR", (NSString *)cachePath.get());
 
     RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);

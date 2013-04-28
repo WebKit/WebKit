@@ -161,7 +161,7 @@ PassRefPtr<RenderTheme> RenderThemeMac::create()
 RenderThemeMac::RenderThemeMac()
     : m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
-    , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
+    , m_notificationObserver(adoptNS([[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this]))
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_notificationObserver.get()
                                                         selector:@selector(systemColorsDidChange:)
@@ -1271,7 +1271,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
     ASSERT(style->appearance() != NoControlPart);
 
     if (!m_levelIndicator)
-        m_levelIndicator.adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSContinuousCapacityLevelIndicatorStyle]);
+        m_levelIndicator = adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSContinuousCapacityLevelIndicatorStyle]);
     NSLevelIndicatorCell* cell = m_levelIndicator.get();
 
     HTMLMeterElement* element = renderMeter->meterElement();
@@ -1469,21 +1469,21 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     FloatRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0f);
     struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> topFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks));
-    RetainPtr<CGShadingRef> topShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), CGPointMake(topGradient.x(), topGradient.maxY()), topFunction.get(), false, false));
+    RetainPtr<CGFunctionRef> topFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks));
+    RetainPtr<CGShadingRef> topShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), CGPointMake(topGradient.x(), topGradient.maxY()), topFunction.get(), false, false));
 
     FloatRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0f, r.width() - 2.0f * radius, r.height() / 2.0f);
     struct CGFunctionCallbacks bottomCallbacks = { 0, BottomGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> bottomFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks));
-    RetainPtr<CGShadingRef> bottomShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), CGPointMake(bottomGradient.x(), bottomGradient.maxY()), bottomFunction.get(), false, false));
+    RetainPtr<CGFunctionRef> bottomFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks));
+    RetainPtr<CGShadingRef> bottomShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), CGPointMake(bottomGradient.x(), bottomGradient.maxY()), bottomFunction.get(), false, false));
 
     struct CGFunctionCallbacks mainCallbacks = { 0, MainGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> mainFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
-    RetainPtr<CGShadingRef> mainShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x(), r.maxY()), mainFunction.get(), false, false));
+    RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
+    RetainPtr<CGShadingRef> mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x(), r.maxY()), mainFunction.get(), false, false));
 
-    RetainPtr<CGShadingRef> leftShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x() + radius, r.y()), mainFunction.get(), false, false));
+    RetainPtr<CGShadingRef> leftShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x() + radius, r.y()), mainFunction.get(), false, false));
 
-    RetainPtr<CGShadingRef> rightShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
+    RetainPtr<CGShadingRef> rightShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
 
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
@@ -1728,12 +1728,12 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     CGContextClipToRect(context, bounds);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> mainFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
+    RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
     if (o->style()->appearance() == SliderVerticalPart)
-        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
+        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
     else
-        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
+        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
 
     IntSize radius(trackRadius, trackRadius);
     paintInfo.context->clipRoundedRect(RoundedRect(bounds, radius, radius, radius, radius));
@@ -2184,7 +2184,7 @@ bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {
     if (!m_popupButton) {
-        m_popupButton.adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        m_popupButton = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popupButton.get() setUsesItemFromMenu:NO];
         [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
     }
@@ -2195,7 +2195,7 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
 NSSearchFieldCell* RenderThemeMac::search() const
 {
     if (!m_search) {
-        m_search.adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
+        m_search = adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
         [m_search.get() setBezelStyle:NSTextFieldRoundedBezel];
         [m_search.get() setBezeled:YES];
         [m_search.get() setEditable:YES];
@@ -2208,7 +2208,7 @@ NSSearchFieldCell* RenderThemeMac::search() const
 NSMenu* RenderThemeMac::searchMenuTemplate() const
 {
     if (!m_searchMenuTemplate)
-        m_searchMenuTemplate.adoptNS([[NSMenu alloc] initWithTitle:@""]);
+        m_searchMenuTemplate = adoptNS([[NSMenu alloc] initWithTitle:@""]);
 
     return m_searchMenuTemplate.get();
 }
@@ -2216,7 +2216,7 @@ NSMenu* RenderThemeMac::searchMenuTemplate() const
 NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
 {
     if (!m_sliderThumbHorizontal) {
-        m_sliderThumbHorizontal.adoptNS([[NSSliderCell alloc] init]);
+        m_sliderThumbHorizontal = adoptNS([[NSSliderCell alloc] init]);
         [m_sliderThumbHorizontal.get() setSliderType:NSLinearSlider];
         [m_sliderThumbHorizontal.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbHorizontal.get() setFocusRingType:NSFocusRingTypeExterior];
@@ -2228,7 +2228,7 @@ NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
 NSSliderCell* RenderThemeMac::sliderThumbVertical() const
 {
     if (!m_sliderThumbVertical) {
-        m_sliderThumbVertical.adoptNS([[NSSliderCell alloc] init]);
+        m_sliderThumbVertical = adoptNS([[NSSliderCell alloc] init]);
         [m_sliderThumbVertical.get() setSliderType:NSLinearSlider];
         [m_sliderThumbVertical.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbVertical.get() setFocusRingType:NSFocusRingTypeExterior];
@@ -2240,7 +2240,7 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
 NSTextFieldCell* RenderThemeMac::textField() const
 {
     if (!m_textField) {
-        m_textField.adoptNS([[WebCoreTextFieldCell alloc] initTextCell:@""]);
+        m_textField = adoptNS([[WebCoreTextFieldCell alloc] initTextCell:@""]);
         [m_textField.get() setBezeled:YES];
         [m_textField.get() setEditable:YES];
         [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];

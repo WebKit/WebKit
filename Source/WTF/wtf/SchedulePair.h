@@ -60,7 +60,7 @@ private:
         : m_runLoop(runLoop)
     {
         if (mode)
-            m_mode.adoptCF(CFStringCreateCopy(0, mode));
+            m_mode = adoptCF(CFStringCreateCopy(0, mode));
     }
 
 #if PLATFORM(MAC) && !USE(CFNETWORK)

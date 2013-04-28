@@ -123,7 +123,7 @@ template<ColorSpace colorSpace> static CGColorRef cachedCGColor(const Color& col
 
     static size_t cursor;
     cachedRGBAValues[cursor] = color.rgb();
-    cachedCGColors[cursor].adoptCF(newCGColor);
+    cachedCGColors[cursor] = adoptCF(newCGColor);
     if (++cursor == cacheSize)
         cursor = 0;
 

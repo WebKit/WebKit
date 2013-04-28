@@ -100,8 +100,8 @@ void BackingStore::resetScrolledRect()
     IntSize scaledSize = m_scrolledRect.size();
     scaledSize.scale(m_deviceScaleFactor);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(0, scaledSize.width(), scaledSize.height(), 8, scaledSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(0, scaledSize.width(), scaledSize.height(), 8, scaledSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
 
     CGContextScaleCTM(context.get(), m_deviceScaleFactor, m_deviceScaleFactor);
 
@@ -147,7 +147,7 @@ CGContextRef BackingStore::backingStoreContext()
 
     // Try to create a layer.
     if (CGContextRef containingWindowContext = m_webPageProxy->containingWindowGraphicsContext()) {
-        m_cgLayer.adoptCF(CGLayerCreateWithContext(containingWindowContext, m_size, 0));
+        m_cgLayer = adoptCF(CGLayerCreateWithContext(containingWindowContext, m_size, 0));
         CGContextRef layerContext = CGLayerGetContext(m_cgLayer.get());
         
         CGContextSetBlendMode(layerContext, kCGBlendModeCopy);
@@ -166,11 +166,11 @@ CGContextRef BackingStore::backingStoreContext()
     }
 
     if (!m_bitmapContext) {
-        RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
         IntSize scaledSize(m_size);
         scaledSize.scale(m_deviceScaleFactor);
-        m_bitmapContext.adoptCF(CGBitmapContextCreate(0, scaledSize.width(), scaledSize.height(), 8, scaledSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+        m_bitmapContext = adoptCF(CGBitmapContextCreate(0, scaledSize.width(), scaledSize.height(), 8, scaledSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
 
         CGContextSetBlendMode(m_bitmapContext.get(), kCGBlendModeCopy);
 

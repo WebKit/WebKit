@@ -62,7 +62,7 @@ RetainPtr<CFDataRef> HistoryPropertyListWriter::releaseData()
     if (!buffer)
         return 0;
     m_buffer = 0;
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, buffer, m_bufferSize, 0));
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreateWithBytesNoCopy(0, buffer, m_bufferSize, 0));
     if (!data) {
         CFAllocatorDeallocate(0, buffer);
         return 0;

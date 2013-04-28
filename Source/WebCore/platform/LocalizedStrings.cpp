@@ -245,7 +245,7 @@ String contextMenuItemTagSearchInSpotlight()
 String contextMenuItemTagSearchWeb()
 {
 #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
-    RetainPtr<CFStringRef> searchProviderName(AdoptCF, wkCopyDefaultSearchProviderDisplayName());
+    RetainPtr<CFStringRef> searchProviderName = adoptCF(wkCopyDefaultSearchProviderDisplayName());
     return formatLocalizedString(WEB_UI_STRING("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get());
 #else
     return WEB_UI_STRING("Search with Google", "Search with Google context menu item");
@@ -788,15 +788,15 @@ String imageTitle(const String& filename, const IntSize& size)
 {
 #if USE(CF)
     RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCopyCurrent());
-    RetainPtr<CFNumberFormatterRef> formatter(AdoptCF, CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));
+    RetainPtr<CFNumberFormatterRef> formatter = adoptCF(CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));
 
     int widthInt = size.width();
-    RetainPtr<CFNumberRef> width(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &widthInt));
-    RetainPtr<CFStringRef> widthString(AdoptCF, CFNumberFormatterCreateStringWithNumber(0, formatter.get(), width.get()));
+    RetainPtr<CFNumberRef> width = adoptCF(CFNumberCreate(0, kCFNumberIntType, &widthInt));
+    RetainPtr<CFStringRef> widthString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), width.get()));
 
     int heightInt = size.height();
-    RetainPtr<CFNumberRef> height(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &heightInt));
-    RetainPtr<CFStringRef> heightString(AdoptCF, CFNumberFormatterCreateStringWithNumber(0, formatter.get(), height.get()));
+    RetainPtr<CFNumberRef> height = adoptCF(CFNumberCreate(0, kCFNumberIntType, &heightInt));
+    RetainPtr<CFStringRef> heightString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), height.get()));
 
     return formatLocalizedString(WEB_UI_STRING("%@ %@×%@ pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename.createCFString().get(), widthString.get(), heightString.get());
 #else

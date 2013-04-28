@@ -84,7 +84,7 @@ void WebDatabaseManagerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
         return;
     }
 
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
+    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification 
                                                         object:webSecurityOrigin.get()];
@@ -97,8 +97,8 @@ void WebDatabaseManagerClient::dispatchDidModifyDatabase(SecurityOrigin* origin,
         return;
     }
 
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
-    RetainPtr<NSDictionary> userInfo(AdoptNS, [[NSDictionary alloc] 
+    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
+    RetainPtr<NSDictionary> userInfo = adoptNS([[NSDictionary alloc] 
                                                initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
     
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification

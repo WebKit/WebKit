@@ -33,7 +33,7 @@ using namespace WebKit;
 
 WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse)
 {
-    RetainPtr<NSURLResponse> copiedURLResponse(AdoptNS, [urlResponse copy]);
+    RetainPtr<NSURLResponse> copiedURLResponse = adoptNS([urlResponse copy]);
     RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse.get());
     return toAPI(response.release().leakRef());
 }

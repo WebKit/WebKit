@@ -1,3 +1,90 @@
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        This change was done by a global replace followed by compiling and inspecting for
+        cases that needed to be tweaked by hand.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_startupVolumeName]):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        (WKPCBooleanAndDataReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::print):
+        (WebKit::NetscapePluginInstanceProxy::snapshot):
+        (WebKit::NetscapePluginInstanceProxy::status):
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript):
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        (WebKit::NetscapePluginInstanceProxy::marshalValues):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValue):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView setAttributeKeys:andValues:]):
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        (-[WebBaseNetscapePluginView cacheSnapshot]):
+        (WebKit::getAuthenticationInfo):
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage initWithPath:]):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::startTimers):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier):
+        (WebNetscapePluginEventHandlerCocoa::handleTSMEvent):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (WebNetscapePluginStream::deliverData):
+        (WebNetscapePluginStream::deliverDataToFile):
+        (WebNetscapePluginStream::didReceiveData):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+        (-[WebNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        (-[WebNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        * Storage/WebDatabaseManagerClient.mm:
+        (WebDatabaseManagerClient::dispatchDidModifyOrigin):
+        (WebDatabaseManagerClient::dispatchDidModifyDatabase):
+        * Storage/WebStorageTrackerClient.mm:
+        (WebStorageTrackerClient::dispatchDidModifyOrigin):
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::handleAcceptedReplacement):
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache originsWithCache]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didRunInsecureContent):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::openInspectorFrontend):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]):
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences initWithIdentifier:]):
+        (-[WebPreferences initWithCoder:]):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::initGlobalCallFrame):
+        (WebScriptDebugger::callEvent):
+        * WebView/WebView.mm:
+        (-[WebView previousValidKeyView]):
+        Use adoptNS and adoptCF free functions.
+
 2013-04-25  Roger Fong  <roger_fong@apple.com>
 
         Disable sub-pixel layout on mac.

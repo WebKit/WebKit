@@ -83,7 +83,7 @@ static uint64_t volumeFreeSize(NSString *path)
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
-    RetainPtr<NSString> nsurlCacheDirectory(AdoptNS, (NSString *)WKCopyFoundationCacheDirectory());
+    RetainPtr<NSString> nsurlCacheDirectory = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 

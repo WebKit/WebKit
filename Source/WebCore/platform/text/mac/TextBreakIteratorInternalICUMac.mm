@@ -29,7 +29,7 @@ static const int maxLocaleStringLength = 32;
 
 static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 {
-    RetainPtr<CFPropertyListRef> locale(AdoptCF, CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
+    RetainPtr<CFPropertyListRef> locale = adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
         kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (!locale || CFGetTypeID(locale.get()) != CFStringGetTypeID())
         return 0;
@@ -53,8 +53,7 @@ static RetainPtr<CFStringRef> canonicalLanguageIdentifier(CFStringRef locale)
 {
     if (!locale)
         return 0;
-    RetainPtr<CFStringRef> canonicalLocale(AdoptCF,
-        CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale));
+    RetainPtr<CFStringRef> canonicalLocale = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale));
     if (!canonicalLocale)
         return locale;
     return canonicalLocale;

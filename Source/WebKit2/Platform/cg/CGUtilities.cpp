@@ -50,7 +50,7 @@ void paintImage(CGContextRef context, CGImageRef image, CGFloat scaleFactor, CGP
 
 void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGFloat scaleFactor, CGPoint destination, CGRect source)
 {
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
+    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
     paintImage(context, image.get(), scaleFactor, destination, source);
 }
 

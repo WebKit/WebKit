@@ -98,7 +98,7 @@ void ResourceError::platformLazyInit()
 
     m_errorCode = CFErrorGetCode(m_platformError.get());
 
-    RetainPtr<CFDictionaryRef> userInfo(AdoptCF, CFErrorCopyUserInfo(m_platformError.get()));
+    RetainPtr<CFDictionaryRef> userInfo = adoptCF(CFErrorCopyUserInfo(m_platformError.get()));
     if (userInfo.get()) {
         CFStringRef failingURLString = (CFStringRef) CFDictionaryGetValue(userInfo.get(), failingURLStringKey);
         if (failingURLString)
@@ -106,7 +106,7 @@ void ResourceError::platformLazyInit()
         else {
             CFURLRef failingURL = (CFURLRef) CFDictionaryGetValue(userInfo.get(), failingURLKey);
             if (failingURL) {
-                RetainPtr<CFURLRef> absoluteURLRef(AdoptCF, CFURLCopyAbsoluteURL(failingURL));
+                RetainPtr<CFURLRef> absoluteURLRef = adoptCF(CFURLCopyAbsoluteURL(failingURL));
                 if (absoluteURLRef.get()) {
                     failingURLString = CFURLGetString(absoluteURLRef.get());
                     m_failingURL = String(failingURLString);
@@ -145,7 +145,7 @@ CFErrorRef ResourceError::cfError() const
     }
 
     if (!m_platformError) {
-        RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFMutableDictionaryRef> userInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
         if (!m_localizedDescription.isEmpty())
             CFDictionarySetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey, m_localizedDescription.createCFString().get());
@@ -153,7 +153,7 @@ CFErrorRef ResourceError::cfError() const
         if (!m_failingURL.isEmpty()) {
             RetainPtr<CFStringRef> failingURLString = m_failingURL.createCFString();
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
-            RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(0, failingURLString.get(), 0));
+            RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(0, failingURLString.get(), 0));
             CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
         }
 
