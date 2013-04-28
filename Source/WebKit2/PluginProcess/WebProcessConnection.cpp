@@ -71,7 +71,7 @@ void WebProcessConnection::addPluginControllerProxy(PassOwnPtr<PluginControllerP
     uint64_t pluginInstanceID = pluginController->pluginInstanceID();
 
     ASSERT(!m_pluginControllers.contains(pluginInstanceID));
-    m_pluginControllers.set(pluginInstanceID, pluginController.leakPtr());
+    m_pluginControllers.set(pluginInstanceID, pluginController);
 }
 
 void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* pluginController)
@@ -86,7 +86,7 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
     {
         ASSERT(m_pluginControllers.contains(pluginController->pluginInstanceID()));
 
-        OwnPtr<PluginControllerProxy> pluginControllerOwnPtr = adoptPtr(m_pluginControllers.take(pluginController->pluginInstanceID()));
+        OwnPtr<PluginControllerProxy> pluginControllerOwnPtr = m_pluginControllers.take(pluginController->pluginInstanceID());
         ASSERT(pluginControllerOwnPtr == pluginController);
     }
 
@@ -167,7 +167,8 @@ void WebProcessConnection::didClose(CoreIPC::Connection*)
     // The web process crashed. Destroy all the plug-in controllers. Destroying the last plug-in controller
     // will cause the web process connection itself to be destroyed.
     Vector<PluginControllerProxy*> pluginControllers;
-    copyValuesToVector(m_pluginControllers, pluginControllers);
+    for (auto& pluginController: m_pluginControllers.values())
+        pluginControllers.append(pluginController.get());
 
     for (size_t i = 0; i < pluginControllers.size(); ++i)
         destroyPluginControllerProxy(pluginControllers[i]);

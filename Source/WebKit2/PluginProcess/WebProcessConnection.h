@@ -78,7 +78,7 @@ private:
 
     RefPtr<CoreIPC::Connection> m_connection;
 
-    HashMap<uint64_t, PluginControllerProxy*> m_pluginControllers;
+    HashMap<uint64_t, OwnPtr<PluginControllerProxy>> m_pluginControllers;
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
     HashSet<uint64_t> m_asynchronousInstanceIDsToIgnore;
 };

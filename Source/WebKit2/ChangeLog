@@ -1,3 +1,17 @@
+2013-04-26  Anders Carlsson  <andersca@apple.com>
+
+        Use OwnPtr<PluginControllerProxy> for storing plug-in controllers in WebProcessConnection
+        https://bugs.webkit.org/show_bug.cgi?id=115259
+
+        Reviewed by Andreas Kling.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::addPluginControllerProxy):
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        (WebKit::WebProcessConnection::didClose):
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+
 2013-04-27  Jessie Berlin  <jberlin@apple.com>
 
         Build fix.
