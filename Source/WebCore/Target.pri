@@ -454,7 +454,6 @@ SOURCES += \
     dom/NodeRenderingTraversal.cpp \
     dom/NodeTraversal.cpp \
     dom/Notation.cpp \
-    dom/StaticHashSetNodeList.cpp \
     dom/OverflowEvent.cpp \
     dom/PageTransitionEvent.cpp \
     dom/PendingScript.cpp \
@@ -1683,7 +1682,6 @@ HEADERS += \
     dom/NodeRenderingTraversal.h \
     dom/NodeTraversal.h \
     dom/Notation.h \
-    dom/StaticHashSetNodeList.h \
     dom/OverflowEvent.h \
     dom/PageTransitionEvent.h \
     dom/Position.h \

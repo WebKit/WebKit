@@ -3073,8 +3073,6 @@ webcore_sources += \
 	Source/WebCore/dom/SimulatedClickOptions.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \
 	Source/WebCore/dom/SpaceSplitString.h \
-	Source/WebCore/dom/StaticHashSetNodeList.cpp \
-	Source/WebCore/dom/StaticHashSetNodeList.h \
 	Source/WebCore/dom/StaticNodeList.cpp \
 	Source/WebCore/dom/StaticNodeList.h \
 	Source/WebCore/dom/StringCallback.cpp \

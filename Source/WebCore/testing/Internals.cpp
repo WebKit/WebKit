@@ -81,6 +81,7 @@
 #include "RenderMenuList.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "ScrollingCoordinator.h"
@@ -89,6 +90,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
+#include "StaticNodeList.h"
 #include "StyleSheetContents.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
@@ -1414,13 +1416,22 @@ PassRefPtr<ClientRectList> Internals::touchEventTargetClientRects(Document* docu
 }
 #endif
 
-PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, unsigned topPadding, unsigned rightPadding,
+PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
     unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode& ec) const
 {
     if (!document || !document->frame() || !document->frame()->view()) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
+
+    Frame* frame = document->frame();
+    FrameView* frameView = document->view();
+    RenderView* renderView = document->renderView();
+    if (!renderView)
+        return 0;
+
+    float zoomFactor = frame->pageZoomFactor();
+    LayoutPoint point = roundedLayoutPoint(FloatPoint(centerX * zoomFactor + frameView->scrollX(), centerY * zoomFactor + frameView->scrollY()));
 
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     if (ignoreClipping)
@@ -1430,7 +1441,28 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, 
     if (allowChildFrameContent)
         hitType |= HitTestRequest::AllowChildFrameContent;
 
-    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, hitType);
+    HitTestRequest request(hitType);
+
+    // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
+    if (!request.ignoreClipping() && !frameView->visibleContentRect().intersects(HitTestLocation::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
+        return 0;
+
+    Vector<RefPtr<Node> > matches;
+
+    // Need padding to trigger a rect based hit test, but we want to return a NodeList
+    // so we special case this.
+    if (!topPadding && !rightPadding && !bottomPadding && !leftPadding) {
+        HitTestResult result(point);
+        renderView->hitTest(request, result);
+        if (result.innerNode())
+            matches.append(result.innerNode()->deprecatedShadowAncestorNode());
+    } else {
+        HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
+        renderView->hitTest(request, result);
+        copyToVector(result.rectBasedTestResult(), matches);
+    }
+
+    return StaticNodeList::adopt(matches);
 }
 
 void Internals::emitInspectorDidBeginFrame()

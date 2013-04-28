@@ -1,3 +1,43 @@
+2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        StaticHashSetNodeList is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=115219
+
+        Reviewed by Antonio Gomes.
+
+        Moved Document::nodesFromRect into Internals::nodesFromRect per
+        https://chromium.googlesource.com/chromium/blink/+/78207c5c34383fbb807bb9347deb67168f09bb04.
+
+        Also made TouchAdjustment functions use HashListSet directly instead of wrapping it inside
+        a StaticHashSetNodeList since there was no need to use the latter.
+
+        With these two changes, I deleted StaticHashSetNodeList.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+        * dom/StaticHashSetNodeList.cpp: Removed.
+        * dom/StaticHashSetNodeList.h: Removed.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::bestClickableNodeForTouchPoint):
+        (WebCore::EventHandler::bestContextMenuNodeForTouchPoint):
+        (WebCore::EventHandler::bestZoomableAreaForTouchPoint):
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::compileSubtargetList):
+        (WebCore::TouchAdjustment::compileZoomableSubtargets):
+        (WebCore::findBestClickableCandidate):
+        (WebCore::findBestContextMenuCandidate):
+        (WebCore::findBestZoomableArea):
+        * page/TouchAdjustment.h:
+        (WebCore):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect):
+
 2013-04-28  Dean Jackson  <dino@apple.com>
 
         [Mac] Disable canvas backing store scaling (HIGH_DPI_CANVAS)

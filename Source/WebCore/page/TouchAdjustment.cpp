@@ -233,7 +233,7 @@ static inline Node* parentShadowHostOrOwner(const Node* node)
 }
 
 // Compiles a list of subtargets of all the relevant target nodes.
-void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets, NodeFilter nodeFilter, AppendSubtargetsForNode appendSubtargetsForNode)
+void compileSubtargetList(const NodeListHashSet& intersectedNodes, SubtargetGeometryList& subtargets, NodeFilter nodeFilter, AppendSubtargetsForNode appendSubtargetsForNode)
 {
     // Find candidates responding to tap gesture events in O(n) time.
     HashMap<Node*, Node*> responderMap;
@@ -244,9 +244,9 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
     // A node matching the NodeFilter is called a responder. Candidate nodes must either be a
     // responder or have an ancestor that is a responder.
     // This iteration tests all ancestors at most once by caching earlier results.
-    unsigned length = intersectedNodes.length();
-    for (unsigned i = 0; i < length; ++i) {
-        Node* const node = intersectedNodes.item(i);
+    NodeListHashSet::const_iterator end = intersectedNodes.end();
+    for (NodeListHashSet::const_iterator it = intersectedNodes.begin(); it != end; ++it) {
+        Node* const node = it->get();
         Vector<Node*> visitedNodes;
         Node* respondingNode = 0;
         for (Node* visitedNode = node; visitedNode; visitedNode = visitedNode->parentOrShadowHostNode()) {
@@ -277,7 +277,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
 
     // We compile the list of component absolute quads instead of using the bounding rect
     // to be able to perform better hit-testing on inline links on line-breaks.
-    length = candidates.size();
+    unsigned length = candidates.size();
     for (unsigned i = 0; i < length; i++) {
         Node* candidate = candidates[i];
         // Skip nodes who's responders are ancestors of other responders. This gives preference to
@@ -310,11 +310,11 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
 }
 
 // Compiles a list of zoomable subtargets.
-void compileZoomableSubtargets(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets)
+void compileZoomableSubtargets(const NodeListHashSet& intersectedNodes, SubtargetGeometryList& subtargets)
 {
-    unsigned length = intersectedNodes.length();
-    for (unsigned i = 0; i < length; ++i) {
-        Node* const candidate = intersectedNodes.item(i);
+    NodeListHashSet::const_iterator end = intersectedNodes.end();
+    for (NodeListHashSet::const_iterator it = intersectedNodes.begin(); it != end; ++it) {
+        Node* const candidate = it->get();
         if (nodeIsZoomTarget(candidate))
             appendZoomableSubtargets(candidate, subtargets);
     }
@@ -476,7 +476,7 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
 
 } // namespace TouchAdjustment
 
-bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeList& nodeList)
+bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeListHashSet& nodeList)
 {
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
@@ -484,7 +484,7 @@ bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const 
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 
-bool findBestContextMenuCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeList& nodeList)
+bool findBestContextMenuCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeListHashSet& nodeList)
 {
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
@@ -492,7 +492,7 @@ bool findBestContextMenuCandidate(Node*& targetNode, IntPoint &targetPoint, cons
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 
-bool findBestZoomableArea(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, const NodeList& nodeList)
+bool findBestZoomableArea(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, const NodeListHashSet& nodeList)
 {
     IntPoint targetPoint;
     TouchAdjustment::SubtargetGeometryList subtargets;
