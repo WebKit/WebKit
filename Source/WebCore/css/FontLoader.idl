@@ -43,7 +43,7 @@
 
     boolean checkFont(in DOMString font, in [Optional=DefaultIsNullString] DOMString text);
     void loadFont(in Dictionary params);
-    void notifyWhenFontsReady(in [Callback] VoidCallback callback);
+    void notifyWhenFontsReady(in VoidCallback callback);
     readonly attribute boolean loading;
 
     void addEventListener(in DOMString type,

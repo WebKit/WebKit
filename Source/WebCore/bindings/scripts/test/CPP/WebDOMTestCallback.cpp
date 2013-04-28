@@ -24,20 +24,15 @@
 
 #include "WebDOMTestCallback.h"
 
-#include "Class1.h"
-#include "Class2.h"
-#include "Class3.h"
-#include "Class8.h"
 #include "DOMStringList.h"
+#include "Float32Array.h"
 #include "KURL.h"
-#include "ThisClass.h"
-#include "WebDOMClass1.h"
-#include "WebDOMClass2.h"
-#include "WebDOMClass3.h"
-#include "WebDOMClass8.h"
+#include "SerializedScriptValue.h"
+#include "TestNode.h"
 #include "WebDOMDOMStringList.h"
+#include "WebDOMFloat32Array.h"
 #include "WebDOMString.h"
-#include "WebDOMThisClass.h"
+#include "WebDOMTestNode.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
@@ -96,28 +91,28 @@ bool WebDOMTestCallback::callbackWithNoParam()
     return impl()->callbackWithNoParam();
 }
 
-bool WebDOMTestCallback::callbackWithClass1Param(const WebDOMClass1& class1Param)
+bool WebDOMTestCallback::callbackWithArrayParam(const WebDOMFloat32Array& arrayParam)
 {
     if (!impl())
         return false;
 
-    return impl()->callbackWithClass1Param(toWebCore(class1Param));
+    return impl()->callbackWithArrayParam(toWebCore(arrayParam));
 }
 
-bool WebDOMTestCallback::callbackWithClass2Param(const WebDOMClass2& class2Param, const WebDOMString& strArg)
+bool WebDOMTestCallback::callbackWithSerializedScriptValueParam(const WebDOMString& srzParam, const WebDOMString& strArg)
 {
     if (!impl())
         return false;
 
-    return impl()->callbackWithClass2Param(toWebCore(class2Param), strArg);
+    return impl()->callbackWithSerializedScriptValueParam(WebCore::SerializedScriptValue::create(WTF::String(srzParam)), strArg);
 }
 
-int WebDOMTestCallback::callbackWithNonBoolReturnType(const WebDOMClass3& class3Param)
+int WebDOMTestCallback::callbackWithNonBoolReturnType(const WebDOMString& strArg)
 {
     if (!impl())
         return 0;
 
-    return impl()->callbackWithNonBoolReturnType(toWebCore(class3Param));
+    return impl()->callbackWithNonBoolReturnType(strArg);
 }
 
 bool WebDOMTestCallback::callbackWithStringList(const WebDOMDOMStringList& listParam)
@@ -136,12 +131,12 @@ bool WebDOMTestCallback::callbackWithBoolean(bool boolParam)
     return impl()->callbackWithBoolean(boolParam);
 }
 
-bool WebDOMTestCallback::callbackRequiresThisToPass(const WebDOMClass8& class8Param, const WebDOMThisClass& thisClassParam)
+bool WebDOMTestCallback::callbackRequiresThisToPass(int longParam, const WebDOMTestNode& testNodeParam)
 {
     if (!impl())
         return false;
 
-    return impl()->callbackRequiresThisToPass(toWebCore(class8Param), toWebCore(thisClassParam));
+    return impl()->callbackRequiresThisToPass(longParam, toWebCore(testNodeParam));
 }
 
 WebCore::TestCallback* toWebCore(const WebDOMTestCallback& wrapper)

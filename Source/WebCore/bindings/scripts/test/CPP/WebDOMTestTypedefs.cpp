@@ -21,11 +21,11 @@
 #include "config.h"
 #include "WebDOMTestTypedefs.h"
 
-#include "Array.h"
+#include "Int32Array.h"
 #include "KURL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
-#include "WebDOMArray.h"
+#include "WebDOMInt32Array.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
@@ -192,7 +192,7 @@ void WebDOMTestTypedefs::func(const WebDOMlong[]& x)
     impl()->func(toWebCore(x));
 }
 
-void WebDOMTestTypedefs::multiTransferList(const WebDOMString& first, const WebDOMArray& tx, const WebDOMString& second, const WebDOMArray& txx)
+void WebDOMTestTypedefs::multiTransferList(const WebDOMString& first, const WebDOMInt32Array& tx, const WebDOMString& second, const WebDOMInt32Array& txx)
 {
     if (!impl())
         return;

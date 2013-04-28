@@ -38,12 +38,9 @@ class WebDOMObject;
 class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestEnumType;
+class WebDOMTestNode;
 class WebDOMTestObj;
-class WebDOMa;
-class WebDOMb;
 class WebDOMbool;
-class WebDOMd;
-class WebDOMe;
 
 class WebDOMTestObj : public WebDOMObject {
 public:
@@ -191,10 +188,10 @@ public:
 #if ENABLE(Condition1)
     void overloadedMethod1(const WebDOMString& type);
 #endif
-    void convert1(const WebDOMa& value);
-    void convert2(const WebDOMb& value);
-    void convert4(const WebDOMd& value);
-    void convert5(const WebDOMe& value);
+    void convert1(const WebDOMTestNode& value);
+    void convert2(const WebDOMTestNode& value);
+    void convert4(const WebDOMTestNode& value);
+    void convert5(const WebDOMTestNode& value);
     WebDOMSVGPoint mutablePointFunction();
     WebDOMSVGPoint immutablePointFunction();
     void banana();

@@ -40,16 +40,13 @@
 #import "DOMSVGPointInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestEnumTypeInternal.h"
+#import "DOMTestNodeInternal.h"
 #import "DOMTestObjInternal.h"
 #import "DOMTestObjectAConstructorInternal.h"
 #import "DOMTestObjectBConstructorInternal.h"
 #import "DOMTestObjectCConstructorInternal.h"
-#import "DOMaInternal.h"
 #import "DOManyInternal.h"
-#import "DOMbInternal.h"
 #import "DOMboolInternal.h"
-#import "DOMdInternal.h"
-#import "DOMeInternal.h"
 #import "Dictionary.h"
 #import "Document.h"
 #import "EventListener.h"
@@ -63,6 +60,7 @@
 #import "SVGStaticPropertyTearOff.h"
 #import "SerializedScriptValue.h"
 #import "TestEnumType.h"
+#import "TestNode.h"
 #import "TestObj.h"
 #import "TestObjectAConstructor.h"
 #import "TestObjectBConstructor.h"
@@ -70,12 +68,8 @@
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import "a.h"
 #import "any.h"
-#import "b.h"
 #import "bool.h"
-#import "d.h"
-#import "e.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -1041,25 +1035,25 @@
     return result;
 }
 
-- (void)convert1:(DOMa *)value
+- (void)convert1:(DOMTestNode *)value
 {
     WebCore::JSMainThreadNullState state;
     IMPL->convert1(core(value));
 }
 
-- (void)convert2:(DOMb *)value
+- (void)convert2:(DOMTestNode *)value
 {
     WebCore::JSMainThreadNullState state;
     IMPL->convert2(core(value));
 }
 
-- (void)convert4:(DOMd *)value
+- (void)convert4:(DOMTestNode *)value
 {
     WebCore::JSMainThreadNullState state;
     IMPL->convert4(core(value));
 }
 
-- (void)convert5:(DOMe *)value
+- (void)convert5:(DOMTestNode *)value
 {
     WebCore::JSMainThreadNullState state;
     IMPL->convert5(core(value));

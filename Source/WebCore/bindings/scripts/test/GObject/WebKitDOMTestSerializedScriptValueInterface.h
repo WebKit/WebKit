@@ -53,27 +53,27 @@ webkit_dom_test_serialized_script_value_interface_get_type (void);
  * webkit_dom_test_serialized_script_value_interface_accept_transfer_list:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  * @data: A #WebKitDOMSerializedScriptValue
- * @transferList: A #WebKitDOMArray
+ * @transferList: A #WebKitDOMInt32Array
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transferList);
+webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMInt32Array* transferList);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_multi_transfer_list:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  * @first: A #WebKitDOMSerializedScriptValue
- * @tx: A #WebKitDOMArray
+ * @tx: A #WebKitDOMInt32Array
  * @second: A #WebKitDOMSerializedScriptValue
- * @txx: A #WebKitDOMArray
+ * @txx: A #WebKitDOMInt32Array
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMArray* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMArray* txx);
+webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMInt32Array* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMInt32Array* txx);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_get_value:

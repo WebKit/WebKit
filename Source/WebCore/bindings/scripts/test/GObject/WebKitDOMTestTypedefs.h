@@ -64,15 +64,15 @@ webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x);
  * webkit_dom_test_typedefs_multi_transfer_list:
  * @self: A #WebKitDOMTestTypedefs
  * @first: A #WebKitDOMSerializedScriptValue
- * @tx: A #WebKitDOMArray
+ * @tx: A #WebKitDOMInt32Array
  * @second: A #WebKitDOMSerializedScriptValue
- * @txx: A #WebKitDOMArray
+ * @txx: A #WebKitDOMInt32Array
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_typedefs_multi_transfer_list(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* first, WebKitDOMArray* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMArray* txx);
+webkit_dom_test_typedefs_multi_transfer_list(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* first, WebKitDOMInt32Array* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMInt32Array* txx);
 
 /**
  * webkit_dom_test_typedefs_set_shadow:

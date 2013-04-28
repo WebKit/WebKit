@@ -1,3 +1,135 @@
+2013-04-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of [Callback] IDL extended attribute for parameters
+        https://bugs.webkit.org/show_bug.cgi?id=115250
+
+        Reviewed by Kentaro Hara.
+
+        Remove the WebKit-specific [Callback] extended attribute and make the bindings
+        generator smart enough to know when a parameter is of callback type on its
+        own.
+
+        No new tests, no behavior change.
+
+        * DerivedSources.make: Use WebCore/Modules as IDL include path instead of using
+        subdirs. The generator will search recursively anyway and the list of subdirs was
+        incomplete.
+        * Modules/filesystem/DOMWindowFileSystem.idl:
+        * Modules/filesystem/DirectoryEntry.idl:
+        * Modules/filesystem/DirectoryReader.idl:
+        * Modules/filesystem/Entry.idl:
+        * Modules/filesystem/FileEntry.idl:
+        * Modules/filesystem/WorkerContextFileSystem.idl:
+        * Modules/mediastream/NavigatorMediaStream.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/WorkerContextWebDatabase.idl:
+        * bindings/gobject/GNUmakefile.am: Add missing IDL include dirs.
+        * bindings/scripts/CodeGenerator.pm:
+        (IsWrapperType):
+        (IsCallbackInterface):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression):
+        (GenerateParametersCheck):
+        * bindings/scripts/IDLAttributes.txt: Remove "Callback" extended attribute.
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        (WebDOMTestCallback::callbackWithArrayParam):
+        (WebDOMTestCallback::callbackWithSerializedScriptValueParam):
+        (WebDOMTestCallback::callbackWithNonBoolReturnType):
+        (WebDOMTestCallback::callbackRequiresThisToPass):
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h:
+        (WebDOMTestCallback):
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::convert1):
+        (WebDOMTestObj::convert2):
+        (WebDOMTestObj::convert4):
+        (WebDOMTestObj::convert5):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        (WebDOMTestSerializedScriptValueInterface::acceptTransferList):
+        (WebDOMTestSerializedScriptValueInterface::multiTransferList):
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.h:
+        (WebDOMTestSerializedScriptValueInterface):
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.cpp:
+        (WebDOMTestTypedefs::multiTransferList):
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.h:
+        (WebDOMTestTypedefs):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_callback_with_array_param):
+        (webkit_dom_test_callback_callback_with_serialized_script_value_param):
+        (webkit_dom_test_callback_callback_with_non_bool_return_type):
+        (webkit_dom_test_callback_callback_requires_this_to_pass):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_convert1):
+        (webkit_dom_test_obj_convert2):
+        (webkit_dom_test_obj_convert4):
+        (webkit_dom_test_obj_convert5):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (webkit_dom_test_serialized_script_value_interface_accept_transfer_list):
+        (webkit_dom_test_serialized_script_value_interface_multi_transfer_list):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        (webkit_dom_test_typedefs_multi_transfer_list):
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.h:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithArrayParam):
+        (WebCore::JSTestCallback::callbackWithSerializedScriptValueParam):
+        (WebCore::JSTestCallback::callbackRequiresThisToPass):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        (JSTestCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionConvert2):
+        (WebCore::jsTestObjPrototypeFunctionConvert4):
+        (WebCore::jsTestObjPrototypeFunctionConvert5):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface):
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionAcceptTransferList):
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionMultiTransferList):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionMultiTransferList):
+        * bindings/scripts/test/ObjC/DOMTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        (-[DOMTestCallback callbackWithArrayParam:]):
+        (-[DOMTestCallback callbackWithSerializedScriptValueParam:strArg:]):
+        (-[DOMTestCallback callbackWithNonBoolReturnType:]):
+        (-[DOMTestCallback callbackRequiresThisToPass:testNodeParam:]):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj convert1:]):
+        (-[DOMTestObj convert2:]):
+        (-[DOMTestObj convert4:]):
+        (-[DOMTestObj convert5:]):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.mm:
+        (-[DOMTestSerializedScriptValueInterface acceptTransferList:transferList:]):
+        (-[DOMTestSerializedScriptValueInterface multiTransferList:tx:second:txx:]):
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.mm:
+        (-[DOMTestTypedefs multiTransferList:tx:second:txx:]):
+        * bindings/scripts/test/TestCallback.idl: Use valid types instead of Class1, Class2, ...
+        so that the bindings generator does not complain about not being able to resolve
+        them.
+        * bindings/scripts/test/TestObj.idl: Use valid parameter types instead of 'a', 'b', 'd', 'e'
+        so that the bindings generator does not complain about them.
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/FontLoader.idl:
+        * dom/DataTransferItem.idl:
+        * page/DOMWindow.idl:
+
 2013-04-27  Darin Adler  <darin@apple.com>
 
         Move from constructor and member function adoptCF/NS to free function adoptCF/NS.

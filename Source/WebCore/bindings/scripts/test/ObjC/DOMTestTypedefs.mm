@@ -29,17 +29,17 @@
 
 #import "DOMTestTypedefs.h"
 
-#import "Array.h"
-#import "DOMArrayInternal.h"
 #import "DOMBlobInternal.h"
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMInt32ArrayInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMSVGPointInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestTypedefsInternal.h"
 #import "ExceptionHandlers.h"
+#import "Int32Array.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "SerializedScriptValue.h"
@@ -154,7 +154,7 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)multiTransferList:(NSString *)first tx:(DOMArray *)tx second:(NSString *)second txx:(DOMArray *)txx
+- (void)multiTransferList:(NSString *)first tx:(DOMInt32Array *)tx second:(NSString *)second txx:(DOMInt32Array *)txx
 {
     WebCore::JSMainThreadNullState state;
     IMPL->multiTransferList(WebCore::SerializedScriptValue::create(WTF::String(first)), core(tx), WebCore::SerializedScriptValue::create(WTF::String(second)), core(txx));

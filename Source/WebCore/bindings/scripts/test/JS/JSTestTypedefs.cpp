@@ -23,9 +23,9 @@
 
 #include "DOMStringList.h"
 #include "ExceptionCode.h"
-#include "JSArray.h"
 #include "JSDOMBinding.h"
 #include "JSDOMStringList.h"
+#include "JSInt32Array.h"
 #include "JSSVGPoint.h"
 #include "JSSerializedScriptValue.h"
 #include "JSTestCallback.h"
@@ -400,7 +400,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
         return JSValue::encode(jsUndefined());
     }
 
-    Array* tx(toArray(exec->argument(1)));
+    Int32Array* tx(toInt32Array(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 2) {
@@ -416,7 +416,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
         return JSValue::encode(jsUndefined());
     }
 
-    Array* txx(toArray(exec->argument(3)));
+    Int32Array* txx(toInt32Array(exec->argument(3)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->multiTransferList(first, tx, second, txx);

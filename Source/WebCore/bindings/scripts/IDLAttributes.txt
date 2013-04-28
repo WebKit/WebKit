@@ -22,7 +22,6 @@ ActiveDOMObject
 CPPPureInterface
 CachedAttribute
 CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
-Callback
 CheckSecurity
 CheckSecurityForNode
 Clamp

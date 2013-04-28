@@ -25,8 +25,8 @@
 #include "JSTestSerializedScriptValueInterface.h"
 
 #include "ExceptionCode.h"
-#include "JSArray.h"
 #include "JSDOMBinding.h"
+#include "JSInt32Array.h"
 #include "JSMessagePort.h"
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::co
     RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, exec->argument(1), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    Array* transferList(toArray(exec->argument(2)));
+    Int32Array* transferList(toInt32Array(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestSerializedScriptValueInterface> object = TestSerializedScriptValueInterface::create(hello, data, transferList);
@@ -301,7 +301,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* transferList(toArray(exec->argument(1)));
+    Int32Array* transferList(toInt32Array(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->acceptTransferList(data, transferList);
@@ -331,7 +331,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* tx(toArray(exec->argument(1)));
+    Int32Array* tx(toInt32Array(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 2) {
@@ -347,7 +347,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* txx(toArray(exec->argument(3)));
+    Int32Array* txx(toInt32Array(exec->argument(3)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->multiTransferList(first, tx, second, txx);

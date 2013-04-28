@@ -60,38 +60,38 @@ WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
 
 /**
- * webkit_dom_test_callback_callback_with_class1param:
+ * webkit_dom_test_callback_callback_with_array_param:
  * @self: A #WebKitDOMTestCallback
- * @class1Param: A #WebKitDOMClass1
+ * @arrayParam: A #WebKitDOMFloat32Array
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1Param);
+webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, WebKitDOMFloat32Array* arrayParam);
 
 /**
- * webkit_dom_test_callback_callback_with_class2param:
+ * webkit_dom_test_callback_callback_with_serialized_script_value_param:
  * @self: A #WebKitDOMTestCallback
- * @class2Param: A #WebKitDOMClass2
+ * @srzParam: A #WebKitDOMSerializedScriptValue
  * @strArg: A #gchar
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2Param, const gchar* strArg);
+webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, WebKitDOMSerializedScriptValue* srzParam, const gchar* strArg);
 
 /**
  * webkit_dom_test_callback_callback_with_non_bool_return_type:
  * @self: A #WebKitDOMTestCallback
- * @class3Param: A #WebKitDOMClass3
+ * @strArg: A #gchar
  *
  * Returns:
  *
 **/
 WEBKIT_API glong
-webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3Param);
+webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, const gchar* strArg);
 
 /**
  * webkit_dom_test_callback_callback_with_string_list:
@@ -118,14 +118,14 @@ webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboo
 /**
  * webkit_dom_test_callback_callback_requires_this_to_pass:
  * @self: A #WebKitDOMTestCallback
- * @class8Param: A #WebKitDOMClass8
- * @thisClassParam: A #WebKitDOMThisClass
+ * @longParam: A #glong
+ * @testNodeParam: A #WebKitDOMTestNode
  *
  * Returns:
  *
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, WebKitDOMClass8* class8Param, WebKitDOMThisClass* thisClassParam);
+webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, glong longParam, WebKitDOMTestNode* testNodeParam);
 
 G_END_DECLS
 

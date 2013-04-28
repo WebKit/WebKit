@@ -293,12 +293,12 @@ sub SkipFunction {
         return 1;
     }
 
-    # Skip functions that have ["Callback"] parameters, because this
+    # Skip functions that have callback parameters, because this
     # code generator doesn't know how to auto-generate callbacks.
     # Skip functions that have "MediaQueryListListener" or sequence<T> parameters, because this
     # code generator doesn't know how to auto-generate MediaQueryListListener or sequence<T>.
     foreach my $param (@{$function->parameters}) {
-        if ($param->extendedAttributes->{"Callback"} ||
+        if ($codeGenerator->IsCallbackInterface($param->type) ||
             $param->extendedAttributes->{"Clamp"} ||
             $param->type eq "MediaQueryListListener" ||
             $codeGenerator->GetSequenceType($param->type)) {

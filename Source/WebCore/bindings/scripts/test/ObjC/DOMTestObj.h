@@ -34,16 +34,13 @@
 @class DOMSVGDocument;
 @class DOMSVGPoint;
 @class DOMTestEnumType;
+@class DOMTestNode;
 @class DOMTestObj;
 @class DOMTestObjectAConstructor;
 @class DOMTestObjectBConstructor;
 @class DOMTestObjectCConstructor;
-@class DOMa;
 @class DOMany;
-@class DOMb;
 @class DOMbool;
-@class DOMd;
-@class DOMe;
 @class NSString;
 @protocol DOMEventListener;
 
@@ -172,10 +169,10 @@ enum {
 - (void)overloadedMethod1:(NSString *)type;
 #endif
 - (DOMSVGDocument *)getSVGDocument;
-- (void)convert1:(DOMa *)value;
-- (void)convert2:(DOMb *)value;
-- (void)convert4:(DOMd *)value;
-- (void)convert5:(DOMe *)value;
+- (void)convert1:(DOMTestNode *)value;
+- (void)convert2:(DOMTestNode *)value;
+- (void)convert4:(DOMTestNode *)value;
+- (void)convert5:(DOMTestNode *)value;
 - (DOMSVGPoint *)mutablePointFunction;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;

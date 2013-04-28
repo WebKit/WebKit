@@ -33,12 +33,9 @@
 #include "WebKitDOMSVGPointPrivate.h"
 #include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestEnumTypePrivate.h"
+#include "WebKitDOMTestNodePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
-#include "WebKitDOMaPrivate.h"
-#include "WebKitDOMbPrivate.h"
 #include "WebKitDOMboolPrivate.h"
-#include "WebKitDOMdPrivate.h"
-#include "WebKitDOMePrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -1380,46 +1377,46 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type
 }
 
 void
-webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMa* value)
+webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_A(value));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::a* convertedValue = WebKit::core(value);
+    WebCore::TestNode* convertedValue = WebKit::core(value);
     item->convert1(convertedValue);
 }
 
 void
-webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* value)
+webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_B(value));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::b* convertedValue = WebKit::core(value);
+    WebCore::TestNode* convertedValue = WebKit::core(value);
     item->convert2(convertedValue);
 }
 
 void
-webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMd* value)
+webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_D(value));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::d* convertedValue = WebKit::core(value);
+    WebCore::TestNode* convertedValue = WebKit::core(value);
     item->convert4(convertedValue);
 }
 
 void
-webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMe* value)
+webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_E(value));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::e* convertedValue = WebKit::core(value);
+    WebCore::TestNode* convertedValue = WebKit::core(value);
     item->convert5(convertedValue);
 }
 

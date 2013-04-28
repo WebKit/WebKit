@@ -25,7 +25,7 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMArrayPrivate.h"
+#include "WebKitDOMInt32ArrayPrivate.h"
 #include "WebKitDOMMessagePortArrayPrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMSerializedScriptValuePrivate.h"
@@ -220,16 +220,16 @@ static void webkit_dom_test_serialized_script_value_interface_init(WebKitDOMTest
 }
 
 void
-webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transferList)
+webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMInt32Array* transferList)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
     g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(data));
-    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(transferList));
+    g_return_if_fail(WEBKIT_DOM_IS_INT32ARRAY(transferList));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     WebCore::SerializedScriptValue* convertedData = WebKit::core(data);
-    WebCore::Array* convertedTransferList = WebKit::core(transferList);
+    WebCore::Int32Array* convertedTransferList = WebKit::core(transferList);
     item->acceptTransferList(convertedData, convertedTransferList);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
@@ -238,20 +238,20 @@ webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOM
 }
 
 void
-webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMArray* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMArray* txx)
+webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMInt32Array* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMInt32Array* txx)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
     g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(first));
-    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(tx));
+    g_return_if_fail(WEBKIT_DOM_IS_INT32ARRAY(tx));
     g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(second));
-    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(txx));
+    g_return_if_fail(WEBKIT_DOM_IS_INT32ARRAY(txx));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     WebCore::SerializedScriptValue* convertedFirst = WebKit::core(first);
-    WebCore::Array* convertedTx = WebKit::core(tx);
+    WebCore::Int32Array* convertedTx = WebKit::core(tx);
     WebCore::SerializedScriptValue* convertedSecond = WebKit::core(second);
-    WebCore::Array* convertedTxx = WebKit::core(txx);
+    WebCore::Int32Array* convertedTxx = WebKit::core(txx);
     item->multiTransferList(convertedFirst, convertedTx, convertedSecond, convertedTxx);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")

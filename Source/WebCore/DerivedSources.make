@@ -970,21 +970,7 @@ preprocess_idls_script = perl $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $
 # JS bindings generator
 
 IDL_INCLUDES = \
-    $(WebCore)/Modules/battery \
-	$(WebCore)/Modules/encryptedmedia \
-    $(WebCore)/Modules/filesystem \
-    $(WebCore)/Modules/gamepad \
-    $(WebCore)/Modules/geolocation \
-    $(WebCore)/Modules/indexeddb \
-    $(WebCore)/Modules/mediasource \
-    $(WebCore)/Modules/mediastream \
-    $(WebCore)/Modules/networkinfo \
-    $(WebCore)/Modules/notifications \
-    $(WebCore)/Modules/speech \
-    $(WebCore)/Modules/vibration \
-    $(WebCore)/Modules/webaudio \
-    $(WebCore)/Modules/webdatabase \
-    $(WebCore)/Modules/websockets \
+    $(WebCore)/Modules \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/fileapi \

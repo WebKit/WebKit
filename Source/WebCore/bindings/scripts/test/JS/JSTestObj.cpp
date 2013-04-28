@@ -37,13 +37,10 @@
 #include "JSSVGPoint.h"
 #include "JSScriptProfile.h"
 #include "JSTestCallback.h"
+#include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
-#include "JSa.h"
-#include "JSb.h"
 #include "JSbool.h"
-#include "JSd.h"
-#include "JSe.h"
 #include "KURL.h"
 #include "SVGDocument.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -2780,7 +2777,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    a* value(toa(exec->argument(0)));
+    TestNode* value(toTestNode(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->convert1(value);
@@ -2797,7 +2794,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    b* value(tob(exec->argument(0)));
+    TestNode* value(toTestNode(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->convert2(value);
@@ -2814,7 +2811,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    d* value(tod(exec->argument(0)));
+    TestNode* value(toTestNode(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->convert4(value);
@@ -2831,7 +2828,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    e* value(toe(exec->argument(0)));
+    TestNode* value(toTestNode(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->convert5(value);

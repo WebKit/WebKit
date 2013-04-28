@@ -33,7 +33,7 @@
 enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
 [
-    Constructor(in [Callback] TestCallback testCallback),
+    Constructor(in TestCallback testCallback),
     InterfaceName=TestObject
 ] interface TestObj {
     // Attributes
@@ -143,12 +143,12 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
 #if defined(TESTING_JS)
     // 'Callback' extended attribute
-    void    methodWithCallbackArg(in [Callback] TestCallback callback);
-    void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
-    void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
+    void    methodWithCallbackArg(in TestCallback callback);
+    void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in TestCallback callback);
+    void    methodWithCallbackAndOptionalArg(in [Optional] TestCallback callback);
     // static methods with 'Callback' extended attribute
-    static void    staticMethodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
-    static void    staticMethodWithCallbackArg(in [Callback] TestCallback callback);
+    static void    staticMethodWithCallbackAndOptionalArg(in [Optional] TestCallback callback);
+    static void    staticMethodWithCallbackArg(in TestCallback callback);
 #endif
 
     // 'Conditional' extended attribute
@@ -180,7 +180,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
     void    overloadedMethod(in [StrictTypeChecking] DOMString strArg);
     void    overloadedMethod(in long longArg);
-    void    overloadedMethod(in [Callback] TestCallback callback);
+    void    overloadedMethod(in TestCallback callback);
     void    overloadedMethod(in DOMStringList? listArg);
     void    overloadedMethod(in DOMString[]? arrayArg);
     void    overloadedMethod(in TestObj objArg);
@@ -210,10 +210,10 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     [CheckSecurityForNode] SVGDocument getSVGDocument()
         raises(DOMException);
 
-    void convert1(in [TreatReturnedNullStringAs=Null] a value);
-    void convert2(in [TreatReturnedNullStringAs=Undefined] b value);
-    void convert4(in [TreatNullAs=NullString] d value);
-    void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e value);
+    void convert1(in [TreatReturnedNullStringAs=Null] TestNode value);
+    void convert2(in [TreatReturnedNullStringAs=Undefined] TestNode value);
+    void convert4(in [TreatNullAs=NullString] TestNode value);
+    void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] TestNode value);
 
     attribute SVGPoint mutablePoint;
     [Immutable] attribute SVGPoint immutablePoint;

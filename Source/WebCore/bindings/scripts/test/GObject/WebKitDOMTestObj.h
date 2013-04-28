@@ -404,46 +404,46 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type
 /**
  * webkit_dom_test_obj_convert1:
  * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMa
+ * @value: A #WebKitDOMTestNode
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMa* value);
+webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
  * webkit_dom_test_obj_convert2:
  * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMb
+ * @value: A #WebKitDOMTestNode
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* value);
+webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
  * webkit_dom_test_obj_convert4:
  * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMd
+ * @value: A #WebKitDOMTestNode
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMd* value);
+webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
  * webkit_dom_test_obj_convert5:
  * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMe
+ * @value: A #WebKitDOMTestNode
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMe* value);
+webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
  * webkit_dom_test_obj_mutable_point_function:

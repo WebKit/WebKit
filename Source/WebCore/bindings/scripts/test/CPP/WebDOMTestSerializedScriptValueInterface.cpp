@@ -24,10 +24,10 @@
 
 #include "WebDOMTestSerializedScriptValueInterface.h"
 
-#include "Array.h"
+#include "Int32Array.h"
 #include "MessagePortArray.h"
 #include "SerializedScriptValue.h"
-#include "WebDOMArray.h"
+#include "WebDOMInt32Array.h"
 #include "WebDOMMessagePortArray.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>
@@ -134,7 +134,7 @@ WebDOMString WebDOMTestSerializedScriptValueInterface::cachedReadonlyValue() con
     return impl()->cachedReadonlyValue()->toString();
 }
 
-void WebDOMTestSerializedScriptValueInterface::acceptTransferList(const WebDOMString& data, const WebDOMArray& transferList)
+void WebDOMTestSerializedScriptValueInterface::acceptTransferList(const WebDOMString& data, const WebDOMInt32Array& transferList)
 {
     if (!impl())
         return;
@@ -142,7 +142,7 @@ void WebDOMTestSerializedScriptValueInterface::acceptTransferList(const WebDOMSt
     impl()->acceptTransferList(WebCore::SerializedScriptValue::create(WTF::String(data)), toWebCore(transferList));
 }
 
-void WebDOMTestSerializedScriptValueInterface::multiTransferList(const WebDOMString& first, const WebDOMArray& tx, const WebDOMString& second, const WebDOMArray& txx)
+void WebDOMTestSerializedScriptValueInterface::multiTransferList(const WebDOMString& first, const WebDOMInt32Array& tx, const WebDOMString& second, const WebDOMInt32Array& txx)
 {
     if (!impl())
         return;

@@ -29,6 +29,7 @@
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestEnumType.h"
+#include "TestNode.h"
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
 #include "WebDOMNode.h"
@@ -36,19 +37,12 @@
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebDOMTestEnumType.h"
+#include "WebDOMTestNode.h"
 #include "WebDOMTestObj.h"
-#include "WebDOMa.h"
-#include "WebDOMb.h"
 #include "WebDOMbool.h"
-#include "WebDOMd.h"
-#include "WebDOMe.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
-#include "a.h"
-#include "b.h"
 #include "bool.h"
-#include "d.h"
-#include "e.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -972,7 +966,7 @@ void WebDOMTestObj::overloadedMethod1(const WebDOMString& type)
 
 #endif
 
-void WebDOMTestObj::convert1(const WebDOMa& value)
+void WebDOMTestObj::convert1(const WebDOMTestNode& value)
 {
     if (!impl())
         return;
@@ -980,7 +974,7 @@ void WebDOMTestObj::convert1(const WebDOMa& value)
     impl()->convert1(toWebCore(value));
 }
 
-void WebDOMTestObj::convert2(const WebDOMb& value)
+void WebDOMTestObj::convert2(const WebDOMTestNode& value)
 {
     if (!impl())
         return;
@@ -988,7 +982,7 @@ void WebDOMTestObj::convert2(const WebDOMb& value)
     impl()->convert2(toWebCore(value));
 }
 
-void WebDOMTestObj::convert4(const WebDOMd& value)
+void WebDOMTestObj::convert4(const WebDOMTestNode& value)
 {
     if (!impl())
         return;
@@ -996,7 +990,7 @@ void WebDOMTestObj::convert4(const WebDOMd& value)
     impl()->convert4(toWebCore(value));
 }
 
-void WebDOMTestObj::convert5(const WebDOMe& value)
+void WebDOMTestObj::convert5(const WebDOMTestNode& value)
 {
     if (!impl())
         return;

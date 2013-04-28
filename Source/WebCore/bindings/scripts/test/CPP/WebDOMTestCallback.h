@@ -32,12 +32,10 @@ namespace WebCore {
 class TestCallback;
 };
 
-class WebDOMClass1;
-class WebDOMClass2;
-class WebDOMClass3;
-class WebDOMClass8;
 class WebDOMDOMStringList;
-class WebDOMThisClass;
+class WebDOMFloat32Array;
+class WebDOMString;
+class WebDOMTestNode;
 
 class WebDOMTestCallback : public WebDOMObject {
 public:
@@ -48,12 +46,12 @@ public:
     virtual ~WebDOMTestCallback();
 
     bool callbackWithNoParam();
-    bool callbackWithClass1Param(const WebDOMClass1& class1Param);
-    bool callbackWithClass2Param(const WebDOMClass2& class2Param, const WebDOMString& strArg);
-    int callbackWithNonBoolReturnType(const WebDOMClass3& class3Param);
+    bool callbackWithArrayParam(const WebDOMFloat32Array& arrayParam);
+    bool callbackWithSerializedScriptValueParam(const WebDOMString& srzParam, const WebDOMString& strArg);
+    int callbackWithNonBoolReturnType(const WebDOMString& strArg);
     bool callbackWithStringList(const WebDOMDOMStringList& listParam);
     bool callbackWithBoolean(bool boolParam);
-    bool callbackRequiresThisToPass(const WebDOMClass8& class8Param, const WebDOMThisClass& thisClassParam);
+    bool callbackRequiresThisToPass(int longParam, const WebDOMTestNode& testNodeParam);
 
     WebCore::TestCallback* impl() const;
 

@@ -43,13 +43,13 @@ public:
 
     // Functions
     virtual bool callbackWithNoParam();
-    virtual bool callbackWithClass1Param(Class1* class1Param);
-    virtual bool callbackWithClass2Param(Class2* class2Param, const String& strArg);
-    COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(Class3* class3Param);
+    virtual bool callbackWithArrayParam(Float32Array* arrayParam);
+    virtual bool callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg);
+    COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(const String& strArg);
     virtual int customCallback(Class5* class5Param, Class6* class6Param);
     virtual bool callbackWithStringList(PassRefPtr<DOMStringList> listParam);
     virtual bool callbackWithBoolean(bool boolParam);
-    virtual bool callbackRequiresThisToPass(Class8* class8Param, ThisClass* thisClassParam);
+    virtual bool callbackRequiresThisToPass(int longParam, TestNode* testNodeParam);
 
 private:
     JSTestCallback(JSC::JSObject* callback, JSDOMGlobalObject*);

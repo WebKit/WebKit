@@ -32,33 +32,28 @@
 
 #import "DOMTestCallback.h"
 
-#import "Class1.h"
-#import "Class2.h"
-#import "Class3.h"
 #import "Class5.h"
 #import "Class6.h"
-#import "Class8.h"
 #import "DOMBlobInternal.h"
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
-#import "DOMClass1Internal.h"
-#import "DOMClass2Internal.h"
-#import "DOMClass3Internal.h"
 #import "DOMClass5Internal.h"
 #import "DOMClass6Internal.h"
-#import "DOMClass8Internal.h"
 #import "DOMDOMStringListInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMFloat32ArrayInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStringList.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestCallbackInternal.h"
-#import "DOMThisClassInternal.h"
+#import "DOMTestNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import "Float32Array.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
+#import "SerializedScriptValue.h"
 #import "TestCallback.h"
-#import "ThisClass.h"
+#import "TestNode.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
@@ -91,22 +86,22 @@
     return IMPL->callbackWithNoParam();
 }
 
-- (BOOL)callbackWithClass1Param:(DOMClass1 *)class1Param
+- (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackWithClass1Param(core(class1Param));
+    return IMPL->callbackWithArrayParam(core(arrayParam));
 }
 
-- (BOOL)callbackWithClass2Param:(DOMClass2 *)class2Param strArg:(NSString *)strArg
+- (BOOL)callbackWithSerializedScriptValueParam:(NSString *)srzParam strArg:(NSString *)strArg
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackWithClass2Param(core(class2Param), strArg);
+    return IMPL->callbackWithSerializedScriptValueParam(WebCore::SerializedScriptValue::create(WTF::String(srzParam)), strArg);
 }
 
-- (int)callbackWithNonBoolReturnType:(DOMClass3 *)class3Param
+- (int)callbackWithNonBoolReturnType:(NSString *)strArg
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackWithNonBoolReturnType(core(class3Param));
+    return IMPL->callbackWithNonBoolReturnType(strArg);
 }
 
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param
@@ -127,10 +122,10 @@
     return IMPL->callbackWithBoolean(boolParam);
 }
 
-- (BOOL)callbackRequiresThisToPass:(DOMClass8 *)class8Param thisClassParam:(DOMThisClass *)thisClassParam
+- (BOOL)callbackRequiresThisToPass:(int)longParam testNodeParam:(DOMTestNode *)testNodeParam
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackRequiresThisToPass(core(class8Param), core(thisClassParam));
+    return IMPL->callbackRequiresThisToPass(longParam, core(testNodeParam));
 }
 
 @end

@@ -6,6 +6,7 @@
 # Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
+# Copyright (C) 2013 Samsung Electronics. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -52,6 +53,13 @@ my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+
+# WebCore types used directly in IDL files.
+my %webCoreTypeHash = (
+    "CompareHow" => 1,
+    "SerializedScriptValue" => 1,
+    "Dictionary" => 1
+);
 
 my %enumTypeHash = ();
 
@@ -663,6 +671,40 @@ sub SetterExpression
     }
 
     return ($functionName, $contentAttributeName);
+}
+
+sub IsWrapperType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 0 if $object->IsPrimitiveType($type);
+    return 0 if $object->GetArrayType($type);
+    return 0 if $object->GetSequenceType($type);
+    return 0 if $object->IsEnumType($type);
+    return 0 if $object->IsStringType($type);
+    return 0 if $webCoreTypeHash{$type};
+    return 0 if $type eq "any";
+
+    return 1;
+}
+
+sub IsCallbackInterface
+{
+  my $object = shift;
+  my $type = shift;
+
+  return 0 unless $object->IsWrapperType($type);
+
+  my $idlFile = $object->IDLFileForInterface($type)
+      or die("Could NOT find IDL file for interface \"$type\"!\n");
+
+  open FILE, "<", $idlFile;
+  my @lines = <FILE>;
+  close FILE;
+
+  my $fileContents = join('', @lines);
+  return ($fileContents =~ /callback\s+interface\s+(\w+)/gs);
 }
 
 sub GenerateConditionalString

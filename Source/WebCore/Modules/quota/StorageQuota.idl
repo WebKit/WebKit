@@ -28,6 +28,6 @@
     OmitConstructor,
     ImplementationLacksVTable
 ] interface StorageQuota {
-    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in [Callback] StorageUsageCallback usageCallback, in [Callback, Optional] StorageErrorCallback errorCallback);
-    [CallWith=ScriptExecutionContext] void requestQuota(in unsigned long long newQuotaInBytes, in [Callback, Optional] StorageQuotaCallback quotaCallback, in [Callback, Optional] StorageErrorCallback errorCallback);
+    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in StorageUsageCallback usageCallback, in [Optional] StorageErrorCallback errorCallback);
+    [CallWith=ScriptExecutionContext] void requestQuota(in unsigned long long newQuotaInBytes, in [Optional] StorageQuotaCallback quotaCallback, in [Optional] StorageErrorCallback errorCallback);
 };

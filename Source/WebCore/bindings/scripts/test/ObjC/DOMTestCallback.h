@@ -28,25 +28,22 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
-@class DOMClass1;
-@class DOMClass2;
-@class DOMClass3;
 @class DOMClass5;
 @class DOMClass6;
-@class DOMClass8;
 @class DOMDOMStringList;
-@class DOMThisClass;
+@class DOMFloat32Array;
+@class DOMTestNode;
 @class NSString;
 
 @interface DOMTestCallback : DOMObject
 - (BOOL)callbackWithNoParam;
-- (BOOL)callbackWithClass1Param:(DOMClass1 *)class1Param;
-- (BOOL)callbackWithClass2Param:(DOMClass2 *)class2Param strArg:(NSString *)strArg;
-- (int)callbackWithNonBoolReturnType:(DOMClass3 *)class3Param;
+- (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam;
+- (BOOL)callbackWithSerializedScriptValueParam:(NSString *)srzParam strArg:(NSString *)strArg;
+- (int)callbackWithNonBoolReturnType:(NSString *)strArg;
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param;
 - (BOOL)callbackWithStringList:(DOMDOMStringList *)listParam;
 - (BOOL)callbackWithBoolean:(BOOL)boolParam;
-- (BOOL)callbackRequiresThisToPass:(DOMClass8 *)class8Param thisClassParam:(DOMThisClass *)thisClassParam;
+- (BOOL)callbackRequiresThisToPass:(int)longParam testNodeParam:(DOMTestNode *)testNodeParam;
 @end
 
 #endif

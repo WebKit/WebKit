@@ -51,7 +51,7 @@
         raises(DOMException);
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
+    void decodeAudioData(in ArrayBuffer audioData, in AudioBufferCallback successCallback, in [Optional] AudioBufferCallback errorCallback)
         raises(DOMException);
 
     // Sources

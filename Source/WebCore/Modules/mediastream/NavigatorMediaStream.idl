@@ -21,8 +21,8 @@
     Conditional=MEDIA_STREAM,
 ] partial interface Navigator {
     void webkitGetUserMedia(in Dictionary options,
-                                                 in [Callback] NavigatorUserMediaSuccessCallback successCallback,
-                                                 in [Callback, Optional] NavigatorUserMediaErrorCallback errorCallback)
+                                                 in NavigatorUserMediaSuccessCallback successCallback,
+                                                 in [Optional] NavigatorUserMediaErrorCallback errorCallback)
         raises(DOMException);
 };
 
