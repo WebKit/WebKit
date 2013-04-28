@@ -1,5 +1,29 @@
 2013-04-27  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/13757007> Crashes in NetworkResourceLoader::didReceiveResponseAsync
+        https://bugs.webkit.org/show_bug.cgi?id=115318
+
+        Reviewed by Darin Adler.
+
+        sendAbortingOnFailure may actually fail, and abort the request, making m_handle null.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync): Null check m_handle after
+        sending a message, because the request will cancelled when connection is invalid.
+        (WebKit::NetworkResourceLoader::didReceiveBuffer): Assert that m_handle matches
+        the handle that we are called with.
+        (WebKit::NetworkResourceLoader::didFinishLoading): Ditto.
+        (WebKit::NetworkResourceLoader::didFail): Ditto.
+        (WebKit::NetworkResourceLoader::willSendRequestAsync): Ditto.
+        (WebKit::NetworkResourceLoader::didSendData): Ditto.
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage): Ditto.
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorageAsync): Ditto.
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge): Ditto.
+        (WebKit::NetworkResourceLoader::didCancelAuthenticationChallenge): Ditto.
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync): Ditto.
+
+2013-04-27  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/13757687> Threads get stuck in NetworkProcess when canceling loads
         https://bugs.webkit.org/show_bug.cgi?id=115319
 
