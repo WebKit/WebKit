@@ -1,3 +1,9 @@
+2013-04-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         StaticHashSetNodeList is unnecessary

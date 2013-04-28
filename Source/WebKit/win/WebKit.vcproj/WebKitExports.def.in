@@ -150,6 +150,8 @@ EXPORTS
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
 
         ; Re-exports from WebCore for test harnesses
+        ??0HitTestResult@WebCore@@QAE@ABVLayoutPoint@1@@Z
+        ??0HitTestResult@WebCore@@QAE@ABVLayoutPoint@1@IIII@Z
         ??0NodeRenderingContext@WebCore@@QAE@PAVNode@1@@Z
         ??1NodeRenderingContext@WebCore@@QAE@XZ
         ??1Range@WebCore@@QAE@XZ
@@ -177,6 +179,7 @@ EXPORTS
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
         ?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
+        ?deprecatedShadowAncestorNode@Node@WebCore@@QBEPAV12@XZ
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@WTF@@W4SerializationErrorMode@2@@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
@@ -191,7 +194,9 @@ EXPORTS
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVNode@2@PBVRange@2@AAI2@Z
+        ?hitTest@RenderView@WebCore@@QAE_NABVHitTestRequest@2@AAVHitTestResult@2@@Z
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+        ?intersects@IntRect@WebCore@@QBE_NABV12@@Z
         ?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z
         ?selectTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
@@ -245,6 +250,8 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z
+        ?rectBasedTestResult@HitTestResult@WebCore@@QBEABV?$ListHashSet@V?$RefPtr@VNode@WebCore@@@WTF@@$0BAA@U?$PtrHash@V?$RefPtr@VNode@WebCore@@@WTF@@@2@@WTF@@XZ
+        ?rectForPoint@HitTestLocation@WebCore@@SA?AVIntRect@2@ABVLayoutPoint@2@IIII@Z
         ?reload@FrameLoader@WebCore@@QAEX_N@Z
         ?remove@String@WTF@@QAEXIH@Z
         ?removedLastRef@Node@WebCore@@AAEXXZ
