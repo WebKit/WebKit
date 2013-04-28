@@ -183,12 +183,12 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
     m_bytesReceived += buffer->size();
     
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    ShareableResource::Handle handle;
-    tryGetShareableHandleFromSharedBuffer(handle, buffer.get());
-    if (!handle.isNull()) {
+    ShareableResource::Handle shareableResourceHandle;
+    tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer.get());
+    if (!shareableResourceHandle.isNull()) {
         // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
         abortInProgressLoad();
-        send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
+        send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
         return;
     }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
