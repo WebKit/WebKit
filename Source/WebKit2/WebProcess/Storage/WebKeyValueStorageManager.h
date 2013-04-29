@@ -67,12 +67,15 @@ private:
     virtual void dispatchDidModifyOrigin(const String&) OVERRIDE;
     virtual void didFinishLoadingOrigins() OVERRIDE;
 
-    Vector<uint64_t> m_originsRequestCallbackIDs;
+    WebProcess* m_process;
+
     String m_localStorageDirectory;
 #if ENABLE(INDEXED_DATABASE)
     String m_indexedDBDatabaseDirectory;
 #endif
-    WebProcess* m_process;
+
+    Vector<uint64_t> m_originsRequestCallbackIDs;
+    bool m_didFinishLoadingOrigins;
 };
 
 } // namespace WebKit

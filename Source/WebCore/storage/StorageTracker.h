@@ -55,7 +55,6 @@ public:
     void deleteAllOrigins();
     void deleteOrigin(SecurityOrigin*);
     void deleteOrigin(const String& originIdentifier);
-    bool originsLoaded() const { return m_finishedImportingOriginIdentifiers; }
     void origins(Vector<RefPtr<SecurityOrigin> >& result);
     long long diskUsageForOrigin(SecurityOrigin*);
     
@@ -117,7 +116,6 @@ private:
     
     bool m_isActive;
     bool m_needsInitialization;
-    bool m_finishedImportingOriginIdentifiers;
     double m_StorageDatabaseIdleInterval;
 };
     

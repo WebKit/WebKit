@@ -1,5 +1,20 @@
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove StorageTracker::originsLoaded
+        https://bugs.webkit.org/show_bug.cgi?id=115382
+
+        Reviewed by Sam Weinig.
+
+        Remove m_finishedImportingOriginIdentifiers.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::StorageTracker):
+        (WebCore::StorageTracker::finishedImportingOriginIdentifiers):
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
         Get rid of StorageTracker::setClient
         https://bugs.webkit.org/show_bug.cgi?id=115376
 

@@ -94,7 +94,6 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_thread(StorageThread::create())
     , m_isActive(false)
     , m_needsInitialization(false)
-    , m_finishedImportingOriginIdentifiers(false)
     , m_StorageDatabaseIdleInterval(DefaultStorageDatabaseIdleInterval)
 {
 }
@@ -178,7 +177,6 @@ void StorageTracker::notifyFinishedImportingOriginIdentifiersOnMainThread(void*)
 
 void StorageTracker::finishedImportingOriginIdentifiers()
 {
-    m_finishedImportingOriginIdentifiers = true;
     MutexLocker locker(m_databaseMutex);
     if (m_client)
         m_client->didFinishLoadingOrigins();

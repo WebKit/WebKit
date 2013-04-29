@@ -1,3 +1,19 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Remove StorageTracker::originsLoaded
+        https://bugs.webkit.org/show_bug.cgi?id=115382
+
+        Reviewed by Sam Weinig.
+
+        Add m_didFinishLoadingOrigins.
+
+        * WebProcess/Storage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::WebKeyValueStorageManager):
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::didFinishLoadingOrigins):
+        * WebProcess/Storage/WebKeyValueStorageManager.h:
+        (WebKeyValueStorageManager):
+
 2013-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH Update seatbelt profile to work with speech synthesis
