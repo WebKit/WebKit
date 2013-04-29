@@ -1,3 +1,27 @@
+2013-04-29  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][AC] Clean up code related with the children management stuff for clutter based AC
+        https://bugs.webkit.org/show_bug.cgi?id=114260
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove unused or usless code for children management stuff.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/clutter/GraphicsLayerActor.cpp:
+        (_GraphicsLayerActorPrivate):
+        (graphics_layer_actor_class_init):
+        (graphicsLayerActorAllocate):
+        (graphicsLayerActorDraw):
+        (graphicsLayerActorNew):
+        (graphicsLayerActorSetSublayers):
+        * platform/graphics/clutter/GraphicsLayerActor.h:
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp:
+        (WebCore::idleDestroy):
+        (WebCore::GraphicsLayerClutter::ensureStructuralLayer):
+        (WebCore::GraphicsLayerClutter::updateLayerDrawsContent):
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Guard cfHDropFormat() with USE(CF) instead of OS(WINCE)

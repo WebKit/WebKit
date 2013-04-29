@@ -40,12 +40,10 @@ G_DEFINE_TYPE(GraphicsLayerActor, graphics_layer_actor, CLUTTER_TYPE_ACTOR)
 #define GRAPHICS_LAYER_ACTOR_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), GRAPHICS_LAYER_TYPE_ACTOR, GraphicsLayerActorPrivate))
 
 struct _GraphicsLayerActorPrivate {
-    GraphicsLayerClutter::LayerType layerType;
-    gboolean allocating;
-
+    PlatformClutterLayerClient* layerClient;
     RefPtr<cairo_surface_t> surface;
 
-    PlatformClutterLayerClient* layerClient;
+    GraphicsLayerClutter::LayerType layerType;
 
     bool flatten;
     bool drawsContent;
@@ -85,8 +83,9 @@ static void graphics_layer_actor_class_init(GraphicsLayerActorClass* klass)
     objectClass->get_property = graphicsLayerActorGetProperty;
     objectClass->set_property = graphicsLayerActorSetProperty;
     objectClass->dispose = graphicsLayerActorDispose;
-    actorClass->apply_transform = graphicsLayerActorApplyTransform;
+
     actorClass->allocate = graphicsLayerActorAllocate;
+    actorClass->apply_transform = graphicsLayerActorApplyTransform;
     actorClass->paint = graphicsLayerActorPaint;
 
     g_type_class_add_private(klass, sizeof(GraphicsLayerActorPrivate));
@@ -158,11 +157,6 @@ static void graphicsLayerActorDispose(GObject* object)
 
 static void graphicsLayerActorAllocate(ClutterActor* self, const ClutterActorBox* box, ClutterAllocationFlags flags)
 {
-    GraphicsLayerActor* layer = GRAPHICS_LAYER_ACTOR(self);
-    GraphicsLayerActorPrivate* priv = layer->priv;
-
-    priv->allocating = TRUE;
-
     CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->allocate(self, box, flags);
 
     ClutterContent* canvas = clutter_actor_get_content(self);
@@ -186,8 +180,6 @@ static void graphicsLayerActorAllocate(ClutterActor* self, const ClutterActorBox
 
         clutter_actor_allocate(childActor, &childBox, flags);
     }
-
-    priv->allocating = FALSE;
 }
 
 static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* matrix)
@@ -224,10 +216,10 @@ static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint
     if (!width || !height)
         return FALSE;
 
-    GraphicsLayerActorPrivate* priv = layer->priv;
     GraphicsContext context(cr);
     context.clearRect(FloatRect(0, 0, width, height));
 
+    GraphicsLayerActorPrivate* priv = layer->priv;
     if (priv->surface) {
         gint surfaceWidth = cairo_image_surface_get_width(priv->surface.get());
         gint surfaceHeight = cairo_image_surface_get_height(priv->surface.get());
@@ -286,8 +278,7 @@ static void drawLayerContents(ClutterActor* actor, GraphicsContext& context)
     priv->layerClient->platformClutterLayerPaintContents(context, clip);
 }
 
-
-GraphicsLayerActor* graphicsLayerActorNew(GraphicsLayerClutter::LayerType type)
+static GraphicsLayerActor* graphicsLayerActorNew(GraphicsLayerClutter::LayerType type)
 {
     GraphicsLayerActor* layer = GRAPHICS_LAYER_ACTOR(g_object_new(GRAPHICS_LAYER_TYPE_ACTOR, 0));
     GraphicsLayerActorPrivate* priv = layer->priv;
@@ -317,20 +308,6 @@ PlatformClutterLayerClient* graphicsLayerActorGetClient(GraphicsLayerActor* laye
     return layer->priv->layerClient;
 }
 
-void graphicsLayerActorRemoveAll(GraphicsLayerActor* layer)
-{
-    g_return_if_fail(GRAPHICS_LAYER_IS_ACTOR(layer));
-
-    clutter_actor_remove_all_children(CLUTTER_ACTOR(layer));
-}
-
-cairo_surface_t* graphicsLayerActorGetSurface(GraphicsLayerActor* layer)
-{
-    GraphicsLayerActorPrivate* priv = layer->priv;
-    ASSERT(priv->surface);
-    return priv->surface.get();
-}
-
 void graphicsLayerActorSetSurface(GraphicsLayerActor* layer, cairo_surface_t* surface)
 {
     GraphicsLayerActorPrivate* priv = layer->priv;
@@ -355,16 +332,6 @@ void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor* layer, float x, float 
     clutter_actor_set_pivot_point_z(actor, z);
 }
 
-void graphicsLayerActorGetAnchorPoint(GraphicsLayerActor* layer, float* x, float* y, float* z)
-{
-    ASSERT(x && y);
-
-    ClutterActor* actor = CLUTTER_ACTOR(layer);
-    clutter_actor_get_pivot_point(actor, x, y);
-    if (z)
-        *z = clutter_actor_get_pivot_point_z(actor);
-}
-
 void graphicsLayerActorSetScrollPosition(GraphicsLayerActor* layer, float x, float y)
 {
     if (x > 0 || y > 0)
@@ -377,34 +344,10 @@ void graphicsLayerActorSetScrollPosition(GraphicsLayerActor* layer, float x, flo
     clutter_actor_queue_redraw(CLUTTER_ACTOR(layer));
 }
 
-gint graphicsLayerActorGetnChildren(GraphicsLayerActor* layer)
-{
-    ASSERT(GRAPHICS_LAYER_IS_ACTOR(layer));
-
-    return clutter_actor_get_n_children(CLUTTER_ACTOR(layer));
-}
-
-void graphicsLayerActorReplaceSublayer(GraphicsLayerActor* layer, ClutterActor* oldChildLayer, ClutterActor* newChildLayer)
-{
-    ASSERT(GRAPHICS_LAYER_IS_ACTOR(layer));
-    ASSERT(CLUTTER_IS_ACTOR(oldChildLayer));
-    ASSERT(CLUTTER_IS_ACTOR(newChildLayer));
-
-    clutter_actor_replace_child(CLUTTER_ACTOR(layer), oldChildLayer, newChildLayer);
-}
-
-void graphicsLayerActorInsertSublayer(GraphicsLayerActor* layer, ClutterActor* childLayer, gint index)
-{
-    ASSERT(GRAPHICS_LAYER_IS_ACTOR(layer));
-    ASSERT(CLUTTER_IS_ACTOR(childLayer));
-
-    clutter_actor_insert_child_at_index(CLUTTER_ACTOR(layer), childLayer, index);
-}
-
 void graphicsLayerActorSetSublayers(GraphicsLayerActor* layer, GraphicsLayerActorList& subLayers)
 {
-    if (!subLayers.size()) {
-        graphicsLayerActorRemoveAll(layer);
+    if (subLayers.isEmpty()) {
+        clutter_actor_remove_all_children(CLUTTER_ACTOR(layer));
         return;
     }
 
@@ -479,11 +422,6 @@ void graphicsLayerActorSetDrawsContent(GraphicsLayerActor* layer, bool drawsCont
     priv->drawsContent = drawsContent;
 
     graphicsLayerActorUpdateTexture(layer);
-}
-
-gboolean graphicsLayerActorGetDrawsContent(GraphicsLayerActor* layer)
-{
-    return layer->priv->drawsContent;
 }
 
 void graphicsLayerActorSetFlatten(GraphicsLayerActor* layer, bool flatten)

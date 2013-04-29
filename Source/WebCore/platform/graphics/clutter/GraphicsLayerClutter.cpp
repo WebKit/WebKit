@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -264,10 +264,10 @@ static gboolean idleDestroy(gpointer data)
     GRefPtr<ClutterActor> actor = adoptGRef(CLUTTER_ACTOR(data));
     ClutterActor* parent = clutter_actor_get_parent(actor.get());
 
-    // We should remove child actors manually because the container of Clutter 
-    // seems to have a bug to remove its child actors when it is removed. 
+    // We should remove child actors manually because the container of Clutter
+    // seems to have a bug to remove its child actors when it is removed.
     if (GRAPHICS_LAYER_IS_ACTOR(GRAPHICS_LAYER_ACTOR(actor.get())))
-        graphicsLayerActorRemoveAll(GRAPHICS_LAYER_ACTOR(actor.get()));
+        clutter_actor_remove_all_children(actor.get());
 
     if (parent)
         clutter_actor_remove_child(parent, actor.get());
@@ -902,7 +902,7 @@ void GraphicsLayerClutter::ensureStructuralLayer(StructuralLayerPurpose purpose)
             // is likely hosted by something that is not expecting to be changed
             ClutterActor* parentActor = clutter_actor_get_parent(CLUTTER_ACTOR(m_structuralLayer.get()));
             ASSERT(parentActor);
-            graphicsLayerActorReplaceSublayer(GRAPHICS_LAYER_ACTOR(parentActor), CLUTTER_ACTOR(m_structuralLayer.get()), CLUTTER_ACTOR(m_layer.get()));
+            clutter_actor_replace_child(parentActor, CLUTTER_ACTOR(m_structuralLayer.get()), CLUTTER_ACTOR(m_layer.get()));
 
             moveOrCopyAnimations(Move, m_structuralLayer.get(), m_layer.get());
 
@@ -966,13 +966,12 @@ GraphicsLayerClutter::StructuralLayerPurpose GraphicsLayerClutter::structuralLay
 
 void GraphicsLayerClutter::updateLayerDrawsContent(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    if (m_drawsContent) {
-        graphicsLayerActorSetDrawsContent(m_layer.get(), TRUE);
+    graphicsLayerActorSetDrawsContent(m_layer.get(), m_drawsContent);
+
+    if (m_drawsContent)
         setNeedsDisplay();
-    } else {
-        graphicsLayerActorSetDrawsContent(m_layer.get(), FALSE);
+    else
         graphicsLayerActorSetSurface(m_layer.get(), 0);
-    }
 
     updateDebugIndicators();
 }
