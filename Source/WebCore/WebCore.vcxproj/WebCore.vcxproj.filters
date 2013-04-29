@@ -4953,9 +4953,6 @@
     <ClCompile Include="..\storage\StorageSyncManager.cpp">
       <Filter>storage</Filter>
     </ClCompile>
-    <ClCompile Include="..\storage\StorageTask.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
     <ClCompile Include="..\storage\StorageThread.cpp">
       <Filter>storage</Filter>
     </ClCompile>
@@ -12259,9 +12256,6 @@
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="..\storage\StorageSyncManager.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageTask.h">
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="..\storage\StorageThread.h">

@@ -2310,7 +2310,6 @@ set(WebCore_SOURCES
     rendering/svg/SVGTextMetricsBuilder.cpp
     rendering/svg/SVGTextQuery.cpp
 
-    storage/StorageTask.cpp
     storage/StorageThread.cpp
     storage/Storage.cpp
     storage/StorageAreaImpl.cpp

@@ -1292,7 +1292,6 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
-    storage/StorageTask.cpp \
     storage/StorageThread.cpp \
     storage/Storage.cpp \
     storage/StorageAreaImpl.cpp \
@@ -2642,7 +2641,6 @@ HEADERS += \
     storage/StorageNamespace.h \
     storage/StorageNamespaceImpl.h \
     storage/StorageSyncManager.h \
-    storage/StorageTask.h \
     storage/StorageThread.h \
     storage/StorageTracker.h \
     storage/StorageTrackerClient.h \

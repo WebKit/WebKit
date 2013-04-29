@@ -4745,8 +4745,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/GridTrackSize.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
-	Source/WebCore/storage/StorageTask.cpp \
-	Source/WebCore/storage/StorageTask.h \
 	Source/WebCore/storage/StorageThread.cpp \
 	Source/WebCore/storage/StorageThread.h \
 	Source/WebCore/storage/StorageArea.h \

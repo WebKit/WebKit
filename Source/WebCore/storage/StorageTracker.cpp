@@ -28,7 +28,6 @@
 
 #include "DatabaseThread.h"
 #include "FileSystem.h"
-#include "StorageTask.h"
 #include "StorageThread.h"
 #include "Logging.h"
 #include "PageGroup.h"
@@ -37,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "StorageTrackerClient.h"
 #include "TextEncoding.h"
+#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

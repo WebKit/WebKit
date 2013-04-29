@@ -1527,8 +1527,6 @@
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; };
 		5112935F3D54B4B52FAF973F /* InspectorHeapProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511293613D6DB4B52FAF973F /* InspectorHeapProfilerAgent.cpp */; };
 		511293603D60B4B52FAF973F /* InspectorHeapProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 511293623D85B4B52FAF973F /* InspectorHeapProfilerAgent.h */; };
-		511F23170DC160DA004F0032 /* StorageTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23130DC160DA004F0032 /* StorageTask.cpp */; };
-		511F23180DC160DA004F0032 /* StorageTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23140DC160DA004F0032 /* StorageTask.h */; };
 		511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* StorageThread.cpp */; };
 		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
@@ -7929,8 +7927,6 @@
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
 		511293613D6DB4B52FAF973F /* InspectorHeapProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHeapProfilerAgent.cpp; sourceTree = "<group>"; };
 		511293623D85B4B52FAF973F /* InspectorHeapProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHeapProfilerAgent.h; sourceTree = "<group>"; };
-		511F23130DC160DA004F0032 /* StorageTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageTask.cpp; sourceTree = "<group>"; };
-		511F23140DC160DA004F0032 /* StorageTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTask.h; sourceTree = "<group>"; };
 		511F23150DC160DA004F0032 /* StorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageThread.cpp; sourceTree = "<group>"; };
 		511F23160DC160DA004F0032 /* StorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageThread.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
@@ -13466,8 +13462,6 @@
 				1AB09DB316AF5F6C008538E7 /* StorageStrategy.h */,
 				C5102D930FD9AA2D00FAFF04 /* StorageSyncManager.cpp */,
 				C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */,
-				511F23130DC160DA004F0032 /* StorageTask.cpp */,
-				511F23140DC160DA004F0032 /* StorageTask.h */,
 				511F23150DC160DA004F0032 /* StorageThread.cpp */,
 				511F23160DC160DA004F0032 /* StorageThread.h */,
 				3AB02D2912D4F91600FBB694 /* StorageTracker.cpp */,
@@ -23513,7 +23507,6 @@
 				C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */,
 				1AB09DB516AF5F6C008538E7 /* StorageStrategy.h in Headers */,
 				C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */,
-				511F23180DC160DA004F0032 /* StorageTask.h in Headers */,
 				511F231A0DC160DA004F0032 /* StorageThread.h in Headers */,
 				3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */,
 				3AC3680012EF7A09006A3D6F /* StorageTrackerClient.h in Headers */,
@@ -26579,7 +26572,6 @@
 				C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */,
 				1AB09DB416AF5F6C008538E7 /* StorageStrategy.cpp in Sources */,
 				C5102D950FD9AA2D00FAFF04 /* StorageSyncManager.cpp in Sources */,
-				511F23170DC160DA004F0032 /* StorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */,
 				3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,

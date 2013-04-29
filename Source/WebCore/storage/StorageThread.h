@@ -26,7 +26,7 @@
 #ifndef StorageThread_h
 #define StorageThread_h
 
-#include <wtf/Forward.h>
+#include <wtf/Functional.h>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
@@ -46,7 +46,6 @@ public:
 
     bool start();
     void terminate();
-    void scheduleTask(PassOwnPtr<StorageTask>);
 
     void dispatch(const Function<void()>&);
 
@@ -63,7 +62,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<StorageTask> m_queue;
+    MessageQueue<Function<void ()> > m_queue;
 };
 
 } // namespace WebCore

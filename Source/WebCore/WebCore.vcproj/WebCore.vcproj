@@ -75427,14 +75427,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\StorageTask.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageTask.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\StorageThread.cpp"
 				>
 			</File>

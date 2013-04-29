@@ -10291,7 +10291,6 @@
     <ClCompile Include="..\storage\StorageNamespace.cpp" />
     <ClCompile Include="..\storage\StorageNamespaceImpl.cpp" />
     <ClCompile Include="..\storage\StorageSyncManager.cpp" />
-    <ClCompile Include="..\storage\StorageTask.cpp" />
     <ClCompile Include="..\storage\StorageThread.cpp" />
     <ClCompile Include="..\storage\StorageTracker.cpp" />
     <ClCompile Include="..\bridge\jsc\BridgeJSC.cpp" />
@@ -13230,7 +13229,6 @@
     <ClInclude Include="..\storage\StorageNamespace.h" />
     <ClInclude Include="..\storage\StorageNamespaceImpl.h" />
     <ClInclude Include="..\storage\StorageSyncManager.h" />
-    <ClInclude Include="..\storage\StorageTask.h" />
     <ClInclude Include="..\storage\StorageThread.h" />
     <ClInclude Include="..\storage\StorageTracker.h" />
     <ClInclude Include="..\bridge\Bridge.h" />
