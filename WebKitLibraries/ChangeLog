@@ -1,3 +1,10 @@
+2013-04-29  Roger Fong  <roger_fong@apple.com>
+
+        Need a tools32 folder for VS2010 builds. 
+        tools folder will be nuked when we nuke VS2005.
+
+        * win/tools32: Copied from WebKitLibraries/win/tools.
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Disable sub-pixel-layout on Apple Windows port, VS2005 edition.
