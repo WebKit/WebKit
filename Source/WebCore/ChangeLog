@@ -1,3 +1,15 @@
+2013-04-29  Andreas Kling  <akling@apple.com>
+
+        Add branch-prediction hint to FAST_RETURN_IF_NO_FRONTENDS.
+        <http://webkit.org/b/115357>
+
+        Reviewed by Anders Carlsson.
+
+        Since this macro is used in some very hot code paths, give the compiler an extra hint
+        to try and minimize the impact it has when the inspector is not active.
+
+        * inspector/InspectorInstrumentation.h:
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add WTF_USE_IMLANG_FONT_LINK2

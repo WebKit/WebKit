@@ -94,7 +94,7 @@ class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
 
-#define FAST_RETURN_IF_NO_FRONTENDS(value) if (!hasFrontends()) return value;
+#define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!hasFrontends())) return value;
 
 class InspectorInstrumentationCookie {
 #if ENABLE(INSPECTOR)
