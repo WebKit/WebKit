@@ -42,8 +42,6 @@ public:
     static PassRefPtr<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
 
-    bool scheduleImport(PassRefPtr<StorageAreaSync>);
-
     void dispatch(const Function<void ()>&);
     void close();
 

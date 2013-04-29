@@ -68,16 +68,15 @@ inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSy
     ASSERT(isMainThread());
     ASSERT(m_storageArea);
     ASSERT(m_syncManager);
+
+    // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
+    // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
+    m_syncManager->dispatch(bind(&StorageAreaSync::performImport, this));
 }
 
 PassRefPtr<StorageAreaSync> StorageAreaSync::create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
 {
     RefPtr<StorageAreaSync> area = adoptRef(new StorageAreaSync(storageSyncManager, storageArea, databaseIdentifier));
-
-    // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
-    // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
-    if (!area->m_syncManager->scheduleImport(area.get()))
-        area->m_importComplete = true;
 
     return area.release();
 }

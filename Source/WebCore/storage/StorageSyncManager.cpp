@@ -90,11 +90,4 @@ void StorageSyncManager::close()
     }
 }
 
-bool StorageSyncManager::scheduleImport(PassRefPtr<StorageAreaSync> area)
-{
-    dispatch(bind(&StorageAreaSync::performImport, area));
-
-    return m_thread;
-}
-
 } // namespace WebCore
