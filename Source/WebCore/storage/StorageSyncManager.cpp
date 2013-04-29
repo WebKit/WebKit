@@ -71,39 +71,40 @@ String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier
     return pathByAppendingComponent(m_path, databaseIdentifier + ".localstorage");
 }
 
+void StorageSyncManager::dispatch(const Function<void ()>& function)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_thread);
+
+    if (m_thread)
+        m_thread->dispatch(function);
+}
+
 void StorageSyncManager::close()
 {
     ASSERT(isMainThread());
 
     if (m_thread) {
         m_thread->terminate();
-        m_thread.clear();
+        m_thread = nullptr;
     }
 }
 
 bool StorageSyncManager::scheduleImport(PassRefPtr<StorageAreaSync> area)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_thread);
-    if (m_thread)
-        m_thread->dispatch(bind(&StorageAreaSync::performImport, area));
+    dispatch(bind(&StorageAreaSync::performImport, area));
+
     return m_thread;
 }
 
 void StorageSyncManager::scheduleSync(PassRefPtr<StorageAreaSync> area)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_thread);
-    if (m_thread)
-        m_thread->dispatch(bind(&StorageAreaSync::performSync, area));
+    dispatch(bind(&StorageAreaSync::performSync, area));
 }
 
 void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync> area)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_thread);
-    if (m_thread)
-        m_thread->dispatch(bind(&StorageAreaSync::deleteEmptyDatabase, area));
+    dispatch(bind(&StorageAreaSync::deleteEmptyDatabase, area));
 }
 
 } // namespace WebCore

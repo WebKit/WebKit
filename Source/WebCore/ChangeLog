@@ -1,5 +1,22 @@
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
+        Add a StorageSyncManager::dispatch helper function
+        https://bugs.webkit.org/show_bug.cgi?id=115365
+
+        Reviewed by Andreas Kling.
+
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::dispatch):
+        (WebCore):
+        (WebCore::StorageSyncManager::close):
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        (WebCore::StorageSyncManager::scheduleDeleteEmptyDatabase):
+        * storage/StorageSyncManager.h:
+        (StorageSyncManager):
+
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
         Re-indent StorageSyncManager and remove SecurityOrigin forward declaration.
 
         Rubber-stamped by Andreas Kling.

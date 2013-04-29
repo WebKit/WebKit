@@ -26,6 +26,7 @@
 #ifndef StorageSyncManager_h
 #define StorageSyncManager_h
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/OwnPtr.h>
@@ -45,6 +46,7 @@ public:
     void scheduleSync(PassRefPtr<StorageAreaSync>);
     void scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>);
 
+    void dispatch(const Function<void ()>&);
     void close();
 
 private:
