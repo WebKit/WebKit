@@ -1,3 +1,19 @@
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Guard cfHDropFormat() with USE(CF) instead of OS(WINCE)
+        https://bugs.webkit.org/show_bug.cgi?id=115195
+
+        Reviewed by Andreas Kling.
+
+        USE(CF) is the correct guard, which works on desktop pcs too.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::files):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::numberOfFiles):
+        (WebCore::DragData::asFilenames):
+
 2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

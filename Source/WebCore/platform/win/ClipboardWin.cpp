@@ -535,10 +535,7 @@ ListHashSet<String> ClipboardWin::types() const
 
 PassRefPtr<FileList> ClipboardWin::files() const
 {
-#if OS(WINCE)
-    notImplemented();
-    return 0;
-#else
+#if USE(CF)
     RefPtr<FileList> files = FileList::create();
     if (!canReadData())
         return files.release();
@@ -573,6 +570,9 @@ PassRefPtr<FileList> ClipboardWin::files() const
     for (Vector<String>::iterator it = filesVector.begin(); it != filesVector.end(); ++it)
         files->append(File::create(*it));
     return files.release();
+#else
+    notImplemented();
+    return 0;
 #endif
 }
 
