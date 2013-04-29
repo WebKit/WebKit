@@ -90,11 +90,13 @@ void DIBPixelData::setRGBABitmapAlpha(HDC hdc, const IntRect& dstRect, unsigned 
     DIBPixelData pixelData(bitmap);
     ASSERT(pixelData.bitsPerPixel() == 32);
 
+    IntRect drawRect(dstRect);
+#if !OS(WINCE)
     XFORM trans;
     GetWorldTransform(hdc, &trans);
     IntSize transformedPosition(trans.eDx, trans.eDy);
-    IntRect drawRect(dstRect);
     drawRect.move(transformedPosition);
+#endif
 
     int pixelDataWidth = pixelData.size().width();
     int pixelDataHeight = pixelData.size().height();

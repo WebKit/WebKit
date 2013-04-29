@@ -270,10 +270,8 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, ScrollbarTheme
         }
     }
 
-#if !OS(WINCE)
     if (!alphaBlend && !context->isInTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
-#endif
 }
 
 void ScrollbarThemeWin::paintButton(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
@@ -324,10 +322,8 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, ScrollbarThemeClie
     else
         ::DrawFrameControl(windowsContext.hdc(), &themeRect, DFC_SCROLL, classicState);
 
-#if !OS(WINCE)
     if (!alphaBlend && !context->isInTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
-#endif
 }
 
 static IntRect gripperRect(int thickness, const IntRect& thumbRect)
@@ -383,10 +379,8 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, ScrollbarThemeClien
     } else
         ::DrawEdge(windowsContext.hdc(), &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
 
-#if !OS(WINCE)
     if (!alphaBlend && !context->isInTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
-#endif
 }
 
 }

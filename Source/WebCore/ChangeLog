@@ -1,3 +1,23 @@
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove OS(WINCE) from (Render|Scrollbar)ThemeWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=115348
+
+        Reviewed by Andreas Kling.
+
+        Compile DIBPixelData.cpp on Windows CE too, which allows us
+        to get rid of a few #if OS(WINCE) in other code parts.
+
+        * PlatformWinCE.cmake:
+        * platform/graphics/win/DIBPixelData.cpp:
+        (WebCore::DIBPixelData::setRGBABitmapAlpha):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeWin::paintButton):
+        (WebCore::ScrollbarThemeWin::paintThumb):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::drawControl):
+
 2013-04-29  Eli Fidler  <efidler@blackberry.com>
 
         [BlackBerry] Fake-bold monospace fonts need to use non-fake-bold advances
