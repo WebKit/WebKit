@@ -421,6 +421,10 @@ public:
     virtual void willStartLiveResize() OVERRIDE;
     virtual void willEndLiveResize() OVERRIDE;
 
+    void addPaintPendingMilestones(LayoutMilestones);
+    void firePaintRelatedMilestones();
+    LayoutMilestones milestonesPendingPaint() const { return m_milestonesPendingPaint; }
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -620,6 +624,8 @@ private:
 
     int m_headerHeight;
     int m_footerHeight;
+
+    LayoutMilestones m_milestonesPendingPaint;
 
     static double s_normalDeferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

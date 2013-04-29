@@ -84,7 +84,7 @@ static WebFrame* findLargestFrameInFrameSet(WebPage* page)
     // Approximate what a user could consider a default target frame for application menu operations.
 
     WebFrame* mainFrame = page->mainWebFrame();
-    if (!mainFrame->isFrameSet())
+    if (!mainFrame || !mainFrame->isFrameSet())
         return 0;
 
     WebFrame* largestSoFar = 0;

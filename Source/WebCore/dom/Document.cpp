@@ -1289,10 +1289,14 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
 
     FrameView* frameView = view();
     bool needsLayout = frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout());
-    if (needsLayout) {
-        // There might be a layout pending, so make sure we don't update the screen with bogus data.
-        // The layout will actually update the compositing layers and repaint if needed.
-        return;
+    if (needsLayout)
+        updateLayout();
+
+    if (Page* page = this->page()) {
+        if (frame() == page->mainFrame())
+            frameView->addPaintPendingMilestones(DidFirstPaintAfterSuppressedIncrementalRendering);
+        if (page->requestedLayoutMilestones() & DidFirstLayoutAfterSuppressedIncrementalRendering)
+            frame()->loader()->didLayout(DidFirstLayoutAfterSuppressedIncrementalRendering);
     }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1300,8 +1304,8 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         view()->updateCompositingLayersAfterLayout();
 #endif
 
-    if (renderer())
-        renderer()->repaint();
+    if (RenderView* renderView = this->renderView())
+        renderView->repaintViewAndCompositedLayers();
 }
 
 void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)

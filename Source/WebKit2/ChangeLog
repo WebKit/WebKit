@@ -1,3 +1,27 @@
+2013-04-28  Beth Dakin  <bdakin@apple.com>
+
+        Need a LayoutMilestone to fire when we have done our first paint after suppressing 
+        incremental layout
+        https://bugs.webkit.org/show_bug.cgi?id=115330
+        -and corresponding-
+        <rdar://problem/12722365>
+
+        Reviewed by Simon Fraser.
+
+        Two new millstones.
+        * Shared/API/c/WKPageLoadTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKLayoutMilestones):
+        (WebKit::toLayoutMilestones):
+
+        This null-check is necessary now since this code ends up running at 
+        WebFrame::init() time while we're setting up the Document. 
+        setVisualUpdatesAllowed(true) has always been called as a part of that process, 
+        and now the updateLayout(), ends up calling this code too, but we don't actually 
+        have a mainFrame yet since it's still being created.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::findLargestFrameInFrameSet):
+
 2013-04-29  Brady Eidson  <beidson@apple.com>
 
         REGRESSION: We see authentication challenge sheets for favicon requests.

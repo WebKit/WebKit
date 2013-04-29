@@ -1,3 +1,49 @@
+2013-04-29  Beth Dakin  <bdakin@apple.com>
+
+        Need a LayoutMilestone to fire when we have done our first paint after suppressing 
+        incremental layout
+        https://bugs.webkit.org/show_bug.cgi?id=115330
+        -and corresponding-
+        <rdar://problem/12722365>
+
+        Reviewed by Simon Fraser.
+
+        To meet the needs of all of our clients, we really need two milestones. One 
+        indicating that a layout has happened after setVisualUpdatesAllowed(true), and 
+        another indicating that painting has happened.
+
+        If layout is needed when setVisualUpdatesAllowed(true) is called, we need to 
+        update it so that we can guarantee the first paint is really happening at this 
+        time. Also fire the DidFirstLayoutAfterSuppressedIncrementalRendering milestone, 
+        and call add DidFirstPaintAfterSuppressedIncrementalRendering to the FrameView's 
+        pending paint milestones. 
+        up the painting milestone.
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+
+        FrameView now stores m_milestonesPendingPaint. We'll send and clear them once we 
+        have painted.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::addPaintPendingMilestones):
+        (WebCore::FrameView::firePaintRelatedMilestones):
+        * page/FrameView.h:
+        (WebCore::FrameView::milestonesPendingPaint):
+
+        Two new milestones.
+        * page/LayoutMilestones.h:
+        (WebCore):
+
+        We don't need m_headerLayerAwaitingFirstFlush anymore since we can use FrameView's 
+        pending paint milestones instead.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2013-04-29  David Hyatt  <hyatt@apple.com>
 
         [Mac] Links can't be hovered or clicked with overlay scrollbars hidden.

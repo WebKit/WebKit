@@ -198,6 +198,7 @@ FrameView::FrameView(Frame* frame)
     , m_didRunAutosize(false)
     , m_headerHeight(0)
     , m_footerHeight(0)
+    , m_milestonesPendingPaint(0)
 #if ENABLE(CSS_FILTERS)
     , m_hasSoftwareFilters(false)
 #endif
@@ -3559,6 +3560,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         sCurrentPaintTimeStamp = 0;
 
     InspectorInstrumentation::didPaint(renderView, p, rect);
+    firePaintRelatedMilestones();
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)
@@ -4125,6 +4127,38 @@ void FrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation o
     if (AXObjectCache* cache = axObjectCache()) {
         cache->remove(scrollbar);
         cache->handleScrollbarUpdate(this);
+    }
+}
+
+void FrameView::addPaintPendingMilestones(LayoutMilestones milestones)
+{
+    m_milestonesPendingPaint |= milestones;
+}
+
+void FrameView::firePaintRelatedMilestones()
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    LayoutMilestones milestonesAchieved = 0;
+
+    // Make sure the pending paint milestones have actually been requested before we send them.
+    if (m_milestonesPendingPaint & DidFirstFlushForHeaderLayer) {
+        if (page->requestedLayoutMilestones() & DidFirstFlushForHeaderLayer)
+            milestonesAchieved |= DidFirstFlushForHeaderLayer;
+    }
+
+    if (m_milestonesPendingPaint & DidFirstPaintAfterSuppressedIncrementalRendering) {
+        if (page->requestedLayoutMilestones() & DidFirstPaintAfterSuppressedIncrementalRendering)
+            milestonesAchieved |= DidFirstPaintAfterSuppressedIncrementalRendering;
+    }
+
+    m_milestonesPendingPaint = 0;
+
+    if (milestonesAchieved) {
+        if (Frame* frame = page->mainFrame())
+            frame->loader()->didLayout(milestonesAchieved);
     }
 }
 
