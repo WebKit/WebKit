@@ -467,12 +467,29 @@ void FrameView::setFrameRect(const IntRect& newRect)
 
     updateScrollableAreaSet();
 
+    RenderView* renderView = this->renderView();
+
 #if USE(ACCELERATED_COMPOSITING)
-    if (RenderView* renderView = this->renderView()) {
+    if (renderView) {
         if (renderView->usesCompositing())
             renderView->compositor()->frameViewDidChangeSize();
     }
 #endif
+
+    if (renderView && !renderView->printing()) {
+        IntSize currentSize;
+        if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
+            currentSize = fixedLayoutSize();
+        else
+            currentSize = visibleContentRect(IncludeScrollbars).size();
+        float currentZoomFactor = renderView->style()->zoom();
+        bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
+        m_lastViewportSize = currentSize;
+        m_lastZoomFactor = currentZoomFactor;
+        if (resized)
+            dispatchResizeEvent();
+    }
+
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -2761,27 +2778,13 @@ void FrameView::performPostLayoutTasks()
     scrollToAnchor();
 
     m_actionScheduler->resume();
-
-    if (renderView && !renderView->printing()) {
-        IntSize currentSize;
-        if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
-            currentSize = fixedLayoutSize();
-        else
-            currentSize = visibleContentRect(IncludeScrollbars).size();
-        float currentZoomFactor = renderView->style()->zoom();
-        bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
-        m_lastViewportSize = currentSize;
-        m_lastZoomFactor = currentZoomFactor;
-        if (resized)
-            sendResizeEvent();
-    }
 }
 
-void FrameView::sendResizeEvent()
+void FrameView::dispatchResizeEvent()
 {
     ASSERT(m_frame);
 
-    m_frame->eventHandler()->sendResizeEvent();
+    m_frame->eventHandler()->dispatchResizeEvent();
 
 #if ENABLE(INSPECTOR)
     if (InspectorInstrumentation::hasFrontends()) {

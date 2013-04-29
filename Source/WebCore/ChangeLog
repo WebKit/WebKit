@@ -1,3 +1,36 @@
+2013-04-29  Andreas Kling  <akling@apple.com>
+
+        When updating geometry, send JavaScript resize before before layout/paint.
+        <http://webkit.org/b/115199>
+        <rdar://problem/13735535>
+
+        Reviewed by Geoffrey Garen.
+
+        Make the "resize" event synchronous and dispatch it before doing any automatic
+        resize-induced layout. This avoids unnecessary work in cases where an event handler
+        does something that dirties style.
+
+        It also avoids a kind of JS-side FOUC that happens if we drop out to the runloop
+        and paint before the resize event handler runs; for example, when viewing a popup
+        on <http://lokeshdhakar.com/projects/lightbox2/> and resizing the window, the dark
+        overlay sometimes resizes out of sync with the web view, since a paint may happen
+        between automatic layout and the resize event.
+
+        * page/EventHandler.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchResizeEvent):
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchResizeEvent):
+
+            Renamed sendResizeEvent() to dispatchResizeEvent() and made it dispatch the event
+            synchronously instead of adding it to the DocumentEventQueue.
+
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::setFrameRect):
+
+            Dispatch the "resize" event right when the new frame rect is set.
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         Remove OS(WINCE) from (Render|Scrollbar)ThemeWin.cpp

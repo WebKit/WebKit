@@ -230,7 +230,7 @@ public:
 
     void capsLockStateMayHaveChanged(); // Only called by FrameSelection
     
-    void sendResizeEvent(); // Only called in FrameView
+    void dispatchResizeEvent(); // Only called in FrameView
     void sendScrollEvent(); // Ditto
 
 #if PLATFORM(MAC) && defined(__OBJC__)

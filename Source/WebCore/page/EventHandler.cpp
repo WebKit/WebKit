@@ -3784,9 +3784,10 @@ void EventHandler::capsLockStateMayHaveChanged()
     }
 }
 
-void EventHandler::sendResizeEvent()
+void EventHandler::dispatchResizeEvent()
 {
-    m_frame->document()->enqueueWindowEvent(Event::create(eventNames().resizeEvent, false, false));
+    RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
+    m_frame->document()->dispatchWindowEvent(resizeEvent.release(), m_frame->document()->domWindow());
 }
 
 void EventHandler::sendScrollEvent()
