@@ -43,8 +43,6 @@ public:
     ~StorageSyncManager();
 
     bool scheduleImport(PassRefPtr<StorageAreaSync>);
-    void scheduleSync(PassRefPtr<StorageAreaSync>);
-    void scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>);
 
     void dispatch(const Function<void ()>&);
     void close();

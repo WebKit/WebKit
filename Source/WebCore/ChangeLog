@@ -1,3 +1,16 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Remove two more StorageSyncManager wrapper functions
+        https://bugs.webkit.org/show_bug.cgi?id=115367
+
+        Reviewed by Andreas Kling.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        * storage/StorageSyncManager.cpp:
+        * storage/StorageSyncManager.h:
+
 2013-04-29  Stephen Chenney  <schenney@chromium.org>
 
         SVGElement destructor can use invalid iterator

@@ -97,14 +97,4 @@ bool StorageSyncManager::scheduleImport(PassRefPtr<StorageAreaSync> area)
     return m_thread;
 }
 
-void StorageSyncManager::scheduleSync(PassRefPtr<StorageAreaSync> area)
-{
-    dispatch(bind(&StorageAreaSync::performSync, area));
-}
-
-void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync> area)
-{
-    dispatch(bind(&StorageAreaSync::deleteEmptyDatabase, area));
-}
-
 } // namespace WebCore
