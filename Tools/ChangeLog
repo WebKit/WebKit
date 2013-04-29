@@ -1,3 +1,12 @@
+2013-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2][Mac] Test with NetworkProcess enabled.
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up the TestWebCore in TestWebKitAPI
