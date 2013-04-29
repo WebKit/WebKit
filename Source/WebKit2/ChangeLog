@@ -1,3 +1,12 @@
+2013-04-29  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Build fix. Enabling c++11 for Qt WK2 after r149259.
+        https://bugs.webkit.org/show_bug.cgi?id=115345
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.pri:
+
 2013-04-29  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [WK2][EFL] Skip cancel fullscreen request if not made from FullScreen API

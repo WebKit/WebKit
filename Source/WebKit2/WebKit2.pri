@@ -85,3 +85,5 @@ have?(QTQUICK): QT += qml quick
 have?(qtlocation):enable?(GEOLOCATION): QT += location
 
 enable?(SECCOMP_FILTERS): PKGCONFIG += libseccomp
+
+CONFIG += c++11
