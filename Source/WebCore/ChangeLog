@@ -1,3 +1,23 @@
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Add WTF_USE_IMLANG_FONT_LINK2
+        https://bugs.webkit.org/show_bug.cgi?id=115198
+
+        Reviewed by Andreas Kling.
+
+        Add this new define to have a central place for switching
+        the IMLangFontLinkType and adop all usages of the type.
+        This makes the usage of the code easier on desktop pcs.
+
+        * platform/graphics/FontCache.h:
+        (WebCore):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore::currentFontContainsCharacter):
+        (WebCore::createMLangFont):
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+
 2013-04-29  Noam Rosenthal  <noam@webkit.org>
 
         Get rid of "non-composited contents" in CoordinatedLayerTreeHost

@@ -64,9 +64,9 @@ IMLangFontLinkType* FontCache::getFontLinkInterface()
     return langFontLink;
 }
 
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-static bool currentFontContainsCharacter(IMLangFontLink2* langFontLink, HDC hdc, UChar character)
+static bool currentFontContainsCharacter(IMLangFontLinkType* langFontLink, HDC hdc, HFONT hfont, UChar character, const wchar_t* faceName)
 {
+#if USE(IMLANG_FONT_LINK2)
     UINT unicodeRanges;
     if (S_OK != langFontLink->GetFontUnicodeRanges(hdc, &unicodeRanges, 0))
         return false;
@@ -82,12 +82,7 @@ static bool currentFontContainsCharacter(IMLangFontLink2* langFontLink, HDC hdc,
         if (i->wcTo >= character)
             return i->wcFrom <= character;
     }
-
-    return false;
-}
 #else
-static bool currentFontContainsCharacter(IMLangFontLink* langFontLink, HDC hdc, HFONT hfont, UChar character, const wchar_t* faceName)
-{
     DWORD fontCodePages = 0, charCodePages = 0;
     HRESULT result = langFontLink->GetFontCodePages(hdc, hfont, &fontCodePages);
     if (result != S_OK)
@@ -99,29 +94,25 @@ static bool currentFontContainsCharacter(IMLangFontLink* langFontLink, HDC hdc, 
     fontCodePages |= FontPlatformData::getKnownFontCodePages(faceName);
     if (fontCodePages & charCodePages)
         return true;
+#endif
 
     return false;
 }
-#endif
 
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-static HFONT createMLangFont(IMLangFontLink2* langFontLink, HDC hdc, DWORD codePageMask, UChar character = 0)
+static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, const FontPlatformData& refFont, DWORD codePageMask, UChar character = 0)
 {
     HFONT mlangFont;
-    if (SUCCEEDED(langFontLink->MapFont(hdc, codePageMask, character, &mlangFont)))
-        return mlangFont;
 
+#if USE(IMLANG_FONT_LINK2)
+    HRESULT result = langFontLink->MapFont(hdc, codePageMask, character, &mlangFont);
+#else
+    HRESULT result = langFontLink->MapFont(hdc, codePageMask, refFont.hfont(), &mlangFont);
+#endif
+
+    if (SUCCEEDED(result))
+        return mlangFont;
     return 0;
 }
-#else
-static HFONT createMLangFont(IMLangFontLink* langFontLink, HDC hdc, const FontPlatformData& refFont, DWORD codePageMask)
-{
-    HFONT mlangFont;
-    LRESULT result = langFontLink->MapFont(hdc, codePageMask, refFont.hfont(), &mlangFont);
-
-    return result == S_OK ? mlangFont : 0;
-}
-#endif
 
 static const Vector<DWORD, 4>& getCJKCodePageMasks()
 {
@@ -235,11 +226,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
             const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
             unsigned numCodePages = CJKCodePageMasks.size();
             for (unsigned i = 0; i < numCodePages; ++i) {
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-                hfont = createMLangFont(langFontLink, g_screenDC, CJKCodePageMasks[i]);
-#else
                 hfont = createMLangFont(langFontLink, g_screenDC, origFont, CJKCodePageMasks[i]);
-#endif
                 if (!hfont)
                     continue;
 
@@ -249,11 +236,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
                 if (hfont && !(codePages & CJKCodePageMasks[i])) {
                     // We asked about a code page that is not one of the code pages
                     // returned by MLang, so the font might not contain the character.
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-                    if (!currentFontContainsCharacter(langFontLink, g_screenDC, character))
-#else
                     if (!currentFontContainsCharacter(langFontLink, g_screenDC, hfont, character, name))
-#endif
                     {
                         SelectObject(g_screenDC, oldFont);
                         langFontLink->ReleaseFont(hfont);
@@ -264,11 +247,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
                 break;
             }
         } else {
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-            hfont = createMLangFont(langFontLink, g_screenDC, codePages, character);
-#else
-            hfont = createMLangFont(langFontLink, g_screenDC, origFont, codePages);
-#endif
+            hfont = createMLangFont(langFontLink, g_screenDC, origFont, codePages, character);
             SelectObject(g_screenDC, hfont);
             GetTextFace(g_screenDC, LF_FACESIZE, name);
         }
