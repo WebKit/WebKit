@@ -218,13 +218,6 @@ static inline EVisibility blendFunc(const AnimationBase* anim, EVisibility from,
 
 static inline LengthBox blendFunc(const AnimationBase* anim, const LengthBox& from, const LengthBox& to, double progress)
 {
-    // Length types have to match to animate
-    if (from.top().type() != to.top().type()
-        || from.right().type() != to.right().type()
-        || from.bottom().type() != to.bottom().type()
-        || from.left().type() != to.left().type())
-        return to;
-
     LengthBox result(blendFunc(anim, from.top(), to.top(), progress),
                      blendFunc(anim, from.right(), to.right(), progress),
                      blendFunc(anim, from.bottom(), to.bottom(), progress),

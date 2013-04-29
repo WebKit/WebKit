@@ -1,3 +1,15 @@
+2013-04-29  Dirk Schulze  <krit@webkit.org>
+
+        Animate clip rect() between different Length types
+        https://bugs.webkit.org/show_bug.cgi?id=115336
+
+        Reviewed by Andreas Kling.
+
+        Modify test for clip animation to cover animations between
+        different Length types.
+
+        * transitions/clip-transition.html:
+
 2013-04-29  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

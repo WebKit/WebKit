@@ -1,3 +1,19 @@
+2013-04-29  Dirk Schulze  <krit@webkit.org>
+
+        Animate clip rect() between different Length types
+        https://bugs.webkit.org/show_bug.cgi?id=115336
+
+        Reviewed by Andreas Kling.
+
+        At the moment the animation for the 'clip' property
+        has an early return if the type of two Length values
+        does not match. This patch removes this early return.
+
+        Modified existing tests to cover the changes.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
 2013-04-29  Andreas Kling  <akling@apple.com>
 
         When updating geometry, send JavaScript resize before before layout/paint.
