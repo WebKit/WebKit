@@ -1,3 +1,19 @@
+2013-04-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use push and pop for iOS math function thunks
+        https://bugs.webkit.org/show_bug.cgi?id=115215
+
+        Reviewed by Filip Pizlo.
+
+        The iOS ABI is a little different than regular ARM ABI regarding stack alignment.
+        The requirement is 4 bytes:
+        "The ARM environment uses a stack that—at the point of function calls—is 4-byte aligned,
+         grows downward, and contains local variables and a function’s parameters."
+
+        Subsequently, we can just use push and pop to preserve the link register.
+
+        * jit/ThunkGenerators.cpp:
+
 2013-04-29  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Get rid of last few pthread include/link references.

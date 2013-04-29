@@ -555,13 +555,11 @@ double jsRound(double d)
         ".thumb\n" \
         ".thumb_func " THUMB_FUNC_PARAM(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
-        "sub sp, sp, #16\n" \
-        "str lr, [sp, #0]\n" \
+        "push {lr}\n" \
         "vmov r0, r1, d0\n" \
         "blx " GLOBAL_REFERENCE(function) "\n" \
         "vmov d0, r0, r1\n" \
-        "ldr lr, [sp, #0]\n" \
-        "add sp, sp, #16\n" \
+        "pop {lr}\n" \
         "bx lr\n" \
     ); \
     extern "C" { \
