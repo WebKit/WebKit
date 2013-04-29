@@ -1,3 +1,17 @@
+2013-04-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Get rid of last few pthread include/link references.
+        https://bugs.webkit.org/show_bug.cgi?id=115375
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props:
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props:
+
 2013-04-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin VS2010 build fix.
