@@ -1,3 +1,18 @@
+2013-04-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        ~BlockAllocator should ASSERT that it has no more Regions left
+        https://bugs.webkit.org/show_bug.cgi?id=115287
+
+        Reviewed by Andreas Kling.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::~BlockAllocator):
+        (JSC::BlockAllocator::allRegionSetsAreEmpty):
+        * heap/BlockAllocator.h:
+        (RegionSet):
+        (JSC::BlockAllocator::RegionSet::isEmpty):
+        (BlockAllocator):
+
 2013-04-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         IndexingTypes should use hex

@@ -71,6 +71,12 @@ private:
             , m_blockSize(blockSize)
         {
         }
+
+        bool isEmpty() const
+        {
+            return m_fullRegions.isEmpty() && m_partialRegions.isEmpty();
+        }
+
         DoublyLinkedList<Region> m_fullRegions;
         DoublyLinkedList<Region> m_partialRegions;
         size_t m_numberOfPartialRegions;
@@ -79,6 +85,7 @@ private:
 
     DeadBlock* tryAllocateFromRegion(RegionSet&, DoublyLinkedList<Region>&, size_t&);
 
+    bool allRegionSetsAreEmpty() const;
     void releaseFreeRegions();
 
     template <typename T> RegionSet& regionSetFor();
