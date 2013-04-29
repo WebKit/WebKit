@@ -888,10 +888,10 @@ static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, ui
 
 static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t> >& result)
 {
-    DEFINE_STATIC_LOCAL(String, imagesString, (ASCIILiteral("Images")));
-    DEFINE_STATIC_LOCAL(String, cssString, (ASCIILiteral("CSS")));
-    DEFINE_STATIC_LOCAL(String, xslString, (ASCIILiteral("XSL")));
-    DEFINE_STATIC_LOCAL(String, javaScriptString, (ASCIILiteral("JavaScript")));
+    String imagesString(ASCIILiteral("Images"));
+    String cssString(ASCIILiteral("CSS"));
+    String xslString(ASCIILiteral("XSL"));
+    String javaScriptString(ASCIILiteral("JavaScript"));
     
     MemoryCache::Statistics memoryCacheStatistics = memoryCache()->getStatistics();
     
@@ -945,10 +945,10 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     // Gather JavaScript statistics.
     {
         JSLockHolder lock(JSDOMWindow::commonVM());
-        data.statisticsNumbers.set("JavaScriptObjectsCount", JSDOMWindow::commonVM()->heap.objectCount());
-        data.statisticsNumbers.set("JavaScriptGlobalObjectsCount", JSDOMWindow::commonVM()->heap.globalObjectCount());
-        data.statisticsNumbers.set("JavaScriptProtectedObjectsCount", JSDOMWindow::commonVM()->heap.protectedObjectCount());
-        data.statisticsNumbers.set("JavaScriptProtectedGlobalObjectsCount", JSDOMWindow::commonVM()->heap.protectedGlobalObjectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptObjectsCount"), JSDOMWindow::commonVM()->heap.objectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptGlobalObjectsCount"), JSDOMWindow::commonVM()->heap.globalObjectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedObjectsCount"), JSDOMWindow::commonVM()->heap.protectedObjectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedGlobalObjectsCount"), JSDOMWindow::commonVM()->heap.protectedGlobalObjectCount());
         
         OwnPtr<TypeCountSet> protectedObjectTypeCounts(JSDOMWindow::commonVM()->heap.protectedObjectTypeCounts());
         fromCountedSetToHashMap(protectedObjectTypeCounts.get(), data.javaScriptProtectedObjectTypeCounts);
@@ -957,27 +957,27 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
         fromCountedSetToHashMap(objectTypeCounts.get(), data.javaScriptObjectTypeCounts);
         
         uint64_t javaScriptHeapSize = JSDOMWindow::commonVM()->heap.size();
-        data.statisticsNumbers.set("JavaScriptHeapSize", javaScriptHeapSize);
-        data.statisticsNumbers.set("JavaScriptFreeSize", JSDOMWindow::commonVM()->heap.capacity() - javaScriptHeapSize);
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptHeapSize"), javaScriptHeapSize);
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptFreeSize"), JSDOMWindow::commonVM()->heap.capacity() - javaScriptHeapSize);
     }
 
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
-    data.statisticsNumbers.set("FastMallocReservedVMBytes", fastMallocStatistics.reservedVMBytes);
-    data.statisticsNumbers.set("FastMallocCommittedVMBytes", fastMallocStatistics.committedVMBytes);
-    data.statisticsNumbers.set("FastMallocFreeListBytes", fastMallocStatistics.freeListBytes);
+    data.statisticsNumbers.set(ASCIILiteral("FastMallocReservedVMBytes"), fastMallocStatistics.reservedVMBytes);
+    data.statisticsNumbers.set(ASCIILiteral("FastMallocCommittedVMBytes"), fastMallocStatistics.committedVMBytes);
+    data.statisticsNumbers.set(ASCIILiteral("FastMallocFreeListBytes"), fastMallocStatistics.freeListBytes);
     
     // Gather icon statistics.
-    data.statisticsNumbers.set("IconPageURLMappingCount", iconDatabase().pageURLMappingCount());
-    data.statisticsNumbers.set("IconRetainedPageURLCount", iconDatabase().retainedPageURLCount());
-    data.statisticsNumbers.set("IconRecordCount", iconDatabase().iconRecordCount());
-    data.statisticsNumbers.set("IconsWithDataCount", iconDatabase().iconRecordCountWithData());
+    data.statisticsNumbers.set(ASCIILiteral("IconPageURLMappingCount"), iconDatabase().pageURLMappingCount());
+    data.statisticsNumbers.set(ASCIILiteral("IconRetainedPageURLCount"), iconDatabase().retainedPageURLCount());
+    data.statisticsNumbers.set(ASCIILiteral("IconRecordCount"), iconDatabase().iconRecordCount());
+    data.statisticsNumbers.set(ASCIILiteral("IconsWithDataCount"), iconDatabase().iconRecordCountWithData());
     
     // Gather font statistics.
-    data.statisticsNumbers.set("CachedFontDataCount", fontCache()->fontDataCount());
-    data.statisticsNumbers.set("CachedFontDataInactiveCount", fontCache()->inactiveFontDataCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache()->fontDataCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache()->inactiveFontDataCount());
     
     // Gather glyph page statistics.
-    data.statisticsNumbers.set("GlyphPageCount", GlyphPageTreeNode::treeGlyphPageCount());
+    data.statisticsNumbers.set(ASCIILiteral("GlyphPageCount"), GlyphPageTreeNode::treeGlyphPageCount());
     
     // Get WebCore memory cache statistics
     getWebCoreMemoryCacheStatistics(data.webCoreCacheStatistics);

@@ -1,3 +1,17 @@
+2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Streamline the use of strings in WebProcess::getWebCoreStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=115315
+
+        Reviewed by Geoffrey Garen.
+
+        Remove a couple of unjustified DEFINE_STATIC_LOCAL.
+        Use ASCIILiteral when allocating new String.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebCoreMemoryCacheStatistics):
+        (WebKit::WebProcess::getWebCoreStatistics):
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Remove StorageTracker::originsLoaded
