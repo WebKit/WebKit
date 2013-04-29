@@ -1,5 +1,17 @@
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
+        Define USE(ICU_UNICODE) if USE(WCHAR_UNICODE) is false
+        https://bugs.webkit.org/show_bug.cgi?id=115349
+
+        Reviewed by Andreas Kling.
+
+        Since we support only ICU and WCHAR as Unicode backend (ICU is the default)
+        automatically use ICU if WCHAR was not selected via compiler defines.
+
+        * wtf/Platform.h:
+
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
         Build fix for WinCE after r148888 and r149097
         https://bugs.webkit.org/show_bug.cgi?id=115168
 

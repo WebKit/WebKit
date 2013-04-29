@@ -496,11 +496,7 @@
 
 #endif  /* OS(WINCE) && !PLATFORM(QT) */
 
-#if OS(WINCE) && !PLATFORM(QT)
-#define WTF_USE_WCHAR_UNICODE 1
-#elif PLATFORM(GTK)
-/* The GTK+ Unicode backend is configurable */
-#else
+#if !USE(WCHAR_UNICODE)
 #define WTF_USE_ICU_UNICODE 1
 #endif
 
