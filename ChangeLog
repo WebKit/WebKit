@@ -1,3 +1,15 @@
+2013-04-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][CMAKE] Build break after r149259
+        https://bugs.webkit.org/show_bug.cgi?id=115339
+
+        Reviewed by Gyuyoung Kim.
+
+        r149259 used c++11 features(Right angle bracket, Range-based for-loop).
+        This patch enforces c++0x when cmake based ports build WebKit2 using gcc.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2013-04-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the memory instrumentation code
