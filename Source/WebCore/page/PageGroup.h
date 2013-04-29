@@ -87,6 +87,8 @@ namespace WebCore {
         StorageNamespace* localStorage();
         bool hasLocalStorage() { return m_localStorage; }
 
+        StorageNamespace* transientLocalStorage(const SecurityOrigin* topOrigin);
+
         void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                   const Vector<String>& whitelist, const Vector<String>& blacklist,
                                   UserScriptInjectionTime, UserContentInjectedFrames);
@@ -128,6 +130,7 @@ namespace WebCore {
 
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;
+        HashMap<String, RefPtr<StorageNamespace> > m_transientLocalStorage;
 
         OwnPtr<UserScriptMap> m_userScripts;
         OwnPtr<UserStyleSheetMap> m_userStyleSheets;

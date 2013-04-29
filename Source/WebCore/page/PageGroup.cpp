@@ -263,6 +263,15 @@ StorageNamespace* PageGroup::localStorage()
     return m_localStorage.get();
 }
 
+StorageNamespace* PageGroup::transientLocalStorage(const SecurityOrigin* topOrigin)
+{
+    String topOriginString = topOrigin->toString();
+    if (!m_transientLocalStorage.get(topOriginString))
+        m_transientLocalStorage.set(topOriginString, StorageNamespace::sessionStorageNamespace(*this->pages().begin()));
+
+    return m_transientLocalStorage.get(topOriginString).get();
+}
+
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
                                      const Vector<String>& whitelist, const Vector<String>& blacklist,
                                      UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)

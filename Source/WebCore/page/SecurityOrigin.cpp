@@ -388,11 +388,14 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
     if (isUnique())
         return false;
 
+    if (m_storageBlockingPolicy == BlockAllStorage)
+        return false;
+
     // FIXME: This check should be replaced with an ASSERT once we can guarantee that topOrigin is not null.
     if (!topOrigin)
         return true;
 
-    if (m_storageBlockingPolicy == BlockAllStorage || topOrigin->m_storageBlockingPolicy == BlockAllStorage)
+    if (topOrigin->m_storageBlockingPolicy == BlockAllStorage)
         return false;
 
     if ((m_storageBlockingPolicy == BlockThirdPartyStorage || topOrigin->m_storageBlockingPolicy == BlockThirdPartyStorage) && topOrigin->isThirdParty(this))

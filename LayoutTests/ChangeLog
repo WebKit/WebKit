@@ -1,3 +1,21 @@
+2013-04-22  Jeffrey Pfau  <jpfau@apple.com>
+
+        Change approach to third-party blocking for LocalStorage
+        https://bugs.webkit.org/show_bug.cgi?id=115004
+
+        Reviewed by Maciej Stachowiak.
+
+        * http/tests/security/cross-origin-local-storage-allowed-expected.txt:
+        * http/tests/security/cross-origin-local-storage-allowed.html:
+        * http/tests/security/cross-origin-local-storage-expected.txt:
+        * http/tests/security/cross-origin-local-storage-wk1.html:
+        * http/tests/security/cross-origin-local-storage-wk1-expected.txt:
+        * http/tests/security/cross-origin-local-storage.html:
+        * http/tests/security/resources/cross-origin-iframe-for-local-storage.html:
+        * http/tests/security/resources/load-local-storage.html: Added.
+        * platform/mac-wk2/http/tests/security/cross-origin-local-storage-wk1-expected.txt:
+        * platform/mac/http/tests/security/cross-origin-local-storage-wk1-expected.txt:
+
 2013-04-29  Yi Shen  <max.hong.shen@gmail.com>
 
         HTML Editing: Insertion point jumps when using link detection

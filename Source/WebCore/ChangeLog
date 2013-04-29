@@ -1,3 +1,27 @@
+2013-04-22  Jeffrey Pfau  <jpfau@apple.com>
+
+        Change approach to third-party blocking for LocalStorage
+        https://bugs.webkit.org/show_bug.cgi?id=115004
+
+        Reviewed by Maciej Stachowiak.
+
+        Instead of outright blocking LocalStorage that's used in a third-party
+        context, silently partition it based on the origin of the top context.
+        These partitions are then discarded when the page group is unloaded.
+
+        No new tests; modified existing tests to account for changes.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+        (WebCore):
+        (WebCore::PageGroup::transientLocalStorage):
+        * page/PageGroup.h:
+        (PageGroup):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccessStorage):
+
 2013-04-29  Yi Shen  <max.hong.shen@gmail.com>
 
         HTML Editing: Insertion point jumps when using link detection

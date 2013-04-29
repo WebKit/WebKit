@@ -3,6 +3,7 @@
 <script>
 try {
 	var c = window.localStorage;
+	c['test'] = 'value';
 	document.write('No exception');
 } catch (exception) {
 	document.write(exception.name);

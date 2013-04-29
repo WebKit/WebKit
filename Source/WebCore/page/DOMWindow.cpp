@@ -791,7 +791,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!document)
         return 0;
 
-    if (!document->securityOrigin()->canAccessLocalStorage(document->topOrigin())) {
+    if (!document->securityOrigin()->canAccessLocalStorage(0)) {
         ec = SECURITY_ERR;
         return 0;
     }
@@ -811,7 +811,12 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!page->settings()->localStorageEnabled())
         return 0;
 
-    RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
+    RefPtr<StorageArea> storageArea;
+    if (!document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
+        storageArea = page->group().transientLocalStorage(document->topOrigin())->storageArea(document->securityOrigin());
+    else
+        storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
+
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;
         return 0;
