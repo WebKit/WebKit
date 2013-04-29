@@ -1,3 +1,11 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Re-indent StorageSyncManager and remove SecurityOrigin forward declaration.
+
+        Rubber-stamped by Andreas Kling.
+
+        * storage/StorageSyncManager.h:
+
 2013-04-27  Anders Carlsson  <andersca@apple.com>
 
         Get rid of StorageTask

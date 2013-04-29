@@ -33,34 +33,33 @@
 
 namespace WebCore {
 
-    class StorageThread;
-    class SecurityOrigin;
-    class StorageAreaSync;
+class StorageThread;
+class StorageAreaSync;
 
-    class StorageSyncManager : public RefCounted<StorageSyncManager> {
-    public:
-        static PassRefPtr<StorageSyncManager> create(const String& path);
-        ~StorageSyncManager();
+class StorageSyncManager : public RefCounted<StorageSyncManager> {
+public:
+    static PassRefPtr<StorageSyncManager> create(const String& path);
+    ~StorageSyncManager();
 
-        bool scheduleImport(PassRefPtr<StorageAreaSync>);
-        void scheduleSync(PassRefPtr<StorageAreaSync>);
-        void scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>);
+    bool scheduleImport(PassRefPtr<StorageAreaSync>);
+    void scheduleSync(PassRefPtr<StorageAreaSync>);
+    void scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>);
 
-        void close();
+    void close();
 
-    private:
-        explicit StorageSyncManager(const String& path);
+private:
+    explicit StorageSyncManager(const String& path);
 
-        OwnPtr<StorageThread> m_thread;
+    OwnPtr<StorageThread> m_thread;
 
-    // The following members are subject to thread synchronization issues
-    public:
-        // To be called from the background thread:
-        String fullDatabaseFilename(const String& databaseIdentifier);
+// The following members are subject to thread synchronization issues
+public:
+    // To be called from the background thread:
+    String fullDatabaseFilename(const String& databaseIdentifier);
 
-    private:
-        String m_path;
-    };
+private:
+    String m_path;
+};
 
 } // namespace WebCore
 
