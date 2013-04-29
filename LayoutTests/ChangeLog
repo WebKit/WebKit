@@ -1,3 +1,77 @@
+2013-04-29  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Move Qt Mac specific results to qt-mac after r149210.
+
+        * platform/qt-mac/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Renamed from LayoutTests/platform/qt-5.0/compositing/visibility/visibility-image-layers-dynamic-expected.txt.
+        * platform/qt-mac/editing/selection/collapse-selection-in-bidi-expected.txt: Renamed from LayoutTests/platform/qt-5.0/editing/selection/collapse-selection-in-bidi-expected.txt.
+        * platform/qt-mac/editing/selection/drag-start-event-client-x-y-expected.txt: Renamed from LayoutTests/platform/qt-5.0/editing/selection/drag-start-event-client-x-y-expected.txt.
+        * platform/qt-mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt.
+        * platform/qt-mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/block/basic/fieldset-stretch-to-legend-expected.txt.
+        * platform/qt-mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt.
+        * platform/qt-mac/fast/borders/fieldsetBorderRadius-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/borders/fieldsetBorderRadius-expected.txt.
+        * platform/qt-mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt.
+        * platform/qt-mac/fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.txt.
+        * platform/qt-mac/fast/css/getComputedStyle/getComputedStyle-margin-percentage-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/css/getComputedStyle/getComputedStyle-margin-percentage-expected.txt.
+        * platform/qt-mac/fast/events/document-elementFromPoint-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/events/document-elementFromPoint-expected.txt.
+        * platform/qt-mac/fast/flexbox/flex-hang-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/flexbox/flex-hang-expected.txt.
+        * platform/qt-mac/fast/images/repaint-subrect-grid-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/images/repaint-subrect-grid-expected.txt.
+        * platform/qt-mac/fast/images/zoomed-img-size-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/images/zoomed-img-size-expected.txt.
+        * platform/qt-mac/fast/multicol/break-properties-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/multicol/break-properties-expected.txt.
+        * platform/qt-mac/fast/multicol/vertical-lr/break-properties-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/multicol/vertical-lr/break-properties-expected.txt.
+        * platform/qt-mac/fast/multicol/vertical-rl/break-properties-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/multicol/vertical-rl/break-properties-expected.txt.
+        * platform/qt-mac/fast/overflow/infiniteRecursionGuard-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/overflow/infiniteRecursionGuard-expected.txt.
+        * platform/qt-mac/fast/parser/style-script-head-test-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/parser/style-script-head-test-expected.txt.
+        * platform/qt-mac/fast/reflections/reflection-with-zoom-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/reflections/reflection-with-zoom-expected.txt.
+        * platform/qt-mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/transforms/rotated-transform-affects-scrolling-1-expected.txt.
+        * platform/qt-mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/transforms/rotated-transform-affects-scrolling-2-expected.txt.
+        * platform/qt-mac/http/tests/misc/acid3-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/misc/acid3-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt.
+        * platform/qt-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt.
+        * platform/qt-mac/svg/as-image/svg-non-integer-scaled-image-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/as-image/svg-non-integer-scaled-image-expected.txt.
+        * platform/qt-mac/svg/custom/fractional-rects-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/fractional-rects-expected.txt.
+        * platform/qt-mac/svg/custom/js-update-container-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/js-update-container-expected.txt.
+        * platform/qt-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt.
+        * platform/qt-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt.
+        * platform/qt-mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt.
+        * platform/qt-mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/svg-fonts-with-no-element-reference-expected.txt.
+        * platform/qt-mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt.
+        * platform/qt-mac/svg/custom/viewBox-hit-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/custom/viewBox-hit-expected.txt.
+        * platform/qt-mac/svg/hixie/text/001-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/hixie/text/001-expected.txt.
+        * platform/qt-mac/svg/hixie/text/003a-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/hixie/text/003a-expected.txt.
+        * platform/qt-mac/svg/text/small-fonts-2-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/text/small-fonts-2-expected.txt.
+        * platform/qt-mac/svg/text/text-hkern-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/text/text-hkern-expected.txt.
+        * platform/qt-mac/svg/text/text-viewbox-rescale-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/text/text-viewbox-rescale-expected.txt.
+        * platform/qt-mac/svg/wicd/sizing-flakiness-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/wicd/sizing-flakiness-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-background-image-tiled-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-svg-as-image-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-svg-as-image-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-svg-as-object-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-svg-as-object-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-svg-as-relative-image-expected.txt.
+        * platform/qt-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Renamed from LayoutTests/platform/qt-5.0/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt.
+        * platform/qt-mac/tables/mozilla/bugs/bug83786-expected.txt: Renamed from LayoutTests/platform/qt-5.0/tables/mozilla/bugs/bug83786-expected.txt.
+
 2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename TestRunner's setAudioData to setAudioResult
