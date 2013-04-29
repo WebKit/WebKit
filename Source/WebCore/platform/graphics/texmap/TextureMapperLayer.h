@@ -122,7 +122,6 @@ public:
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
-    void setShouldMapBackingStoreToContentsRect(bool m) { m_state.shouldMapBackingStoreToContentsRect = m; }
 
     void syncAnimations();
     bool descendantsOrSelfHaveRunningAnimations() const;
@@ -232,7 +231,6 @@ private:
         bool visible : 1;
         bool showDebugBorders : 1;
         bool showRepaintCounter : 1;
-        bool shouldMapBackingStoreToContentsRect : 1;
 
         State()
             : opacity(1)
@@ -249,7 +247,6 @@ private:
             , visible(true)
             , showDebugBorders(false)
             , showRepaintCounter(false)
-            , shouldMapBackingStoreToContentsRect(false)
         {
         }
     };

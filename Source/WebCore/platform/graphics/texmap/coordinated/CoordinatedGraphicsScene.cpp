@@ -200,7 +200,7 @@ void CoordinatedGraphicsScene::createCanvasIfNeeded(TextureMapperLayer* layer, c
     RefPtr<TextureMapperSurfaceBackingStore> canvasBackingStore(TextureMapperSurfaceBackingStore::create());
     m_surfaceBackingStores.set(layer, canvasBackingStore);
     canvasBackingStore->setGraphicsSurface(GraphicsSurface::create(state.canvasSize, state.canvasSurfaceFlags, state.canvasToken));
-    layer->setBackingStore(canvasBackingStore.get());
+    layer->setContentsLayer(canvasBackingStore.get());
 }
 
 void CoordinatedGraphicsScene::syncCanvasIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)
@@ -226,7 +226,7 @@ void CoordinatedGraphicsScene::destroyCanvasIfNeeded(TextureMapperLayer* layer, 
         return;
 
     m_surfaceBackingStores.remove(layer);
-    layer->setBackingStore(0);
+    layer->setContentsLayer(0);
 }
 #endif
 
@@ -581,15 +581,13 @@ void CoordinatedGraphicsScene::assignImageBackingToLayer(TextureMapperLayer* lay
 #endif
 
     if (imageID == InvalidCoordinatedImageBackingID) {
-        layer->setBackingStore(0);
-        layer->setShouldMapBackingStoreToContentsRect(false);
+        layer->setContentsLayer(0);
         return;
     }
 
     ImageBackingMap::iterator it = m_imageBackings.find(imageID);
     ASSERT(it != m_imageBackings.end());
-    layer->setBackingStore(it->value.get());
-    layer->setShouldMapBackingStoreToContentsRect(true);
+    layer->setContentsLayer(it->value.get());
 }
 
 void CoordinatedGraphicsScene::removeReleasedImageBackingsIfNeeded()

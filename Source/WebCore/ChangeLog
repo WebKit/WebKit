@@ -1,3 +1,25 @@
+2013-04-29  Noam Rosenthal  <noam@webkit.org>
+
+        [Qt] fast/canvas/webgl/webgl-composite-modes.html broken after r148433.
+        https://bugs.webkit.org/show_bug.cgi?id=115243
+
+        Reviewed by Jocelyn Turcotte.
+
+        When compositing a layer with a canvas or directly composited image, it is
+        wrong to use TextureMapperLayer::setBackingStore. Instead, setContentsLayer
+        should be used, which allows for the layer to have both a backing store and
+        a contents layer.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (State):
+        (WebCore::TextureMapperLayer::State::State):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::createCanvasIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::destroyCanvasIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::assignImageBackingToLayer):
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix.

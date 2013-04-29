@@ -131,14 +131,8 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     options.textureMapper->setWrapMode(TextureMapper::StretchWrap);
     options.textureMapper->setPatternTransform(TransformationMatrix());
 
-    if (!m_state.contentsTileSize.isEmpty()) {
-        computePatternTransformIfNeeded();
-        options.textureMapper->setWrapMode(TextureMapper::RepeatWrap);
-        options.textureMapper->setPatternTransform(m_patternTransform);
-    }
-
     if (m_backingStore) {
-        FloatRect targetRect = m_state.shouldMapBackingStoreToContentsRect ? m_state.contentsRect : layerRect();
+        FloatRect targetRect = layerRect();
         ASSERT(!targetRect.isEmpty());
         m_backingStore->paintToTextureMapper(options.textureMapper, targetRect, transform, options.opacity);
         if (m_state.showDebugBorders)
@@ -150,6 +144,12 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 
     if (!m_contentsLayer)
         return;
+
+    if (!m_state.contentsTileSize.isEmpty()) {
+        computePatternTransformIfNeeded();
+        options.textureMapper->setWrapMode(TextureMapper::RepeatWrap);
+        options.textureMapper->setPatternTransform(m_patternTransform);
+    }
 
     ASSERT(!layerRect().isEmpty());
     m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
