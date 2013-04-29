@@ -34,27 +34,27 @@ namespace JSC {
 typedef uint8_t IndexingType;
 
 // Flags for testing the presence of capabilities.
-static const IndexingType IsArray                  = 1;
+static const IndexingType IsArray                  = 0x01;
 
 // The shape of the indexed property storage.
-static const IndexingType IndexingShapeMask        = 30;
-static const IndexingType NoIndexingShape          = 0;
-static const IndexingType UndecidedShape           = 2; // Only useful for arrays.
-static const IndexingType Int32Shape               = 20;
-static const IndexingType DoubleShape              = 22;
-static const IndexingType ContiguousShape          = 26;
-static const IndexingType ArrayStorageShape        = 28;
-static const IndexingType SlowPutArrayStorageShape = 30;
+static const IndexingType IndexingShapeMask        = 0x1E;
+static const IndexingType NoIndexingShape          = 0x00;
+static const IndexingType UndecidedShape           = 0x02; // Only useful for arrays.
+static const IndexingType Int32Shape               = 0x14;
+static const IndexingType DoubleShape              = 0x16;
+static const IndexingType ContiguousShape          = 0x1A;
+static const IndexingType ArrayStorageShape        = 0x1C;
+static const IndexingType SlowPutArrayStorageShape = 0x1E;
 
 static const IndexingType IndexingShapeShift       = 1;
 static const IndexingType NumberOfIndexingShapes   = 16;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
-static const IndexingType MayHaveIndexedAccessors  = 32;
+static const IndexingType MayHaveIndexedAccessors  = 0x20;
 
 // List of acceptable array types.
-static const IndexingType NonArray                        = 0;
+static const IndexingType NonArray                        = 0x0;
 static const IndexingType NonArrayWithInt32               = Int32Shape;
 static const IndexingType NonArrayWithDouble              = DoubleShape;
 static const IndexingType NonArrayWithContiguous          = ContiguousShape;

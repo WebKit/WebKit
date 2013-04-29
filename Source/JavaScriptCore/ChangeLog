@@ -1,3 +1,14 @@
+2013-04-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        IndexingTypes should use hex
+        https://bugs.webkit.org/show_bug.cgi?id=115286
+
+        Decimal is kind of confusing/hard to read because they're used as bit masks. Hex seems more appropriate.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/IndexingType.h:
+
 2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
