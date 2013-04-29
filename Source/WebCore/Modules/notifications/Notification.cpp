@@ -226,29 +226,25 @@ void Notification::taskTimerFired(Timer<Notification>* timer)
 
 
 #if ENABLE(NOTIFICATIONS)
-const String& Notification::permission(ScriptExecutionContext* context)
+const String Notification::permission(ScriptExecutionContext* context)
 {
     ASSERT(toDocument(context)->page());
     return permissionString(NotificationController::from(toDocument(context)->page())->client()->checkPermission(context));
 }
 
-const String& Notification::permissionString(NotificationClient::Permission permission)
+const String Notification::permissionString(NotificationClient::Permission permission)
 {
-    DEFINE_STATIC_LOCAL(const String, allowedPermission, (ASCIILiteral("granted")));
-    DEFINE_STATIC_LOCAL(const String, deniedPermission, (ASCIILiteral("denied")));
-    DEFINE_STATIC_LOCAL(const String, defaultPermission, (ASCIILiteral("default")));
-
     switch (permission) {
     case NotificationClient::PermissionAllowed:
-        return allowedPermission;
+        return ASCIILiteral("granted");
     case NotificationClient::PermissionDenied:
-        return deniedPermission;
+        return ASCIILiteral("denied");
     case NotificationClient::PermissionNotAllowed:
-        return defaultPermission;
+        return ASCIILiteral("default");
     }
     
     ASSERT_NOT_REACHED();
-    return deniedPermission;
+    return String();
 }
 
 void Notification::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)

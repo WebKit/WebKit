@@ -1,3 +1,18 @@
+2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not allocate Static Strings for Notification::permissionString
+        https://bugs.webkit.org/show_bug.cgi?id=115316
+
+        Reviewed by Geoffrey Garen.
+
+        The code is not nearly hot enough to justify keeping this memory around.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::permission):
+        (WebCore::Notification::permissionString):
+        * Modules/notifications/Notification.h:
+        (Notification):
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Remove StorageTracker::originsLoaded
