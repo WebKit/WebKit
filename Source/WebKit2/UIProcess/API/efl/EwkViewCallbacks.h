@@ -141,7 +141,7 @@ struct CallBack <callbackType, Ewk_CSS_Size*> : public EvasObjectHolder {
 
     void call(const WKSize& arg)
     {
-        Ewk_CSS_Size size = { arg.width, arg.height };
+        Ewk_CSS_Size size = { static_cast<Evas_Coord>(arg.width), static_cast<Evas_Coord>(arg.height) };
         call(&size);
     }
 };

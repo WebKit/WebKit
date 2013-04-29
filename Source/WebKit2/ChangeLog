@@ -1,3 +1,14 @@
+2013-04-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed fix build break on EFL port since r149259.
+
+        In EFL port, there is a non-compatible code when compiling based on C++11. This is a trivial build fix.
+
+        I got a confirm from Sam about landing a trivial build fix patch without sign-off from
+        WK2 owner.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+
 2013-04-28  Dean Jackson  <dino@apple.com>
 
         [Mac] Disable canvas backing store scaling (HIGH_DPI_CANVAS)
