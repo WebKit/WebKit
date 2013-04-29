@@ -91,11 +91,6 @@ def createZipManually(directoryToZip, archiveFile):
 
 def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
-
-    # Chromium bots may not have this directory
-    if not os.path.isdir(archiveDir):
-        os.mkdir(archiveDir)
-
     archiveFile = os.path.join(archiveDir, configuration + ".zip")
 
     try:
@@ -118,7 +113,7 @@ def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
 
 
 def archiveBuiltProduct(configuration, platform, fullPlatform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl', 'chromium')
+    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
 
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
@@ -162,26 +157,6 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         if createZip(thinDirectory, configuration):
             return 1
 
-    elif platform == 'chromium':
-        print "Archiving", configurationBuildDirectory
-        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
-
-        # The scripts use the existence of out/Release/build.ninja to decide
-        # if this is a ninja build, so don't exclude build.ninja from the
-        # archive.
-        ignorePatterns = ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb',
-                          'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate',
-                          '*.h', '*.c', '*.cc', '*.cpp', '*.stamp']
-
-        if fullPlatform and fullPlatform == 'chromium-android':
-            ignorePatterns.extend(['*.so', '*-unaligned.apk', '*-unsigned.apk'])
-
-        removeDirectoryIfExists(thinDirectory)
-        copyBuildFiles(configurationBuildDirectory, thinDirectory, ignorePatterns)
-        if createZip(thinDirectory, configuration):
-            return 1
-
-
 def unzipArchive(directoryToExtractTo, configuration):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
     assert os.path.isdir(archiveDir)
@@ -202,7 +177,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl', 'chromium')
+    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
 
     archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
@@ -223,7 +198,7 @@ def extractBuiltProduct(configuration, platform):
             return 1
 
         return unzipArchive(configurationBuildDirectory, configuration)
-    elif platform == 'qt' or platform == 'gtk' or platform == 'efl' or platform == 'chromium':
+    elif platform == 'qt' or platform == 'gtk' or platform == 'efl':
         print "Extracting", configurationBuildDirectory
         return unzipArchive(configurationBuildDirectory, configuration)
 

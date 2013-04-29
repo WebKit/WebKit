@@ -1,3 +1,21 @@
+2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove Chromium code from Tools/BuildSlaveSupport
+        https://bugs.webkit.org/show_bug.cgi?id=115325
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the two Chromium-specific scripts and the Chromium-specific parts from the code
+        covering archiving test results and built products.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+        * BuildSlaveSupport/chromium/output-android-device-status: Removed.
+        * BuildSlaveSupport/chromium/remove-crash-logs: Removed.
+        * BuildSlaveSupport/test-result-archive:
+        (archiveTestResults):
+
 2013-04-28  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove support for Chromium from webkitdirs.pm

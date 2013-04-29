@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import optparse, os, shutil, subprocess, sys, zipfile
+import optparse, os, shutil, subprocess, sys
 
 sourceRootDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 archiveFile = os.path.join(sourceRootDirectory, "layout-test-results.zip")
@@ -46,7 +46,7 @@ def main():
     return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)
 
 def archiveTestResults(configuration, platform, layoutTestResultsDir):
-    assert platform in ('mac', 'win', 'wincairo', 'gtk', 'qt', 'chromium', 'efl')
+    assert platform in ('mac', 'win', 'wincairo', 'gtk', 'qt', 'efl')
 
     try:
         os.unlink(archiveFile)
@@ -69,11 +69,6 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
     elif platform in ('win', 'wincairo', 'gtk', 'qt', 'efl'):
         if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
-    elif platform == 'chromium':
-        cwd = os.getcwd()
-        os.chdir(layoutTestResultsDir)
-        zipFilesRecursively(archiveFile, ["."])
-        os.chdir(cwd)
 
     try:
         shutil.rmtree(layoutTestResultsDir)
@@ -90,27 +85,6 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
         # <http://webkit.org/b/55581>.
         if e.errno != 90 and e.errno != 2:
             raise
-
-def zipFilesRecursively(archiveFile, files):
-    """Make a zip archive.
-
-    Args:
-        archiveFile: The resultant zip archive file name.
-        files: A list of files to be archived.  If a list item is a directory,
-            files in the directory are archived recursively."""
-    zipper = zipfile.ZipFile(archiveFile, 'w', zipfile.ZIP_DEFLATED)
-    for file in files:
-        if os.path.isdir(file):
-            for dirPath, dirNames, fileNames in os.walk(file):
-                for fileName in fileNames:
-                    relativePath = os.path.join(dirPath, fileName)
-                    print "Adding", relativePath
-                    zipper.write(relativePath)
-        else:
-            print "Adding", file
-            zipper.write(file)
-    zipper.close()
-    print "Created zip archive: ", archiveFile
 
 if __name__ == '__main__':
     sys.exit(main())
