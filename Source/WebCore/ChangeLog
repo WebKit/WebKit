@@ -1,3 +1,16 @@
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove OS(WINCE) from HTMLSelectElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=115194
+
+        Reviewed by Andreas Kling.
+
+        Use the same files like the the other PLATFORM(WIN) ports use.
+
+        * PlatformWinCE.cmake:
+        * html/HTMLSelectElement.cpp:
+        (WebCore):
+
 2013-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         StaticHashSetNodeList is unnecessary
