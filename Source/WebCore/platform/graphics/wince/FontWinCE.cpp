@@ -137,7 +137,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
             start = 1;
         }
         for (int i = 1; i < run.length(); ++i) {
-            uint ch = run[i];
+            UChar ch = run[i];
             if (U16_IS_LEAD(ch) && U16_IS_TRAIL(run[i-1]))
                 ch = U16_GET_SUPPLEMENTARY(ch, run[i-1]);
             if (U16_IS_TRAIL(ch) || category(ch) == Mark_NonSpacing)

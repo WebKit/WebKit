@@ -1,5 +1,12 @@
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed build fix.
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::generateComponents):
+
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
         Remove OS(WINCE) from HTMLSelectElement.cpp
         https://bugs.webkit.org/show_bug.cgi?id=115194
 
