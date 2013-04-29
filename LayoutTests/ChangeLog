@@ -1,3 +1,9 @@
+2013-04-29  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed, added missing new line in baseline.
+
+        * fast/canvas/2d.imageDataHD-expected.txt:
+
 2013-04-29  Stephen Chenney  <schenney@chromium.org>
 
         SVGElement destructor can use invalid iterator
