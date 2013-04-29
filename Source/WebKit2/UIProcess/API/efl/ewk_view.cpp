@@ -510,9 +510,7 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
 #if ENABLE(FULLSCREEN_API)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WKViewExitFullScreen(impl->wkView());
-
-    return true;
+    return WKViewExitFullScreen(impl->wkView());
 #else
     UNUSED_PARAM(ewkView);
     return false;

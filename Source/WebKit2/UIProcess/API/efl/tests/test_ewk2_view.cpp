@@ -287,6 +287,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
     ASSERT_TRUE(fullScreenCallbackCalled);
 }
 
+TEST_F(EWK2UnitTestBase, ewk_view_cancel_full_screen_request)
+{
+    // FullScreenmanager should skip cancel fullscreen request if fullscreen
+    // mode was not set using FullScreen API.
+    ASSERT_FALSE(ewk_view_fullscreen_exit(webView()));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
 {
     // Tests that same page navigation updates the page URL.

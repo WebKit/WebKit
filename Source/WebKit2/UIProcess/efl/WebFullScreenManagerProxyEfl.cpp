@@ -49,14 +49,15 @@ void WebFullScreenManagerProxy::close()
 
 bool WebFullScreenManagerProxy::isFullScreen()
 {
-    notImplemented();
-    return false;
+    return m_hasRequestedFullScreen;
 }
 
 void WebFullScreenManagerProxy::enterFullScreen()
 {
-    if (!m_webView)
+    if (!m_webView || m_hasRequestedFullScreen)
         return;
+
+    m_hasRequestedFullScreen = true;
 
     willEnterFullScreen();
     toEwkView(m_webView)->enterFullScreen();
@@ -65,9 +66,10 @@ void WebFullScreenManagerProxy::enterFullScreen()
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
-    if (!m_webView)
+    if (!m_webView || !m_hasRequestedFullScreen)
         return;
 
+    m_hasRequestedFullScreen = false;
 
     willExitFullScreen();
     toEwkView(m_webView)->exitFullScreen();

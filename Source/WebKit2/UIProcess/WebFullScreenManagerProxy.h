@@ -92,6 +92,10 @@ private:
 
     WebPageProxy* m_page;
     PlatformWebView* m_webView;
+
+#if PLATFORM(EFL)
+    bool m_hasRequestedFullScreen;
+#endif
 };
 
 } // namespace WebKit

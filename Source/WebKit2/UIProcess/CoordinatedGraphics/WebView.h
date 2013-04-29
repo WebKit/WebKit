@@ -90,7 +90,7 @@ public:
     bool showsAsSource() const;
 
 #if ENABLE(FULLSCREEN_API)
-    void exitFullScreen();
+    bool exitFullScreen();
 #endif
 
     // View client.

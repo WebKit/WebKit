@@ -1,3 +1,50 @@
+2013-04-29  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [WK2][EFL] Skip cancel fullscreen request if not made from FullScreen API
+        https://bugs.webkit.org/show_bug.cgi?id=108201
+
+        Reviewed by Andreas Kling.
+
+        Adds a check on WebFullScreenManagerProxyEfl whether fullscreen mode was
+        set from FullScreen API or not, so it can skip cancelling fullscreen
+        request if fullscreen mode was set by application, preventing
+        WebProcess' FullScreenManager from crashing.
+
+        EFL unit test available: ewk_view_cancel_full_screen_request.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewExitFullScreen):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        WKViewExitFullScreen now returns a bool, indicating whether the
+        operation has succeeded or not.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_fullscreen_exit):
+        Skip request if not in fullscreen mode.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        Added ewk_view_cancel_full_screen_request unit test.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::exitFullScreen):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        (WebView):
+        exitFullScreen now returns a bool, indicating whether the operation has
+        succeeded or not.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::WebFullScreenManagerProxy):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebFullScreenManagerProxy):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::isFullScreen):
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        Added m_hasRequestedFullScreen boolean flag to EFL port. Used to
+        indicate if fullscreen mode is enabled, as well as sanity checks on both
+        {enter,exit}FullScreen functions.
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Stop using range-based for syntax
