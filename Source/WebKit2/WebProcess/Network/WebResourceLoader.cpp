@@ -109,6 +109,9 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
     m_coreLoader->didReceiveResponse(responseCopy);
 
+    if (!m_coreLoader)
+        return;
+
     if (needsContinueDidReceiveResponseMessage)
         send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
 }
