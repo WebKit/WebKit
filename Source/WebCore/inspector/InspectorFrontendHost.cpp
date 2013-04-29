@@ -286,7 +286,7 @@ String InspectorFrontendHost::loadResourceSynchronously(const String& url)
     Vector<char> data;
     ResourceError error;
     ResourceResponse response;
-    m_frontendPage->mainFrame()->loader()->loadResourceSynchronously(request, DoNotAllowStoredCredentials, error, response, data);
+    m_frontendPage->mainFrame()->loader()->loadResourceSynchronously(request, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
     return String(data.data(), data.size());
 }
 

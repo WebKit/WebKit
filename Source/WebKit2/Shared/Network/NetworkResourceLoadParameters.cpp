@@ -44,6 +44,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , priority(ResourceLoadPriorityVeryLow)
     , contentSniffingPolicy(SniffContent)
     , allowStoredCredentials(DoNotAllowStoredCredentials)
+    , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
     , inPrivateBrowsingMode(false)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
     , isMainResource(false)
@@ -92,6 +93,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encodeEnum(priority);
     encoder.encodeEnum(contentSniffingPolicy);
     encoder.encodeEnum(allowStoredCredentials);
+    encoder.encodeEnum(clientCredentialPolicy);
     encoder << inPrivateBrowsingMode;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << isMainResource;
@@ -136,6 +138,8 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, Ne
     if (!decoder.decodeEnum(result.contentSniffingPolicy))
         return false;
     if (!decoder.decodeEnum(result.allowStoredCredentials))
+        return false;
+    if (!decoder.decodeEnum(result.clientCredentialPolicy))
         return false;
     if (!decoder.decode(result.inPrivateBrowsingMode))
         return false;

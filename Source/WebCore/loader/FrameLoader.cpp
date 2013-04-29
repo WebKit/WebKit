@@ -2553,7 +2553,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
     }
 }
 
-unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(m_frame->document());
     String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), outgoingReferrer());
@@ -2579,7 +2579,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         
         if (!documentLoader()->applicationCacheHost()->maybeLoadSynchronously(newRequest, error, response, data)) {
 #if USE(PLATFORM_STRATEGIES)
-            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, error, response, data);
+            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, clientCredentialPolicy, error, response, data);
 #else
             ResourceHandle::loadResourceSynchronously(networkingContext(), newRequest, storedCredentials, error, response, data);
 #endif

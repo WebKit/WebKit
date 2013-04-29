@@ -58,6 +58,7 @@ public:
     WebCore::ResourceLoadPriority priority;
     WebCore::ContentSniffingPolicy contentSniffingPolicy;
     WebCore::StoredCredentials allowStoredCredentials;
+    WebCore::ClientCredentialPolicy clientCredentialPolicy;
     bool inPrivateBrowsingMode;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool isMainResource;

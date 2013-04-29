@@ -444,7 +444,7 @@ static void* openFunc(const char* uri)
         // FIXME: We should restore the original global error handler as well.
 
         if (cachedResourceLoader->frame())
-            cachedResourceLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, error, response, data);
+            cachedResourceLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
     }
 
     // We have to check the URL again after the load to catch redirects.

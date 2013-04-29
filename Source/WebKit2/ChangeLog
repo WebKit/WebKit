@@ -1,3 +1,40 @@
+2013-04-29  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION: We see authentication challenge sheets for favicon requests.
+        <rdar://problem/13753470> and https://bugs.webkit.org/show_bug.cgi?id=115288
+
+        Reviewed by Alexey Proskuryakov.
+
+        Have NetworkResourceLoadParameters remember the ClientCredentialPolicy:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+
+        Pass along the ClientCredentialPolicy to the NetworkProcess:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
+        Have the SchedulableLoader remember the ClientCredentialPolicy:
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader):
+        * NetworkProcess/SchedulableLoader.h:
+        (WebKit::SchedulableLoader::clientCredentialPolicy):
+
+        Don’t message for credentials if the ClientCredentialPolicy forbids it:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        Update for the new loadResourceSynchronously signature (which is still a no-op on the NetworkProcess side):
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::loadResourceSynchronously):
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+
 2013-04-29  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix. Point the Network process towards its own version of SecItemShim.dyld.

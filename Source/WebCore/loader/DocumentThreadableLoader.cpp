@@ -368,7 +368,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     if (m_async) {
         ThreadableLoaderOptions options = m_options;
-        options.crossOriginCredentialPolicy = DoNotAskClientForCrossOriginCredentials;
+        options.clientCredentialPolicy = DoNotAskClientForCrossOriginCredentials;
         if (m_actualRequest) {
             // Don't sniff content or send load callbacks for the preflight request.
             options.sendLoadCallbacks = DoNotSendCallbacks;
@@ -401,7 +401,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     ResourceResponse response;
     unsigned long identifier = std::numeric_limits<unsigned long>::max();
     if (m_document->frame())
-        identifier = m_document->frame()->loader()->loadResourceSynchronously(request, m_options.allowCredentials, error, response, data);
+        identifier = m_document->frame()->loader()->loadResourceSynchronously(request, m_options.allowCredentials, m_options.clientCredentialPolicy, error, response, data);
 
     InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
 

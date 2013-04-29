@@ -51,6 +51,7 @@ public:
     WebCore::ResourceLoadPriority priority() const { return m_priority; }
     WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
     WebCore::StoredCredentials allowStoredCredentials() const { return m_allowStoredCredentials; }
+    WebCore::ClientCredentialPolicy clientCredentialPolicy() const { return m_clientCredentialPolicy; }
     bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
 
@@ -80,6 +81,7 @@ private:
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
+    WebCore::ClientCredentialPolicy m_clientCredentialPolicy;
     bool m_inPrivateBrowsingMode;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;

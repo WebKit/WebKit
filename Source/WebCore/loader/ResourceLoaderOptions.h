@@ -50,24 +50,19 @@ enum DataBufferingPolicy {
     DoNotBufferData
 };
 
-enum ClientCrossOriginCredentialPolicy {
-    AskClientForCrossOriginCredentials,
-    DoNotAskClientForCrossOriginCredentials
-};
-
 enum SecurityCheckPolicy {
     SkipSecurityCheck,
     DoSecurityCheck
 };
 
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), dataBufferingPolicy(BufferData), allowCredentials(DoNotAllowStoredCredentials), crossOriginCredentialPolicy(DoNotAskClientForCrossOriginCredentials), securityCheck(DoSecurityCheck) { }
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy, SecurityCheckPolicy securityCheck)
+    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), dataBufferingPolicy(BufferData), allowCredentials(DoNotAllowStoredCredentials), clientCredentialPolicy(DoNotAskClientForAnyCredentials), securityCheck(DoSecurityCheck) { }
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, SecurityCheckPolicy securityCheck)
         : sendLoadCallbacks(sendLoadCallbacks)
         , sniffContent(sniffContent)
         , dataBufferingPolicy(dataBufferingPolicy)
         , allowCredentials(allowCredentials)
-        , crossOriginCredentialPolicy(crossOriginCredentialPolicy)
+        , clientCredentialPolicy(credentialPolicy)
         , securityCheck(securityCheck)
     {
     }
@@ -75,7 +70,7 @@ struct ResourceLoaderOptions {
     ContentSniffingPolicy sniffContent;
     DataBufferingPolicy dataBufferingPolicy;
     StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
-    ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy; // Whether we will ask the client for credentials (if we allow credentials at all).
+    ClientCredentialPolicy clientCredentialPolicy; // When we should ask the client for credentials (if we allow credentials at all).
     SecurityCheckPolicy securityCheck;
 };
 

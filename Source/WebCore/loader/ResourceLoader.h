@@ -137,6 +137,7 @@ public:
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
     bool shouldSniffContent() const { return m_options.sniffContent == SniffContent; }
+    ClientCredentialPolicy clientCredentialPolicy() const { return m_options.clientCredentialPolicy; }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 

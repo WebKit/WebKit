@@ -32,7 +32,6 @@
 #include "SchedulableLoader.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceHandleClient.h>
-#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/RunLoop.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;

@@ -116,6 +116,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     loadParameters.priority = priority;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.allowStoredCredentials = allowStoredCredentials;
+    loadParameters.clientCredentialPolicy = resourceLoader->clientCredentialPolicy();
     loadParameters.inPrivateBrowsingMode = privateBrowsingEnabled;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;

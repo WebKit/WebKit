@@ -298,6 +298,14 @@ void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* ha
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
+    // FIXME (http://webkit.org/b/115291): Since we go straight to the UI process for authentication we don't get WebCore's
+    // cross-origin check before asking the client for credentials.
+    // Therefore we are too permissive in the case where the ClientCredentialPolicy is DoNotAskClientForCrossOriginCredentials.
+    if (clientCredentialPolicy() == DoNotAskClientForAnyCredentials) {
+        challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
+        return;
+    }
+
     NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(webPageID(), webFrameID(), challenge);
 }
 

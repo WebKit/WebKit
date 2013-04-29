@@ -48,7 +48,7 @@ private:
 
     // WebCore::LoaderStrategy
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() OVERRIDE;
-    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) OVERRIDE;
+    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) OVERRIDE;
 #if ENABLE(BLOB)
     virtual WebCore::BlobRegistry* createBlobRegistry() OVERRIDE;
 #endif

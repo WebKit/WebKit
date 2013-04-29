@@ -1,3 +1,65 @@
+2013-04-29  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION: We see authentication challenge sheets for favicon requests.
+        <rdar://problem/13753470> and https://bugs.webkit.org/show_bug.cgi?id=115288
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests (Not in a tested config, might fix existing test).
+
+        Rename ClientCrossOriginCredentialPolicy to ClientCredentialPolicy, make it be three options.
+        and move it to ResourceHandleTypes where it belongs:
+        * loader/ResourceLoaderOptions.h:
+        * platform/network/ResourceHandleTypes.h:
+
+        Expose the ClientCredentialPolicy the ResourceLoader was created with:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::clientCredentialPolicy):
+
+        Rework the “should ask client” clause for the new values of ClientCredentialPolicy:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+
+        Rework loadResourceSynchronously() to include a ClientCredentialPolicy argument:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::loadResourceSynchronously):
+        * loader/LoaderStrategy.h:
+
+        Never ask the client for credentials for icon loads:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+
+        Update all other users of ClientCredentialPolicy to the appropriate new value,
+        and update all users of loadResourceSynchronously to the new function signature:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::loadResourceSynchronously):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::loadResourceSynchronously):
+        * loader/LoaderStrategy.h:
+        (LoaderStrategy):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
+        * WebCore.exp.in:
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Add a StorageSyncManager::dispatch helper function

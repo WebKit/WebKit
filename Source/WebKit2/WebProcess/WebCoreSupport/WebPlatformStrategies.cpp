@@ -226,10 +226,10 @@ ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
     return scheduler;
 }
 
-void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (!WebProcess::shared().usesNetworkProcess()) {
-        LoaderStrategy::loadResourceSynchronously(context, resourceLoadIdentifier, request, storedCredentials, error, response, data);
+        LoaderStrategy::loadResourceSynchronously(context, resourceLoadIdentifier, request, storedCredentials, clientCredentialPolicy, error, response, data);
         return;
     }
 
@@ -241,6 +241,7 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     loadParameters.priority = ResourceLoadPriorityHighest;
     loadParameters.contentSniffingPolicy = SniffContent;
     loadParameters.allowStoredCredentials = storedCredentials;
+    loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.inPrivateBrowsingMode = context->storageSession().isPrivateBrowsingSession();
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 

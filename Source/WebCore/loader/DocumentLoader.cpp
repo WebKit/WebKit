@@ -1364,7 +1364,7 @@ void DocumentLoader::startLoadingMainResource()
 
     ResourceRequest request(m_request);
     DEFINE_STATIC_LOCAL(ResourceLoaderOptions, mainResourceLoadOptions,
-        (SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck));
+        (SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck));
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
     if (!m_mainResource) {

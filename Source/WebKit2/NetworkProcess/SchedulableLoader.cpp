@@ -45,6 +45,7 @@ SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parame
     , m_priority(parameters.priority)
     , m_contentSniffingPolicy(parameters.contentSniffingPolicy)
     , m_allowStoredCredentials(parameters.allowStoredCredentials)
+    , m_clientCredentialPolicy(parameters.clientCredentialPolicy)
     , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
