@@ -1,3 +1,38 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Begin cleaning up StorageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=115373
+
+        Reviewed by Andreas Kling.
+
+        Rename Mutexes to use "Mutex" and not "Guard".
+        Don't use static locals for ".localstorage" and "*.localstorage" strings.
+        Put end iterator declarations together with begin declarations.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::setDatabaseDirectoryPath):
+        (WebCore::StorageTracker::trackerDatabasePath):
+        (WebCore::StorageTracker::openTrackerDatabase):
+        (WebCore::StorageTracker::finishedImportingOriginIdentifiers):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::syncSetOriginDetails):
+        (WebCore::StorageTracker::origins):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::deleteOrigin):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::willDeleteAllOrigins):
+        (WebCore::StorageTracker::willDeleteOrigin):
+        (WebCore::StorageTracker::canDeleteOrigin):
+        (WebCore::StorageTracker::cancelDeletingOrigin):
+        (WebCore::StorageTracker::setClient):
+        (WebCore::StorageTracker::databasePathForOrigin):
+        (WebCore::StorageTracker::diskUsageForOrigin):
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
 2013-04-29  Andreas Kling  <akling@apple.com>
 
         Don't check for @media rules affected by viewport changes in every layout.

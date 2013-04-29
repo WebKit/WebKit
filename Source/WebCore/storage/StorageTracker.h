@@ -101,16 +101,16 @@ private:
     
     void setIsActive(bool);
 
-    // Guard for m_database, m_storageDirectoryPath and static Strings in syncFileSystemAndTrackerDatabase().
-    Mutex m_databaseGuard;
+    // Mutex for m_database and m_storageDirectoryPath.
+    Mutex m_databaseMutex;
     SQLiteDatabase m_database;
     String m_storageDirectoryPath;
 
-    Mutex m_clientGuard;
+    Mutex m_clientMutex;
     StorageTrackerClient* m_client;
 
     // Guard for m_originSet and m_originsBeingDeleted.
-    Mutex m_originSetGuard;
+    Mutex m_originSetMutex;
     typedef HashSet<String> OriginSet;
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;
