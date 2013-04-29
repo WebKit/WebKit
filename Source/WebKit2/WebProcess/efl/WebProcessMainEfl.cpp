@@ -139,7 +139,9 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     edje_shutdown();
     ecore_evas_shutdown();
+#ifdef HAVE_ECORE_X
     ecore_x_shutdown();
+#endif
     ecore_shutdown();
     eina_shutdown();
 
