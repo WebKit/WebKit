@@ -96,11 +96,6 @@ my $isWinCE;
 my $isWinCairo;
 my $isEfl;
 my $isBlackBerry;
-my $isChromium;
-my $isChromiumAndroid;
-my $isChromiumMacMake;
-my $isChromiumNinja;
-my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
 my $shouldTargetWebProcess;
@@ -220,14 +215,6 @@ sub determineBaseProductDir
         }
 
         undef $baseProductDir unless $baseProductDir =~ /^\//;
-    } elsif (isChromium()) {
-        if (isLinux() || isChromiumAndroid() || isChromiumMacMake() || isChromiumNinja()) {
-            $baseProductDir = "$sourceDir/out";
-        } elsif (isDarwin()) {
-            $baseProductDir = "$sourceDir/Source/WebKit/chromium/xcodebuild";
-        } elsif (isWindows() || isCygwin()) {
-            $baseProductDir = "$sourceDir/Source/WebKit/chromium/build";
-        }
     }
 
     if (!defined($baseProductDir)) { # Port-specific checks failed, use default
@@ -239,7 +226,7 @@ sub determineBaseProductDir
         $baseProductDir = "$baseProductDir/" . $archInfo{"cpuDir"};
     }
 
-    if (isGit() && isGitBranchBuild() && !isChromium()) {
+    if (isGit() && isGitBranchBuild()) {
         my $branch = gitBranch();
         $baseProductDir = "$baseProductDir/$branch";
     }
@@ -396,8 +383,6 @@ sub argumentsForConfiguration()
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--wince') if isWinCE();
     push(@args, '--blackberry') if isBlackBerry();
-    push(@args, '--chromium') if isChromium() && !isChromiumAndroid();
-    push(@args, '--chromium-android') if isChromiumAndroid();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
     return @args;
 }
@@ -757,9 +742,7 @@ sub builtDylibPathForName
 {
     my $libraryName = shift;
     determineConfigurationProductDir();
-    if (isChromium()) {
-        return "$configurationProductDir/$libraryName";
-    }
+
     if (isBlackBerry()) {
         my $libraryExtension = $libraryName =~ /^WebKit$/i ? ".so" : ".a";
         return "$configurationProductDir/$libraryName/lib" . lc($libraryName) . $libraryExtension;
@@ -966,8 +949,8 @@ sub determineIsQt()
         return;
     }
 
-    # The presence of QTDIR only means Qt if --gtk or --efl or --blackberry or --chromium or --wincairo are not on the command-line
-    if (isGtk() || isEfl() || isBlackBerry() || isChromium() || isWinCairo()) {
+    # The presence of QTDIR only means Qt if --gtk or --efl or --blackberry or --wincairo are not on the command-line
+    if (isGtk() || isEfl() || isBlackBerry() || isWinCairo()) {
         $isQt = 0;
         return;
     }
@@ -1153,101 +1136,6 @@ sub isFedoraBased()
     return -e "/etc/fedora-release";
 }
 
-sub isChromium()
-{
-    determineIsChromium();
-    determineIsChromiumAndroid();
-    return $isChromium || $isChromiumAndroid;
-}
-
-sub determineIsChromium()
-{
-    return if defined($isChromium);
-    $isChromium = checkForArgumentAndRemoveFromARGV("--chromium");
-    if ($isChromium) {
-        $forceChromiumUpdate = checkForArgumentAndRemoveFromARGV("--force-update");
-    }
-}
-
-sub isChromiumAndroid()
-{
-    determineIsChromiumAndroid();
-    return $isChromiumAndroid;
-}
-
-sub determineIsChromiumAndroid()
-{
-    return if defined($isChromiumAndroid);
-    $isChromiumAndroid = checkForArgumentAndRemoveFromARGV("--chromium-android");
-}
-
-sub isChromiumMacMake()
-{
-    determineIsChromiumMacMake();
-    return $isChromiumMacMake;
-}
-
-sub determineIsChromiumMacMake()
-{
-    return if defined($isChromiumMacMake);
-
-    my $hasUpToDateMakefile = 0;
-    if (-e 'Makefile.chromium') {
-        unless (-e 'Source/WebKit/chromium/WebKit.xcodeproj') {
-            $hasUpToDateMakefile = 1;
-        } else {
-            $hasUpToDateMakefile = stat('Makefile.chromium')->mtime > stat('Source/WebKit/chromium/WebKit.xcodeproj')->mtime;
-        }
-    }
-    $isChromiumMacMake = isDarwin() && $hasUpToDateMakefile;
-}
-
-sub isChromiumNinja()
-{
-    determineIsChromiumNinja();
-    return $isChromiumNinja;
-}
-
-sub determineIsChromiumNinja()
-{
-    return if defined($isChromiumNinja);
-
-    # This function can be called from baseProductDir(), which in turn is
-    # called by configuration(). So calling configuration() here leads to
-    # infinite recursion. Gyp writes both Debug and Release at the same time
-    # by default, so just check the timestamp on the Release build.ninja file.
-    my $config = "Release";
-
-    my $hasUpToDateNinjabuild = 0;
-    if (-e "out/$config/build.ninja") {
-        my $statNinja = stat("out/$config/build.ninja")->mtime;
-
-        my $statXcode = 0;
-        if (-e 'Source/WebKit/chromium/WebKit.xcodeproj') {
-          $statXcode = stat('Source/WebKit/chromium/WebKit.xcodeproj')->mtime;
-        }
-
-        my $statMake = 0;
-        if (-e 'Makefile.chromium') {
-          $statMake = stat('Makefile.chromium')->mtime;
-        }
-
-        my $statVisualStudio = 0;
-        if (-e 'Source/WebKit/chromium/webkit.vcxproj') {
-          $statVisualStudio = stat('Source/WebKit/chromium/webkit.vcxproj')->mtime;
-        }
-
-        $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake && $statNinja > $statVisualStudio;
-    }
-    $isChromiumNinja = $hasUpToDateNinjabuild;
-}
-
-sub forceChromiumUpdate()
-{
-    determineIsChromium();
-    return $forceChromiumUpdate;
-}
-
 sub isWinCairo()
 {
     determineIsWinCairo();
@@ -1351,7 +1239,7 @@ sub isCrossCompilation()
 
 sub isAppleWebKit()
 {
-    return !(isQt() or isGtk() or isChromium() or isEfl() or isWinCE() or isBlackBerry());
+    return !(isQt() or isGtk() or isEfl() or isWinCE() or isBlackBerry());
 }
 
 sub isAppleMacWebKit()
@@ -2463,122 +2351,6 @@ sub buildGtkProject
     }
 
     return buildAutotoolsProject($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features);
-}
-
-sub buildChromiumMakefile($$@)
-{
-    my ($target, $clean, @options) = @_;
-    if ($clean) {
-        return system qw(rm -rf out);
-    }
-    my $config = configuration();
-    my $numCpus = numberOfCPUs();
-    my $makeArgs;
-    for (@options) {
-        $makeArgs = $1 if /^--makeargs=(.*)/i;
-    }
-    $makeArgs = "-j$numCpus" if not $makeArgs;
-    my $command .= "make -fMakefile.chromium $makeArgs BUILDTYPE=$config $target";
-
-    print "$command\n";
-    return system $command;
-}
-
-sub buildChromiumNinja($$@)
-{
-    # rm -rf out requires rerunning gyp, so don't support --clean for now.
-    my ($target, @options) = @_;
-    my $config = configuration();
-    my $makeArgs = "";
-    for (@options) {
-        $makeArgs = $1 if /^--makeargs=(.*)/i;
-    }
-    my $command = "";
-
-    # Find ninja.
-    my $ninjaPath;
-    if (commandExists('ninja')) {
-        $ninjaPath = 'ninja';
-    } elsif (-e 'Source/WebKit/chromium/depot_tools/ninja') {
-        $ninjaPath = 'Source/WebKit/chromium/depot_tools/ninja';
-    } else {
-        die "ninja not found. Install chromium's depot_tools by running update-webkit first\n";
-    }
-
-    $command .= "$ninjaPath -C out/$config $target $makeArgs";
-
-    print "$command\n";
-    return system $command;
-}
-
-sub buildChromiumVisualStudioProject($$)
-{
-    my ($projectPath, $clean) = @_;
-
-    my $config = configuration();
-    my $action = "/build";
-    $action = "/clean" if $clean;
-
-    # Find Visual Studio installation.
-    my $vsInstallDir;
-    my $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
-    if ($ENV{'VSINSTALLDIR'}) {
-        $vsInstallDir = $ENV{'VSINSTALLDIR'};
-    } else {
-        $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
-    }
-    $vsInstallDir =~ s,\\,/,g;
-    $vsInstallDir = `cygpath "$vsInstallDir"` if isCygwin();
-    chomp $vsInstallDir;
-    $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
-    if (! -e $vcBuildPath) {
-        # Visual Studio not found, try VC++ Express
-        $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
-        if (! -e $vcBuildPath) {
-            print "*************************************************************\n";
-            print "Cannot find '$vcBuildPath'\n";
-            print "Please execute the file 'vcvars32.bat' from\n";
-            print "'$programFilesPath\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
-            print "to setup the necessary environment variables.\n";
-            print "*************************************************************\n";
-            die;
-        }
-    }
-
-    # Create command line and execute it.
-    my @command = ($vcBuildPath, $projectPath, $action, $config);
-    print "Building results into: ", baseProductDir(), "\n";
-    print join(" ", @command), "\n";
-    return system @command;
-}
-
-sub buildChromium($@)
-{
-    my ($clean, @options) = @_;
-
-    # We might need to update DEPS or re-run GYP if things have changed.
-    if (checkForArgumentAndRemoveFromArrayRef("--update-chromium", \@options)) {
-        my @updateCommand = ("perl", "Tools/Scripts/update-webkit-chromium", "--force");
-        push @updateCommand, "--chromium-android" if isChromiumAndroid();
-        system(@updateCommand) == 0 or die $!;
-    }
-
-    my $result = 1;
-    if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake() && !isChromiumNinja()) {
-        # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("Source/WebKit/chromium/All", $clean, "-configuration", configuration(), @options);
-    } elsif ((isCygwin() || isWindows()) && !isChromiumNinja()) {
-        # Windows build - builds the root visual studio solution.
-        $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/All.sln", $clean);
-    } elsif (isChromiumNinja()) {
-        $result = buildChromiumNinja("all", $clean, @options);
-    } elsif (isLinux() || isChromiumAndroid() || isChromiumMacMake()) {
-        # Linux build - build using make.
-        $result = buildChromiumMakefile("all", $clean, @options);
-    } else {
-        print STDERR "This platform is not supported by chromium.\n";
-    }
-    return $result;
 }
 
 sub appleApplicationSupportPath
