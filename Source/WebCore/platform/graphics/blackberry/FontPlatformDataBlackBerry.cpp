@@ -75,7 +75,7 @@ bool FontPlatformData::applyState(FS_STATE* font, float scale) const
                 return false;
 
     if (m_syntheticBold) {
-        if (FS_set_bold_pct(font, floatToITypeFixed(0.06)) != SUCCESS) // 6% pseudo bold
+        if (FS_set_bold_pct(font, ITYPEFAKEBOLDAMOUNT) != SUCCESS)
             return false;
         FS_set_flags(font, FLAGS_CHECK_CONTOUR_WINDING_ON); // we need correctly-wound contours to fake bold
     } else {
@@ -216,9 +216,13 @@ const void* FontPlatformData::platformFontHandle() const
 
 bool FontPlatformData::isFixedPitch() const
 {
-    TTF_POST post;
-    if (m_font && FS_get_table_structure(m_font, TAG_post, &post) == SUCCESS)
-        return post.isFixedPitch;
+    FS_BYTE* postTable;
+    FS_ULONG length;
+    if (m_font && (postTable = FS_get_table(m_font, TAG_post, TBL_EXTRACT, &length))) {
+        bool fixed = reinterpret_cast<TTF_POST*>(postTable)->isFixedPitch;
+        FS_free_table(m_font, postTable);
+        return fixed;
+    }
     return false;
 }
 

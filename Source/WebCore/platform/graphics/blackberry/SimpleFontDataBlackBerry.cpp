@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -157,8 +157,22 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     FS_SHORT idx, idy;
     FS_FIXED dx, dy;
+    FS_FIXED s00, s01, s10, s11;
+    bool needsFakeBoldReset = m_platformData.syntheticBold() && m_treatAsFixedPitch;
+
+    if (needsFakeBoldReset) {
+        FS_get_scale(m_platformData.font(), &s00, &s01, &s10, &s11);
+        FS_set_bold_pct(m_platformData.font(), 0);
+        FS_set_scale(m_platformData.font(), s00, s01, s10, s11);
+    }
+
     if (FS_get_advance(m_platformData.font(), glyph, FS_MAP_DISTANCEFIELD | FS_MAP_GRAYMAP8, &idx, &idy, &dx, &dy) != SUCCESS)
-        return 0;
+        dx = 0;
+
+    if (needsFakeBoldReset) {
+        FS_set_bold_pct(m_platformData.font(), ITYPEFAKEBOLDAMOUNT);
+        FS_set_scale(m_platformData.font(), s00, s01, s10, s11);
+    }
 
     return iTypeFixedToFloat(dx);
 }

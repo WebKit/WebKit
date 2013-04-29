@@ -1,3 +1,21 @@
+2013-04-29  Eli Fidler  <efidler@blackberry.com>
+
+        [BlackBerry] Fake-bold monospace fonts need to use non-fake-bold advances
+        https://bugs.webkit.org/show_bug.cgi?id=115280
+
+        Reviewed by George Staikos.
+
+        BlackBerry PR 330864
+
+        Tested by fast/css/css3-ch-unit.html
+
+        * platform/graphics/blackberry/FontPlatformDataBlackBerry.cpp:
+        (WebCore::FontPlatformData::applyState):
+        (WebCore::FontPlatformData::isFixedPitch):
+        * platform/graphics/blackberry/ITypeUtils.h:
+        * platform/graphics/blackberry/SimpleFontDataBlackBerry.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2013-04-29  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK][AC] Clean up code related with the children management stuff for clutter based AC

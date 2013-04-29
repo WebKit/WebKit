@@ -40,4 +40,6 @@ static inline float iTypeFixedToFloat(FS_FIXED n) { return n / 65536.0; }
 
 static const FS_FIXED MAXITYPEFONTSCALE = intToITypeFixed(10000) - 1;
 
+static const FS_FIXED ITYPEFAKEBOLDAMOUNT = floatToITypeFixed(0.06); // 6% pseudo bold
+
 #endif // ITypeUtils_h
