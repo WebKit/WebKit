@@ -97,7 +97,7 @@ function createAudioData(audioBuffer) {
 
 function finishAudioTest(event) {
     var audioData = createAudioData(event.renderedBuffer);
-    testRunner.setAudioData(audioData);
+    testRunner.setAudioResult(audioData);
     testRunner.notifyDone();
 }
 

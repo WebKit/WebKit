@@ -28,7 +28,7 @@ function runDecodingTest(url, optionalSampleRate)
 
 function finishedLoading(bufferList)
 {
-    testRunner.setAudioData(createAudioData(bufferList[0]));
+    testRunner.setAudioResult(createAudioData(bufferList[0]));
     testRunner.notifyDone();
 }
 

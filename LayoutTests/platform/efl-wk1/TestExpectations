@@ -359,7 +359,7 @@ Bug(EFL) http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Fa
 Bug(EFL) http/tests/websocket/tests/hybi/workers/close-in-onmessage-crash.html [ Timeout ]
 Bug(EFL) http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Timeout Pass ]
 
-# DRT does not implement setAudioData
+# DRT does not implement setAudioResult
 webkit.org/b/105881 webaudio/audiobuffersource-loop-points.html [ Skip ]
 webkit.org/b/105881 webaudio/audiobuffersource-multi-channels.html [ Skip ]
 webkit.org/b/105881 webaudio/audiobuffersource-playbackrate.html [ Skip ]

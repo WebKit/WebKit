@@ -168,7 +168,7 @@ interface TestRunner {
     void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
 
     // Audio testing.
-    [PassContext] void setAudioData(in object data);
+    [PassContext] void setAudioResult(in object data);
 
     boolean callShouldCloseOnWebView();
 

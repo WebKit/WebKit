@@ -187,7 +187,7 @@ public Q_SLOTS:
     void setAlwaysAcceptCookies(bool);
     void setAlwaysBlockCookies(bool);
 
-    void setAudioData(const QByteArray&);
+    void setAudioResult(const QByteArray&);
 
 private Q_SLOTS:
     void processWork();

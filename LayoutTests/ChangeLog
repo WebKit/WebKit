@@ -1,3 +1,19 @@
+2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Rename TestRunner's setAudioData to setAudioResult
+        https://bugs.webkit.org/show_bug.cgi?id=115326
+
+        Reviewed by Darin Adler.
+
+        Adjust the testRunner.setAudioData references/callsites, the method is now named setAudioResult.
+
+        * platform/efl-wk1/TestExpectations:
+        * webaudio/resources/audio-codec-test.js:
+        (finishedLoading):
+        * webaudio/resources/audio-testing.js:
+        (finishAudioTest):
+        * webaudio/test-basic.html:
+
 2013-04-28  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Get rid of a duplicate file from LayoutTests/TestExpectations

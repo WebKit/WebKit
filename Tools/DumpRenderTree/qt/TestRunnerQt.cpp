@@ -768,7 +768,7 @@ void TestRunnerQt::setAlwaysBlockCookies(bool block)
         globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysAllowThirdPartyCookies);
 }
 
-void TestRunnerQt::setAudioData(const QByteArray& audioData)
+void TestRunnerQt::setAudioResult(const QByteArray& audioData)
 {
     m_audioData = audioData;
     m_audioDump = true;

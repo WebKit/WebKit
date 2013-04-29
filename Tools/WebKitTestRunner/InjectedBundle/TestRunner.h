@@ -161,7 +161,7 @@ public:
     void setValueForUser(JSContextRef, JSValueRef element, JSStringRef value);
 
     // Audio testing.
-    void setAudioData(JSContextRef, JSValueRef data);
+    void setAudioResult(JSContextRef, JSValueRef data);
 
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText, Audio };
     WhatToDump whatToDump() const { return m_whatToDump; }

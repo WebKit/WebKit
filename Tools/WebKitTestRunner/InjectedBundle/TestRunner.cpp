@@ -375,7 +375,7 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStr
     WKBundleNodeHandleSetHTMLInputElementValueForUser(nodeHandle.get(), toWK(value).get());
 }
 
-void TestRunner::setAudioData(JSContextRef context, JSValueRef data)
+void TestRunner::setAudioResult(JSContextRef context, JSValueRef data)
 {
     WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(InjectedBundle::shared().bundle(), context, data));
     InjectedBundle::shared().setAudioResult(audioData.get());

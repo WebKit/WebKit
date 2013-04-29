@@ -1,5 +1,26 @@
 2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        Rename TestRunner's setAudioData to setAudioResult
+        https://bugs.webkit.org/show_bug.cgi?id=115326
+
+        Reviewed by Darin Adler.
+
+        Rename the TestRunner's setAudioData method to setAudioResult. The new name better conveys the method's purpose
+        than the previous one. The change is a simple rename, there's no change in the method's functionality. The
+        affected tests are adjusted accordingly.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunnerQt::setAudioResult):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunnerQt):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAudioResult):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
+2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [WKTR] Tests dumping audio data shouldn't dump pixels
         https://bugs.webkit.org/show_bug.cgi?id=115270
 

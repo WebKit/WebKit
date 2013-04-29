@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!--
-This is a very basic test to make sure testRunner.setAudioData() works correctly.
+This is a very basic test to make sure testRunner.setAudioResult() works correctly.
 It generates a 2 seconds long stereo result @44.1KHz
 The left channel will be a 880Hz tone, while the right will be 440Hz.
 -->
@@ -18,7 +18,7 @@ The left channel will be a 880Hz tone, while the right will be 440Hz.
 <div id="console"></div>
 
 <script>
-description("Tests basic audio test infrastructure: specifically testRunner.setAudioData()");
+description("Tests basic audio test infrastructure: specifically testRunner.setAudioResult()");
 
 var sampleRate = 44100.0;
 var lengthInSeconds = 2;
@@ -45,7 +45,7 @@ function runTest() {
     generateSinWave(audioBuffer);
 
     var audioData = createAudioData(audioBuffer);
-    testRunner.setAudioData(audioData);
+    testRunner.setAudioResult(audioData);
 
     testRunner.notifyDone();
 }
