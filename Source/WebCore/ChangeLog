@@ -1,3 +1,17 @@
+2013-04-29  David Hyatt  <hyatt@apple.com>
+
+        [Mac] Links can't be hovered or clicked with overlay scrollbars hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=99379
+        
+        This is also <rdar://problem/10929565> Overlay scrollbars prevent hit-testing on
+        content underneath them, even when hidden
+
+        Reviewed by Beth Dakin.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::verticalScrollbarWidth):
+        (WebCore::RenderLayer::horizontalScrollbarHeight):
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Begin cleaning up StorageTracker
