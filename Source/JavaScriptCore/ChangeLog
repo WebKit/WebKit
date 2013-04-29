@@ -1,3 +1,9 @@
+2013-04-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ~BlockAllocator should ASSERT that it has no more Regions left
