@@ -1,5 +1,17 @@
 2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Set up the TestJavaScriptCore in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=115236
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Set up the TestJavaScriptCore unit test program, consisting of the unit tests
+        under the TestWebKitAPI/Tests/JavaScriptCore directory.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
+2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Export the COLLECT_NO_DEMANGLE variable on the builders
         https://bugs.webkit.org/show_bug.cgi?id=115323
 
