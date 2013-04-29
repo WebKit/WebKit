@@ -1,3 +1,19 @@
+2013-04-29  Andreas Kling  <akling@apple.com>
+
+        Don't check for @media rules affected by viewport changes in every layout.
+        <http://webkit.org/b/115370>
+        <rdar://problem/13765739>
+
+        Reviewed by Antti Koivisto.
+
+        Move the logic that checks if any @media rules are affected by a change in the viewport
+        size to FrameView::setFrameRect(). This way it's no longer necessary to do the style
+        recalc synchronously, which allows us to coalesce multiple updates in some cases.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::layout):
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Remove the last StorageSyncManager function
