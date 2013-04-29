@@ -1,3 +1,9 @@
+2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files to compilation.
+
 2013-04-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed fix build break on EFL port since r149259.

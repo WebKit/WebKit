@@ -311,16 +311,16 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/Handle.h \
-    Source/JavaScriptCore/heap/HandleBlock.h \
-    Source/JavaScriptCore/heap/HandleBlockInlines.h \
+	Source/JavaScriptCore/heap/HandleBlock.h \
+	Source/JavaScriptCore/heap/HandleBlockInlines.h \
 	Source/JavaScriptCore/heap/HandleSet.cpp \
 	Source/JavaScriptCore/heap/HandleSet.h \
 	Source/JavaScriptCore/heap/HeapBlock.h \
-    Source/JavaScriptCore/heap/HeapTimer.h \
-    Source/JavaScriptCore/heap/HeapTimer.cpp \
+	Source/JavaScriptCore/heap/HeapTimer.h \
+	Source/JavaScriptCore/heap/HeapTimer.cpp \
 	Source/JavaScriptCore/heap/IncrementalSweeper.h \
 	Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
-    Source/JavaScriptCore/heap/SlotVisitor.cpp \
+	Source/JavaScriptCore/heap/SlotVisitor.cpp \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/SlotVisitorInlines.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
@@ -328,14 +328,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleTypes.h \
 	Source/JavaScriptCore/heap/BlockAllocator.cpp \
 	Source/JavaScriptCore/heap/BlockAllocator.h \
-    Source/JavaScriptCore/heap/GCThreadSharedData.cpp \
-    Source/JavaScriptCore/heap/GCThreadSharedData.h \
-    Source/JavaScriptCore/heap/GCThread.cpp \
-    Source/JavaScriptCore/heap/GCThread.h \
+	Source/JavaScriptCore/heap/GCThreadSharedData.cpp \
+	Source/JavaScriptCore/heap/GCThreadSharedData.h \
+	Source/JavaScriptCore/heap/GCThread.cpp \
+	Source/JavaScriptCore/heap/GCThread.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
-    Source/JavaScriptCore/heap/HeapStatistics.cpp \
-    Source/JavaScriptCore/heap/HeapStatistics.h \
+	Source/JavaScriptCore/heap/HeapStatistics.cpp \
+	Source/JavaScriptCore/heap/HeapStatistics.h \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.cpp \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.h \
 	Source/JavaScriptCore/heap/ListableHandler.h \
@@ -345,7 +345,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MachineStackMarker.h \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
-    Source/JavaScriptCore/heap/MarkStackInlines.h \
+	Source/JavaScriptCore/heap/MarkStackInlines.h \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedAllocator.cpp \
 	Source/JavaScriptCore/heap/MarkedAllocator.h \
@@ -359,8 +359,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/Region.h \
 	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/StrongInlines.h \
-    Source/JavaScriptCore/heap/SuperRegion.cpp \
-    Source/JavaScriptCore/heap/SuperRegion.h \
+	Source/JavaScriptCore/heap/SuperRegion.cpp \
+	Source/JavaScriptCore/heap/SuperRegion.h \
 	Source/JavaScriptCore/heap/UnconditionalFinalizer.h \
 	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \
@@ -371,6 +371,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/WeakHandleOwner.cpp \
 	Source/JavaScriptCore/heap/WeakHandleOwner.h \
 	Source/JavaScriptCore/heap/WeakImpl.h \
+	Source/JavaScriptCore/heap/WeakInlines.h \
 	Source/JavaScriptCore/heap/WeakSet.cpp \
 	Source/JavaScriptCore/heap/WeakSet.h \
 	Source/JavaScriptCore/heap/WeakSetInlines.h \
@@ -832,6 +833,7 @@ offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/risc.rb \
 	Source/JavaScriptCore/offlineasm/self_hash.rb \
 	Source/JavaScriptCore/offlineasm/settings.rb \
+	Source/JavaScriptCore/offlineasm/sh4.rb \
 	Source/JavaScriptCore/offlineasm/transform.rb \
 	Source/JavaScriptCore/offlineasm/x86.rb
 

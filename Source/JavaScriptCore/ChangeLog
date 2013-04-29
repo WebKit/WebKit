@@ -1,3 +1,10 @@
+2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing headers files to compilation
+        and offlineasm/sh4.rb script.
+
 2013-04-28  Dean Jackson  <dino@apple.com>
 
         [Mac] Disable canvas backing store scaling (HIGH_DPI_CANVAS)

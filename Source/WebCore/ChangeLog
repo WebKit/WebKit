@@ -1,3 +1,10 @@
+2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add missing scripts to EXTRA_DIST.
+        * GNUmakefile.list.am: Add missing files to compilation.
+
 2013-04-29  Noam Rosenthal  <noam@webkit.org>
 
         [Qt] fast/canvas/webgl/webgl-composite-modes.html broken after r148433.

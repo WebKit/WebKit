@@ -628,10 +628,12 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
+	Source/WebCore/bindings/scripts/Hasher.pm \
 	Source/WebCore/bindings/scripts/IDLAttributes.txt \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
 	Source/WebCore/bindings/scripts/InFilesCompiler.pm \
 	Source/WebCore/bindings/scripts/InFilesParser.pm \
+	Source/WebCore/bindings/scripts/StaticString.pm \
 	Source/WebCore/bindings/scripts/generate-bindings.pl \
 	Source/WebCore/bindings/scripts/gobject-generate-headers.pl \
 	Source/WebCore/bindings/scripts/preprocessor.pm \

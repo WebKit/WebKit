@@ -1,3 +1,9 @@
+2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file to compilation.
+
 2013-04-27  Darin Adler  <darin@apple.com>
 
         Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
