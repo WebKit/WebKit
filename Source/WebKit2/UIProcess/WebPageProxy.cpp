@@ -2654,7 +2654,7 @@ void WebPageProxy::connectionWillOpen(CoreIPC::Connection* connection)
 
 void WebPageProxy::connectionWillClose(CoreIPC::Connection* connection)
 {
-    ASSERT(connection == m_process->connection());
+    ASSERT_UNUSED(connection, connection == m_process->connection());
 
     m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }

@@ -361,7 +361,7 @@ PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)
     return 0;
 }
 
-PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* page)
+PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
 {
     notImplemented();
     return 0;

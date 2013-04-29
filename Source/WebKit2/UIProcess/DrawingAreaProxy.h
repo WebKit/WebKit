@@ -68,7 +68,7 @@ public:
     static const double didUpdateBackingStoreStateTimeout;
 
     virtual void pageCustomRepresentationChanged() { }
-    virtual void waitForPossibleGeometryUpdate(double timeout = didUpdateBackingStoreStateTimeout) { }
+    virtual void waitForPossibleGeometryUpdate(double = didUpdateBackingStoreStateTimeout) { }
 
     virtual void colorSpaceDidChange() { }
     virtual void minimumLayoutWidthDidChange() { }
