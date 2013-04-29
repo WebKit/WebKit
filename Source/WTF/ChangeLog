@@ -1,5 +1,18 @@
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Add workaround for UNUSED_PARAM()
+        https://bugs.webkit.org/show_bug.cgi?id=115350
+
+        Reviewed by Andreas Kling.
+
+        r147882 added an workaround for the MSVC compiler on Windows CE.
+        Extend this workaround to whole MSVC compiler, since the same
+        problem occurs with the Visual Studio 10 compiler too.
+
+        * wtf/UnusedParam.h:
+
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Add WTF_USE_IMLANG_FONT_LINK2
         https://bugs.webkit.org/show_bug.cgi?id=115198
 
