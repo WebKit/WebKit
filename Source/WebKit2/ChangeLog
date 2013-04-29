@@ -1,3 +1,9 @@
+2013-04-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix. Point the Network process towards its own version of SecItemShim.dyld.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist:
+
 2013-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         Threads get stuck in NetworkProcess when canceling loads
