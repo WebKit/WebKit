@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PluginDatabase.h"
+#include "PolicyChecker.h"
 #include "RenderPart.h"
 #include "SystemInfo.h"
 #include "WebKitVersion.h"

@@ -26,6 +26,7 @@
 #define WebView_h
 
 #include "IntRect.h"
+#include <windows.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
