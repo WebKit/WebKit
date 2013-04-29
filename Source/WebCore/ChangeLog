@@ -1,3 +1,21 @@
+2013-04-29  Yi Shen  <max.hong.shen@gmail.com>
+
+        HTML Editing: Insertion point jumps when using link detection
+        https://bugs.webkit.org/show_bug.cgi?id=82198
+
+        Reviewed by Ryosuke Niwa.
+
+        Add links should be done only when typing a word separator (e.g. space or dot) which 
+        breaks the text into two parts - the link and the rest of the text. Reflected in 
+        code, we should only add link when the caret position is at the right end location of 
+        TextChecking result. Otherwise, the text on the right of a word separator could be
+        highlighted as a link and the insertion point jumps unexpectedly.
+
+        Tests: update editing/inserting/typing-space-to-trigger-smart-link.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+
 2013-04-29  Beth Dakin  <bdakin@apple.com>
 
         Need a LayoutMilestone to fire when we have done our first paint after suppressing 

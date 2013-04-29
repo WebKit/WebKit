@@ -1,3 +1,16 @@
+2013-04-29  Yi Shen  <max.hong.shen@gmail.com>
+
+        HTML Editing: Insertion point jumps when using link detection
+        https://bugs.webkit.org/show_bug.cgi?id=82198
+
+        Reviewed by Ryosuke Niwa.
+        
+        Update typing-space-to-trigger-smart-link.html to verify link detection behavior
+        when typing a link before existing text.
+
+        * editing/inserting/typing-space-to-trigger-smart-link-expected.txt:
+        * editing/inserting/typing-space-to-trigger-smart-link.html:
+
 2013-04-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Tests mistakenly added to general TestExpectations file moved to mac TestExpectations file.
