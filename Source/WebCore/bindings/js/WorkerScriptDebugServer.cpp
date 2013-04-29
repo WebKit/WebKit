@@ -37,7 +37,7 @@
 #include "WorkerDebuggerAgent.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
-
+#include <runtime/VM.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

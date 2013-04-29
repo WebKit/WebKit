@@ -2,6 +2,12 @@
 
         Unreviewed build fix.
 
+        * bindings/js/WorkerScriptDebugServer.cpp: Added missing header.
+
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix.
+
         * platform/graphics/wince/FontWinCE.cpp:
         (WebCore::generateComponents):
 
