@@ -1,3 +1,15 @@
+2013-04-29  Stephen Chenney  <schenney@chromium.org>
+
+        SVGElement destructor can use invalid iterator
+        https://bugs.webkit.org/show_bug.cgi?id=115361
+
+        Reviewed by Philip Rogers.
+
+        Test asserts in Debug and should also crash in memory checking builds.
+
+        * svg/custom/svg-element-destructor-iteration-crash-expected.txt: Added.
+        * svg/custom/svg-element-destructor-iteration-crash.html: Added.
+
 2013-04-29  Dirk Schulze  <krit@webkit.org>
 
         Animate clip rect() between different Length types
