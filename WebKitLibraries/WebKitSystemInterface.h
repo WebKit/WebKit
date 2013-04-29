@@ -86,6 +86,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
     
 NSArray *WKSpeechSynthesisGetVoiceIdentifiers(void);
+NSString *WKSpeechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale*);
     
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
 BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);

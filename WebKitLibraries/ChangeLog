@@ -1,3 +1,14 @@
+2013-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        WEB SPEECH: need to identify the default voice per language
+        https://bugs.webkit.org/show_bug.cgi?id=115366
+
+        Reviewed by Simon Fraser.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-04-29  Roger Fong  <roger_fong@apple.com>
 
         Need a tools32 folder for VS2010 builds. 
