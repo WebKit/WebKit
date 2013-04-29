@@ -148,6 +148,7 @@ public:
     bool hasPendingVisibleChanges();
 
     static void setShouldSupportContentsTiling(bool);
+    CoordinatedGraphicsLayer* findFirstDescendantWithContentsRecursively();
 
 private:
 #if USE(GRAPHICS_SURFACE)

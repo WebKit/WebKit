@@ -836,6 +836,20 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
 {
 }
 
+CoordinatedGraphicsLayer* CoordinatedGraphicsLayer::findFirstDescendantWithContentsRecursively()
+{
+    if (shouldHaveBackingStore())
+        return this;
+
+    for (size_t i = 0; i < children().size(); ++i) {
+        CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(children()[i])->findFirstDescendantWithContentsRecursively();
+        if (layer)
+            return layer;
+    }
+
+    return 0;
+}
+
 void CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     if (!m_mainBackingStore)

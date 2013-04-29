@@ -1,3 +1,30 @@
+2013-04-29  Noam Rosenthal  <noam@webkit.org>
+
+        Get rid of "non-composited contents" in CoordinatedLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=110355
+
+        Reviewed by Jocelyn Turcotte.
+
+        Instead of using a special non-composited contents layer, we let RenderLayerCompositor create
+        a proper GraphicsLayer for that content.
+        CoordinatedLayerTreeHost now needs to find the main contents layer for the purpose of setting
+        the trajectory vector and applying the cover rect.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+            Don't create the non-composited layer, instead keep a raw pointer to the root
+            compositing layer created by the WebCore compositor.
+
+        (WebKit::CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay):
+        (WebKit::CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::CoordinatedLayerTreeHost::scrollNonCompositedContents):
+        (WebKit::CoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::CoordinatedLayerTreeHost::paintContents):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+            Remove non-composited layer specialization.
+
 2013-04-29  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Build fix. Enabling c++11 for Qt WK2 after r149259.

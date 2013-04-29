@@ -65,9 +65,9 @@ public:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void invalidate();
 
-    virtual void setNonCompositedContentsNeedDisplay() OVERRIDE;
-    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) OVERRIDE;
-    virtual void scrollNonCompositedContents(const WebCore::IntRect&) OVERRIDE;
+    virtual void setNonCompositedContentsNeedDisplay() OVERRIDE { }
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) OVERRIDE { }
+    virtual void scrollNonCompositedContents(const WebCore::IntRect&) OVERRIDE { }
     virtual void forceRepaint();
     virtual bool forceRepaintAsync(uint64_t callbackID);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
@@ -88,6 +88,7 @@ public:
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
+    WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() OVERRIDE;
@@ -143,7 +144,6 @@ private:
     void performScheduledLayerFlush();
     void didPerformScheduledLayerFlush();
     void syncDisplayState();
-
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
     void scheduleReleaseInactiveAtlases();
@@ -164,9 +164,7 @@ private:
 #endif
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-
-    // The layer which contains all non-composited content.
-    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+    WebCore::GraphicsLayer* m_rootCompositingLayer;
 
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;

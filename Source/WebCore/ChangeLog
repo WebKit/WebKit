@@ -1,3 +1,39 @@
+2013-04-29  Noam Rosenthal  <noam@webkit.org>
+
+        Get rid of "non-composited contents" in CoordinatedLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=110355
+
+        Reviewed by Jocelyn Turcotte.
+
+        When in force compositing mode, always assume that the main layer needs
+        a backing store. Make setVisibleContentRectTrajectoryVector and accumulatedCoverRect
+        recursive so that they don't rely on a specialized layer.
+
+        No new testable behavior, changes to coverRect and trajectory vector only
+        affect tiling latency in rare cases that are not trivial to test.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer:setVisibleContentRectTrajectoryVector):
+            Make the trajectory vector recursive, though limited only to layers with
+            translate/identity. This allows us to keep the trajectory vector while removing
+            the non-composited contents specialization.
+
+        (WebCore::CoordinatedGraphicsLayer::accumulatedCoverRect):
+            Added accumulatedCoverRect, so that the coverRect calculations for the UI process
+            are not bound to the non-composited contents layer.
+
+        (WebCore::CoordinatedGraphicsLayer::findDescendantWithContentsRecursively):
+            Instead of saving a reference to the non-composited contents layer, we assume that
+            the first layer we found recursively which has contents is the one to be used for
+            coverRect/trajectory calculations.
+
+        (WebCore):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintsIntoWindow):
+            Always create a layer for the non-composited contents when in forceCompositing mode.
+
 2013-04-29  Dirk Schulze  <krit@webkit.org>
 
         Animate clip rect() between different Length types
