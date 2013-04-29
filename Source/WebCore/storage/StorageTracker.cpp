@@ -567,12 +567,6 @@ void StorageTracker::cancelDeletingOrigin(const String& originIdentifier)
     }
 }
 
-void StorageTracker::setClient(StorageTrackerClient* client)
-{
-    MutexLocker locker(m_clientMutex);
-    m_client = client;
-}
-
 void StorageTracker::syncLocalStorage()
 {
     PageGroup::syncLocalStorage();

@@ -1,3 +1,15 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of StorageTracker::setClient
+        https://bugs.webkit.org/show_bug.cgi?id=115376
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * storage/StorageTracker.cpp:
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
 2013-04-22  Jeffrey Pfau  <jpfau@apple.com>
 
         Change approach to third-party blocking for LocalStorage

@@ -61,8 +61,6 @@ public:
     
     void cancelDeletingOrigin(const String& originIdentifier);
     
-    void setClient(StorageTrackerClient*);
-    
     bool isActive();
 
     // Sync to disk on background thread.
