@@ -78,6 +78,7 @@
        (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
        (home-literal "/Library/Preferences/com.apple.avfoundation.plist")
        (home-literal "/Library/Preferences/com.apple.coremedia.plist")
+       (home-literal "/Library/Preferences/com.apple.speech.voice.prefs.plist")
        (home-regex #"/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
 
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
@@ -190,6 +191,7 @@
        (global-name "com.apple.windowserver.active")
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
        (global-name "com.apple.PowerManagement.control")
+       (global-name "com.apple.speech.speechsynthesisd")
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
        (global-name "com.apple.coreservices.launchservicesd")
