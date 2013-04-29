@@ -1,3 +1,18 @@
+2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Export the COLLECT_NO_DEMANGLE variable on the builders
+        https://bugs.webkit.org/show_bug.cgi?id=115323
+
+        Reviewed by Philippe Normand.
+
+        Export the COLLECT_NO_DEMANGLE environment variable on the GTK BuildBot builders.
+        Its presence enforces linkers to output mangled symbols when reporting linking failures
+        due to unresolved references. People trying to fix the build can then simply copy
+        the printed mangled symbol into the symbols.filter file instead of doing a manual build
+        or connecting to the builders to discover the mangled version of the missing symbol.
+
+        * BuildSlaveSupport/gtk/daemontools-buildbot.conf:
+
 2013-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove Chromium code from Tools/BuildSlaveSupport
