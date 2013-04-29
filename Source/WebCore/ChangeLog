@@ -1,3 +1,17 @@
+2013-04-29  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
+
+        Remove unused method RenderMeter::valueRatio()
+        https://bugs.webkit.org/show_bug.cgi?id=115266
+
+        Reviewed by Darin Adler.
+
+        The removed method is not used anywhere.
+        No new tests are required.
+
+        * rendering/RenderMeter.cpp:
+        * rendering/RenderMeter.h:
+        (RenderMeter):
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Remove two more StorageSyncManager wrapper functions

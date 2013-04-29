@@ -38,8 +38,6 @@ public:
     HTMLMeterElement* meterElement() const;
     virtual void updateFromElement();
 
-    double valueRatio() const;
-
 private:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
