@@ -3,7 +3,8 @@
         REGRESSION (r149287?): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
         https://bugs.webkit.org/show_bug.cgi?id=115386
 
-        * platform/mac-wk2/TestExpectations: Marked the test as crashing in debug.
+        * platform/mac/TestExpectations: Skipping the test.
+        * platform/mac-wk2/TestExpectations: Removed it from here, as the assertion failure is not limited to wk2.
 
 2013-04-22  Jeffrey Pfau  <jpfau@apple.com>
 

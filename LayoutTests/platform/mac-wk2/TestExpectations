@@ -271,9 +271,6 @@ webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Fai
 webkit.org/b/114573 fast/repaint/selection-gap-fixed-child.html [ Failure ]
 webkit.org/b/114573 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
 
-# REGRESSION (r149287?): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
-webkit.org/b/115386 [ Debug ] fast/frames/flattening/iframe-flattening-crash.html [ Crash ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
