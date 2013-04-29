@@ -1,3 +1,20 @@
+2013-04-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r148888 and r149097
+        https://bugs.webkit.org/show_bug.cgi?id=115168
+
+        Reviewed by Anders Carlsson.
+
+        When using compiler intrinsics on Windows CE the compiler complains
+        about wrong linkage specification of replaced CRT functions defined
+        in math.h. This is because the compiler has intrinsics for this
+        functions defined, and requires them to have extern "C" linkage.
+
+        * wtf/MathExtras.h:
+        (wtf_atan2): Added extern "C" to function signature.
+        (wtf_fmod): Ditto.
+        (wtf_pow): Ditto.
+
 2013-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
