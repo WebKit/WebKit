@@ -7,7 +7,6 @@
     <Import Project="WebCoreCommon.props" />
     <Import Project="WebCoreCG.props" />
     <Import Project="WebCoreCFNetwork.props" />
-    <Import Project="WebCorePthreads.props" />
     <Import Project="WebCoreMediaQT.props" />
     <Import Project="WebCoreQuartzCore.props" />
   </ImportGroup>

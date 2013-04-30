@@ -1,3 +1,29 @@
+2013-04-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Remove link and include directives for pthread.
+        https://bugs.webkit.org/show_bug.cgi?id=115381
+
+        Reviewed by Benjamin Poulain.
+
+        Update various VS2005 and VS2010 property sheets to remove
+        reference to the pthreads Include path and instructions to
+        link to the pthreads library.
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/WebCoreDebug.vsprops:
+        * WebCore.vcproj/WebCoreDebugAll.vsprops:
+        * WebCore.vcproj/WebCoreProduction.vsprops:
+        * WebCore.vcproj/WebCorePthreads.vsprops: Removed.
+        * WebCore.vcproj/WebCoreRelease.vsprops:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.vcxproj/WebCoreDebug.props:
+        * WebCore.vcxproj/WebCoreDebugWinCairo.props:
+        * WebCore.vcxproj/WebCoreProduction.props:
+        * WebCore.vcxproj/WebCorePthreads.props: Removed.
+        * WebCore.vcxproj/WebCoreRelease.props:
+        * WebCore.vcxproj/WebCoreReleaseWinCairo.props:
+
 2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not allocate Static Strings for Notification::permissionString
