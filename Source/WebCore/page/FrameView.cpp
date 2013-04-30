@@ -34,6 +34,7 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DOMWindow.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
@@ -2787,7 +2788,12 @@ void FrameView::dispatchResizeEvent()
 {
     ASSERT(m_frame);
 
-    m_frame->eventHandler()->dispatchResizeEvent();
+    // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
+    RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
+    if (isInLayout())
+        m_frame->document()->enqueueWindowEvent(resizeEvent.release());
+    else
+        m_frame->document()->dispatchWindowEvent(resizeEvent.release(), m_frame->document()->domWindow());
 
 #if ENABLE(INSPECTOR)
     if (InspectorInstrumentation::hasFrontends()) {

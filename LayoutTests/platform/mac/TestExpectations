@@ -1547,6 +1547,3 @@ webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-lr.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html
 webkit.org/b/115292 fast/writing-mode/vertical-baseline-alignment.html
 webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
-
-# REGRESSION (r149287?): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
-webkit.org/b/115386 [ Debug ] fast/frames/flattening/iframe-flattening-crash.html [ Skip ]

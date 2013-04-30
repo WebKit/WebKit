@@ -1,3 +1,21 @@
+2013-04-30  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r149287): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
+        <http://webkit.org/b/115386>
+        <rdar://problem/13769995>
+
+        Reviewed by Darin Adler.
+
+        Put the resize event on the Document's event queue if it happens while layout is in progress.
+        This avoids re-entering layout while laying out flattened subframes.
+
+        Also move the little logic for the resize event from EventHandler to FrameView (the only client.)
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchResizeEvent):
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

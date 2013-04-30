@@ -3784,12 +3784,6 @@ void EventHandler::capsLockStateMayHaveChanged()
     }
 }
 
-void EventHandler::dispatchResizeEvent()
-{
-    RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
-    m_frame->document()->dispatchWindowEvent(resizeEvent.release(), m_frame->document()->domWindow());
-}
-
 void EventHandler::sendScrollEvent()
 {
     setFrameWasScrolledByUser();
