@@ -353,8 +353,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         // alpha channel. Creation of a bitmap context with an alpha channel
         // doesn't seem to work unless it's premultiplied.
         bitmapContext = adoptCF(CGBitmapContextCreate(0, m_imageWidth, m_imageHeight, 8, m_imageWidth * 4,
-                                                    deviceRGBColorSpaceRef(),
-                                                    kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+            deviceRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
         if (!bitmapContext)
             return false;
 

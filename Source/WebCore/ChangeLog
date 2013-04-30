@@ -1,3 +1,20 @@
+2013-04-30  Darin Adler  <darin@apple.com>
+
+        Formatting tweaks
+        https://bugs.webkit.org/show_bug.cgi?id=115427
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): Fixed indenting to match
+        normal WebKit style.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection): Removed an excess "+" that is harmless
+        but strange.
+
+        * platform/mac/SharedBufferMac.mm: Tweaked blank lines for better paragraphing.
+
 2013-04-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify ContainerNode::removeChildren

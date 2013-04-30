@@ -1052,7 +1052,7 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
     if (fabsf(deltaY) >= fabsf(deltaX)) {
         if (deltaY < 0) {
             // We are trying to scroll up.  Make sure we are not pinned to the top
-            limitDelta.setHeight(m_scrollableArea->visibleContentRect().y() + + m_scrollableArea->scrollOrigin().y());
+            limitDelta.setHeight(m_scrollableArea->visibleContentRect().y() + m_scrollableArea->scrollOrigin().y());
         } else {
             // We are trying to scroll down.  Make sure we are not pinned to the bottom
             limitDelta.setHeight(m_scrollableArea->totalContentsSize().height() - (m_scrollableArea->visibleContentRect().maxY() + m_scrollableArea->scrollOrigin().y()));
