@@ -1,3 +1,11 @@
+2013-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix an issue with JSPerformance.cpp in the WebCore.xcodeproj where
+        it was being recognized as a diretory rather than a file, introduced
+        in r149359.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-04-30  Beth Dakin  <bdakin@apple.com>
 
         Page::pageCount() is inaccurate when we allow the first paint in App Mode
