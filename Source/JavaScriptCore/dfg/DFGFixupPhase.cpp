@@ -214,14 +214,7 @@ private:
         case ArithDiv: {
             if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInteger()) {
-#if CPU(X86) || CPU(X86_64)
-                const bool cpuSupportsIntegerDiv = true;
-#elif CPU(ARM_THUMB2)
-                const bool cpuSupportsIntegerDiv = MacroAssembler::supportsIntegerDiv();
-#else
-                const bool cpuSupportsIntegerDiv = false;
-#endif
-                if (cpuSupportsIntegerDiv) {
+                if (isX86() || isARMv7s()) {
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
                     break;

@@ -97,7 +97,6 @@ typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
 typedef double DFG_OPERATION (*D_DFGOperation_ZZ)(int32_t, int32_t);
 typedef double DFG_OPERATION (*D_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
-typedef int32_t DFG_OPERATION (*Z_DFGOperation_ZZ)(int32_t, int32_t);
 typedef size_t DFG_OPERATION (*S_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
@@ -209,7 +208,6 @@ EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(ExecState*, int32_
 EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState*, int32_t, int32_t) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*) WTF_INTERNAL;
-int32_t DFG_OPERATION operationModOnInts(int32_t, int32_t) WTF_INTERNAL;
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsObject(ExecState*, EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsFunction(EncodedJSValue) WTF_INTERNAL;

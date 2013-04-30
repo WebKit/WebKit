@@ -793,19 +793,8 @@ public:
     }
 #endif
 
-    // Integer operations.
-    static bool supportsIntegerDiv()
-    {
-#if CPU(APPLE_ARMV7S)
-        return true;
-#elif OS(QNX)
-        return s_isIntegerDivSupported;
-#else
-        return false;
-#endif
-    }
+    // Floating-point operations:
 
-    // Floating-point operations.
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
@@ -1918,10 +1907,6 @@ private:
     }
 
     bool m_makeJumpPatchable;
-
-#if OS(QNX)
-    static const bool s_isIntegerDivSupported;
-#endif
 };
 
 } // namespace JSC

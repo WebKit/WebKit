@@ -2877,12 +2877,12 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
 #endif
 }
 
-#if CPU(X86) || CPU(X86_64)
 void SpeculativeJIT::compileSoftModulo(Node* node)
 {
     // In the fast path, the dividend value could be the final result
     // (in case of |dividend| < |divisor|), so we speculate it as strict int32.
     SpeculateStrictInt32Operand op1(this, node->child1());
+#if CPU(X86) || CPU(X86_64)
     if (isInt32Constant(node->child2().node())) {
         int32_t divisor = valueOfInt32Constant(node->child2().node());
         if (divisor) {
@@ -2922,9 +2922,36 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
             return;
         }
     }
+#elif CPU(APPLE_ARMV7S) || CPU(ARM_THUMB2)
+    if (isInt32Constant(node->child2().node())) {
+        int32_t divisor = valueOfInt32Constant(node->child2().node());
+        if (divisor > 0 && hasOneBitSet(divisor)) { // If power of 2 then just mask
+            GPRReg dividendGPR = op1.gpr();
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+
+            m_jit.assembler().cmp(dividendGPR, ARMThumbImmediate::makeEncodedImm(0));
+            m_jit.assembler().it(ARMv7Assembler::ConditionLT, false);
+            m_jit.assembler().neg(resultGPR, dividendGPR);
+            m_jit.assembler().mov(resultGPR, dividendGPR);
+            m_jit.and32(TrustedImm32(divisor - 1), resultGPR);
+            m_jit.assembler().it(ARMv7Assembler::ConditionLT);
+            m_jit.assembler().neg(resultGPR, resultGPR);
+
+            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                // Check that we're not about to create negative zero.
+                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
+                numeratorPositive.link(&m_jit);
+            }
+            integerResult(resultGPR, node);
+            return;
+        }
+    }
+#endif
 
     SpeculateIntegerOperand op2(this, node->child2());
-
+#if CPU(X86) || CPU(X86_64)
     GPRTemporary eax(this, X86Registers::eax);
     GPRTemporary edx(this, X86Registers::edx);
     GPRReg op1GPR = op1.gpr();
@@ -2989,87 +3016,43 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     
     if (op1SaveGPR != op1GPR)
         unlock(op1SaveGPR);
-
+            
     integerResult(edx.gpr(), node);
-}
-#elif CPU(ARM_THUMB2)
-void SpeculativeJIT::compileSoftModulo(Node* node)
-{
-    // In the fast path, the dividend value could be the final result
-    // (in case of |dividend| < |divisor|), so we speculate it as strict int32.
-    SpeculateStrictInt32Operand op1(this, node->child1());
-    if (isInt32Constant(node->child2().node())) {
-        int32_t divisor = valueOfInt32Constant(node->child2().node());
-        if (divisor > 0 && hasOneBitSet(divisor)) { // If power of 2 then just mask
-            GPRReg dividendGPR = op1.gpr();
-            GPRTemporary result(this);
-            GPRReg resultGPR = result.gpr();
 
-            m_jit.assembler().cmp(dividendGPR, ARMThumbImmediate::makeEncodedImm(0));
-            m_jit.assembler().it(ARMv7Assembler::ConditionLT, false);
-            m_jit.assembler().neg(resultGPR, dividendGPR);
-            m_jit.assembler().mov(resultGPR, dividendGPR);
-            m_jit.and32(TrustedImm32(divisor - 1), resultGPR);
-            m_jit.assembler().it(ARMv7Assembler::ConditionLT);
-            m_jit.assembler().neg(resultGPR, resultGPR);
-
-            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-                // Check that we're not about to create negative zero.
-                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
-                numeratorPositive.link(&m_jit);
-            }
-            integerResult(resultGPR, node);
-            return;
-        }
-    }
-
-    SpeculateIntegerOperand op2(this, node->child2());
-
+#elif CPU(APPLE_ARMV7S)
+    GPRTemporary temp(this);
+    GPRTemporary quotientThenRemainder(this);
+    GPRTemporary multiplyAnswer(this);
     GPRReg dividendGPR = op1.gpr();
     GPRReg divisorGPR = op2.gpr();
+    GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
+    GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
 
-    GPRResult result(this);
-    GPRReg resultGPR = result.gpr();
-
-    if (MacroAssembler::supportsIntegerDiv()) {
-        GPRTemporary multiplyAnswer(this);
-        GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
-        m_jit.assembler().sdiv(resultGPR, dividendGPR, divisorGPR);
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, resultGPR, divisorGPR, multiplyAnswerGPR));
-        m_jit.assembler().sub(resultGPR, dividendGPR, multiplyAnswerGPR);
-    } else {
-        flushRegisters();
-        callOperation(operationModOnInts, resultGPR, dividendGPR, divisorGPR);
-    }
+    m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
+    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
+    m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
 
     // If the user cares about negative zero, then speculate that we're not about
     // to produce negative zero.
     if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
         // Check that we're not about to create negative zero.
         JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
+        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
         numeratorPositive.link(&m_jit);
     }
 
-    integerResult(resultGPR, node);
-}
-#else // CPU type without integer division
-void SpeculativeJIT::compileSoftModulo(Node* node)
-{
-    SpeculateStrictInt32Operand op1(this, node->child1());
-    SpeculateIntegerOperand op2(this, node->child2());
-
+    integerResult(quotientThenRemainderGPR, node);
+#else // not architecture that can do integer division
     // Do this the *safest* way possible: call out to a C function that will do the modulo,
     // and then attempt to convert back.
-    GPRReg dividendGPR = op1.gpr();
-    GPRReg divisorGPR = op2.gpr();
-
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    
     FPRResult result(this);
-
+    
     flushRegisters();
-    callOperation(operationFModOnInts, result.fpr(), dividendGPR, divisorGPR);
-
+    callOperation(operationFModOnInts, result.fpr(), op1GPR, op2GPR);
+    
     FPRTemporary scratch(this);
     GPRTemporary intResult(this);
     JITCompiler::JumpList failureCases;
@@ -3077,14 +3060,14 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
     if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
         // Check that we're not about to create negative zero.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1GPR, TrustedImm32(0));
         speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, intResult.gpr()));
         numeratorPositive.link(&m_jit);
     }
-
+    
     integerResult(intResult.gpr(), node);
+#endif // CPU(X86) || CPU(X86_64)
 }
-#endif
 
 void SpeculativeJIT::compileAdd(Node* node)
 {
@@ -3493,8 +3476,8 @@ void SpeculativeJIT::compileIntegerArithDivForX86(Node* node)
             
     integerResult(eax.gpr(), node);
 }
-#elif ENABLE(ARM_INTEGER_DIV)
-void SpeculativeJIT::compileIntegerArithDivForARM(Node* node)
+#elif CPU(APPLE_ARMV7S)
+void SpeculativeJIT::compileIntegerArithDivForARMv7s(Node* node)
 {
     SpeculateIntegerOperand op1(this, node->child1());
     SpeculateIntegerOperand op2(this, node->child2());

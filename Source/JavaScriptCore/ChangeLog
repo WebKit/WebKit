@@ -1,3 +1,38 @@
+2013-04-30  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r149349 and r149354.
+        http://trac.webkit.org/changeset/149349
+        http://trac.webkit.org/changeset/149354
+        https://bugs.webkit.org/show_bug.cgi?id=115444
+
+         The Thumb version of compileSoftModulo make invalid use of
+        registers (Requested by benjaminp on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isARMv7s):
+        (JSC):
+        * assembler/MacroAssemblerARMv7.cpp: Removed.
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForARMv7s):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/

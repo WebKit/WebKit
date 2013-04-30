@@ -517,7 +517,6 @@ if (WTF_CPU_ARM)
         assembler/ARMAssembler.cpp
         assembler/ARMv7Assembler.cpp
         assembler/MacroAssemblerARM.cpp
-        assembler/MacroAssemblerARMv7.cpp
     )
 elseif (WTF_CPU_MIPS)
 elseif (WTF_CPU_X86)

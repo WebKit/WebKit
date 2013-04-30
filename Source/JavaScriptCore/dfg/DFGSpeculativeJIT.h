@@ -1110,13 +1110,6 @@ public:
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call callOperation(Z_DFGOperation_ZZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
-    {
-        m_jit.setupArguments(arg1, arg2);
-        JITCompiler::Call call = m_jit.appendCall(operation);
-        m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
-        return call;
-    }
     JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg result, GPRReg arg1, GPRReg arg2, Identifier* identifier)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
@@ -1318,13 +1311,6 @@ public:
     {
         prepareForExternalCall();
         m_jit.setupArguments(arg1);
-        JITCompiler::Call call = m_jit.appendCall(operation);
-        m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
-        return call;
-    }
-    JITCompiler::Call callOperation(Z_DFGOperation_ZZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
-    {
-        m_jit.setupArguments(arg1, arg2);
         JITCompiler::Call call = m_jit.appendCall(operation);
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
@@ -1985,8 +1971,8 @@ public:
     void compileArithIMul(Node*);
 #if CPU(X86) || CPU(X86_64)
     void compileIntegerArithDivForX86(Node*);
-#elif ENABLE(ARM_INTEGER_DIV)
-    void compileIntegerArithDivForARM(Node*);
+#elif CPU(APPLE_ARMV7S)
+    void compileIntegerArithDivForARMv7s(Node*);
 #endif
     void compileArithMod(Node*);
     void compileSoftModulo(Node*);

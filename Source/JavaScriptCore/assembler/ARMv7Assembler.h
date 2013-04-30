@@ -661,8 +661,10 @@ private:
         OP_ROR_reg_T2   = 0xFA60,
         OP_CLZ          = 0xFAB0,
         OP_SMULL_T1     = 0xFB80,
+#if CPU(APPLE_ARMV7S)
         OP_SDIV_T1      = 0xFB90,
         OP_UDIV_T1      = 0xFBB0,
+#endif
     } OpcodeID1;
 
     typedef enum {
@@ -1405,6 +1407,7 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_ROR_reg_T2, rn, FourFours(0xf, rd, 0, rm));
     }
 
+#if CPU(APPLE_ARMV7S)
     ALWAYS_INLINE void sdiv(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
@@ -1412,6 +1415,7 @@ public:
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp12Reg4FourFours(OP_SDIV_T1, rn, FourFours(0xf, rd, 0xf, rm));
     }
+#endif
 
     ALWAYS_INLINE void smull(RegisterID rdLo, RegisterID rdHi, RegisterID rn, RegisterID rm)
     {
@@ -1749,6 +1753,7 @@ public:
         m_formatter.twoWordOp12Reg40Imm3Reg4Imm20Imm5(OP_UBFX_T1, rd, rn, (lsb & 0x1c) << 10, (lsb & 0x3) << 6, (width - 1) & 0x1f);
     }
 
+#if CPU(APPLE_ARMV7S)
     ALWAYS_INLINE void udiv(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
@@ -1756,6 +1761,7 @@ public:
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp12Reg4FourFours(OP_UDIV_T1, rn, FourFours(0xf, rd, 0xf, rm));
     }
+#endif
 
     void vadd(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {

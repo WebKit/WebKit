@@ -1,3 +1,15 @@
+2013-04-30  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r149349 and r149354.
+        http://trac.webkit.org/changeset/149349
+        http://trac.webkit.org/changeset/149354
+        https://bugs.webkit.org/show_bug.cgi?id=115444
+
+         The Thumb version of compileSoftModulo make invalid use of
+        registers (Requested by benjaminp on #webkit).
+
+        * wtf/Platform.h:
+
 2013-04-30  Darin Adler  <darin@apple.com>
 
         [Mac] Make adoptNS faster on platforms without garbage collection by skipping a CFRetain/NSRelease pair
