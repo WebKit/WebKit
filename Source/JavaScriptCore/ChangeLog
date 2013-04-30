@@ -1,3 +1,24 @@
+2013-04-30  Oliver Hunt  <oliver@apple.com>
+
+        JSC Stack walking logic craches in the face of inlined functions triggering VM re-entry
+        https://bugs.webkit.org/show_bug.cgi?id=115449
+
+        Reviewed by Geoffrey Garen.
+
+        Rename callframeishost to something that makes sense, and fix
+        getCallerInfo to correctly handle inline functions calling into
+        the VM.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::codeOriginForReturn):
+          Make this more robust in the face of incorrect stack walking
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallerFrame):
+          Everyone has to perform a codeblock() check before calling this
+          so we might as well just do it here.
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+
 2013-04-30  Julien Brianceau  <jbrianceau@nds.com>
 
         Bug fixing in sh4 base JIT and LLINT.

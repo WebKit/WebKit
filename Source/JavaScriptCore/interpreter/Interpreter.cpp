@@ -520,41 +520,33 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
     ASSERT_UNUSED(vm, vm);
     bytecodeOffset = 0;
     ASSERT(!callFrame->hasHostCallFrameFlag());
-    CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : callFrame->callerFrame()->removeHostCallFrameFlag();
-    bool callframeIsHost = callerFrame->addHostCallFrameFlag() == callFrame->callerFrame();
-    ASSERT(!callerFrame->hasHostCallFrameFlag());
+    CallFrame* trueCallerFrame = callFrame->trueCallerFrame();
+    bool wasCalledByHost = callFrame->callerFrame()->hasHostCallFrameFlag();
+    ASSERT(!trueCallerFrame->hasHostCallFrameFlag());
 
-    if (callerFrame == CallFrame::noCaller() || !callerFrame || !callerFrame->codeBlock()) {
+    if (trueCallerFrame == CallFrame::noCaller() || !trueCallerFrame || !trueCallerFrame->codeBlock()) {
         caller = 0;
-        return callerFrame;
+        return trueCallerFrame;
     }
     
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    CodeBlock* callerCodeBlock = trueCallerFrame->codeBlock();
     
-#if ENABLE(JIT) || ENABLE(LLINT)
     if (!callFrame->hasReturnPC())
-        callframeIsHost = true;
-#endif
-#if ENABLE(DFG_JIT)
-    if (callFrame->isInlineCallFrame())
-        callframeIsHost = false;
-#endif
+        wasCalledByHost = true;
 
-    if (callframeIsHost) {
-        // Don't need to deal with inline callframes here as by definition we haven't
-        // inlined a call with an intervening native call frame.
-#if ENABLE(JIT) || ENABLE(LLINT)
+    if (wasCalledByHost) {
 #if ENABLE(DFG_JIT)
         if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
-            unsigned codeOriginIndex = callerFrame->codeOriginIndexForDFG();
-            bytecodeOffset = callerCodeBlock->codeOrigin(codeOriginIndex).bytecodeIndex;
+            unsigned codeOriginIndex = callFrame->callerFrame()->removeHostCallFrameFlag()->codeOriginIndexForDFG();
+            CodeOrigin origin = callerCodeBlock->codeOrigin(codeOriginIndex);
+            bytecodeOffset = origin.bytecodeIndex;
+            if (InlineCallFrame* inlineCallFrame = origin.inlineCallFrame)
+                callerCodeBlock = inlineCallFrame->baselineCodeBlock();
         } else
 #endif
-            bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
-#endif
+            bytecodeOffset = trueCallerFrame->bytecodeOffsetForNonDFGCode();
     } else {
-#if ENABLE(JIT) || ENABLE(LLINT)
-    #if ENABLE(DFG_JIT)
+#if ENABLE(DFG_JIT)
         if (callFrame->isInlineCallFrame()) {
             InlineCallFrame* icf = callFrame->inlineCallFrame();
             bytecodeOffset = icf->caller.bytecodeIndex;
@@ -584,17 +576,16 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
                 callerCodeBlock = newCodeBlock;
             }
         } else
-    #endif
+#endif
         {
             RELEASE_ASSERT(callerCodeBlock);
-            bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+            bytecodeOffset = callerCodeBlock->bytecodeOffset(trueCallerFrame, callFrame->returnPC());
         }
-#endif
     }
 
     RELEASE_ASSERT(callerCodeBlock);
     caller = callerCodeBlock;
-    return callerFrame;
+    return trueCallerFrame;
 }
 
 static ALWAYS_INLINE const String getSourceURLFromCallFrame(CallFrame* callFrame)

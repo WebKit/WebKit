@@ -172,6 +172,9 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         
 CallFrame* CallFrame::trueCallerFrame()
 {
+    if (!codeBlock())
+        return callerFrame()->removeHostCallFrameFlag();
+
     // this -> The callee; this is either an inlined callee in which case it already has
     //    a pointer to the true caller. Otherwise it contains current PC in the machine
     //    caller.

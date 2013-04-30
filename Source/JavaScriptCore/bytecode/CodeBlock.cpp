@@ -2747,7 +2747,11 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
         return false;
 
     if (!getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
-        codeOrigin = findClosureCallForReturnPC(returnAddress)->codeOrigin();
+        ClosureCallStubRoutine* stub = findClosureCallForReturnPC(returnAddress);
+        ASSERT(stub);
+        if (!stub)
+            return false;
+        codeOrigin = stub->codeOrigin();
         return true;
     }
     

@@ -427,4 +427,38 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   f at stack-trace.js:202:9
     3   global code at stack-trace.js:208:5
 
+--> Stack Trace:
+    0   willThrow at stack-trace.js:246:20
+    1   dfg1 at stack-trace.js:257:12
+    2   dfg2 at stack-trace.js:261:8
+    3   dfg3 at stack-trace.js:265:8
+    4   dfgTest at stack-trace.js:231:13
+    5   global code at stack-trace.js:304:7
+
+--> Stack Trace:
+    0   willThrowFunc at stack-trace.js:251:61
+    1   dfg4 at stack-trace.js:269:26
+    2   dfg5 at stack-trace.js:273:8
+    3   dfg6 at stack-trace.js:277:8
+    4   dfgTest at stack-trace.js:231:13
+    5   global code at stack-trace.js:305:7
+
+--> Stack Trace:
+    0   inlineableThrow at stack-trace.js:240:32
+    1   willThrowEventually at stack-trace.js:249:23
+    2   dfg7 at stack-trace.js:281:12
+    3   dfg8 at stack-trace.js:285:8
+    4   dfg9 at stack-trace.js:289:8
+    5   dfgTest at stack-trace.js:231:13
+    6   global code at stack-trace.js:306:7
+
+--> Stack Trace:
+    0   inlineableThrow at stack-trace.js:240:32
+    1   willThrowEventuallyFunc at stack-trace.js:252:58
+    2   dfga at stack-trace.js:293:36
+    3   dfgb at stack-trace.js:297:8
+    4   dfgc at stack-trace.js:301:8
+    5   dfgTest at stack-trace.js:231:13
+    6   global code at stack-trace.js:307:7
+
 

@@ -224,4 +224,86 @@ for (var i = 0; i < 100; i++) {
     }
 }
 
+function dfgTest(f) {
+    dfgCount = 0;
+    while (dfgCount++ < 1000) {
+        try {
+            f();
+        } catch (e) {
+            printStack(e.stack)
+            return;
+        }
+    }
+}
+
+function inlineableThrow() {
+    if (dfgCount > 500) throw {};
+}
+
+var dfgThing = {
+    get willThrow() {
+        if (dfgCount > 500)
+            throw {};
+    },
+    get willThrowEventually() {
+        inlineableThrow();
+    },
+    willThrowFunc: function () { if (dfgCount > 500) throw {}; },
+    willThrowEventuallyFunc: function () { inlineableThrow(); }
+}
+dfgThing.__defineGetter__("hostWillThrow", hostThrower);
+
+function dfg1() {
+    dfgThing.willThrow
+}
+
+function dfg2() {
+    dfg1();
+}
+
+function dfg3() {
+    dfg2();
+}
+
+function dfg4() {
+    dfgThing.willThrowFunc();
+}
+
+function dfg5() {
+    dfg4();
+}
+
+function dfg6() {
+    dfg5();
+}
+
+function dfg7() {
+    dfgThing.willThrowEventually
+}
+
+function dfg8() {
+    dfg7();
+}
+
+function dfg9() {
+    dfg8();
+}
+
+function dfga() {
+    dfgThing.willThrowEventuallyFunc();
+}
+
+function dfgb() {
+    dfga();
+}
+
+function dfgc() {
+    dfgb();
+}
+
+dfgTest(dfg3)
+dfgTest(dfg6)
+dfgTest(dfg9)
+dfgTest(dfgc)
+
 successfullyParsed = true;
