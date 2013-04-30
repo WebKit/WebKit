@@ -1,3 +1,21 @@
+2013-04-30  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        Fix the USE(3D_GRAPHICS) build with the standard OpenGL on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=114684
+
+        Reviewed by Simon Hausmann.
+
+        Currently USE(3D_GRAPHICS) is only supported with OpenGLES through ANGLE
+        on Windows. Allow building with the stock opengl32.lib on Windows by adding
+        missing glCompressedTex* entries in OpenGLShims.
+        Those are used in Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        and will be substituted by the preprocessor.
+
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/OpenGLShims.h:
+        (_OpenGLFunctionTable):
+
 2013-04-29  Alberto Garcia  <agarcia@igalia.com>
 
         Remove all remaining Skia code

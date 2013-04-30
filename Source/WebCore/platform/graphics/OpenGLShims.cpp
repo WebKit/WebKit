@@ -144,6 +144,8 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glBufferSubData, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glCheckFramebufferStatus, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glCompileShader, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glCompressedTexImage2D, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glCompressedTexSubImage2D, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glCreateProgram, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glCreateShader, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDeleteBuffers, success);
