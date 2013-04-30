@@ -359,7 +359,7 @@ my @features = (
       define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry() || isGtk()), value => \$microdataSupport },
 
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
-      define => "ENABLE_MOUSE_CURSOR_SCALE", default => 0, value => \$mouseCursorScaleSupport },
+      define => "ENABLE_MOUSE_CURSOR_SCALE", default => isEfl(), value => \$mouseCursorScaleSupport },
 
     { option => "navigator-content-utils", desc => "Toggle Navigator Content Utils support",
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => (isBlackBerry() || isEfl()), value => \$registerProtocolHandlerSupport },

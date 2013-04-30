@@ -59,10 +59,6 @@ media/media-captions.html
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# Need ENABLE(MOUSE_CURSOR_SCALE)
-fast/css/cursor-parsing-image-set.html
-fast/events/mouse-cursor-image-set.html
-
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
@@ -528,6 +524,9 @@ editing/style/style-boundary-005.html [ Missing ]
 # CSS Sticky (-webkit-sticky) supported by EFL, but these tests fail.
 webkit.org/b/95182 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
 webkit.org/b/95182 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
+
+# Test is failing due to a scrolling problem on second iteration.
+webkit.org/b/106240 fast/events/mouse-cursor-image-set.html [ Failure ]
 
 # Testcase assumes a thumb width of 12px, default there uses 29px.
 webkit.org/b/95071 fast/forms/range/slider-in-multi-column.html [ Failure ]

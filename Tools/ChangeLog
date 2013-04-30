@@ -1,5 +1,16 @@
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        [EFL] Enable scaled cursors
+        https://bugs.webkit.org/show_bug.cgi?id=106242
+
+        Reviewed by Gyuyoung Kim.
+
+        Enable ENABLE_MOUSE_CURSOR_SCALE for EFL port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Replace "Optional" extended attribute by proper Web IDL "optional" keyword
         https://bugs.webkit.org/show_bug.cgi?id=115380
 

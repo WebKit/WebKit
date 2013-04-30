@@ -1,3 +1,17 @@
+2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Enable scaled cursors
+        https://bugs.webkit.org/show_bug.cgi?id=106242
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskip fast/css/cursor-parsing-image-set.html for EFL port
+        now that scaled cursors are enabled. Update expectation for
+        fast/events/mouse-cursor-image-set.html to explain the
+        reason why it is failing and set its bug URL.
+
+        * platform/efl/TestExpectations:
+
 2013-04-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
