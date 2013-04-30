@@ -1,0 +1,4 @@
+This tests for a crasher when deleting contents of a table cell. <radr://problem/4845371>
+
+baz
+

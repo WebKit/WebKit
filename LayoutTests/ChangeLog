@@ -1,3 +1,30 @@
+2013-04-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows gardening after r148987.
+
+        * platform/win/editing/deleting/delete-by-word-002-expected.txt: Added.
+        * platform/win/editing/deleting/delete-cell-contents-expected.txt: Added.
+        * platform/win/editing/execCommand: Added.
+        * platform/win/editing/execCommand/button-expected.txt: Added.
+        * platform/win/editing/execCommand/createLink-expected.txt: Added.
+        * platform/win/editing/execCommand/indent-pre-expected.txt: Added.
+        * platform/win/editing/execCommand/unlink-expected.txt: Added.
+        * platform/win/editing/inserting/insert-before-link-1-expected.txt: Added.
+        * platform/win/editing/pasteboard/display-block-on-spans-expected.txt: Added.
+        * platform/win/editing/pasteboard/merge-end-list-2-expected.txt: Added.
+        * platform/win/editing/pasteboard/merge-end-table-2-expected.txt: Added.
+        * platform/win/editing/pasteboard/page-zoom-expected.txt: Added.
+        * platform/win/editing/style: Added.
+        * platform/win/editing/style/apply-through-end-of-document-expected.txt: Added.
+        * platform/win/editing/style/remove-underline-across-paragraph-expected.txt: Added.
+        * platform/win/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Added.
+        * platform/win/editing/style/remove-underline-expected.txt: Added.
+        * platform/win/editing/style/remove-underline-from-stylesheet-expected.txt: Added.
+        * platform/win/editing/style/remove-underline-in-bold-expected.txt: Added.
+        * platform/win/editing/style/unbold-in-bold-expected.txt: Added.
+        * platform/win/editing/undo: Added.
+        * platform/win/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt: Added.
+
 2013-04-29  James Craig  <james@cookiecrook.com>
 
         Settings.in selectionIncludesAltImageText should default to true, due to update in HTML spec.
