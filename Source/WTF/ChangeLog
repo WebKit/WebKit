@@ -1,3 +1,19 @@
+2013-04-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Fix crash in fast/js/create-lots-of-workers.html
+        https://bugs.webkit.org/show_bug.cgi?id=115130
+
+        Reviewed by Tim Horton.
+
+        Windows is suffering from mismatched allocation/deallocation
+        between the system allocator and fastMalloc/fastFree.  By turning
+        off the global switch to fastMalloc, only classes specified to
+        honor fastMalloc/fastFree are affected, and other memory allocation
+        and freeing is done with consistent library calls.
+
+        * wtf/Platform.h: Deactivate ENABLE_GLOBAL_FASTMALLOC_NEW for
+        the Windows build.
+
 2013-04-30  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r149349 and r149354.
