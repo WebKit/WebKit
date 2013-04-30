@@ -1,3 +1,12 @@
+2013-04-30  Alberto Garcia  <agarcia@igalia.com>
+
+        ImageBufferData: add BlackBerry header
+        https://bugs.webkit.org/show_bug.cgi?id=115408
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/ImageBufferData.h:
+
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Replace "Optional" extended attribute by proper Web IDL "optional" keyword

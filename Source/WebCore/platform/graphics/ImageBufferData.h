@@ -31,4 +31,6 @@
 #include "ImageBufferDataQt.h"
 #elif OS(WINCE)
 #include "ImageBufferDataWince.h"
+#elif PLATFORM(BLACKBERRY)
+#include "ImageBufferDataBlackBerry.h"
 #endif
