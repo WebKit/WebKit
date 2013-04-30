@@ -399,7 +399,7 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
 
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
         Performance* performance() const;
 #endif
 
@@ -464,7 +464,7 @@ namespace WebCore {
         mutable RefPtr<Storage> m_localStorage;
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
         mutable RefPtr<Performance> m_performance;
 #endif
 

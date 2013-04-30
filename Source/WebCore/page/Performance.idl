@@ -31,13 +31,15 @@
 
 // See: http://dev.w3.org/2006/webapi/WebTiming/
 [
-    Conditional=WEB_TIMING,
+    Conditional=WEB_TIMING|WEB_TIMING_MINIMAL,
     EventTarget,
     OmitConstructor
 ] interface Performance {
+#if !defined(ENABLE_WEB_TIMING_MINIMAL)
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
     readonly attribute MemoryInfo memory;
+#endif
 
 #if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
     PerformanceEntryList webkitGetEntries();

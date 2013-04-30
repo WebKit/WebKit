@@ -1,3 +1,21 @@
+2013-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/
+        https://bugs.webkit.org/show_bug.cgi?id=111244
+
+        Reviewed by David Kilzer.
+        
+        Enable performance.now() as a minimal subset of Web Timing API. 
+        It returns DOMHighResTimeStamp, a monotonically increasing value representing the 
+        number of milliseconds from the start of the navigation of the current document.
+        JS libraries use this API to check against the requestAnimationFrame() timestamp.
+        
+        We can test the monotonical behaviour of this API only. Checking whether the value
+        actually represents the navigation start requires PerformanceTiming enabled.
+        
+        * fast/dom/Window/web-timing-minimal-performance-now-expected.txt: Added.
+        * fast/dom/Window/web-timing-minimal-performance-now.html: Added.
+
 2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

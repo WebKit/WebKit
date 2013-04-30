@@ -186,7 +186,7 @@
         raises(DOMException);
 #endif
 
-#if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
+#if (defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING) || (defined(ENABLE_WEB_TIMING_MINIMAL) && ENABLE_WEB_TIMING_MINIMAL)
     [Replaceable] readonly attribute Performance performance;
 #endif
 

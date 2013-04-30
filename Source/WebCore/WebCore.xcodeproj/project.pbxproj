@@ -5585,6 +5585,8 @@
 		E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */; };
 		E4F9EEF2156D9FFA00D23E7E /* StyleSheetContents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; };
+		E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */; };
+		E526AF3F1727F8F200E41781 /* Performance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E526AF3E1727F8F200E41781 /* Performance.cpp */; };
 		E55F497A151B888000BB67DB /* LengthFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E55F4979151B888000BB67DB /* LengthFunctions.cpp */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
@@ -12420,6 +12422,8 @@
 		E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeableBuffer.h; sourceTree = "<group>"; };
 		E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheetContents.cpp; sourceTree = "<group>"; };
 		E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSheetContents.h; sourceTree = "<group>"; };
+		E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSPerformance.cpp; sourceTree = "<group>"; };
+		E526AF3E1727F8F200E41781 /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		E55F4979151B888000BB67DB /* LengthFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthFunctions.cpp; sourceTree = "<group>"; };
 		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
@@ -14828,6 +14832,7 @@
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
 				FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */,
 				FFD5B978135CC97800D5E92A /* PageVisibilityState.h */,
+				E526AF3E1727F8F200E41781 /* Performance.cpp */,
 				8A844D0211D3C18E0014065C /* Performance.h */,
 				8A844D0311D3C18E0014065C /* Performance.idl */,
 				86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */,
@@ -19106,6 +19111,7 @@
 				9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */,
 				A9D247F50D757E3300FDF959 /* JSNavigator.cpp */,
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
+				E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */,
 				8A9A587311E84C81008ACFD1 /* JSPerformance.h */,
 				8A9A586E11E84C35008ACFD1 /* JSPerformanceNavigation.cpp */,
 				8A9A586F11E84C36008ACFD1 /* JSPerformanceNavigation.h */,
@@ -25741,6 +25747,7 @@
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */,
+				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
 				93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */,
 				5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */,
@@ -26215,6 +26222,7 @@
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
+				E526AF3F1727F8F200E41781 /* Performance.cpp in Sources */,
 				86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,
 				86512EDE154A2AEF00A90426 /* PerformanceResourceTiming.cpp in Sources */,

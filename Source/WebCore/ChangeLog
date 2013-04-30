@@ -1,3 +1,33 @@
+2013-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/
+        https://bugs.webkit.org/show_bug.cgi?id=111244
+
+        Reviewed by David Kilzer.
+        
+        Enable performance.now() as a minimal subset of Web Timing API. 
+        It returns DOMHighResTimeStamp, a monotonically increasing value representing the 
+        number of milliseconds from the start of the navigation of the current document.
+        JS libraries use this API to check against the requestAnimationFrame() timestamp.
+
+        Test: fast/dom/Window/web-timing-minimal-performance-now.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTargetFactory.in:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::resetDOMWindowProperties):
+        (WebCore):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/DOMWindow.idl:
+        * page/Performance.cpp:
+        (WebCore):
+        * page/Performance.h:
+        (Performance):
+        * page/Performance.idl:
+
 2013-04-30  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r149338.
