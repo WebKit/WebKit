@@ -1,3 +1,16 @@
+2013-04-30  Mike Lattanzio  <mlattanzio@blackberry.com>
+
+        [BlackBerry] ImageBuffer::copyImage leaking memory
+        https://bugs.webkit.org/show_bug.cgi?id=115359
+
+        Reviewed by George Staikos.
+
+        Use a WebCore::Vector to ensure the temporary data is destroyed.
+        The TiledImage does not take ownership of the data.
+
+        * platform/graphics/blackberry/ImageBufferBlackBerry.cpp:
+        (WebCore::ImageBuffer::copyImage):
+
 2013-04-30  Noam Rosenthal  <noam@webkit.org>
 
         [Texmap] Avoid using overlap/non-overlap region in cases where the overhead is bigger than the gain

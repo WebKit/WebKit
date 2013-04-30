@@ -32,6 +32,7 @@
 #include <BlackBerryPlatformGraphicsContext.h>
 #include <BlackBerryPlatformSettings.h>
 #include <BlackBerryPlatformWindow.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
@@ -210,10 +211,10 @@ PlatformLayer* ImageBuffer::platformLayer() const
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy, ScaleBehavior) const
 {
     // FIXME respect copyBehaviour enum.
-    unsigned* imageData = new unsigned[m_size.width() * m_size.height()];
-    m_data.getImageData(m_context.get(), IntRect(IntPoint(0, 0), m_size), IntRect(IntPoint(0, 0), m_size), (unsigned char*)imageData, false /* unmultiply */);
-    BlackBerry::Platform::Graphics::TiledImage* nativeImage = new BlackBerry::Platform::Graphics::TiledImage(m_size, imageData, false /* dataIsBGRA */);
-    return BitmapImage::create(nativeImage);
+    Vector<unsigned> pixels;
+    pixels.reserveCapacity(m_size.area());
+    m_data.getImageData(m_context.get(), IntRect(IntPoint(0, 0), m_size), IntRect(IntPoint(0, 0), m_size), reinterpret_cast<unsigned char*>(pixels.data()), false /* unmultiply */);
+    return BitmapImage::create(new BlackBerry::Platform::Graphics::TiledImage(m_size, pixels.data(), false /* dataIsBGRA */));
 }
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
