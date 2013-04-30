@@ -354,9 +354,6 @@ webkit.org/b/100137 fast/media/mq-resolution-dpi-dpcm-warning.html [ Failure ]
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
-# Requires HighDPI canvas support
-webkit.org/b/102180 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
-
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
@@ -826,7 +823,6 @@ Bug(GTK) fast/encoding/idn-security.html [ Failure ]
 
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
-webkit.org/b/53964 fast/forms/listbox-selection-2.html [ Failure ]
 webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
 # Probably failing because resizing is asynchronous.
@@ -970,10 +966,6 @@ webkit.org/b/40601 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
 
-# The middle circle on both rectangles is missing in the pixel output.
-Bug(GTK) svg/custom/circular-marker-reference-2.svg [ Failure ]
-Bug(GTK) svg/custom/non-circular-marker-reference.svg [ Failure ]
-
 # Tests that fail across all platforms.
 # Even though some platforms don't skip these tests, there are platform-specific
 # results generated that make these tests 'pass'.
@@ -1082,8 +1074,6 @@ webkit.org/b/72248 editing/spelling/spelling-unified-emulation.html [ Failure ]
 webkit.org/b/62204 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml [ Failure ]
 webkit.org/b/62204 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 webkit.org/b/62204 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
-
-webkit.org/b/78673 svg/animations/animate-text-nested-transforms.html [ Failure ]
 
 webkit.org/b/73409 fast/forms/textarea/textarea-placeholder-paint-order.html [ ImageOnlyFailure ]
 webkit.org/b/73409 fast/forms/input-placeholder-paint-order.html [ ImageOnlyFailure ]
@@ -1239,8 +1229,6 @@ webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html 
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
-webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
-
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
 webkit.org/b/104680 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Failure ]
@@ -1275,10 +1263,6 @@ webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
-
-webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
-webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
-webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
