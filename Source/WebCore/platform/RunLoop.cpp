@@ -43,8 +43,8 @@ void RunLoop::initializeMainRunLoop()
 
 RunLoop* RunLoop::current()
 {
-    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop>, runLoopData, ());
-    return &*runLoopData;
+    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RefPtr<RunLoop> >, runLoopData, ());
+    return runLoopData->get();
 }
 
 RunLoop* RunLoop::main()

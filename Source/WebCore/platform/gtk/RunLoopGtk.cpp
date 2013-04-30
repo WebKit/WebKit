@@ -46,6 +46,8 @@ RunLoop::RunLoop()
 
 RunLoop::~RunLoop()
 {
+    ASSERT(this != main());
+
     for (int i = m_runLoopMainLoops.size() - 1; i >= 0; --i) {
         if (!g_main_loop_is_running(m_runLoopMainLoops[i].get()))
             continue;

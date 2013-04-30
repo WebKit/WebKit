@@ -38,7 +38,7 @@ void RunLoop::initializeMainRunLoop()
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        s_mainRunLoop = new RunLoop(CFRunLoopGetMain());
+        s_mainRunLoop = adoptRef(new RunLoop(CFRunLoopGetMain())).leakRef();
     });
 }
 
@@ -47,8 +47,8 @@ RunLoop* RunLoop::current()
     if (pthread_main_np())
         return RunLoop::main();
     
-    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop>, runLoopData, ());
-    return &*runLoopData;
+    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RefPtr<RunLoop> >, runLoopData, ());
+    return runLoopData->get();
 }
 
 RunLoop* RunLoop::main()
@@ -88,7 +88,8 @@ RunLoop::RunLoop(CFRunLoopRef runLoop)
 
 RunLoop::~RunLoop()
 {
-    // FIXME: Tear down the work item queue here.
+    ASSERT(this != main());
+
     CFRunLoopSourceInvalidate(m_runLoopSource);
     CFRelease(m_runLoopSource);
 }

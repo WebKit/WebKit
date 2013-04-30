@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-class RunLoop {
+class RunLoop : public ThreadSafeRefCounted<RunLoop> {
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
@@ -56,6 +56,7 @@ public:
 
     static RunLoop* current();
     static RunLoop* main();
+    ~RunLoop();
 
     void dispatch(const Function<void()>&);
 
@@ -133,7 +134,6 @@ private:
     friend class WTF::ThreadSpecific<RunLoop>;
 
     RunLoop();
-    ~RunLoop();
 
     void performWork();
 

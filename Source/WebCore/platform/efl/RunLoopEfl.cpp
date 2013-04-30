@@ -46,6 +46,7 @@ RunLoop::RunLoop()
 
 RunLoop::~RunLoop()
 {
+    ASSERT(this != main());
 }
 
 void RunLoop::run()
