@@ -1,3 +1,15 @@
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
+        More StorageTracker cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=115429
+
+        Reviewed by Andreas Kling.
+
+        Call PageGroup::syncLocalStorage directly.
+
+        * Storage/WebStorageManager.mm:
+        (-[WebStorageManager syncLocalStorage]):
+
 2013-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/

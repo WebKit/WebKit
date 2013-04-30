@@ -62,15 +62,6 @@ public:
     
     bool isActive();
 
-    // Sync to disk on background thread.
-    void syncDeleteAllOrigins();
-    void syncDeleteOrigin(const String& originIdentifier);
-    void syncSetOriginDetails(const String& originIdentifier, const String& databaseFile);
-    void syncImportOriginIdentifiers();
-    void syncFileSystemAndTrackerDatabase();
-
-    void syncLocalStorage();
-
     double storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
     void setStorageDatabaseIdleInterval(double interval) { m_StorageDatabaseIdleInterval = interval; }
 
@@ -97,6 +88,13 @@ private:
     void originFilePaths(Vector<String>& paths);
     
     void setIsActive(bool);
+
+    // Sync to disk on background thread.
+    void syncDeleteAllOrigins();
+    void syncDeleteOrigin(const String& originIdentifier);
+    void syncSetOriginDetails(const String& originIdentifier, const String& databaseFile);
+    void syncImportOriginIdentifiers();
+    void syncFileSystemAndTrackerDatabase();
 
     // Mutex for m_database and m_storageDirectoryPath.
     Mutex m_databaseMutex;

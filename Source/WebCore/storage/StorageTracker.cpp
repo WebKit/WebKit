@@ -565,11 +565,6 @@ void StorageTracker::cancelDeletingOrigin(const String& originIdentifier)
     }
 }
 
-void StorageTracker::syncLocalStorage()
-{
-    PageGroup::syncLocalStorage();
-}
-    
 bool StorageTracker::isActive()
 {
     return m_isActive;

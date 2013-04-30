@@ -84,7 +84,7 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (void)syncLocalStorage
 {
-    StorageTracker::tracker().syncLocalStorage();
+    PageGroup::syncLocalStorage();
 }
 
 - (void)syncFileSystemAndTrackerDatabase

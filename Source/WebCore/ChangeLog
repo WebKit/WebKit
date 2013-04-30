@@ -1,3 +1,17 @@
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
+        More StorageTracker cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=115429
+
+        Reviewed by Andreas Kling.
+
+        Make a bunch of member functions private, and remove StorageTracker::syncLocalStorage.
+
+        * WebCore.exp.in:
+        * storage/StorageTracker.cpp:
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
 2013-04-30  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r149313) Crash at WebCore::FrameView::setFrameRect() when navigating back to previous page while find banner is displayed.
