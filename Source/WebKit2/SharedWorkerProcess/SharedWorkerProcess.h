@@ -48,6 +48,7 @@ private:
     ~SharedWorkerProcess();
 
     // ChildProcess
+    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
 

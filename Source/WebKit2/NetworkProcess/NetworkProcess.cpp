@@ -253,6 +253,10 @@ void NetworkProcess::terminate()
 }
 
 #if !PLATFORM(MAC)
+void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+}
+
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
 }

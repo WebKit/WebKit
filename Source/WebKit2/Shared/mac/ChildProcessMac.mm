@@ -42,17 +42,9 @@
 extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
 
 #ifdef __has_include
-#if __has_include(<CoreGraphics/CGSConnection.h>)
-#include <CoreGraphics/CGSConnection.h>
-#endif
-
 #if __has_include(<HIServices/ProcessesPriv.h>)
 #include <HIServices/ProcessesPriv.h>
 #endif
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080 // Temporary workaround for <rdar://problem/13564588>. We should have the forward declaration on all OS X versions again eventually.
-extern "C" CGError CGSShutdownServerConnections();
 #endif
 
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
@@ -89,10 +81,10 @@ static void initializeTimerCoalescingPolicy()
 }
 #endif
 
-void ChildProcess::shutdownWindowServerConnection()
+void ChildProcess::setApplicationIsDaemon()
 {
-    CGSShutdownServerConnections();
-    SetApplicationIsDaemon(true);
+    OSStatus error = SetApplicationIsDaemon(true);
+    ASSERT_UNUSED(error, error == noErr);
 }
 
 void ChildProcess::platformInitialize()

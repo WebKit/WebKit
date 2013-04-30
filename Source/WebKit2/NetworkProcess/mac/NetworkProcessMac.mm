@@ -62,15 +62,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
+    setApplicationIsDaemon();
+}
+
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-    if (!parameters.uiProcessName.isNull()) {
-        NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-        WKSetVisibleApplicationName((CFStringRef)applicationName);
-
-        // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-        shutdownWindowServerConnection();
-    }
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070

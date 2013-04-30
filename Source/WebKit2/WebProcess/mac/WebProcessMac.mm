@@ -189,10 +189,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-    if (!parameters.uiProcessName.isNull()) {
-        NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-        WKSetVisibleApplicationName((CFStringRef)applicationName);
-    }
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)

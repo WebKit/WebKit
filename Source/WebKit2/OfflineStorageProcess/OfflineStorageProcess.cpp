@@ -82,6 +82,10 @@ void OfflineStorageProcess::initializeOfflineStorageProcess(const OfflineStorage
 }
 
 #if !PLATFORM(MAC)
+void OfflineStorageProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+}
+
 void OfflineStorageProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
 }

@@ -33,13 +33,16 @@
 
 namespace WebKit {
 
+void SharedWorkerProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
+    setApplicationIsDaemon();
+}
+
 void SharedWorkerProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Shared Worker", "Visible name of the shared worker process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
-
-    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    shutdownWindowServerConnection();
 }
 
 } // namespace WebKit

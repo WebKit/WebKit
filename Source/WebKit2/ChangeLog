@@ -1,3 +1,43 @@
+2013-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Don't open window server connection in network process
+        https://bugs.webkit.org/show_bug.cgi?id=115446
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        (WebKit::NetworkProcess::initializeProcessName):
+        Instead of shutting down a connection after setting process name, just prevent
+        it from being created.
+
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm: (WebKit::ChildProcess::setApplicationIsDaemon):
+        Expose a function for client processes to call if they don't run an NSApplication
+        run loop.
+
+        * OfflineStorageProcess/OfflineStorageProcess.cpp:
+        (WebKit::OfflineStorageProcess::initializeProcess):
+        * OfflineStorageProcess/OfflineStorageProcess.h:
+        * OfflineStorageProcess/mac/OfflineStorageProcessMac.mm:
+        (WebKit::OfflineStorageProcess::initializeProcess):
+        (WebKit::OfflineStorageProcess::initializeProcessName):
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        (WebKit::SharedWorkerProcess::initializeProcess):
+        (WebKit::SharedWorkerProcess::initializeProcessName):
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        * SharedWorkerProcess/mac/SharedWorkerProcessMac.mm:
+        (WebKit::SharedWorkerProcess::initializeProcess):
+        (WebKit::SharedWorkerProcess::initializeProcessName):
+        Match NetworkProcess for consistency.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::WebProcess::initializeProcessName):
+        Don't null check UI process name. First, it can't be null, and second, some other
+        processes already don't have this check.
+
 2013-04-30  Tim Horton  <timothy_horton@apple.com>
 
         Disable deprecation warnings around some NSProcessInfo API.

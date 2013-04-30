@@ -182,6 +182,16 @@ void SharedWorkerProcess::minimumLifetimeTimerFired()
     enableTermination();
 }
 
+#if !PLATFORM(MAC)
+void SharedWorkerProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+}
+
+void SharedWorkerProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+{
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(SHARED_WORKER_PROCESS)

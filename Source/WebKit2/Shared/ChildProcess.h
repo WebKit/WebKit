@@ -65,7 +65,7 @@ public:
     bool processSuppressionEnabled() const { return !m_processSuppressionAssertion; }
     void setProcessSuppressionEnabled(bool);
 
-    void shutdownWindowServerConnection();
+    void setApplicationIsDaemon();
 #endif
 
     CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }
