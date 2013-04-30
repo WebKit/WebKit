@@ -1517,10 +1517,11 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
             }
             setLogicalHeight(0);
         }
-        if (colInfo->columnHeight() != pageLogicalHeight && everHadLayout()) {
-            colInfo->setColumnHeight(pageLogicalHeight);
+
+        if (colInfo->columnHeight() != pageLogicalHeight && everHadLayout())
             pageLogicalHeightChanged = true;
-        }
+
+        colInfo->setColumnHeight(pageLogicalHeight);
         
         if (!hasSpecifiedPageLogicalHeight && !pageLogicalHeight)
             colInfo->clearForcedBreaks();

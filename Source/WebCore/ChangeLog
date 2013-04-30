@@ -1,3 +1,16 @@
+2013-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Page::pageCount() is inaccurate when we allow the first paint in App Mode
+        https://bugs.webkit.org/show_bug.cgi?id=115442
+        -and corresponding-
+        <rdar://problem/13758445>
+
+        Reviewed by Dave Hyatt.
+
+        We should set the height here all the time, even if it is the first layout.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::checkForPaginationLogicalHeightChange):
+
 2013-04-30  Andreas Kling  <akling@apple.com>
 
         Don't create StyleResolvers just to invalidate them.
