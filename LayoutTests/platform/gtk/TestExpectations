@@ -413,6 +413,15 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 # Skip the perf/ tests in debug builds
 Bug(GTK) [ Debug ] perf [ Skip ]
 
+# Shadow DOM is disabled
+webkit.org/b/115374 fast/css/style-scoped/style-scoped-apply-author-styles.html [ Skip ]
+webkit.org/b/115374 fast/css/style-scoped/style-scoped-change-scoped-in-shadow.html [ Skip ]
+webkit.org/b/115374 fast/css/style-scoped/style-scoped-in-shadow.html [ Skip ]
+webkit.org/b/115374 fast/css/style-scoped/style-scoped-nested.html [ Skip ]
+webkit.org/b/115374 fast/css/style-scoped/style-scoped-with-important-rule.html [ Skip ]
+webkit.org/b/115374 fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]
+webkit.org/b/115374 fast/dom/shadow [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,9 @@
+2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Skipping the Shadow DOM layout tests after the feature was disabled in r149352.
+
 2013-04-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. Rebaseline some Windows tests after disabling subpixel layout.
