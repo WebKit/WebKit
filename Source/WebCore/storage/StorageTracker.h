@@ -65,6 +65,8 @@ public:
     double storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
     void setStorageDatabaseIdleInterval(double interval) { m_StorageDatabaseIdleInterval = interval; }
 
+    void syncFileSystemAndTrackerDatabase();
+
 private:
     explicit StorageTracker(const String& storagePath);
 
@@ -94,7 +96,6 @@ private:
     void syncDeleteOrigin(const String& originIdentifier);
     void syncSetOriginDetails(const String& originIdentifier, const String& databaseFile);
     void syncImportOriginIdentifiers();
-    void syncFileSystemAndTrackerDatabase();
 
     // Mutex for m_database and m_storageDirectoryPath.
     Mutex m_databaseMutex;

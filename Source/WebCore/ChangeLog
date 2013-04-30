@@ -1,5 +1,13 @@
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebCore.exp.in:
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
         More StorageTracker cleanup
         https://bugs.webkit.org/show_bug.cgi?id=115429
 
