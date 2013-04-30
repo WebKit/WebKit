@@ -47,8 +47,6 @@ Usage: $programName [options]
   --top-level           Show the top-level build directory
 
   --blackberry          Find the build directory for the BlackBerry port on Mac/Linux
-  --chromium            Find the build directory for the Chromium port on Mac/Win/Linux
-  --chromium-android    Find the build directory for the Chromium port on Android
   --efl                 Find the build directory for the EFL port
   --gtk                 Find the build directory for the GTK+ port
   --qt                  Find the build directory for the Qt port

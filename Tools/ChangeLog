@@ -1,3 +1,12 @@
+2013-04-29  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Get rid of unused options in Tools/Scripts/webkit-build-directory
+        https://bugs.webkit.org/show_bug.cgi?id=115383
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit-build-directory:
+
 2013-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2][Mac] Test with NetworkProcess enabled.
