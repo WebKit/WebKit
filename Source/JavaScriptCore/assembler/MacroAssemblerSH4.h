@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Cisco Systems, Inc. All rights reserved.
  * Copyright (C) 2009-2011 STMicroelectronics. All rights reserved.
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -183,39 +184,28 @@ public:
 
     void lshift32(RegisterID shiftamount, RegisterID dest)
     {
-        if (shiftamount == SH4Registers::r0)
-            m_assembler.andlImm8r(0x1f, shiftamount);
-        else {
-            RegisterID scr = claimScratch();
-            m_assembler.loadConstant(0x1f, scr);
-            m_assembler.andlRegReg(scr, shiftamount);
-            releaseScratch(scr);
-        }
-        m_assembler.shllRegReg(dest, shiftamount);
-    }
-
-    void rshift32(int imm, RegisterID dest)
-    {
-        RegisterID scr = claimScratch();
-        m_assembler.loadConstant(-imm, scr);
-        m_assembler.shaRegReg(dest, scr);
-        releaseScratch(scr);
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(0x1f, shiftTmp);
+        m_assembler.andlRegReg(shiftamount, shiftTmp);
+        m_assembler.shldRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void lshift32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
+        int immMasked = imm.m_value & 0x1f;
+        if (!immMasked)
             return;
 
-        if ((imm.m_value == 1) || (imm.m_value == 2) || (imm.m_value == 8) || (imm.m_value == 16)) {
-            m_assembler.shllImm8r(imm.m_value, dest);
+        if ((immMasked == 1) || (immMasked == 2) || (immMasked == 8) || (immMasked == 16)) {
+            m_assembler.shllImm8r(immMasked, dest);
             return;
         }
 
-        RegisterID scr = claimScratch();
-        m_assembler.loadConstant(imm.m_value & 0x1f, scr);
-        m_assembler.shllRegReg(dest, scr);
-        releaseScratch(scr);
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(immMasked, shiftTmp);
+        m_assembler.shldRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void lshift32(RegisterID src, TrustedImm32 shiftamount, RegisterID dest)
@@ -296,22 +286,29 @@ public:
 
     void rshift32(RegisterID shiftamount, RegisterID dest)
     {
-        if (shiftamount == SH4Registers::r0)
-            m_assembler.andlImm8r(0x1f, shiftamount);
-        else {
-            RegisterID scr = claimScratch();
-            m_assembler.loadConstant(0x1f, scr);
-            m_assembler.andlRegReg(scr, shiftamount);
-            releaseScratch(scr);
-        }
-        m_assembler.neg(shiftamount, shiftamount);
-        m_assembler.shaRegReg(dest, shiftamount);
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(0x1f, shiftTmp);
+        m_assembler.andlRegReg(shiftamount, shiftTmp);
+        m_assembler.neg(shiftTmp, shiftTmp);
+        m_assembler.shadRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
-        if (imm.m_value & 0x1f)
-            rshift32(imm.m_value & 0x1f, dest);
+        int immMasked = imm.m_value & 0x1f;
+        if (!immMasked)
+            return;
+
+        if (immMasked == 1) {
+            m_assembler.sharImm8r(immMasked, dest);
+            return;
+        }
+
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(-immMasked, shiftTmp);
+        m_assembler.shadRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
@@ -1938,7 +1935,7 @@ public:
             m_assembler.stsmacl(dest);
             m_assembler.movImm8(-31, scr);
             m_assembler.movlRegReg(dest, scr1);
-            m_assembler.shaRegReg(scr1, scr);
+            m_assembler.shadRegReg(scr1, scr);
             m_assembler.stsmach(scr);
             m_assembler.cmplRegReg(scr, scr1, SH4Condition(Equal));
             releaseScratch(scr1);
@@ -2062,24 +2059,29 @@ public:
 
     void urshift32(RegisterID shiftamount, RegisterID dest)
     {
-        if (shiftamount == SH4Registers::r0)
-            m_assembler.andlImm8r(0x1f, shiftamount);
-        else {
-            RegisterID scr = claimScratch();
-            m_assembler.loadConstant(0x1f, scr);
-            m_assembler.andlRegReg(scr, shiftamount);
-            releaseScratch(scr);
-        }
-        m_assembler.neg(shiftamount, shiftamount);
-        m_assembler.shllRegReg(dest, shiftamount);
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(0x1f, shiftTmp);
+        m_assembler.andlRegReg(shiftamount, shiftTmp);
+        m_assembler.neg(shiftTmp, shiftTmp);
+        m_assembler.shldRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void urshift32(TrustedImm32 imm, RegisterID dest)
     {
-        RegisterID scr = claimScratch();
-        m_assembler.loadConstant(-(imm.m_value & 0x1f), scr);
-        m_assembler.shaRegReg(dest, scr);
-        releaseScratch(scr);
+        int immMasked = imm.m_value & 0x1f;
+        if (!immMasked)
+            return;
+
+        if ((immMasked == 1) || (immMasked == 2) || (immMasked == 8) || (immMasked == 16)) {
+            m_assembler.shlrImm8r(immMasked, dest);
+            return;
+        }
+
+        RegisterID shiftTmp = claimScratch();
+        m_assembler.loadConstant(-immMasked, shiftTmp);
+        m_assembler.shldRegReg(dest, shiftTmp);
+        releaseScratch(shiftTmp);
     }
 
     void urshift32(RegisterID src, TrustedImm32 shiftamount, RegisterID dest)
@@ -2201,13 +2203,12 @@ public:
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        SH4Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
     }
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-        RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        return SH4Assembler::maxJumpReplacementSize();
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }

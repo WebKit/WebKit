@@ -1,3 +1,27 @@
+2013-04-30  Julien Brianceau  <jbrianceau@nds.com>
+
+        Bug fixing in sh4 base JIT and LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=115420
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::lshift32):
+        (JSC::MacroAssemblerSH4::rshift32):
+        (JSC::MacroAssemblerSH4::branchMul32):
+        (JSC::MacroAssemblerSH4::urshift32):
+        (JSC::MacroAssemblerSH4::replaceWithJump):
+        (JSC::MacroAssemblerSH4::maxJumpReplacementSize):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::shldRegReg):
+        (JSC::SH4Assembler::shadRegReg):
+        (JSC::SH4Assembler::shalImm8r):
+        (SH4Assembler):
+        (JSC::SH4Assembler::sharImm8r):
+        (JSC::SH4Assembler::maxJumpReplacementSize):
+        (JSC::SH4Assembler::replaceWithJump):
+        * offlineasm/sh4.rb:
+
 2013-04-30  Geoffrey Garen  <ggaren@apple.com>
 
         Objective-C JavaScriptCore API should publicly support bridging to C

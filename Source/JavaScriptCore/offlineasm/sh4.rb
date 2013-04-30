@@ -153,7 +153,7 @@ end
 # becomes:
 #
 # negi foo, tmp
-# shld tmp, bar
+# shad tmp, bar
 #
 
 def sh4LowerShiftOps(list)
@@ -163,35 +163,36 @@ def sh4LowerShiftOps(list)
         if node.is_a? Instruction
             case node.opcode
             when "ulshifti", "ulshiftp", "urshifti", "urshiftp", "lshifti", "lshiftp", "rshifti", "rshiftp"
-                if node.opcode[0,1] == "u"
+                if node.opcode[0, 1] == "u"
                     type = "l"
-                    direction = node.opcode[1,1]
+                    direction = node.opcode[1, 1]
                 else
                     type = "a"
-                    direction = node.opcode[0,1]
+                    direction = node.opcode[0, 1]
                 end
                 if node.operands[0].is_a? Immediate
-                    if node.operands[0].value == 0
+                    maskedImm = Immediate.new(node.operands[0].codeOrigin, node.operands[0].value & 31)
+                    if maskedImm.value == 0
                         # There is nothing to do here.
-                    elsif node.operands[0].value == 1 or (type == "l" and [2, 8, 16].include? node.operands[0].value)
-                        newList << Instruction.new(node.codeOrigin, "sh#{type}#{direction}x", node.operands)
+                    elsif maskedImm.value == 1 or (type == "l" and [2, 8, 16].include? maskedImm.value)
+                        newList << Instruction.new(node.codeOrigin, "sh#{type}#{direction}x", [maskedImm, node.operands[1]])
                     else
                         tmp = Tmp.new(node.codeOrigin, :gpr)
                         if direction == "l"
-                            newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp])
+                            newList << Instruction.new(node.codeOrigin, "move", [maskedImm, tmp])
                         else
-                            newList << Instruction.new(node.codeOrigin, "move", [Immediate.new(node.operands[0].codeOrigin, -1 * node.operands[0].value), tmp])
+                            newList << Instruction.new(node.codeOrigin, "move", [Immediate.new(node.operands[0].codeOrigin, -1 * maskedImm.value), tmp])
                         end
                         newList << Instruction.new(node.codeOrigin, "sh#{type}d", [tmp, node.operands[1]])
                     end
                 else
-                    if direction == "l"
-                        newList << Instruction.new(node.codeOrigin, "sh#{type}d", node.operands)
-                    else
-                        tmp = Tmp.new(node.codeOrigin, :gpr)
-                        newList << Instruction.new(node.codeOrigin, "negi", [node.operands[0], tmp])
-                        newList << Instruction.new(node.codeOrigin, "sh#{type}d", [tmp, node.operands[1]])
+                    tmp = Tmp.new(node.codeOrigin, :gpr)
+                    newList << Instruction.new(node.codeOrigin, "move", [Immediate.new(node.operands[0].codeOrigin, 31), tmp])
+                    newList << Instruction.new(node.codeOrigin, "andi", [node.operands[0], tmp])
+                    if direction == "r"
+                        newList << Instruction.new(node.codeOrigin, "negi", [tmp, tmp])
                     end
+                    newList << Instruction.new(node.codeOrigin, "sh#{type}d", [tmp, node.operands[1]])
                 end
             else
                 newList << node
@@ -225,24 +226,39 @@ def sh4LowerSimpleBranchOps(list)
             when /^b(addi|subi|ori|addp)/
                 op = $1
                 bc = $~.post_match
-                branch = "b" + bc
 
                 case op
                 when "addi", "addp"
                     op = "addi"
-                when "subi"
+                when "subi", "subp"
                     op = "subi"
-                when "ori"
+                when "ori", "orp"
                     op = "ori"
                 end
 
                 if bc == "s"
-                    tmp = Tmp.new(node.codeOrigin, :gpr)
-                    newList << Instruction.new(node.codeOrigin, op, [node.operands[0], node.operands[1], tmp])
-                    newList << Instruction.new(node.codeOrigin, "bs", [tmp, node.operands[2]])
+                    raise "Invalid operands number (#{node.operands.size})" unless node.operands.size == 3
+                    if node.operands[1].is_a? RegisterID or node.operands[1].is_a? SpecialRegister
+                        newList << Instruction.new(node.codeOrigin, op, node.operands[0..1])
+                        newList << Instruction.new(node.codeOrigin, "bs", node.operands[1..2])
+                    else
+                        tmpVal = Tmp.new(node.codeOrigin, :gpr)
+                        tmpPtr = Tmp.new(node.codeOrigin, :gpr)
+                        addr = Address.new(node.codeOrigin, tmpPtr, Immediate.new(node.codeOrigin, 0))
+                        newList << Instruction.new(node.codeOrigin, "leap", [node.operands[1], tmpPtr])
+                        newList << Instruction.new(node.codeOrigin, "loadi", [addr, tmpVal])
+                        newList << Instruction.new(node.codeOrigin, op, [node.operands[0], tmpVal])
+                        newList << Instruction.new(node.codeOrigin, "storei", [tmpVal, addr])
+                        newList << Instruction.new(node.codeOrigin, "bs", [tmpVal, node.operands[2]])
+                    end
                 else
                     newList << node
                 end
+            when "bmulio", "bmulpo"
+                raise "Invalid operands number (#{node.operands.size})" unless node.operands.size == 3
+                tmp1 = Tmp.new(node.codeOrigin, :gpr)
+                tmp2 = Tmp.new(node.codeOrigin, :gpr)
+                newList << Instruction.new(node.codeOrigin, node.opcode, [tmp1, tmp2].concat(node.operands))
             else
                 newList << node
             end
@@ -485,9 +501,14 @@ end
 
 def emitSH4CompareSet(cmpOpcode, neg, operands)
     emitSH4IntCompare(cmpOpcode, operands)
-    $asm.puts "movt #{operands[2].sh4Operand}"
-    if neg
-        $asm.puts "dt #{operands[2].sh4Operand}"
+    if !neg
+        $asm.puts "movt #{operands[2].sh4Operand}"
+    else
+        outlabel = LocalLabel.unique("compareSet")
+        $asm.puts "mov #0, #{operands[2].sh4Operand}"
+        $asm.puts "bt #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
+        $asm.puts "mov #1, #{operands[2].sh4Operand}"
+        outlabel.lower("SH4")
     end
 end
 
@@ -518,7 +539,7 @@ end
 
 def emitSH4DoubleCondBranch(cmpOpcode, neg, operands)
     if cmpOpcode == "lt"
-        if (!neg)
+        if !neg
             outlabel = LocalLabel.unique("dcbout")
             $asm.puts "fcmp/gt #{sh4Operands([operands[1], operands[0]])}"
             $asm.puts "bt #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
@@ -554,7 +575,7 @@ class Instruction
             else
                 $asm.puts "add #{sh4Operands(operands)}"
             end
-        when "subi"
+        when "subi", "subp"
             raise "#{opcode} with #{operands.size} operands is not handled yet" unless operands.size == 2
             if operands[0].is_a? Immediate
                 $asm.puts "add #{sh4Operands([Immediate.new(codeOrigin, -1 * operands[0].value), operands[1]])}"
@@ -564,22 +585,22 @@ class Instruction
         when "muli", "mulp"
             $asm.puts "mul.l #{sh4Operands(operands[0..1])}"
             $asm.puts "sts macl, #{operands[-1].sh4Operand}"
-        when "negi"
+        when "negi", "negp"
             if operands.size == 2
                 $asm.puts "neg #{sh4Operands(operands)}"
             else
                 $asm.puts "neg #{sh4Operands([operands[0], operands[0]])}"
             end
-        when "andi", "ori", "xori"
+        when "andi", "andp", "ori", "orp", "xori", "xorp"
             raise "#{opcode} with #{operands.size} operands is not handled yet" unless operands.size == 2
             sh4opcode = opcode[0..-2]
             $asm.puts "#{sh4opcode} #{sh4Operands(operands)}"
         when "shllx", "shlrx"
             raise "Unhandled parameters for opcode #{opcode}" unless operands[0].is_a? Immediate
             if operands[0].value == 1
-                $asm.puts "shl#{opcode[3,1]} #{operands[1].sh4Operand}"
+                $asm.puts "shl#{opcode[3, 1]} #{operands[1].sh4Operand}"
             else
-                $asm.puts "shl#{opcode[3,1]}#{operands[0].value} #{operands[1].sh4Operand}"
+                $asm.puts "shl#{opcode[3, 1]}#{operands[0].value} #{operands[1].sh4Operand}"
             end
         when "shld", "shad"
             $asm.puts "#{opcode} #{sh4Operands(operands)}"
@@ -613,6 +634,8 @@ class Instruction
             $asm.puts "float fpul, #{SH4_TMP_FPRS[0].sh4Operand}"
             $asm.puts "fcmp/eq #{sh4Operands([operands[0], SH4_TMP_FPRS[0]])}"
             $asm.puts "bf #{operands[2].asmLabel}"
+            $asm.puts "tst #{sh4Operands([operands[1], operands[1]])}"
+            $asm.puts "bt #{operands[2].asmLabel}"
         when "bdnan"
             emitSH4BranchIfNaN(operands)
         when "bdneq"
@@ -625,17 +648,21 @@ class Instruction
             emitSH4DoubleCondBranch("gt", true, operands)
         when "bdgt"
             emitSH4DoubleCondBranch("gt", false, operands)
-        when "baddio", "bsubio"
+        when "baddio", "baddpo", "bsubio", "bsubpo"
             raise "#{opcode} with #{operands.size} operands is not handled yet" unless operands.size == 3
-            $asm.puts "#{opcode[1,3]}v #{sh4Operands([operands[0], operands[1]])}"
+            $asm.puts "#{opcode[1, 3]}v #{sh4Operands([operands[0], operands[1]])}"
             $asm.puts "bt #{operands[2].asmLabel}"
-        when "bmulio"
-            $asm.puts "dmuls.l #{sh4Operands([operands[0], operands[1]])}"
-            $asm.puts "sts mach, #{operands[-2].sh4Operand}"
-            $asm.puts "tst #{sh4Operands([operands[-2], operands[-2]])}"
-            $asm.puts "sts macl, #{operands[-2].sh4Operand}"
-            $asm.puts "bf #{operands[-1].asmLabel}"
-        when "btiz", "btpz", "btinz", "btpnz", "btbz", "btbnz"
+        when "bmulio", "bmulpo"
+            raise "Invalid operands number (#{operands.size})" unless operands.size == 5
+            $asm.puts "dmuls.l #{sh4Operands([operands[2], operands[3]])}"
+            $asm.puts "sts macl, #{operands[3].sh4Operand}"
+            $asm.puts "sts mach, #{operands[0].sh4Operand}"
+            $asm.puts "cmp/pz #{operands[3].sh4Operand}"
+            $asm.puts "movt #{operands[1].sh4Operand}"
+            $asm.puts "dt #{operands[1].sh4Operand}"
+            $asm.puts "cmp/eq #{sh4Operands([operands[0], operands[1]])}"
+            $asm.puts "bf #{operands[4].asmLabel}"
+        when "btiz", "btpz", "btbz", "btinz", "btpnz", "btbnz"
             if operands.size == 3
                 $asm.puts "tst #{sh4Operands([operands[0], operands[1]])}"
             else
@@ -645,38 +672,30 @@ class Instruction
                     $asm.puts "tst #{sh4Operands([operands[0], operands[0]])}"
                 end
             end
-            emitSH4BranchIfT(operands[-1], (opcode[-2,2] == "nz"))
-        when "cbeq"
+            emitSH4BranchIfT(operands[-1], (opcode[-2, 2] == "nz"))
+        when "cieq", "cpeq", "cbeq"
             emitSH4CompareSet("eq", false, operands)
-        when "cieq", "cpeq"
-            emitSH4CompareSet("eq", false, operands)
-        when "cineq", "cpneq"
+        when "cineq", "cpneq", "cbneq"
             emitSH4CompareSet("eq", true, operands)
-        when "cib"
+        when "cib", "cpb", "cbb"
             emitSH4CompareSet("hs", true, operands)
-        when "bbeq"
+        when "bieq", "bpeq", "bbeq"
             emitSH4CondBranch("eq", false, operands)
-        when "bbneq"
+        when "bineq", "bpneq", "bbneq"
             emitSH4CondBranch("eq", true, operands)
-        when "bbb"
+        when "bib", "bpb", "bbb"
             emitSH4CondBranch("hs", true, operands)
-        when "bieq", "bpeq"
-            emitSH4CondBranch("eq", false, operands)
-        when "bineq", "bpneq"
-            emitSH4CondBranch("eq", true, operands)
-        when "bia", "bpa"
+        when "bia", "bpa", "bba"
             emitSH4CondBranch("hi", false, operands)
         when "biaeq", "bpaeq"
             emitSH4CondBranch("hs", false, operands)
-        when "bib", "bpb"
-            emitSH4CondBranch("hs", true, operands)
-        when "bigteq", "bpgteq"
+        when "bigteq", "bpgteq", "bbgteq"
             emitSH4CondBranch("ge", false, operands)
-        when "bilt", "bplt"
+        when "bilt", "bplt", "bblt"
             emitSH4CondBranch("ge", true, operands)
-        when "bigt", "bpgt"
+        when "bigt", "bpgt", "bbgt"
             emitSH4CondBranch("gt", false, operands)
-        when "bilteq", "bplteq"
+        when "bilteq", "bplteq", "bblteq"
             emitSH4CondBranch("gt", true, operands)
         when "bs"
             $asm.puts "cmp/pz #{operands[0].sh4Operand}"
