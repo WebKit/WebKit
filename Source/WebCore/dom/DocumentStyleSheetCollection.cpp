@@ -86,7 +86,7 @@ DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
 void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 {
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
-    StyleResolver* styleResolver = m_document->styleResolver();
+    StyleResolver* styleResolver = m_document->ensureStyleResolver();
     m_usesSiblingRules = m_usesSiblingRules || styleResolver->usesSiblingRules();
     m_usesFirstLineRules = m_usesFirstLineRules || styleResolver->usesFirstLineRules();
     m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver->usesBeforeAfterRules();
@@ -94,7 +94,7 @@ void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 
 void DocumentStyleSheetCollection::resetCSSFeatureFlags()
 {
-    StyleResolver* styleResolver = m_document->styleResolver();
+    StyleResolver* styleResolver = m_document->ensureStyleResolver();
     m_usesSiblingRules = styleResolver->usesSiblingRules();
     m_usesFirstLineRules = styleResolver->usesFirstLineRules();
     m_usesBeforeAfterRules = styleResolver->usesBeforeAfterRules();
@@ -474,7 +474,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (styleResolverUpdateType == Reconstruct)
         m_document->clearStyleResolver();
     else {
-        StyleResolver* styleResolver = m_document->styleResolver();
+        StyleResolver* styleResolver = m_document->ensureStyleResolver();
         if (styleResolverUpdateType == Reset) {
             styleResolver->ruleSets().resetAuthorStyle();
             styleResolver->appendAuthorStyleSheets(0, activeCSSStyleSheets);

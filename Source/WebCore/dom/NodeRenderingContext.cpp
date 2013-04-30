@@ -297,7 +297,7 @@ void NodeRenderingContext::createRendererForTextIfNeeded()
     Document* document = textNode->document();
 
     if (resetStyleInheritance())
-        m_style = document->styleResolver()->defaultStyleForElement();
+        m_style = document->ensureStyleResolver()->defaultStyleForElement();
     else
         m_style = parentRenderer->style();
 

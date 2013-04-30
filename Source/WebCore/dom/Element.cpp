@@ -112,7 +112,7 @@ public:
     {
         if (m_pushedStyleResolver)
             return;
-        m_pushedStyleResolver = m_parent->document()->styleResolver();
+        m_pushedStyleResolver = m_parent->document()->ensureStyleResolver();
         m_pushedStyleResolver->pushParentElement(m_parent);
     }
     ~StyleResolverParentPusher()
@@ -123,8 +123,8 @@ public:
 
         // This tells us that our pushed style selector is in a bad state,
         // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleResolver == m_parent->document()->styleResolver());
-        if (m_pushedStyleResolver != m_parent->document()->styleResolver())
+        ASSERT(m_pushedStyleResolver == m_parent->document()->ensureStyleResolver());
+        if (m_pushedStyleResolver != m_parent->document()->ensureStyleResolver())
             return;
 
         m_pushedStyleResolver->popParentElement(m_parent);
@@ -1387,7 +1387,7 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
             return style.release();
     }
 
-    return document()->styleResolver()->styleForElement(this);
+    return document()->ensureStyleResolver()->styleForElement(this);
 }
 
 void Element::recalcStyle(StyleChange change)
@@ -1440,7 +1440,8 @@ void Element::recalcStyle(StyleChange change)
         // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
         if (document()->styleSheetCollection()->usesRemUnits() && document()->documentElement() == this && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
             // Cached RenderStyles may depend on the re units.
-            document()->styleResolver()->invalidateMatchedPropertiesCache();
+            if (StyleResolver* styleResolver = document()->styleResolverIfExists())
+                styleResolver->invalidateMatchedPropertiesCache();
             change = Force;
         }
 
@@ -2721,7 +2722,7 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
     }
 
     if (oldValue != newValue) {
-        if (attached() && document()->styleResolver() && document()->styleResolver()->hasSelectorForAttribute(name.localName()))
+        if (attached() && document()->styleResolverIfExists() && document()->styleResolverIfExists()->hasSelectorForAttribute(name.localName()))
             setNeedsStyleRecalc();
     }
 

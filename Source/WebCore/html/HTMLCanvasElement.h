@@ -124,8 +124,6 @@ public:
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
 
-    StyleResolver* styleResolver();
-
     AffineTransform baseTransform() const;
 
 #if ENABLE(WEBGL)    

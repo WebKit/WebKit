@@ -286,7 +286,7 @@ void Text::recalcTextStyle(StyleChange change)
     RenderText* renderer = toRenderText(this->renderer());
 
     if (change != NoChange && renderer)
-        renderer->setStyle(document()->styleResolver()->styleForText(this));
+        renderer->setStyle(document()->ensureStyleResolver()->styleForText(this));
 
     if (needsStyleRecalc()) {
         if (renderer)

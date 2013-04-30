@@ -312,7 +312,7 @@ void HTMLOptionElement::setLabel(const String& label)
 
 void HTMLOptionElement::updateNonRenderStyle()
 {
-    m_style = document()->styleResolver()->styleForElement(this);
+    m_style = document()->ensureStyleResolver()->styleForElement(this);
 }
 
 RenderStyle* HTMLOptionElement::nonRendererStyle() const

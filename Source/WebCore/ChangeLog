@@ -1,3 +1,89 @@
+2013-04-30  Andreas Kling  <akling@apple.com>
+
+        Don't create StyleResolvers just to invalidate them.
+        <http://webkit.org/b/115436>
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed Document::styleResolver() to ensureStyleResolver() so it's clear that it never returns null.
+        Removed a bunch of unnecessary null-checks I spotted while doing this.
+
+        Also fixed Element::willModifyAttribute() and FrameView::setFrameRect() to not create a StyleResolver
+        and immediately invalidate it in some cases.
+
+        * css/FontLoader.cpp:
+        (WebCore::FontLoader::loadFont):
+        (WebCore::FontLoader::checkFont):
+        (WebCore::FontLoader::resolveFontStyle):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        (WebCore::Document::styleForPage):
+        * dom/Document.h:
+        (WebCore::Document::ensureStyleResolver):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::combineCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::resetCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/Element.cpp:
+        (WebCore::StyleResolverParentPusher::push):
+        (WebCore::StyleResolverParentPusher::~StyleResolverParentPusher):
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::willModifyAttribute):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::createRendererForTextIfNeeded):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::recalcStyle):
+        (WebCore::ShadowRoot::attach):
+        * dom/Text.cpp:
+        (WebCore::Text::recalcTextStyle):
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::customStyleForRenderer):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::updateNonRenderStyle):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::updateNonRenderStyle):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::customStyleForRenderer):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::customStyleForRenderer):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::fontSelector):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getUncachedPseudoStyle):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::checkRegionStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::fontSelector):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::customStyleForRenderer):
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::overrideComputedStyle):
+
 2013-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Cap max CALayer tree depth to avoid crashes

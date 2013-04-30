@@ -293,7 +293,7 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
 {
     if (!m_customStyleForPageCache)
-        return document()->styleResolver()->styleForElement(this);
+        return document()->ensureStyleResolver()->styleForElement(this);
     return m_customStyleForPageCache;
 }
 

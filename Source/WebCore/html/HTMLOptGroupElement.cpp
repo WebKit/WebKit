@@ -114,7 +114,7 @@ void HTMLOptGroupElement::detach()
 
 void HTMLOptGroupElement::updateNonRenderStyle()
 {
-    m_style = document()->styleResolver()->styleForElement(this);
+    m_style = document()->ensureStyleResolver()->styleForElement(this);
 }
 
 RenderStyle* HTMLOptGroupElement::nonRendererStyle() const

@@ -478,11 +478,6 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return document()->securityOrigin();
 }
 
-StyleResolver* HTMLCanvasElement::styleResolver()
-{
-    return document()->styleResolver();
-}
-
 bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)

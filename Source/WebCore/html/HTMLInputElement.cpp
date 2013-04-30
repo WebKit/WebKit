@@ -1972,7 +1972,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 PassRefPtr<RenderStyle> HTMLInputElement::customStyleForRenderer()
 {
-    return m_inputType->customStyleForRenderer(document()->styleResolver()->styleForElement(this));
+    return m_inputType->customStyleForRenderer(document()->ensureStyleResolver()->styleForElement(this));
 }
 #endif
 

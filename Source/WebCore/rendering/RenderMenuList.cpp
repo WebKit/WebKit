@@ -615,7 +615,7 @@ void RenderMenuList::setTextFromItem(unsigned listIndex)
 
 FontSelector* RenderMenuList::fontSelector() const
 {
-    return document()->styleResolver()->fontSelector();
+    return document()->ensureStyleResolver()->fontSelector();
 }
 
 }

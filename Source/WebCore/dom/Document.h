@@ -449,7 +449,7 @@ public:
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
-    StyleResolver* styleResolver()
+    StyleResolver* ensureStyleResolver()
     { 
         if (!m_styleResolver)
             createStyleResolver();

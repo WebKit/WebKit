@@ -1,3 +1,13 @@
+2013-04-30  Andreas Kling  <akling@apple.com>
+
+        Don't create StyleResolvers just to invalidate them.
+        <http://webkit.org/b/115436>
+
+        Reviewed by Geoffrey Garen.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible

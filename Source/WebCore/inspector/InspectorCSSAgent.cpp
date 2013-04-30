@@ -734,7 +734,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
         return;
 
     // Matched rules.
-    StyleResolver* styleResolver = element->ownerDocument()->styleResolver();
+    StyleResolver* styleResolver = element->ownerDocument()->ensureStyleResolver();
     RefPtr<CSSRuleList> matchedRules = styleResolver->styleRulesForElement(element, StyleResolver::AllCSSRules);
     matchedCSSRules = buildArrayForMatchedRuleList(matchedRules.get(), styleResolver, element);
 
@@ -759,7 +759,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
         RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> > entries = TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry>::create();
         Element* parentElement = element->parentElement();
         while (parentElement) {
-            StyleResolver* parentStyleResolver = parentElement->ownerDocument()->styleResolver();
+            StyleResolver* parentStyleResolver = parentElement->ownerDocument()->ensureStyleResolver();
             RefPtr<CSSRuleList> parentMatchedRules = parentStyleResolver->styleRulesForElement(parentElement, StyleResolver::AllCSSRules);
             RefPtr<TypeBuilder::CSS::InheritedStyleEntry> entry = TypeBuilder::CSS::InheritedStyleEntry::create()
                 .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules.get(), styleResolver, parentElement));

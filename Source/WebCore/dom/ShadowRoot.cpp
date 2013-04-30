@@ -134,7 +134,7 @@ void ShadowRoot::recalcStyle(StyleChange change)
     // ShadowRoot doesn't support custom callbacks.
     ASSERT(!hasCustomStyleCallbacks());
 
-    StyleResolver* styleResolver = document()->styleResolver();
+    StyleResolver* styleResolver = document()->ensureStyleResolver();
     styleResolver->pushParentShadowRoot(this);
 
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
@@ -174,7 +174,7 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
 void ShadowRoot::attach()
 {
-    StyleResolver* styleResolver = document()->styleResolver();
+    StyleResolver* styleResolver = document()->ensureStyleResolver();
     styleResolver->pushParentShadowRoot(this);
     DocumentFragment::attach();
     styleResolver->popParentShadowRoot(this);

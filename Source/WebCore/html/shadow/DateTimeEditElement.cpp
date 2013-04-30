@@ -498,7 +498,7 @@ PassRefPtr<RenderStyle> DateTimeEditElement::customStyleForRenderer()
 {
     // FIXME: This is a kind of layout. We might want to introduce new renderer.
     FontCachePurgePreventer fontCachePurgePreventer;
-    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    RefPtr<RenderStyle> originalStyle = document()->ensureStyleResolver()->styleForElement(this);
     RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
     float width = 0;
     for (Node* child = fieldsWrapperElement()->firstChild(); child; child = child->nextSibling()) {
