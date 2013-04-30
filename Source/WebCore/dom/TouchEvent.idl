@@ -34,17 +34,17 @@
     readonly attribute boolean altKey;
     readonly attribute boolean metaKey;
 
-    void initTouchEvent(in [Optional=DefaultIsUndefined] TouchList touches,
-                        in [Optional=DefaultIsUndefined] TouchList targetTouches,
-                        in [Optional=DefaultIsUndefined] TouchList changedTouches,
-                        in [Optional=DefaultIsUndefined] DOMString type,
-                        in [Optional=DefaultIsUndefined] DOMWindow view,
-                        in [Optional=DefaultIsUndefined] long screenX, 
-                        in [Optional=DefaultIsUndefined] long screenY, 
-                        in [Optional=DefaultIsUndefined] long clientX, 
-                        in [Optional=DefaultIsUndefined] long clientY,
-                        in [Optional=DefaultIsUndefined] boolean ctrlKey,
-                        in [Optional=DefaultIsUndefined] boolean altKey,
-                        in [Optional=DefaultIsUndefined] boolean shiftKey,
-                        in [Optional=DefaultIsUndefined] boolean metaKey);
+    void initTouchEvent(in [Default=Undefined] optional TouchList touches,
+                        in [Default=Undefined] optional TouchList targetTouches,
+                        in [Default=Undefined] optional TouchList changedTouches,
+                        in [Default=Undefined] optional DOMString type,
+                        in [Default=Undefined] optional DOMWindow view,
+                        in [Default=Undefined] optional long screenX, 
+                        in [Default=Undefined] optional long screenY, 
+                        in [Default=Undefined] optional long clientX, 
+                        in [Default=Undefined] optional long clientY,
+                        in [Default=Undefined] optional boolean ctrlKey,
+                        in [Default=Undefined] optional boolean altKey,
+                        in [Default=Undefined] optional boolean shiftKey,
+                        in [Default=Undefined] optional boolean metaKey);
 };

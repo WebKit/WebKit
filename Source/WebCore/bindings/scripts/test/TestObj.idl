@@ -86,7 +86,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
         raises(DOMException);
 
     void serializedValue(in SerializedScriptValue serializedArg);
-    void optionsObject(in Dictionary oo, in [Optional] Dictionary ooo);
+    void optionsObject(in Dictionary oo, in optional Dictionary ooo);
 
     // Exceptions
     void methodWithException() raises(DOMException);
@@ -102,10 +102,10 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     void addEventListener(in DOMString type, 
                           in EventListener listener, 
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type, 
                              in EventListener listener, 
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
 
     // 'CallWith' extended attribute
     [CallWith=ScriptState] void withScriptStateVoid();
@@ -134,20 +134,20 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     [CallWith=ScriptArguments|CallStack] attribute TestObj withScriptArgumentsAndCallStackAttribute;
 
     // 'Optional' extended attribute
-    void    methodWithOptionalArg(in [Optional] long opt);
-    void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
-    void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
-    void    methodWithOptionalString(in [Optional] DOMString str);
-    void    methodWithOptionalStringIsUndefined(in [Optional=DefaultIsUndefined] DOMString str);
-    void    methodWithOptionalStringIsNullString(in [Optional=DefaultIsNullString] DOMString str);
+    void    methodWithOptionalArg(in optional long opt);
+    void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in optional long opt);
+    void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in optional long opt1, in optional long opt2);
+    void    methodWithOptionalString(in optional DOMString str);
+    void    methodWithOptionalStringIsUndefined(in [Default=Undefined] optional DOMString str);
+    void    methodWithOptionalStringIsNullString(in [Default=NullString] optional DOMString str);
 
 #if defined(TESTING_JS)
     // 'Callback' extended attribute
     void    methodWithCallbackArg(in TestCallback callback);
     void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in TestCallback callback);
-    void    methodWithCallbackAndOptionalArg(in [Optional] TestCallback callback);
+    void    methodWithCallbackAndOptionalArg(in optional TestCallback callback);
     // static methods with 'Callback' extended attribute
-    static void    staticMethodWithCallbackAndOptionalArg(in [Optional] TestCallback callback);
+    static void    staticMethodWithCallbackAndOptionalArg(in optional TestCallback callback);
     static void    staticMethodWithCallbackArg(in TestCallback callback);
 #endif
 
@@ -177,7 +177,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 #if defined(TESTING_JS)
     // Overloads
     void    overloadedMethod(in TestObj? objArg, in [StrictTypeChecking] DOMString strArg);
-    void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
+    void    overloadedMethod(in TestObj? objArg, in optional long longArg);
     void    overloadedMethod(in [StrictTypeChecking] DOMString strArg);
     void    overloadedMethod(in long longArg);
     void    overloadedMethod(in TestCallback callback);
@@ -191,7 +191,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).
     static void classMethod();
-    static long classMethodWithOptional(in [Optional] long arg);
+    static long classMethodWithOptional(in optional long arg);
     [Custom] static void classMethod2(in long arg);
 
     // Static method with conditional on overloaded methods

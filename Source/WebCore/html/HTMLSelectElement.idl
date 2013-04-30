@@ -40,10 +40,10 @@
 #else
     attribute unsigned long length setter raises (DOMException);
 #endif
-    Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
-    Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
-    [ObjCLegacyUnnamedParameters] void add(in [Optional=DefaultIsUndefined] HTMLElement element,
-                            in [Optional=DefaultIsUndefined] HTMLElement before) raises(DOMException);
+    Node item(in [IsIndex,Default=Undefined] optional unsigned long index);
+    Node namedItem(in [Default=Undefined] optional DOMString name);
+    [ObjCLegacyUnnamedParameters] void add(in [Default=Undefined] optional HTMLElement element,
+                            in [Default=Undefined] optional HTMLElement before) raises(DOMException);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // In JavaScript, we support both option index and option object parameters.
     // As of this writing this cannot be auto-generated.

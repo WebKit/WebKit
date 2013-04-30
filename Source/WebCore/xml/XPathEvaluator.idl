@@ -21,16 +21,16 @@
     Constructor,
     ImplementationLacksVTable
 ] interface XPathEvaluator {
-    XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
-                                     in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
+    XPathExpression createExpression(in [Default=Undefined] optional DOMString expression,
+                                     in [Default=Undefined] optional XPathNSResolver resolver)
         raises(DOMException);
 
-    XPathNSResolver createNSResolver(in [Optional=DefaultIsUndefined] Node nodeResolver);
+    XPathNSResolver createNSResolver(in [Default=Undefined] optional Node nodeResolver);
 
-    XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
-                         in [Optional=DefaultIsUndefined] Node contextNode, 
-                         in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
-                         in [Optional=DefaultIsUndefined] unsigned short type,
-                         in [Optional=DefaultIsUndefined] XPathResult inResult)
+    XPathResult evaluate(in [Default=Undefined] optional DOMString expression,
+                         in [Default=Undefined] optional Node contextNode, 
+                         in [Default=Undefined] optional XPathNSResolver resolver,
+                         in [Default=Undefined] optional unsigned short type,
+                         in [Default=Undefined] optional XPathResult inResult)
         raises(DOMException);
 };

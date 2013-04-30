@@ -30,38 +30,38 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void save();
     void restore();
 
-    void scale(in [Optional=DefaultIsUndefined] float sx,
-               in [Optional=DefaultIsUndefined] float sy);
-    void rotate(in [Optional=DefaultIsUndefined] float angle);
-    void translate(in [Optional=DefaultIsUndefined] float tx,
-                   in [Optional=DefaultIsUndefined] float ty);
-    void transform(in [Optional=DefaultIsUndefined] float m11,
-                   in [Optional=DefaultIsUndefined] float m12,
-                   in [Optional=DefaultIsUndefined] float m21,
-                   in [Optional=DefaultIsUndefined] float m22,
-                   in [Optional=DefaultIsUndefined] float dx,
-                   in [Optional=DefaultIsUndefined] float dy);
-    void setTransform(in [Optional=DefaultIsUndefined] float m11,
-                      in [Optional=DefaultIsUndefined] float m12,
-                      in [Optional=DefaultIsUndefined] float m21,
-                      in [Optional=DefaultIsUndefined] float m22,
-                      in [Optional=DefaultIsUndefined] float dx,
-                      in [Optional=DefaultIsUndefined] float dy);
+    void scale(in [Default=Undefined] optional float sx,
+               in [Default=Undefined] optional float sy);
+    void rotate(in [Default=Undefined] optional float angle);
+    void translate(in [Default=Undefined] optional float tx,
+                   in [Default=Undefined] optional float ty);
+    void transform(in [Default=Undefined] optional float m11,
+                   in [Default=Undefined] optional float m12,
+                   in [Default=Undefined] optional float m21,
+                   in [Default=Undefined] optional float m22,
+                   in [Default=Undefined] optional float dx,
+                   in [Default=Undefined] optional float dy);
+    void setTransform(in [Default=Undefined] optional float m11,
+                      in [Default=Undefined] optional float m12,
+                      in [Default=Undefined] optional float m21,
+                      in [Default=Undefined] optional float m22,
+                      in [Default=Undefined] optional float dx,
+                      in [Default=Undefined] optional float dy);
 
     attribute float globalAlpha;
     [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
 
-    CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
-                                        in [Optional=DefaultIsUndefined] float y0,
-                                        in [Optional=DefaultIsUndefined] float x1,
-                                        in [Optional=DefaultIsUndefined] float y1)
+    CanvasGradient createLinearGradient(in [Default=Undefined] optional float x0,
+                                        in [Default=Undefined] optional float y0,
+                                        in [Default=Undefined] optional float x1,
+                                        in [Default=Undefined] optional float y1)
         raises (DOMException);
-    CanvasGradient createRadialGradient(in [Optional=DefaultIsUndefined] float x0,
-                                        in [Optional=DefaultIsUndefined] float y0,
-                                        in [Optional=DefaultIsUndefined] float r0,
-                                        in [Optional=DefaultIsUndefined] float x1,
-                                        in [Optional=DefaultIsUndefined] float y1,
-                                        in [Optional=DefaultIsUndefined] float r1)
+    CanvasGradient createRadialGradient(in [Default=Undefined] optional float x0,
+                                        in [Default=Undefined] optional float y0,
+                                        in [Default=Undefined] optional float r0,
+                                        in [Default=Undefined] optional float x1,
+                                        in [Default=Undefined] optional float y1,
+                                        in [Default=Undefined] optional float r1)
         raises (DOMException);
 
     attribute float lineWidth;
@@ -81,14 +81,14 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [Custom] attribute Array webkitLineDash;
     attribute float webkitLineDashOffset;
 
-    void clearRect(in [Optional=DefaultIsUndefined] float x,
-                   in [Optional=DefaultIsUndefined] float y,
-                   in [Optional=DefaultIsUndefined] float width,
-                   in [Optional=DefaultIsUndefined] float height);
-    void fillRect(in [Optional=DefaultIsUndefined] float x,
-                  in [Optional=DefaultIsUndefined] float y,
-                  in [Optional=DefaultIsUndefined] float width,
-                  in [Optional=DefaultIsUndefined] float height);
+    void clearRect(in [Default=Undefined] optional float x,
+                   in [Default=Undefined] optional float y,
+                   in [Default=Undefined] optional float width,
+                   in [Default=Undefined] optional float height);
+    void fillRect(in [Default=Undefined] optional float x,
+                  in [Default=Undefined] optional float y,
+                  in [Default=Undefined] optional float width,
+                  in [Default=Undefined] optional float height);
 
     void beginPath();
 
@@ -98,86 +98,86 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
-    void moveTo(in [Optional=DefaultIsUndefined] float x,
-                in [Optional=DefaultIsUndefined] float y);
-    void lineTo(in [Optional=DefaultIsUndefined] float x,
-                in [Optional=DefaultIsUndefined] float y);
-    void quadraticCurveTo(in [Optional=DefaultIsUndefined] float cpx,
-                          in [Optional=DefaultIsUndefined] float cpy,
-                          in [Optional=DefaultIsUndefined] float x,
-                          in [Optional=DefaultIsUndefined] float y);
-    void bezierCurveTo(in [Optional=DefaultIsUndefined] float cp1x,
-                       in [Optional=DefaultIsUndefined] float cp1y,
-                       in [Optional=DefaultIsUndefined] float cp2x,
-                       in [Optional=DefaultIsUndefined] float cp2y,
-                       in [Optional=DefaultIsUndefined] float x,
-                       in [Optional=DefaultIsUndefined] float y);
-    void arcTo(in [Optional=DefaultIsUndefined] float x1,
-               in [Optional=DefaultIsUndefined] float y1,
-               in [Optional=DefaultIsUndefined] float x2,
-               in [Optional=DefaultIsUndefined] float y2,
-               in [Optional=DefaultIsUndefined] float radius)
+    void moveTo(in [Default=Undefined] optional float x,
+                in [Default=Undefined] optional float y);
+    void lineTo(in [Default=Undefined] optional float x,
+                in [Default=Undefined] optional float y);
+    void quadraticCurveTo(in [Default=Undefined] optional float cpx,
+                          in [Default=Undefined] optional float cpy,
+                          in [Default=Undefined] optional float x,
+                          in [Default=Undefined] optional float y);
+    void bezierCurveTo(in [Default=Undefined] optional float cp1x,
+                       in [Default=Undefined] optional float cp1y,
+                       in [Default=Undefined] optional float cp2x,
+                       in [Default=Undefined] optional float cp2y,
+                       in [Default=Undefined] optional float x,
+                       in [Default=Undefined] optional float y);
+    void arcTo(in [Default=Undefined] optional float x1,
+               in [Default=Undefined] optional float y1,
+               in [Default=Undefined] optional float x2,
+               in [Default=Undefined] optional float y2,
+               in [Default=Undefined] optional float radius)
         raises (DOMException);
-    void rect(in [Optional=DefaultIsUndefined] float x,
-              in [Optional=DefaultIsUndefined] float y,
-              in [Optional=DefaultIsUndefined] float width,
-              in [Optional=DefaultIsUndefined] float height);
-    void arc(in [Optional=DefaultIsUndefined] float x,
-             in [Optional=DefaultIsUndefined] float y,
-             in [Optional=DefaultIsUndefined] float radius,
-             in [Optional=DefaultIsUndefined] float startAngle,
-             in [Optional=DefaultIsUndefined] float endAngle,
-             in [Optional=DefaultIsUndefined] boolean anticlockwise)
+    void rect(in [Default=Undefined] optional float x,
+              in [Default=Undefined] optional float y,
+              in [Default=Undefined] optional float width,
+              in [Default=Undefined] optional float height);
+    void arc(in [Default=Undefined] optional float x,
+             in [Default=Undefined] optional float y,
+             in [Default=Undefined] optional float radius,
+             in [Default=Undefined] optional float startAngle,
+             in [Default=Undefined] optional float endAngle,
+             in [Default=Undefined] optional boolean anticlockwise)
         raises (DOMException);
 
-    void fill(in [Optional] CanvasWindingRule winding);
+    void fill(in optional CanvasWindingRule winding);
     void stroke();
-    void clip(in [Optional] CanvasWindingRule winding);
-    boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
-                          in [Optional=DefaultIsUndefined] float y,
-                          in [Optional] CanvasWindingRule winding);
-    boolean isPointInStroke(in [Optional=DefaultIsUndefined] float x,
-                            in [Optional=DefaultIsUndefined] float y);
+    void clip(in optional CanvasWindingRule winding);
+    boolean isPointInPath(in [Default=Undefined] optional float x,
+                          in [Default=Undefined] optional float y,
+                          in optional CanvasWindingRule winding);
+    boolean isPointInStroke(in [Default=Undefined] optional float x,
+                            in [Default=Undefined] optional float y);
 
     // text
     attribute DOMString font;
     attribute DOMString textAlign;
     attribute DOMString textBaseline;
 
-    TextMetrics measureText(in [Optional=DefaultIsUndefined] DOMString text);
+    TextMetrics measureText(in [Default=Undefined] optional DOMString text);
 
     // other
 
-    void setAlpha(in [Optional=DefaultIsUndefined] float alpha);
-    void setCompositeOperation(in [Optional=DefaultIsUndefined] DOMString compositeOperation);
+    void setAlpha(in [Default=Undefined] optional float alpha);
+    void setCompositeOperation(in [Default=Undefined] optional DOMString compositeOperation);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    void setLineWidth(in [Optional=DefaultIsUndefined] float width);
-    void setLineCap(in [Optional=DefaultIsUndefined] DOMString cap);
-    void setLineJoin(in [Optional=DefaultIsUndefined] DOMString join);
-    void setMiterLimit(in [Optional=DefaultIsUndefined] float limit);
+    void setLineWidth(in [Default=Undefined] optional float width);
+    void setLineCap(in [Default=Undefined] optional DOMString cap);
+    void setLineJoin(in [Default=Undefined] optional DOMString join);
+    void setMiterLimit(in [Default=Undefined] optional float limit);
 #endif
 
     void clearShadow();
 
-    void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
-    void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+    void fillText(in DOMString text, in float x, in float y, in optional float maxWidth);
+    void strokeText(in DOMString text, in float x, in float y, in optional float maxWidth);
 
-    void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-    void setStrokeColor(in float grayLevel, in [Optional] float alpha);
+    void setStrokeColor(in [StrictTypeChecking] DOMString color, in optional float alpha);
+    void setStrokeColor(in float grayLevel, in optional float alpha);
     void setStrokeColor(in float r, in float g, in float b, in float a);
     void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
 
-    void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-    void setFillColor(in float grayLevel, in [Optional] float alpha);
+    void setFillColor(in [StrictTypeChecking] DOMString color, in optional float alpha);
+    void setFillColor(in float grayLevel, in optional float alpha);
     void setFillColor(in float r, in float g, in float b, in float a);
     void setFillColor(in float c, in float m, in float y, in float k, in float a);
 
-    void strokeRect(in [Optional=DefaultIsUndefined] float x,
-                    in [Optional=DefaultIsUndefined] float y,
-                    in [Optional=DefaultIsUndefined] float width,
-                    in [Optional=DefaultIsUndefined] float height,
-                    in [Optional] float lineWidth);
+    void strokeRect(in [Default=Undefined] optional float x,
+                    in [Default=Undefined] optional float y,
+                    in [Default=Undefined] optional float width,
+                    in [Default=Undefined] optional float height,
+                    in optional float lineWidth);
 
     void drawImage(in HTMLImageElement? image, in float x, in float y)
         raises (DOMException);
@@ -201,12 +201,12 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 #endif
 
     void drawImageFromRect(in HTMLImageElement image,
-                           in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
-                           in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
-                           in [Optional] DOMString compositeOperation);
+                           in optional float sx, in optional float sy, in optional float sw, in optional float sh,
+                           in optional float dx, in optional float dy, in optional float dw, in optional float dh,
+                           in optional DOMString compositeOperation);
 
-    void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
-    void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
+    void setShadow(in float width, in float height, in float blur, in [StrictTypeChecking] optional DOMString color, in optional float alpha);
+    void setShadow(in float width, in float height, in float blur, in float grayLevel, in optional float alpha);
     void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
     void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
 
@@ -233,12 +233,12 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [Custom] attribute custom fillStyle;
 
     // pixel manipulation
-    ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
-                           in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
+    ImageData getImageData(in [Default=Undefined] optional float sx, in [Default=Undefined] optional float sy,
+                           in [Default=Undefined] optional float sw, in [Default=Undefined] optional float sh)
         raises(DOMException);
 
-    ImageData webkitGetImageDataHD(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
-                                   in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
+    ImageData webkitGetImageDataHD(in [Default=Undefined] optional float sx, in [Default=Undefined] optional float sy,
+                                   in [Default=Undefined] optional float sw, in [Default=Undefined] optional float sh)
         raises(DOMException);
 
     readonly attribute float webkitBackingStorePixelRatio;

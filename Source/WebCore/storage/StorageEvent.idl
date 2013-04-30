@@ -32,14 +32,14 @@
     [InitializedByEventConstructor] readonly attribute DOMString url;
     [InitializedByEventConstructor] readonly attribute Storage storageArea;
 
-    void initStorageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
-                          in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
-                          in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                          in [Optional=DefaultIsUndefined] DOMString keyArg, 
-                          in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString oldValueArg, 
-                          in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString newValueArg, 
-                          in [Optional=DefaultIsUndefined] DOMString urlArg, 
-                          in [Optional=DefaultIsUndefined] Storage storageAreaArg);
+    void initStorageEvent(in [Default=Undefined] optional DOMString typeArg, 
+                          in [Default=Undefined] optional boolean canBubbleArg, 
+                          in [Default=Undefined] optional boolean cancelableArg, 
+                          in [Default=Undefined] optional DOMString keyArg, 
+                          in [Default=Undefined,TreatNullAs=NullString] optional DOMString oldValueArg, 
+                          in [Default=Undefined,TreatNullAs=NullString] optional DOMString newValueArg, 
+                          in [Default=Undefined] optional DOMString urlArg, 
+                          in [Default=Undefined] optional Storage storageAreaArg);
 
     // Needed once we support init<blank>EventNS
     // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);

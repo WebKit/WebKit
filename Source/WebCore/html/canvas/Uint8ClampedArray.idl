@@ -38,10 +38,10 @@
     const unsigned long BYTES_PER_ELEMENT = 1;
 
     readonly attribute unsigned long length;
-    Uint8ClampedArray subarray(in [Optional=DefaultIsUndefined] long start, in [Optional] long end);
+    Uint8ClampedArray subarray(in [Default=Undefined] optional long start, in optional long end);
 
     // FIXME: Missing other setters!
-    // void set(in Uint8ClampedArray array, [Optional] in unsigned long offset);
-    // void set(in sequence<long> array, [Optional] in unsigned long offset);
+    // void set(in Uint8ClampedArray array, optional in unsigned long offset);
+    // void set(in sequence<long> array, optional in unsigned long offset);
     void set();
 };

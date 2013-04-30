@@ -37,7 +37,7 @@
         raises(FileException);
     [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(in Blob blob)
         raises(FileException);
-    [CallWith=ScriptExecutionContext] DOMString readAsText(in Blob blob, in [Optional] DOMString encoding)
+    [CallWith=ScriptExecutionContext] DOMString readAsText(in Blob blob, in optional DOMString encoding)
         raises(FileException);
     [CallWith=ScriptExecutionContext] DOMString readAsDataURL(in Blob blob)
         raises(FileException);

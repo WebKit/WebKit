@@ -30,7 +30,7 @@
 // changes in its ouput.
 [
     ActiveDOMObject,
-    NamedConstructor=Audio(in DOMString str1, in [Optional=DefaultIsUndefined] DOMString str2, in [Optional=DefaultIsNullString] DOMString str3),
+    NamedConstructor=Audio(in DOMString str1, in [Default=Undefined] optional DOMString str2, in [Default=NullString] optional DOMString str3),
     ConstructorRaisesException
 ] interface TestNamedConstructor {
 };

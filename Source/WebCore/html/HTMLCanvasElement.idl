@@ -31,13 +31,13 @@
     attribute long width;
     attribute long height;
 
-    [Custom] DOMString toDataURL(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString type)
+    [Custom] DOMString toDataURL(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString type)
         raises(DOMException);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // The custom binding is needed to handle context creation attributes.
-    [Custom] any getContext(in [Optional=DefaultIsUndefined] DOMString contextId);
+    [Custom] any getContext(in [Default=Undefined] optional DOMString contextId);
 #endif
 #endif
 

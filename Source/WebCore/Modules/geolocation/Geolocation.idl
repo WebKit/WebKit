@@ -30,12 +30,12 @@
     OmitConstructor
 ] interface Geolocation {
     [Custom] void getCurrentPosition(in PositionCallback successCallback,
-                                     in [Optional] PositionErrorCallback errorCallback,
-                                     in [Optional] PositionOptions options);
+                                     in optional PositionErrorCallback errorCallback,
+                                     in optional PositionOptions options);
 
     [Custom] long watchPosition(in PositionCallback successCallback,
-                                in [Optional] PositionErrorCallback errorCallback,
-                                in [Optional] PositionOptions options);
+                                in optional PositionErrorCallback errorCallback,
+                                in optional PositionOptions options);
 
     void clearWatch(in long watchID);
 };

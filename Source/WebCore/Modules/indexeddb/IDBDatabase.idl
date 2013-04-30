@@ -38,15 +38,15 @@
     attribute EventListener onerror;
     attribute EventListener onversionchange;
 
-    [Custom] IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
+    [Custom] IDBObjectStore createObjectStore(in DOMString name, in optional Dictionary options)
         raises (DOMException);
     void deleteObjectStore(in DOMString name)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Default=NullString] optional DOMString mode)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<DOMString> storeNames, in [Optional=DefaultIsNullString] DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<DOMString> storeNames, in [Default=NullString] optional DOMString mode)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Default=NullString] optional DOMString mode)
         raises (DOMException);
 
     void close();
@@ -54,10 +54,10 @@
     // EventTarget interface
     void addEventListener(in DOMString type,
                           in EventListener listener,
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type,
                              in EventListener listener,
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
     boolean dispatchEvent(in Event evt)
         raises(EventException);
 };

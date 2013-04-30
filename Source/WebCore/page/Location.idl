@@ -41,8 +41,8 @@
              [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
 #endif
 
-    [Custom] void assign(in [Optional=DefaultIsUndefined] DOMString url);
-    [Custom] void replace(in [Optional=DefaultIsUndefined] DOMString url);
+    [Custom] void assign(in [Default=Undefined] optional DOMString url);
+    [Custom] void replace(in [Default=Undefined] optional DOMString url);
     [Custom] void reload();
 
     // URI decomposition attributes

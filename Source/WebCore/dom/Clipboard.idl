@@ -33,7 +33,7 @@
     [CustomGetter] readonly attribute Array types;
     readonly attribute FileList files;
 
-    [Custom] void clearData(in [Optional] DOMString type)
+    [Custom] void clearData(in optional DOMString type)
         raises(DOMException);
     DOMString getData(in DOMString type);
     boolean setData(in DOMString type, in DOMString data);

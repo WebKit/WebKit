@@ -38,35 +38,35 @@ interface [
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
-    void moveTo(in [Optional=DefaultIsUndefined] float x,
-                in [Optional=DefaultIsUndefined] float y);
-    void lineTo(in [Optional=DefaultIsUndefined] float x,
-                in [Optional=DefaultIsUndefined] float y);
-    void quadraticCurveTo(in [Optional=DefaultIsUndefined] float cpx,
-                          in [Optional=DefaultIsUndefined] float cpy,
-                          in [Optional=DefaultIsUndefined] float x,
-                          in [Optional=DefaultIsUndefined] float y);
-    void bezierCurveTo(in [Optional=DefaultIsUndefined] float cp1x,
-                       in [Optional=DefaultIsUndefined] float cp1y,
-                       in [Optional=DefaultIsUndefined] float cp2x,
-                       in [Optional=DefaultIsUndefined] float cp2y,
-                       in [Optional=DefaultIsUndefined] float x,
-                       in [Optional=DefaultIsUndefined] float y);
-    void arcTo(in [Optional=DefaultIsUndefined] float x1,
-               in [Optional=DefaultIsUndefined] float y1,
-               in [Optional=DefaultIsUndefined] float x2,
-               in [Optional=DefaultIsUndefined] float y2,
-               in [Optional=DefaultIsUndefined] float radius)
+    void moveTo(in [Default=Undefined] optional float x,
+                in [Default=Undefined] optional float y);
+    void lineTo(in [Default=Undefined] optional float x,
+                in [Default=Undefined] optional float y);
+    void quadraticCurveTo(in [Default=Undefined] optional float cpx,
+                          in [Default=Undefined] optional float cpy,
+                          in [Default=Undefined] optional float x,
+                          in [Default=Undefined] optional float y);
+    void bezierCurveTo(in [Default=Undefined] optional float cp1x,
+                       in [Default=Undefined] optional float cp1y,
+                       in [Default=Undefined] optional float cp2x,
+                       in [Default=Undefined] optional float cp2y,
+                       in [Default=Undefined] optional float x,
+                       in [Default=Undefined] optional float y);
+    void arcTo(in [Default=Undefined] optional float x1,
+               in [Default=Undefined] optional float y1,
+               in [Default=Undefined] optional float x2,
+               in [Default=Undefined] optional float y2,
+               in [Default=Undefined] optional float radius)
         raises (DOMException);
-    void rect(in [Optional=DefaultIsUndefined] float x,
-              in [Optional=DefaultIsUndefined] float y,
-              in [Optional=DefaultIsUndefined] float width,
-              in [Optional=DefaultIsUndefined] float height);
-    void arc(in [Optional=DefaultIsUndefined] float x,
-             in [Optional=DefaultIsUndefined] float y,
-             in [Optional=DefaultIsUndefined] float radius,
-             in [Optional=DefaultIsUndefined] float startAngle,
-             in [Optional=DefaultIsUndefined] float endAngle,
-             in [Optional=DefaultIsUndefined] boolean anticlockwise)
+    void rect(in [Default=Undefined] optional float x,
+              in [Default=Undefined] optional float y,
+              in [Default=Undefined] optional float width,
+              in [Default=Undefined] optional float height);
+    void arc(in [Default=Undefined] optional float x,
+             in [Default=Undefined] optional float y,
+             in [Default=Undefined] optional float radius,
+             in [Default=Undefined] optional float startAngle,
+             in [Default=Undefined] optional float endAngle,
+             in [Default=Undefined] optional boolean anticlockwise)
         raises (DOMException);
 };

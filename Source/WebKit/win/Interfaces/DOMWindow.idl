@@ -54,7 +54,7 @@ interface IDOMWindow : IDOMObject
     // WebKit extensions
     //CSSRuleList getMatchedCSSRules(in Element element,
     //                               in DOMString pseudoElement,
-    //                               in [Optional] boolean authorOnly);
+    //                               in optional boolean authorOnly);
     HRESULT getMatchedCSSRules([in] IDOMElement* element, [in] BSTR pseudoElement, [in] BOOL authorOnly, [out, retval] IDOMCSSRuleList** result);
 
     //readonly attribute double devicePixelRatio;

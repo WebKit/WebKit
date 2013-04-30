@@ -1331,7 +1331,7 @@ sub GetFunctionLength
   foreach my $parameter (@{$function->parameters}) {
     # Abort as soon as we find the first optional parameter as no mandatory
     # parameter can follow an optional one.
-    last if $parameter->extendedAttributes->{"Optional"};
+    last if $parameter->isOptional;
     $numMandatoryParams++;
   }
   return $numMandatoryParams;
@@ -1348,7 +1348,7 @@ sub GenerateFunctionParametersCheck
     my $numMandatoryParams = @{$function->parameters};
 
     foreach my $parameter (@{$function->parameters}) {
-        if ($parameter->extendedAttributes->{"Optional"}) {
+        if ($parameter->isOptional) {
             my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
             push(@orExpression, $expression);
             push(@neededArguments, @usedArguments);
@@ -2842,7 +2842,7 @@ sub GenerateArgumentsCountCheck
 
     my $numMandatoryParams = @{$function->parameters};
     foreach my $param (reverse(@{$function->parameters})) {
-        if ($param->extendedAttributes->{"Optional"} or $param->isVariadic) {
+        if ($param->isOptional or $param->isVariadic) {
             $numMandatoryParams--;
         } else {
             last;
@@ -2898,8 +2898,9 @@ sub GenerateParametersCheck
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
-        my $optional = $parameter->extendedAttributes->{"Optional"};
-        if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($parameter->type)) {
+        my $optional = $parameter->isOptional;
+        my $defaultAttribute = $parameter->extendedAttributes->{"Default"};
+        if ($optional && !$defaultAttribute && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($parameter->type)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
@@ -3016,7 +3017,7 @@ sub GenerateParametersCheck
                 }
             }
 
-            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional && $optional eq "DefaultIsNullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)") . ");\n");
+            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)") . ");\n");
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
@@ -4122,8 +4123,7 @@ END
             }
 
             # FIXME: For now, we do not support SVG constructors.
-            # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
-            # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
+            # FIXME: Currently [Constructor(...)] does not yet support optional arguments without [Default=...]
             my $numParameters = @{$function->parameters};
             my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $interface, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 

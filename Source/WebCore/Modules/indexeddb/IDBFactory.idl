@@ -31,7 +31,7 @@
     [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames()
         raises (DOMException);
 
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [EnforceRange, Optional] unsigned long long version)
+    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [EnforceRange] optional unsigned long long version)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBOpenDBRequest deleteDatabase(in DOMString name)
         raises (DOMException);

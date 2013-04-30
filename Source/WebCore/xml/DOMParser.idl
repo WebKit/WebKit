@@ -21,6 +21,6 @@
     Constructor,
     ImplementationLacksVTable
 ] interface DOMParser {
-    Document parseFromString(in [Optional=DefaultIsUndefined] DOMString str, 
-                             in [Optional=DefaultIsUndefined] DOMString contentType);
+    Document parseFromString(in [Default=Undefined] optional DOMString str, 
+                             in [Default=Undefined] optional DOMString contentType);
 };

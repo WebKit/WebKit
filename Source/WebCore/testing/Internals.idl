@@ -111,7 +111,7 @@
 
     void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
 
-    void setPagination(in Document document, in DOMString mode, in long gap, in [Optional] long pageLength) raises(DOMException);
+    void setPagination(in Document document, in DOMString mode, in long gap, in optional long pageLength) raises(DOMException);
 
     DOMString configurationForViewport(in Document document,
                                        in float devicePixelRatio,
@@ -189,7 +189,7 @@
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
     const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
     const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
-    DOMString layerTreeAsText(in Document document, in [Optional] unsigned short flags) raises (DOMException);
+    DOMString layerTreeAsText(in Document document, in optional unsigned short flags) raises (DOMException);
 
     DOMString scrollingStateTreeAsText(in Document document) raises (DOMException);
     DOMString mainThreadScrollingReasons(in Document document) raises (DOMException);
@@ -225,10 +225,10 @@
     [Conditional=INSPECTOR] void setJavaScriptProfilingEnabled(in boolean creates) raises(DOMException);
 
     DOMString counterValue(in Element element);
-    long pageNumber(in Element element, in [Optional] float pageWidth, in [Optional] float pageHeight);
+    long pageNumber(in Element element, in optional float pageWidth, in optional float pageHeight);
     DOMString[] shortcutIconURLs(in Document document);
     DOMString[] allIconURLs(in Document document);
-    long numberOfPages(in [Optional] double pageWidthInPixels, in [Optional] double pageHeightInPixels);
+    long numberOfPages(in optional double pageWidthInPixels, in optional double pageHeightInPixels);
     DOMString pageProperty(in DOMString propertyName, in long pageNumber) raises (DOMException);
     DOMString pageSizeAndMarginsInPixels(in long pageIndex, in long width, in long height, in long marginTop, in long marginRight, in long marginBottom, in long marginLeft) raises (DOMException);
 

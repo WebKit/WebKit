@@ -33,5 +33,5 @@
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface DirectoryReader {
-    void readEntries(in EntriesCallback successCallback, in [Optional] ErrorCallback errorCallback);
+    void readEntries(in EntriesCallback successCallback, in optional ErrorCallback errorCallback);
 };

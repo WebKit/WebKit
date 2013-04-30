@@ -22,7 +22,7 @@
 ] partial interface Navigator {
     void webkitGetUserMedia(in Dictionary options,
                                                  in NavigatorUserMediaSuccessCallback successCallback,
-                                                 in [Optional] NavigatorUserMediaErrorCallback errorCallback)
+                                                 in optional NavigatorUserMediaErrorCallback errorCallback)
         raises(DOMException);
 };
 

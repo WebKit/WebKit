@@ -21,12 +21,12 @@ interface Text : CharacterData {
 
     // DOM Level 1
 
-    Text splitText(in [IsIndex,Optional=DefaultIsUndefined] unsigned long offset)
+    Text splitText(in [IsIndex,Default=Undefined] optional unsigned long offset)
         raises (DOMException);
 
     // Introduced in DOM Level 3:
     readonly attribute DOMString       wholeText;
-    Text               replaceWholeText(in [Optional=DefaultIsUndefined] DOMString content)
+    Text               replaceWholeText(in [Default=Undefined] optional DOMString content)
                                         raises(DOMException);
     // ShadowAware API
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

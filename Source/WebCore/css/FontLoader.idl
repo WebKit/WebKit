@@ -41,17 +41,17 @@
     attribute EventListener onload;
     attribute EventListener onerror;
 
-    boolean checkFont(in DOMString font, in [Optional=DefaultIsNullString] DOMString text);
+    boolean checkFont(in DOMString font, in [Default=NullString] optional DOMString text);
     void loadFont(in Dictionary params);
     void notifyWhenFontsReady(in VoidCallback callback);
     readonly attribute boolean loading;
 
     void addEventListener(in DOMString type,
                           in EventListener listener,
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type,
                              in EventListener listener,
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
     boolean dispatchEvent(in Event evt)
         raises(EventException);
 };

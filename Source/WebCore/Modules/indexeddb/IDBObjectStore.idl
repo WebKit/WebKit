@@ -34,9 +34,9 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [CallWith=ScriptState] IDBRequest put(in any value, in [Optional] any key)
+    [CallWith=ScriptState] IDBRequest put(in any value, in optional any key)
         raises (DOMException);
-    [CallWith=ScriptState] IDBRequest add(in any value, in [Optional] any key)
+    [CallWith=ScriptState] IDBRequest add(in any value, in optional any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKeyRange? keyRange)
         raises (DOMException);
@@ -48,20 +48,20 @@
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest get(in any key)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in optional IDBKeyRange? range, in optional DOMString direction)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in any key, in [Optional] DOMString direction)
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in any key, in optional DOMString direction)
         raises (DOMException);
 
-    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(in DOMString name, in sequence<DOMString> keyPath, in [Optional] Dictionary options)
+    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(in DOMString name, in sequence<DOMString> keyPath, in optional Dictionary options)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(in DOMString name, in DOMString keyPath, in [Optional] Dictionary options)
+    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(in DOMString name, in DOMString keyPath, in optional Dictionary options)
         raises (DOMException);
     IDBIndex index(in DOMString name)
         raises (DOMException);
     void deleteIndex(in DOMString name)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
+    [CallWith=ScriptExecutionContext] IDBRequest count(in optional IDBKeyRange? range)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest count(in any key)
         raises (DOMException);

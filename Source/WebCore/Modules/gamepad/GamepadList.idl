@@ -29,6 +29,6 @@
     ImplementationLacksVTable
 ] interface GamepadList {
     readonly attribute unsigned long length;
-    Gamepad item(in [Optional=DefaultIsUndefined] unsigned long index);
+    Gamepad item(in [Default=Undefined] optional unsigned long index);
 };
 

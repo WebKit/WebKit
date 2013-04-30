@@ -37,6 +37,6 @@
    Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
 
    int checkPermission();
-   void requestPermission(in [Optional] VoidCallback callback);
+   void requestPermission(in optional VoidCallback callback);
 };
 

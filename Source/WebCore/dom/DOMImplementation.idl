@@ -25,28 +25,28 @@
 
     // DOM Level 1
 
-    [ObjCLegacyUnnamedParameters] boolean hasFeature(in [Optional=DefaultIsUndefined] DOMString feature, 
-                                      in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString version);
+    [ObjCLegacyUnnamedParameters] boolean hasFeature(in [Default=Undefined] optional DOMString feature, 
+                                      in [TreatNullAs=NullString, Default=Undefined] optional DOMString version);
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName,
-                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString publicId,
-                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString systemId)
+    [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
+                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString publicId,
+                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString systemId)
         raises(DOMException);
-    [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI, 
-                                           in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName, 
-                                           in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DocumentType doctype)
+    [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=NullString, Default=Undefined] optional DOMString namespaceURI, 
+                                           in [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName, 
+                                           in [TreatNullAs=NullString, Default=Undefined] optional DocumentType doctype)
         raises(DOMException);
 
     // DOMImplementationCSS interface from DOM Level 2 CSS
 
-    [ObjCLegacyUnnamedParameters] CSSStyleSheet createCSSStyleSheet(in [Optional=DefaultIsUndefined] DOMString title,
-                                                     in [Optional=DefaultIsUndefined] DOMString media)
+    [ObjCLegacyUnnamedParameters] CSSStyleSheet createCSSStyleSheet(in [Default=Undefined] optional DOMString title,
+                                                     in [Default=Undefined] optional DOMString media)
         raises(DOMException);
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-    HTMLDocument createHTMLDocument(in [Optional=DefaultIsNullString] DOMString title);
+    HTMLDocument createHTMLDocument(in [Default=NullString] optional DOMString title);
 };
 

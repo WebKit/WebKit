@@ -34,7 +34,7 @@
     readonly attribute long duration;
     readonly attribute long interToneGap;
 
-    void insertDTMF(in DOMString tones, in [Optional] long duration, in [Optional] long interToneGap)
+    void insertDTMF(in DOMString tones, in optional long duration, in optional long interToneGap)
         raises(DOMException);
 
     attribute EventListener ontonechange;
@@ -42,10 +42,10 @@
     // EventTarget interface
     void addEventListener(in DOMString type,
                           in EventListener listener,
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type,
                              in EventListener listener,
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
     boolean dispatchEvent(in Event event)
         raises(EventException);
 };

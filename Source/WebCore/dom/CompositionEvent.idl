@@ -30,11 +30,11 @@
 
     [InitializedByEventConstructor] readonly attribute DOMString data;
 
-    void initCompositionEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
-                              in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
-                              in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                              in [Optional=DefaultIsUndefined] DOMWindow viewArg, 
-                              in [Optional=DefaultIsUndefined] DOMString dataArg);
+    void initCompositionEvent(in [Default=Undefined] optional DOMString typeArg, 
+                              in [Default=Undefined] optional boolean canBubbleArg, 
+                              in [Default=Undefined] optional boolean cancelableArg, 
+                              in [Default=Undefined] optional DOMWindow viewArg, 
+                              in [Default=Undefined] optional DOMString dataArg);
 
 };
 

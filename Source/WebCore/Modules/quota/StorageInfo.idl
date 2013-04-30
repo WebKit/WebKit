@@ -31,6 +31,6 @@
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;
 
-    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in unsigned short storageType, in [Optional] StorageUsageCallback usageCallback, in [Optional] StorageErrorCallback errorCallback);
-    [CallWith=ScriptExecutionContext] void requestQuota(in unsigned short storageType, in unsigned long long newQuotaInBytes, in [Optional] StorageQuotaCallback quotaCallback, in [Optional] StorageErrorCallback errorCallback);
+    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in unsigned short storageType, in optional StorageUsageCallback usageCallback, in optional StorageErrorCallback errorCallback);
+    [CallWith=ScriptExecutionContext] void requestQuota(in unsigned short storageType, in unsigned long long newQuotaInBytes, in optional StorageQuotaCallback quotaCallback, in optional StorageErrorCallback errorCallback);
 };

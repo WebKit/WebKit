@@ -23,10 +23,10 @@ interface CSSMediaRule : CSSRule {
     readonly attribute MediaList media;
     readonly attribute CSSRuleList cssRules;
     
-    [ObjCLegacyUnnamedParameters] unsigned long      insertRule(in [Optional=DefaultIsUndefined] DOMString rule, 
-                                                 in [Optional=DefaultIsUndefined] unsigned long index)
+    [ObjCLegacyUnnamedParameters] unsigned long      insertRule(in [Default=Undefined] optional DOMString rule, 
+                                                 in [Default=Undefined] optional unsigned long index)
         raises(DOMException);
-    void               deleteRule(in [Optional=DefaultIsUndefined] unsigned long index)
+    void               deleteRule(in [Default=Undefined] optional unsigned long index)
         raises(DOMException);
 };
 

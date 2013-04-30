@@ -34,77 +34,77 @@
     readonly attribute SVGAnimatedNumber pathLength;
 
     float getTotalLength();
-    SVGPoint getPointAtLength(in [Optional=DefaultIsUndefined] float distance);
-    unsigned long getPathSegAtLength(in [Optional=DefaultIsUndefined] float distance);
+    SVGPoint getPointAtLength(in [Default=Undefined] optional float distance);
+    unsigned long getPathSegAtLength(in [Default=Undefined] optional float distance);
 
     SVGPathSegClosePath createSVGPathSegClosePath();
 
-    SVGPathSegMovetoAbs createSVGPathSegMovetoAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                  in [Optional=DefaultIsUndefined] float y);
-    SVGPathSegMovetoRel createSVGPathSegMovetoRel(in [Optional=DefaultIsUndefined] float x, 
-                                                  in [Optional=DefaultIsUndefined] float y);
+    SVGPathSegMovetoAbs createSVGPathSegMovetoAbs(in [Default=Undefined] optional float x, 
+                                                  in [Default=Undefined] optional float y);
+    SVGPathSegMovetoRel createSVGPathSegMovetoRel(in [Default=Undefined] optional float x, 
+                                                  in [Default=Undefined] optional float y);
 
-    SVGPathSegLinetoAbs createSVGPathSegLinetoAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                  in [Optional=DefaultIsUndefined] float y);
-    SVGPathSegLinetoRel createSVGPathSegLinetoRel(in [Optional=DefaultIsUndefined] float x, 
-                                                  in [Optional=DefaultIsUndefined] float y);
+    SVGPathSegLinetoAbs createSVGPathSegLinetoAbs(in [Default=Undefined] optional float x, 
+                                                  in [Default=Undefined] optional float y);
+    SVGPathSegLinetoRel createSVGPathSegLinetoRel(in [Default=Undefined] optional float x, 
+                                                  in [Default=Undefined] optional float y);
 
-    SVGPathSegCurvetoCubicAbs createSVGPathSegCurvetoCubicAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                              in [Optional=DefaultIsUndefined] float y, 
-                                                              in [Optional=DefaultIsUndefined] float x1, 
-                                                              in [Optional=DefaultIsUndefined] float y1, 
-                                                              in [Optional=DefaultIsUndefined] float x2, 
-                                                              in [Optional=DefaultIsUndefined] float y2);
-    SVGPathSegCurvetoCubicRel createSVGPathSegCurvetoCubicRel(in [Optional=DefaultIsUndefined] float x, 
-                                                              in [Optional=DefaultIsUndefined] float y, 
-                                                              in [Optional=DefaultIsUndefined] float x1, 
-                                                              in [Optional=DefaultIsUndefined] float y1, 
-                                                              in [Optional=DefaultIsUndefined] float x2, 
-                                                              in [Optional=DefaultIsUndefined] float y2);
+    SVGPathSegCurvetoCubicAbs createSVGPathSegCurvetoCubicAbs(in [Default=Undefined] optional float x, 
+                                                              in [Default=Undefined] optional float y, 
+                                                              in [Default=Undefined] optional float x1, 
+                                                              in [Default=Undefined] optional float y1, 
+                                                              in [Default=Undefined] optional float x2, 
+                                                              in [Default=Undefined] optional float y2);
+    SVGPathSegCurvetoCubicRel createSVGPathSegCurvetoCubicRel(in [Default=Undefined] optional float x, 
+                                                              in [Default=Undefined] optional float y, 
+                                                              in [Default=Undefined] optional float x1, 
+                                                              in [Default=Undefined] optional float y1, 
+                                                              in [Default=Undefined] optional float x2, 
+                                                              in [Default=Undefined] optional float y2);
 
-    SVGPathSegCurvetoQuadraticAbs createSVGPathSegCurvetoQuadraticAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                                      in [Optional=DefaultIsUndefined] float y, 
-                                                                      in [Optional=DefaultIsUndefined] float x1, 
-                                                                      in [Optional=DefaultIsUndefined] float y1);
-    SVGPathSegCurvetoQuadraticRel createSVGPathSegCurvetoQuadraticRel(in [Optional=DefaultIsUndefined] float x, 
-                                                                      in [Optional=DefaultIsUndefined] float y, 
-                                                                      in [Optional=DefaultIsUndefined] float x1, 
-                                                                      in [Optional=DefaultIsUndefined] float y1);
+    SVGPathSegCurvetoQuadraticAbs createSVGPathSegCurvetoQuadraticAbs(in [Default=Undefined] optional float x, 
+                                                                      in [Default=Undefined] optional float y, 
+                                                                      in [Default=Undefined] optional float x1, 
+                                                                      in [Default=Undefined] optional float y1);
+    SVGPathSegCurvetoQuadraticRel createSVGPathSegCurvetoQuadraticRel(in [Default=Undefined] optional float x, 
+                                                                      in [Default=Undefined] optional float y, 
+                                                                      in [Default=Undefined] optional float x1, 
+                                                                      in [Default=Undefined] optional float y1);
 
-    SVGPathSegArcAbs createSVGPathSegArcAbs(in [Optional=DefaultIsUndefined] float x, 
-                                            in [Optional=DefaultIsUndefined] float y, 
-                                            in [Optional=DefaultIsUndefined] float r1, 
-                                            in [Optional=DefaultIsUndefined] float r2, 
-                                            in [Optional=DefaultIsUndefined] float angle, 
-                                            in [Optional=DefaultIsUndefined] boolean largeArcFlag, 
-                                            in [Optional=DefaultIsUndefined] boolean sweepFlag);
-    SVGPathSegArcRel createSVGPathSegArcRel(in [Optional=DefaultIsUndefined] float x, 
-                                            in [Optional=DefaultIsUndefined] float y, 
-                                            in [Optional=DefaultIsUndefined] float r1, 
-                                            in [Optional=DefaultIsUndefined] float r2, 
-                                            in [Optional=DefaultIsUndefined] float angle, 
-                                            in [Optional=DefaultIsUndefined] boolean largeArcFlag, 
-                                            in [Optional=DefaultIsUndefined] boolean sweepFlag);
+    SVGPathSegArcAbs createSVGPathSegArcAbs(in [Default=Undefined] optional float x, 
+                                            in [Default=Undefined] optional float y, 
+                                            in [Default=Undefined] optional float r1, 
+                                            in [Default=Undefined] optional float r2, 
+                                            in [Default=Undefined] optional float angle, 
+                                            in [Default=Undefined] optional boolean largeArcFlag, 
+                                            in [Default=Undefined] optional boolean sweepFlag);
+    SVGPathSegArcRel createSVGPathSegArcRel(in [Default=Undefined] optional float x, 
+                                            in [Default=Undefined] optional float y, 
+                                            in [Default=Undefined] optional float r1, 
+                                            in [Default=Undefined] optional float r2, 
+                                            in [Default=Undefined] optional float angle, 
+                                            in [Default=Undefined] optional boolean largeArcFlag, 
+                                            in [Default=Undefined] optional boolean sweepFlag);
 
-    SVGPathSegLinetoHorizontalAbs createSVGPathSegLinetoHorizontalAbs(in [Optional=DefaultIsUndefined] float x);
-    SVGPathSegLinetoHorizontalRel createSVGPathSegLinetoHorizontalRel(in [Optional=DefaultIsUndefined] float x);
+    SVGPathSegLinetoHorizontalAbs createSVGPathSegLinetoHorizontalAbs(in [Default=Undefined] optional float x);
+    SVGPathSegLinetoHorizontalRel createSVGPathSegLinetoHorizontalRel(in [Default=Undefined] optional float x);
 
-    SVGPathSegLinetoVerticalAbs createSVGPathSegLinetoVerticalAbs(in [Optional=DefaultIsUndefined] float y);
-    SVGPathSegLinetoVerticalRel createSVGPathSegLinetoVerticalRel(in [Optional=DefaultIsUndefined] float y);
+    SVGPathSegLinetoVerticalAbs createSVGPathSegLinetoVerticalAbs(in [Default=Undefined] optional float y);
+    SVGPathSegLinetoVerticalRel createSVGPathSegLinetoVerticalRel(in [Default=Undefined] optional float y);
 
-    SVGPathSegCurvetoCubicSmoothAbs createSVGPathSegCurvetoCubicSmoothAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                                          in [Optional=DefaultIsUndefined] float y, 
-                                                                          in [Optional=DefaultIsUndefined] float x2, 
-                                                                          in [Optional=DefaultIsUndefined] float y2);
-    SVGPathSegCurvetoCubicSmoothRel createSVGPathSegCurvetoCubicSmoothRel(in [Optional=DefaultIsUndefined] float x, 
-                                                                          in [Optional=DefaultIsUndefined] float y, 
-                                                                          in [Optional=DefaultIsUndefined] float x2, 
-                                                                          in [Optional=DefaultIsUndefined] float y2);
+    SVGPathSegCurvetoCubicSmoothAbs createSVGPathSegCurvetoCubicSmoothAbs(in [Default=Undefined] optional float x, 
+                                                                          in [Default=Undefined] optional float y, 
+                                                                          in [Default=Undefined] optional float x2, 
+                                                                          in [Default=Undefined] optional float y2);
+    SVGPathSegCurvetoCubicSmoothRel createSVGPathSegCurvetoCubicSmoothRel(in [Default=Undefined] optional float x, 
+                                                                          in [Default=Undefined] optional float y, 
+                                                                          in [Default=Undefined] optional float x2, 
+                                                                          in [Default=Undefined] optional float y2);
 
-    SVGPathSegCurvetoQuadraticSmoothAbs createSVGPathSegCurvetoQuadraticSmoothAbs(in [Optional=DefaultIsUndefined] float x, 
-                                                                                  in [Optional=DefaultIsUndefined] float y);
-    SVGPathSegCurvetoQuadraticSmoothRel createSVGPathSegCurvetoQuadraticSmoothRel(in [Optional=DefaultIsUndefined] float x, 
-                                                                                  in [Optional=DefaultIsUndefined] float y);
+    SVGPathSegCurvetoQuadraticSmoothAbs createSVGPathSegCurvetoQuadraticSmoothAbs(in [Default=Undefined] optional float x, 
+                                                                                  in [Default=Undefined] optional float y);
+    SVGPathSegCurvetoQuadraticSmoothRel createSVGPathSegCurvetoQuadraticSmoothRel(in [Default=Undefined] optional float x, 
+                                                                                  in [Default=Undefined] optional float y);
 
     readonly attribute SVGPathSegList pathSegList;
     readonly attribute SVGPathSegList normalizedPathSegList;

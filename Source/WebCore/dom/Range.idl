@@ -36,25 +36,25 @@
     readonly attribute Node commonAncestorContainer
         getter raises(DOMException);
 
-    [ObjCLegacyUnnamedParameters] void setStart(in [Optional=DefaultIsUndefined] Node refNode, 
-                                 in [Optional=DefaultIsUndefined] long offset)
+    [ObjCLegacyUnnamedParameters] void setStart(in [Default=Undefined] optional Node refNode, 
+                                 in [Default=Undefined] optional long offset)
         raises(RangeException, DOMException);
-    [ObjCLegacyUnnamedParameters] void setEnd(in [Optional=DefaultIsUndefined] Node refNode, 
-                               in [Optional=DefaultIsUndefined] long offset)
+    [ObjCLegacyUnnamedParameters] void setEnd(in [Default=Undefined] optional Node refNode, 
+                               in [Default=Undefined] optional long offset)
         raises(RangeException, DOMException);
-    void setStartBefore(in [Optional=DefaultIsUndefined] Node refNode)
+    void setStartBefore(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
-    void setStartAfter(in [Optional=DefaultIsUndefined] Node refNode)
+    void setStartAfter(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
-    void setEndBefore(in [Optional=DefaultIsUndefined] Node refNode)
+    void setEndBefore(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
-    void setEndAfter(in [Optional=DefaultIsUndefined] Node refNode)
+    void setEndAfter(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
-    void collapse(in [Optional=DefaultIsUndefined] boolean toStart)
+    void collapse(in [Default=Undefined] optional boolean toStart)
         raises(DOMException);
-    void selectNode(in [Optional=DefaultIsUndefined] Node refNode)
+    void selectNode(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
-    void selectNodeContents(in [Optional=DefaultIsUndefined] Node refNode)
+    void selectNodeContents(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
 
     // CompareHow
@@ -63,8 +63,8 @@
     const unsigned short END_TO_END     = 2;
     const unsigned short END_TO_START   = 3;
 
-    [ObjCLegacyUnnamedParameters] short compareBoundaryPoints(in [Optional=DefaultIsUndefined] CompareHow how,
-                                               in [Optional=DefaultIsUndefined] Range sourceRange)
+    [ObjCLegacyUnnamedParameters] short compareBoundaryPoints(in [Default=Undefined] optional CompareHow how,
+                                               in [Default=Undefined] optional Range sourceRange)
         raises(DOMException);
 
     void deleteContents()
@@ -73,9 +73,9 @@
         raises(DOMException);
     DocumentFragment cloneContents()
         raises(DOMException);
-    void insertNode(in [Optional=DefaultIsUndefined] Node newNode)
+    void insertNode(in [Default=Undefined] optional Node newNode)
         raises(DOMException, RangeException);
-    void surroundContents(in [Optional=DefaultIsUndefined] Node newParent)
+    void surroundContents(in [Default=Undefined] optional Node newParent)
         raises(DOMException, RangeException);
     Range cloneRange()
         raises(DOMException);
@@ -94,15 +94,15 @@
 
     // extensions
 
-    DocumentFragment createContextualFragment(in [Optional=DefaultIsUndefined] DOMString html)
+    DocumentFragment createContextualFragment(in [Default=Undefined] optional DOMString html)
         raises(DOMException);
 
     // WebKit extensions
 
-    boolean intersectsNode(in [Optional=DefaultIsUndefined] Node refNode)
+    boolean intersectsNode(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
 
-    short compareNode(in [Optional=DefaultIsUndefined] Node refNode)
+    short compareNode(in [Default=Undefined] optional Node refNode)
         raises(RangeException, DOMException);
 
     // CompareResults
@@ -111,15 +111,15 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE           = 3;
 
-    short comparePoint(in [Optional=DefaultIsUndefined] Node refNode, 
-                       in [Optional=DefaultIsUndefined] long offset)
+    short comparePoint(in [Default=Undefined] optional Node refNode, 
+                       in [Default=Undefined] optional long offset)
         raises(RangeException, DOMException);
 
-    boolean isPointInRange(in [Optional=DefaultIsUndefined] Node refNode, 
-                           in [Optional=DefaultIsUndefined] long offset)
+    boolean isPointInRange(in [Default=Undefined] optional Node refNode, 
+                           in [Default=Undefined] optional long offset)
         raises(RangeException, DOMException);
 
-    void expand(in [Optional=DefaultIsUndefined] DOMString unit)
+    void expand(in [Default=Undefined] optional DOMString unit)
         raises(RangeException, DOMException);
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT

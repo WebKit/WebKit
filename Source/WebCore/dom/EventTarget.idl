@@ -29,10 +29,10 @@
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
                                          in EventListener listener, 
-                                         in [Optional] boolean useCapture);
+                                         in optional boolean useCapture);
     [ObjCLegacyUnnamedParameters] void removeEventListener(in DOMString type, 
                                             in EventListener listener, 
-                                            in [Optional] boolean useCapture);
+                                            in optional boolean useCapture);
     boolean dispatchEvent(in Event event)
         raises(EventException);
 };

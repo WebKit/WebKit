@@ -38,7 +38,7 @@
     readonly attribute SVGAnimatedNumber      radiusX;
     readonly attribute SVGAnimatedNumber      radiusY;
 
-    void setRadius(in [Optional=DefaultIsUndefined] float radiusX, 
-                   in [Optional=DefaultIsUndefined] float radiusY);
+    void setRadius(in [Default=Undefined] optional float radiusX, 
+                   in [Default=Undefined] optional float radiusY);
 };
 

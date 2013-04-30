@@ -164,7 +164,7 @@ interface TestRunner {
 
     // Geolocation
     void setGeolocationPermission(in boolean value);
-    void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy, in [Optional=DefaultIsUndefined] object altitude, in [Optional] object altitudeAccuracy, in [Optional] object heading, in [Optional] object speed);
+    void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy, in [Default=Undefined] optional object altitude, in optional object altitudeAccuracy, in optional object heading, in optional object speed);
     void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
 
     // Audio testing.
@@ -176,7 +176,7 @@ interface TestRunner {
     void queueBackNavigation(in unsigned long howFarBackward);
     void queueForwardNavigation(in unsigned long howFarForward);
     void queueLoad(in DOMString url, in DOMString target);
-    void queueLoadHTMLString(in DOMString content, in [Optional] DOMString baseURL, in [Optional] DOMString unreachableURL);
+    void queueLoadHTMLString(in DOMString content, in optional DOMString baseURL, in optional DOMString unreachableURL);
     void queueReload();
     void queueLoadingScript(in DOMString script);
     void queueNonLoadingScript(in DOMString script);

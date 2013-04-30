@@ -24,11 +24,11 @@
     [InitializedByEventConstructor] readonly attribute DOMWindow view;
     [InitializedByEventConstructor] readonly attribute long detail;
     
-    [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=DefaultIsUndefined] DOMString type, 
-                                    in [Optional=DefaultIsUndefined] boolean canBubble, 
-                                    in [Optional=DefaultIsUndefined] boolean cancelable, 
-                                    in [Optional=DefaultIsUndefined] DOMWindow view, 
-                                    in [Optional=DefaultIsUndefined] long detail);
+    [ObjCLegacyUnnamedParameters] void initUIEvent(in [Default=Undefined] optional DOMString type, 
+                                    in [Default=Undefined] optional boolean canBubble, 
+                                    in [Default=Undefined] optional boolean cancelable, 
+                                    in [Default=Undefined] optional DOMWindow view, 
+                                    in [Default=Undefined] optional long detail);
 
     // extensions
     readonly attribute long                 keyCode;

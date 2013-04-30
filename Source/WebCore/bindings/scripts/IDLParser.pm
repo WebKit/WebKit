@@ -78,7 +78,8 @@ struct( domSignature => {
     type => '$',      # Variable type
     extendedAttributes => '$', # Extended attributes
     isNullable => '$', # Is variable type Nullable (T?)
-    isVariadic => '$' # Is variable variadic (long... numbers)
+    isVariadic => '$', # Is variable variadic (long... numbers)
+    isOptional => '$', # Is variable optional (optional T)
 });
 
 # Used to represent string constants
@@ -1427,6 +1428,7 @@ sub parseOptionalOrRequiredArgument
         }
         # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
         $paramDataNode->type(typeRemoveNullableSuffix($type));
+        $paramDataNode->isOptional(1);
         $paramDataNode->name($self->parseArgumentName());
         $self->parseDefault();
         return $paramDataNode;
@@ -1441,6 +1443,7 @@ sub parseOptionalOrRequiredArgument
         }
         # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
         $paramDataNode->type(typeRemoveNullableSuffix($type));
+        $paramDataNode->isOptional(0);
         $paramDataNode->isVariadic($self->parseEllipsis());
         $paramDataNode->name($self->parseArgumentName());
         return $paramDataNode;

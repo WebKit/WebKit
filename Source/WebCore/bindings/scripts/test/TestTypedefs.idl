@@ -40,17 +40,17 @@
     
     static readonly attribute T TestSubObj;
 
-    [StrictTypeChecking] void func(in [Optional] ARRAY_OF_LONGS x);
+    [StrictTypeChecking] void func(in optional ARRAY_OF_LONGS x);
 
-    void multiTransferList(in [TransferList=tx] SCRIPT_VALUE first, in [Optional] ARRAY tx, in [Optional] TRANSFER_TXX_SCRIPT_VALUE second, in [Optional] ARRAY txx);
+    void multiTransferList(in [TransferList=tx] SCRIPT_VALUE first, in optional ARRAY tx, in optional TRANSFER_TXX_SCRIPT_VALUE second, in optional ARRAY txx);
 
-    void setShadow(in DOUBLE width, in DOUBLE height, in float blur, in [StrictTypeChecking] OPTIONAL_STRING color, in [Optional] DOUBLE alpha);
+    void setShadow(in DOUBLE width, in DOUBLE height, in float blur, in [StrictTypeChecking] optional STRING color, in optional DOUBLE alpha);
 
     ULONGLONG methodWithSequenceArg(in sequence<SCRIPT_VALUE> sequenceArg);
 
     void nullableArrayArg(in ARRAY_OF_STRINGS? arrayArg);
 
-    void funcWithClamp(in ULONGLONG_CLAMP arg1, in [Optional] ULONGLONG_CLAMP arg2);
+    void funcWithClamp(in ULONGLONG_CLAMP arg1, in optional ULONGLONG_CLAMP arg2);
 
     [Immutable] SVGPOINT immutablePointFunction();
 
@@ -72,7 +72,6 @@ typedef SerializedScriptValue      SCRIPT_VALUE;
 typedef long[]                     ARRAY_OF_LONGS;
 typedef SVGPoint                   SVGPOINT;
 typedef DOMString                  STRING;
-typedef [Optional] DOMString       OPTIONAL_STRING;
 typedef DOMString[]                ARRAY_OF_STRINGS;
 typedef TestCallback               TEST_CALLBACK;
 typedef TestSubObjConstructor      T;

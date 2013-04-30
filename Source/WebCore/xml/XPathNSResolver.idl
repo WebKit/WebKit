@@ -23,6 +23,6 @@
     OmitConstructor,
     SkipVTableValidation
 ] interface XPathNSResolver {
-    [TreatReturnedNullStringAs=Null] DOMString lookupNamespaceURI(in [Optional=DefaultIsUndefined] DOMString prefix);
+    [TreatReturnedNullStringAs=Null] DOMString lookupNamespaceURI(in [Default=Undefined] optional DOMString prefix);
 };
 

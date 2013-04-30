@@ -48,7 +48,7 @@
         raises(DOMException);
     void readAsBinaryString(in Blob blob)
         raises(DOMException);
-    void readAsText(in Blob blob, in [Optional] DOMString encoding)
+    void readAsText(in Blob blob, in optional DOMString encoding)
         raises(DOMException);
     void readAsDataURL(in Blob blob)
         raises(DOMException);
@@ -63,10 +63,10 @@
     // EventTarget interface
     void addEventListener(in DOMString type,
                           in EventListener listener,
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type,
                              in EventListener listener,
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
     boolean dispatchEvent(in Event evt)
         raises(EventException);
 

@@ -26,7 +26,7 @@
     [Reflect=charoff] attribute DOMString chOff;
     [Reflect] attribute DOMString vAlign;
     readonly attribute HTMLCollection rows;
-    HTMLElement insertRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
-    void deleteRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
+    HTMLElement insertRow(in [Default=Undefined] optional long index) raises(DOMException);
+    void deleteRow(in [Default=Undefined] optional long index) raises(DOMException);
 };
 

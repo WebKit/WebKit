@@ -20,7 +20,7 @@
 
 [
     JSGenerateToNativeObject,
-    NamedConstructor=Option(in [Optional=DefaultIsNullString] DOMString data, in [Optional=DefaultIsNullString] DOMString value, in [Optional=DefaultIsUndefined] boolean defaultSelected, in [Optional=DefaultIsUndefined] boolean selected),
+    NamedConstructor=Option(in [Default=NullString] optional DOMString data, in [Default=NullString] optional DOMString value, in [Default=Undefined] optional boolean defaultSelected, in [Default=Undefined] optional boolean selected),
     ConstructorRaisesException
 ] interface HTMLOptionElement : HTMLElement {
     [Reflect] attribute boolean disabled;

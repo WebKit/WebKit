@@ -30,8 +30,8 @@
     OmitConstructor
 ] interface ElementTimeControl { 
     void beginElement();
-    void beginElementAt(in [Optional=DefaultIsUndefined] float offset);
+    void beginElementAt(in [Default=Undefined] optional float offset);
     void endElement();
-    void endElementAt(in [Optional=DefaultIsUndefined] float offset);
+    void endElementAt(in [Default=Undefined] optional float offset);
 };
 

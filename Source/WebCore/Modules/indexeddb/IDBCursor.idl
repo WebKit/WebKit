@@ -37,7 +37,7 @@
         raises (DOMException);
     void advance(in [EnforceRange] unsigned long count)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction] void continue(in [Optional] any key)
+    [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction] void continue(in optional any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete()
         raises (DOMException);

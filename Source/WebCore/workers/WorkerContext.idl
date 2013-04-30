@@ -49,19 +49,19 @@
              [Replaceable] readonly attribute WorkerNavigator navigator;
 
     // Timers
-    [Custom] long setTimeout(in any handler, in [Optional=DefaultIsUndefined] long timeout);
-    void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
-    [Custom] long setInterval(in any handler, in [Optional=DefaultIsUndefined] long timeout);
-    void clearInterval(in [Optional=DefaultIsUndefined] long handle);
+    [Custom] long setTimeout(in any handler, in [Default=Undefined] optional long timeout);
+    void clearTimeout(in [Default=Undefined] optional long handle);
+    [Custom] long setInterval(in any handler, in [Default=Undefined] optional long timeout);
+    void clearInterval(in [Default=Undefined] optional long handle);
 
 
     // EventTarget interface
     void addEventListener(in DOMString type, 
                           in EventListener listener, 
-                          in [Optional] boolean useCapture);
+                          in optional boolean useCapture);
     void removeEventListener(in DOMString type, 
                              in EventListener listener, 
-                             in [Optional] boolean useCapture);
+                             in optional boolean useCapture);
     boolean dispatchEvent(in Event evt)
         raises(EventException);
 
