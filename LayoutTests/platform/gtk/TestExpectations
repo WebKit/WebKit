@@ -1378,6 +1378,19 @@ webkit.org/b/115374 fast/css/style-scoped/style-scoped-nested.html [ Failure ]
 webkit.org/b/115374 fast/css/style-scoped/style-scoped-with-important-rule.html [ Failure ]
 webkit.org/b/115374 fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Failure ]
 
+webkit.org/b/115437 css3/flexbox/auto-margins.html [ ImageOnlyFailure ]
+webkit.org/b/115437 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
+webkit.org/b/115437 fast/exclusions/shape-inside/shape-inside-percentage.html [ ImageOnlyFailure ]
+webkit.org/b/115437 fast/regions/region-content-flown-into-region.html [ ImageOnlyFailure ]
+webkit.org/b/115437 fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/115437 fast/regions/webkit-flow-inlines-inside-regions-bounds.html [ ImageOnlyFailure ]
+
+webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
+
+webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
+
+webkit.org/b/115441 media/video-poster-background.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
