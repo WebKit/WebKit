@@ -28,6 +28,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 -->
+
 <title>SunSpider 1.0 JavaScript Benchmark</title>
 <link rel="stylesheet" href="sunspider.css">
 </head>
@@ -39,43 +40,16 @@
 <p>This is SunSpider, a JavaScript benchmark. This benchmark tests the
 core JavaScript language only, not the DOM or other browser APIs. It
 is designed to compare different versions of the same browser, and
-different browsers to each other. Unlike many widely available
-JavaScript benchmarks, this test is:</p>
+different browsers to each other.</p>
 
-<dl>
-<dt>Real World<dt>
-<dd>This test mostly avoids microbenchmarks, and tries to focus on
-the kinds of actual problems developers solve with JavaScript today,
-and the problems they may want to tackle in the future as the language
-gets faster. This includes tests to generate a tagcloud from JSON
-input, a 3D raytracer, cryptography tests, code decompression, and
-many more examples. There are a few microbenchmarkish things, but they
-mostly represent real performance problems that developers have
-encountered.</dd>
+<p>This version of the harness is 1.0. This page lists all versions
+of the test content:</p>
 
-<dt>Balanced<dt>
-<dd>This test is balanced between different areas of the language and
-different types of code. It's not all math, all string processing, or
-all timing simple loops. In addition to having tests in many
-categories, the individual tests were balanced to take similar amounts
-of time on currently shipping versions of popular browsers.</dd>
-
-<dt>Statistically Sound<dt>
-<dd>One of the challenges of benchmarking is knowing how much noise
-you have in your measurements. This benchmark runs each test multiple
-times and determines an error range (technically, a 95% confidence
-interval). In addition, in comparison mode it tells you if you have
-enough data to determine if the difference is statistically
-significant.</dd>
-
-</dl>
-
-<p><b>Current version - sunspider-1.0:</b> <a href="../sunspider-1.0/sunspider-1.0/driver.html">Start Now!</a><br>
-<small>(When you run the benchmark, be patient - it loops through all of the
-test cases five times and can take a minute or longer to complete.)</small></p>
-
-<a href="versions.html">All versions.</a>
+<ul>
+<li><a href="../sunspider-0.9/sunspider-driver.html">Version 0.9</a></li>
+<li><a href="../sunspider-0.9.1/sunspider-0.9.1/driver.html">Version 0.9.1</a></li>
+<li><a href="../sunspider-1.0/sunspider-1.0/driver.html">Version 1.0</a></li>
+</ul>
 
 </body>
-
-</html>
+<html>

@@ -1,3 +1,58 @@
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Release SunSpider 1.0
+
+        Rubber stamped by Maciej Stachowiak.
+
+        * perf/sunspider-1.0: Added.
+        * perf/sunspider-1.0/json2.js: Added.
+        (.):
+        * perf/sunspider-1.0/sunspider-1.0: Added.
+        * perf/sunspider-1.0/sunspider-1.0/driver.html: Added.
+        * perf/sunspider-1.0/sunspider-1.0/results.html: Added.
+        * perf/sunspider-1.0/sunspider-1.0/sunspider-test-contents.js: Added.
+        * perf/sunspider-1.0/sunspider-1.0/sunspider-test-prefix.js: Added.
+        * perf/sunspider-1.0/sunspider-analyze-results.js: Added.
+        (computeItemTotals):
+        (computeTotals):
+        (computeMeans):
+        (standardDeviation):
+        (computeStdDevs):
+        (computeStdErrors):
+        (tDist):
+        (formatResult):
+        (computeLabelWidth):
+        (computeMeanWidth):
+        (resultLine):
+        (printOutput):
+        * perf/sunspider-1.0/sunspider-compare-results.js: Added.
+        (.computeItemTotals):
+        (.computeTotals):
+        (.computeMeans):
+        (.standardDeviation):
+        (.computeStdDevs):
+        (.computeStdErrors):
+        (.tDist):
+        (.formatMean):
+        (.computeLabelWidth):
+        (.computeMeanWidth):
+        (.pad):
+        (.resultLine):
+        (.printOutput):
+        (sunspiderCompareResults):
+        * perf/sunspider-1.0/sunspider.css: Added.
+        (body):
+        (h2):
+        (dt):
+        (dd):
+        (:link):
+        (:visited):
+        (#testframe):
+        (#logo):
+        * perf/sunspider-1.0/sunspider.html: Added.
+        * perf/sunspider/sunspider.html:
+        * perf/sunspider/versions.html: Added.
+
 2013-04-16  Vivek Galatage  <vivek.vg@samsung.com>
 
         Update team.html to use contributors.json instead of committers.py
