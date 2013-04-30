@@ -1,5 +1,34 @@
 2013-04-29  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening. Rebaseline some Windows tests after disabling subpixel layout.
+
+        * platform/win/editing/selection/caret-ltr-right-expected.txt:
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/win/editing/selection/caret-rtl-right-expected.txt:
+        * platform/win/editing/selection/extend-selection-word-expected.txt: Added.
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/win/fast/borders/bidi-012-expected.txt:
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/win/fast/forms/range: Added.
+        * platform/win/fast/forms/range/slider-mouse-events-expected.txt: Added.
+        * platform/win/fast/inline/inline-box-background-expected.txt:
+        * platform/win/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-y-expected.txt:
+
+2013-04-29  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows gardening after r148987.
 
         * platform/win/editing/deleting/delete-by-word-002-expected.txt: Added.
