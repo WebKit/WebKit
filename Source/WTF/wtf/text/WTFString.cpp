@@ -654,12 +654,35 @@ float String::toFloat(bool* ok) const
     return m_impl->toFloat(ok);
 }
 
+#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
+String String::isolatedCopy() const &
+{
+    if (!m_impl)
+        return String();
+    return m_impl->isolatedCopy();
+}
+
+String String::isolatedCopy() const &&
+{
+    if (isSafeToSendToAnotherThread()) {
+        // Since we know that our string is a temporary that will be destroyed
+        // we can just steal the m_impl from it, thus avoiding a copy.
+        return String(std::move(*this));
+    }
+
+    if (!m_impl)
+        return String();
+
+    return m_impl->isolatedCopy();
+}
+#else
 String String::isolatedCopy() const
 {
     if (!m_impl)
         return String();
     return m_impl->isolatedCopy();
 }
+#endif
 
 bool String::isSafeToSendToAnotherThread() const
 {

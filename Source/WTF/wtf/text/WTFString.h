@@ -398,7 +398,13 @@ public:
 
     bool percentage(int& percentage) const;
 
+#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
+    WTF_EXPORT_STRING_API String isolatedCopy() const &;
+    WTF_EXPORT_STRING_API String isolatedCopy() const &&;
+#else
     WTF_EXPORT_STRING_API String isolatedCopy() const;
+#endif
+
     WTF_EXPORT_STRING_API bool isSafeToSendToAnotherThread() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that

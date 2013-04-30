@@ -1,3 +1,21 @@
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
+        String::isolatedCopy() can avoid a copy if the original is a temporary
+        https://bugs.webkit.org/show_bug.cgi?id=115425
+
+        Reviewed by Darin Adler.
+
+        * wtf/Compiler.h:
+        Add WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS define.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isolatedCopy):
+        * wtf/text/WTFString.h:
+        If COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS) is true, add two overloads of String::isolatedCopy().
+        One is used if *this is an lvalue, and one is used if *this is an rvalue. In the latter case, we know that the original
+        String object is a temporary and will be going away, so if it's safe to send it to another thread (if it's not an AtomicString,
+        and if it's refcount is 1), then we can just steal the StringImpl from the original and avoid a copy altogether.
+
 2013-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/
