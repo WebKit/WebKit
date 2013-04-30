@@ -607,30 +607,15 @@ void ContainerNode::removeChildren()
     // and remove... e.g. stop loading frames, fire unload events.
     willRemoveChildren(protect.get());
 
-    Vector<RefPtr<Node>, 10> removedChildren;
+    NodeVector removedChildren;
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         {
             NoEventDispatchAssertion assertNoEventDispatch;
             removedChildren.reserveInitialCapacity(childNodeCount());
             while (RefPtr<Node> n = m_firstChild) {
-                Node* next = n->nextSibling();
-
-                if (n->attached())
-                    n->detach();
-
-                n->setPreviousSibling(0);
-                n->setNextSibling(0);
-                n->setParentOrShadowHostNode(0);
-                document()->adoptIfNeeded(n.get());
-
-                m_firstChild = next;
-                if (n == m_lastChild)
-                    m_lastChild = 0;
-                else
-                    m_firstChild->setPreviousSibling(0);
-
-                removedChildren.append(n.release());
+                removedChildren.append(m_firstChild);
+                removeBetween(0, m_firstChild->nextSibling(), m_firstChild);
             }
         }
 

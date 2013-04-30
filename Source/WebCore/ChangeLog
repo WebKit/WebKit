@@ -1,3 +1,16 @@
+2013-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify ContainerNode::removeChildren
+        https://bugs.webkit.org/show_bug.cgi?id=115398
+
+        Reviewed by Andreas Kling.
+
+        Back port https://chromium.googlesource.com/chromium/blink/+/b981f01cd065236b5ff7e3a8446d15b384c1b557
+        by Andrei Bucur, which includes both this and his r148754.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+
 2013-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Move default buffer handling from ResourceHandleClient to ResourceHandlesoup
