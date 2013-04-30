@@ -1,3 +1,17 @@
+2013-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2][GTK] MiniBrowser won't play video in <embed> tag
+        https://bugs.webkit.org/show_bug.cgi?id=113107
+
+        Reviewed by Anders Carlsson.
+
+        The wrong clip region is used for windowed plugins, because it's
+        translated to window frame coords again.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Do not move
+        the current clip region.
+
 2013-04-30  Timothy Hatcher  <timothy@apple.com>
 
         Make the Inspector dock to right button work in the WebKit nightlies on Safari 6.0.4.
