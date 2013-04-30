@@ -1,3 +1,13 @@
+2013-04-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        CSSParser::parseFontFamily should allow the keyword "default" as part of a font name
+        https://bugs.webkit.org/show_bug.cgi?id=107231
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/font-family-parse-keyword-expected.html: Added.
+        * fast/css/font-family-parse-keyword.html: Added.
+
 2013-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/

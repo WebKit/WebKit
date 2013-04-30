@@ -5442,14 +5442,21 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
     bool inFamily = false;
 
     while (value) {
-        if (value->id == CSSValueInitial || value->id == CSSValueInherit || value->id == CSSValueDefault)
-            return 0;
         CSSParserValue* nextValue = m_valueList->next();
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == CSSParserValue::Operator && nextValue->iValue == ',');
         bool nextValIsFontName = nextValue &&
             ((nextValue->id >= CSSValueSerif && nextValue->id <= CSSValueWebkitBody) ||
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
+
+        bool valueIsKeyword = value->id == CSSValueInitial || value->id == CSSValueInherit || value->id == CSSValueDefault;
+        if (valueIsKeyword && !inFamily) {
+            if (nextValBreaksFont)
+                value = m_valueList->next();
+            else if (nextValIsFontName)
+                value = nextValue;
+            continue;
+        }
 
         if (value->id >= CSSValueSerif && value->id <= CSSValueWebkitBody) {
             if (inFamily)
