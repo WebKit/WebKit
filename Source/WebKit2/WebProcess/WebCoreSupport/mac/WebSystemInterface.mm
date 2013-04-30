@@ -144,6 +144,7 @@ void InitWebCoreSystemInterface(void)
 
 #if PLATFORM(MAC)
         INIT(SpeechSynthesisGetVoiceIdentifiers);
+        INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
 #endif
         INIT(GetAXTextMarkerTypeID);
         INIT(GetAXTextMarkerRangeTypeID);

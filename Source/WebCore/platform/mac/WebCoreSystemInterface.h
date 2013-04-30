@@ -91,6 +91,7 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS NSFont;
 OBJC_CLASS NSHTTPCookie;
 OBJC_CLASS NSImage;
+OBJC_CLASS NSLocale;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSMutableURLRequest;
 OBJC_CLASS NSString;
@@ -276,6 +277,7 @@ extern NSCursor *(*wkCursor)(const char*);
     
 #if PLATFORM(MAC)
 extern NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
+extern NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
 #endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);

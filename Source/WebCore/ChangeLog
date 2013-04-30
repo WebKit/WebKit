@@ -1,3 +1,22 @@
+2013-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        WEB SPEECH: need to identify the default voice per language
+        https://bugs.webkit.org/show_bug.cgi?id=115366
+
+        Reviewed by Tim Horton.
+
+        Use a WKSystemInterface method to determine which voice per language is the default voice.
+
+        When looking for a voice, there may not be a default at all, so we need to search until we
+        find a default.
+
+        * WebCore.exp.in:
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:WebCore::]):
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2013-04-29  James Craig  <james@cookiecrook.com>
 
         Settings.in selectionIncludesAltImageText should default to true, due to update in HTML spec.

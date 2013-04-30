@@ -1,3 +1,13 @@
+2013-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        WEB SPEECH: need to identify the default voice per language
+        https://bugs.webkit.org/show_bug.cgi?id=115366
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2] Streamline the use of strings in WebProcess::getWebCoreStatistics

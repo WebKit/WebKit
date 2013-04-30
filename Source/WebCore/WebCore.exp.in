@@ -1946,6 +1946,7 @@ _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetMetadataURL
 _wkSignedPublicKeyAndChallengeString
+_wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale
 _wkSpeechSynthesisGetVoiceIdentifiers
 _wkUnregisterUniqueIdForElement
 _wkWindowSetAlpha

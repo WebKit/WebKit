@@ -106,7 +106,8 @@
         for (size_t k = 0; k < voiceListSize; k++) {
             if (equalIgnoringCase(utterance->lang(), voiceList[k]->lang())) {
                 utteranceVoice = voiceList[k].get();
-                break;
+                if (voiceList[k]->isDefault())
+                    break;
             }
         }
     }
@@ -210,7 +211,6 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
-    NSString *defaultVoiceURI = [NSSpeechSynthesizer defaultVoice];
     NSArray *availableVoices = wkSpeechSynthesisGetVoiceIdentifiers();
     NSUInteger count = [availableVoices count];
     for (NSUInteger k = 0; k < count; k++) {
@@ -220,6 +220,9 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         NSString *voiceURI = [attributes objectForKey:NSVoiceIdentifier];
         NSString *name = [attributes objectForKey:NSVoiceName];
         NSString *language = [attributes objectForKey:NSVoiceLocaleIdentifier];
+        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:language];
+        NSString *defaultVoiceURI = wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale(locale);
+        [locale release];
         
         // Change to BCP-47 format as defined by spec.
         language = [language stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
