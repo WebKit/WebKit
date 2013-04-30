@@ -1,3 +1,16 @@
+2013-04-30  Ed Bartosh  <bartosh@gmail.com>
+
+        [GTK] --minimal build fails with error: class WebCore::EventHandler' has no member named 'dragSourceEndedAt
+        https://bugs.webkit.org/show_bug.cgi?id=114299
+
+        Reviewed by Martin Robinson.
+
+        Wrapped code, related to drag&drop in #if ENABLE(DRAG_SUPPORT)
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        (webkit_web_view_init):
+
 2013-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ConsoleMessage should include line and column number where possible

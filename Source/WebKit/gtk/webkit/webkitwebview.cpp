@@ -1489,6 +1489,7 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
     settings->setMinimumLogicalFontSize(webViewConvertFontSizeToPixels(webView, minimumLogicalFontSize));
 }
 
+#if ENABLE(DRAG_SUPPORT)
 static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -1584,6 +1585,7 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
     gtk_drag_finish(context, TRUE, FALSE, time);
     return TRUE;
 }
+#endif // ENABLE(DRAG_SUPPORT)
 
 #if GTK_CHECK_VERSION(2, 12, 0)
 static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip)
@@ -3100,12 +3102,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->focus_out_event = webkit_web_view_focus_out_event;
     widgetClass->get_accessible = webkit_web_view_get_accessible;
     widgetClass->screen_changed = webkit_web_view_screen_changed;
+#if ENABLE(DRAG_SUPPORT)
     widgetClass->drag_end = webkit_web_view_drag_end;
     widgetClass->drag_data_get = webkit_web_view_drag_data_get;
     widgetClass->drag_motion = webkit_web_view_drag_motion;
     widgetClass->drag_leave = webkit_web_view_drag_leave;
     widgetClass->drag_drop = webkit_web_view_drag_drop;
     widgetClass->drag_data_received = webkit_web_view_drag_data_received;
+#else
+    widgetClass->drag_end = NULL;
+    widgetClass->drag_data_get = NULL;
+    widgetClass->drag_motion = NULL;
+    widgetClass->drag_leave = NULL;
+    widgetClass->drag_drop = NULL;
+    widgetClass->drag_data_received = NULL;
+#endif
 #if GTK_CHECK_VERSION(2, 12, 0)
     widgetClass->query_tooltip = webkit_web_view_query_tooltip;
     widgetClass->show_help = webkit_web_view_show_help;
@@ -3756,7 +3767,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.contextMenuClient = new WebKit::ContextMenuClient(webView);
 #endif
     pageClients.editorClient = new WebKit::EditorClient(webView);
+#if ENABLE(DRAG_SUPPORT)
     pageClients.dragClient = new WebKit::DragClient(webView);
+#endif
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
 
     priv->corePage = new Page(pageClients);
@@ -3824,9 +3837,11 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->subResources = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
 
+#if ENABLE(DRAG_SUPPORT)
     priv->dragAndDropHelper.setWidget(GTK_WIDGET(webView));
     gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
     gtk_drag_dest_set_target_list(GTK_WIDGET(webView), PasteboardHelper::defaultPasteboardHelper()->targetList());
+#endif
 
     priv->selfScrolling = false;
 
