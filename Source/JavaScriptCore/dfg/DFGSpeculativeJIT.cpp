@@ -3077,7 +3077,7 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
     speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
     if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
         // Check that we're not about to create negative zero.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1GPR, TrustedImm32(0));
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
         speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, intResult.gpr()));
         numeratorPositive.link(&m_jit);
     }

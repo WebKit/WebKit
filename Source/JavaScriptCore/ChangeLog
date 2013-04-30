@@ -1,3 +1,10 @@
+2013-04-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Unreviewed. Speculative build fix on Qt Arm and Mips after r149349.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+
 2013-04-29  Cosmin Truta  <ctruta@blackberry.com>
 
         [ARM] Expand the use of integer division
