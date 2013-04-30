@@ -1,3 +1,17 @@
+2013-04-29  Alberto Garcia  <agarcia@igalia.com>
+
+        Remove all remaining Skia code
+        https://bugs.webkit.org/show_bug.cgi?id=115263
+
+        Reviewed by Benjamin Poulain.
+
+        Remove all remaining references to Skia.
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments):
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-29  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Get rid of unused options in Tools/Scripts/webkit-build-directory

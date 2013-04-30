@@ -131,7 +131,6 @@ contribution_areas = [
     _Area('Scrollbars', ['scroll']),
     _Area('Security'),  # Probably need more tokens
 # FIXME: 'Shadow DOM'
-    _Area('Skia'),
     _Area('Soup Network Backend', ['soup']),
 # FIXME: 'Spell Checking' just need tokens
     _Area('Tables', ['htmltable', 'rendertable']),

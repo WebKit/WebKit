@@ -52,10 +52,6 @@
         "XSS": {
             "filename": r".*XSS",
         },
-        "SkiaGraphics": {
-            "filename": r"Source/WebCore/platform/graphics/skia/"
-                        r"|Source/WebCore/platform/graphics/filters/skia/",
-        },
         "FrameLoader": {
             "more": r"FrameLoader\.(cpp|h)",
         },
@@ -373,7 +369,6 @@
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
-        "SkiaGraphics": [ "senorblanco@chromium.org", "junov@google.com" ],
         "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "TextureMapper" : [ "noam@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],

@@ -1031,8 +1031,6 @@ sub blackberryCMakeArguments()
     push @cmakeExtraOptions, "-DENABLE_GLES2=1" unless $ENV{"DISABLE_GLES2"};
 
     my @includeSystemDirectories;
-    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia", "skia");
-    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia");
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "harfbuzz");
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "imf");
     # We only use jpeg-turbo for device build
