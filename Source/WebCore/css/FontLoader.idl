@@ -41,17 +41,17 @@
     attribute EventListener onload;
     attribute EventListener onerror;
 
-    boolean checkFont(in DOMString font, in [Default=NullString] optional DOMString text);
-    void loadFont(in Dictionary params);
-    void notifyWhenFontsReady(in VoidCallback callback);
+    boolean checkFont(DOMString font, [Default=NullString] optional DOMString text);
+    void loadFont(Dictionary params);
+    void notifyWhenFontsReady(VoidCallback callback);
     readonly attribute boolean loading;
 
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };

@@ -38,7 +38,7 @@
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString webkitErrorMessage;
 
     // Methods
-    IDBObjectStore objectStore (in DOMString name)
+    IDBObjectStore objectStore (DOMString name)
         raises (DOMException);
     void abort ()
         raises (DOMException);
@@ -48,12 +48,12 @@
     attribute EventListener oncomplete;
     attribute EventListener onerror;
     // EventTarget interface
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt) 
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt) 
         raises(EventException);
 };

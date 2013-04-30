@@ -31,17 +31,17 @@
 
     void clear()
         raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg initialize(in SVGPathSeg newItem)
+    [StrictTypeChecking] SVGPathSeg initialize(SVGPathSeg newItem)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg getItem(in unsigned long index)
+    [StrictTypeChecking] SVGPathSeg getItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
+    [StrictTypeChecking] SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
+    [StrictTypeChecking] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg removeItem(in unsigned long index)
+    [StrictTypeChecking] SVGPathSeg removeItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg appendItem(in SVGPathSeg newItem)
+    [StrictTypeChecking] SVGPathSeg appendItem(SVGPathSeg newItem)
         raises(DOMException, SVGException);
 };
 

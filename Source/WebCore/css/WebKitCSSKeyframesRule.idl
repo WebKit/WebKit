@@ -34,8 +34,8 @@
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString name;
     readonly attribute CSSRuleList cssRules;
     
-    void insertRule(in [Default=Undefined] optional DOMString rule);
-    void deleteRule(in [Default=Undefined] optional DOMString key);
-    WebKitCSSKeyframeRule findRule(in [Default=Undefined] optional DOMString key);
+    void insertRule([Default=Undefined] optional DOMString rule);
+    void deleteRule([Default=Undefined] optional DOMString key);
+    WebKitCSSKeyframeRule findRule([Default=Undefined] optional DOMString key);
 };
 

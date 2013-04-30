@@ -30,17 +30,17 @@
 
     void clear()
         raises(DOMException);
-    [StrictTypeChecking] SVGPoint initialize(in SVGPoint item)
+    [StrictTypeChecking] SVGPoint initialize(SVGPoint item)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint getItem(in unsigned long index)
+    [StrictTypeChecking] SVGPoint getItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGPoint insertItemBefore(in SVGPoint item, in unsigned long index)
+    [StrictTypeChecking] SVGPoint insertItemBefore(SVGPoint item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint replaceItem(in SVGPoint item, in unsigned long index)
+    [StrictTypeChecking] SVGPoint replaceItem(SVGPoint item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint removeItem(in unsigned long index)
+    [StrictTypeChecking] SVGPoint removeItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGPoint appendItem(in SVGPoint item)
+    [StrictTypeChecking] SVGPoint appendItem(SVGPoint item)
         raises(DOMException, SVGException);
 };
 

@@ -32,22 +32,22 @@
              [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString        cssText
                  setter raises(DOMException);
 
-    [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Default=Undefined] optional DOMString propertyName);
-    [Custom] CSSValue           getPropertyCSSValue(in [Default=Undefined] optional DOMString propertyName);
-    [TreatReturnedNullStringAs=Null] DOMString          removeProperty(in [Default=Undefined] optional DOMString propertyName)
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue([Default=Undefined] optional DOMString propertyName);
+    [Custom] CSSValue           getPropertyCSSValue([Default=Undefined] optional DOMString propertyName);
+    [TreatReturnedNullStringAs=Null] DOMString          removeProperty([Default=Undefined] optional DOMString propertyName)
         raises(DOMException);
-    [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority(in [Default=Undefined] optional DOMString propertyName);
-    [ObjCLegacyUnnamedParameters] void setProperty(in [Default=Undefined] optional DOMString propertyName, 
-                                    in [TreatNullAs=NullString, Default=Undefined] optional DOMString value, 
-                                    in [Default=Undefined] optional DOMString priority)
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority([Default=Undefined] optional DOMString propertyName);
+    [ObjCLegacyUnnamedParameters] void setProperty([Default=Undefined] optional DOMString propertyName, 
+                                    [TreatNullAs=NullString, Default=Undefined] optional DOMString value, 
+                                    [Default=Undefined] optional DOMString priority)
         raises(DOMException);
 
     readonly attribute unsigned long    length;
-    DOMString          item(in [Default=Undefined] optional unsigned long index);
+    DOMString          item([Default=Undefined] optional unsigned long index);
     readonly attribute CSSRule          parentRule;
 
     // Extensions
-    [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand(in [Default=Undefined] optional DOMString propertyName);
-    boolean            isPropertyImplicit(in [Default=Undefined] optional DOMString propertyName);
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand([Default=Undefined] optional DOMString propertyName);
+    boolean            isPropertyImplicit([Default=Undefined] optional DOMString propertyName);
 };
 

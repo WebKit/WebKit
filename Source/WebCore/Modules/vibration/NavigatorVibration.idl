@@ -20,7 +20,7 @@
 [
     Conditional=VIBRATION,
 ] partial interface Navigator {
-    void vibrate(in sequence<unsigned long> pattern) raises(DOMException);
-    void vibrate(in unsigned long time) raises(DOMException);
+    void vibrate(sequence<unsigned long> pattern) raises(DOMException);
+    void vibrate(unsigned long time) raises(DOMException);
 };
 

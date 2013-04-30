@@ -63,25 +63,25 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
-                                                            in Node refChild)
+    [ObjCLegacyUnnamedParameters, Custom] Node insertBefore([CustomReturn] Node newChild,
+                                                            Node refChild)
         raises(DOMException);
-    [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
-                                                            in [CustomReturn] Node oldChild)
+    [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(Node newChild,
+                                                            [CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom] Node removeChild(in [CustomReturn] Node oldChild)
+    [Custom] Node removeChild([CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom] Node appendChild(in [CustomReturn] Node newChild)
+    [Custom] Node appendChild([CustomReturn] Node newChild)
         raises(DOMException);
 
     boolean            hasChildNodes();
-    Node               cloneNode(in [Default=Undefined] optional boolean deep);
+    Node               cloneNode([Default=Undefined] optional boolean deep);
     void               normalize();
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters] boolean isSupported(in [Default=Undefined] optional DOMString feature, 
-                                       in [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
+    [ObjCLegacyUnnamedParameters] boolean isSupported([Default=Undefined] optional DOMString feature, 
+                                       [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
 
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
              attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        prefix
@@ -102,11 +102,11 @@
              attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString       textContent
                  setter raises(DOMException);
 
-    boolean            isSameNode(in [Default=Undefined] optional Node other);
-    boolean            isEqualNode(in [Default=Undefined] optional Node other);
-    [TreatReturnedNullStringAs=Null] DOMString          lookupPrefix(in [TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
-    boolean            isDefaultNamespace(in [TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
-    [TreatReturnedNullStringAs=Null] DOMString          lookupNamespaceURI(in [TreatNullAs=NullString,Default=Undefined] optional DOMString prefix);
+    boolean            isSameNode([Default=Undefined] optional Node other);
+    boolean            isEqualNode([Default=Undefined] optional Node other);
+    [TreatReturnedNullStringAs=Null] DOMString          lookupPrefix([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
+    boolean            isDefaultNamespace([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
+    [TreatReturnedNullStringAs=Null] DOMString          lookupNamespaceURI([TreatNullAs=NullString,Default=Undefined] optional DOMString prefix);
 
     // DocumentPosition
     const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
@@ -116,10 +116,10 @@
     const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
     const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-    unsigned short     compareDocumentPosition(in [Default=Undefined] optional Node other);
+    unsigned short     compareDocumentPosition([Default=Undefined] optional Node other);
 
     // Introduced in DOM4
-    boolean contains(in [Default=Undefined] optional Node other);
+    boolean contains([Default=Undefined] optional Node other);
 
     // IE extensions
     readonly attribute Element          parentElement;
@@ -133,25 +133,25 @@
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-    void addEventListener(in DOMString type, 
-                          in EventListener listener, 
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type, 
-                             in EventListener listener, 
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event event)
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event event)
         raises(EventException);
 #endif
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
-    [Custom] void addEventListener(in DOMString type, 
-                                      in EventListener listener, 
-                                      in boolean useCapture);
-    [Custom] void removeEventListener(in DOMString type, 
-                                         in EventListener listener, 
-                                         in boolean useCapture);
-    boolean dispatchEvent(in Event event)
+    [Custom] void addEventListener(DOMString type, 
+                                      EventListener listener, 
+                                      boolean useCapture);
+    [Custom] void removeEventListener(DOMString type, 
+                                         EventListener listener, 
+                                         boolean useCapture);
+    boolean dispatchEvent(Event event)
         raises(EventException);
 #endif
 

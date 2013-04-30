@@ -32,7 +32,7 @@
 [
     Conditional=SHARED_WORKERS,
     CustomConstructor,
-    Constructor(in DOMString scriptURL, in [Default=NullString] optional DOMString name),
+    Constructor(DOMString scriptURL, [Default=NullString] optional DOMString name),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     JSCustomMarkFunction,

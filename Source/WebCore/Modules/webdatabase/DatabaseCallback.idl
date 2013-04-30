@@ -29,6 +29,6 @@
 [
     Conditional=SQL_DATABASE,
 ] callback interface DatabaseCallback {
-    boolean handleEvent(in Database database);
-    boolean handleEvent(in DatabaseSync database);
+    boolean handleEvent(Database database);
+    boolean handleEvent(DatabaseSync database);
 };

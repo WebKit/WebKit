@@ -26,6 +26,6 @@
     ImplementationLacksVTable
 ] interface StyleSheetList {
     readonly attribute unsigned long    length;
-    StyleSheet         item(in [Default=Undefined] optional unsigned long index);
+    StyleSheet         item([Default=Undefined] optional unsigned long index);
 };
 

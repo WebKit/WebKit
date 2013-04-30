@@ -30,7 +30,7 @@
     ImplementationLacksVTable
 ] interface DOMStringList {
     readonly attribute unsigned long length;
-    [TreatReturnedNullStringAs=Null] DOMString item(in [Default=Undefined] optional unsigned long index);
-    boolean contains(in [Default=Undefined] optional DOMString string);
+    [TreatReturnedNullStringAs=Null] DOMString item([Default=Undefined] optional unsigned long index);
+    boolean contains([Default=Undefined] optional DOMString string);
 };
 

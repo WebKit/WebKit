@@ -32,47 +32,47 @@
     // All these methods raise an exception if they would read or write beyond the end of the view.
 
     // We have to use custom code because our code generator does not support int8_t type.
-    // int8_t getInt8(in unsigned long byteOffset);
-    // uint8_t getUint8(in unsigned long byteOffset);
+    // int8_t getInt8(unsigned long byteOffset);
+    // uint8_t getUint8(unsigned long byteOffset);
     [Custom] any getInt8()
         raises (DOMException);
     [Custom] any getUint8()
         raises (DOMException);
 
-    [StrictTypeChecking] short getInt16(in unsigned long byteOffset, in optional boolean littleEndian)
+    [StrictTypeChecking] short getInt16(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] unsigned short getUint16(in unsigned long byteOffset, in optional boolean littleEndian)
+    [StrictTypeChecking] unsigned short getUint16(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] long getInt32(in unsigned long byteOffset, in optional boolean littleEndian)
+    [StrictTypeChecking] long getInt32(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] unsigned long getUint32(in unsigned long byteOffset, in optional boolean littleEndian)
+    [StrictTypeChecking] unsigned long getUint32(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
 
     // Use custom code to handle NaN case.
-    [Custom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in optional boolean littleEndian)
+    [Custom, StrictTypeChecking] float getFloat32(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
-    [Custom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in optional boolean littleEndian)
+    [Custom, StrictTypeChecking] double getFloat64(unsigned long byteOffset, optional boolean littleEndian)
         raises (DOMException);
 
     // We have to use custom code because our code generator does not support uint8_t type.
-    // void setInt8(in unsigned long byteOffset, in int8_t value);
-    // void setUint8(in unsigned long byteOffset, in uint8_t value);
+    // void setInt8(unsigned long byteOffset, int8_t value);
+    // void setUint8(unsigned long byteOffset, uint8_t value);
     [Custom] void setInt8()
         raises (DOMException);
     [Custom] void setUint8()
         raises (DOMException);
 
-    [StrictTypeChecking] void setInt16(in unsigned long byteOffset, in short value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setInt16(unsigned long byteOffset, short value, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] void setUint16(in unsigned long byteOffset, in unsigned short value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setUint16(unsigned long byteOffset, unsigned short value, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] void setInt32(in unsigned long byteOffset, in long value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setInt32(unsigned long byteOffset, long value, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] void setUint32(in unsigned long byteOffset, in unsigned long value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setUint32(unsigned long byteOffset, unsigned long value, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] void setFloat32(in unsigned long byteOffset, in float value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setFloat32(unsigned long byteOffset, float value, optional boolean littleEndian)
         raises (DOMException);
-    [StrictTypeChecking] void setFloat64(in unsigned long byteOffset, in double value, in optional boolean littleEndian)
+    [StrictTypeChecking] void setFloat64(unsigned long byteOffset, double value, optional boolean littleEndian)
         raises (DOMException);
 };
 

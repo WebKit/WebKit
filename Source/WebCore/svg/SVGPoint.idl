@@ -26,6 +26,6 @@
     [StrictTypeChecking] attribute float x;
     [StrictTypeChecking] attribute float y;
 
-    [StrictTypeChecking] SVGPoint matrixTransform(in SVGMatrix matrix);
+    [StrictTypeChecking] SVGPoint matrixTransform(SVGMatrix matrix);
 };
 

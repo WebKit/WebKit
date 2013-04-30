@@ -34,6 +34,6 @@
     JSGenerateToJSObject,
     JSNoStaticTables
 ] interface FileEntry : Entry {
-    void createWriter(in FileWriterCallback successCallback, in optional ErrorCallback errorCallback);
-    void file(in FileCallback successCallback, in optional ErrorCallback errorCallback);
+    void createWriter(FileWriterCallback successCallback, optional ErrorCallback errorCallback);
+    void file(FileCallback successCallback, optional ErrorCallback errorCallback);
 };

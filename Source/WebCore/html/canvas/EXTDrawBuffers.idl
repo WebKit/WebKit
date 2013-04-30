@@ -68,5 +68,5 @@ typedef unsigned long GLenum;
     const GLenum MAX_COLOR_ATTACHMENTS_EXT = 0x8CDF;
     const GLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
 
-    void drawBuffersEXT(in sequence<GLenum> buffers);
+    void drawBuffersEXT(sequence<GLenum> buffers);
 };

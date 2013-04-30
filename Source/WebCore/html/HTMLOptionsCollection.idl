@@ -27,15 +27,15 @@
     [CustomSetter] attribute unsigned long length
         setter raises (DOMException);
 
-    Node namedItem(in [Default=Undefined] optional DOMString name);
+    Node namedItem([Default=Undefined] optional DOMString name);
 
-    [Custom] void add(in [Default=Undefined] optional HTMLOptionElement option, 
-                      in optional unsigned long index)
+    [Custom] void add([Default=Undefined] optional HTMLOptionElement option, 
+                      optional unsigned long index)
          raises (DOMException);
-    [Custom] void remove(in [Default=Undefined] optional unsigned long index);
+    [Custom] void remove([Default=Undefined] optional unsigned long index);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    Node item(in unsigned long index);
+    Node item(unsigned long index);
 #endif
 };
 

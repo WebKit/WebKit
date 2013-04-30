@@ -72,7 +72,7 @@ interface IFormsAutoFillTransition : IUnknown
     HRESULT isTextField([out, retval] BOOL* result);
 
     /*
-        - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
+        - (NSRect)_rectOnScreen; // bounding box of the text field, screen coordinates
     */
     HRESULT rectOnScreen([out, retval] LPRECT rect);
 

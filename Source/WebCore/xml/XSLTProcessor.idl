@@ -36,13 +36,13 @@
     ImplementationLacksVTable
 ] interface XSLTProcessor {
     
-    void importStylesheet(in [Default=Undefined] optional Node stylesheet);
-    DocumentFragment transformToFragment(in [Default=Undefined] optional Node source, in [Default=Undefined] optional Document docVal);
-    Document transformToDocument(in [Default=Undefined] optional Node source);
+    void importStylesheet([Default=Undefined] optional Node stylesheet);
+    DocumentFragment transformToFragment([Default=Undefined] optional Node source, [Default=Undefined] optional Document docVal);
+    Document transformToDocument([Default=Undefined] optional Node source);
 
-    [Custom] void setParameter(in DOMString namespaceURI, in DOMString localName, in DOMString value);
-    [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);
-    [Custom] void removeParameter(in DOMString namespaceURI, in DOMString localName);
+    [Custom] void setParameter(DOMString namespaceURI, DOMString localName, DOMString value);
+    [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(DOMString namespaceURI, DOMString localName);
+    [Custom] void removeParameter(DOMString namespaceURI, DOMString localName);
     void clearParameters();
 
     void reset();

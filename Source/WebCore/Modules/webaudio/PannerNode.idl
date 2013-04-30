@@ -40,9 +40,9 @@
     [CustomSetter] attribute DOMString panningModel;
 
     // Uses a 3D cartesian coordinate system 
-    void setPosition(in float x, in float y, in float z);
-    void setOrientation(in float x, in float y, in float z);
-    void setVelocity(in float x, in float y, in float z);
+    void setPosition(float x, float y, float z);
+    void setOrientation(float x, float y, float z);
+    void setVelocity(float x, float y, float z);
 
     // Distance model
     [CustomSetter] attribute DOMString distanceModel;

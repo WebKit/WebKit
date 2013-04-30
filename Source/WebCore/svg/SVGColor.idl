@@ -32,13 +32,13 @@
     readonly attribute RGBColor rgbColor;
     // FIXME: readonly attribute SVGICCColor iccColor;
 
-    [StrictTypeChecking] void setRGBColor(in DOMString rgbColor)
+    [StrictTypeChecking] void setRGBColor(DOMString rgbColor)
         raises(DOMException, SVGException);
 
-    [StrictTypeChecking] void setRGBColorICCColor(in DOMString rgbColor, in DOMString iccColor)
+    [StrictTypeChecking] void setRGBColorICCColor(DOMString rgbColor, DOMString iccColor)
         raises(DOMException, SVGException);
 
-    [StrictTypeChecking] void setColor(in unsigned short colorType, in DOMString rgbColor, in DOMString iccColor)
+    [StrictTypeChecking] void setColor(unsigned short colorType, DOMString rgbColor, DOMString iccColor)
         raises(DOMException, SVGException);
 };
 

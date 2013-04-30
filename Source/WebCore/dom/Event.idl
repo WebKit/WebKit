@@ -62,9 +62,9 @@
 
     void               stopPropagation();
     void               preventDefault();
-    [ObjCLegacyUnnamedParameters] void initEvent(in [Default=Undefined] optional DOMString eventTypeArg, 
-                                  in [Default=Undefined] optional boolean canBubbleArg, 
-                                  in [Default=Undefined] optional boolean cancelableArg);
+    [ObjCLegacyUnnamedParameters] void initEvent([Default=Undefined] optional DOMString eventTypeArg, 
+                                  [Default=Undefined] optional boolean canBubbleArg, 
+                                  [Default=Undefined] optional boolean cancelableArg);
 
     // DOM Level 3 Additions.
     readonly attribute boolean defaultPrevented;

@@ -31,7 +31,7 @@
 
 [
     ActiveDOMObject,
-    Constructor(in DOMString url, in optional Dictionary eventSourceInit),
+    Constructor(DOMString url, optional Dictionary eventSourceInit),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     EventTarget,
@@ -55,13 +55,13 @@
     void close();
 
     // EventTarget interface
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 
 };

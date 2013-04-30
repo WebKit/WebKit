@@ -26,11 +26,11 @@
     ObjCPolymorphic,
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
-    Node item(in [Default=Undefined] optional unsigned long index);
-    Node namedItem(in [Default=Undefined] optional DOMString name);
+    Node item([Default=Undefined] optional unsigned long index);
+    Node namedItem([Default=Undefined] optional DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    NodeList tags(in [Default=Undefined] optional DOMString name);
+    NodeList tags([Default=Undefined] optional DOMString name);
 #endif
 };
 

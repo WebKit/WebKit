@@ -25,7 +25,7 @@
 
 interface TestRunner {
     // The basics.
-    void dumpAsText(in boolean dumpPixels);
+    void dumpAsText(boolean dumpPixels);
     void dumpChildFramesAsText();
     void waitForPolicyDelegate();
     void waitUntilDone();
@@ -50,33 +50,33 @@ interface TestRunner {
 
     // Special options.
     void keepWebHistory();
-    void setAcceptsEditing(in boolean value);
-    void setCanOpenWindows(in boolean value);
-    void setCloseRemainingWindowsWhenComplete(in boolean value);
-    void setXSSAuditorEnabled(in boolean value);
-    void setAllowUniversalAccessFromFileURLs(in boolean value);
-    void setAllowFileAccessFromFileURLs(in boolean value);
-    void setPluginsEnabled(in boolean value);
-    void setJavaScriptCanAccessClipboard(in boolean value);
-    void setPrivateBrowsingEnabled(in boolean value);
-    void setPopupBlockingEnabled(in boolean value);
-    void setAuthorAndUserStylesEnabled(in boolean value);
-    void setCustomPolicyDelegate(in boolean enabled, in boolean permissive);
-    void addOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
-    void removeOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
-    void setUserStyleSheetEnabled(in boolean value);
-    void setUserStyleSheetLocation(in DOMString location);
-    void setSpatialNavigationEnabled(in boolean value);
-    void setTabKeyCyclesThroughElements(in boolean enabled);
+    void setAcceptsEditing(boolean value);
+    void setCanOpenWindows(boolean value);
+    void setCloseRemainingWindowsWhenComplete(boolean value);
+    void setXSSAuditorEnabled(boolean value);
+    void setAllowUniversalAccessFromFileURLs(boolean value);
+    void setAllowFileAccessFromFileURLs(boolean value);
+    void setPluginsEnabled(boolean value);
+    void setJavaScriptCanAccessClipboard(boolean value);
+    void setPrivateBrowsingEnabled(boolean value);
+    void setPopupBlockingEnabled(boolean value);
+    void setAuthorAndUserStylesEnabled(boolean value);
+    void setCustomPolicyDelegate(boolean enabled, boolean permissive);
+    void addOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
+    void removeOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
+    void setUserStyleSheetEnabled(boolean value);
+    void setUserStyleSheetLocation(DOMString location);
+    void setSpatialNavigationEnabled(boolean value);
+    void setTabKeyCyclesThroughElements(boolean enabled);
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();
-    void setCacheModel(in int model);
-    void setAsynchronousSpellCheckingEnabled(in boolean value);
+    void setCacheModel(int model);
+    void setAsynchronousSpellCheckingEnabled(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();
-    void execCommand(in DOMString name, in DOMString argument);
-    boolean isCommandEnabled(in DOMString name);
+    void execCommand(DOMString name, DOMString argument);
+    boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
 
     // Special DOM variables.
@@ -88,102 +88,102 @@ interface TestRunner {
     void display();
 
     // Printing
-    boolean isPageBoxVisible(in int pageIndex);
+    boolean isPageBoxVisible(int pageIndex);
 
-    [PassContext] void setValueForUser(in object element, in DOMString value);
+    [PassContext] void setValueForUser(object element, DOMString value);
 
     // UserContent testing.
-    void addUserScript(in DOMString source, in boolean runAtStart, in boolean allFrames);
-    void addUserStyleSheet(in DOMString source, in boolean allFrames);
+    void addUserScript(DOMString source, boolean runAtStart, boolean allFrames);
+    void addUserStyleSheet(DOMString source, boolean allFrames);
 
     // Local storage API
     void clearAllDatabases();
-    void setDatabaseQuota(in unsigned long long quota);
-    DOMString pathToLocalResource(in DOMString url);
+    void setDatabaseQuota(unsigned long long quota);
+    DOMString pathToLocalResource(DOMString url);
 
     // Application Cache API
     void clearAllApplicationCaches();
-    void setAppCacheMaximumSize(in unsigned long long size);
-    long long applicationCacheDiskUsageForOrigin(in DOMString origin);
-    void clearApplicationCacheForOrigin(in DOMString name);
-    void setApplicationCacheOriginQuota(in unsigned long long bytes);
+    void setAppCacheMaximumSize(unsigned long long size);
+    long long applicationCacheDiskUsageForOrigin(DOMString origin);
+    void clearApplicationCacheForOrigin(DOMString name);
+    void setApplicationCacheOriginQuota(unsigned long long bytes);
     void disallowIncreaseForApplicationCacheQuota();
     object originsWithApplicationCache();
 
     // Text search testing.
-    boolean findString(in DOMString target, in object optionsArray);
+    boolean findString(DOMString target, object optionsArray);
 
     // Evaluating script in a special context.
-    [PassContext] void evaluateScriptInIsolatedWorld(in unsigned long worldID, in DOMString script);
+    [PassContext] void evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
 
     // For Web Inspector tests
     void showWebInspector();
     void closeWebInspector();
-    void evaluateInWebInspector(in long callID, in DOMString script);
+    void evaluateInWebInspector(long callID, DOMString script);
 
-    void setPOSIXLocale(in DOMString locale);
+    void setPOSIXLocale(DOMString locale);
 
-    void setTextDirection(in DOMString direction);
+    void setTextDirection(DOMString direction);
 
-    void setWillSendRequestReturnsNull(in boolean flag);
-    void setWillSendRequestReturnsNullOnRedirect(in boolean flag);
+    void setWillSendRequestReturnsNull(boolean flag);
+    void setWillSendRequestReturnsNullOnRedirect(boolean flag);
     
-    void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
+    void setShouldStayOnPageAfterHandlingBeforeUnload(boolean flag);
 
-    void setDefersLoading(in boolean flag);
+    void setDefersLoading(boolean flag);
     void setStopProvisionalFrameLoads();
 
     // Focus testing.
-    void addChromeInputField(in object callback);
-    void removeChromeInputField(in object callback);
-    void focusWebView(in object callback);
+    void addChromeInputField(object callback);
+    void removeChromeInputField(object callback);
+    void focusWebView(object callback);
 
-    void setBackingScaleFactor(in double backingScaleFactor, in object callback);
+    void setBackingScaleFactor(double backingScaleFactor, object callback);
 
-    void setWindowIsKey(in boolean isKey);
+    void setWindowIsKey(boolean isKey);
 
     // Cookies testing
-    void setAlwaysAcceptCookies(in boolean accept);
+    void setAlwaysAcceptCookies(boolean accept);
 
-    void overridePreference(in DOMString preference, in DOMString value);
+    void overridePreference(DOMString preference, DOMString value);
 
     // Page Visibility API
-    void setPageVisibility(in DOMString state);
+    void setPageVisibility(DOMString state);
     void resetPageVisibility();
 
     readonly attribute DOMString platformName;
 
     // Control full screen behavior.
-    void setHasCustomFullScreenBehavior(in boolean value);
+    void setHasCustomFullScreenBehavior(boolean value);
 
     // Web notifications support
-    void grantWebNotificationPermission(in DOMString origin);
-    void denyWebNotificationPermission(in DOMString origin);
+    void grantWebNotificationPermission(DOMString origin);
+    void denyWebNotificationPermission(DOMString origin);
     void removeAllWebNotificationPermissions();
-    void simulateWebNotificationClick(in object notification);
+    void simulateWebNotificationClick(object notification);
 
     // Geolocation
-    void setGeolocationPermission(in boolean value);
-    void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy, in [Default=Undefined] optional object altitude, in optional object altitudeAccuracy, in optional object heading, in optional object speed);
-    void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
+    void setGeolocationPermission(boolean value);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, [Default=Undefined] optional object altitude, optional object altitudeAccuracy, optional object heading, optional object speed);
+    void setMockGeolocationPositionUnavailableError(DOMString errorMessage);
 
     // Audio testing.
-    [PassContext] void setAudioResult(in object data);
+    [PassContext] void setAudioResult(object data);
 
     boolean callShouldCloseOnWebView();
 
     // Work queue.
-    void queueBackNavigation(in unsigned long howFarBackward);
-    void queueForwardNavigation(in unsigned long howFarForward);
-    void queueLoad(in DOMString url, in DOMString target);
-    void queueLoadHTMLString(in DOMString content, in optional DOMString baseURL, in optional DOMString unreachableURL);
+    void queueBackNavigation(unsigned long howFarBackward);
+    void queueForwardNavigation(unsigned long howFarForward);
+    void queueLoad(DOMString url, DOMString target);
+    void queueLoadHTMLString(DOMString content, optional DOMString baseURL, optional DOMString unreachableURL);
     void queueReload();
-    void queueLoadingScript(in DOMString script);
-    void queueNonLoadingScript(in DOMString script);
+    void queueLoadingScript(DOMString script);
+    void queueNonLoadingScript(DOMString script);
 
     // Authentication
-    void setHandlesAuthenticationChallenges(in boolean value);
-    void setAuthenticationUsername(in DOMString username);
-    void setAuthenticationPassword(in DOMString password);
+    void setHandlesAuthenticationChallenges(boolean value);
+    void setAuthenticationUsername(DOMString username);
+    void setAuthenticationPassword(DOMString password);
 };
 

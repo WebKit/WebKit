@@ -24,19 +24,19 @@
  */
 
 interface AccessibilityUIElement {
-    boolean isEqual(in AccessibilityUIElement otherElement);
+    boolean isEqual(AccessibilityUIElement otherElement);
 
     // Document information
     readonly attribute DOMString documentEncoding;
     readonly attribute DOMString documentURI;
 
     // Element access.
-    AccessibilityUIElement elementAtPoint(in int x, in int y);
-    AccessibilityUIElement childAtIndex(in unsigned long index);
-    unsigned long indexOfChild(in AccessibilityUIElement child);
-    AccessibilityUIElement linkedUIElementAtIndex(in unsigned long index);
-    AccessibilityUIElement selectedChildAtIndex(in unsigned long index);
-    void setSelectedChild(in AccessibilityUIElement element);
+    AccessibilityUIElement elementAtPoint(int x, int y);
+    AccessibilityUIElement childAtIndex(unsigned long index);
+    unsigned long indexOfChild(AccessibilityUIElement child);
+    AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
+    AccessibilityUIElement selectedChildAtIndex(unsigned long index);
+    void setSelectedChild(AccessibilityUIElement element);
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
     
@@ -54,12 +54,12 @@ interface AccessibilityUIElement {
     readonly attribute int insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
 
-    DOMString stringAttributeValue(in DOMString attr);
-    double numberAttributeValue(in DOMString attr);
-    AccessibilityUIElement uiElementAttributeValue(in DOMString attr);  
-    boolean boolAttributeValue(in DOMString attr);
-    boolean isAttributeSupported(in DOMString attr);
-    boolean isAttributeSettable(in DOMString attr);
+    DOMString stringAttributeValue(DOMString attr);
+    double numberAttributeValue(DOMString attr);
+    AccessibilityUIElement uiElementAttributeValue(DOMString attr);  
+    boolean boolAttributeValue(DOMString attr);
+    boolean isAttributeSupported(DOMString attr);
+    boolean isAttributeSettable(DOMString attr);
     boolean isPressActionSupported();
     boolean isIncrementActionSupported();
     boolean isDecrementActionSupported();
@@ -118,31 +118,31 @@ interface AccessibilityUIElement {
     DOMString attributesOfRows();
     DOMString attributesOfVisibleCells();
     DOMString attributesOfHeader();
-    AccessibilityUIElement cellForColumnAndRow(in unsigned long column, in unsigned long row);
-    AccessibilityUIElement selectedRowAtIndex(in unsigned long index);
+    AccessibilityUIElement cellForColumnAndRow(unsigned long column, unsigned long row);
+    AccessibilityUIElement selectedRowAtIndex(unsigned long index);
     AccessibilityUIElement disclosedByRow();
-    AccessibilityUIElement disclosedRowAtIndex(in unsigned long index);
-    AccessibilityUIElement rowAtIndex(in unsigned long index);
+    AccessibilityUIElement disclosedRowAtIndex(unsigned long index);
+    AccessibilityUIElement rowAtIndex(unsigned long index);
     int indexInTable();
     DOMString rowIndexRange();
     DOMString columnIndexRange();
     int rowCount();
     int columnCount();
 
-    AccessibilityUIElement ariaOwnsElementAtIndex(in unsigned long index);
-    AccessibilityUIElement ariaFlowToElementAtIndex(in unsigned long index);
+    AccessibilityUIElement ariaOwnsElementAtIndex(unsigned long index);
+    AccessibilityUIElement ariaFlowToElementAtIndex(unsigned long index);
 
     // Paramaterized attributes.
     DOMString parameterizedAttributeNames();
-    int lineForIndex(in int index);
-    DOMString rangeForLine(in int index);
-    DOMString rangeForPosition(in int x, in int y);
-    DOMString boundsForRange(in unsigned long location, in unsigned long length);
-    DOMString stringForRange(in unsigned long location, in unsigned long length);
-    DOMString attributedStringForRange(in unsigned long location, in unsigned long length);
-    boolean attributedStringRangeIsMisspelled(in unsigned long location, in unsigned long length);
-    [PassContext] AccessibilityUIElement uiElementForSearchPredicate(in AccessibilityUIElement startElement, in boolean isDirectionNext, in object searchKey, in DOMString searchText);
-    void setSelectedTextRange(in unsigned long location, in unsigned long length);
+    int lineForIndex(int index);
+    DOMString rangeForLine(int index);
+    DOMString rangeForPosition(int x, int y);
+    DOMString boundsForRange(unsigned long location, unsigned long length);
+    DOMString stringForRange(unsigned long location, unsigned long length);
+    DOMString attributedStringForRange(unsigned long location, unsigned long length);
+    boolean attributedStringRangeIsMisspelled(unsigned long location, unsigned long length);
+    [PassContext] AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText);
+    void setSelectedTextRange(unsigned long location, unsigned long length);
 
     // Scroll area attributes.
     readonly attribute AccessibilityUIElement horizontalScrollbar;
@@ -151,20 +151,20 @@ interface AccessibilityUIElement {
     void scrollToMakeVisible();
 
     // Text markers.
-    AccessibilityTextMarkerRange textMarkerRangeForElement(in AccessibilityUIElement element);    
-    AccessibilityTextMarkerRange textMarkerRangeForMarkers(in AccessibilityTextMarker startMarker, in AccessibilityTextMarker endMarker);
-    AccessibilityTextMarker startTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
-    AccessibilityTextMarker endTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
-    AccessibilityTextMarker textMarkerForPoint(in int x, in int y);
-    AccessibilityTextMarker previousTextMarker(in AccessibilityTextMarker marker);
-    AccessibilityTextMarker nextTextMarker(in AccessibilityTextMarker marker);
-    AccessibilityUIElement accessibilityElementForTextMarker(in AccessibilityTextMarker marker);
-    DOMString stringForTextMarkerRange(in AccessibilityTextMarkerRange range);
-    int textMarkerRangeLength(in AccessibilityTextMarkerRange range);
-    boolean attributedStringForTextMarkerRangeContainsAttribute(in DOMString attr, in AccessibilityTextMarkerRange range);
-    int indexForTextMarker(in AccessibilityTextMarker marker);
-    boolean isTextMarkerValid(in AccessibilityTextMarker marker);
-    AccessibilityTextMarker textMarkerForIndex(in int textIndex);
+    AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);    
+    AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
+    AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
+    AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
+    AccessibilityTextMarker textMarkerForPoint(int x, int y);
+    AccessibilityTextMarker previousTextMarker(AccessibilityTextMarker marker);
+    AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker marker);
+    AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker marker);
+    DOMString stringForTextMarkerRange(AccessibilityTextMarkerRange range);
+    int textMarkerRangeLength(AccessibilityTextMarkerRange range);
+    boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
+    int indexForTextMarker(AccessibilityTextMarker marker);
+    boolean isTextMarkerValid(AccessibilityTextMarker marker);
+    AccessibilityTextMarker textMarkerForIndex(int textIndex);
 
     // Returns an ordered list of supported actions for an element.
     readonly attribute DOMString supportedActions;
@@ -172,7 +172,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString pathDescription;
     
     // Notification support.
-    boolean addNotificationListener(in object callbackFunction);
+    boolean addNotificationListener(object callbackFunction);
     boolean removeNotificationListener();
     
 };

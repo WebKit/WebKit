@@ -24,39 +24,39 @@
  */
 
 interface EventSendingController {
-    void mouseDown(in long buttonNumber, in object modifierArray);
-    void mouseUp(in long buttonNumber, in object modifierArray);
-    void mouseMoveTo(in long x, in long y);
-    void mouseScrollBy(in long x, in long y);
-    void continuousMouseScrollBy(in long x, in long y, in optional boolean paged);
+    void mouseDown(long buttonNumber, object modifierArray);
+    void mouseUp(long buttonNumber, object modifierArray);
+    void mouseMoveTo(long x, long y);
+    void mouseScrollBy(long x, long y);
+    void continuousMouseScrollBy(long x, long y, optional boolean paged);
     object contextClick();
     void scheduleAsynchronousClick();
 
-    void leapForward(in long milliseconds);
+    void leapForward(long milliseconds);
 
-    void keyDown(in DOMString key, in object modifierArray, in long location);
-    void scheduleAsynchronousKeyDown(in DOMString key);
+    void keyDown(DOMString key, object modifierArray, long location);
+    void scheduleAsynchronousKeyDown(DOMString key);
 
     // Zoom functions.
     void textZoomIn();
     void textZoomOut();
     void zoomPageIn();
     void zoomPageOut();
-    void scalePageBy(in double scale, in double x, in double y);
+    void scalePageBy(double scale, double x, double y);
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
     // Touch events.
-    void addTouchPoint(in long x, in long y);
-    void updateTouchPoint(in long index, in long x, in long y);
-    void setTouchModifier(in DOMString modifier, in boolean enable);
-    void setTouchPointRadius(in long radiusX, in long radiusY);
+    void addTouchPoint(long x, long y);
+    void updateTouchPoint(long index, long x, long y);
+    void setTouchModifier(DOMString modifier, boolean enable);
+    void setTouchPointRadius(long radiusX, long radiusY);
     void touchStart();
     void touchMove();
     void touchEnd();
     void touchCancel();
     void clearTouchPoints();
-    void releaseTouchPoint(in long index);
-    void cancelTouchPoint(in long index);
+    void releaseTouchPoint(long index);
+    void cancelTouchPoint(long index);
 #endif
 };
 

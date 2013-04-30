@@ -35,7 +35,7 @@
     JSNoStaticTables
 ] interface DirectoryEntry : Entry {
     DirectoryReader createReader();
-    void getFile(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in optional Dictionary options, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);
-    void getDirectory(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in optional Dictionary options, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);
-    void removeRecursively(in VoidCallback successCallback, in optional ErrorCallback errorCallback);
+    void getFile([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, optional Dictionary options, optional EntryCallback successCallback, optional ErrorCallback errorCallback);
+    void getDirectory([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, optional Dictionary options, optional EntryCallback successCallback, optional ErrorCallback errorCallback);
+    void removeRecursively(VoidCallback successCallback, optional ErrorCallback errorCallback);
 };

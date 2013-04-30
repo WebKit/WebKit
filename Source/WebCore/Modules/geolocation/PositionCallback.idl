@@ -25,5 +25,5 @@
 [
     Conditional=GEOLOCATION,
 ] callback interface PositionCallback {
-    boolean handleEvent(in Geoposition position);
+    boolean handleEvent(Geoposition position);
 };

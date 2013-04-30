@@ -31,5 +31,5 @@
 [
     Conditional=FILE_SYSTEM,
 ] callback interface ErrorCallback {
-    boolean handleEvent(in FileError error);
+    boolean handleEvent(FileError error);
 };

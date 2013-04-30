@@ -47,14 +47,14 @@ interface IDOMWindow : IDOMObject
     HRESULT document([out, retval] IDOMDocument** result);
 
     // DOM Level 2 Style Interface
-    //CSSStyleDeclaration getComputedStyle(in Element element,
-    //                                     in DOMString pseudoElement);
+    //CSSStyleDeclaration getComputedStyle(Element element,
+    //                                     DOMString pseudoElement);
     HRESULT getComputedStyle([in] IDOMElement* element, [in] BSTR pseudoElement);
 
     // WebKit extensions
-    //CSSRuleList getMatchedCSSRules(in Element element,
-    //                               in DOMString pseudoElement,
-    //                               in optional boolean authorOnly);
+    //CSSRuleList getMatchedCSSRules(Element element,
+    //                               DOMString pseudoElement,
+    //                               optional boolean authorOnly);
     HRESULT getMatchedCSSRules([in] IDOMElement* element, [in] BSTR pseudoElement, [in] BOOL authorOnly, [out, retval] IDOMCSSRuleList** result);
 
     //readonly attribute double devicePixelRatio;

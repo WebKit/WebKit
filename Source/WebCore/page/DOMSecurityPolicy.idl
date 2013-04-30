@@ -34,14 +34,14 @@
 
     readonly attribute DOMStringList reportURIs;
 
-    boolean allowsConnectionTo(in DOMString url);
-    boolean allowsFontFrom(in DOMString url);
-    boolean allowsFormAction(in DOMString url);
-    boolean allowsFrameFrom(in DOMString url);
-    boolean allowsImageFrom(in DOMString url);
-    boolean allowsMediaFrom(in DOMString url);
-    boolean allowsObjectFrom(in DOMString url);
-    boolean allowsPluginType(in DOMString type);
-    boolean allowsScriptFrom(in DOMString url);
-    boolean allowsStyleFrom(in DOMString url);
+    boolean allowsConnectionTo(DOMString url);
+    boolean allowsFontFrom(DOMString url);
+    boolean allowsFormAction(DOMString url);
+    boolean allowsFrameFrom(DOMString url);
+    boolean allowsImageFrom(DOMString url);
+    boolean allowsMediaFrom(DOMString url);
+    boolean allowsObjectFrom(DOMString url);
+    boolean allowsPluginType(DOMString type);
+    boolean allowsScriptFrom(DOMString url);
+    boolean allowsStyleFrom(DOMString url);
 };

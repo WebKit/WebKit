@@ -31,5 +31,5 @@
 [
     Conditional=QUOTA,
 ] callback interface StorageErrorCallback {
-    boolean handleEvent(in DOMCoreException error);
+    boolean handleEvent(DOMCoreException error);
 };

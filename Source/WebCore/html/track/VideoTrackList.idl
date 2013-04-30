@@ -31,20 +31,20 @@
     JSCustomMarkFunction
 ] interface VideoTrackList {
     readonly attribute unsigned long length;
-    VideoTrack item(in unsigned long index);
-    VideoTrack getTrackById(in DOMString id);
+    VideoTrack item(unsigned long index);
+    VideoTrack getTrackById(DOMString id);
 
     attribute EventListener onchange;
     attribute EventListener onaddtrack;
     attribute EventListener onremovetrack;
 
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };
 

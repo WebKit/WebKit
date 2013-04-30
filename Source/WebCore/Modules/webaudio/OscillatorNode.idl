@@ -48,12 +48,12 @@
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    void start(in double when);
-    void stop(in double when);
+    void start(double when);
+    void stop(double when);
 
-    [Conditional=LEGACY_WEB_AUDIO] void noteOn(in double when);
-    [Conditional=LEGACY_WEB_AUDIO] void noteOff(in double when);
+    [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
+    [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
 
-    void setWaveTable(in WaveTable waveTable);
+    void setWaveTable(WaveTable waveTable);
 
 };

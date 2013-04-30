@@ -23,5 +23,5 @@
     NamedGetter,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLFormControlsCollection : HTMLCollection {
-    [Custom] Node namedItem(in [Default=Undefined] optional DOMString name);
+    [Custom] Node namedItem([Default=Undefined] optional DOMString name);
 };

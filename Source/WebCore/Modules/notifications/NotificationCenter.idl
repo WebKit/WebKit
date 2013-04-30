@@ -34,9 +34,9 @@
     ActiveDOMObject,
     OmitConstructor
 ] interface NotificationCenter {
-   Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
+   Notification createNotification(DOMString iconUrl, DOMString title, DOMString body) raises(DOMException);
 
    int checkPermission();
-   void requestPermission(in optional VoidCallback callback);
+   void requestPermission(optional VoidCallback callback);
 };
 

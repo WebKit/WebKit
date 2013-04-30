@@ -27,10 +27,10 @@
 [
     Conditional=SQL_DATABASE,
 ] partial interface WorkerContext {
-    Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in optional DatabaseCallback creationCallback)
+    Database openDatabase(DOMString name, DOMString version, DOMString displayName, unsigned long estimatedSize, optional DatabaseCallback creationCallback)
         raises(DOMException);
 
-    DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in optional DatabaseCallback creationCallback)
+    DatabaseSync openDatabaseSync(DOMString name, DOMString version, DOMString displayName, unsigned long estimatedSize, optional DatabaseCallback creationCallback)
         raises(DOMException);
 };
 

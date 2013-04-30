@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 [
-    Constructor(in ArrayBuffer arrayBuffer),
-    Constructor(in ArrayBufferView arrayBufferView),
-    Constructor(in Blob blob),
-    Constructor(in DOMString string),
+    Constructor(ArrayBuffer arrayBuffer),
+    Constructor(ArrayBufferView arrayBufferView),
+    Constructor(Blob blob),
+    Constructor(DOMString string),
 ] interface TestOverloadedConstructors {
 };

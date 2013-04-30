@@ -25,7 +25,7 @@
     SkipVTableValidation
 ] interface NodeList {
 
-    Node item(in [IsIndex,Default=Undefined] optional unsigned long index);
+    Node item([IsIndex,Default=Undefined] optional unsigned long index);
 
     readonly attribute unsigned long length;
 

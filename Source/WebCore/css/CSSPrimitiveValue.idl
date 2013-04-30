@@ -55,13 +55,13 @@
     
     readonly attribute unsigned short primitiveType;
 
-    [ObjCLegacyUnnamedParameters] void setFloatValue(in [Default=Undefined] optional unsigned short unitType,
-                                      in [Default=Undefined] optional float floatValue)
+    [ObjCLegacyUnnamedParameters] void setFloatValue([Default=Undefined] optional unsigned short unitType,
+                                      [Default=Undefined] optional float floatValue)
         raises(DOMException);
-    float getFloatValue(in [Default=Undefined] optional unsigned short unitType)
+    float getFloatValue([Default=Undefined] optional unsigned short unitType)
         raises(DOMException);
-    [ObjCLegacyUnnamedParameters] void setStringValue(in [Default=Undefined] optional unsigned short stringType, 
-                                       in [Default=Undefined] optional DOMString stringValue)
+    [ObjCLegacyUnnamedParameters] void setStringValue([Default=Undefined] optional unsigned short stringType, 
+                                       [Default=Undefined] optional DOMString stringValue)
         raises(DOMException);
     DOMString getStringValue()
         raises(DOMException);

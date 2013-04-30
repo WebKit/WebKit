@@ -35,5 +35,5 @@
     ImplementationLacksVTable
 ] interface EntryArray {
     readonly attribute unsigned long length;
-    Entry item(in [IsIndex] unsigned long index);
+    Entry item([IsIndex] unsigned long index);
 };

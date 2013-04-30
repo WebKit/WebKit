@@ -36,21 +36,21 @@
 ] interface InjectedScriptHost {
     void clearConsoleMessages();
 
-    void copyText(in DOMString text);
-    [Custom] void inspect(in any objectId, in any hints);
-    [Custom] any inspectedObject(in int num);
-    [Custom] any internalConstructorName(in any object);
-    [Custom] boolean isHTMLAllCollection(in any object);
-    [Custom] DOMString type(in any object);
-    [Custom] any functionDetails(in any object);
-    [Custom] Array getInternalProperties(in any object);
-    [Custom] Array getEventListeners(in Node node);
+    void copyText(DOMString text);
+    [Custom] void inspect(any objectId, any hints);
+    [Custom] any inspectedObject(int num);
+    [Custom] any internalConstructorName(any object);
+    [Custom] boolean isHTMLAllCollection(any object);
+    [Custom] DOMString type(any object);
+    [Custom] any functionDetails(any object);
+    [Custom] Array getInternalProperties(any object);
+    [Custom] Array getEventListeners(Node node);
 
     [Custom] readonly attribute any evaluate;
 
-    [Custom] DOMString databaseId(in any database);
-    [Custom] DOMString storageId(in any storage);
+    [Custom] DOMString databaseId(any database);
+    [Custom] DOMString storageId(any storage);
 
     // Only declarative scope (local, with and catch) is accepted. Returns undefined. 
-    [Custom] any setFunctionVariableValue(in any functionObject, in int scopeIndex, in DOMString variableName, any newValue);
+    [Custom] any setFunctionVariableValue(any functionObject, int scopeIndex, DOMString variableName, any newValue);
 };

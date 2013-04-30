@@ -36,10 +36,10 @@
 
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void back();
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();
-    [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go(in [Default=Undefined] optional long distance);
+    [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go([Default=Undefined] optional long distance);
 
-    [Custom] void pushState(in any data, in DOMString title, in optional DOMString url)
+    [Custom] void pushState(any data, DOMString title, optional DOMString url)
         raises(DOMException);
-    [Custom] void replaceState(in any data, in DOMString title, in optional DOMString url)
+    [Custom] void replaceState(any data, DOMString title, optional DOMString url)
         raises(DOMException);
 };

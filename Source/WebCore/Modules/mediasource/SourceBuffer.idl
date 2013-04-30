@@ -41,7 +41,7 @@
         setter raises(DOMException);
 
     // Append segment data.
-    void append(in Uint8Array data) raises (DOMException);
+    void append(Uint8Array data) raises (DOMException);
 
     // Abort the current segment append sequence.
     void abort() raises (DOMException);

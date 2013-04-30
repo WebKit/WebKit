@@ -31,12 +31,12 @@
     [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames()
         raises (DOMException);
 
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [EnforceRange] optional unsigned long long version)
+    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest deleteDatabase(in DOMString name)
+    [CallWith=ScriptExecutionContext] IDBOpenDBRequest deleteDatabase(DOMString name)
         raises (DOMException);
 
-    [CallWith=ScriptExecutionContext] short cmp(in any first, in any second)
+    [CallWith=ScriptExecutionContext] short cmp(any first, any second)
         raises (DOMException);
 };
 

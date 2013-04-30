@@ -37,10 +37,10 @@
     [TreatNullAs=NullString] attribute DOMString valueAsString
         setter raises(DOMException);
 
-    [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, in float valueInSpecifiedUnits)
+    [StrictTypeChecking] void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
         raises(DOMException);
 
-    [StrictTypeChecking] void convertToSpecifiedUnits(in unsigned short unitType)
+    [StrictTypeChecking] void convertToSpecifiedUnits(unsigned short unitType)
         raises(DOMException);
 };
 

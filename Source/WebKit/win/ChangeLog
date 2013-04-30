@@ -1,5 +1,19 @@
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Stop using "in" keyword in IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=115418
+
+        Reviewed by Kentaro Hara.
+
+        Remove "in" keyword from IDL files as this is no longer part of the Web
+        IDL specification.
+
+        * Interfaces/DOMEvents.idl:
+        * Interfaces/DOMPrivate.idl:
+        * Interfaces/DOMWindow.idl:
+
+2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Replace "Optional" extended attribute by proper Web IDL "optional" keyword
         https://bugs.webkit.org/show_bug.cgi?id=115380
 

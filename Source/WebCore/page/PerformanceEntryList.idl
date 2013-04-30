@@ -37,6 +37,6 @@
     ImplementationLacksVTable
 ] interface PerformanceEntryList {
     readonly attribute unsigned long length;
-    PerformanceEntry item(in unsigned long index);
+    PerformanceEntry item(unsigned long index);
 };
 

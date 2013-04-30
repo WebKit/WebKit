@@ -31,5 +31,5 @@
 [
     Conditional=FILE_SYSTEM,
 ] callback interface FileWriterCallback {
-    boolean handleEvent(in FileWriter fileWriter);
+    boolean handleEvent(FileWriter fileWriter);
 };

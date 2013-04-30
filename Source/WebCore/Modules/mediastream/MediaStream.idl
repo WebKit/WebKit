@@ -26,8 +26,8 @@
     Conditional=MEDIA_STREAM,
     EventTarget,
     Constructor,
-    Constructor(in MediaStream stream),
-    Constructor(in MediaStreamTrack[] tracks),
+    Constructor(MediaStream stream),
+    Constructor(MediaStreamTrack[] tracks),
     ConstructorParameters=0,
     CallWith=ScriptExecutionContext,
     SkipVTableValidation
@@ -53,13 +53,13 @@
     attribute EventListener onremovetrack;
 
     // EventTarget interface
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event event)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event event)
         raises(EventException);
 };
 

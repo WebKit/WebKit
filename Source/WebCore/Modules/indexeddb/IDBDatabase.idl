@@ -38,27 +38,27 @@
     attribute EventListener onerror;
     attribute EventListener onversionchange;
 
-    [Custom] IDBObjectStore createObjectStore(in DOMString name, in optional Dictionary options)
+    [Custom] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options)
         raises (DOMException);
-    void deleteObjectStore(in DOMString name)
+    void deleteObjectStore(DOMString name)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Default=NullString] optional DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(DOMStringList storeNames, [Default=NullString] optional DOMString mode)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<DOMString> storeNames, in [Default=NullString] optional DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(sequence<DOMString> storeNames, [Default=NullString] optional DOMString mode)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Default=NullString] optional DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(DOMString storeName, [Default=NullString] optional DOMString mode)
         raises (DOMException);
 
     void close();
 
     // EventTarget interface
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };
 

@@ -34,5 +34,5 @@
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface SQLTransactionSync {
-    [Custom] SQLResultSet executeSql(in DOMString sqlStatement, in ObjectArray arguments);
+    [Custom] SQLResultSet executeSql(DOMString sqlStatement, ObjectArray arguments);
 };

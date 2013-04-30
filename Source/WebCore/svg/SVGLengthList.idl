@@ -31,17 +31,17 @@
 
     void clear()
         raises(DOMException);
-    [StrictTypeChecking] SVGLength initialize(in SVGLength item)
+    [StrictTypeChecking] SVGLength initialize(SVGLength item)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGLength getItem(in unsigned long index)
+    [StrictTypeChecking] SVGLength getItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGLength insertItemBefore(in SVGLength item, in unsigned long index)
+    [StrictTypeChecking] SVGLength insertItemBefore(SVGLength item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGLength replaceItem(in SVGLength item, in unsigned long index)
+    [StrictTypeChecking] SVGLength replaceItem(SVGLength item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGLength removeItem(in unsigned long index)
+    [StrictTypeChecking] SVGLength removeItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGLength appendItem(in SVGLength item)
+    [StrictTypeChecking] SVGLength appendItem(SVGLength item)
         raises(DOMException, SVGException);
 };
 

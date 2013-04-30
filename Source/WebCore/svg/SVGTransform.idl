@@ -35,11 +35,11 @@
     readonly attribute SVGMatrix matrix;
     readonly attribute float angle;
 
-    [StrictTypeChecking] void setMatrix(in SVGMatrix matrix);
-    [StrictTypeChecking] void setTranslate(in float tx, in float ty);
-    [StrictTypeChecking] void setScale(in float sx, in float sy);
-    [StrictTypeChecking] void setRotate(in float angle, in float cx, in float cy);
-    [StrictTypeChecking] void setSkewX(in float angle);
-    [StrictTypeChecking] void setSkewY(in float angle);
+    [StrictTypeChecking] void setMatrix(SVGMatrix matrix);
+    [StrictTypeChecking] void setTranslate(float tx, float ty);
+    [StrictTypeChecking] void setScale(float sx, float sy);
+    [StrictTypeChecking] void setRotate(float angle, float cx, float cy);
+    [StrictTypeChecking] void setSkewX(float angle);
+    [StrictTypeChecking] void setSkewY(float angle);
 };
 

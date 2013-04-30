@@ -32,6 +32,6 @@
     ImplementationLacksVTable
 ] interface ArrayBuffer {
     readonly attribute unsigned long byteLength;
-    ArrayBuffer slice(in long begin, in optional long end);
+    ArrayBuffer slice(long begin, optional long end);
 };
 

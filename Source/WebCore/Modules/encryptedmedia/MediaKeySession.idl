@@ -35,7 +35,7 @@ interface [
     readonly attribute DOMString sessionId;
 
     // session operations
-    void update(in Uint8Array key)
+    void update(Uint8Array key)
         raises(DOMException);
     void close();
     
@@ -45,12 +45,12 @@ interface [
     attribute EventListener onwebkitkeymessage;
 
     // EventTarget interface
-    void addEventListener(in DOMString type, 
-                          in EventListener listener, 
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type, 
-                             in EventListener listener, 
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };

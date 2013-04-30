@@ -35,10 +35,10 @@
                  setter raises(DOMException);
     readonly attribute unsigned long length;
 
-    [TreatReturnedNullStringAs=Null] DOMString item(in [Default=Undefined] optional unsigned long index);
-    void deleteMedium(in [Default=Undefined] optional DOMString oldMedium)
+    [TreatReturnedNullStringAs=Null] DOMString item([Default=Undefined] optional unsigned long index);
+    void deleteMedium([Default=Undefined] optional DOMString oldMedium)
         raises(DOMException);
-    void appendMedium(in [Default=Undefined] optional DOMString newMedium)
+    void appendMedium([Default=Undefined] optional DOMString newMedium)
         raises(DOMException);
 
 };

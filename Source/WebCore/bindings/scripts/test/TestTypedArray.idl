@@ -35,6 +35,6 @@
     DoNotCheckConstants,
     TypedArray=double
 ] interface Float64Array : ArrayBufferView {
-    Int32Array foo(in Float32Array array);
+    Int32Array foo(Float32Array array);
     void set();
 };

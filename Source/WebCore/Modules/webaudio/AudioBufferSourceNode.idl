@@ -45,14 +45,14 @@
     attribute double loopStart;
     attribute double loopEnd;
 
-    void start(in double when);
-    [ImplementedAs=startGrain] void start(in double when, in double grainOffset);
-    [ImplementedAs=startGrain] void start(in double when, in double grainOffset, in double grainDuration);
-    void stop(in double when);
+    void start(double when);
+    [ImplementedAs=startGrain] void start(double when, double grainOffset);
+    [ImplementedAs=startGrain] void start(double when, double grainOffset, double grainDuration);
+    void stop(double when);
 
     [Conditional=LEGACY_WEB_AUDIO] attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
 
-    [Conditional=LEGACY_WEB_AUDIO] void noteOn(in double when);
-    [Conditional=LEGACY_WEB_AUDIO] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
-    [Conditional=LEGACY_WEB_AUDIO] void noteOff(in double when);
+    [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
+    [Conditional=LEGACY_WEB_AUDIO] void noteGrainOn(double when, double grainOffset, double grainDuration);
+    [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
 };

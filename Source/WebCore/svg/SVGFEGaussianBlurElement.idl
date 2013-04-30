@@ -31,7 +31,7 @@
     readonly attribute SVGAnimatedNumber stdDeviationX;
     readonly attribute SVGAnimatedNumber stdDeviationY;
 
-    void setStdDeviation(in [Default=Undefined] optional float stdDeviationX, 
-                         in [Default=Undefined] optional float stdDeviationY);
+    void setStdDeviation([Default=Undefined] optional float stdDeviationX, 
+                         [Default=Undefined] optional float stdDeviationY);
 };
 

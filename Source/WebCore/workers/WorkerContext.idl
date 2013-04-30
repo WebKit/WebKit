@@ -45,24 +45,24 @@
              attribute EventListener onerror;
 
     // WorkerUtils
-    [Custom] void importScripts(/*[Variadic] in DOMString urls */);
+    [Custom] void importScripts(/*[Variadic] DOMString urls */);
              [Replaceable] readonly attribute WorkerNavigator navigator;
 
     // Timers
-    [Custom] long setTimeout(in any handler, in [Default=Undefined] optional long timeout);
-    void clearTimeout(in [Default=Undefined] optional long handle);
-    [Custom] long setInterval(in any handler, in [Default=Undefined] optional long timeout);
-    void clearInterval(in [Default=Undefined] optional long handle);
+    [Custom] long setTimeout(any handler, [Default=Undefined] optional long timeout);
+    void clearTimeout([Default=Undefined] optional long handle);
+    [Custom] long setInterval(any handler, [Default=Undefined] optional long timeout);
+    void clearInterval([Default=Undefined] optional long handle);
 
 
     // EventTarget interface
-    void addEventListener(in DOMString type, 
-                          in EventListener listener, 
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type, 
-                             in EventListener listener, 
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

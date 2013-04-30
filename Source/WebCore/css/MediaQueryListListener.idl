@@ -23,5 +23,5 @@
     CPPPureInterface,
     OmitConstructor
 ] interface MediaQueryListListener {
-    void queryChanged(in [Default=Undefined] optional MediaQueryList list);
+    void queryChanged([Default=Undefined] optional MediaQueryList list);
 };

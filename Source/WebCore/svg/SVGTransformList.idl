@@ -31,20 +31,20 @@
 
     void clear()
         raises(DOMException);
-    [StrictTypeChecking] SVGTransform initialize(in SVGTransform item)
+    [StrictTypeChecking] SVGTransform initialize(SVGTransform item)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform getItem(in unsigned long index)
+    [StrictTypeChecking] SVGTransform getItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+    [StrictTypeChecking] SVGTransform insertItemBefore(SVGTransform item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+    [StrictTypeChecking] SVGTransform replaceItem(SVGTransform item, unsigned long index)
         raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform removeItem(in unsigned long index)
+    [StrictTypeChecking] SVGTransform removeItem(unsigned long index)
         raises(DOMException);
-    [StrictTypeChecking] SVGTransform appendItem(in SVGTransform item)
+    [StrictTypeChecking] SVGTransform appendItem(SVGTransform item)
         raises(DOMException, SVGException);
 
-    [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
+    [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix)
         raises(DOMException);
 
     SVGTransform consolidate()

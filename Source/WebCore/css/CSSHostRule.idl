@@ -24,10 +24,10 @@
 ] interface CSSHostRule : CSSRule {
     readonly attribute CSSRuleList cssRules;
     
-    unsigned long      insertRule(in [Default=Undefined] optional DOMString rule, 
-                                  in [Default=Undefined] optional unsigned long index)
+    unsigned long      insertRule([Default=Undefined] optional DOMString rule, 
+                                  [Default=Undefined] optional unsigned long index)
         raises(DOMException);
-    void               deleteRule(in [Default=Undefined] optional unsigned long index)
+    void               deleteRule([Default=Undefined] optional unsigned long index)
         raises(DOMException);
 };
 

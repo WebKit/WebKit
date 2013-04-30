@@ -24,6 +24,6 @@
  */
 
 interface AccessibilityTextMarkerRange {
-    boolean isEqual(in AccessibilityTextMarkerRange otherMarkerRange);
+    boolean isEqual(AccessibilityTextMarkerRange otherMarkerRange);
 };
 

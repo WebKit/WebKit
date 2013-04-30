@@ -30,5 +30,5 @@
 ] interface TouchList {
     readonly attribute unsigned long length;
 
-    Touch item(in unsigned long index);
+    Touch item(unsigned long index);
 };

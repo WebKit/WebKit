@@ -30,6 +30,6 @@
     SkipVTableValidation
 ] interface CSSRuleList {
     readonly attribute unsigned long    length;
-    CSSRule           item(in [Default=Undefined] optional unsigned long index);
+    CSSRule           item([Default=Undefined] optional unsigned long index);
 };
 

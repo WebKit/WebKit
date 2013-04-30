@@ -30,6 +30,6 @@
     CheckSecurity
 ] interface TestActiveDOMObject {
     readonly attribute long excitingAttr;
-    void excitingFunction(in Node nextChild);
-    [DoNotCheckSecurity] void postMessage(in DOMString message);
+    void excitingFunction(Node nextChild);
+    [DoNotCheckSecurity] void postMessage(DOMString message);
 };

@@ -28,7 +28,7 @@
 [
     Conditional=WORKERS,
     CustomConstructor,
-    Constructor(in DOMString scriptUrl),
+    Constructor(DOMString scriptUrl),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     JSGenerateToNativeObject,
@@ -38,11 +38,11 @@
     attribute EventListener onmessage;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Custom] void postMessage(in SerializedScriptValue message, in optional Array messagePorts)
+    [Custom] void postMessage(SerializedScriptValue message, optional Array messagePorts)
         raises(DOMException);
 #else
     // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
-    void postMessage(in SerializedScriptValue message, in optional MessagePort messagePort)
+    void postMessage(SerializedScriptValue message, optional MessagePort messagePort)
         raises(DOMException);
 #endif
 

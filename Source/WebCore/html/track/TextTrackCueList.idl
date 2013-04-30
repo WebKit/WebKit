@@ -29,7 +29,7 @@
     ImplementationLacksVTable
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;
-    TextTrackCue item(in unsigned long index);
-    TextTrackCue getCueById(in DOMString id);
+    TextTrackCue item(unsigned long index);
+    TextTrackCue getCueById(DOMString id);
 };
 

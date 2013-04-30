@@ -34,21 +34,21 @@
     [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementX;
     [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementY;
     
-    [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Default=Undefined] optional DOMString type, 
-                                       in [Default=Undefined] optional boolean canBubble, 
-                                       in [Default=Undefined] optional boolean cancelable, 
-                                       in [Default=Undefined] optional DOMWindow view, 
-                                       in [Default=Undefined] optional long detail, 
-                                       in [Default=Undefined] optional long screenX, 
-                                       in [Default=Undefined] optional long screenY, 
-                                       in [Default=Undefined] optional long clientX, 
-                                       in [Default=Undefined] optional long clientY, 
-                                       in [Default=Undefined] optional boolean ctrlKey, 
-                                       in [Default=Undefined] optional boolean altKey, 
-                                       in [Default=Undefined] optional boolean shiftKey, 
-                                       in [Default=Undefined] optional boolean metaKey, 
-                                       in [Default=Undefined] optional unsigned short button, 
-                                       in [Default=Undefined] optional EventTarget relatedTarget);
+    [ObjCLegacyUnnamedParameters] void initMouseEvent([Default=Undefined] optional DOMString type, 
+                                       [Default=Undefined] optional boolean canBubble, 
+                                       [Default=Undefined] optional boolean cancelable, 
+                                       [Default=Undefined] optional DOMWindow view, 
+                                       [Default=Undefined] optional long detail, 
+                                       [Default=Undefined] optional long screenX, 
+                                       [Default=Undefined] optional long screenY, 
+                                       [Default=Undefined] optional long clientX, 
+                                       [Default=Undefined] optional long clientY, 
+                                       [Default=Undefined] optional boolean ctrlKey, 
+                                       [Default=Undefined] optional boolean altKey, 
+                                       [Default=Undefined] optional boolean shiftKey, 
+                                       [Default=Undefined] optional boolean metaKey, 
+                                       [Default=Undefined] optional unsigned short button, 
+                                       [Default=Undefined] optional EventTarget relatedTarget);
 
     // extensions
     readonly attribute long             offsetX;

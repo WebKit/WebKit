@@ -34,6 +34,6 @@
     readonly attribute SVGStringList requiredExtensions;
     readonly attribute SVGStringList systemLanguage;
 
-    boolean hasExtension(in [Default=Undefined] optional DOMString extension);
+    boolean hasExtension([Default=Undefined] optional DOMString extension);
 };
 

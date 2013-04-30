@@ -31,5 +31,5 @@
 [
     Conditional=SQL_DATABASE,
 ] callback interface SQLTransactionSyncCallback {
-    boolean handleEvent(in SQLTransactionSync transaction);
+    boolean handleEvent(SQLTransactionSync transaction);
 };

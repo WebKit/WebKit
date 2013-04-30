@@ -20,9 +20,9 @@
 [
      ImplementationLacksVTable
 ] interface XPathExpression {
-    [ObjCLegacyUnnamedParameters] XPathResult evaluate(in [Default=Undefined] optional Node contextNode, 
-                                        in [Default=Undefined] optional unsigned short type, 
-                                        in [Default=Undefined] optional XPathResult inResult)
+    [ObjCLegacyUnnamedParameters] XPathResult evaluate([Default=Undefined] optional Node contextNode, 
+                                        [Default=Undefined] optional unsigned short type, 
+                                        [Default=Undefined] optional XPathResult inResult)
         raises(DOMException);
 };
 

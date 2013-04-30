@@ -43,26 +43,26 @@
 
 #if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
     PerformanceEntryList webkitGetEntries();
-    PerformanceEntryList webkitGetEntriesByType(in DOMString entryType);
-    PerformanceEntryList webkitGetEntriesByName(in DOMString name, in [Default=NullString] optional DOMString entryType);
+    PerformanceEntryList webkitGetEntriesByType(DOMString entryType);
+    PerformanceEntryList webkitGetEntriesByName(DOMString name, [Default=NullString] optional DOMString entryType);
 #endif
 
 #if defined(ENABLE_RESOURCE_TIMING) && ENABLE_RESOURCE_TIMING
     void webkitClearResourceTimings();
-    void webkitSetResourceTimingBufferSize(in unsigned long maxSize);
+    void webkitSetResourceTimingBufferSize(unsigned long maxSize);
 
     attribute EventListener onwebkitresourcetimingbufferfull;
 #endif
 
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
 #if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
-    void webkitMark(in DOMString markName)
+    void webkitMark(DOMString markName)
         raises(DOMException);
-    void webkitClearMarks(in [Default=NullString] optional  DOMString markName);
+    void webkitClearMarks([Default=NullString] optional  DOMString markName);
 
-    void webkitMeasure(in DOMString measureName, in [Default=NullString] optional DOMString startMark, in [Default=NullString] optional DOMString endMark)
+    void webkitMeasure(DOMString measureName, [Default=NullString] optional DOMString startMark, [Default=NullString] optional DOMString endMark)
         raises(DOMException);
-    void webkitClearMeasures(in [Default=NullString] optional DOMString measureName);
+    void webkitClearMeasures([Default=NullString] optional DOMString measureName);
 #endif
 
     // See http://www.w3.org/TR/hr-time/ for details.

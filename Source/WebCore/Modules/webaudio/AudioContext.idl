@@ -36,7 +36,7 @@
     // All scheduled times are relative to this time in seconds.
     readonly attribute float currentTime;
 
-    // All AudioNodes in the context run at this sample-rate (in sample-frames per second).
+    // All AudioNodes in the context run at this sample-rate (sample-frames per second).
     readonly attribute float sampleRate;
 
     // All panning is relative to this listener.
@@ -45,60 +45,60 @@
     // Number of AudioBufferSourceNodes that are currently playing.
     readonly attribute unsigned long activeSourceCount;
     
-    AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate)
+    AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate)
         raises(DOMException);
-    AudioBuffer createBuffer(in ArrayBuffer? buffer, in boolean mixToMono)
+    AudioBuffer createBuffer(ArrayBuffer? buffer, boolean mixToMono)
         raises(DOMException);
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(in ArrayBuffer audioData, in AudioBufferCallback successCallback, in optional AudioBufferCallback errorCallback)
+    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback successCallback, optional AudioBufferCallback errorCallback)
         raises(DOMException);
 
     // Sources
     AudioBufferSourceNode createBufferSource();
 
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement)
+    MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement)
         raises(DOMException);
 #endif
 
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-    MediaStreamAudioSourceNode createMediaStreamSource(in MediaStream mediaStream)
+    MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream)
         raises(DOMException);
     MediaStreamAudioDestinationNode createMediaStreamDestination();
 #endif
 
     // Processing nodes
     GainNode createGain();
-    DelayNode createDelay(in optional double maxDelayTime) raises(DOMException);
+    DelayNode createDelay(optional double maxDelayTime) raises(DOMException);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
     AnalyserNode createAnalyser();
-    ScriptProcessorNode createScriptProcessor(in unsigned long bufferSize, in optional unsigned long numberOfInputChannels, in optional unsigned long numberOfOutputChannels)
+    ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels)
         raises(DOMException);
     OscillatorNode createOscillator();
-    WaveTable createWaveTable(in Float32Array real, in Float32Array imag)
+    WaveTable createWaveTable(Float32Array real, Float32Array imag)
         raises(DOMException);
 
     // Channel splitting and merging
-    ChannelSplitterNode createChannelSplitter(in optional unsigned long numberOfOutputs)
+    ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs)
         raises(DOMException);
-    ChannelMergerNode createChannelMerger(in optional unsigned long numberOfInputs)
+    ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs)
         raises(DOMException);
 
     // Offline rendering
-    // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+    // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
     attribute EventListener oncomplete;
     void startRendering();
 
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay] DelayNode createDelayNode(in optional double maxDelayTime) 
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay] DelayNode createDelayNode(optional double maxDelayTime) 
         raises(DOMException);
 
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in optional unsigned long numberOfInputChannels, in optional unsigned long numberOfOutputChannels)
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels)
         raises(DOMException);
 
 };

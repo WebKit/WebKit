@@ -71,10 +71,10 @@ enum XMLHttpRequestResponseType {
     attribute boolean withCredentials
         setter raises(DOMException);
 
-    [Custom] void open(in DOMString method, in DOMString url, in optional boolean async, in optional DOMString user, in optional DOMString password)
+    [Custom] void open(DOMString method, DOMString url, optional boolean async, optional DOMString user, optional DOMString password)
         raises(DOMException);
 
-    void setRequestHeader(in DOMString header, in DOMString value)
+    void setRequestHeader(DOMString header, DOMString value)
         raises(DOMException);
 
     [Custom] void send()
@@ -87,7 +87,7 @@ enum XMLHttpRequestResponseType {
     // response
     [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders()
         raises(DOMException);
-    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(in DOMString header)
+    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(DOMString header)
         raises(DOMException);
     [CustomGetter] readonly attribute DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
         getter raises(DOMException);
@@ -105,15 +105,15 @@ enum XMLHttpRequestResponseType {
         getter raises(DOMException);
 
     // Extension
-    void overrideMimeType(in DOMString override);
+    void overrideMimeType(DOMString override);
 
     // EventTarget interface
-    void addEventListener(in DOMString type, 
-                          in EventListener listener, 
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type, 
-                             in EventListener listener, 
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };

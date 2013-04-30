@@ -30,12 +30,12 @@
     [Custom] readonly attribute double beta;
     [Custom] readonly attribute double gamma;
     [Custom] readonly attribute boolean absolute;
-    [Custom] void initDeviceOrientationEvent(in [Default=Undefined] optional DOMString type, 
-                                             in [Default=Undefined] optional boolean bubbles, 
-                                             in [Default=Undefined] optional boolean cancelable, 
-                                             in [Default=Undefined] optional double alpha, 
-                                             in [Default=Undefined] optional double beta, 
-                                             in [Default=Undefined] optional double gamma,
-                                             in [Default=Undefined] optional boolean absolute);
+    [Custom] void initDeviceOrientationEvent([Default=Undefined] optional DOMString type, 
+                                             [Default=Undefined] optional boolean bubbles, 
+                                             [Default=Undefined] optional boolean cancelable, 
+                                             [Default=Undefined] optional double alpha, 
+                                             [Default=Undefined] optional double beta, 
+                                             [Default=Undefined] optional double gamma,
+                                             [Default=Undefined] optional boolean absolute);
 };
 

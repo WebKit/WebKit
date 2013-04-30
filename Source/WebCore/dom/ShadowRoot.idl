@@ -36,15 +36,15 @@
     attribute DOMString innerHTML setter raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    Node cloneNode(in [Default=Undefined] optional boolean deep) raises(DOMException);
+    Node cloneNode([Default=Undefined] optional boolean deep) raises(DOMException);
 #endif
     DOMSelection getSelection();
-    Element getElementById(in [Default=Undefined] optional DOMString elementId);
-    NodeList getElementsByClassName(in [Default=Undefined] optional DOMString className);
-    NodeList getElementsByTagName(in [Default=Undefined] optional DOMString tagName);
-    NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                                    in [Default=Undefined] optional DOMString localName);
+    Element getElementById([Default=Undefined] optional DOMString elementId);
+    NodeList getElementsByClassName([Default=Undefined] optional DOMString className);
+    NodeList getElementsByTagName([Default=Undefined] optional DOMString tagName);
+    NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+                                    [Default=Undefined] optional DOMString localName);
 
-    Element elementFromPoint(in [Default=Undefined] optional long x, 
-                             in [Default=Undefined] optional long y);
+    Element elementFromPoint([Default=Undefined] optional long x, 
+                             [Default=Undefined] optional long y);
 };

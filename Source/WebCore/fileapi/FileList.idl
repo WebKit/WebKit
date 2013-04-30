@@ -29,6 +29,6 @@
     ImplementationLacksVTable
 ] interface FileList {
     readonly attribute unsigned long length;
-    File item(in unsigned long index);
+    File item(unsigned long index);
 };
 

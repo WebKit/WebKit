@@ -21,11 +21,11 @@
 [
     ConstructorTemplate=Event
 ] interface HashChangeEvent : Event {
-    void initHashChangeEvent(in [Default=Undefined] optional DOMString type, 
-                             in [Default=Undefined] optional boolean canBubble, 
-                             in [Default=Undefined] optional boolean cancelable, 
-                             in [Default=Undefined] optional DOMString oldURL, 
-                             in [Default=Undefined] optional DOMString newURL); 
+    void initHashChangeEvent([Default=Undefined] optional DOMString type, 
+                             [Default=Undefined] optional boolean canBubble, 
+                             [Default=Undefined] optional boolean cancelable, 
+                             [Default=Undefined] optional DOMString oldURL, 
+                             [Default=Undefined] optional DOMString newURL); 
     [InitializedByEventConstructor] readonly attribute DOMString oldURL;
     [InitializedByEventConstructor] readonly attribute DOMString newURL;
 };

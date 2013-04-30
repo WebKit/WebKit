@@ -51,23 +51,23 @@
                  /*setter raises(DOMException)*/;
     readonly attribute SVGPoint currentTranslate;
 
-    unsigned long suspendRedraw(in [Default=Undefined] optional unsigned long maxWaitMilliseconds);
-    void unsuspendRedraw(in [Default=Undefined] optional unsigned long suspendHandleId);
+    unsigned long suspendRedraw([Default=Undefined] optional unsigned long maxWaitMilliseconds);
+    void unsuspendRedraw([Default=Undefined] optional unsigned long suspendHandleId);
     void unsuspendRedrawAll();
     void forceRedraw();
     void pauseAnimations();
     void unpauseAnimations();
     boolean animationsPaused();
     float getCurrentTime();
-    void setCurrentTime(in [Default=Undefined] optional float seconds);
-    NodeList getIntersectionList(in [Default=Undefined] optional SVGRect rect, 
-                                 in [Default=Undefined] optional SVGElement referenceElement);
-    NodeList getEnclosureList(in [Default=Undefined] optional SVGRect rect, 
-                              in [Default=Undefined] optional SVGElement referenceElement);
-    boolean checkIntersection(in [Default=Undefined] optional SVGElement element, 
-                              in [Default=Undefined] optional SVGRect rect);
-    boolean checkEnclosure(in [Default=Undefined] optional SVGElement element, 
-                           in [Default=Undefined] optional SVGRect rect);
+    void setCurrentTime([Default=Undefined] optional float seconds);
+    NodeList getIntersectionList([Default=Undefined] optional SVGRect rect, 
+                                 [Default=Undefined] optional SVGElement referenceElement);
+    NodeList getEnclosureList([Default=Undefined] optional SVGRect rect, 
+                              [Default=Undefined] optional SVGElement referenceElement);
+    boolean checkIntersection([Default=Undefined] optional SVGElement element, 
+                              [Default=Undefined] optional SVGRect rect);
+    boolean checkEnclosure([Default=Undefined] optional SVGElement element, 
+                           [Default=Undefined] optional SVGRect rect);
     void deselectAll();
 
     SVGNumber createSVGNumber();
@@ -77,7 +77,7 @@
     SVGMatrix createSVGMatrix();
     SVGRect createSVGRect();
     SVGTransform createSVGTransform();
-    SVGTransform createSVGTransformFromMatrix(in [Default=Undefined] optional SVGMatrix matrix);
-    Element getElementById(in [Default=Undefined] optional DOMString elementId);
+    SVGTransform createSVGTransformFromMatrix([Default=Undefined] optional SVGMatrix matrix);
+    Element getElementById([Default=Undefined] optional DOMString elementId);
 };
 

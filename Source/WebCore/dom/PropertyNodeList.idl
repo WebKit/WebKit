@@ -35,7 +35,7 @@
 ] interface PropertyNodeList : NodeList {
 
     sequence<MicroDataItemValue> getValues();
-    Node item(in unsigned long index);
+    Node item(unsigned long index);
 
     readonly attribute unsigned long length;
 };

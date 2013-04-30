@@ -29,6 +29,6 @@
 [
     CustomNamedGetter
 ] interface TestCustomNamedGetter {
-    void anotherFunction(in DOMString str);
+    void anotherFunction(DOMString str);
 };
 

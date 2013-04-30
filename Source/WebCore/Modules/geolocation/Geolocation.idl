@@ -29,14 +29,14 @@
     GenerateIsReachable=ImplFrame,
     OmitConstructor
 ] interface Geolocation {
-    [Custom] void getCurrentPosition(in PositionCallback successCallback,
-                                     in optional PositionErrorCallback errorCallback,
-                                     in optional PositionOptions options);
+    [Custom] void getCurrentPosition(PositionCallback successCallback,
+                                     optional PositionErrorCallback errorCallback,
+                                     optional PositionOptions options);
 
-    [Custom] long watchPosition(in PositionCallback successCallback,
-                                in optional PositionErrorCallback errorCallback,
-                                in optional PositionOptions options);
+    [Custom] long watchPosition(PositionCallback successCallback,
+                                optional PositionErrorCallback errorCallback,
+                                optional PositionOptions options);
 
-    void clearWatch(in long watchID);
+    void clearWatch(long watchID);
 };
 

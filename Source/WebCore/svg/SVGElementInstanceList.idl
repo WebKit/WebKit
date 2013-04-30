@@ -28,5 +28,5 @@
 ] interface SVGElementInstanceList {
     readonly attribute unsigned long length;
 
-    SVGElementInstance item(in [Default=Undefined] optional unsigned long index);
+    SVGElementInstance item([Default=Undefined] optional unsigned long index);
 };

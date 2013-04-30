@@ -25,8 +25,8 @@
     InterfaceName=PluginArray
 ] interface DOMPluginArray {
     readonly attribute unsigned long length;
-    DOMPlugin item(in [Default=Undefined] optional unsigned long index);
-    DOMPlugin namedItem(in [Default=Undefined] optional DOMString name);
-    void refresh(in [Default=Undefined] optional boolean reload);
+    DOMPlugin item([Default=Undefined] optional unsigned long index);
+    DOMPlugin namedItem([Default=Undefined] optional DOMString name);
+    void refresh([Default=Undefined] optional boolean reload);
 };
 

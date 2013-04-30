@@ -31,9 +31,9 @@
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
-    [Custom] Node item(in [Default=Undefined] optional unsigned long index);
-    [Custom] Node namedItem(in DOMString name);
+    [Custom] Node item([Default=Undefined] optional unsigned long index);
+    [Custom] Node namedItem(DOMString name);
     // FIXME: This should return an HTMLAllCollection.
-    NodeList tags(in DOMString name);
+    NodeList tags(DOMString name);
 };
 

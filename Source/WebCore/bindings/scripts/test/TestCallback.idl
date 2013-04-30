@@ -32,11 +32,11 @@
     Conditional=SQL_DATABASE,
 ] callback interface TestCallback {
   boolean callbackWithNoParam();
-  boolean callbackWithArrayParam(in Float32Array arrayParam);
-  boolean callbackWithSerializedScriptValueParam(in SerializedScriptValue srzParam, in DOMString strArg);
-  long callbackWithNonBoolReturnType(in DOMString strArg);
-  [Custom] long customCallback(in Class5 class5Param, in Class6 class6Param);
-  boolean callbackWithStringList(in DOMStringList listParam);
-  boolean callbackWithBoolean(in boolean boolParam);
-  [PassThisToCallback=TestNode] boolean callbackRequiresThisToPass(in long longParam, in TestNode testNodeParam);
+  boolean callbackWithArrayParam(Float32Array arrayParam);
+  boolean callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strArg);
+  long callbackWithNonBoolReturnType(DOMString strArg);
+  [Custom] long customCallback(Class5 class5Param, Class6 class6Param);
+  boolean callbackWithStringList(DOMStringList listParam);
+  boolean callbackWithBoolean(boolean boolParam);
+  [PassThisToCallback=TestNode] boolean callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
 };

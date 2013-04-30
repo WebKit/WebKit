@@ -20,11 +20,11 @@
 
 // http://www.w3.org/TR/html5/system-state-and-capabilities.html#custom-handlers
 partial interface Navigator {
-    [Conditional=NAVIGATOR_CONTENT_UTILS] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+    [Conditional=NAVIGATOR_CONTENT_UTILS] void registerProtocolHandler(DOMString scheme, DOMString url, DOMString title)
         raises(DOMException);
-    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
+    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(DOMString scheme, DOMString url)
         raises(DOMException);
-    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
+    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(DOMString scheme, DOMString url)
         raises(DOMException);
 };
 

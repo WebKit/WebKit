@@ -24,9 +24,9 @@
  */
 
 interface TextInputController {
-    void setMarkedText(in DOMString string, in long from, in long length);
+    void setMarkedText(DOMString string, long from, long length);
     boolean hasMarkedText();
     void unmarkText();
-    void insertText(in DOMString string);
+    void insertText(DOMString string);
 };
 

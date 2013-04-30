@@ -26,7 +26,7 @@
     Conditional=WEB_AUDIO,
     EventTarget,
     JSGenerateToJSObject,
-    Constructor(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate),
+    Constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate),
     ConstructorRaisesException,
     CallWith=ScriptExecutionContext
 ] interface OfflineAudioContext : AudioContext {

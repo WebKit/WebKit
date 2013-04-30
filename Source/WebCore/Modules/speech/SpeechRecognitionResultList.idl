@@ -29,5 +29,5 @@
     ImplementationLacksVTable
 ] interface SpeechRecognitionResultList {
     readonly attribute unsigned long length;
-    SpeechRecognitionResult item(in [IsIndex] unsigned long index);
+    SpeechRecognitionResult item([IsIndex] unsigned long index);
 };

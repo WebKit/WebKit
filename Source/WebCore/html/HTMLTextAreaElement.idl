@@ -42,7 +42,7 @@ interface HTMLTextAreaElement : HTMLElement {
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
-    void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
+    void setCustomValidity([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
     readonly attribute NodeList labels;
 
@@ -51,18 +51,18 @@ interface HTMLTextAreaElement : HTMLElement {
     attribute long selectionEnd;
     attribute DOMString selectionDirection;
 
-    void setRangeText(in DOMString replacement) raises(DOMException);
-    void setRangeText(in DOMString replacement,
-                        in unsigned long start,
-                        in unsigned long end,
-                        in [Default=NullString] optional DOMString selectionMode) raises(DOMException);
+    void setRangeText(DOMString replacement) raises(DOMException);
+    void setRangeText(DOMString replacement,
+                        unsigned long start,
+                        unsigned long end,
+                        [Default=NullString] optional DOMString selectionMode) raises(DOMException);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    void setSelectionRange(in long start, in long end);
+    void setSelectionRange(long start, long end);
 #else
-    void setSelectionRange(in [Default=Undefined] optional long start,
-                           in [Default=Undefined] optional long end,
-                           in optional DOMString direction);
+    void setSelectionRange([Default=Undefined] optional long start,
+                           [Default=Undefined] optional long end,
+                           optional DOMString direction);
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

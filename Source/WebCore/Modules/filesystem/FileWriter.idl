@@ -43,9 +43,9 @@
     readonly attribute unsigned short readyState;
 
     // async write/modify methods
-    void write(in Blob data) raises (FileException);
-    void seek(in long long position) raises (FileException);
-    void truncate(in long long size) raises (FileException);
+    void write(Blob data) raises (FileException);
+    void seek(long long position) raises (FileException);
+    void truncate(long long size) raises (FileException);
 
     void abort() raises (FileException);
 
@@ -61,12 +61,12 @@
              attribute EventListener onwriteend;
 
     // EventTarget interface
-    void addEventListener(in DOMString type,
-                          in EventListener listener,
-                          in optional boolean useCapture);
-    void removeEventListener(in DOMString type,
-                             in EventListener listener,
-                             in optional boolean useCapture);
-    boolean dispatchEvent(in Event evt)
+    void addEventListener(DOMString type,
+                          EventListener listener,
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type,
+                             EventListener listener,
+                             optional boolean useCapture);
+    boolean dispatchEvent(Event evt)
         raises(EventException);
 };

@@ -28,11 +28,11 @@
     SkipVTableValidation
 ] interface DOMTokenList {
     readonly attribute unsigned long length;
-    [TreatReturnedNullStringAs=Null] DOMString item(in unsigned long index);
-    boolean contains(in DOMString token) raises(DOMException);
-    void add(in DOMString... tokens) raises(DOMException);
-    void remove(in DOMString... tokens) raises(DOMException);
-    boolean toggle(in DOMString token, in optional boolean force) raises(DOMException);
+    [TreatReturnedNullStringAs=Null] DOMString item(unsigned long index);
+    boolean contains(DOMString token) raises(DOMException);
+    void add(DOMString... tokens) raises(DOMException);
+    void remove(DOMString... tokens) raises(DOMException);
+    boolean toggle(DOMString token, optional boolean force) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();

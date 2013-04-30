@@ -33,12 +33,12 @@
     Constructor,
     JSNoStaticTables
 ] interface FileReaderSync {
-    [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)
+    [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(Blob blob)
         raises(FileException);
-    [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(in Blob blob)
+    [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(Blob blob)
         raises(FileException);
-    [CallWith=ScriptExecutionContext] DOMString readAsText(in Blob blob, in optional DOMString encoding)
+    [CallWith=ScriptExecutionContext] DOMString readAsText(Blob blob, optional DOMString encoding)
         raises(FileException);
-    [CallWith=ScriptExecutionContext] DOMString readAsDataURL(in Blob blob)
+    [CallWith=ScriptExecutionContext] DOMString readAsDataURL(Blob blob)
         raises(FileException);
 };

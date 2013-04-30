@@ -31,14 +31,14 @@ interface MutationEvent : Event {
     readonly attribute DOMString      attrName;
     readonly attribute unsigned short attrChange;
 
-    [ObjCLegacyUnnamedParameters] void initMutationEvent(in [Default=Undefined] optional DOMString type, 
-                                          in [Default=Undefined] optional boolean canBubble, 
-                                          in [Default=Undefined] optional boolean cancelable, 
-                                          in [Default=Undefined] optional Node relatedNode, 
-                                          in [Default=Undefined] optional DOMString prevValue, 
-                                          in [Default=Undefined] optional DOMString newValue, 
-                                          in [Default=Undefined] optional DOMString attrName, 
-                                          in [Default=Undefined] optional unsigned short attrChange);
+    [ObjCLegacyUnnamedParameters] void initMutationEvent([Default=Undefined] optional DOMString type, 
+                                          [Default=Undefined] optional boolean canBubble, 
+                                          [Default=Undefined] optional boolean cancelable, 
+                                          [Default=Undefined] optional Node relatedNode, 
+                                          [Default=Undefined] optional DOMString prevValue, 
+                                          [Default=Undefined] optional DOMString newValue, 
+                                          [Default=Undefined] optional DOMString attrName, 
+                                          [Default=Undefined] optional unsigned short attrChange);
 
 };
 

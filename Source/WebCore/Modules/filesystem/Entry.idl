@@ -39,10 +39,10 @@
     readonly attribute DOMString fullPath;
     readonly attribute DOMFileSystem filesystem;
 
-    void getMetadata(in MetadataCallback successCallback, in optional ErrorCallback errorCallback);
-    void moveTo(in DirectoryEntry parent, in [TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString name, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);
-    void copyTo(in DirectoryEntry parent, in [TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString name, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);
+    void getMetadata(MetadataCallback successCallback, optional ErrorCallback errorCallback);
+    void moveTo(DirectoryEntry parent, [TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString name, optional EntryCallback successCallback, optional ErrorCallback errorCallback);
+    void copyTo(DirectoryEntry parent, [TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString name, optional EntryCallback successCallback, optional ErrorCallback errorCallback);
     DOMString toURL();
-    void remove(in VoidCallback successCallback, in optional ErrorCallback errorCallback);
-    void getParent(in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);
+    void remove(VoidCallback successCallback, optional ErrorCallback errorCallback);
+    void getParent(optional EntryCallback successCallback, optional ErrorCallback errorCallback);
 };

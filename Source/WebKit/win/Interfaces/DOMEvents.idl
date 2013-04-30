@@ -52,7 +52,7 @@ typedef long long DOMTimeStamp;
 ]
 interface IDOMEventListener : IDOMObject
 {
-    //void               handleEvent(in Event evt);
+    //void               handleEvent(Event evt);
     HRESULT handleEvent([in] IDOMEvent* evt);
 }
 
@@ -114,9 +114,9 @@ interface IDOMEvent : IDOMObject
     //void               preventDefault();
     HRESULT preventDefault();
 
-    //[OldStyleObjC] void initEvent(in DOMString eventTypeArg, 
-    //                              in boolean canBubbleArg, 
-    //                              in boolean cancelableArg);
+    //[OldStyleObjC] void initEvent(DOMString eventTypeArg, 
+    //                              boolean canBubbleArg, 
+    //                              boolean cancelableArg);
     HRESULT initEvent([in] BSTR eventTypeArg, [in] BOOL canBubbleArg, [in] BOOL cancelableArg);
 }
 
@@ -128,17 +128,17 @@ interface IDOMEvent : IDOMObject
 ]
 interface IDOMEventTarget : IUnknown
 {
-    //void               addEventListener(in DOMString type, 
-    //                                    in EventListener listener, 
-    //                                    in boolean useCapture);
+    //void               addEventListener(DOMString type, 
+    //                                    EventListener listener, 
+    //                                    boolean useCapture);
     HRESULT addEventListener([in] BSTR type, [in] IDOMEventListener* listener, [in] BOOL useCapture);
 
-    //void               removeEventListener(in DOMString type, 
-    //                                       in EventListener listener, 
-    //                                       in boolean useCapture);
+    //void               removeEventListener(DOMString type, 
+    //                                       EventListener listener, 
+    //                                       boolean useCapture);
     HRESULT removeEventListener([in] BSTR type, [in] IDOMEventListener* listener, [in] BOOL useCapture);
 
-    //boolean            dispatchEvent(in Event event)
+    //boolean            dispatchEvent(Event event)
     HRESULT dispatchEvent([in] IDOMEvent* event, [out, retval] BOOL* result);
 }
 
@@ -150,7 +150,7 @@ interface IDOMEventTarget : IUnknown
 ]
 interface IDOMDocumentEvent : IUnknown
 {
-    //Event              createEvent(in DOMString eventType)
+    //Event              createEvent(DOMString eventType)
     //    raises(DOMException);
     HRESULT createEvent([in] BSTR eventType, [out, retval] IDOMEvent** result);
 }
@@ -190,21 +190,21 @@ interface IDOMKeyboardEvent : IDOMUIEvent
     //readonly attribute boolean          altGraphKey;
     HRESULT altGraphKey([out, retval] BOOL* result);
 
-    //boolean getModifierState(in DOMString keyIdentifierArg);
+    //boolean getModifierState(DOMString keyIdentifierArg);
     HRESULT getModifierState([in] BSTR keyIdentifierArg, [out, retval] BOOL* result);
 
     // FIXME: this does not match the version in the DOM spec.
-    //void initKeyboardEvent(in AtomicString type, 
-    //                       in boolean canBubble, 
-    //                       in boolean cancelable, 
-    //                       in DOMWindow view, 
-    //                       in DOMString keyIdentifier,
-    //                       in unsigned long keyLocation,
-    //                       in boolean ctrlKey,
-    //                       in boolean altKey,
-    //                       in boolean shiftKey,
-    //                       in boolean metaKey,
-    //                       in boolean altGraphKey);
+    //void initKeyboardEvent(AtomicString type, 
+    //                       boolean canBubble, 
+    //                       boolean cancelable, 
+    //                       DOMWindow view, 
+    //                       DOMString keyIdentifier,
+    //                       unsigned long keyLocation,
+    //                       boolean ctrlKey,
+    //                       boolean altKey,
+    //                       boolean shiftKey,
+    //                       boolean metaKey,
+    //                       boolean altGraphKey);
     HRESULT initKeyboardEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] BSTR keyIdentifier, [in] unsigned long keyLocation, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] BOOL graphKey);
 
     // WebKit Extensions
@@ -214,16 +214,16 @@ interface IDOMKeyboardEvent : IDOMUIEvent
     //readonly attribute long             charCode;
     //HRESULT charCode([out, retval] long* result);
 
-    //void initKeyboardEvent(in AtomicString type, 
-    //                       in boolean canBubble, 
-    //                       in boolean cancelable, 
-    //                       in DOMWindow view, 
-    //                       in DOMString keyIdentifier,
-    //                       in unsigned long keyLocation,
-    //                       in boolean ctrlKey,
-    //                       in boolean altKey,
-    //                       in boolean shiftKey,
-    //                       in boolean metaKey);
+    //void initKeyboardEvent(AtomicString type, 
+    //                       boolean canBubble, 
+    //                       boolean cancelable, 
+    //                       DOMWindow view, 
+    //                       DOMString keyIdentifier,
+    //                       unsigned long keyLocation,
+    //                       boolean ctrlKey,
+    //                       boolean altKey,
+    //                       boolean shiftKey,
+    //                       boolean metaKey);
 }
 
 [
@@ -264,21 +264,21 @@ interface IDOMMouseEvent : IDOMUIEvent
     //readonly attribute EventTarget      relatedTarget;
     HRESULT relatedTarget([out, retval] IDOMEventTarget** result);
 
-    //[OldStyleObjC] void initMouseEvent(in AtomicString type, 
-    //                                   in boolean canBubble, 
-    //                                   in boolean cancelable, 
-    //                                   in DOMWindow view, 
-    //                                   in long detail, 
-    //                                   in long screenX, 
-    //                                   in long screenY, 
-    //                                   in long clientX, 
-    //                                   in long clientY, 
-    //                                   in boolean ctrlKey, 
-    //                                   in boolean altKey, 
-    //                                   in boolean shiftKey, 
-    //                                   in boolean metaKey, 
-    //                                   in unsigned short button, 
-    //                                   in EventTarget relatedTarget);
+    //[OldStyleObjC] void initMouseEvent(AtomicString type, 
+    //                                   boolean canBubble, 
+    //                                   boolean cancelable, 
+    //                                   DOMWindow view, 
+    //                                   long detail, 
+    //                                   long screenX, 
+    //                                   long screenY, 
+    //                                   long clientX, 
+    //                                   long clientY, 
+    //                                   boolean ctrlKey, 
+    //                                   boolean altKey, 
+    //                                   boolean shiftKey, 
+    //                                   boolean metaKey, 
+    //                                   unsigned short button, 
+    //                                   EventTarget relatedTarget);
     HRESULT initMouseEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] long detail, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] unsigned short button, [in] IDOMEventTarget* relatedTarget);
 
     // extensions
@@ -329,14 +329,14 @@ interface IDOMMutationEvent : IDOMEvent
     //readonly attribute unsigned short attrChange;
     HRESULT attrChange([out, retval] unsigned short* result);
 
-    //[OldStyleObjC] void initMutationEvent(in AtomicString type, 
-    //                                      in boolean canBubble, 
-    //                                      in boolean cancelable, 
-    //                                      in Node relatedNode, 
-    //                                      in DOMString prevValue, 
-    //                                      in DOMString newValue, 
-    //                                      in DOMString attrName, 
-    //                                      in unsigned short attrChange);
+    //[OldStyleObjC] void initMutationEvent(AtomicString type, 
+    //                                      boolean canBubble, 
+    //                                      boolean cancelable, 
+    //                                      Node relatedNode, 
+    //                                      DOMString prevValue, 
+    //                                      DOMString newValue, 
+    //                                      DOMString attrName, 
+    //                                      unsigned short attrChange);
     HRESULT initMutationEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMNode* relatedNode, [in] BSTR prevValue, [in] BSTR newValue, [in] BSTR attrName, [in] unsigned short attrChange);
 }
 
@@ -376,11 +376,11 @@ interface IDOMUIEvent : IDOMEvent
     //readonly attribute long                 detail;
     HRESULT detail([out, retval] long* result);
 
-    //[OldStyleObjC] void initUIEvent(in AtomicString type, 
-    //                                in boolean canBubble, 
-    //                                in boolean cancelable, 
-    //                                in DOMWindow view, 
-    //                                in long detail);
+    //[OldStyleObjC] void initUIEvent(AtomicString type, 
+    //                                boolean canBubble, 
+    //                                boolean cancelable, 
+    //                                DOMWindow view, 
+    //                                long detail);
     HRESULT initUIEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] long detail);
 
     // extentsions
@@ -461,16 +461,16 @@ interface IDOMWheelEvent : IDOMUIEvent
     //readonly attribute boolean isHorizontal;
     HRESULT isHorizontal([out, retval] BOOL* result);
 
-    //void initWheelEvent(in long wheelDeltaX,
-    //                    in long wheelDeltaY, 
-    //                    in DOMWindow view, 
-    //                    in long screenX,
-    //                    in long screenY,
-    //                    in long clientX,
-    //                    in long clientY,
-    //                    in boolean ctrlKey,
-    //                    in boolean altKey,
-    //                    in boolean shiftKey,
-    //                    in boolean metaKey);
+    //void initWheelEvent(long wheelDeltaX,
+    //                    long wheelDeltaY, 
+    //                    DOMWindow view, 
+    //                    long screenX,
+    //                    long screenY,
+    //                    long clientX,
+    //                    long clientY,
+    //                    boolean ctrlKey,
+    //                    boolean altKey,
+    //                    boolean shiftKey,
+    //                    boolean metaKey);
     HRESULT initWheelEvent([in] long wheelDeltaX, [in] long wheelDeltaY, [in] IDOMWindow* view, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey);
 }

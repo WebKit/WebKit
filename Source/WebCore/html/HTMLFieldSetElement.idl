@@ -30,5 +30,5 @@ interface HTMLFieldSetElement : HTMLElement {
     readonly attribute ValidityState   validity;
     readonly attribute DOMString       validationMessage;
     boolean  checkValidity();
-    void     setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
+    void     setCustomValidity([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 };
