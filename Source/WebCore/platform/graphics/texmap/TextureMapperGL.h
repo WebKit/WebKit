@@ -23,6 +23,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CustomFilterProgramInfo.h"
+#include "FilterOperation.h"
 #include "FloatQuad.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
@@ -70,7 +71,7 @@ public:
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
 
 #if ENABLE(CSS_FILTERS)
-    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&, int pass);
+    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
 #endif
 #if ENABLE(CSS_SHADERS)
     bool drawUsingCustomFilter(BitmapTexture& targetTexture, const BitmapTexture& sourceTexture, const FilterOperation&);
@@ -169,7 +170,19 @@ public:
     virtual bool isBackedByOpenGL() const { return true; }
 
 #if ENABLE(CSS_FILTERS)
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const BitmapTexture& contentTexture, const FilterOperations&);
+    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) OVERRIDE;
+    struct FilterInfo {
+        RefPtr<FilterOperation> filter;
+        unsigned pass;
+        RefPtr<BitmapTexture> contentTexture;
+
+        FilterInfo(PassRefPtr<FilterOperation> f = 0, unsigned p = 0, PassRefPtr<BitmapTexture> t = 0)
+            : filter(f)
+            , pass(p)
+            , contentTexture(t)
+            { }
+    };
+    const FilterInfo* filterInfo() const { return &m_filterInfo; }
 #endif
 
 private:
@@ -190,6 +203,10 @@ private:
 
     void clearIfNeeded();
     void createFboIfNeeded();
+
+#if ENABLE(CSS_FILTERS)
+    FilterInfo m_filterInfo;
+#endif
 
     friend class TextureMapperGL;
 };

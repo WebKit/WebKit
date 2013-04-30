@@ -163,7 +163,7 @@ void TextureMapperImageBuffer::drawNumber(int /* number */, const Color&, const 
 }
 
 #if ENABLE(CSS_FILTERS)
-PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(TextureMapper*, const BitmapTexture&, const FilterOperations&)
+PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(TextureMapper*, const FilterOperations&)
 {
     return this;
 }

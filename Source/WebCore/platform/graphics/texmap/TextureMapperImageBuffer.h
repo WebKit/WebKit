@@ -38,7 +38,7 @@ public:
     virtual void updateContents(TextureMapper*, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
 #if ENABLE(CSS_FILTERS)
-    PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const BitmapTexture&, const FilterOperations&);
+    PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&);
 #endif
 
 private:

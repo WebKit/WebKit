@@ -1,3 +1,54 @@
+2013-04-30  Noam Rosenthal  <noam@webkit.org>
+
+        [Texmap] Use fewer intermediate surfaces when compositing filters
+        https://bugs.webkit.org/show_bug.cgi?id=115224
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Until now, when rendering CSS filters, the filters were applied to the texture
+        and then the resulting texture would be composited to the target surface with
+        its transform/opacity.
+        This requires at least two intermediate surface passes for every filtered layer.
+
+        This patch makes it so that the last filter pass is applied together with the 
+        resulting surface's opacity and transform, during composition.
+
+        Tested by css3/filters tests, whichn now scroll/zoom a lot faster.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::applyFilters):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (TextureMapperGLData):
+        (WebCore):
+        (WebCore::optionsForFilterType):
+        (WebCore::getPassesRequiredForFilter):
+        (WebCore::gauss):
+        (WebCore::gaussianKernel):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawFiltered):
+        (WebCore::isCustomFilter):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (TextureMapperGL):
+        (BitmapTextureGL):
+        (FilterInfo):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::applyFilters):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (BitmapTextureImageBuffer):
+        (WebCore::BitmapTextureGL::FilterInfo::FilterInfo):
+        (WebCore::BitmapTextureGL::filterInfo):
+        (WebCore::BitmapTextureGL::applyFilters):
+            Modify TextureMapperGL to remember the last filter operation applied
+            to a BitmapTexture and apply it when the texture is composited.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+            Simplify the call to applyFilters, since now TextureMapperGL is responsible
+            for maintaining the content texture.
+
+
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Enable scaled cursors

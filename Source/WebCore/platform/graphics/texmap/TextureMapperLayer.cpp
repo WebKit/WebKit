@@ -250,31 +250,6 @@ void TextureMapperLayer::setAnimatedFilters(const FilterOperations& filters)
 {
     m_currentFilters = filters;
 }
-
-static bool shouldKeepContentTexture(const FilterOperations& filters)
-{
-    for (size_t i = 0; i < filters.size(); ++i) {
-        switch (filters.operations().at(i)->getOperationType()) {
-        // The drop-shadow filter requires the content texture, because it needs to composite it
-        // on top of the blurred shadow color.
-        case FilterOperation::DROP_SHADOW:
-            return true;
-        default:
-            break;
-        }
-    }
-
-    return false;
-}
-
-static PassRefPtr<BitmapTexture> applyFilters(const FilterOperations& filters, TextureMapper* textureMapper, BitmapTexture* source)
-{
-    if (!filters.size())
-        return source;
-
-    RefPtr<BitmapTexture> filterSurface = shouldKeepContentTexture(filters) ? textureMapper->acquireTextureFromPool(source->size()) : source;
-    return filterSurface->applyFilters(textureMapper, *source, filters);
-}
 #endif
 
 static void resolveOverlaps(Region newRegion, Region& overlapRegion, Region& nonOverlapRegion)
@@ -407,8 +382,7 @@ PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapp
     if (m_state.maskLayer)
         m_state.maskLayer->applyMask(options);
 #if ENABLE(CSS_FILTERS)
-    if (!m_currentFilters.isEmpty())
-        surface = applyFilters(m_currentFilters, options.textureMapper, surface.get());
+    surface = surface->applyFilters(options.textureMapper, m_currentFilters);
 #endif
     options.textureMapper->bindSurface(surface.get());
     return surface;
