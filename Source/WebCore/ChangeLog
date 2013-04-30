@@ -1,3 +1,12 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCompositeFontReferenceFontData):
+
 2013-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Don't do CGContext flipping when painting subframes in WebKit1 on post-MountainLion OSes

@@ -271,7 +271,7 @@ SimpleFontData::DerivedFontData::~DerivedFontData()
             SimpleFontData** fonts = stash.data();
             CFDictionaryGetKeysAndValues(dictionary, 0, (const void **)fonts);
             while (count-- > 0 && *fonts) {
-                OwnPtr<SimpleFontData> afont = adoptPtr(*fonts++);
+                RefPtr<SimpleFontData> afont = adoptRef(*fonts++);
                 GlyphPageTreeNode::pruneTreeCustomFontData(afont.get());
             }
         }
