@@ -53,7 +53,7 @@ class StreamingClient : public ResourceHandleClient {
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
 
-        virtual char* getBuffer(int, int*);
+        virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
 
         virtual void didReceiveData(ResourceHandle*, const char*, int, int);
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
@@ -924,7 +924,7 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
         GST_ELEMENT_ERROR(m_src, CORE, FAILED, (0), (0));
 }
 
-char* StreamingClient::getBuffer(int requestedSize, int* actualSize)
+char* StreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 
@@ -938,7 +938,7 @@ char* StreamingClient::getBuffer(int requestedSize, int* actualSize)
 
     priv->buffer = adoptGRef(buffer);
 
-    *actualSize = getGstBufferSize(buffer);
+    actualSize = getGstBufferSize(buffer);
     return getGstBufferDataPointer(buffer);
 }
 

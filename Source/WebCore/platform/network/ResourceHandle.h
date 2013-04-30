@@ -167,6 +167,7 @@ public:
     void sendPendingRequest();
     bool shouldUseCredentialStorage();
     bool cancelledOrClientless();
+    void ensureReadBuffer();
     static SoupSession* defaultSession();
     static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);

@@ -29,27 +29,14 @@
 #include "ResourceHandle.h"
 #include "SharedBuffer.h"
 
-#if USE(SOUP)
-#include <glib.h>
-#endif
-
 namespace WebCore {
 
 ResourceHandleClient::ResourceHandleClient()
-#if USE(SOUP)
-    : m_buffer(0)
-#endif
 {
 }
 
 ResourceHandleClient::~ResourceHandleClient()
 {
-#if USE(SOUP)
-    if (m_buffer) {
-        g_free(m_buffer);
-        m_buffer = 0;
-    }
-#endif
 }
 
 void ResourceHandleClient::willSendRequestAsync(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
@@ -85,17 +72,5 @@ void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<S
 {
     didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);
 }
-
-#if USE(SOUP)
-char* ResourceHandleClient::getBuffer(int requestedLength, int* actualLength)
-{
-    *actualLength = requestedLength;
-
-    if (!m_buffer)
-        m_buffer = static_cast<char*>(g_malloc(requestedLength));
-
-    return m_buffer;
-}
-#endif
 
 }

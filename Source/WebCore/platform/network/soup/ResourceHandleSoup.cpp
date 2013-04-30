@@ -76,8 +76,6 @@
 
 namespace WebCore {
 
-#define READ_BUFFER_SIZE 8192
-
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
 {
 #if LOG_DISABLED
@@ -304,6 +302,28 @@ bool ResourceHandle::cancelledOrClientless()
     return getInternal()->m_cancelled;
 }
 
+void ResourceHandle::ensureReadBuffer()
+{
+    ResourceHandleInternal* d = getInternal();
+
+    static const size_t defaultReadBufferSize = 8192;
+    size_t bufferSize;
+    char* bufferPtr = client()->getOrCreateReadBuffer(defaultReadBufferSize, bufferSize);
+    if (bufferPtr) {
+        d->m_defaultReadBuffer.clear();
+        d->m_readBufferPtr = bufferPtr;
+        d->m_readBufferSize = bufferSize;
+    } else if (!d->m_defaultReadBuffer) {
+        d->m_defaultReadBuffer.set(static_cast<char*>(g_malloc(defaultReadBufferSize)));
+        d->m_readBufferPtr = d->m_defaultReadBuffer.get();
+        d->m_readBufferSize = defaultReadBufferSize;
+    } else
+        d->m_readBufferPtr = d->m_defaultReadBuffer.get();
+
+    ASSERT(d->m_readBufferPtr);
+    ASSERT(d->m_readBufferSize);
+}
+
 static bool isAuthenticationFailureStatusCode(int httpStatusCode)
 {
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
@@ -512,8 +532,8 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     if (bytesSkipped > 0) {
-        d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
+        handle->ensureReadBuffer();
+        g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize, G_PRIORITY_DEFAULT,
             d->m_cancellable.get(), redirectSkipCallback, handle.get());
         return;
     }
@@ -554,10 +574,10 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         d->m_soupMessage.clear();
     }
 
-    if (d->m_buffer) {
-        d->m_buffer = 0;
-        d->m_bufferSize = 0;
-    }
+    if (d->m_readBufferPtr)
+        d->m_readBufferPtr = 0;
+    if (!d->m_defaultReadBuffer)
+        d->m_readBufferSize = 0;
 
     if (d->m_timeoutSource) {
         g_source_destroy(d->m_timeoutSource.get());
@@ -627,8 +647,8 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
         return;
     }
 
-    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
+    handle->ensureReadBuffer();
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize,
         G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -658,7 +678,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
-    ASSERT(!d->m_buffer);
+    ASSERT(!d->m_readBufferPtr);
 
     if (soupMessage) {
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
@@ -666,8 +686,8 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
             // We use read_async() rather than skip_async() to work around
             // https://bugzilla.gnome.org/show_bug.cgi?id=691489 until we can
             // depend on glib > 2.35.4
-            d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
+            handle->ensureReadBuffer();
+            g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize, G_PRIORITY_DEFAULT,
                 d->m_cancellable.get(), redirectSkipCallback, handle.get());
             return;
         }
@@ -707,9 +727,9 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
 
     d->m_inputStream = inputStream;
 
-    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
-                              G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
+    handle->ensureReadBuffer();
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize,
+        G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
 static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNameString, size_t offset, size_t lengthToSend, unsigned long& totalBodySize)
@@ -1321,7 +1341,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     // It's mandatory to have sent a response before sending data
     ASSERT(!d->m_response.isNull());
 
-    handle->client()->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
+    handle->client()->didReceiveData(handle.get(), d->m_readBufferPtr, bytesRead, bytesRead);
 
     // didReceiveData may cancel the load, which may release the last reference.
     if (handle->cancelledOrClientless()) {
@@ -1329,9 +1349,9 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
         return;
     }
 
-    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
-                              d->m_cancellable.get(), readCallback, handle.get());
+    handle->ensureReadBuffer();
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize, G_PRIORITY_DEFAULT,
+        d->m_cancellable.get(), readCallback, handle.get());
 }
 
 static gboolean requestTimeoutCallback(gpointer data)

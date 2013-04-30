@@ -99,7 +99,7 @@ namespace WebCore {
 #endif
 
 #if USE(SOUP)
-        virtual char* getBuffer(int requestedLength, int* actualLength);
+        virtual char* getOrCreateReadBuffer(size_t requestedLength, size_t& actualLength) { return 0; }
 #endif
 
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
@@ -122,10 +122,6 @@ namespace WebCore {
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif
 
-#if USE(SOUP)
-private:
-        char* m_buffer;
-#endif
     };
 
 }

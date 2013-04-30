@@ -1,3 +1,45 @@
+2013-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move default buffer handling from ResourceHandleClient to ResourceHandlesoup
+        https://bugs.webkit.org/show_bug.cgi?id=115364
+
+        Reviewed by Martin Robinson.
+
+        ResourceHandleClient that is cross-platform file is not the right
+        place for the default ResourceHandle read buffer. We can make
+        getBuffer return 0 by default and handle it in ResourceHandleSoup,
+        creating a default buffer when the client doesn't provide one.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::getOrCreateReadBuffer): Adapt to API change.
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): Add ensureReadBuffer().
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::~ResourceHandleClient): Remove
+        soup specific code.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::getOrCreateReadBuffer): Rename
+        getBuffer() as getOrCreateReadBuffer() and use a reference for the
+        out parameter instead of a pointer.
+        (ResourceHandleClient): Remove soup specific code.
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Rename
+        m_buffer and m_bufferSize as m_readBufferPtr and m_readBufferSize
+        and add m_readBuffer to be used as default read buffer.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::ensureReadBuffer): Helper function to
+        make usre we have a read buffer before a read operation. It first
+        checks if the client provides a buffer and if it doesn't it
+        creates or reuses the default buffer.
+        (WebCore::redirectSkipCallback): Call ensureReadBuffer() and adapt
+        to variable name changes.
+        (WebCore::cleanupSoupRequestOperation): Adapt to variable name
+        changes.
+        (WebCore::nextMultipartResponsePartCallback): Call
+        ensureReadBuffer() and adapt to variable name changes.
+        (WebCore::sendRequestCallback): Ditto.
+        (WebCore::readCallback): Ditto.
+
 2013-04-30  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r149287): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
