@@ -42,8 +42,8 @@ public:
     }
 
     virtual void start() OVERRIDE;
-    virtual void connectionToWebProcessDidClose() OVERRIDE;
-    
+    virtual void abort() OVERRIDE;
+
     virtual bool isSynchronous() OVERRIDE { return true; }
 
 private:

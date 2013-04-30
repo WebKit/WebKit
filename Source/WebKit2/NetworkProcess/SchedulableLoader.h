@@ -56,10 +56,10 @@ public:
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
 
     NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
-    virtual void connectionToWebProcessDidClose() = 0;
 
     virtual void start() = 0;
-    
+    virtual void abort() = 0;
+
     virtual bool isSynchronous() { return false; }
 
     void setHostRecord(HostRecord* hostRecord) { ASSERT(isMainThread()); m_hostRecord = hostRecord; }

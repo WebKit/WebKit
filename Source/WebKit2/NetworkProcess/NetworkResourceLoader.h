@@ -63,8 +63,8 @@ public:
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
 
     virtual void start() OVERRIDE;
-    virtual void connectionToWebProcessDidClose() OVERRIDE;
-        
+    virtual void abort() OVERRIDE;
+
     // ResourceHandleClient methods
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
     virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
@@ -116,9 +116,7 @@ private:
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
-    template<typename U> bool sendAbortingOnFailure(const U& message);
-    template<typename U> bool sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply);
-    void abortInProgressLoad();
+    template<typename U> bool sendAbortingOnFailure(const U& message, unsigned messageSendFlags = 0);
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;

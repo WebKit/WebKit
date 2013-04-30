@@ -98,11 +98,11 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator end = m_networkResourceLoaders.end();
     for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
-        i->value->connectionToWebProcessDidClose();
+        i->value->abort();
 
     HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> >::iterator syncEnd = m_syncNetworkResourceLoaders.end();
     for (HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> >::iterator i = m_syncNetworkResourceLoaders.begin(); i != syncEnd; ++i)
-        i->value->connectionToWebProcessDidClose();
+        i->value->abort();
 
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
 
@@ -139,7 +139,9 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     if (!loader)
         return;
 
-    NetworkProcess::shared().networkResourceLoadScheduler().removeLoader(loader.get());
+    // Abort the load now, as the WebProcess won't be able to respond to messages any more which might lead
+    // to leaked loader resources (connections, threads, etc).
+    loader->abort();
 }
 
 void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPriority)

@@ -71,10 +71,8 @@ void SyncNetworkResourceLoader::start()
     m_delayedReply->send(error, response, CoreIPC::DataReference((uint8_t*)data.data(), data.size()));
 }
 
-void SyncNetworkResourceLoader::connectionToWebProcessDidClose()
+void SyncNetworkResourceLoader::abort()
 {
-    ASSERT(isMainThread());
-    
     cleanup();
 }
 

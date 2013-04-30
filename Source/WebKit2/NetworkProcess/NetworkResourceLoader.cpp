@@ -108,40 +108,20 @@ void NetworkResourceLoader::cleanup()
     }
 }
 
-void NetworkResourceLoader::connectionToWebProcessDidClose()
+template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message, unsigned messageSendFlags)
+{
+    bool result = connection()->send(message, destinationID(), messageSendFlags);
+    if (!result)
+        abort();
+    return result;
+}
+
+void NetworkResourceLoader::abort()
 {
     ASSERT(isMainThread());
 
-    // If this loader already has a resource handle then it is already in progress on a background thread.
-    // On that thread it will notice that its connection to its WebProcess has been invalidated and it will "gracefully" abort.
     if (m_handle)
-        return;
-
-    cleanup();
-}
-
-template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message)
-{
-    bool result = send(message);
-    if (!result)
-        abortInProgressLoad();
-    return result;
-}
-
-template<typename U> bool NetworkResourceLoader::sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply)
-{
-    bool result = sendSync(message, reply);
-    if (!result)
-        abortInProgressLoad();
-    return result;
-}
-
-void NetworkResourceLoader::abortInProgressLoad()
-{
-    ASSERT(m_handle);
-    ASSERT(isMainThread());
-
-    m_handle->cancel();
+        m_handle->cancel();
 
     cleanup();
 }
@@ -187,7 +167,7 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
     tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer.get());
     if (!shareableResourceHandle.isNull()) {
         // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
-        abortInProgressLoad();
+        abort();
         send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
         return;
     }
@@ -232,7 +212,7 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
 
     // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked waiting for 6 connections
     // to complete while the WebProcess is waiting for a 7th to complete.
-    connection()->send(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), destinationID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
@@ -325,7 +305,7 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
 
     // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked
     // waiting for 6 connections to complete while the WebProcess is waiting for a 7th to complete.
-    connection()->send(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), destinationID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)

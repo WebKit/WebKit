@@ -109,6 +109,7 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
     m_coreLoader->didReceiveResponse(responseCopy);
 
+    // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 
     if (!m_coreLoader)
         return;
 

@@ -1,3 +1,39 @@
+2013-04-30  Brady Eidson  <beidson@apple.com>
+
+        [WK2] Threads get stuck in NetworkProcess when canceling loads in WebProcess.
+        <rdar://problem/13757687> and https://bugs.webkit.org/show_bug.cgi?id=115319
+
+        Written and reviewed by both Alexey Proskuryakov and Brady Eidson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose): Call abort() on all loaders
+          instead of connectionToWebProcessDidClose()
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier): Instead of removing
+          the loader from the scheduler, call abort() which will also end up removing it.
+
+        * NetworkProcess/SchedulableLoader.h: Add a virtual abort() call.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure): Added a messageFlags argument so 
+          callers can pass DispatchMessageEvenWhenWaitingForSyncReply.
+        (WebKit::NetworkResourceLoader::abort): Combined "abortInProgressLoad" and "cleanup" to
+          be a general purpose "cancel"
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::willSendRequestAsync):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        * NetworkProcess/SyncNetworkResourceLoader.cpp:
+        (WebKit::SyncNetworkResourceLoader::abort):
+        * NetworkProcess/SyncNetworkResourceLoader.h:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::remove): Remove an obsolete/incorrect comment.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo): Add comment stressing
+          the importance of this null check so it's not removed again.
+
 2013-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2][GTK] MiniBrowser won't play video in <embed> tag
