@@ -1,3 +1,47 @@
+2013-04-29  Cosmin Truta  <ctruta@blackberry.com>
+
+        [ARM] Expand the use of integer division
+        https://bugs.webkit.org/show_bug.cgi?id=115138
+
+        Reviewed by Benjamin Poulain.
+
+        If availability of hardware integer division isn't known at compile
+        time, check the CPU flags and decide at runtime whether to fall back
+        to software. Currently, this OS-specific check is implemented on QNX.
+
+        Moreover, use operator % instead of fmod() in the calculation of the
+        software modulo. Even when it's software-emulated, operator % is faster
+        than fmod(): on ARM v7 QNX, without hardware division, we noticed
+        >3% speedup on SunSpider.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::sdiv): Did not compile conditionally.
+        (JSC::ARMv7Assembler::udiv): Ditto.
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isARMv7s): Removed.
+        * assembler/MacroAssemblerARMv7.cpp: Added.
+        (JSC::isIntegerDivSupported): Added.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsIntegerDiv): Added.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Checked MacroAssembler::supportsIntegerDiv() in ArithDiv case.
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationModOnInts): Added.
+        * dfg/DFGOperations.h:
+        (JSC::DFG::Z_DFGOperation_ZZ): Added.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo): Separated the X86-specific and ARM-specific codegen
+        from the common implementation; used operationModOnInts on ARM.
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForARM): Renamed from compileIntegerArithDivForARMv7.
+        (JSC::DFG::SpeculativeJIT::compileArithMod): Allowed run-time detection of integer div on ARM.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Added overloads with Z_DFGOperation_ZZ arguments.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Used compileIntegerArithDivForARM.
+
 2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Unify the data access of StringImpl members from JavaScriptCore

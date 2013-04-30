@@ -2253,8 +2253,9 @@ void SpeculativeJIT::compile(Node* node)
         case Int32Use: {
 #if CPU(X86)
             compileIntegerArithDivForX86(node);
-#elif CPU(APPLE_ARMV7S)
-            compileIntegerArithDivForARMv7s(node);
+#elif ENABLE(ARM_INTEGER_DIV)
+            ASSERT(MacroAssembler::supportsIntegerDiv());
+            compileIntegerArithDivForARM(node);
 #else // CPU type without integer divide
             RELEASE_ASSERT_NOT_REACHED(); // should have been coverted into a double divide.
 #endif

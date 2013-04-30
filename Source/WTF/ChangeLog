@@ -1,3 +1,12 @@
+2013-04-29  Cosmin Truta  <ctruta@blackberry.com>
+
+        [ARM] Expand the use of integer division
+        https://bugs.webkit.org/show_bug.cgi?id=115138
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/Platform.h: Added ENABLE_ARM_INTEGER_DIV.
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         It should be an error to use adoptPtr with RefCounted subclasses

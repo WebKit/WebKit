@@ -45,6 +45,7 @@
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "StringConstructor.h"
+#include <stdlib.h>
 #include <wtf/InlineASM.h>
 
 #if ENABLE(JIT)
@@ -1598,6 +1599,11 @@ JSCell* DFG_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     NativeCallFrameTracer tracer(&vm, exec);
 
     return JSRopeString::create(vm, a, b, c);
+}
+
+int32_t DFG_OPERATION operationModOnInts(int32_t a, int32_t b)
+{
+    return a % b;
 }
 
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
