@@ -186,7 +186,6 @@ public:
     // Helper render methods.
     void renderAndBlitVisibleContentsImmediately();
     void renderAndBlitImmediately(const Platform::IntRect&);
-    void paintDefaultBackground(const Platform::IntRect& dstRect, BlackBerry::Platform::ViewportAccessor*, bool flush);
     void blitVisibleContents(bool force = false);
     void blitOnIdle();
 
@@ -279,12 +278,9 @@ public:
     bool renderContents(BlackBerry::Platform::Graphics::Buffer*, const BlackBerry::Platform::IntRect& dstRect, double scale, const BlackBerry::Platform::FloatPoint& documentScrollPosition, LayersToRender) const;
 
     void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, BlackBerry::Platform::Graphics::BlendMode, unsigned char globalAlpha);
-    void fillWindow(Platform::Graphics::FillPattern, const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);
 
     WebCore::Color webPageBackgroundColorUserInterfaceThread() const; // use WebSettings::backgroundColor() for the WebKit thread
     void setWebPageBackgroundColor(const WebCore::Color&);
-
-    void clearWindow(const Platform::IntRect&, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
 
     bool isScrollingOrZooming() const;
     void setScrollingOrZooming(bool scrollingOrZooming, bool shouldBlit = true);
