@@ -69,7 +69,7 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     if (!self)
         return nil;
     
-    if (!value || !JSValueIsObject([value.context globalContextRef], [value JSValueRef])) {
+    if (!value || !JSValueIsObject([value.context JSGlobalContextRef], [value JSValueRef])) {
         JSC::Weak<JSC::JSObject> weak;
         m_value.swap(weak);
     } else {
@@ -86,8 +86,8 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     if (!m_value)
         return nil;
     JSC::JSObject* object = m_value.get();
-    JSContext *context = [JSContext contextWithGlobalContextRef:toGlobalRef(object->structure()->globalObject()->globalExec())];
-    return [JSValue valueWithValue:toRef(object) inContext:context];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(object->structure()->globalObject()->globalExec())];
+    return [JSValue valueWithJSValueRef:toRef(object) inContext:context];
 }
 
 @end

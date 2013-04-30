@@ -1,3 +1,15 @@
+2013-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Objective-C JavaScriptCore API should publicly support bridging to C
+        https://bugs.webkit.org/show_bug.cgi?id=115447
+
+        Reviewed by Mark Hahnenberg.
+
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::javaScriptContext):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject JSValue]):
+
 2013-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix an issue with JSPerformance.cpp in the WebCore.xcodeproj where

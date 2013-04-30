@@ -1095,7 +1095,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     JSGlobalContextRef globalContextRef = [self _globalContextForScriptWorld:world];
     if (!globalContextRef)
         return 0;
-    return [JSContext contextWithGlobalContextRef:globalContextRef];
+    return [JSContext contextWithJSGlobalContextRef:globalContextRef];
 }
 #endif
 

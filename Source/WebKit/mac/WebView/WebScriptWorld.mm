@@ -110,7 +110,7 @@ static WorldMap& allWorlds()
 #if JSC_OBJC_API_ENABLED
 + (WebScriptWorld *)scriptWorldForJavaScriptContext:(JSContext *)context
 {
-    return [self scriptWorldForGlobalContext:[context globalContextRef]];
+    return [self scriptWorldForGlobalContext:[context JSGlobalContextRef]];
 }
 #endif
 

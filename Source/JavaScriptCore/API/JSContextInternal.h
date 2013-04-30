@@ -71,8 +71,6 @@ private:
 - (JSValue *)wrapperForObjCObject:(id)object;
 - (JSValue *)wrapperForJSObject:(JSValueRef)value;
 
-+ (JSContext *)contextWithGlobalContextRef:(JSGlobalContextRef)globalContext;
-
 @property (readonly, retain) JSWrapperMap *wrapperMap;
 
 @end

@@ -52,10 +52,6 @@ NS_CLASS_AVAILABLE(10_9, NA)
 // Evaluate a string of JavaScript code.
 - (JSValue *)evaluateScript:(NSString *)script;
 
-// Return the C API version of this context. This function is for convenience
-// at the boundaries when converting code from the C API to the Objective-C API.
-- (JSGlobalContextRef)globalContextRef;
-
 // This method retrieves the global object of the JavaScript execution context.
 // Instances of JSContext originating from WebKit will return a reference to the
 // WindowProxy object.
@@ -118,6 +114,14 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (JSValue *)objectForKeyedSubscript:(id)key;
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 
+@end
+
+// These functions are for bridging between the C API and the Objective-C API.
+@interface JSContext(JSContextRefSupport)
+// Creates a JSContext, wrapping its C API counterpart.
++ (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)jsGlobalContextRef;
+// Returns the C API counterpart wrapped by a JSContext.
+- (JSGlobalContextRef)JSGlobalContextRef;
 @end
 
 #endif

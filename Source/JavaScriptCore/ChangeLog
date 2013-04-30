@@ -1,3 +1,26 @@
+2013-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Objective-C JavaScriptCore API should publicly support bridging to C
+        https://bugs.webkit.org/show_bug.cgi?id=115447
+
+        Reviewed by Mark Hahnenberg.
+
+        For consistency, I renamed
+
+            +[JSValue valueWithValue:] => +[JSValue valueWithJSValueRef]
+            +[JSContext contextWithGlobalContextRef] => +[JSContext contextWithJSGlobalContextRef]
+            -[JSContext globalContext] => -[JSContext JSGlobalContextRef]
+
+        I searched svn to verify that these functions don't have clients yet,
+        so we won't break anything.
+
+        I also exported as public API
+
+            +[JSValue valueWithJSValueRef:]
+            +[JSContext contextWithJSGlobalContextRef:]
+
+        It's hard to integrate with the C API without these.
+
 2013-04-30  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r149349 and r149354.

@@ -1,3 +1,15 @@
+2013-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Objective-C JavaScriptCore API should publicly support bridging to C
+        https://bugs.webkit.org/show_bug.cgi?id=115447
+
+        Reviewed by Mark Hahnenberg.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _javaScriptContextForScriptWorld:]):
+        * WebView/WebScriptWorld.mm:
+        (+[WebScriptWorld scriptWorldForJavaScriptContext:]):
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         More StorageTracker cleanup

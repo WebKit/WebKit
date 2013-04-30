@@ -656,7 +656,7 @@ void testObjectiveCAPI()
             [context evaluateScript:@"testObject = undefined"];
         }
         
-        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         @autoreleasepool {
             context[@"testObject"] = testObject;
@@ -688,7 +688,7 @@ void testObjectiveCAPI()
             checkResult(@"Event handler onclick", [result toBool]);
         }
 
-        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         @autoreleasepool {
             JSValue *result = [context evaluateScript:@"testXYZ.onclick"];
@@ -708,7 +708,7 @@ void testObjectiveCAPI()
             "];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         @autoreleasepool {
             [testXYZ click];
@@ -730,7 +730,7 @@ void testObjectiveCAPI()
         @autoreleasepool {
             JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
             context[@"testObject"] = testObject;
-            JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
             checkResult(@"weak value == nil", ![weakValue value]);
             checkResult(@"root is still alive", ![context[@"testObject"] isUndefined]);
         }
@@ -760,7 +760,7 @@ void testObjectiveCAPI()
             [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty = 42;"];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"My custom property == 42", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);
@@ -795,7 +795,7 @@ void testObjectiveCAPI()
             [root removeChildAtIndex:0];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"duplicate calls to addManagedReference don't cause things to die", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);

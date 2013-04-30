@@ -116,9 +116,9 @@ static JSValue *objectWithCustomBrand(JSContext *context, NSString *brand, Class
     definition = kJSClassDefinitionEmpty;
     definition.className = [brand UTF8String];
     JSClassRef classRef = JSClassCreate(&definition);
-    JSObjectRef result = makeWrapper([context globalContextRef], classRef, cls);
+    JSObjectRef result = makeWrapper([context JSGlobalContextRef], classRef, cls);
     JSClassRelease(classRef);
-    return [JSValue valueWithValue:result inContext:context];
+    return [JSValue valueWithJSValueRef:result inContext:context];
 }
 
 // Look for @optional properties in the prototype containing a selector to property
@@ -167,7 +167,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (!method)
                 return;
-            accessorMethods[name] = [JSValue valueWithValue:method inContext:context];
+            accessorMethods[name] = [JSValue valueWithJSValueRef:method inContext:context];
         } else {
             name = renameMap[name];
             if (!name)
@@ -176,7 +176,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
-                putNonEnumerable(object, name, [JSValue valueWithValue:method inContext:context]);
+                putNonEnumerable(object, name, [JSValue valueWithJSValueRef:method inContext:context]);
         }
     });
 
@@ -334,7 +334,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     ASSERT(!m_constructor || !m_prototype);
     ASSERT((m_class == [NSObject class]) == !superClassInfo);
     if (!superClassInfo) {
-        JSContextRef cContext = [m_context globalContextRef];
+        JSContextRef cContext = [m_context JSGlobalContextRef];
         JSValue *constructor = m_context[@"Object"];
         if (!m_constructor)
             m_constructor = toJS(JSValueToObject(cContext, valueInternalValue(constructor), 0));
@@ -350,16 +350,16 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         JSValue *prototype;
         JSValue *constructor;
         if (m_prototype)
-            prototype = [JSValue valueWithValue:toRef(m_prototype.get()) inContext:m_context];
+            prototype = [JSValue valueWithJSValueRef:toRef(m_prototype.get()) inContext:m_context];
         else
             prototype = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sPrototype", className]);
 
         if (m_constructor)
-            constructor = [JSValue valueWithValue:toRef(m_constructor.get()) inContext:m_context];
+            constructor = [JSValue valueWithJSValueRef:toRef(m_constructor.get()) inContext:m_context];
         else
             constructor = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sConstructor", className], m_class);
 
-        JSContextRef cContext = [m_context globalContextRef];
+        JSContextRef cContext = [m_context JSGlobalContextRef];
         m_prototype = toJS(JSValueToObject(cContext, valueInternalValue(prototype), 0));
         m_constructor = toJS(JSValueToObject(cContext, valueInternalValue(constructor), 0));
 
@@ -373,7 +373,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         });
 
         // Set [Prototype].
-        JSObjectSetPrototype([m_context globalContextRef], toRef(m_prototype.get()), toRef(superClassInfo->m_prototype.get()));
+        JSObjectSetPrototype([m_context JSGlobalContextRef], toRef(m_prototype.get()), toRef(superClassInfo->m_prototype.get()));
     }
 }
 
@@ -388,16 +388,16 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     ASSERT(m_block == [object isKindOfClass:getNSBlockClass()]);
     if (m_block) {
         if (JSObjectRef method = objCCallbackFunctionForBlock(m_context, object))
-            return [JSValue valueWithValue:method inContext:m_context];
+            return [JSValue valueWithJSValueRef:method inContext:m_context];
     }
 
     if (!m_prototype)
         [self reallocateConstructorAndOrPrototype];
     ASSERT(!!m_prototype);
 
-    JSObjectRef wrapper = makeWrapper([m_context globalContextRef], m_classRef, object);
-    JSObjectSetPrototype([m_context globalContextRef], wrapper, toRef(m_prototype.get()));
-    return [JSValue valueWithValue:wrapper inContext:m_context];
+    JSObjectRef wrapper = makeWrapper([m_context JSGlobalContextRef], m_classRef, object);
+    JSObjectSetPrototype([m_context JSGlobalContextRef], wrapper, toRef(m_prototype.get()));
+    return [JSValue valueWithJSValueRef:wrapper inContext:m_context];
 }
 
 - (JSValue *)constructor
@@ -405,7 +405,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     if (!m_constructor)
         [self reallocateConstructorAndOrPrototype];
     ASSERT(!!m_constructor);
-    return [JSValue valueWithValue:toRef(m_constructor.get()) inContext:m_context];
+    return [JSValue valueWithJSValueRef:toRef(m_constructor.get()) inContext:m_context];
 }
 
 @end
@@ -459,7 +459,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 {
     JSC::JSObject* jsWrapper = m_cachedJSWrappers.get(object);
     if (jsWrapper)
-        return [JSValue valueWithValue:toRef(jsWrapper) inContext:m_context];
+        return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:m_context];
 
     JSValue *wrapper;
     if (class_isMetaClass(object_getClass(object)))
@@ -474,7 +474,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     // (1) For immortal objects JSValues will effectively leak and this results in error output being logged - we should avoid adding associated objects to immortal objects.
     // (2) A long lived object may rack up many JSValues. When the contexts are released these will unprotect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
-    JSC::ExecState* exec = toJS([m_context globalContextRef]);
+    JSC::ExecState* exec = toJS([m_context JSGlobalContextRef]);
     jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);
     m_cachedJSWrappers.set(object, jsWrapper);
     return wrapper;

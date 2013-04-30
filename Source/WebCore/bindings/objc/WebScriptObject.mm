@@ -579,8 +579,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return 0;
     
-    return [JSValue valueWithValue:[self JSObject] 
-                    inContext:[JSContext contextWithGlobalContextRef:[self _globalContextRef]]];
+    return [JSValue valueWithJSValueRef:[self JSObject] 
+                    inContext:[JSContext contextWithJSGlobalContextRef:[self _globalContextRef]]];
 }
 #endif
 

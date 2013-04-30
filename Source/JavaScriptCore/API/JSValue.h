@@ -105,10 +105,6 @@ NS_CLASS_AVAILABLE(10_9, NA)
 + (JSValue *)valueWithNullInContext:(JSContext *)context;
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
 
-// Return the C API version of this value. This function is for convenience
-// at the boundaries when converting code from the C API to the Objective-C API.
-- (JSValueRef)JSValueRef;
-
 // Convert this value to a corresponding Objective-C object, according to the
 // conversion specified above.
 - (id)toObject;
@@ -257,6 +253,14 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
+@end
+
+// These functions are for bridging between the C API and the Objective-C API.
+@interface JSValue(JSValueRefSupport)
+// Creates a JSValue, wrapping its C API counterpart.
++ (JSValue *)valueWithJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
+// Returns the C API counterpart wrapped by a JSContext.
+- (JSValueRef)JSValueRef;
 @end
 
 #ifdef __cplusplus

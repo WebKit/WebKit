@@ -35,7 +35,6 @@
 
 JSValueRef valueInternalValue(JSValue *);
 
-+ (JSValue *)valueWithValue:(JSValueRef)value inContext:(JSContext *)context;
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context;
 
 JSValueRef objectToValue(JSContext *, id);

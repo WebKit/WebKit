@@ -115,7 +115,7 @@ JSContext *ScriptController::javaScriptContext()
 #if JSC_OBJC_API_ENABLED
     if (!canExecuteScripts(NotAboutToExecuteScript))
         return 0;
-    JSContext *context = [JSContext contextWithGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject()->globalExec())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject()->globalExec())];
     return context;
 #else
     return 0;
