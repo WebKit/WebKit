@@ -1,3 +1,16 @@
+2013-04-30  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Inspector dock to right button work in the WebKit nightlies on Safari 6.0.4.
+
+        https://webkit.org/b/115428
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow): Reduce the required Safari version.
+        (WebKit::WebInspectorProxy::platformDetach): Simplify the frame restoring code so it
+        works on Safari 6.0.4.
+
 2013-04-30  Artur Moryc  <a.moryc@samsung.com>
 
         [WK2][EFL] Spelling marker disappears while selection is being changed

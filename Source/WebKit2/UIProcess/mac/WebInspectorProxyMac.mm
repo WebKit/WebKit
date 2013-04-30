@@ -280,7 +280,7 @@ void WebInspectorProxy::createInspectorWindow()
 
     NSView *contentView = [window contentView];
 
-    static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02192400; // 537.36.0
+    static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02181d0d; // 536.29.13
     static bool supportsDockToRight = NSVersionOfLinkTimeLibrary("Safari") >= firstVersionOfSafariWithDockToRightSupport;
 
     m_dockBottomButton = adoptNS(createDockButton(@"DockBottom"));
@@ -610,22 +610,7 @@ void WebInspectorProxy::platformDetach()
     // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
     // attached inspector used to.
 
-    NSRect inspectedViewFrame = [inspectedView frame];
-    NSRect parentBounds = [[inspectedView superview] bounds];
-
-    switch (m_attachmentSide) {
-    case AttachmentSideBottom:
-        inspectedViewFrame.size.height = NSHeight(parentBounds);
-        inspectedViewFrame.origin.y = 0;
-        break;
-
-    case AttachmentSideRight:
-        inspectedViewFrame.size.width = NSWidth(parentBounds);
-        inspectedViewFrame.origin.x = 0;
-        break;
-    }
-
-    [inspectedView setFrame:inspectedViewFrame];
+    [inspectedView setFrame:[[inspectedView superview] bounds]];
 
     // Return early if we are not visible. This means the inspector was closed while attached
     // and we should not create and show the inspector window.
