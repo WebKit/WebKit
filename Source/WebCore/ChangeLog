@@ -1,3 +1,18 @@
+2013-04-30  Darin Adler  <darin@apple.com>
+
+        [CG] Over-release in MIME type registry code
+        https://bugs.webkit.org/show_bug.cgi?id=115423
+
+        Reviewed by Eric Carlson.
+
+        Sam Weinig spotted these by code inspection. I don't know how to make a test demonstrating
+        the problem, but this is clearly an over-release.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes): Removed incorrect adoptCF call on a string we
+        are getting from a CFArray.
+        (WebCore::initializeSupportedImageMIMETypesForEncoding): Ditto.
+
 2013-04-30  Mike Lattanzio  <mlattanzio@blackberry.com>
 
         [BlackBerry] ImageBuffer::copyImage leaking memory
