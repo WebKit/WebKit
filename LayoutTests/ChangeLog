@@ -1,3 +1,17 @@
+2013-04-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rebaseline some tests on AppleWin port after disabling subpixel layout.
+
+        * platform/win/css1/font_properties/font-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/win/fast/lists/003-vertical-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/win/svg/batik/paints: Added.
+        * platform/win/svg/batik/paints/gradientLimit-expected.txt: Added.
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
 2013-04-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][WK2] Unreviewed gardening. Massive rebaselining after r149292.
