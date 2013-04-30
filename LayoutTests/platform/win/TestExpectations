@@ -1148,6 +1148,7 @@ fast/harness/show-modal-dialog.html
 fast/events/scroll-event-during-modal-dialog.html
 inspector/console/console-long-eval-crash.html
 fast/dom/Window/open-window-min-size.html
+fast/js/function-length.html
 
 # These tests fail when showModalDialog is unsupported, even though they don't
 # rely on it directly http://webkit.org/b/53676
@@ -1266,6 +1267,7 @@ fast/forms/validation-message-on-textarea.html
 
 # Web Timing is not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=42435
+fast/dom/Window/web-timing-minimal-performance-now.html
 fast/dom/Window/window-properties-performance.html
 fast/dom/navigation-type-back-forward.html
 fast/dom/navigation-type-navigate.html
@@ -2496,12 +2498,7 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 # CSS3_TEXT is disabled on Windows
-fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
-fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
-fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
-fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-color.html
-fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html
-fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
+fast/css3-text
 
 # Needs rebaseline.
 webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
