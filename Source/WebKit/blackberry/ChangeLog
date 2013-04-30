@@ -1,3 +1,22 @@
+2013-04-30  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Cannot touch scroll readonly text input.
+        https://bugs.webkit.org/show_bug.cgi?id=115378
+
+        Reviewed by Rob Buis.
+
+        PR #332902
+        Reviewed Internally by Mike Fenton.
+        Node::rendererIsEditable() returns false if the input element has the readonly tag set.
+        Check the node type instead.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isShadowHostTextInputElement):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2013-04-29  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Replace disappearing fillBuffer() API with graphics context drawing

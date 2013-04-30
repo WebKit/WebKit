@@ -91,6 +91,15 @@ void visibleTextQuads(const Range& range, Vector<FloatQuad>& quads, bool useSele
     }
 }
 
+bool isShadowHostTextInputElement(Node* node)
+{
+    if (!node)
+        return false;
+
+    Element* element = node->shadowHost();
+    return element && DOMSupport::isTextInputElement(element);
+}
+
 bool isTextInputElement(Element* element)
 {
     return element->isTextFormControl()

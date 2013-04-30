@@ -53,6 +53,7 @@ enum AttributeState { On, Off, Default };
 bool isElementTypePlugin(const WebCore::Element*);
 
 bool isTextInputElement(WebCore::Element*);
+bool isShadowHostTextInputElement(WebCore::Node*);
 bool isTextBasedContentEditableElement(WebCore::Element*);
 bool isPasswordElement(const WebCore::Element*);
 

@@ -19,6 +19,7 @@
 #include "config.h"
 #include "InRegionScrollableArea.h"
 
+#include "DOMSupport.h"
 #include "Document.h"
 #include "Frame.h"
 #include "LayerWebKitThread.h"
@@ -118,7 +119,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_scrollsVertically = box->scrollHeight() != box->clientHeight();
 
         // Check the overflow if its not an input field because overflow can be set to hidden etc. by the content.
-        if (!box->node() || !box->node()->rendererIsEditable()) {
+        if (!DOMSupport::isShadowHostTextInputElement(box->node())) {
             m_scrollsHorizontally = m_scrollsHorizontally && box->scrollsOverflowX();
             m_scrollsVertically = m_scrollsVertically && box->scrollsOverflowY();
         }
