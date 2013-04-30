@@ -197,11 +197,10 @@ bool TextureMapperLayer::shouldBlend() const
     if (m_state.preserves3D)
         return false;
 
-#if ENABLE(CSS_FILTERS)
-    if (m_currentFilters.size())
-        return true;
-#endif
-    return m_currentOpacity < 1 || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer);
+    return m_currentOpacity < 1
+        || hasFilters()
+        || m_state.maskLayer
+        || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer);
 }
 
 bool TextureMapperLayer::isVisible() const
@@ -334,8 +333,16 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
         return;
     }
 
+    // Having both overlap and non-overlap regions carries some overhead. Avoid it if the overlap area
+    // is big anyway.
+    if (overlapRegion.bounds().size().area() > nonOverlapRegion.bounds().size().area()) {
+        overlapRegion.unite(nonOverlapRegion);
+        nonOverlapRegion = Region();
+    }
+
     nonOverlapRegion.translate(options.offset);
     Vector<IntRect> rects = nonOverlapRegion.rects();
+
     for (size_t i = 0; i < rects.size(); ++i) {
         IntRect rect = rects[i];
         if (!rect.intersects(options.textureMapper->clipBounds()))
@@ -347,6 +354,12 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     }
 
     rects = overlapRegion.rects();
+    static const size_t OverlapRegionConsolidationThreshold = 4;
+    if (nonOverlapRegion.isEmpty() && rects.size() > OverlapRegionConsolidationThreshold) {
+        rects.clear();
+        rects.append(overlapRegion.bounds());
+    }
+
     IntSize maxTextureSize = options.textureMapper->maxTextureSize();
     IntRect adjustedClipBounds(options.textureMapper->clipBounds());
     adjustedClipBounds.move(-options.offset);

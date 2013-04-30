@@ -1,3 +1,25 @@
+2013-04-30  Noam Rosenthal  <noam@webkit.org>
+
+        [Texmap] Avoid using overlap/non-overlap region in cases where the overhead is bigger than the gain
+        https://bugs.webkit.org/show_bug.cgi?id=115226
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        When there are several fragmeneted overlap regions, or when the overlap region is bigger than the
+        non-overlap region, it's more efficient to have a single intermediate surface rather than split
+        the rendering to overlap/non-overlap.
+
+        Covered by tests in compositing/overlap-blending.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::shouldBlend):
+            Readability fix.
+
+        (WebCore::TextureMapperLayer::paintUsingOverlapRegions):
+            Consolidate to one overlap rect when one of the following occurs:
+            - The overlap region's area is larger than the non-overlap region area.
+            - There are many fragmented overlap regions and no non-overlap regions.
+
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Stop using "in" keyword in IDL files
