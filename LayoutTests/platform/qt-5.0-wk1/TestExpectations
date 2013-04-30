@@ -67,6 +67,7 @@ fast/events/click-count.html
 # [Qt] http/tests/misc/drag-over-iframe-invalid-source-crash.html and fast/events/drag-selects-image.html fails with timeout
 # https://bugs.webkit.org/show_bug.cgi?id=73901
 fast/events/drag-selects-image.html
+fast/events/mousedown-inside-dragstart-should-not-cause-crash.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
@@ -108,6 +109,8 @@ http/tests/misc/drag-over-iframe-invalid-source-crash.html
 http/tests/misc/iframe-invalid-source-crash.html
 
 # [Qt][WK1] ERROR: TestRunner::overridePreference() does not support the 'WebKitStorageBlockingPolicy' preference
+http/tests/security/cross-origin-local-storage-allowed.html
+http/tests/security/cross-origin-local-storage.html
 http/tests/security/cross-origin-local-storage-wk1.html
 
 # [Qt] Unidentified plugin failures
