@@ -42,9 +42,9 @@ void RunLoop::run()
         // Use -[NSApplication run] for the main run loop.
         [NSApp run];
     } else {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        CFRunLoopRun();
-        [pool drain];
+        @autoreleasepool {
+            CFRunLoopRun();
+        }
     }
     current()->m_nestingLevel--;
 }
@@ -68,7 +68,7 @@ void RunLoop::stop()
                                                data2:0];
         [NSApp postEvent:event atStart:true];
     } else
-        CFRunLoopStop(m_runLoop);
+        CFRunLoopStop(m_runLoop.get());
 }
 
 } // namespace WebCore

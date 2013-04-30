@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Functional.h>
 #include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
@@ -92,7 +93,7 @@ public:
         bool m_isRepeating;
 #elif PLATFORM(MAC)
         static void timerFired(CFRunLoopTimerRef, void*);
-        CFRunLoopTimerRef m_timer;
+        RetainPtr<CFRunLoopTimerRef> m_timer;
 #elif PLATFORM(QT)
         static void timerFired(RunLoop*, int ID);
         int m_ID;
@@ -149,10 +150,9 @@ private:
     typedef HashMap<uint64_t, TimerBase*> TimerMap;
     TimerMap m_activeTimers;
 #elif PLATFORM(MAC)
-    RunLoop(CFRunLoopRef);
     static void performWork(void*);
-    CFRunLoopRef m_runLoop;
-    CFRunLoopSourceRef m_runLoopSource;
+    RetainPtr<CFRunLoopRef> m_runLoop;
+    RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
     int m_nestingLevel;
 #elif PLATFORM(QT)
     typedef HashMap<int, TimerBase*> TimerMap;

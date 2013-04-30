@@ -1,3 +1,33 @@
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Clean up RunLoop code
+        https://bugs.webkit.org/show_bug.cgi?id=115454
+
+        Reviewed by Andreas Kling.
+
+        Delete a couple of functions from RunLoopCF.cpp and just use the generic ones in RunLoop.cpp,
+        use RetainPtr instead of manual retain/release. Always use an AutoreleasePool when calling performWork or timers.
+
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::setUseApplicationRunLoopOnMainRunLoop):
+        (WebCore):
+        * platform/RunLoop.h:
+        (TimerBase):
+        (RunLoop):
+        * platform/cf/RunLoopCF.cpp:
+        (WebCore::RunLoop::performWork):
+        (WebCore::RunLoop::RunLoop):
+        (WebCore::RunLoop::~RunLoop):
+        (WebCore::RunLoop::wakeUp):
+        (WebCore::RunLoop::TimerBase::timerFired):
+        (WebCore::RunLoop::TimerBase::TimerBase):
+        (WebCore::RunLoop::TimerBase::start):
+        (WebCore::RunLoop::TimerBase::stop):
+        (WebCore::RunLoop::TimerBase::isActive):
+        * platform/mac/RunLoopMac.mm:
+        (WebCore::RunLoop::run):
+        (WebCore::RunLoop::stop):
+
 2013-04-30  David Hyatt  <hyatt@apple.com>
 
         <button> ignores margin-bottom.
