@@ -1,3 +1,29 @@
+2013-04-30  Andrei Bucur  <abucur@adobe.com>
+
+        Cleanup HTMLOListElement<->RenderListItem bridge
+        https://bugs.webkit.org/show_bug.cgi?id=115434
+
+        Reviewed by Darin Adler.
+
+        Refactor the way HTMLOListElement is accessing its list items. Instead
+        of exposing the nextListItem function, wrap the desiredfunctionality
+        in static methods on RenderListItem. This should make the code more readable.
+        I've also added more constness to some functions in RenderListItem.
+
+        Tests: No new tests, just refactoring.
+
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::updateItemValues): Use updateItemValuesForOrderedList.
+        (WebCore::HTMLOListElement::recalculateItemCount): Use itemCountForOrderedList.
+        * rendering/RenderListItem.cpp:
+        (WebCore::isList): Add more constness.
+        (WebCore::nextListItem): Make local to the CPP and add constness.
+        (WebCore::previousListItem): Add constness.
+        (WebCore::RenderListItem::updateItemValuesForOrderedList): Called by OL elements.
+        (WebCore::RenderListItem::itemCountForOrderedList): Called by OL elements.
+        (WebCore::previousOrNextItem):
+        * rendering/RenderListItem.h: Add updateItemValuesForOrderedList and itemCountForOrderedList.
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         More StorageTracker cleanup

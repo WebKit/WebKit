@@ -92,7 +92,7 @@ void RenderListItem::willBeRemovedFromTree()
     updateListMarkerNumbers();
 }
 
-static bool isList(Node* node)
+static bool isList(const Node* node)
 {
     return (node->hasTagName(ulTag) || node->hasTagName(olTag));
 }
@@ -117,12 +117,12 @@ static Node* enclosingList(const RenderListItem* listItem)
 }
 
 // Returns the next list item with respect to the DOM order.
-RenderListItem* RenderListItem::nextListItem(Node* listNode, const RenderListItem* item)
+static RenderListItem* nextListItem(const Node* listNode, const RenderListItem* item = 0)
 {
     if (!listNode)
         return 0;
 
-    Node* current = item ? item->node() : listNode;
+    const Node* current = item ? item->node() : listNode;
     current = ElementTraversal::nextIncludingPseudo(current, listNode);
 
     while (current) {
@@ -144,7 +144,7 @@ RenderListItem* RenderListItem::nextListItem(Node* listNode, const RenderListIte
 }
 
 // Returns the previous list item with respect to the DOM order.
-static RenderListItem* previousListItem(Node* listNode, const RenderListItem* item)
+static RenderListItem* previousListItem(const Node* listNode, const RenderListItem* item)
 {
     Node* current = item->node();
     for (current = ElementTraversal::previousIncludingPseudo(current, listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
@@ -163,6 +163,25 @@ static RenderListItem* previousListItem(Node* listNode, const RenderListItem* it
             current = ElementTraversal::nextIncludingPseudo(otherList);
     }
     return 0;
+}
+
+void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement* listNode)
+{
+    ASSERT(listNode);
+
+    for (RenderListItem* listItem = nextListItem(listNode); listItem; listItem = nextListItem(listNode, listItem))
+        listItem->updateValue();
+}
+
+unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement* listNode)
+{
+    ASSERT(listNode);
+
+    unsigned itemCount = 0;
+    for (RenderListItem* listItem = nextListItem(listNode); listItem; listItem = nextListItem(listNode, listItem))
+        itemCount++;
+
+    return itemCount;
 }
 
 inline int RenderListItem::calcValue() const
@@ -464,7 +483,7 @@ void RenderListItem::clearExplicitValue()
 
 static RenderListItem* previousOrNextItem(bool isListReversed, Node* list, RenderListItem* item)
 {
-    return isListReversed ? previousListItem(list, item) : RenderListItem::nextListItem(list, item);
+    return isListReversed ? previousListItem(list, item) : nextListItem(list, item);
 }
 
 void RenderListItem::updateListMarkerNumbers()

@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class HTMLOListElement;
 class RenderListMarker;
 
 class RenderListItem : public RenderBlock {
@@ -49,7 +50,8 @@ public:
 
     void updateListMarkerNumbers();
 
-    static RenderListItem* nextListItem(Node*, const RenderListItem* = 0);
+    static void updateItemValuesForOrderedList(const HTMLOListElement*);
+    static unsigned itemCountForOrderedList(const HTMLOListElement*);
 
 private:
     virtual const char* renderName() const { return "RenderListItem"; }
