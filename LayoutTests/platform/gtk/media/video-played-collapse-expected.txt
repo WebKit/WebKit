@@ -34,6 +34,12 @@ Test 12 OK
 Test looping
 RUN(video.loop = true)
 RUN(video.play())
-ERROR: test stalled, waited 2.5999999046325684 seconds for movie to play 1.907348590179936e-8 seconds FAIL
+RUN(video.pause())
+EVENT(pause)
+Test 13 OK
+Test 14 OK
+Test 15 OK
+Test 16 OK
+Test 17 OK
 END OF TEST
 

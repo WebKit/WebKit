@@ -1,3 +1,20 @@
+2013-04-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Rebaselining tests that are possible to and required to be rebaselined
+
+        * platform/gtk-wk1/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
+        * platform/gtk/editing/selection/drag-start-event-client-x-y-expected.txt: Added.
+        * platform/gtk/fast/dom/Range/getClientRects-expected.txt:
+        * platform/gtk/fast/events/remove-target-with-shadow-in-drag-expected.txt:
+        * platform/gtk/fast/js/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/fast/js/function-length-expected.txt: Added.
+        * platform/gtk/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.txt:
+        * platform/gtk/media/media-can-play-ogg-expected.txt: Added.
+        * platform/gtk/media/video-played-collapse-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+
 2013-04-30  Balazs Kelemen  <kbalazs@webkit.org>
 
         [EFL][GStreamer] failing media tests
