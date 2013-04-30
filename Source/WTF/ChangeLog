@@ -1,3 +1,15 @@
+2013-04-30  Darin Adler  <darin@apple.com>
+
+        [Mac] Make adoptNS faster on platforms without garbage collection by skipping a CFRetain/NSRelease pair
+        https://bugs.webkit.org/show_bug.cgi?id=115424
+
+        Reviewed by Eric Carlson.
+
+        * wtf/RetainPtr.h:
+        (WTF::adoptNSReference): When OBJC_NO_GC is set, make this an empty function, because in that case
+        CFRetain and -[NSObject retain] are the same thing and there is no need to call CFRetain and
+        -[NSObject release] to adopt an Objective-C object.
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         String::isolatedCopy() can avoid a copy if the original is a temporary

@@ -51,6 +51,11 @@ namespace WTF {
     enum AdoptNSTag { AdoptNS };
     
 #ifdef __OBJC__
+#ifdef OBJC_NO_GC
+    inline void adoptNSReference(id)
+    {
+    }
+#else
     inline void adoptNSReference(id ptr)
     {
         if (ptr) {
@@ -58,6 +63,7 @@ namespace WTF {
             [ptr release];
         }
     }
+#endif
 #endif
 
     template<typename T> class RetainPtr {
