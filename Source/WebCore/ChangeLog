@@ -1,3 +1,18 @@
+2013-04-29  James Craig  <james@cookiecrook.com>
+
+        Settings.in selectionIncludesAltImageText should default to true, due to update in HTML spec.
+        https://bugs.webkit.org/show_bug.cgi?id=115283
+
+        Reviewed by Chris Fleizach.
+
+        Config change due to this spec update:
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=21403
+        http://html5.org/tools/web-apps-tracker?from=7854&to=7855
+
+        Updated existing test coverage.
+
+        * page/Settings.in:
+
 2013-04-29  Anders Carlsson  <andersca@apple.com>
 
         Make RunLoop ref-counted

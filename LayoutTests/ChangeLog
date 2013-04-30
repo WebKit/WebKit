@@ -1,3 +1,14 @@
+2013-04-29  James Craig  <james@cookiecrook.com>
+
+        Settings.in selectionIncludesAltImageText should default to true, due to update in HTML spec.
+        https://bugs.webkit.org/show_bug.cgi?id=115283
+
+        Reviewed by Chris Fleizach.
+
+        Update test to account for the initial setting change.
+
+        * editing/pasteboard/copy-image-with-alt-text.html:
+
 2013-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r149287?): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html

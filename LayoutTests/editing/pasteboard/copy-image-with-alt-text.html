@@ -27,6 +27,9 @@ function runTest()
 
 window.onload = function()
 {
+    if (window.internals)
+        internals.settings.setSelectionIncludesAltImageText(false);
+
     if (window.testRunner)
         testRunner.dumpAsText();
 
