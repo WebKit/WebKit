@@ -1,3 +1,17 @@
+2013-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Cap max CALayer tree depth to avoid crashes
+        https://bugs.webkit.org/show_bug.cgi?id=115431
+        <rdar://problem/13401861>
+
+        Reviewed by Tim Horton.
+        
+        Test that makes a very deep tree. Should note crash, and should match
+        the reference.
+
+        * compositing/layer-creation/deep-tree-expected.html: Added.
+        * compositing/layer-creation/deep-tree.html: Added.
+
 2013-04-30  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r149287): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html

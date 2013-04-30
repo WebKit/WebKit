@@ -60,6 +60,9 @@ namespace WebCore {
 // texture size limit on all supported hardware.
 static const int cMaxPixelDimension = 2000;
 
+// Derived empirically: <rdar://problem/13401861>
+static const int cMaxLayerTreeDepth = 250;
+
 // If we send a duration of 0 to CA, then it will use the default duration
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
@@ -898,10 +901,12 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
 {
     float pageScaleFactor;
     bool hadChanges = m_uncommittedChanges;
+    
+    CommitState commitState;
 
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
-    commitLayerChangesBeforeSublayers(pageScaleFactor, offset, m_visibleRect);
-    commitLayerChangesAfterSublayers();
+    commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset, m_visibleRect);
+    commitLayerChangesAfterSublayers(commitState);
 
     if (hadChanges && client())
         client()->didCommitChangesForLayer(this);
@@ -1059,7 +1064,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (affectedByPageScale)
         baseRelativePosition += m_position;
     
-    commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, oldVisibleRect);
+    commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect);
 
     if (isRunningTransformAnimation()) {
         childCommitState.ancestorHasTransformAnimation = true;
@@ -1068,7 +1073,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
     if (m_maskLayer) {
         GraphicsLayerCA* maskLayerCA = static_cast<GraphicsLayerCA*>(m_maskLayer);
-        maskLayerCA->commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, maskLayerCA->visibleRect());
+        maskLayerCA->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, maskLayerCA->visibleRect());
     }
 
     const Vector<GraphicsLayer*>& childLayers = children();
@@ -1083,9 +1088,9 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
     if (m_maskLayer)
-        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
+        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers(childCommitState);
 
-    commitLayerChangesAfterSublayers();
+    commitLayerChangesAfterSublayers(childCommitState);
 
     if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
         client()->notifyFlushBeforeDisplayRefresh(this);
@@ -1124,10 +1129,18 @@ float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
     return deviceScaleFactor();
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
 {
-    if (!m_uncommittedChanges)
+    ++commitState.treeDepth;
+    if (m_structuralLayer)
+        ++commitState.treeDepth;
+
+    if (!m_uncommittedChanges) {
+        // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
+        if (commitState.treeDepth > cMaxLayerTreeDepth)
+            m_uncommittedChanges |= ChildrenChanged;
         return;
+    }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledBacking)
@@ -1221,15 +1234,19 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
         m_uncommittedChanges &= ~ChildrenChanged;
     }
+
+    // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
+    if (commitState.treeDepth > cMaxLayerTreeDepth)
+        m_uncommittedChanges |= ChildrenChanged;
 }
 
-void GraphicsLayerCA::commitLayerChangesAfterSublayers()
+void GraphicsLayerCA::commitLayerChangesAfterSublayers(CommitState& commitState)
 {
     if (!m_uncommittedChanges)
         return;
 
     if (m_uncommittedChanges & ChildrenChanged)
-        updateSublayerList();
+        updateSublayerList(commitState.treeDepth > cMaxLayerTreeDepth);
 
     if (m_uncommittedChanges & ReplicatedLayerChanged)
         updateReplicatedLayers();
@@ -1252,8 +1269,13 @@ void GraphicsLayerCA::updateLayerNames()
     m_layer->setName(name());
 }
 
-void GraphicsLayerCA::updateSublayerList()
+void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 {
+    if (maxLayerDepthReached) {
+        m_layer->setSublayers(PlatformCALayerList());
+        return;
+    }
+    
     const PlatformCALayerList* customSublayers = m_layer->customSublayers();
 
     PlatformCALayerList structuralLayerChildren;
