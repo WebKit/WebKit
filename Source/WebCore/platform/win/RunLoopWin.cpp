@@ -107,7 +107,6 @@ RunLoop::RunLoop()
 RunLoop::~RunLoop()
 {
     // FIXME: Tear down the work item queue here.
-    ASSERT(this != main());
 }
 
 void RunLoop::wakeUp()

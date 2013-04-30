@@ -1,3 +1,28 @@
+2013-04-30  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r149338.
+        http://trac.webkit.org/changeset/149338
+        https://bugs.webkit.org/show_bug.cgi?id=115409
+
+        Broke layout/perf/API tests on non-Mac:
+        ThreadSpecific<RefPtr<RunLoop>> does not initialize RunLoop
+        (Requested by rakuco on #webkit).
+
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::current):
+        * platform/RunLoop.h:
+        (RunLoop):
+        * platform/cf/RunLoopCF.cpp:
+        (WebCore::RunLoop::initializeMainRunLoop):
+        (WebCore::RunLoop::current):
+        (WebCore::RunLoop::~RunLoop):
+        * platform/efl/RunLoopEfl.cpp:
+        (WebCore::RunLoop::~RunLoop):
+        * platform/gtk/RunLoopGtk.cpp:
+        (WebCore::RunLoop::~RunLoop):
+        * platform/win/RunLoopWin.cpp:
+        (WebCore::RunLoop::~RunLoop):
+
 2013-04-30  Alberto Garcia  <agarcia@igalia.com>
 
         ImageBufferData: add BlackBerry header
