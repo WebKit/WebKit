@@ -1,3 +1,14 @@
+2013-04-30  Commit Queue  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r149309.
+        http://trac.webkit.org/changeset/149309
+        https://bugs.webkit.org/show_bug.cgi?id=115430
+
+        The patch does not build on WK1-only builds of the GTK port
+        (Requested by zdobersek on #webkit).
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-04-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Stop using "in" keyword in IDL files
