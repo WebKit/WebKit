@@ -1,3 +1,14 @@
+2013-04-29  Anders Carlsson  <andersca@apple.com>
+
+        It should be an error to use adoptPtr with RefCounted subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=115389
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/PassOwnPtr.h:
+        (WTF::adoptPtr):
+        Add COMPILE_ASSERTs.
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add workaround for UNUSED_PARAM()

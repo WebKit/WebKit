@@ -39,6 +39,9 @@ namespace WTF {
     template<typename T> class PassOwnPtr;
     template<typename T> PassOwnPtr<T> adoptPtr(T*);
 
+    class RefCountedBase;
+    class ThreadSafeRefCountedBase;
+
     template<typename T> class PassOwnPtr {
     public:
         typedef typename RemovePointer<T>::Type ValueType;
@@ -144,6 +147,9 @@ namespace WTF {
 
     template<typename T> inline PassOwnPtr<T> adoptPtr(T* ptr)
     {
+        COMPILE_ASSERT(!(IsSubclass<T, RefCountedBase>::value), DoNotUseAdoptPtrWithRefCounted);
+        COMPILE_ASSERT(!(IsSubclass<T, ThreadSafeRefCountedBase>::value), DoNotUseAdoptPtrWithThreadSafeRefCounted);
+
         return PassOwnPtr<T>(ptr);
     }
 
