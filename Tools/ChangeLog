@@ -1,3 +1,14 @@
+2013-04-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Disable Shadow DOM feature
+        https://bugs.webkit.org/show_bug.cgi?id=115374
+
+        Reviewed by Martin Robinson.
+
+        Disable the Shadow DOM feature on the GTK port, the feature is planned for removal.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-04-29  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] Add missing contributor email addresses
