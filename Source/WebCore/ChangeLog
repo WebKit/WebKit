@@ -1,3 +1,17 @@
+2013-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't do CGContext flipping when painting subframes in WebKit1 on post-MountainLion OSes
+        https://bugs.webkit.org/show_bug.cgi?id=115392
+        <rdar://problem/13421519>
+
+        Reviewed by Beth Dakin.
+
+        Sync up with AppKit behavior changes that could cause subviews to be flipped when
+        painted.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2013-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH: need to identify the default voice per language

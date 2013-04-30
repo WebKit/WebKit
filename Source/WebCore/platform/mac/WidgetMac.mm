@@ -241,8 +241,15 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         NSRect viewBounds = [view bounds];
         // Set up the translation and (flipped) orientation of the graphics context. In normal drawing, AppKit does it as it descends down
         // the view hierarchy.
-        CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
-        CGContextScaleCTM(cgContext, 1, -1);
+        bool shouldFlipContext = true;
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        shouldFlipContext = false;
+#endif
+        if (shouldFlipContext) {
+            CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
+            CGContextScaleCTM(cgContext, 1, -1);
+        } else
+            CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewBounds.origin.y);
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         {
