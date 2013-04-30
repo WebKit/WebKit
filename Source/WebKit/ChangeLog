@@ -1,3 +1,16 @@
+2013-04-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Remove pthread paths for WebKit build.
+        https://bugs.webkit.org/show_bug.cgi?id=115390
+
+        Reviewed by Tim Horton.
+
+        Update Visual Studio property sheets to remove include paths and
+        link references for the pthreadsVC2.dll, which is no longer used.
+
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+
 2013-04-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix.

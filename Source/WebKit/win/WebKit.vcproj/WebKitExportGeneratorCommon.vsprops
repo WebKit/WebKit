@@ -6,12 +6,12 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore&quot;;&quot;$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources&quot;;&quot;$(ConfigurationBuildDir)\Include&quot;;&quot;$(ConfigurationBuildDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(ConfigurationBuildDir)\Include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore&quot;;&quot;$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources&quot;;&quot;$(ConfigurationBuildDir)\Include&quot;;&quot;$(ConfigurationBuildDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\private&quot;;&quot;$(ConfigurationBuildDir)\Include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;"
 		DisableSpecificWarnings="4481;4819"
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="WTF$(WebKitConfigSuffix).lib libicuuc.lib pthreadVC2$(LibraryConfigSuffix).lib winmm.lib"
+		AdditionalDependencies="WTF$(WebKitConfigSuffix).lib libicuuc.lib winmm.lib"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>
