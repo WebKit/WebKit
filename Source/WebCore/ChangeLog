@@ -1,3 +1,19 @@
+2013-04-30  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r149313) Crash at WebCore::FrameView::setFrameRect() when navigating back to previous page while find banner is displayed.
+        <http://webkit.org/b/115421>
+        <rdar://problem/13765739>
+
+        Reviewed by Antti Koivisto.
+
+        Add missing null-checks for Document and StyleResolver when re-evaluating media queries due to viewport changes.
+
+        No layout test, since we can't show the find banner from WebCore, and I can't think of another way to
+        trigger a back navigation to a Document-less Frame that would also change the FrameView's size.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+
 2013-04-30  Glenn Adams  <glenn@skynav.com>
 
         The bison grammar for @supports should return 0 in case of an error

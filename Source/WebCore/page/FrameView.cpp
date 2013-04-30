@@ -477,10 +477,12 @@ void FrameView::setFrameRect(const IntRect& newRect)
     }
 #endif
 
+    Document* document = m_frame ? m_frame->document() : 0;
+
     // Viewport-dependent media queries may cause us to need completely different style information.
-    if (m_frame->document()->styleResolver()->affectedByViewportChange()) {
-        m_frame->document()->styleResolverChanged(DeferRecalcStyle);
-        InspectorInstrumentation::mediaQueryResultChanged(m_frame->document());
+    if (document && document->styleResolver() && document->styleResolver()->affectedByViewportChange()) {
+        document->styleResolverChanged(DeferRecalcStyle);
+        InspectorInstrumentation::mediaQueryResultChanged(document);
     }
 
     if (renderView && !renderView->printing()) {
