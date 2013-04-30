@@ -743,6 +743,7 @@ supports:
         $$ = parser->createSupportsRule($4, $9);
     }
     | before_supports_rule SUPPORTS_SYM supports_error {
+        $$ = 0;
         parser->popRuleData();
         parser->popSupportsRuleData();
     }

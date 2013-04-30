@@ -1,3 +1,16 @@
+2013-04-30  Glenn Adams  <glenn@skynav.com>
+
+        The bison grammar for @supports should return 0 in case of an error
+        https://bugs.webkit.org/show_bug.cgi?id=115402
+
+        Reviewed by Darin Adler.
+
+        Back ported from https://chromium.googlesource.com/chromium/blink/+/74399c27c8b93286bae03a1d6371735935b34d85.
+
+        Test: css3/supports-crash.html
+
+        * css/CSSGrammar.y.in:
+
 2013-04-30  Darin Adler  <darin@apple.com>
 
         [CG] Over-release in MIME type registry code
