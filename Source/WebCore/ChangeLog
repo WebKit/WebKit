@@ -1,3 +1,23 @@
+2013-04-30  David Hyatt  <hyatt@apple.com>
+
+        <button> ignores margin-bottom.
+        https://bugs.webkit.org/show_bug.cgi?id=114940
+        
+        Reviewed by Beth Dakin.
+
+        Make sure that the inner block inside the <button> (flexbox) acts like it
+        establishes a block formatting context, i.e., it should refuse to collapse
+        its margins with its children. This causes margins to stay inside the <button>
+        and be honored, adding to the button's overall height.
+        
+        Basically we have to remove the restriction that anonymous blocks can't be
+        BFCs on the bottom margin.
+
+        Added fast/forms/content-with-margins-inside-button.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleAfterSideOfBlock):
+
 2013-04-30  Andrei Bucur  <abucur@adobe.com>
 
         Cleanup HTMLOListElement<->RenderListItem bridge

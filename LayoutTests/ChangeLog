@@ -1,3 +1,13 @@
+2013-04-30  David Hyatt  <hyatt@apple.com>
+
+        <button> ignores margin-bottom.
+        https://bugs.webkit.org/show_bug.cgi?id=114940
+        
+        Reviewed by Beth Dakin.
+
+        * fast/forms/content-with-margins-inside-button-expected.html: Added.
+        * fast/forms/content-with-margins-inside-button.html: Added.
+
 2013-04-30  Oliver Hunt  <oliver@apple.com>
 
         JSC Stack walking logic craches in the face of inlined functions triggering VM re-entry
