@@ -54,7 +54,7 @@ public:
     
     void deleteAllOrigins();
     void deleteOrigin(SecurityOrigin*);
-    void deleteOrigin(const String& originIdentifier);
+    void deleteOriginWithIdentifier(const String& originIdentifier);
     void origins(Vector<RefPtr<SecurityOrigin> >& result);
     long long diskUsageForOrigin(SecurityOrigin*);
     
@@ -76,7 +76,6 @@ private:
     void openTrackerDatabase(bool createIfDoesNotExist);
 
     void importOriginIdentifiers();
-    static void notifyFinishedImportingOriginIdentifiersOnMainThread(void*);
     void finishedImportingOriginIdentifiers();
     
     void deleteTrackerFiles();
@@ -85,7 +84,6 @@ private:
     bool canDeleteOrigin(const String& originIdentifier);
     void willDeleteOrigin(const String& originIdentifier);
     void willDeleteAllOrigins();
-    static void deleteOriginOnMainThread(void* originIdentifier);
 
     void originFilePaths(Vector<String>& paths);
     

@@ -509,7 +509,7 @@ void StorageAreaSync::deleteEmptyDatabase()
         query.finalize();
         m_database.close();
         if (StorageTracker::tracker().isActive())
-            StorageTracker::tracker().deleteOrigin(m_databaseIdentifier);
+            StorageTracker::tracker().deleteOriginWithIdentifier(m_databaseIdentifier);
         else {
             String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
             if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))

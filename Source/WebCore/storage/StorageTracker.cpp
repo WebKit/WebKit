@@ -170,11 +170,6 @@ void StorageTracker::importOriginIdentifiers()
     m_thread->dispatch(bind(&StorageTracker::syncImportOriginIdentifiers, this));
 }
 
-void StorageTracker::notifyFinishedImportingOriginIdentifiersOnMainThread(void*)
-{
-    tracker().finishedImportingOriginIdentifiers();
-}
-
 void StorageTracker::finishedImportingOriginIdentifiers()
 {
     MutexLocker locker(m_databaseMutex);
@@ -232,7 +227,7 @@ void StorageTracker::syncImportOriginIdentifiers()
         }
     }
 
-    callOnMainThread(notifyFinishedImportingOriginIdentifiersOnMainThread, 0);
+    callOnMainThread(bind(&StorageTracker::finishedImportingOriginIdentifiers, this));
 }
     
 void StorageTracker::syncFileSystemAndTrackerDatabase()
@@ -278,8 +273,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
         if (foundOrigins.contains(originIdentifier))
             continue;
 
-        RefPtr<StringImpl> originIdentifierImpl = originIdentifier.isolatedCopy().impl();
-        callOnMainThread(deleteOriginOnMainThread, originIdentifierImpl.release().leakRef());
+        callOnMainThread(bind(&StorageTracker::deleteOriginWithIdentifier, this, originIdentifier.isolatedCopy()));
     }
 }
 
@@ -432,15 +426,7 @@ void StorageTracker::syncDeleteAllOrigins()
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
 }
 
-void StorageTracker::deleteOriginOnMainThread(void* originIdentifier)
-{
-    ASSERT(isMainThread());
-
-    String identifier = adoptRef(reinterpret_cast<StringImpl*>(originIdentifier));
-    tracker().deleteOrigin(identifier);
-}
-
-void StorageTracker::deleteOrigin(const String& originIdentifier)
+void StorageTracker::deleteOriginWithIdentifier(const String& originIdentifier)
 {
     deleteOrigin(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier).get());
 }
