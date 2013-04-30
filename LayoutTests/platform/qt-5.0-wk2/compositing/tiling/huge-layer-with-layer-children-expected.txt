@@ -7,6 +7,7 @@ This is some text
     (GraphicsLayer
       (bounds 785.00 5113.00)
       (contentsOpaque 1)
+      (drawsContent 1)
       (children 1
         (GraphicsLayer
           (position 8.00 70.00)
