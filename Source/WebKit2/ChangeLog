@@ -1,3 +1,12 @@
+2013-04-30  Tim Horton  <timothy_horton@apple.com>
+
+        Disable deprecation warnings around some NSProcessInfo API.
+
+        Rubber-stamped by Brady Eidson.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled):
+
 2013-04-30  Brady Eidson  <beidson@apple.com>
 
         [WK2] Threads get stuck in NetworkProcess when canceling loads in WebProcess.

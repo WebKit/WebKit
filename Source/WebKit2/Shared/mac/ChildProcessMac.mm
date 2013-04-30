@@ -67,10 +67,13 @@ void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
     if (this->processSuppressionEnabled() == processSuppressionEnabled)
         return;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (processSuppressionEnabled)
         m_processSuppressionAssertion.clear();
     else
         m_processSuppressionAssertion = [[NSProcessInfo processInfo] beginSuspensionOfSystemBehaviors:WKProcessSuppressionSystemBehaviors reason:@"Process Suppression Disabled"];
+#pragma clang diagnostic pop
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
