@@ -1,3 +1,15 @@
+2013-04-30  Artur Moryc  <a.moryc@samsung.com>
+
+        [WK2][EFL] Spelling marker disappears while selection is being changed
+        https://bugs.webkit.org/show_bug.cgi?id=115165
+
+        Reviewed by Anders Carlsson.
+
+        The marker for a misspelled word disappears while the cursor is being navigated along the word.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+
 2013-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Animations fail to start on http://www.google.com/insidesearch/howsearchworks/thestory/
