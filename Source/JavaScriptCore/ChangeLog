@@ -1,3 +1,25 @@
+2013-04-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unify the data access of StringImpl members from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=115320
+
+        Reviewed by Andreas Kling.
+
+        DFG accesses the member infos by directly calling the methods on StringImpl,
+        while the baseline JIT was using helper methods on ThunkHelpers.
+
+        Cut the middle man, and use StringImpl directly everywhere.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JSInterfaceJIT.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+
 2013-04-29  Benjamin Poulain  <bpoulain@apple.com>
 
         Use push and pop for iOS math function thunks
