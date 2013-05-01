@@ -1,5 +1,20 @@
 2013-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TestWebKitAPI] <WebKit2/WebKit2_C.h> being included in GTK WK1-only builds
+        https://bugs.webkit.org/show_bug.cgi?id=115470
+
+        Reviewed by Martin Robinson.
+
+        In the TestWebKitAPI's config.h header, only include the <WebKit2/WebKit2_C.h> header when
+        not building either of the IOS, Windows or GTK-WK1 platforms.
+
+        Up until now the header was included for everything but the IOS and Windows platforms due to
+        an incorrectly stated condition regarding the GTK platform.
+
+        * TestWebKitAPI/config.h:
+
+2013-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Split the forwarding headers stamp in the TestWebKitAPI GNUmakefile.am
         https://bugs.webkit.org/show_bug.cgi?id=115469
 
