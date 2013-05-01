@@ -489,8 +489,8 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/EncoderAdapter.cpp
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
-
     WebProcess/WebPage/LayerTreeHost.cpp
+    WebProcess/WebPage/PageBanner.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
@@ -593,6 +593,7 @@ set(WebProcess_LIBRARIES
 )
 
 set(WebKit2_LIBRARIES
+    ${WTF_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
 )
 
