@@ -1,3 +1,9 @@
+2013-05-01  Roger Fong  <roger_fong@apple.com>
+
+        Set Path in makefile for AppleWin.
+
+        * WTF.vcxproj/WTF.make:
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Add FunctionDispatcher class and make RunLoop derive from it

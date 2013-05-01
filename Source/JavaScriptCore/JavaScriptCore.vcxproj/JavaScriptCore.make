@@ -8,6 +8,7 @@ install:
     set OFFICIAL_BUILD=1
 	set WebKit_Libraries=$(SRCROOT)\AppleInternal
 	set WebKit_OutputDir=$(OBJROOT)
+    set Path=%PATH%;$(SRCROOT)\Program Files (x86)\Common Files\Apple\Apple Application Support
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     -mkdir "%ConfigurationBuildDir%\include\private"
     xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y

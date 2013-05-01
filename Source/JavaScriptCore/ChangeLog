@@ -1,3 +1,9 @@
+2013-05-01  Roger Fong  <roger_fong@apple.com>
+
+        Set Path in makefile for AppleWin.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-05-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the remaining wscript
