@@ -83,6 +83,7 @@ static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, vo
 {
     JSShouldTerminateCallback callback = reinterpret_cast<JSShouldTerminateCallback>(callbackPtr);
     JSContextRef contextRef = toRef(exec);
+    ASSERT(callback);
     return callback(contextRef, callbackData);
 }
 
@@ -91,8 +92,11 @@ void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, 
     VM& vm = *toJS(group);
     APIEntryShim entryShim(&vm);
     Watchdog& watchdog = vm.watchdog;
-    void* callbackPtr = reinterpret_cast<void*>(callback);
-    watchdog.setTimeLimit(vm, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
+    if (callback) {
+        void* callbackPtr = reinterpret_cast<void*>(callback);
+        watchdog.setTimeLimit(vm, limit, internalScriptTimeoutCallback, callbackPtr, callbackData);
+    } else
+        watchdog.setTimeLimit(vm, limit);
 }
 
 void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)

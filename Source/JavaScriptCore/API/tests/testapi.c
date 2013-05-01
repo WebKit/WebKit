@@ -1790,12 +1790,12 @@ int main(int argc, char* argv[])
         }
 
         if (!exception) {
-            printf("FAIL: TerminationExecutionException was not thrown.\n");
+            printf("FAIL: TerminatedExecutionException was not thrown.\n");
             failed = true;
         }
     }
 
-    /* Test the script timeout's TerminationExecutionException should NOT be catchable: */
+    /* Test the script timeout's TerminatedExecutionException should NOT be catchable: */
     JSContextGroupSetExecutionTimeLimit(contextGroup, 0.10f, shouldTerminateCallback, 0);
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); try { while (true) { if (currentCPUTime() - startTime > .150) break; } } catch(e) { }";
@@ -1817,9 +1817,35 @@ int main(int argc, char* argv[])
         }
 
         if (exception)
-            printf("PASS: TerminationExecutionException was not catchable as expected.\n");
+            printf("PASS: TerminatedExecutionException was not catchable as expected.\n");
         else {
-            printf("FAIL: TerminationExecutionException was caught.\n");
+            printf("FAIL: TerminatedExecutionException was caught.\n");
+            failed = true;
+        }
+    }
+
+    /* Test script timeout with no callback: */
+    JSContextGroupSetExecutionTimeLimit(contextGroup, .10f, 0, 0);
+    {
+        const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
+        JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
+        double startTime;
+        double endTime;
+        exception = NULL;
+        startTime = currentCPUTime();
+        v = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        endTime = currentCPUTime();
+
+        if (((endTime - startTime) < .150f) && shouldTerminateCallbackWasCalled)
+            printf("PASS: script timed out as expected when no callback is specified.\n");
+        else {
+            if (!((endTime - startTime) < .150f))
+                printf("FAIL: script did not timed out as expected when no callback is specified.\n");
+            failed = true;
+        }
+
+        if (!exception) {
+            printf("FAIL: TerminatedExecutionException was not thrown.\n");
             failed = true;
         }
     }
@@ -1843,6 +1869,11 @@ int main(int argc, char* argv[])
                 printf("FAIL: script timeout was not cancelled.\n");
             if (!cancelTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
+            failed = true;
+        }
+
+        if (exception) {
+            printf("FAIL: Unexpected TerminatedExecutionException thrown.\n");
             failed = true;
         }
     }
@@ -1875,7 +1906,7 @@ int main(int argc, char* argv[])
                 printf("FAIL: script timeout callback was not called after timeout extension.\n");
 
             if (!exception)
-                printf("FAIL: TerminationExecutionException was not thrown during timeout extension test.\n");
+                printf("FAIL: TerminatedExecutionException was not thrown during timeout extension test.\n");
 
             failed = true;
         }
