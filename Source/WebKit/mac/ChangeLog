@@ -1,3 +1,20 @@
+2013-05-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the function names of r149453
+
+        Unreviewed.
+
+        I forgot to follow one of Darin's review comment. This patch
+        fixes the function names to follow CF naming conventions.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (newArrayWithStrings):
+        (newArrayByConcatenatingArrays):
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+
 2013-05-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify WebHTMLRepresentation supportedMIMETypes methods
