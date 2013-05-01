@@ -375,6 +375,8 @@ set(WebKit2_SOURCES
     UIProcess/Plugins/PluginProcessProxy.cpp
     UIProcess/Plugins/WebPluginSiteDataManager.cpp
 
+    UIProcess/Storage/LocalStorageDatabase.cpp
+
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
 
