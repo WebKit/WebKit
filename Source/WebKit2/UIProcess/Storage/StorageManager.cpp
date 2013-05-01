@@ -56,10 +56,12 @@ public:
     void removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
     void clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
 
-    const HashMap<String, String>& items() const { return m_storageMap->items(); }
+    const HashMap<String, String>& items();
 
 private:
     explicit StorageArea(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
+
+    void importItemsFromDatabase();
 
     void dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
@@ -143,6 +145,8 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() con
 
 void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
+    importItemsFromDatabase();
+
     String oldValue;
 
     RefPtr<StorageMap> newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
@@ -155,6 +159,8 @@ void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection,
 
 void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
 {
+    importItemsFromDatabase();
+
     String oldValue;
     RefPtr<StorageMap> newStorageMap = m_storageMap->removeItem(key, oldValue);
     if (newStorageMap)
@@ -168,12 +174,29 @@ void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnecti
 
 void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
 {
+    importItemsFromDatabase();
+
     if (!m_storageMap->length())
         return;
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
 
     dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
+}
+
+const HashMap<String, String>& StorageManager::StorageArea::items()
+{
+    importItemsFromDatabase();
+
+    return m_storageMap->items();
+}
+
+void StorageManager::StorageArea::importItemsFromDatabase()
+{
+    if (!m_localStorageDatabase)
+        return;
+
+    m_localStorageDatabase->importItems(*m_storageMap);
 }
 
 void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const

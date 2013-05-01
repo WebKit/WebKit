@@ -1,3 +1,31 @@
+2013-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on loading items from the local storage database
+        https://bugs.webkit.org/show_bug.cgi?id=115489
+
+        Reviewed by Andreas Kling.
+
+        Some of the LocalStorageDatabase code is originally from WebCore,
+        but has been simplified due to the fact that we don't need to load
+        database data asynchronously since we're already running on a non-main thread.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::tryToOpenDatabase):
+        (WebKit::LocalStorageDatabase::migrateItemTableIfNeeded):
+        (WebKit::LocalStorageDatabase::importItems):
+
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        (WebKit::StorageManager::StorageArea::setItem):
+        (WebKit::StorageManager::StorageArea::removeItem):
+        (WebKit::StorageManager::StorageArea::clear):
+        (WebKit::StorageManager::StorageArea::items):
+        Call importItemsFromDatabase().
+        
+        (WebKit::StorageManager::StorageArea::importItemsFromDatabase):
+        Ask the database to import the items.
+
 2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviewed buildfix after r149449.

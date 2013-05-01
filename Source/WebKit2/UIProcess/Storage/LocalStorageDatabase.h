@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,16 @@
 #ifndef LocalStorageDatabase_h
 #define LocalStorageDatabase_h
 
+#include <WebCore/SQLiteDatabase.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 class WorkQueue;
+
+namespace WebCore {
+class StorageMap;
+}
 
 namespace WebKit {
 
@@ -39,12 +44,28 @@ public:
     static PassRefPtr<LocalStorageDatabase> create(const String& databaseFilename, PassRefPtr<WorkQueue>);
     ~LocalStorageDatabase();
 
+    // Will block until the import is complete.
+    void importItems(WebCore::StorageMap&);
+
 private:
     LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>);
 
+    enum DatabaseOpeningStrategy {
+        CreateIfNonExistent,
+        SkipIfNonExistent
+    };
+    bool tryToOpenDatabase(DatabaseOpeningStrategy);
+    void openDatabase(DatabaseOpeningStrategy);
+
+    bool migrateItemTableIfNeeded();
+
     void performImport();
 
+    String m_databaseFilename;
     RefPtr<WorkQueue> m_queue;
+
+    WebCore::SQLiteDatabase m_database;
+    bool m_failedToOpenDatabase;
 };
 
 
