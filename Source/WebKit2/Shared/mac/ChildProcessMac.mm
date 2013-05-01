@@ -47,6 +47,12 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 #endif
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
+extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
+extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
+#endif
+
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
 using namespace WebCore;
@@ -85,6 +91,11 @@ void ChildProcess::setApplicationIsDaemon()
 {
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
+    RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+#endif
 }
 
 void ChildProcess::platformInitialize()

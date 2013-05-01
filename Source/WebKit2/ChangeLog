@@ -1,3 +1,14 @@
+2013-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13781156> Launching NetworkProcess broken on some OS versions.
+
+        Reviewed by Anders Carlsson.
+
+        Adapt to LaunchServices changes.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setApplicationIsDaemon):
+
 2013-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Add a setting to control whether or not accelerated 2D canvas is enabled
