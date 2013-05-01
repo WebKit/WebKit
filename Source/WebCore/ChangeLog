@@ -1,3 +1,16 @@
+2013-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac Lion] Assertion failure in MediaControlTextTrackContainerElement::updateDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=115289
+
+        Reviewed by Jer Noble.
+
+        No new tests, this is a speculative fix for an infrequent assertion.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Mark the cue as inactive when it is removed
+            from the active set.
+
 2013-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         TextTrackMenu crashes in ports where MediaElement players are lazily created
