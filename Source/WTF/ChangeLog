@@ -1,3 +1,9 @@
+2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed buildfix after r149416.
+
+        * WTF.pro:
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         Remove the WebKit2 BinarySemaphore class

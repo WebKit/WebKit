@@ -20,7 +20,6 @@ HEADERS += \
     Platform/CoreIPC/ArgumentEncoder.h \
     Platform/CoreIPC/Arguments.h \
     Platform/CoreIPC/Attachment.h \
-    Platform/CoreIPC/BinarySemaphore.h \
     Platform/CoreIPC/Connection.h \
     Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
@@ -361,6 +360,7 @@ HEADERS += \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h \
     WebProcess/WebPage/TapHighlightController.h \
+    WebProcess/WebPage/PageBanner.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
     WebProcess/WebPage/WebFrame.h \
@@ -740,6 +740,7 @@ SOURCES += \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
+    WebProcess/WebPage/PageBanner.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
@@ -878,14 +879,6 @@ mac: {
         Platform/CoreIPC/unix/ConnectionUnix.cpp \
         Platform/qt/WorkQueueQt.cpp \
         Platform/unix/SharedMemoryUnix.cpp
-}
-
-win32 {
-    SOURCES += \
-        Platform/CoreIPC/win/BinarySemaphoreWin.cpp
-} else {
-    SOURCES += \
-        Platform/CoreIPC/BinarySemaphore.cpp
 }
 
 enable?(SECCOMP_FILTERS) {

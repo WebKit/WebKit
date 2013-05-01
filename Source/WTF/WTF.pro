@@ -157,6 +157,7 @@ HEADERS += \
     text/StringOperators.h \
     text/TextPosition.h \
     text/WTFString.h \
+    threads/BinarySemaphore.h \
     Threading.h \
     ThreadingPrimitives.h \
     ThreadRestrictionVerifier.h \
@@ -255,6 +256,13 @@ win*|wince*: SOURCES += \
     ThreadSpecificWin.cpp \
     ThreadingWin.cpp
 
+win32 {
+    SOURCES += \
+        threads/win/BinarySemaphoreWin.cpp
+} else {
+    SOURCES += \
+        threads/BinarySemaphore.cpp
+}
 
 QT += core
 QT -= gui

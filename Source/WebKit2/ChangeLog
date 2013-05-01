@@ -1,3 +1,9 @@
+2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed buildfix after r149416 and r149417.
+
+        * Target.pri:
+
 2013-04-30  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [EFL] Unreviewed, EFL build fix after r149416
