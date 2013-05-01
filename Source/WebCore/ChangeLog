@@ -1,3 +1,17 @@
+2013-04-30  Jer Noble  <jer.noble@apple.com>
+
+        Closed caption lines overlap
+        https://bugs.webkit.org/show_bug.cgi?id=115438
+        <rdar://problem/13351747>
+
+        Reviewed by Eric Carlson.
+
+        Take the line-box padding into account when determining line hight by setting
+        the -webkit-line-box-contain property to include 'inline-box'.
+
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-container):
+
 2013-05-01  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r149410): CFRunLoopStop() doesn't know what to do with a RetainPtr<CFRunLoopRef>

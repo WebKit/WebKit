@@ -237,6 +237,8 @@ video::-webkit-media-text-track-container {
     word-break: break-word;
 
     -webkit-flex: 1 1;
+
+    -webkit-line-box-contain: block inline-box replaced;
 }
 
 video::cue {
