@@ -1,3 +1,24 @@
+2013-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Add a setting to control whether or not accelerated 2D canvas is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=114394
+
+        Reviewed by Anders Carlsson.
+
+        Add a setting to control accelerated 2D canvas, which determines whether
+        or not to consider rendering HTML canvas with hardware acceleration.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Added support for enable-accelerated-2d-canvas property.
+        (webKitSettingsGetProperty): Added support for enable-accelerated-2d-canvas property.
+        (webkit_settings_class_init): Added support for enable-accelerated-2d-canvas property.
+        (webkit_settings_get_enable_accelerated_2d_canvas): Added.
+        (webkit_settings_set_enable_accelerated_2d_canvas): Added.
+        * UIProcess/API/gtk/WebKitSettings.h: New methods.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Added new methods to the documentation.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Added a simple test for the setting.
+
 2013-04-30  Jer Noble  <jer.noble@apple.com>
 
         Entering full screen mode shows desktop linen instead of WKView the first time.

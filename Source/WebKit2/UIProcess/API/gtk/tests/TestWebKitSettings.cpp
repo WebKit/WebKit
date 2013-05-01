@@ -248,6 +248,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_smooth_scrolling(settings, TRUE);
     g_assert(webkit_settings_get_enable_smooth_scrolling(settings));
 
+    // By default, accelerated 2D canvas is disabled.
+    g_assert(!webkit_settings_get_enable_accelerated_2d_canvas(settings));
+    webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
+    g_assert(webkit_settings_get_enable_accelerated_2d_canvas(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 
