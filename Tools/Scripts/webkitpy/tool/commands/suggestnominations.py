@@ -32,14 +32,30 @@ import re
 
 from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.tool import steps
 from webkitpy.tool.grammar import join_with_separators
 from webkitpy.tool.multicommandtool import Command
+
+
+class CommitLogError(Exception):
+    def __init__(self):
+        Exception.__init__(self)
+
+
+class CommitLogMissingReviewer(CommitLogError):
+    def __init__(self):
+        CommitLogError.__init__(self)
 
 
 class SuggestNominations(Command):
     name = "suggest-nominations"
     help_text = "Suggest contributors for committer/reviewer nominations"
+
+    _leading_indent_regexp = re.compile(r"^[ ]{4}", re.MULTILINE)
+    _reviewed_by_regexp = re.compile(ChangeLogEntry.reviewed_by_regexp, re.MULTILINE)
+    _patch_by_regexp = re.compile(r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$', re.MULTILINE)
+    _committer_regexp = re.compile(r'^Author: (?P<email>\S+)\s+<[^>]+>$', re.MULTILINE)
+    _date_regexp = re.compile(r'^Date:   (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) [\+\-]\d{4}$', re.MULTILINE)
+    _revision_regexp = re.compile(r'^git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) (?P<gitid>[0-9a-f\-]{36})$', re.MULTILINE)
 
     def __init__(self):
         options = [
@@ -48,13 +64,9 @@ class SuggestNominations(Command):
             make_option("--max-commit-age", action="store", dest="max_commit_age", type="int", default=9, help="Specify max commit age to consider for nominations (in months)."),
             make_option("--show-commits", action="store_true", dest="show_commits", default=False, help="Show commit history with nomination suggestions."),
         ]
-
-        Command.__init__(self, options=options)
+        super(SuggestNominations, self).__init__(options=options)
         # FIXME: This should probably be on the tool somewhere.
         self._committer_list = CommitterList()
-
-    _counters_by_name = {}
-    _counters_by_email = {}
 
     def _init_options(self, options):
         self.committer_minimum = options.committer_minimum
@@ -65,98 +77,133 @@ class SuggestNominations(Command):
 
     # FIXME: This should move to scm.py
     def _recent_commit_messages(self):
-        git_log = self._tool.executive.run_command(['git', 'log', '--since="%s months ago"' % self.max_commit_age])
-        match_git_svn_id = re.compile(r"\n\n    git-svn-id:.*\n", re.MULTILINE)
-        match_get_log_lines = re.compile(r"^\S.*\n", re.MULTILINE)
-        match_leading_indent = re.compile(r"^[ ]{4}", re.MULTILINE)
-
-        messages = re.split(r"commit \w{40}", git_log)[1:]  # Ignore the first message which will be empty.
+        git_log = self._tool.executive.run_command(['git', 'log', '--date=iso', '--since="%s months ago"' % self.max_commit_age])
+        messages = re.split(r"^commit \w{40}$", git_log, flags=re.MULTILINE)[1:]  # Ignore the first message which will be empty.
         for message in messages:
-            # Remove any lines from git and unindent all the lines
-            (message, _) = match_git_svn_id.subn("", message)
-            (message, _) = match_get_log_lines.subn("", message)
-            (message, _) = match_leading_indent.subn("", message)
+            # Unindent all the lines
+            (message, _) = self._leading_indent_regexp.subn("", message)
             yield message.lstrip()  # Remove any leading newlines from the log message.
 
-    # e.g. Patch by Eric Seidel <eric@webkit.org> on 2011-09-15
-    patch_by_regexp = r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$'
+    def _author_name_from_email(self, email):
+        contributor = self._committer_list.contributor_by_email(email)
+        return contributor.full_name if contributor else None
+
+    def _contributor_from_email(self, email):
+        contributor = self._committer_list.contributor_by_email(email)
+        return contributor if contributor else None
+
+    def _parse_commit_message(self, commit_message):
+        committer_match = self._committer_regexp.search(commit_message)
+        if not committer_match:
+            raise CommitLogError
+
+        committer_email = committer_match.group('email')
+        if not committer_email:
+            raise CommitLogError
+
+        committer = self._contributor_from_email(committer_email)
+        if not committer:
+            raise CommitLogError
+
+        commit_date_match = self._date_regexp.search(commit_message)
+        if not commit_date_match:
+            raise CommitLogError
+        commit_date = commit_date_match.group('date')
+
+        revision_match = self._revision_regexp.search(commit_message)
+        if not revision_match:
+            raise CommitLogError
+        revision = revision_match.group('svnid')
+
+        # Look for "Patch by" line first, which is used for non-committer contributors;
+        # otherwise, use committer info determined above.
+        author_match = self._patch_by_regexp.search(commit_message)
+        if not author_match:
+            author_match = committer_match
+
+        author_email = author_match.group('email')
+        if not author_email:
+            author_email = committer_email
+
+        author_name = author_match.group('name') if 'name' in author_match.groupdict() else None
+        if not author_name:
+            author_name = self._author_name_from_email(author_email)
+        if not author_name:
+            raise CommitLogError
+
+        contributor = self._contributor_from_email(author_email)
+        if contributor and author_name != contributor.full_name and contributor.full_name:
+            author_name = contributor.full_name
+
+        reviewer_match = self._reviewed_by_regexp.search(commit_message)
+        if not reviewer_match:
+            raise CommitLogMissingReviewer
+        reviewers = reviewer_match.group('reviewer')
+
+        return {
+            'committer': committer,
+            'commit_date': commit_date,
+            'revision': revision,
+            'author_email': author_email,
+            'author_name': author_name,
+            'contributor': contributor,
+            'reviewers': reviewers,
+        }
+
+    def _count_commit(self, commit, analysis):
+        author_name = commit['author_name']
+        author_email = commit['author_email']
+        revision = commit['revision']
+        commit_date = commit['commit_date']
+
+        # See if we already have a contributor with this author_name or email
+        counter_by_name = analysis['counters_by_name'].get(author_name)
+        counter_by_email = analysis['counters_by_email'].get(author_email)
+        if counter_by_name:
+            if counter_by_email:
+                if counter_by_name != counter_by_email:
+                    # Merge these two counters  This is for the case where we had
+                    # John Smith (jsmith@gmail.com) and Jonathan Smith (jsmith@apple.com)
+                    # and just found a John Smith (jsmith@apple.com).  Now we know the
+                    # two names are the same person
+                    counter_by_name['names'] |= counter_by_email['names']
+                    counter_by_name['emails'] |= counter_by_email['emails']
+                    counter_by_name['count'] += counter_by_email.get('count', 0)
+                    analysis['counters_by_email'][author_email] = counter_by_name
+            else:
+                # Add email to the existing counter
+                analysis['counters_by_email'][author_email] = counter_by_name
+                counter_by_name['emails'] |= set([author_email])
+        else:
+            if counter_by_email:
+                # Add name to the existing counter
+                analysis['counters_by_name'][author_name] = counter_by_email
+                counter_by_email['names'] |= set([author_name])
+            else:
+                # Create new counter
+                new_counter = {'names': set([author_name]), 'emails': set([author_email]), 'latest_name': author_name, 'latest_email': author_email, 'commits': ""}
+                analysis['counters_by_name'][author_name] = new_counter
+                analysis['counters_by_email'][author_email] = new_counter
+
+        assert(analysis['counters_by_name'][author_name] == analysis['counters_by_email'][author_email])
+        counter = analysis['counters_by_name'][author_name]
+        counter['count'] = counter.get('count', 0) + 1
+
+        if revision.isdigit():
+            revision = "http://trac.webkit.org/changeset/" + revision
+        counter['commits'] += "  commit: %s on %s by %s (%s)\n" % (revision, commit_date, author_name, author_email)
 
     def _count_recent_patches(self):
-        # This entire block could be written as a map/reduce over the messages.
-        for message in self._recent_commit_messages():
-            # FIXME: This should use ChangeLogEntry to do the entire parse instead
-            # of grabbing at its regexps.
-            dateline_match = re.match(ChangeLogEntry.date_line_regexp, message, re.MULTILINE)
-            if not dateline_match:
-                # Modern commit messages don't just dump the ChangeLog entry, but rather
-                # have a special Patch by line for non-committers.
-                dateline_match = re.search(self.patch_by_regexp, message, re.MULTILINE)
-                if not dateline_match:
-                    continue
-
-            author_email = dateline_match.group("email")
-            if not author_email:
+        analysis = {
+            'counters_by_name': {},
+            'counters_by_email': {},
+        }
+        for commit_message in self._recent_commit_messages():
+            try:
+                self._count_commit(self._parse_commit_message(commit_message), analysis)
+            except CommitLogError, exception:
                 continue
-
-            # We only care about reviewed patches, so make sure it has a valid reviewer line.
-            reviewer_match = re.search(ChangeLogEntry.reviewed_by_regexp, message, re.MULTILINE)
-            # We might also want to validate the reviewer name against the committer list.
-            if not reviewer_match or not reviewer_match.group("reviewer"):
-                continue
-
-            author_name = dateline_match.group("name")
-            if not author_name:
-                continue
-
-            if re.search("([^a-zA-Z]and[^a-zA-Z])|(,)|(@)", author_name):
-                # This entry seems to have multiple reviewers, or invalid characters, so reject it.
-                continue
-
-            svn_id_match = re.search(ChangeLogEntry.svn_id_regexp, message, re.MULTILINE)
-            if svn_id_match:
-                svn_id = svn_id_match.group("svnid")
-            if not svn_id_match or not svn_id:
-                svn_id = "unknown"
-            commit_date = dateline_match.group("date")
-
-            # See if we already have a contributor with this name or email
-            counter_by_name = self._counters_by_name.get(author_name)
-            counter_by_email = self._counters_by_email.get(author_email)
-            if counter_by_name:
-                if counter_by_email:
-                    if counter_by_name != counter_by_email:
-                        # Merge these two counters  This is for the case where we had
-                        # John Smith (jsmith@gmail.com) and Jonathan Smith (jsmith@apple.com)
-                        # and just found a John Smith (jsmith@apple.com).  Now we know the
-                        # two names are the same person
-                        counter_by_name['names'] |= counter_by_email['names']
-                        counter_by_name['emails'] |= counter_by_email['emails']
-                        counter_by_name['count'] += counter_by_email.get('count', 0)
-                        self._counters_by_email[author_email] = counter_by_name
-                else:
-                    # Add email to the existing counter
-                    self._counters_by_email[author_email] = counter_by_name
-                    counter_by_name['emails'] |= set([author_email])
-            else:
-                if counter_by_email:
-                    # Add name to the existing counter
-                    self._counters_by_name[author_name] = counter_by_email
-                    counter_by_email['names'] |= set([author_name])
-                else:
-                    # Create new counter
-                    new_counter = {'names': set([author_name]), 'emails': set([author_email]), 'latest_name': author_name, 'latest_email': author_email, 'commits': ""}
-                    self._counters_by_name[author_name] = new_counter
-                    self._counters_by_email[author_email] = new_counter
-
-            assert(self._counters_by_name[author_name] == self._counters_by_email[author_email])
-            counter = self._counters_by_name[author_name]
-            counter['count'] = counter.get('count', 0) + 1
-
-            if svn_id.isdigit():
-                svn_id = "http://trac.webkit.org/changeset/" + svn_id
-            counter['commits'] += "  commit: %s on %s by %s (%s)\n" % (svn_id, commit_date, author_name, author_email)
-
-        return self._counters_by_email
+        return analysis['counters_by_email']
 
     def _collect_nominations(self, counters_by_email):
         nominations = []
@@ -172,7 +219,7 @@ class SuggestNominations(Command):
 
             if patch_count >= self.committer_minimum and (not contributor or not contributor.can_commit):
                 roles.append("committer")
-            if patch_count >= self.reviewer_minimum  and (not contributor or not contributor.can_review):
+            if patch_count >= self.reviewer_minimum and contributor and contributor.can_commit and not contributor.can_review:
                 roles.append("reviewer")
             if roles:
                 nominations.append({
@@ -183,7 +230,7 @@ class SuggestNominations(Command):
                 })
         return nominations
 
-    def _print_nominations(self, nominations):
+    def _print_nominations(self, nominations, counters_by_email):
         def nomination_cmp(a_nomination, b_nomination):
             roles_result = cmp(a_nomination['roles'], b_nomination['roles'])
             if roles_result:
@@ -197,7 +244,7 @@ class SuggestNominations(Command):
             # This is a little bit of a hack, but its convienent to just pass the nomination dictionary to the formating operator.
             nomination['roles_string'] = join_with_separators(nomination['roles']).upper()
             print "%(roles_string)s: %(author_name)s (%(author_email)s) has %(patch_count)s reviewed patches" % nomination
-            counter = self._counters_by_email[nomination['author_email']]
+            counter = counters_by_email[nomination['author_email']]
 
             if self.show_commits:
                 print counter['commits']
@@ -238,10 +285,9 @@ class SuggestNominations(Command):
         self._init_options(options)
         patch_counts = self._count_recent_patches()
         nominations = self._collect_nominations(patch_counts)
-        self._print_nominations(nominations)
+        self._print_nominations(nominations, patch_counts)
         if self.verbose:
             self._print_counts(patch_counts)
-
 
 if __name__ == "__main__":
     SuggestNominations()

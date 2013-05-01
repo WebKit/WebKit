@@ -1,3 +1,34 @@
+2013-04-30  Glenn Adams  <glenn@skynav.com>
+
+        [webkitpy] suggest-nominations doesn't count all qualified patches
+        https://bugs.webkit.org/show_bug.cgi?id=115285
+
+        Reviewed by Benjamin Poulain.
+
+        Fix commit analysis so that patches made by an existing committer are counted towards reviewer
+        nomination. Improve commit log parsing.
+
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (CommitLogError):
+        (CommitLogError.__init__):
+        (CommitLogMissingReviewer):
+        (CommitLogMissingReviewer.__init__):
+        (SuggestNominations):
+        (SuggestNominations.__init__):
+        (SuggestNominations._recent_commit_messages):
+        (SuggestNominations._author_name_from_email):
+        (SuggestNominations._contributor_from_email):
+        (SuggestNominations._parse_commit_message):
+        (SuggestNominations._count_commit):
+        (SuggestNominations._count_recent_patches):
+        (SuggestNominations._collect_nominations):
+        (SuggestNominations._print_nominations):
+        (SuggestNominations.execute):
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py:
+        (_make_options):
+        (test_recent_commit_messages):
+        (test_basic):
+
 2013-04-30  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r149309.
