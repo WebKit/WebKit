@@ -1,3 +1,14 @@
+2013-05-01  Enrica Casucci  <enrica@apple.com>
+
+        Incorrect layout for blocks containing ideographs with -webkit-linebox-contain: glyphs, font, inline-box.
+        https://bugs.webkit.org/show_bug.cgi?id=115478.
+
+        Reviewed by Dave Hyatt.
+
+        * fast/block/lineboxcontain/block-with-ideographs.xhtml: Added.
+        * platform/mac/fast/block/lineboxcontain/block-with-ideographs-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/block-with-ideographs-expected.png : Added.
+
 2013-05-01  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         EventSource: Loss of reconnect time precision due to integer division

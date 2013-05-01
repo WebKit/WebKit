@@ -1,3 +1,19 @@
+2013-05-01  Enrica Casucci  <enrica@apple.com>
+
+        Incorrect layout for blocks containing ideographs with -webkit-linebox-contain: glyphs, font, inline-box.
+        https://bugs.webkit.org/show_bug.cgi?id=115478.
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/block/lineboxcontain/block-with-ideographs.xhtml
+
+        When computing ascent and descent we need to take into account
+        the baseline type. RootInlineBox::ascentAndDescentForBox failed
+        to do that in few cases.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Add LocalStorageDatabase class
