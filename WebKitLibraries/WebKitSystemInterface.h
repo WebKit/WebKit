@@ -261,6 +261,7 @@ CFArrayRef WKCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void WKCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 void WKSetVisibleApplicationName(CFStringRef);
+void WKSetApplicationInformationItem(CFStringRef key, CFTypeRef value);
 
 CFURLRef WKCopyBundleURLForExecutableURL(CFURLRef);
 
@@ -494,7 +495,10 @@ bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclu
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOcclusionState);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 extern const NSSystemBehaviors WKProcessSuppressionSystemBehaviors;
+#pragma clang diagnostic pop
 #endif
 
 bool WKIsJavaPlugInActive(void);

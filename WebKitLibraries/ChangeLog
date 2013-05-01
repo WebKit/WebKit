@@ -1,3 +1,11 @@
+2013-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebKitSystemInterface.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         WEB SPEECH: need to identify the default voice per language
