@@ -84,44 +84,46 @@ using namespace HTMLNames;
 
 @implementation WebHTMLRepresentation
 
-static NSArray *stringArray(const HashSet<String>& set)
+static NSMutableArray *createArrayWithStrings(const HashSet<String>& set) NS_RETURNS_RETAINED;
+static NSMutableArray *createArrayWithStrings(const HashSet<String>& set)
 {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:set.size()];
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:set.size()];
     HashSet<String>::const_iterator end = set.end();
     for (HashSet<String>::const_iterator it = set.begin(); it != end; ++it)
         [array addObject:(NSString *)(*it)];
     return array;
 }
 
-static NSArray *concatenateArrays(NSArray *first, NSArray *second)
+static NSMutableArray *createArrayByConcatenatingArrays(NSArray *first, NSArray *second) NS_RETURNS_RETAINED;
+static NSMutableArray *createArrayByConcatenatingArrays(NSArray *first, NSArray *second)
 {
-    NSMutableArray *result = [[first mutableCopy] autorelease];
+    NSMutableArray *result = [first mutableCopy];
     [result addObjectsFromArray:second];
     return result;
 }
 
 + (NSArray *)supportedMIMETypes
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, staticSupportedMIMETypes, (concatenateArrays([self supportedNonImageMIMETypes], [self supportedImageMIMETypes])));
-    return staticSupportedMIMETypes.get();
+    static __unsafe_unretained NSArray *staticSupportedMIMETypes = createArrayByConcatenatingArrays([self supportedNonImageMIMETypes], [self supportedImageMIMETypes]);
+    return staticSupportedMIMETypes;
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, staticSupportedNonImageMIMETypes, (stringArray(MIMETypeRegistry::getSupportedNonImageMIMETypes())));
-    return staticSupportedNonImageMIMETypes.get();
+    static __unsafe_unretained NSArray *staticSupportedNonImageMIMETypes = createArrayWithStrings(MIMETypeRegistry::getSupportedNonImageMIMETypes());
+    return staticSupportedNonImageMIMETypes;
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, staticSupportedImageMIMETypes, (stringArray(MIMETypeRegistry::getSupportedImageMIMETypes())));
-    return staticSupportedImageMIMETypes.get();
+    static __unsafe_unretained NSArray *staticSupportedImageMIMETypes = createArrayWithStrings(MIMETypeRegistry::getSupportedImageMIMETypes());
+    return staticSupportedImageMIMETypes;
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, staticUnsupportedTextMIMETypes, (stringArray(MIMETypeRegistry::getUnsupportedTextMIMETypes())));
-    return staticUnsupportedTextMIMETypes.get();
+    static __unsafe_unretained NSArray *staticUnsupportedTextMIMETypes = createArrayWithStrings(MIMETypeRegistry::getUnsupportedTextMIMETypes());
+    return staticUnsupportedTextMIMETypes;
 }
 
 - (id)init

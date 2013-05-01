@@ -1,3 +1,26 @@
+2013-05-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify WebHTMLRepresentation supportedMIMETypes methods
+        https://bugs.webkit.org/show_bug.cgi?id=115314
+
+        Reviewed by Darin Adler.
+
+        The initialization was surprisingly complex because of DEFINE_STATIC_LOCAL.
+        First, a new pointer was allocated on the heap with fast malloc (for RetainPtr<NSArray>).
+        Then a new NSMutableArray was allocated but immediately put on the autorelease pool.
+        Finally, that array was retained by the RetainPtr.
+
+        This patch changes the code to only leak the NSMutableArray memory. There
+        is no fastMalloc, nor any use of the autorelease pool.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (createArrayWithStrings):
+        (createArrayByConcatenatingArrays):
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+
 2013-04-30  Darin Adler  <darin@apple.com>
 
         [Mac] Remove adoptNS/retain pairs, since the two cancel each other out
