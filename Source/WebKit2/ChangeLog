@@ -1,3 +1,16 @@
+2013-04-30  Simon Cooper  <scooper@apple.com>
+
+        ipc-posix-shm backwards compatibility 
+        https://bugs.webkit.org/show_bug.cgi?id=115448
+        <rdar://problem/13743037>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add compatibility for older ipc-posix-shm operations, but prefer the
+        newer names when writing profiles.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2013-04-30  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r149416.

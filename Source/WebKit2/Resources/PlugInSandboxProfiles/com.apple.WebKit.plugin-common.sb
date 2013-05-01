@@ -246,11 +246,17 @@
 (define (webkit-imagecapture)
     (allow appleevent-send (appleevent-destination "com.apple.imagecaptureextension2")))
 
+(if (not (defined? 'ipc-posix-shm*))
+    (define ipc-posix-shm* ipc-posix-shm))
+
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^AudioIO")
     (ipc-posix-name-regex #"^CFPBS:")
     (ipc-posix-name "_CS_GSHMEMLOCK")
     (ipc-posix-name "_CS_DSHMEMLOCK"))
+
+(if (not (defined? 'ipc-posix-shm-read*))
+    (define ipc-posix-shm-read* ipc-posix-shm))
 
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center"))
