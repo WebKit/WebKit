@@ -1,3 +1,17 @@
+2013-05-01  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        EventSource: Loss of reconnect time precision due to integer division
+        https://bugs.webkit.org/show_bug.cgi?id=115358
+
+        Make sure precision is not lost when converting the reconnect time from milliseconds to seconds.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/eventsource/eventsource-retry-precision.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::scheduleReconnect):
+
 2013-05-01  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r149287): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
