@@ -33,7 +33,6 @@
 #include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
 #if PLATFORM(GTK)
@@ -46,7 +45,7 @@
 
 namespace WebCore {
 
-class RunLoop {
+class RunLoop : public ThreadSafeRefCounted<RunLoop> {
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
@@ -57,6 +56,7 @@ public:
 
     static RunLoop* current();
     static RunLoop* main();
+    ~RunLoop();
 
     void dispatch(const Function<void()>&);
 
@@ -130,11 +130,10 @@ public:
         TimerFiredFunction m_function;
     };
 
-private:
-    friend class WTF::ThreadSpecific<RunLoop>;
+    class Holder;
 
+private:
     RunLoop();
-    ~RunLoop();
 
     void performWork();
 
