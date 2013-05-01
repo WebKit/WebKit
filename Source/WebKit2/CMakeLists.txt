@@ -129,7 +129,6 @@ set(WebKit2_SOURCES
     Platform/CoreIPC/ArgumentDecoder.cpp
     Platform/CoreIPC/ArgumentEncoder.cpp
     Platform/CoreIPC/Attachment.cpp
-    Platform/CoreIPC/BinarySemaphore.cpp
     Platform/CoreIPC/Connection.cpp
     Platform/CoreIPC/DataReference.cpp
     Platform/CoreIPC/MessageDecoder.cpp
