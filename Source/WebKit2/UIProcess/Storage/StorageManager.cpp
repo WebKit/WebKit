@@ -26,11 +26,13 @@
 #include "config.h"
 #include "StorageManager.h"
 
+#include "LocalStorageDatabase.h"
 #include "SecurityOriginData.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"
 #include "WorkQueue.h"
+#include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
 
@@ -63,6 +65,8 @@ private:
 
     // Will be null if the storage area belongs to a session storage namespace.
     LocalStorageNamespace* m_localStorageNamespace;
+    RefPtr<LocalStorageDatabase> m_localStorageDatabase;
+
     RefPtr<SecurityOrigin> m_securityOrigin;
     unsigned m_quotaInBytes;
 
@@ -74,6 +78,9 @@ class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalS
 public:
     static PassRefPtr<LocalStorageNamespace> create(StorageManager*, uint64_t storageManagerID);
     ~LocalStorageNamespace();
+
+    StorageManager* storageManager() const { return m_storageManager; }
+    String databaseFilename(SecurityOrigin*) const;
 
     PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
     void didDestroyStorageArea(StorageArea*);
@@ -100,6 +107,8 @@ StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageName
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
+    if (m_localStorageNamespace)
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->databaseFilename(m_securityOrigin.get()), m_localStorageNamespace->storageManager()->m_queue);
 }
 
 StorageManager::StorageArea::~StorageArea()
@@ -193,6 +202,16 @@ StorageManager::LocalStorageNamespace::LocalStorageNamespace(StorageManager* sto
 StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
 {
     ASSERT(m_storageAreaMap.isEmpty());
+}
+
+String StorageManager::LocalStorageNamespace::databaseFilename(SecurityOrigin* securityOrigin) const
+{
+    if (!makeAllDirectories(m_storageManager->m_localStorageDirectory)) {
+        LOG_ERROR("Unabled to create LocalStorage database path %s", m_storageManager->m_localStorageDirectory.utf8().data());
+        return String();
+    }
+
+    return pathByAppendingComponent(m_storageManager->m_localStorageDirectory, securityOrigin->databaseIdentifier() + ".localstorage");
 }
 
 PassRefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
