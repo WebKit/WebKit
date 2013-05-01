@@ -1,3 +1,18 @@
+2013-04-30  Jer Noble  <jer.noble@apple.com>
+
+        Entering full screen mode shows desktop linen instead of WKView the first time.
+        https://bugs.webkit.org/show_bug.cgi?id=115433
+        <rdar://problem/13774540>
+
+        Reviewed by Eric Carlson.
+
+        For certain types of windows created by subclasses of WKView, the window in question fails to paint
+        when created with a zero-size rect. Create the window with an initial size of the active screen frame
+        as that is the likely destination size.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView createFullScreenWindow]):
+
 2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Win] Fix build after r149416.
