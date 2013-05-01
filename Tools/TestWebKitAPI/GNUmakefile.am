@@ -14,6 +14,7 @@ Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
 	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
 	-I$(srcdir)/Tools/TestWebKitAPI \
 	-I$(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(top_builddir)/DerivedSources/WebCore/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -249,13 +250,20 @@ Libraries_libTestWebKitAPIInjectedBundle_la_CXXFLAGS = \
 Libraries_libTestWebKitAPIInjectedBundle_la_CFLAGS = \
 	$(global_cflags)
 
-stamp-testwebkitapi-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_TestWebKitAPI_TestWebKit2_SOURCES) $(Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES)
+
+stamp-testwebkitapi-webcore-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_TestWebKitAPI_TestWebCore_SOURCES)
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI/Tests/WebCore $(GENSOURCES_WEBCORE)/include gtk \
+	&& echo timestamp > $(@F)
+
+stamp-testwebkitapi-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_TestWebKitAPI_TestWebKit2_SOURCES) $(Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES)
 	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include gtk \
 	&& echo timestamp > $(@F)
 
+BUILT_SOURCES += $(top_builddir)/stamp-testwebkitapi-webcore-forwarding-headers
 if ENABLE_WEBKIT2
-BUILT_SOURCES += $(top_builddir)/stamp-testwebkitapi-forwarding-headers
+BUILT_SOURCES += $(top_builddir)/stamp-testwebkitapi-webkit2-forwarding-headers
 endif # ENABLE_WEBKIT2
+
 
 EXTRA_DIST += \
 	Tools/TestWebKitAPI/Tests/WebKit2/18-characters.html \
