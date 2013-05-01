@@ -1517,12 +1517,7 @@ webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-circle-padding.htm
 webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-circle.html
 webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html
 webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-ellipse.html
-webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-polygon-layout.html
 webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html
-webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-polygon-padding-003.html
-webkit.org/b/115292 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html
 webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html
 webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html
 webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html

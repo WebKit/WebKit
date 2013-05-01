@@ -2,8 +2,4 @@ X
 X
 X
 X
-PASS shapeInsideRect('a').top is 7
-PASS shapeInsideRect('b').top is 22
-PASS shapeInsideRect('c').top is 37
-PASS shapeInsideRect('d').top is 52
 

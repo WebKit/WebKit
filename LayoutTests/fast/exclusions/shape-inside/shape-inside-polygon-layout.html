@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/subpixel-utils.js"></script>
 <script>
     if (window.internals)
         window.internals.settings.setCSSExclusionsEnabled(true);
@@ -47,11 +48,16 @@
       return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
   }
 
-  /* Verify that all four one-character lines are vertically adjacent and 15 pixels high. */
-  shouldBe("shapeInsideRect('a').top", "7");
-  shouldBe("shapeInsideRect('b').top", "22");
-  shouldBe("shapeInsideRect('c').top", "37");
-  shouldBe("shapeInsideRect('d').top", "52");
+  // The top of the polygon is a horzontal edge at y=1.42%, and its parent's height is 500px.  The top of
+  // the first line, span "a", will align with the top of the polygon. The ExclusionShape::firstIncludedIntervalLogicalTop()
+  // methods use ceiledLayoutUnit() to ensure that their return value is within the shape.
+  var lineATop = SubPixelLayout.ceilSnapToLayoutUnit(.0142 * 500);
+
+  // Verify that all four one-character lines are vertically adjacent and 15 pixels high.
+  var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()
+  shouldBe("shapeInsideRect('a').top", String(lineATop), quiet);
+  shouldBe("shapeInsideRect('b').top", String(lineATop + 15), quiet);
+  shouldBe("shapeInsideRect('c').top", String(lineATop + 30), quiet);
+  shouldBe("shapeInsideRect('d').top", String(lineATop + 45), quiet);
 </script>
 </html>
-

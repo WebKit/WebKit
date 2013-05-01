@@ -52,6 +52,7 @@
         <span id="s1">X</span></br><span id="s2">X</span><br/><span id="s3">X</span>
     </div>
 </div>
+<div id="console"></div>
 </body>
 <script>
 function elementRect(elementId) 
@@ -66,22 +67,22 @@ function elementRect(elementId)
 
 function marginEllipseLeftXIntercept(y, cx, rx, ry)
 {
-    return String( SubPixelLayout.roundLineLeft(cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2))) );
+    return String( SubPixelLayout.snapToLayoutUnit(cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2))) );
 }
 
 // In the ".left" tests below, it's the lower edge of the 20px Ahem glyph that that defines the element rect's left edge. 
 // That's why the Y coordinate in each of those tests is 20 greater than the ".top" test.
 
-SubPixelLayout.initSubPixelLayout();
+var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()
 
 shouldBe("elementRect('s1').top", "0");
-shouldBe("elementRect('s1').left", marginEllipseLeftXIntercept(20, 225, 225, 125));
+shouldBe("elementRect('s1').left", marginEllipseLeftXIntercept(20, 225, 225, 125), quiet);
 
 shouldBe("elementRect('s2').top", "20");
-shouldBe("elementRect('s2').left", marginEllipseLeftXIntercept(40, 225, 225, 125));
+shouldBe("elementRect('s2').left", marginEllipseLeftXIntercept(40, 225, 225, 125), quiet);
 
 shouldBe("elementRect('s3').top", "40");
-shouldBe("elementRect('s3').left", marginEllipseLeftXIntercept(60, 225, 225, 125));
+shouldBe("elementRect('s3').left", marginEllipseLeftXIntercept(60, 225, 225, 125), quiet);
 
 </script>
 </html>

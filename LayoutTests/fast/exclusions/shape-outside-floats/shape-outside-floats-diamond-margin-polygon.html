@@ -12,7 +12,7 @@
 #container {
     font: 20px/1 Ahem, sans-serif;
     width: 200px;
-    height: 300px;
+    height: 150px;
   }
 
 #float-left {
@@ -25,14 +25,14 @@
 
 #svg-shape {
     position: absolute;
-    display:block;
+    display: block;
+    top: 0px;
+    left: 0px;
     width: 100px;
     height: 100px;
 }
 </style>
-
 <body>
-<p></p>
 <div id="container">
     <div id="float-left">
         <svg id="svg-shape" xmlns="http://www.w3.org/2000/">
@@ -41,6 +41,7 @@
     </div>
     <span id="l1">X</span></br><span id="l2">X</span><br/><span id="l3">X</span><br/><br/><span id="l4">X</span><br/><span id="l5">X</span><br/><span id="l6">X</span>
 </div>
+<div id="console"></div>
 </body>
 <script>
 function elementRect(elementId) 
@@ -58,8 +59,10 @@ function elementRect(elementId)
 
 function marginLeftXIntercept(lineNumber)
 {
-    return SubPixelLayout.roundLineLeft(lineNumber * 20 + 20 * Math.sqrt(2) + 50);
+    return SubPixelLayout.snapToLayoutUnit(lineNumber * 20 + 20 * Math.sqrt(2) + 50);
 }
+
+var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()
 
 shouldBe("elementRect('l1').top", "0");
 shouldBeCloseTo("elementRect('l1').left", marginLeftXIntercept(1), 1);

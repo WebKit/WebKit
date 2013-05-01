@@ -1,28 +1,26 @@
 var SubPixelLayout = (function() {
-    var _subPixelLayout = null;
-    function initSubPixelLayout() {
-        var elem = document.createElement('div');
-        elem.style.setProperty('width', '4.5px');
-        document.body.appendChild(elem);
-        var bounds = elem.getBoundingClientRect();
-        _subPixelLayout =  (bounds.width != Math.floor(bounds.width));
-        document.body.removeChild(elem);
+    var enabled = undefined;
+
+    function isEnabled()
+    {
+        if (enabled === undefined) {
+            var elem = document.createElement('div');
+            elem.style.setProperty('width', '4.5px');
+            document.body.appendChild(elem);
+            var bounds = elem.getBoundingClientRect();
+            enabled = (bounds.width != Math.floor(bounds.width));
+            document.body.removeChild(elem);
+        }
+        return enabled;
     }
-    document.addEventListener('DOMContentLoaded', initSubPixelLayout);
+
     return {
-        initSubPixelLayout: initSubPixelLayout,
-        roundLineLeft: function(f) {
-            if (!_subPixelLayout)
-                return Math.floor(f);
-            return Math.floor((Math.floor(f * 64) + 32) / 64); // see FractionLayoutUnit::round()
+        isEnabled: isEnabled,
+        snapToLayoutUnit: function(f) {
+            return isEnabled() ? Math.floor(f * 64) / 64 : Math.floor(f); // as in LayoutUnit(f).toFloat()
         },
-        roundLineRight: function(f) {
-            if (!_subPixelLayout)
-                return Math.floor(f);
-            return Math.floor(Math.floor(f * 64) / 64); // see FractionLayoutUnit::floor()
-        },
-        isSubPixelLayoutEnabled: function() {
-            return _subPixelLayout;
+        ceilSnapToLayoutUnit: function(f) {
+            return isEnabled() ? Math.ceil(f * 64) / 64 : Math.ceil(f); // see ceiledLayoutUnit(), LayoutUnit.h
         }
     }
 }());

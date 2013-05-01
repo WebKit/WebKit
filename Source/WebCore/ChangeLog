@@ -1,3 +1,18 @@
+2013-05-01  Hans Muller  <hmuller@adobe.com>
+        [CSS Exclusions] Programmatic layout tests fail when subpixel layout is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115455
+
+        First round of changes to restore platform/mac exclusion tests that started failing when
+        subpixel layout was turned off.
+
+        Reviewed by Dirk Schulze.
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::appendArc): Ensure that the 3rd of 5 added vertices is in the center of the arc.
+        (WebCore::ExclusionPolygon::firstIncludedIntervalLogicalTop): Use ceiledLayoutUnit() for downwards-snapping first fit location.
+        * rendering/ExclusionRectangle.cpp:
+        (WebCore::ExclusionRectangle::firstIncludedIntervalLogicalTop): Ditto.
+
 2013-05-01  Enrica Casucci  <enrica@apple.com>
 
         Incorrect layout for blocks containing ideographs with -webkit-linebox-contain: glyphs, font, inline-box.

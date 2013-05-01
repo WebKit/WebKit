@@ -213,7 +213,7 @@ bool ExclusionRectangle::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIn
             return true;
         }
         if (minIntervalHeight < bounds.height() - (2 * cornerIntercept.y())) {
-            result = LayoutUnit::fromFloatCeil(bounds.y() + cornerIntercept.y());
+            result = ceiledLayoutUnit(bounds.y() + cornerIntercept.y());
             return true;
         }
     }

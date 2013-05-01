@@ -95,12 +95,12 @@ function simulateShape(elementId, stylesheet, dimensions, lineHeight) {
 
         var paddingLeft = document.createElement("div");
         paddingLeft.setAttribute("class", "float left");
-        paddingLeft.style.width = SubPixelLayout.roundLineLeft(dimensions.shapeX + inset) + "px";
+        paddingLeft.style.width = SubPixelLayout.snapToLayoutUnit(dimensions.shapeX + inset) + "px";
         element.appendChild(paddingLeft);
 
         var paddingRight = document.createElement("div");
         paddingRight.setAttribute("class", "float right");
-        paddingRight.style.width = SubPixelLayout.roundLineRight((dimensions.width - dimensions.shapeWidth - dimensions.shapeX) + inset) + "px";
+        paddingRight.style.width = SubPixelLayout.snapToLayoutUnit((dimensions.width - dimensions.shapeWidth - dimensions.shapeX) + inset) + "px";
         element.appendChild(paddingRight);
     }
 }
