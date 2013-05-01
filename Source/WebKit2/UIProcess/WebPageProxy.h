@@ -288,6 +288,7 @@ public:
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String& string);
     void loadWebArchiveData(const WebData*);
+    void loadFile(const String& fileURL, const String& resourceDirectoryURL);
 
     void stopLoading();
     void reload(bool reloadFromOrigin);

@@ -92,6 +92,11 @@ void WKPageLoadWebArchiveData(WKPageRef pageRef, WKDataRef webArchiveDataRef)
     toImpl(pageRef)->loadWebArchiveData(toImpl(webArchiveDataRef));
 }
 
+void WKPageLoadFile(WKPageRef pageRef, WKURLRef fileURL, WKURLRef resourceDirectoryURL)
+{
+    toImpl(pageRef)->loadFile(toWTFString(fileURL), toWTFString(resourceDirectoryURL));
+}
+
 void WKPageStopLoading(WKPageRef pageRef)
 {
     toImpl(pageRef)->stopLoading();

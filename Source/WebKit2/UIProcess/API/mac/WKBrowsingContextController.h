@@ -50,9 +50,9 @@ WK_EXPORT
 - (void)loadRequest:(NSURLRequest *)request;
 
 /* Load a file: URL. Opens the sandbox only for files within allowedDirectory.
-    - Passing a non-file: URL to either parameter will yeild an exception.
+    - Passing a non-file: URL to either parameter will yield an exception.
     - Passing nil as the allowedDirectory will open the entire file-system for
-      reading. 
+      reading.
 */
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory;
 

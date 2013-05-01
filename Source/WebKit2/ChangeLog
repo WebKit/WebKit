@@ -1,3 +1,24 @@
+2013-04-28  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13574729> Implement file path restrictions in WebKit Objective C API
+        https://bugs.webkit.org/show_bug.cgi?id=115321
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h: 
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::loadFile):
+        * UIProcess/WebPageProxy.h:
+        Added and implemented a C API to load a file while only opening sandbox for
+        a specific directory.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Fixed a typo in a comment.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]):
+        Respect allowedDirectory argument. Updated the function to raise an exception for
+        incorrect input, as decribed in header file.
+
 2013-04-29  Sam Weinig  <sam@webkit.org>
 
         Add API to allow WebKit2 banners to get mouse events

@@ -119,13 +119,13 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
 {
-    if (![URL isFileURL])
-        return;
-
-    /* FIXME: Implement restrictions. */
+    if (![URL isFileURL] || (allowedDirectory && ![allowedDirectory isFileURL]))
+        [NSException raise:NSInvalidArgumentException format:@"Attempted to load a non-file URL"];
 
     WKRetainPtr<WKURLRef> wkURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)URL));
-    WKPageLoadURL(self._pageRef, wkURL.get());
+    WKRetainPtr<WKURLRef> wkAllowedDirectory = adoptWK(WKURLCreateWithCFURL((CFURLRef)allowedDirectory));
+    
+    WKPageLoadFile(self._pageRef, wkURL.get(), wkAllowedDirectory.get());
 }
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL

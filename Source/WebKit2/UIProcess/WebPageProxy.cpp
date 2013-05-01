@@ -731,6 +731,31 @@ void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData)
     m_process->responsivenessTimer()->start();
 }
 
+void WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    KURL fileURL = KURL(KURL(), fileURLString);
+    if (!fileURL.isLocalFile())
+        return;
+
+    String resourceDirectoryPath;
+    if (!resourceDirectoryURLString.isNull()) {
+        KURL resourceDirectoryURL = KURL(KURL(), resourceDirectoryURLString);
+        if (!resourceDirectoryURL.isLocalFile())
+            return;
+        resourceDirectoryPath = resourceDirectoryURL.fileSystemPath();
+    } else
+        resourceDirectoryPath = ASCIILiteral("/");
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
+    m_process->assumeReadAccessToBaseURL(resourceDirectoryPath);
+    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
 void WebPageProxy::stopLoading()
 {
     if (!isValid())
