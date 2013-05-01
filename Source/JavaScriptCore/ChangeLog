@@ -1,3 +1,12 @@
+2013-05-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the remaining wscript
+        https://bugs.webkit.org/show_bug.cgi?id=115459
+
+        Reviewed by Andreas Kling.
+
+        * wscript: Removed.
+
 2013-04-30  Mark Lam  <mark.lam@apple.com>
 
         JSContextGroupSetExecutionTimeLimit() should not pass a callback to the
