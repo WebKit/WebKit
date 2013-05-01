@@ -1,3 +1,16 @@
+2013-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        TextTrackMenu crashes in ports where MediaElement players are lazily created
+        https://bugs.webkit.org/show_bug.cgi?id=115485
+
+        Null check the player for ports, like iOS, that lazily create the player.
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::platformTextTrackMenu):
+        (WebCore::HTMLMediaElement::closeCaptionTracksChanged):
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Add FunctionDispatcher class and make RunLoop derive from it

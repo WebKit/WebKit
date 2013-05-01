@@ -2938,7 +2938,7 @@ PlatformTextTrackMenuInterface* HTMLMediaElement::platformTextTrackMenu()
     if (m_platformMenu)
         return m_platformMenu.get();
 
-    if (!m_player->implementsTextTrackControls())
+    if (!m_player || !m_player->implementsTextTrackControls())
         return 0;
 
     m_platformMenu = m_player->textTrackMenu();
@@ -2957,7 +2957,7 @@ void HTMLMediaElement::closeCaptionTracksChanged()
         mediaControls()->closedCaptionTracksChanged();
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (m_player->implementsTextTrackControls())
+    if (m_player && m_player->implementsTextTrackControls())
         scheduleDelayedAction(TextTrackChangesNotification);
 #endif
 }
