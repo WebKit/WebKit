@@ -1,3 +1,16 @@
+2013-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r149410): CFRunLoopStop() doesn't know what to do with a RetainPtr<CFRunLoopRef>
+
+        Fixes the following build failure:
+
+            WebCore/platform/cf/RunLoopCF.cpp:82:5: error: no matching function for call to 'CFRunLoopStop'
+                CFRunLoopStop(m_runLoop);
+                ^~~~~~~~~~~~~
+
+        * platform/cf/RunLoopCF.cpp:
+        (WebCore::RunLoop::stop): Call RetainPtr::get().
+
 2013-05-01  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         EventSource: Loss of reconnect time precision due to integer division

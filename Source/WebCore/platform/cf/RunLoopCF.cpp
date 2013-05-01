@@ -79,7 +79,7 @@ void RunLoop::run()
 void RunLoop::stop()
 {
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
-    CFRunLoopStop(m_runLoop);
+    CFRunLoopStop(m_runLoop.get());
 }
 #endif
 
