@@ -157,7 +157,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_base);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_base);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_ensure_property_exists);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_with_base);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_with_this);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_init_global_const_check);

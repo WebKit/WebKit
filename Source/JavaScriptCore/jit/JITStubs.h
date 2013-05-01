@@ -371,7 +371,6 @@ EncodedJSValue JIT_STUB cti_op_inc(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_base_strict_put(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_ensure_property_exists(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_with_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_to_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;

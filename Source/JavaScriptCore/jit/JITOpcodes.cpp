@@ -366,14 +366,6 @@ void JIT::emit_op_strcat(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_ensure_property_exists);
-    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_not(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);

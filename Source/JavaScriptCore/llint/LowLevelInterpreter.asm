@@ -818,11 +818,6 @@ _llint_op_resolve_base:
     callSlowPath(_llint_slow_path_resolve_base)
     dispatch(7)
 
-_llint_op_ensure_property_exists:
-    traceExecution()
-    callSlowPath(_llint_slow_path_ensure_property_exists)
-    dispatch(3)
-
 macro interpretResolveWithBase(opcodeLength, slowPath)
     traceExecution()
     getResolveOperation(4, t0)

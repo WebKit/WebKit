@@ -1028,12 +1028,6 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
-        case op_ensure_property_exists: {
-            int r0 = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
-            out.printf("[%4d] ensure_property_exists\t %s, %s", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data());
-            break;
-        }
         case op_resolve_with_base: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

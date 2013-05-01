@@ -111,8 +111,6 @@ namespace JSC {
     macro(op_resolve_base_to_scope_with_top_scope_check, 7) /* has value profiling */ \
     macro(op_resolve_base, 7) /* has value profiling */ \
     \
-    macro(op_ensure_property_exists, 3) \
-    \
     macro(op_resolve_with_base, 7) /* has value profiling */ \
     \
     macro(op_resolve_with_this, 6) /* has value profiling */ \

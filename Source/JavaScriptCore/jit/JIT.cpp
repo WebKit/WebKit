@@ -326,7 +326,6 @@ void JIT::privateCompileMainPass()
         case op_put_to_base_variable:
         DEFINE_OP(op_put_to_base)
 
-        DEFINE_OP(op_ensure_property_exists)
         DEFINE_OP(op_resolve_with_base)
         DEFINE_OP(op_resolve_with_this)
         DEFINE_OP(op_ret)

@@ -2792,21 +2792,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
     VM_THROW_EXCEPTION();
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_ensure_property_exists)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    JSValue base = stackFrame.callFrame->r(stackFrame.args[0].int32()).jsValue();
-    JSObject* object = asObject(base);
-    PropertySlot slot(object);
-    ASSERT(stackFrame.callFrame->codeBlock()->isStrictMode());
-    if (!object->getPropertySlot(stackFrame.callFrame, stackFrame.args[1].identifier(), slot)) {
-        stackFrame.vm->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[1].identifier().string());
-        VM_THROW_EXCEPTION();
-    }
-
-    return JSValue::encode(base);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

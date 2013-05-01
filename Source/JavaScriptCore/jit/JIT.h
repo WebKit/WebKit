@@ -725,7 +725,6 @@ namespace JSC {
         void emitSlow_link_resolve_operations(ResolveOperations*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_resolve(Instruction*);
         void emit_op_resolve_base(Instruction*);
-        void emit_op_ensure_property_exists(Instruction*);
         void emit_op_resolve_with_base(Instruction*);
         void emit_op_resolve_with_this(Instruction*);
         void emit_op_put_to_base(Instruction*);

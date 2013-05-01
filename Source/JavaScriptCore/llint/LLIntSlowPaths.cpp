@@ -858,17 +858,6 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_base)
     LLINT_RETURN(result);
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_ensure_property_exists)
-{
-    LLINT_BEGIN();
-    JSObject* object = asObject(LLINT_OP(1).jsValue());
-    PropertySlot slot(object);
-    Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
-    if (!object->getPropertySlot(exec, ident, slot))
-        LLINT_THROW(createErrorForInvalidGlobalAssignment(exec, ident.string()));
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_resolve_with_base)
 {
     LLINT_BEGIN();

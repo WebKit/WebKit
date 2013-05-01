@@ -1,3 +1,28 @@
+2013-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed op_ensure_property_exists
+        https://bugs.webkit.org/show_bug.cgi?id=115460
+
+        Reviewed by Mark Hahnenberg.
+
+        It was unused, and whatever it was once used for was not optimized.
+
+        * JavaScriptCore.order:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2013-04-30  Oliver Hunt  <oliver@apple.com>
 
         JSC Stack walking logic craches in the face of inlined functions triggering VM re-entry
