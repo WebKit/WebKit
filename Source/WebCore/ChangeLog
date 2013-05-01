@@ -1,3 +1,17 @@
+2013-05-01  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r149287): Assertion failure in fast/frames/flattening/iframe-flattening-crash.html
+        <http://webkit.org/b/115386>
+        <rdar://problem/13769995>
+
+        Reviewed by Antti Koivisto.
+
+        Only send synchronous resize events for the main frame. Subframes change size during layout,
+        so it never really makes sense for them to use synchronous dispatch anyway.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchResizeEvent):
+
 2013-05-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial buildfix after r149432.

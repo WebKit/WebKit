@@ -2788,21 +2788,21 @@ void FrameView::dispatchResizeEvent()
 {
     ASSERT(m_frame);
 
+    Page* page = m_frame->page();
+    bool isMainFrame = page && page->mainFrame() == m_frame;
+    bool canSendResizeEventSynchronously = isMainFrame && !isInLayout();
+
     // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
     RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
-    if (isInLayout())
-        m_frame->document()->enqueueWindowEvent(resizeEvent.release());
-    else
+    if (canSendResizeEventSynchronously)
         m_frame->document()->dispatchWindowEvent(resizeEvent.release(), m_frame->document()->domWindow());
+    else
+        m_frame->document()->enqueueWindowEvent(resizeEvent.release());
 
 #if ENABLE(INSPECTOR)
-    if (InspectorInstrumentation::hasFrontends()) {
-        if (Page* page = m_frame->page()) {
-            if (page->mainFrame() == m_frame) {
-                if (InspectorClient* inspectorClient = page->inspectorController()->inspectorClient())
-                    inspectorClient->didResizeMainFrame(m_frame.get());
-            }
-        }
+    if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
+        if (InspectorClient* inspectorClient = page ? page->inspectorController()->inspectorClient() : 0)
+            inspectorClient->didResizeMainFrame(m_frame.get());
     }
 #endif
 }
