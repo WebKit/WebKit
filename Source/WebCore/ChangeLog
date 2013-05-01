@@ -1,3 +1,16 @@
+2013-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLMediaElement::updateActiveTextTrackCues can do unnecessary work
+        https://bugs.webkit.org/show_bug.cgi?id=81856
+
+        Reviewed by Jer Noble.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::ignoreTrackDisplayUpdateRequests): Add an early return when there
+            is obviously no work to be done.
+
 2013-04-30  Jer Noble  <jer.noble@apple.com>
 
         Closed caption lines overlap
