@@ -259,6 +259,7 @@ win*|wince*: SOURCES += \
 win32 {
     SOURCES += \
         threads/win/BinarySemaphoreWin.cpp
+    INCLUDEPATH += $$PWD/wtf/threads
 } else {
     SOURCES += \
         threads/BinarySemaphore.cpp

@@ -1,5 +1,16 @@
 2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt][Win] Fix build after r149416.
+        https://bugs.webkit.org/show_bug.cgi?id=115474
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.pro:
+        * wtf/threads/BinarySemaphore.h:
+        (BinarySemaphore):
+
+2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt] Unreviewed buildfix after r149416.
 
         * WTF.pro:

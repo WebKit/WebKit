@@ -26,11 +26,11 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "BinarySemaphore.h"
 #include "DataReference.h"
 #include <wtf/Functional.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 using namespace std;
 
@@ -307,7 +307,7 @@ bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
     return false;
 }
 
-bool Connection::dispatchSentMessagesUntil(const Vector<HWND>& windows, CoreIPC::BinarySemaphore& semaphore, double absoluteTime)
+bool Connection::dispatchSentMessagesUntil(const Vector<HWND>& windows, WTF::BinarySemaphore& semaphore, double absoluteTime)
 {
     if (windows.isEmpty())
         return semaphore.wait(absoluteTime);
