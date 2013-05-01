@@ -1,3 +1,18 @@
+2013-04-30  Darin Adler  <darin@apple.com>
+
+        [Mac] Remove adoptNS/retain pairs, since the two cancel each other out
+        https://bugs.webkit.org/show_bug.cgi?id=115426
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::PlatformCAAnimation):
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::filterValueForOperation):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse):
+        Remove adoptNS and release from code that is doing both.
+
 2013-04-29  Sam Weinig  <sam@webkit.org>
 
         Add API to allow WebKit2 banners to get mouse events

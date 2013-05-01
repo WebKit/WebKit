@@ -572,7 +572,7 @@ void WebNetscapePluginStream::deliverDataToFile(NSData *data)
             return;
         }
 
-        m_path = adoptNS([[NSString stringWithUTF8String:temporaryFileName] retain]);
+        m_path = [NSString stringWithUTF8String:temporaryFileName];
         free(temporaryFileName);
     }
 

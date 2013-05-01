@@ -348,7 +348,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(operation);
             amount = op->amount();
         }
-        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = [NSNumber numberWithDouble:amount];
         break;
     }
     case FilterOperation::SEPIA: {
@@ -389,7 +389,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
         
-        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = [NSNumber numberWithDouble:amount];
         break;
     }
     case FilterOperation::HUE_ROTATE: {
@@ -401,7 +401,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
         amount = deg2rad(amount);
-        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = [NSNumber numberWithDouble:amount];
         break;
     }
     case FilterOperation::INVERT: {
@@ -488,7 +488,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = op->amount();
         }
 
-        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = [NSNumber numberWithDouble:amount];
 #endif
         break;
     }
@@ -502,7 +502,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
             amount = floatValueForLength(op->stdDeviation(), 0);
         }
         
-        value = adoptNS([[NSNumber numberWithDouble:amount] retain]);
+        value = [NSNumber numberWithDouble:amount];
         break;
     }
     default:

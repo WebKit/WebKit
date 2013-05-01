@@ -80,7 +80,7 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
         return nil;
 
     if (!m_nsResponse)
-        m_nsResponse = adoptNS([[NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()] retain]);
+        m_nsResponse = [NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()];
 
     return m_nsResponse.get();
 }

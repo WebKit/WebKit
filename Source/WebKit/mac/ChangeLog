@@ -1,3 +1,13 @@
+2013-04-30  Darin Adler  <darin@apple.com>
+
+        [Mac] Remove adoptNS/retain pairs, since the two cancel each other out
+        https://bugs.webkit.org/show_bug.cgi?id=115426
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverDataToFile): Remove adoptNS and release.
+
 2013-04-30  Geoffrey Garen  <ggaren@apple.com>
 
         Objective-C JavaScriptCore API should publicly support bridging to C
