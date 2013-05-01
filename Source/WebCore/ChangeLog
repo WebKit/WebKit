@@ -1,3 +1,10 @@
+2013-05-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial buildfix after r149432.
+
+        * testing/Internals.cpp:
+        (WebCore):
+
 2013-05-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Show a block cursor in overtype mode
