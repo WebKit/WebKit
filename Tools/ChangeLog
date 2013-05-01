@@ -1,5 +1,11 @@
 2013-04-30  Glenn Adams  <glenn@skynav.com>
 
+        Unreviewed. Add myself to watchlist entries.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2013-04-30  Glenn Adams  <glenn@skynav.com>
+
         [webkitpy] suggest-nominations doesn't count all qualified patches
         https://bugs.webkit.org/show_bug.cgi?id=115285
 
