@@ -1,3 +1,45 @@
+2013-05-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Show a block cursor in overtype mode
+        https://bugs.webkit.org/show_bug.cgi?id=114819
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/selection/block-cursor-overtype-mode.html
+
+        Overtype mode will use block cursor instead of a caret to
+        highlight the next character to be replaced. It will fully cover
+        the next character to be replaced (except at the end of a line
+        where the usual blinking caret will be shown).
+
+        This new block cursor is internally implemented as a selection
+        (not exposed to JavaScript) because the selection code knows how
+        to deal with bidi text.
+
+        * WebCore.exp.in: Export symbols for testing purposes.
+        * WebCore.order: Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::toggleOverwriteModeEnabled): Added a call to
+        FrameLoader::setShouldShowBlockCursor.
+        (WebCore):
+        * editing/Editor.h:
+        (Editor):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::updateAppearance): Use a 1-character
+        long selection to paint the cursor in overtype mode.
+        (WebCore::FrameSelection::setShouldShowBlockCursor):
+        (WebCore):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::shouldShowBlockCursor):
+        (FrameSelection):
+        * testing/Internals.cpp:
+        (WebCore):
+        (WebCore::Internals::selectionBounds): Added a new method which
+        returns the IntRect issued by FrameSelection::bounds().
+        * testing/Internals.h: Ditto.
+        * testing/Internals.idl: Ditto.
+
 2013-04-30  Darin Adler  <darin@apple.com>
 
         [Mac] Remove adoptNS/retain pairs, since the two cancel each other out

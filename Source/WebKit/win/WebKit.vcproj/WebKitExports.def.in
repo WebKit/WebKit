@@ -156,6 +156,7 @@ EXPORTS
         ??1NodeRenderingContext@WebCore@@QAE@XZ
         ??1Range@WebCore@@QAE@XZ
         ?toNode@WebCore@@YAPAVNode@1@VJSValue@JSC@@@Z
+        ??0ClientRect@WebCore@@AAE@ABVFloatRect@1@@Z
         ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
         ??0ClientRect@WebCore@@AAE@XZ
         ??0ClientRectList@WebCore@@AAE@XZ
@@ -188,6 +189,7 @@ EXPORTS
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ
+        ?bounds@FrameSelection@WebCore@@QBE?AVFloatRect@2@_N@Z
         ?fromUTF8@String@WTF@@SA?AV12@PBE@Z
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ
@@ -318,6 +320,7 @@ EXPORTS
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
         ?isContinuousSpellCheckingEnabled@Editor@WebCore@@QBE_NXZ
         ?toggleContinuousSpellChecking@Editor@WebCore@@QAEXXZ
+        ?toggleOverwriteModeEnabled@Editor@WebCore@@QAEXXZ
 #if ENABLE(FULLSCREEN_API)
         ?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z

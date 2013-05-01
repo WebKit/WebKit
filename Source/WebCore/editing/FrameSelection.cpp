@@ -114,6 +114,7 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
+    , m_shouldShowBlockCursor(false)
 {
     if (shouldAlwaysUseDirectionalSelection(m_frame))
         m_selection.setIsDirectional(true);
@@ -1753,11 +1754,19 @@ inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 
 void FrameSelection::updateAppearance()
 {
+    // Paint a block cursor instead of a caret in overtype mode unless the caret is at the end of a line (in this case
+    // the FrameSelection will paint a blinking caret as usual).
+    VisiblePosition forwardPosition;
+    if (m_shouldShowBlockCursor && m_selection.isCaret()) {
+        forwardPosition = modifyExtendingForward(CharacterGranularity);
+        m_caretPaint = forwardPosition.isNull();
+    }
+
 #if ENABLE(TEXT_CARET)
     bool caretRectChangedOrCleared = recomputeCaretRect();
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
-    bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing);
+    bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing) && forwardPosition.isNull();
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
@@ -1783,7 +1792,7 @@ void FrameSelection::updateAppearance()
 
     // Construct a new VisibleSolution, since m_selection is not necessarily valid, and the following steps
     // assume a valid selection. See <https://bugs.webkit.org/show_bug.cgi?id=69563> and <rdar://problem/10232866>.
-    VisibleSelection selection(m_selection.visibleStart(), m_selection.visibleEnd());
+    VisibleSelection selection(m_selection.visibleStart(), forwardPosition.isNotNull() ? forwardPosition : m_selection.visibleEnd());
 
     if (!selection.isRange()) {
         view->clearSelection();
@@ -2054,6 +2063,15 @@ inline bool FrameSelection::visualWordMovementEnabled() const
 {
     Settings* settings = m_frame ? m_frame->settings() : 0;
     return settings && settings->visualWordMovementEnabled();
+}
+
+void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
+{
+    m_shouldShowBlockCursor = shouldShowBlockCursor;
+
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+
+    updateAppearance();
 }
 
 #ifndef NDEBUG

@@ -246,7 +246,7 @@ public:
     void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
-    void toggleOverwriteModeEnabled() { m_overwriteModeEnabled = !m_overwriteModeEnabled; }
+    void toggleOverwriteModeEnabled();
 
 #if USE(APPKIT)
     void uppercaseWord();

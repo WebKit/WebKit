@@ -311,6 +311,9 @@ _ZNK7WebCore4Node28deprecatedShadowAncestorNodeEv;
 _ZNK7WebCore7IntRect10intersectsERKS0_;
 _ZNK7WebCore8Document13nodesFromRectEiijjjjj;
 _ZTVN7WebCore14StaticNodeListE;
+_ZN7WebCore6Editor26toggleOverwriteModeEnabledEv;
+_ZNK7WebCore14FrameSelection6boundsEb;
+_ZN7WebCore10ClientRectC1ERKNS_9FloatRectE;
 
 local:
 _Z*;

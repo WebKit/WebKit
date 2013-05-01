@@ -287,4 +287,6 @@
     [Conditional=VIDEO] double closestTimeToTimeRanges(double time, TimeRanges ranges);
 
     boolean isSelectPopupVisible(Node node);
+
+    ClientRect selectionBounds() raises(DOMException);
 };

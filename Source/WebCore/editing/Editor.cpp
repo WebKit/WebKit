@@ -3124,4 +3124,10 @@ void Editor::applyDictationAlternativelternative(const String& alternativeString
     m_alternativeTextController->applyDictationAlternative(alternativeString);
 }
 
+void Editor::toggleOverwriteModeEnabled()
+{
+    m_overwriteModeEnabled = !m_overwriteModeEnabled;
+    frame()->selection()->setShouldShowBlockCursor(m_overwriteModeEnabled);
+};
+
 } // namespace WebCore

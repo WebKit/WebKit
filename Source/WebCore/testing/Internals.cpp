@@ -2295,6 +2295,18 @@ double Internals::closestTimeToTimeRanges(double time, TimeRanges* ranges)
 {
     return ranges->nearest(time);
 }
+
+PassRefPtr<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame() || !document->frame()->selection()) {
+        ec = INVALID_ACCESS_ERR;
+        return ClientRect::create();
+    }
+
+    return ClientRect::create(document->frame()->selection()->bounds());
+}
+
 #endif
 
 }

@@ -1,3 +1,19 @@
+2013-05-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Show a block cursor in overtype mode
+        https://bugs.webkit.org/show_bug.cgi?id=114819
+
+        Reviewed by Ryosuke Niwa.
+
+        New test case for the new block cursor to be used in overtype
+        mode. The test verifies that the 1-pixel long caret is replaced by
+        a selection like 1-character long block cursor when in overtype
+        mode. This test covers LTR and RTL text in LTR and RTL blocks and
+        bidi text.
+
+        * editing/selection/block-cursor-overtype-mode-expected.txt: Added.
+        * editing/selection/block-cursor-overtype-mode.html: Added.
+
 2013-04-30  David Hyatt  <hyatt@apple.com>
 
         <button> ignores margin-bottom.

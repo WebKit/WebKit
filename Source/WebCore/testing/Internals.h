@@ -328,6 +328,8 @@ public:
     double closestTimeToTimeRanges(double time, TimeRanges*);
 #endif
 
+    PassRefPtr<ClientRect> selectionBounds(ExceptionCode&);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;
