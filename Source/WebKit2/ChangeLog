@@ -1,5 +1,13 @@
 2013-04-30  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/13757475> WebProcess deny ipc-posix-shm-read-data CFPBS:A2:
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Allow pbs shared memory.
+
+2013-04-30  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] Don't open window server connection in network process
         https://bugs.webkit.org/show_bug.cgi?id=115446
 
