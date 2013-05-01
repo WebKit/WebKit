@@ -30,7 +30,9 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <WebCore/StorageMap.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -134,7 +136,7 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
     return true;
 }
 
-void LocalStorageDatabase::importItems(StorageMap&)
+void LocalStorageDatabase::importItems(StorageMap& storageMap)
 {
     // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
@@ -143,7 +145,26 @@ void LocalStorageDatabase::importItems(StorageMap&)
     if (!m_database.isOpen())
         return;
 
-    // FIXME: Actually import the items.
+    SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
+    if (query.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to select items from ItemTable for local storage");
+        return;
+    }
+
+    HashMap<String, String> items;
+
+    int result = query.step();
+    while (result == SQLResultRow) {
+        items.set(query.getColumnText(0), query.getColumnBlobAsString(1));
+        result = query.step();
+    }
+
+    if (result != SQLResultDone) {
+        LOG_ERROR("Error reading items from ItemTable for local storage");
+        return;
+    }
+
+    storageMap.importItems(items);
 }
 
 } // namespace WebKit

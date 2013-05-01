@@ -1,5 +1,16 @@
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Implement LocalStorageDatabase::importItems
+        https://bugs.webkit.org/show_bug.cgi?id=115493
+
+        Reviewed by Andreas Kling.
+
+        Export symbols needed by WebKit2.
+
+        * WebCore.exp.in:
+
+2013-05-01  Anders Carlsson  <andersca@apple.com>
+
         Begin work on loading items from the local storage database
         https://bugs.webkit.org/show_bug.cgi?id=115489
 
