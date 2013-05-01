@@ -39,6 +39,7 @@ namespace WTF {
     class ArrayBufferView;
     class AtomicString;
     class AtomicStringImpl;
+    class BinarySemaphore;
     class CString;
     class Decoder;
     class Encoder;
@@ -72,6 +73,7 @@ using WTF::ArrayBuffer;
 using WTF::ArrayBufferView;
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
+using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::Encoder;
 using WTF::Decoder;

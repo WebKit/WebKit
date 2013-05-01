@@ -35,11 +35,11 @@ class BinarySemaphore {
     WTF_MAKE_NONCOPYABLE(BinarySemaphore);
 
 public:
-    BinarySemaphore();
-    ~BinarySemaphore();
+    WTF_EXPORT_PRIVATE BinarySemaphore();
+    WTF_EXPORT_PRIVATE ~BinarySemaphore();
 
-    void signal();
-    bool wait(double absoluteTime);
+    WTF_EXPORT_PRIVATE void signal();
+    WTF_EXPORT_PRIVATE bool wait(double absoluteTime);
 
 #if PLATFORM(WIN)
     HANDLE event() const { return m_event; }

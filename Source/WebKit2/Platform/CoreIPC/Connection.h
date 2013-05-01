@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
@@ -60,8 +61,6 @@ class RunLoop;
 
 namespace CoreIPC {
 
-class BinarySemaphore;
-    
 enum MessageSendFlags {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.

@@ -1,3 +1,18 @@
+2013-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Remove the WebKit2 BinarySemaphore class
+        https://bugs.webkit.org/show_bug.cgi?id=115458
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the WK2 specific BinarySemaphore class and use the one from WTF.
+
+        * Platform/CoreIPC/BinarySemaphore.cpp: Removed.
+        * Platform/CoreIPC/BinarySemaphore.h: Removed.
+        * Platform/CoreIPC/Connection.cpp:
+        * Platform/CoreIPC/Connection.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13757475> WebProcess deny ipc-posix-shm-read-data CFPBS:A2:
