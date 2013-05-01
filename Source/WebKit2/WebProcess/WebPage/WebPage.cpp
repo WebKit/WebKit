@@ -556,8 +556,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     if (pluginPath.isNull()) {
 #if PLATFORM(MAC)
         String path = parameters.url.path();
-        if ((parameters.mimeType == "application/pdf" || parameters.mimeType == "application/postscript")
-            || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))) {
+        if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))) {
 #if ENABLE(PDFKIT_PLUGIN)
             if (shouldUsePDFPlugin())
                 return PDFPlugin::create(frame);
@@ -3769,7 +3768,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
     String pluginPath;
     String newMIMEType;
     uint32_t pluginLoadPolicy;
-    
+
     if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), response.url().string(), response.url().string(), response.url().string()), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy)))
         return false;
 

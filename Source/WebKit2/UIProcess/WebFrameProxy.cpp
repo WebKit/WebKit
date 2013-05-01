@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/Image.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,16 +96,7 @@ bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
     if (!m_page)
         return false;
 
-    if (m_page->canShowMIMEType(mimeType))
-        return true;
-
-#if PLATFORM(MAC)
-    // On Mac, we can show PDFs.
-    if (!mimeType.isEmpty())
-        return WebContext::pdfAndPostScriptMIMETypes().contains(mimeType) && !WebContext::omitPDFSupport();
-#endif
-
-    return false;
+    return m_page->canShowMIMEType(mimeType);
 }
 
 bool WebFrameProxy::isDisplayingStandaloneImageDocument() const
@@ -123,7 +115,7 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
     if (m_MIMEType.isEmpty())
         return false;
 
-    return WebContext::pdfAndPostScriptMIMETypes().contains(m_MIMEType);
+    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(m_MIMEType);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)

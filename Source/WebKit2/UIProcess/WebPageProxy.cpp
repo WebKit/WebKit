@@ -933,6 +933,13 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
     if (!plugin.path.isNull() && m_pageGroup->preferences()->pluginsEnabled())
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#if PLATFORM(MAC)
+    // On Mac, we can show PDFs.
+    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType) && !WebContext::omitPDFSupport())
+        return true;
+#endif // PLATFORM(MAC)
+
     return false;
 }
 

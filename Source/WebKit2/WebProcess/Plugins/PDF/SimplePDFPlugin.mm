@@ -184,6 +184,12 @@ PluginInfo SimplePDFPlugin::pluginInfo()
     pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
     pdfMimeClassInfo.extensions.append("pdf");
     info.mimes.append(pdfMimeClassInfo);
+    
+    MimeClassInfo textPDFMimeClassInfo;
+    textPDFMimeClassInfo.type = "text/pdf";
+    textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
+    textPDFMimeClassInfo.extensions.append("pdf");
+    info.mimes.append(textPDFMimeClassInfo);
 
     MimeClassInfo postScriptMimeClassInfo;
     postScriptMimeClassInfo.type = postScriptMIMEType;

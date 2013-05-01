@@ -1,3 +1,31 @@
+2013-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Move knowledge of PDF/PostScript MIME types into MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=115487
+
+        Reviewed by Darin Adler.
+
+        No new tests, just a refactoring.
+
+        * WebCore.exp.in:
+        Export newly-added isPDFOrPostScriptMIMEType and getPDFAndPostScriptMIMETypes.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        Adopt MIMETypeRegistry::isPDFOrPostScriptMIMEType instead of duplicating
+        the list of MIME types. The previous list did not include PostScript, but
+        it seems reasonable to put plugins ahead of built-in support for it in addition to PDF.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializePDFAndPostScriptMIMETypes): Added.
+        (WebCore::initializeMIMETypeRegistry): Call initializePDFAndPostScriptMIMETypes.
+        (WebCore::MIMETypeRegistry::isPDFOrPostScriptMIMEType):
+        Consult our new HashSet to see if the given MIME type is one of those used for PDF or PS.
+
+        (WebCore::MIMETypeRegistry::getPDFAndPostScriptMIMETypes): Added.
+        * platform/MIMETypeRegistry.h:
+        (MIMETypeRegistry): Add isPDFOrPostScriptMIMEType and getPDFAndPostScriptMIMETypes.
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Implement LocalStorageDatabase::importItems

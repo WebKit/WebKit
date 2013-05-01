@@ -901,18 +901,6 @@ DownloadProxy* WebContext::createDownloadProxy()
     return ensureSharedWebProcess()->createDownloadProxy();
 }
 
-// FIXME: This is not the ideal place for this function.
-HashSet<String, CaseFoldingHash> WebContext::pdfAndPostScriptMIMETypes()
-{
-    HashSet<String, CaseFoldingHash> mimeTypes;
-
-    mimeTypes.add("application/pdf");
-    mimeTypes.add("application/postscript");
-    mimeTypes.add("text/pdf");
-    
-    return mimeTypes;
-}
-
 void WebContext::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);

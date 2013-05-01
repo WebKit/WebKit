@@ -1,3 +1,42 @@
+2013-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Move knowledge of PDF/PostScript MIME types into MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=115487
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        Remove pdfAndPostScriptMIMETypes.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canShowMIMEType): Move PDF bits to WebPageProxy.
+        (WebKit::WebFrameProxy::isDisplayingPDFDocument):
+        Make use of WebCore's newfound knowledge of PDF and PostScript MIME types,
+        so we don't have to duplicate it unnecessarily in WebKit2.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+        Add code which used to be in WebFrameProxy::canShowMIMEType, and adapt it
+        to use WebCore's knowledge of PDF and PostScript MIME types.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (WebKit::SimplePDFPlugin::pluginInfo):
+        We previously supported the "text/pdf" MIME type for PDFViewController,
+        so SimplePDFPlugin and PDFPlugin should support it as well.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Adopt MIMETypeRegistry::isPDFOrPostScriptMIMEType.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        Remove pdfAndPostScriptMIMETypes.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        Adopt getPDFAndPostScriptMIMETypes instead of duplicating the list in WebKit2.
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Implement LocalStorageDatabase::importItems

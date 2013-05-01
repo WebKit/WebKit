@@ -54,6 +54,7 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkingContext.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -104,9 +105,9 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 
     BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
     if (!shouldUsePDFPlugin() && !omitPDFSupport) {
-        // We want to use a PDF view in the UI process for PDF MIME types.
-        HashSet<String, CaseFoldingHash> mimeTypes = pdfAndPostScriptMIMETypes();
-        for (HashSet<String, CaseFoldingHash>::iterator it = mimeTypes.begin(); it != mimeTypes.end(); ++it)
+        // If we don't have PDFPlugin, we will use a PDF view in the UI process for PDF and PostScript MIME types.
+        HashSet<String> mimeTypes = MIMETypeRegistry::getPDFAndPostScriptMIMETypes();
+        for (HashSet<String>::iterator it = mimeTypes.begin(); it != mimeTypes.end(); ++it)
             m_mimeTypesWithCustomRepresentations.add(*it);
     }
 }
@@ -1000,18 +1001,6 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
         drawPDFPage(pdfDocument, page, context, printInfo.pageSetupScaleFactor, CGSizeMake(printInfo.availablePaperWidth, printInfo.availablePaperHeight));
         CGPDFContextEndPage(context);
     }
-}
-
-// FIXME: This is not the ideal place for this function (and now it's duplicated here and in WebContextMac).
-HashSet<String, CaseFoldingHash> WebPage::pdfAndPostScriptMIMETypes()
-{
-    HashSet<String, CaseFoldingHash> mimeTypes;
-    
-    mimeTypes.add("application/pdf");
-    mimeTypes.add("application/postscript");
-    mimeTypes.add("text/pdf");
-    
-    return mimeTypes;
 }
 
 } // namespace WebKit

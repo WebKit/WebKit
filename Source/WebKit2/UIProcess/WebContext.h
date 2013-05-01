@@ -212,8 +212,6 @@ public:
     WebHistoryClient& historyClient() { return m_historyClient; }
     WebContextClient& client() { return m_client; }
 
-    static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
-
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
 #endif

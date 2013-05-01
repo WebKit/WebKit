@@ -633,10 +633,6 @@ public:
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
 #endif
 
-#if PLATFORM(MAC)
-    static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
-#endif
-
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size);
 #if PLATFORM(MAC)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
