@@ -1,3 +1,9 @@
+2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed buildfix after r149449.
+
+        * Target.pri:
+
 2013-05-01  Anders Carlsson  <andersca@apple.com>
 
         Add LocalStorageDatabase class

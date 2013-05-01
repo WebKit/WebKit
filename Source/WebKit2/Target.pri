@@ -229,6 +229,7 @@ HEADERS += \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
     UIProcess/StatisticsRequest.h \
+    UIProcess/Storage/LocalStorageDatabase.h \
     UIProcess/Storage/StorageManager.h \
     UIProcess/TextChecker.h \
     UIProcess/TextCheckerCompletion.h \
@@ -582,6 +583,7 @@ SOURCES += \
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/StatisticsRequest.cpp \
+    UIProcess/Storage/LocalStorageDatabase.cpp \
     UIProcess/Storage/StorageManager.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebApplicationCacheManagerProxy.cpp \
