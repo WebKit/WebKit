@@ -1,3 +1,10 @@
+2013-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r149416.
+
+        * GNUmakefile.list.am: Remove references to non-existant
+        BinarySemaphore module.
+
 2013-04-28  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13574729> Implement file path restrictions in WebKit Objective C API

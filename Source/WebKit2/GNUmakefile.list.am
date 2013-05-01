@@ -260,8 +260,6 @@ webkit2platform_sources += \
 	Source/WebKit2/Platform/CoreIPC/Arguments.h \
 	Source/WebKit2/Platform/CoreIPC/Attachment.cpp \
 	Source/WebKit2/Platform/CoreIPC/Attachment.h \
-	Source/WebKit2/Platform/CoreIPC/BinarySemaphore.cpp \
-	Source/WebKit2/Platform/CoreIPC/BinarySemaphore.h \
 	Source/WebKit2/Platform/CoreIPC/Connection.cpp \
 	Source/WebKit2/Platform/CoreIPC/Connection.h \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
