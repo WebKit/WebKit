@@ -215,6 +215,8 @@ public:
     IntRect rootViewToContents(const IntRect&) const;
     IntRect contentsToRootView(const IntRect&) const;
 
+    IntPoint rootViewToTotalContents(const IntPoint&) const;
+
     // Event coordinates are assumed to be in the coordinate space of a window that contains
     // the entire widget hierarchy. It is up to the platform to decide what the precise definition
     // of containing window is. (For example on Mac it is the containing NSWindow.)

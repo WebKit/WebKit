@@ -122,6 +122,7 @@ public:
         TypeBundleNavigationAction,
         TypeBundleNodeHandle,
         TypeBundlePage,
+        TypeBundlePageBanner,
         TypeBundlePageGroup,
         TypeBundlePageOverlay,
         TypeBundleRangeHandle,

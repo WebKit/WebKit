@@ -29,6 +29,7 @@
 
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
+#include "PageBanner.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKBundleAPICast.h"
@@ -325,24 +326,34 @@ void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBu
     toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), true);
 }
 
-void WKBundlePageSetTopOverhangImage(WKBundlePageRef page, WKImageRef image)
+void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
 #if PLATFORM(MAC)
-    toImpl(page)->setTopOverhangImage(toImpl(image));
+    toImpl(pageRef)->setTopOverhangImage(toImpl(imageRef));
 #else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(image);
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(imageRef);
 #endif
 }
 
-void WKBundlePageSetBottomOverhangImage(WKBundlePageRef page, WKImageRef image)
+void WKBundlePageSetBottomOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
 #if PLATFORM(MAC)
-    toImpl(page)->setBottomOverhangImage(toImpl(image));
+    toImpl(pageRef)->setBottomOverhangImage(toImpl(imageRef));
 #else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(image);
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(imageRef);
 #endif
+}
+
+void WKBundlePageSetHeaderBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef bannerRef)
+{
+    toImpl(pageRef)->setHeaderPageBanner(toImpl(bannerRef));
+}
+
+void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef bannerRef)
+{
+    toImpl(pageRef)->setFooterPageBanner(toImpl(bannerRef));
 }
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)

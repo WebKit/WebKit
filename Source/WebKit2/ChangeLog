@@ -1,3 +1,76 @@
+2013-04-29  Sam Weinig  <sam@webkit.org>
+
+        Add API to allow WebKit2 banners to get mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=115395
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        Add banner type.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        Add conversion.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetTopOverhangImage):
+        (WKBundlePageSetBottomOverhangImage):
+        Fix parameter names to be consistent.
+
+        (WKBundlePageSetHeaderBanner):
+        (WKBundlePageSetFooterBanner):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp: Added.
+        (WKBundlePageBannerGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageBanner.h: Added.
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h: Added.
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm: Added.
+        (PageBannerClientImpl):
+        (PageBannerClientImpl::create):
+        (PageBannerClientImpl::PageBannerClientImpl):
+        (PageBannerClientImpl::pageBannerDestroyed):
+        (PageBannerClientImpl::mouseEvent):
+        (WKBundlePageBannerCreateBannerWithCALayer):
+        (WKBundlePageBannerGetLayer):
+        Add banner API.
+
+        * WebProcess/WebPage/PageBanner.h: Added.
+        * WebProcess/WebPage/PageBanner.cpp: Added.
+        (WebKit::PageBanner::~PageBanner):
+        (WebKit::PageBanner::addToPage):
+        (WebKit::PageBanner::detachFromPage):
+        (WebKit::PageBanner::didChangeDeviceScaleFactor):
+        (WebKit::PageBanner::mouseEvent):
+        Add non-mac implementations.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::setHeaderPageBanner):
+        (WebKit::WebPage::headerPageBanner):
+        (WebKit::WebPage::setFooterPageBanner):
+        (WebKit::WebPage::footerPageBanner):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+        * WebProcess/WebPage/WebPage.h:
+        Add banner setter/getters and give the banners a chance to handle mouse events.
+
+        * WebProcess/WebPage/mac/PageBannerMac.mm: Added.
+        (WebKit::PageBanner::create):
+        (WebKit::PageBanner::PageBanner):
+        (WebKit::PageBanner::addToPage):
+        (WebKit::PageBanner::detachFromPage):
+        (WebKit::PageBanner::didChangeDeviceScaleFactor):
+        (WebKit::PageBanner::mouseEvent):
+        (WebKit::PageBanner::layer):
+        Add Mac implementation.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::updateHeaderAndFooterLayersForDeviceScaleChange):
+        Notify banners when the device scale changes.
+
 2013-04-30  Anders Carlsson  <andersca@apple.com>
 
         Remove the WebKit2 BinarySemaphore class

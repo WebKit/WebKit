@@ -39,6 +39,7 @@
 #include "LayerTreeHost.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
+#include "PageBanner.h"
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
@@ -423,6 +424,11 @@ WebPage::~WebPage()
 
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->webPageDestroyed();
+
+    if (m_headerBanner)
+        m_headerBanner->detachFromPage();
+    if (m_footerBanner)
+        m_footerBanner->detachFromPage();
 
     WebProcess::shared().removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
 
@@ -1403,6 +1409,38 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
     m_drawingArea->didUninstallPageOverlay(pageOverlay);
 }
 
+void WebPage::setHeaderPageBanner(PassRefPtr<PageBanner> pageBanner)
+{
+    if (m_headerBanner) {
+        m_headerBanner->detachFromPage();
+        m_headerBanner = 0;
+    }
+
+    m_headerBanner = pageBanner;
+    m_headerBanner->addToPage(PageBanner::Header, this);
+}
+
+PageBanner* WebPage::headerPageBanner()
+{
+    return m_headerBanner.get();
+}
+
+void WebPage::setFooterPageBanner(PassRefPtr<PageBanner> pageBanner)
+{
+    if (m_footerBanner) {
+        m_footerBanner->detachFromPage();
+        m_footerBanner = 0;
+    }
+
+    m_footerBanner = pageBanner;
+    m_footerBanner->addToPage(PageBanner::Footer, this);
+}
+
+PageBanner* WebPage::footerPageBanner()
+{
+    return m_footerBanner.get();
+}
+
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
     FrameView* frameView = m_mainFrame->coreFrame()->view();
@@ -1593,6 +1631,11 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
                 break;
     }
 
+    if (!handled && m_headerBanner)
+        handled = m_headerBanner->mouseEvent(mouseEvent);
+    if (!handled && m_footerBanner)
+        handled = m_footerBanner->mouseEvent(mouseEvent);
+
     if (!handled && canHandleUserEvents()) {
         CurrentEvent currentEvent(mouseEvent);
 
@@ -1618,6 +1661,10 @@ void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& ha
             if ((handled = (*it)->mouseEvent(mouseEvent)))
                 break;
     }
+    if (!handled && m_headerBanner)
+        handled = m_headerBanner->mouseEvent(mouseEvent);
+    if (!handled && m_footerBanner)
+        handled = m_footerBanner->mouseEvent(mouseEvent);
 
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);

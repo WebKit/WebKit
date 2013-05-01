@@ -131,6 +131,7 @@ namespace WebKit {
 class DrawingArea;
 class InjectedBundleBackForwardList;
 class NotificationPermissionRequestManager;
+class PageBanner;
 class PageOverlay;
 class PluginView;
 class SessionState;
@@ -383,7 +384,13 @@ public:
     void uninstallPageOverlay(PageOverlay*, bool shouldFadeOut = false);
     bool hasPageOverlay() const { return m_pageOverlays.size(); }
     PageOverlayList& pageOverlays() { return m_pageOverlays; }
-    
+
+    void setHeaderPageBanner(PassRefPtr<PageBanner>);
+    PageBanner* headerPageBanner();
+    void setFooterPageBanner(PassRefPtr<PageBanner>);
+    PageBanner* footerPageBanner();
+
+
     WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
@@ -916,7 +923,10 @@ private:
     uint64_t m_nativeWindowHandle;
 #endif
 #endif
-    
+
+    RefPtr<PageBanner> m_headerBanner;
+    RefPtr<PageBanner> m_footerBanner;
+
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
     WebCore::RunLoop::Timer<WebPage> m_sendDidUpdateInWindowStateTimer;
     bool m_mayStartMediaWhenInWindow;

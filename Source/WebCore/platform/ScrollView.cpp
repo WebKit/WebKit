@@ -735,6 +735,12 @@ IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
     return convertToRootView(viewRect);
 }
 
+IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) const
+{
+    IntPoint viewPoint = convertFromRootView(rootViewPoint);
+    return viewPoint + scrollOffset();
+}
+
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 {
     if (delegatesScrolling())
