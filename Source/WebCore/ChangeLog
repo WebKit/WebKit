@@ -1,3 +1,15 @@
+2013-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Add FunctionDispatcher class and make RunLoop derive from it
+        https://bugs.webkit.org/show_bug.cgi?id=115480
+
+        Reviewed by Sam Weinig.
+
+        Change RunLoop to be a subclass of FunctionDispatcher.
+
+        * platform/RunLoop.h:
+        (RunLoop):
+
 2013-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement::updateActiveTextTrackCues can do unnecessary work

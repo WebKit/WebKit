@@ -48,6 +48,7 @@
     <ClCompile Include="..\wtf\DynamicAnnotations.cpp" />
     <ClCompile Include="..\wtf\FastMalloc.cpp" />
     <ClCompile Include="..\wtf\FilePrintStream.cpp" />
+    <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />
     <ClCompile Include="..\wtf\GregorianDateTime.cpp" />
     <ClCompile Include="..\wtf\HashTable.cpp" />
     <ClCompile Include="..\wtf\MainThread.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="..\wtf\Float32Array.h" />
     <ClInclude Include="..\wtf\Float64Array.h" />
     <ClInclude Include="..\wtf\Forward.h" />
+    <ClInclude Include="..\wtf\FunctionDispatcher.h" />
     <ClInclude Include="..\wtf\Functional.h" />
     <ClInclude Include="..\wtf\GetPtr.h" />
     <ClInclude Include="..\wtf\GregorianDateTime.h" />

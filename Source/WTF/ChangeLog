@@ -1,3 +1,21 @@
+2013-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Add FunctionDispatcher class and make RunLoop derive from it
+        https://bugs.webkit.org/show_bug.cgi?id=115480
+
+        Reviewed by Sam Weinig.
+
+        Add FunctionDispatcher files.
+
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/FunctionDispatcher.cpp: Added.
+        (WTF::FunctionDispatcher::FunctionDispatcher):
+        (WTF::FunctionDispatcher::~FunctionDispatcher):
+        * wtf/FunctionDispatcher.h: Added.
+
 2013-05-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Win] Fix build after r149416.

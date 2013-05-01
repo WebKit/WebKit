@@ -58,6 +58,8 @@ wtf_sources += \
     Source/WTF/wtf/Float32Array.h \
     Source/WTF/wtf/Float64Array.h \
     Source/WTF/wtf/Forward.h \
+    Source/WTF/wtf/FunctionDispatcher.cpp \
+    Source/WTF/wtf/FunctionDispatcher.h \
     Source/WTF/wtf/Functional.h \
     Source/WTF/wtf/GetPtr.h \
     Source/WTF/wtf/GregorianDateTime.cpp \

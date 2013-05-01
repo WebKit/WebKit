@@ -30,6 +30,8 @@ set(WTF_HEADERS
     FilePrintStream.h
     FixedArray.h
     Forward.h
+    FunctionDispatcher.h
+    Functional.h
     GetPtr.h
     GregorianDateTime.h
     HashCountedSet.h
@@ -159,6 +161,7 @@ set(WTF_SOURCES
     DynamicAnnotations.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
+    FunctionDispatcher.cpp
     GregorianDateTime.cpp
     HashTable.cpp
     MD5.cpp

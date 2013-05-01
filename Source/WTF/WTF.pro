@@ -68,6 +68,7 @@ HEADERS += \
     Float32Array.h \
     Float64Array.h \
     Forward.h \
+    FunctionDispatcher.h \
     Functional.h \
     GetPtr.h \
     GregorianDateTime.h \
@@ -207,6 +208,7 @@ SOURCES += \
     dtoa/strtod.cc \
     FastMalloc.cpp \
     FilePrintStream.cpp \
+    FunctionDispatcher.cpp \
     GregorianDateTime.cpp \
     gobject/GOwnPtr.cpp \
     gobject/GRefPtr.cpp \

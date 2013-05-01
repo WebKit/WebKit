@@ -30,6 +30,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -45,7 +46,7 @@
 
 namespace WebCore {
 
-class RunLoop : public ThreadSafeRefCounted<RunLoop> {
+class RunLoop : public FunctionDispatcher {
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
@@ -58,7 +59,7 @@ public:
     static RunLoop* main();
     ~RunLoop();
 
-    void dispatch(const Function<void()>&);
+    virtual void dispatch(const Function<void()>&) OVERRIDE;
 
     static void run();
     void stop();

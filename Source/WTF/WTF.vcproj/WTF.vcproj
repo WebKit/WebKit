@@ -819,6 +819,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\FunctionDispatcher.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\FunctionDispatcher.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\Functional.h"
 			>
 		</File>
