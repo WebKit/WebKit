@@ -1,3 +1,10 @@
+2013-05-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed GTK build fix after r149417.
+
+        * GNUmakefile.list.am: Added PageBanner.[cpp|h] to the list of
+        sources.
+
 2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviewed buildfix after r149416 and r149417.
