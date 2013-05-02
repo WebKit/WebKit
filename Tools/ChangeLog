@@ -1,3 +1,18 @@
+2013-05-02  Nico Weber  <thakis@chromium.org>
+
+        Remove a stale script file.
+        https://bugs.webkit.org/show_bug.cgi?id=115521
+
+        Reviewed by Anders Carlsson.
+
+        This script was added in
+        https://bugs.webkit.org/show_bug.cgi?id=17507, but it relies on the
+        Bakefile system that was removed in
+        https://bugs.webkit.org/show_bug.cgi?id=49983 . As a result, this
+        script just asserts when it's run and is useless.
+
+        * Scripts/update-sources-list.py: Removed.
+
 2013-05-01  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] Need abstract base class for commands that analyze commit logs
