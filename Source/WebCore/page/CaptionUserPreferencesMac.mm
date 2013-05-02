@@ -748,15 +748,15 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
         TextTrack* track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->language());
 
+        if (track->containsOnlyForcedSubtitles())
+            continue;
+        
         if (track->isEasyToRead()) {
             if (!language.isEmpty())
                 languagesIncluded.add(language);
             tracksForMenu.append(track);
             continue;
         }
-
-        if (track->containsOnlyForcedSubtitles())
-            continue;
 
         if (!language.isEmpty() && track->isMainProgramContent()) {
             bool isAccessibilityTrack = track->kind() == track->captionsKeyword();
