@@ -36,7 +36,6 @@
 #include "ScrollTypes.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
-#include "SiblingTraversalStrategies.h"
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
@@ -671,7 +670,7 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regi
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
         SelectorChecker::SelectorCheckingContext selectorCheckingContext(s, regionElement, SelectorChecker::VisitedMatchDisabled);
         PseudoId ignoreDynamicPseudo = NOPSEUDO;
-        if (selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches)
+        if (selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo) == SelectorChecker::SelectorMatches)
             return true;
     }
     return false;

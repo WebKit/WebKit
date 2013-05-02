@@ -1,3 +1,36 @@
+2013-05-02  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM removal: Make SelectorChecker non-generic
+        https://bugs.webkit.org/show_bug.cgi?id=115526
+
+        Reviewed by Andreas Kling.
+
+        Without Shadow DOM distribution we don't need SiblingTraversalStrategies anymore.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/SelectorChecker.cpp:
+        (WebCore):
+        (WebCore::isFirstChildElement):
+        (WebCore::isLastChildElement):
+        (WebCore::isFirstOfType):
+        (WebCore::isLastOfType):
+        (WebCore::countElementsBefore):
+        (WebCore::countElementsOfTypeBefore):
+        (WebCore::countElementsAfter):
+        (WebCore::countElementsOfTypeAfter):
+        (WebCore::SelectorChecker::match):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (SelectorChecker):
+        * css/SiblingTraversalStrategies.h:
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+        * html/shadow/ContentSelectorQuery.cpp:
+        (WebCore::ContentSelectorDataList::checkContentSelector):
+
 2013-05-02  Anders Carlsson  <andersca@apple.com>
 
         Simplify WebCoreObjCExtras by using WTF::bind

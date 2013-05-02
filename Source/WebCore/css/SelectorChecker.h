@@ -81,10 +81,8 @@ public:
         BehaviorAtBoundary behaviorAtBoundary;
     };
 
-    template<typename SiblingTraversalStrategy>
-    Match match(const SelectorCheckingContext&, PseudoId&, const SiblingTraversalStrategy&) const;
-    template<typename SiblingTraversalStrategy>
-    bool checkOne(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
+    Match match(const SelectorCheckingContext&, PseudoId&) const;
+    bool checkOne(const SelectorCheckingContext&) const;
 
     bool strictParsing() const { return m_strictParsing; }
 

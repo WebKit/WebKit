@@ -39,7 +39,6 @@
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCheckerFastPath.h"
-#include "SiblingTraversalStrategies.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 
@@ -401,7 +400,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, const Co
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
     context.behaviorAtBoundary = m_behaviorAtBoundary;
-    SelectorChecker::Match match = selectorChecker.match(context, dynamicPseudo, DOMSiblingTraversalStrategy());
+    SelectorChecker::Match match = selectorChecker.match(context, dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_pseudoStyleRequest.pseudoId != NOPSEUDO && m_pseudoStyleRequest.pseudoId != dynamicPseudo)

@@ -31,7 +31,6 @@
 #include "InsertionPoint.h"
 #include "SelectorChecker.h"
 #include "ShadowRoot.h"
-#include "SiblingTraversalStrategies.h"
 
 namespace WebCore {
 
@@ -40,9 +39,8 @@ bool ContentSelectorDataList::checkContentSelector(const CSSSelector* selector, 
     Element* element = toElement(siblings[nth].get());
     SelectorChecker selectorChecker(element->document(), SelectorChecker::CollectingRules);
     SelectorChecker::SelectorCheckingContext context(selector, element, SelectorChecker::VisitedMatchEnabled);
-    ShadowDOMSiblingTraversalStrategy strategy(siblings, nth);
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return selectorChecker.match(context, ignoreDynamicPseudo, strategy) == SelectorChecker::SelectorMatches;
+    return selectorChecker.match(context, ignoreDynamicPseudo) == SelectorChecker::SelectorMatches;
 }
 
 void ContentSelectorDataList::initialize(const CSSSelectorList& selectors)
