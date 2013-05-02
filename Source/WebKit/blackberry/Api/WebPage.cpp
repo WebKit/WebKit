@@ -5231,7 +5231,7 @@ Platform::IntPoint WebPage::adjustDocumentScrollPosition(const Platform::IntPoin
 
 Platform::IntSize WebPage::fixedElementSizeDelta()
 {
-    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
 
     // Traverse the layer tree and find the fixed element rect if there is one.
     IntRect fixedElementRect;

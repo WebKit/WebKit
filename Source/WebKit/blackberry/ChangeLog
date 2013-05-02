@@ -1,3 +1,16 @@
+2013-05-02  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Make scroll position adjustment work with pages with fixed position elements.
+        https://bugs.webkit.org/show_bug.cgi?id=115178
+
+        Reviewed by Rob Buis.
+
+        PR 308796
+        Debug build fix.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::fixedElementSizeDelta):
+
 2013-05-01  Iris Wu  <shuwu@blackberry.com>
 
          [BlackBerry] Upstream smart selection
