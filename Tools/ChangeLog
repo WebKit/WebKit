@@ -1,3 +1,26 @@
+2013-05-01  Glenn Adams  <glenn@skynav.com>
+
+        [webkitpy] Need abstract base class for commands that analyze commit logs
+        https://bugs.webkit.org/show_bug.cgi?id=115391
+
+        Reviewed by Benjamin Poulain.
+
+        Move commit log parsing functions into new abstract base class AbstractCommitLogCommand
+        in preparation for adding two new commands that will reuse this functionality along with
+        suggest-nominations. See https://bugs.webkit.org/show_bug.cgi?id=115387 and
+        https://bugs.webkit.org/show_bug.cgi?id=115388.
+
+        No new tests as this patch does not change existing functionality or behavior.
+
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (AbstractCommitLogCommand): Add abstract base class for commands that analyze commit logs.
+        (AbstractCommitLogCommand.__init__):
+        (AbstractCommitLogCommand._init_options):
+        (AbstractCommitLogCommand._parse_commit_message):
+        (SuggestNominations): Move generic commit log parsing into new base class. Use new base class.
+        (SuggestNominations.__init__): 
+        (SuggestNominations._init_options):
+
 2013-05-01  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Fix check-inspector-strings script and fix localized strings

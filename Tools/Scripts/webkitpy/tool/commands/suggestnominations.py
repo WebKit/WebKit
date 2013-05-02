@@ -46,10 +46,7 @@ class CommitLogMissingReviewer(CommitLogError):
         CommitLogError.__init__(self)
 
 
-class SuggestNominations(Command):
-    name = "suggest-nominations"
-    help_text = "Suggest contributors for committer/reviewer nominations"
-
+class AbstractCommitLogCommand(Command):
     _leading_indent_regexp = re.compile(r"^[ ]{4}", re.MULTILINE)
     _reviewed_by_regexp = re.compile(ChangeLogEntry.reviewed_by_regexp, re.MULTILINE)
     _patch_by_regexp = re.compile(r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$', re.MULTILINE)
@@ -57,23 +54,19 @@ class SuggestNominations(Command):
     _date_regexp = re.compile(r'^Date:   (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) [\+\-]\d{4}$', re.MULTILINE)
     _revision_regexp = re.compile(r'^git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) (?P<gitid>[0-9a-f\-]{36})$', re.MULTILINE)
 
-    def __init__(self):
-        options = [
-            make_option("--committer-minimum", action="store", dest="committer_minimum", type="int", default=10, help="Specify minimum patch count for Committer nominations."),
-            make_option("--reviewer-minimum", action="store", dest="reviewer_minimum", type="int", default=80, help="Specify minimum patch count for Reviewer nominations."),
-            make_option("--max-commit-age", action="store", dest="max_commit_age", type="int", default=9, help="Specify max commit age to consider for nominations (in months)."),
-            make_option("--show-commits", action="store_true", dest="show_commits", default=False, help="Show commit history with nomination suggestions."),
+    def __init__(self, options=None):
+        options = options or []
+        options += [
+            make_option("--max-commit-age", action="store", dest="max_commit_age", type="int", default=9, help="Specify maximum commit age to consider (in months)."),
         ]
-        super(SuggestNominations, self).__init__(options=options)
+        options = sorted(options, cmp=lambda a, b: cmp(a._long_opts, b._long_opts))
+        super(AbstractCommitLogCommand, self).__init__(options=options)
         # FIXME: This should probably be on the tool somewhere.
         self._committer_list = CommitterList()
 
     def _init_options(self, options):
-        self.committer_minimum = options.committer_minimum
-        self.reviewer_minimum = options.reviewer_minimum
-        self.max_commit_age = options.max_commit_age
-        self.show_commits = options.show_commits
         self.verbose = options.verbose
+        self.max_commit_age = options.max_commit_age
 
     # FIXME: This should move to scm.py
     def _recent_commit_messages(self):
@@ -149,6 +142,25 @@ class SuggestNominations(Command):
             'contributor': contributor,
             'reviewers': reviewers,
         }
+
+
+class SuggestNominations(AbstractCommitLogCommand):
+    name = "suggest-nominations"
+    help_text = "Suggest contributors for committer/reviewer nominations"
+
+    def __init__(self):
+        options = [
+            make_option("--committer-minimum", action="store", dest="committer_minimum", type="int", default=10, help="Specify minimum patch count for Committer nominations."),
+            make_option("--reviewer-minimum", action="store", dest="reviewer_minimum", type="int", default=80, help="Specify minimum patch count for Reviewer nominations."),
+            make_option("--show-commits", action="store_true", dest="show_commits", default=False, help="Show commit history with nomination suggestions."),
+        ]
+        super(SuggestNominations, self).__init__(options=options)
+
+    def _init_options(self, options):
+        super(SuggestNominations, self)._init_options(options)
+        self.committer_minimum = options.committer_minimum
+        self.reviewer_minimum = options.reviewer_minimum
+        self.show_commits = options.show_commits
 
     def _count_commit(self, commit, analysis):
         author_name = commit['author_name']
