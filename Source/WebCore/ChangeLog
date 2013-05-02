@@ -1,3 +1,22 @@
+2013-05-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        border-radius clipping a canvas does not always clip
+        https://bugs.webkit.org/show_bug.cgi?id=113343
+
+        Reviewed by Simon Fraser.
+
+        clipToRect method clip context to clipRect, and then clip to rounded
+        rect if clipRect has a radius. But currently, clipToRect exit early if
+        clipToRect is equal to paintDirtyRect.
+
+        This patch allows clipping to rounded corner ever if clipToRect is
+        equal to paintDirtyRect.
+
+        Test: fast/overflow/border-radius-clipping-2.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+
 2013-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Caption menu does not include in-band captions

@@ -1,3 +1,17 @@
+2013-05-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        border-radius clipping a canvas does not always clip
+        https://bugs.webkit.org/show_bug.cgi?id=113343
+
+        Create a test that draws a canvas into a clipped overflown div with
+        radius corner. Then redraw that same thing a moment later. The canvas
+        should stay correctly clipped the second time.
+
+        Reviewed by Simon Fraser.
+
+        * fast/overflow/border-radius-clipping-2-expected.html: Added.
+        * fast/overflow/border-radius-clipping-2.html: Added.
+
 2013-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Caption menu does not include in-band captions
