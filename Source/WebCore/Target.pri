@@ -761,7 +761,6 @@ SOURCES += \
     html/parser/XSSAuditorDelegate.cpp \
     html/shadow/ClearButtonElement.cpp \
     html/shadow/ContentDistributor.cpp \
-    html/shadow/ContentSelectorQuery.cpp \
     html/shadow/DateTimeEditElement.cpp \
     html/shadow/DateTimeFieldElement.cpp \
     html/shadow/DateTimeFieldElements.cpp \
@@ -1950,7 +1949,6 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/parser/XSSAuditorDelegate.h \
     html/shadow/ContentDistributor.h \
-    html/shadow/ContentSelectorQuery.h \
     html/shadow/HTMLContentElement.h \
     html/shadow/HTMLShadowElement.h \
     html/shadow/MediaControlElementTypes.h \

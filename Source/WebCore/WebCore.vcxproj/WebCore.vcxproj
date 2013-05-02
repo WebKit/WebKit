@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -9041,7 +9041,6 @@
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp" />
     <ClCompile Include="..\html\shadow\ClearButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp" />
-    <ClCompile Include="..\html\shadow\ContentSelectorQuery.cpp" />
     <ClCompile Include="..\html\shadow\DateTimeEditElement.cpp" />
     <ClCompile Include="..\html\shadow\DateTimeFieldElement.cpp" />
     <ClCompile Include="..\html\shadow\DateTimeFieldElements.cpp" />
@@ -12872,7 +12871,6 @@
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
     <ClInclude Include="..\html\shadow\ClearButtonElement.h" />
     <ClInclude Include="..\html\shadow\ContentDistributor.h" />
-    <ClInclude Include="..\html\shadow\ContentSelectorQuery.h" />
     <ClInclude Include="..\html\shadow\DateTimeEditElement.h" />
     <ClInclude Include="..\html\shadow\DateTimeFieldElement.h" />
     <ClInclude Include="..\html\shadow\DateTimeFieldElements.h" />

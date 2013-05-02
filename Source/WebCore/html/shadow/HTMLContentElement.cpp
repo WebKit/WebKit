@@ -29,7 +29,6 @@
 
 #include "CSSParser.h"
 #include "ContentDistributor.h"
-#include "ContentSelectorQuery.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "RuntimeEnabledFeatures.h"

@@ -1565,7 +1565,6 @@ set(WebCore_SOURCES
 
     html/shadow/ClearButtonElement.cpp
     html/shadow/ContentDistributor.cpp
-    html/shadow/ContentSelectorQuery.cpp
     html/shadow/DateTimeEditElement.cpp
     html/shadow/DateTimeFieldElement.cpp
     html/shadow/DateTimeFieldElements.cpp

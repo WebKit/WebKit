@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ContentDistributor.h"
 
-#include "ContentSelectorQuery.h"
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLShadowElement.h"
@@ -302,13 +301,12 @@ bool ContentDistributor::invalidate(Element* host)
 void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, const ContentDistribution& pool, Vector<bool>& distributed)
 {
     ContentDistribution distribution;
-    ContentSelectorQuery query(insertionPoint);
 
     for (size_t i = 0; i < pool.size(); ++i) {
         if (distributed[i])
             continue;
 
-        if (!query.matches(pool.nodes(), i))
+        if (insertionPoint->matchTypeFor(pool.nodes().at(i).get()) != InsertionPoint::AlwaysMatches)
             continue;
 
         Node* child = pool.at(i).get();

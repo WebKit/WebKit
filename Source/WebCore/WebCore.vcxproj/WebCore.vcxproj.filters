@@ -4329,9 +4329,6 @@
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\shadow\ContentSelectorQuery.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\shadow\DateTimeEditElement.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
@@ -11275,9 +11272,6 @@
       <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\ContentDistributor.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\ContentSelectorQuery.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\DateTimeEditElement.h">

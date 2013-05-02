@@ -65486,14 +65486,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\ContentSelectorQuery.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\ContentSelectorQuery.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\DateTimeEditElement.cpp"
 					>
 				</File>
