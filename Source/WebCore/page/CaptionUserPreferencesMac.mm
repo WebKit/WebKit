@@ -619,7 +619,8 @@ String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
 int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
     CaptionDisplayMode displayMode = captionDisplayMode();
-    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions()))
+    bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
+    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions() && !legacyOverride))
         return 0;
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->kind() != TextTrack::forcedKeyword())
         return 0;
@@ -627,8 +628,7 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
         return 0;
 
     bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
-    if ((trackHasOnlyForcedSubtitles && displayMode != ForcedOnly)
-        || (!trackHasOnlyForcedSubtitles && displayMode == ForcedOnly))
+    if (!legacyOverride && ((trackHasOnlyForcedSubtitles && displayMode != ForcedOnly) || (!trackHasOnlyForcedSubtitles && displayMode == ForcedOnly)))
         return 0;
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
@@ -743,6 +743,7 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
     Vector<RefPtr<TextTrack> > tracksForMenu;
     HashSet<String> languagesIncluded;
     bool prefersAccessibilityTracks = userPrefersCaptions();
+    bool filterTrackList = shouldFilterTrackMenu();
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
@@ -762,18 +763,18 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
             bool isAccessibilityTrack = track->kind() == track->captionsKeyword();
             if (prefersAccessibilityTracks) {
                 // In the first pass, include only caption tracks if the user prefers accessibility tracks.
-                if (!isAccessibilityTrack) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping %s because it is NOT an accessibility track", language.utf8().data());
+                if (!isAccessibilityTrack && filterTrackList) {
+                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is NOT an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
             } else {
                 // In the first pass, only include the first non-CC or SDH track with each language if the user prefers translation tracks.
-                if (isAccessibilityTrack) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping %s because it is an accessibility track", language.utf8().data());
+                if (isAccessibilityTrack && filterTrackList) {
+                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
-                if (languagesIncluded.contains(language)) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping %s because it is not the first with this language", language.utf8().data());
+                if (languagesIncluded.contains(language)  && filterTrackList) {
+                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is not the first with this language", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
             }
@@ -799,6 +800,7 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
         if (!languagesIncluded.contains(language) && track->isMainProgramContent()) {
             languagesIncluded.add(language);
             tracksForMenu.append(track);
+            LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - adding '%s' track with language '%s' because it is the only track with this language", track->kind().string().utf8().data(), language.utf8().data());
         }
     }
 

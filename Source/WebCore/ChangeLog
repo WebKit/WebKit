@@ -1,5 +1,66 @@
 2013-05-02  Eric Carlson  <eric.carlson@apple.com>
 
+        Caption menu does not include in-band captions
+        https://bugs.webkit.org/show_bug.cgi?id=111934
+
+        Reviewed by Dean Jackson.
+
+        No new tests, upated existing tests for these changes.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_legacyWebKitClosedCaptionsVisible.
+        (WebCore::HTMLMediaElement::loadInternal): Clear the LoadMediaResource from m_pendingActionFlags
+            in case there is a pending async load.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Always log the track score.
+        (WebCore::HTMLMediaElement::configureTextTracks): Call configureTextTrackDisplay so 
+            m_legacyWebKitClosedCaptionsVisible is always updated immediately.
+        (WebCore::HTMLMediaElement::setWebkitClosedCaptionsVisible): Use m_legacyWebKitClosedCaptionsVisible.
+        (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): Ditto.
+        * html/HTMLMediaElement.h:
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::CaptionUserPreferences): Initialize m_displayMode to ForcedOnly
+            because it is no longer used for testing only.
+        (WebCore::CaptionUserPreferences::notify): Post notifications when not in testing-only mode.
+
+        * page/CaptionUserPreferencesMac.h:
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::CaptionUserPreferencesMac::textTrackSelectionScore): Calculate a track score when
+            webkitClosedCaptionsVisible has been set.
+        (WebCore::CaptionUserPreferencesMac::sortedTrackListForMenu): Don't filter track list when we
+            don't have the media accessibility framework. Make logging more informative.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h:
+        (WebCore::InbandTextTrackPrivateAVFObjC::create): Take a AVFInbandTrackParent instead of a
+            MediaPlayerPrivateAVFoundationObjC.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC): Ditto.
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h: Added.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm: Added.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): We only have legible output when
+            HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT is defined.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Create a legacy CC track if
+            there are no media selection options and there is a CC AVAssetTrack.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyCCTracks): New, process CC tracks.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processNewAndRemovedTextTracks): New, refactored
+            common setup/cleanup code from processMediaSelectionOptions.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): Renamed from 
+            processTextTracks. Move common setup/cleanup code to processNewAndRemovedTextTracks.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Deal with legacy CC tracks.
+
+2013-05-02  Eric Carlson  <eric.carlson@apple.com>
+
         [Mac] caption track menu includes "easy to read" in-band tracks twice
         https://bugs.webkit.org/show_bug.cgi?id=115529
 

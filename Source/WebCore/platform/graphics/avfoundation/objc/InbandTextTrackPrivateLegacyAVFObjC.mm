@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,23 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 
-#import "InbandTextTrackPrivateAVFObjC.h"
+#import "InbandTextTrackPrivateLegacyAVFObjC.h"
 
-#import "BlockExceptions.h"
-#import "FloatConversion.h"
-#import "InbandTextTrackPrivate.h"
 #import "InbandTextTrackPrivateAVF.h"
 #import "Logging.h"
+#import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 #import <wtf/UnusedParam.h>
 
-
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-
-#define AVPlayer getAVPlayerClass()
 #define AVPlayerItem getAVPlayerItemClass()
 
-SOFT_LINK_CLASS(AVFoundation, AVPlayer)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerItemLegibleOutput)
-#define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
-#define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
 #define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
 #define AVMediaCharacteristicIsMainProgramContent getAVMediaCharacteristicIsMainProgramContent()
@@ -68,7 +59,6 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSStr
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicEasyToRead, NSString *)
 
 #define AVMetadataItem getAVMetadataItemClass()
-#define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
 #define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
 #define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
@@ -81,37 +71,38 @@ using namespace std;
 
 namespace WebCore {
 
-InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent* player, AVMediaSelectionOption *selection)
+InbandTextTrackPrivateLegacyAVFObjC::InbandTextTrackPrivateLegacyAVFObjC(MediaPlayerPrivateAVFoundationObjC* player, AVPlayerItemTrack* track)
     : InbandTextTrackPrivateAVF(player)
-    , m_mediaSelectionOption(selection)
+    , m_playerItemTrack(track)
 {
 }
 
-void InbandTextTrackPrivateAVFObjC::disconnect()
+void InbandTextTrackPrivateLegacyAVFObjC::disconnect()
 {
-    m_mediaSelectionOption = 0;
+    m_playerItemTrack = 0;
     InbandTextTrackPrivateAVF::disconnect();
 }
 
-InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
+InbandTextTrackPrivate::Kind InbandTextTrackPrivateLegacyAVFObjC::kind() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return InbandTextTrackPrivate::None;
 
-    NSString *mediaType = [m_mediaSelectionOption mediaType];
+    AVAssetTrack *assetTrack = [m_playerItemTrack assetTrack];
+    NSString *mediaType = [assetTrack mediaType];
     
     if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
         return InbandTextTrackPrivate::Captions;
     if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
 
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
             return InbandTextTrackPrivate::Forced;
 
         // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
         // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
             return InbandTextTrackPrivate::Captions;
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
             return InbandTextTrackPrivate::Captions;
         
         return InbandTextTrackPrivate::Subtitles;
@@ -120,46 +111,46 @@ InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
     return InbandTextTrackPrivate::Captions;
 }
 
-bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
+bool InbandTextTrackPrivateLegacyAVFObjC::isClosedCaptions() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return false;
     
-    return [[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeClosedCaption];
+    return [[[m_playerItemTrack assetTrack] mediaType] isEqualToString:AVMediaTypeClosedCaption];
 }
 
-bool InbandTextTrackPrivateAVFObjC::containsOnlyForcedSubtitles() const
+bool InbandTextTrackPrivateLegacyAVFObjC::containsOnlyForcedSubtitles() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return false;
     
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles];
+    return [[m_playerItemTrack assetTrack] hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles];
 }
 
-bool InbandTextTrackPrivateAVFObjC::isMainProgramContent() const
+bool InbandTextTrackPrivateLegacyAVFObjC::isMainProgramContent() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return false;
     
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent];
+    return [[m_playerItemTrack assetTrack] hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent];
 }
 
-bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
+bool InbandTextTrackPrivateLegacyAVFObjC::isEasyToRead() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return false;
 
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicEasyToRead];
+    return [[m_playerItemTrack assetTrack] hasMediaCharacteristic:AVMediaCharacteristicEasyToRead];
 }
 
-AtomicString InbandTextTrackPrivateAVFObjC::label() const
+AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return emptyAtom;
 
     NSString *title = 0;
 
-    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[m_mediaSelectionOption.get() commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[[m_playerItemTrack assetTrack] commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
         NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
@@ -173,17 +164,14 @@ AtomicString InbandTextTrackPrivateAVFObjC::label() const
     return title ? AtomicString(title) : emptyAtom;
 }
 
-AtomicString InbandTextTrackPrivateAVFObjC::language() const
+AtomicString InbandTextTrackPrivateLegacyAVFObjC::language() const
 {
-    if (!m_mediaSelectionOption)
+    if (!m_playerItemTrack)
         return emptyAtom;
 
-    return [[m_mediaSelectionOption.get() locale] localeIdentifier];
-}
-
-bool InbandTextTrackPrivateAVFObjC::isDefault() const
-{
-    return false;
+    NSString *languageCode = [[m_playerItemTrack assetTrack] languageCode];
+    RetainPtr<NSLocale> locale(AdoptNS, [[NSLocale alloc] initWithLocaleIdentifier:languageCode]);
+    return [locale localeIdentifier];
 }
 
 } // namespace WebCore

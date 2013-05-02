@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
+OBJC_CLASS AVPlayerItemTrack;
 OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVURLAsset;
@@ -168,10 +169,16 @@ private:
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
-    virtual InbandTextTrackPrivateAVF* currentTrack() OVERRIDE;
-    void processTextTracks();
+    virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE { return m_currentTrack; }
+    void processMediaSelectionOptions();
+    void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >&);
     void clearTextTracks();
     AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
+
+#if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+    void processLegacyClosedCaptionsTracks();
+#endif
+
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -201,9 +208,12 @@ private:
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_sessionIDToRequestMap;
 #endif
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
-    InbandTextTrackPrivateAVFObjC* m_currentTrack;
+#endif
+    
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    InbandTextTrackPrivateAVF* m_currentTrack;
 #endif
 };
 

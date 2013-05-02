@@ -1,3 +1,13 @@
+2013-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Caption menu does not include in-band captions
+        https://bugs.webkit.org/show_bug.cgi?id=111934
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt:
+
 2013-05-02  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.

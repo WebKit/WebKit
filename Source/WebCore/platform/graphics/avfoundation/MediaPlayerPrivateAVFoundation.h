@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ public:
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     virtual void configureInbandTracks();
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) { }
-    virtual InbandTextTrackPrivateAVF* currentTrack() { return 0; }
+    virtual InbandTextTrackPrivateAVF* currentTrack() const = 0;
 #endif
 
     class Notification {

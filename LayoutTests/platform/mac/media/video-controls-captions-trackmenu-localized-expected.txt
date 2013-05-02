@@ -14,12 +14,12 @@ Second item in captions menu should be labelled 'Automatic (English)'
 EXPECTED (item.textContent == 'Automatic (English)') OK
 
 Third item in captions menu should be labelled 'English CC'
-EXPECTED (item.textContent == 'English CC'), OBSERVED 'Laugh Track (English-United States)' FAIL
+EXPECTED (item.textContent == 'English CC') OK
 
 Fourth item in captions menu should be labelled 'Laugh Track (English-United States)'
-EXPECTED (item.textContent == 'Laugh Track (English-United States)'), OBSERVED 'Unknown SDH' FAIL
+EXPECTED (item.textContent == 'Laugh Track (English-United States)') OK
 
 Fifth item in captions menu should be labelled 'Unknown SDH'
-TypeError: 'undefined' is not an object (evaluating 'item.textContent')
+EXPECTED (item.textContent == 'Unknown SDH') OK
 END OF TEST
 

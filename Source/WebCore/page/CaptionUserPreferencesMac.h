@@ -55,6 +55,10 @@ public:
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     virtual void captionPreferencesChanged() OVERRIDE;
+
+    bool shouldFilterTrackMenu() const { return true; }
+#else
+    bool shouldFilterTrackMenu() const { return false; }
 #endif
 
     virtual String captionsStyleSheetOverride() const OVERRIDE;

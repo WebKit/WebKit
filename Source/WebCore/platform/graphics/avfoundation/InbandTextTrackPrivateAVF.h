@@ -62,6 +62,8 @@ public:
     void beginSeeking();
     void endSeeking() { m_seeking = false; }
     bool seeking() const { return m_seeking; }
+    
+    virtual bool isLegacyClosedCaptionsTrack() const = 0;
 
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*);

@@ -140,6 +140,16 @@ using namespace std;
 
 namespace WebCore {
 
+static void setFlags(unsigned& value, unsigned flags)
+{
+    value |= flags;
+}
+
+static void clearFlags(unsigned& value, unsigned flags)
+{
+    value &= ~flags;
+}
+    
 #if !LOG_DISABLED
 static String urlForLoggingMedia(const KURL& url)
 {
@@ -284,6 +294,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_sendProgressEvents(true)
     , m_isFullscreen(false)
     , m_closedCaptionsVisible(false)
+    , m_legacyWebKitClosedCaptionsVisible(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
@@ -625,17 +636,17 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
 #endif
         
         prepareForLoad();
-        m_pendingActionFlags |= LoadMediaResource;
+        setFlags(m_pendingActionFlags, LoadMediaResource);
     }
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (actionType & ConfigureTextTracks))
-        m_pendingActionFlags |= ConfigureTextTracks;
+        setFlags(m_pendingActionFlags, ConfigureTextTracks);
 #endif
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     if (actionType & TextTrackChangesNotification)
-        m_pendingActionFlags |= TextTrackChangesNotification;
+        setFlags(m_pendingActionFlags, TextTrackChangesNotification);
 #endif
 
     m_loadTimer.startOneShot(0);
@@ -644,7 +655,7 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
 void HTMLMediaElement::scheduleNextSourceChild()
 {
     // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
-    m_pendingActionFlags |= LoadMediaResource;
+    setFlags(m_pendingActionFlags, LoadMediaResource);
     m_loadTimer.startOneShot(0);
 }
 
@@ -841,7 +852,9 @@ void HTMLMediaElement::loadInternal()
         m_isWaitingUntilMediaCanStart = true;
         return;
     }
-    
+
+    clearFlags(m_pendingActionFlags, LoadMediaResource);
+
     // Once the page has allowed an element to load media, it is free to load at will. This allows a 
     // playlist that starts in a foreground tab to continue automatically if the tab is subsequently 
     // put in the the background.
@@ -3194,9 +3207,9 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             currentlyEnabledTracks.append(textTrack);
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
-        if (trackScore) {
+        LOG(Media, "HTMLMediaElement::configureTextTrackGroup -  '%s' track with language '%s' has score %i", String(textTrack->kind()).utf8().data(), String(textTrack->language()).utf8().data(), trackScore);
 
-            LOG(Media, "HTMLMediaElement::configureTextTrackGroup -  '%s' track with language '%s' has score %i", String(textTrack->kind()).utf8().data(), String(textTrack->language()).utf8().data(), trackScore);
+        if (trackScore) {
 
             // * If the text track kind is { [subtitles or captions] [descriptions] } and the user has indicated an interest in having a
             // track with this text track kind, text track language, and text track label enabled, and there is no
@@ -3359,6 +3372,7 @@ void HTMLMediaElement::configureTextTracks()
     if (otherTracks.tracks.size())
         configureTextTrackGroup(otherTracks);
 
+    configureTextTrackDisplay();
     if (hasMediaControls())
         mediaControls()->closedCaptionTracksChanged();
 }
@@ -4084,7 +4098,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     stopPeriodicTimers();
     m_loadTimer.stop();
 
-    m_pendingActionFlags &= ~flags;
+    clearFlags(m_pendingActionFlags, flags);
     m_loadState = WaitingForSource;
 
 #if ENABLE(VIDEO_TRACK)
@@ -4450,12 +4464,14 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
 void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
 {
+    m_legacyWebKitClosedCaptionsVisible = visible;
     setClosedCaptionsVisible(visible);
+    m_legacyWebKitClosedCaptionsVisible = m_closedCaptionsVisible;
 }
 
 bool HTMLMediaElement::webkitClosedCaptionsVisible() const
 {
-    return closedCaptionsVisible();
+    return m_legacyWebKitClosedCaptionsVisible;
 }
 
 
@@ -4684,7 +4700,7 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     }
 
     m_processingPreferenceChange = true;
-    m_pendingActionFlags &= ~ConfigureTextTracks;
+    clearFlags(m_pendingActionFlags, ConfigureTextTracks);
     if (mode == Immediately)
         configureTextTracks();
     else
