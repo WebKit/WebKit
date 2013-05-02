@@ -1,3 +1,15 @@
+2013-05-02  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13740375> Non-ASCII downloaded file names are garbled when using NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115520
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        Send the encoding fallback array over IPC, so that it's present when NetworkProcess does its loading.
+
 2013-05-01  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r149422): -[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]

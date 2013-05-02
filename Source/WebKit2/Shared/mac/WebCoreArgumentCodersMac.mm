@@ -58,6 +58,9 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
 
     RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), CoreIPC::tokenNullTypeRef()));
     CoreIPC::encode(encoder, dictionary.get());
+
+    // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
+    encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
@@ -80,6 +83,17 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
         return false;
 
     resourceRequest = ResourceRequest(nsURLRequest);
+    
+    Vector<String> responseContentDispositionEncodingFallbackArray;
+    if (!decoder.decode(responseContentDispositionEncodingFallbackArray))
+        return false;
+
+    resourceRequest.setResponseContentDispositionEncodingFallbackArray(
+        responseContentDispositionEncodingFallbackArray.size() > 0 ? responseContentDispositionEncodingFallbackArray[0] : String(),
+        responseContentDispositionEncodingFallbackArray.size() > 1 ? responseContentDispositionEncodingFallbackArray[1] : String(),
+        responseContentDispositionEncodingFallbackArray.size() > 2 ? responseContentDispositionEncodingFallbackArray[2] : String()
+    );
+
     return true;
 }
 
