@@ -1512,6 +1512,12 @@ fast/css/square-button-appearance.html
 # https://bugs.webkit.org/show_bug.cgi?id=115053
 fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html
 fast/exclusions/shape-inside/shape-inside-percentage.html
+fast/exclusions/shape-inside/shape-inside-polygon-layout.html
+
+# REGRESSION(r149457): some fast/exclusions tests are failing
+webkit.org/b/115511 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Skip ]
+webkit.org/b/115511 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
+webkit.org/b/115511 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Skip ]
 
 # --- new failing tests, bug report needed
 css3/images/cross-fade-blending.html
@@ -2323,6 +2329,9 @@ svg/transforms/transformed-text-fill-gradient.html
 fast/regions/counters/extract-list-items-013.html
 fast/regions/floats-basic-in-variable-width-regions.html
 fast/regions/region-style-rule-position.html
+fast/regions/webkit-flow-inlines-inside-regions-bounds.html
+fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html
+
 fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html
 webkit.org/b/110762 compositing/overlap-blending/children-opacity-no-overlap.html [ Skip ]
 webkit.org/b/110762 compositing/overlap-blending/reflection-opacity-huge.html [ Skip ]
@@ -2330,6 +2339,7 @@ webkit.org/b/110447 fast/regions/shape-inside/shape-inside-on-regions.html [ Ski
 css3/flexbox/auto-margins.html
 fast/regions/overflow-in-uniform-regions.html
 webkit.org/b/114807 fast/gradients/css3-color-stop-invalid.html [ Skip ]
+webkit.org/b/115512 compositing/layer-creation/deep-tree.html [ Skip ]
 
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080

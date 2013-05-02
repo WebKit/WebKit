@@ -1,3 +1,10 @@
+2013-05-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r149457 and r149388.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+
 2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.
