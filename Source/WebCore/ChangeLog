@@ -1,3 +1,19 @@
+2013-05-01  Enrica Casucci  <enrica@apple.com>
+
+        text-combine: horizontal does not work properly for some fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=115503.
+
+        Reviewed by Dave Hyatt.
+
+        For some fonts that don't have width variants, we fail to combine glyphs
+        because we believe they don't fit. That decision is made comparing the run width
+        with the font computed size multiplied by a margin factor.
+        I've increased the margin from 10% to 15%.
+         
+        Test: fast/text/text-combine-different-fonts.html
+
+        * rendering/RenderCombineText.cpp:
+
 2013-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Null check plugInClient earlier in snapshotting path

@@ -1,3 +1,14 @@
+2013-05-01  Enrica Casucci  <enrica@apple.com>
+
+        text-combine: horizontal does not work properly for some fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=115503.
+
+        Reviewed by Dave Hyatt.
+
+        * fast/text/text-combine-different-fonts.html: Added.
+        * platform/mac/fast/text/text-combine-different-fonts-expected.png: Added.
+        * platform/mac/fast/text/text-combine-different-fonts-expected.txt: Added.
+
 2013-05-01  Stephanie Lewis  <slewis@apple.com>
 
         Update Lion results after http://trac.webkit.org/projects/webkit/changeset/149450
