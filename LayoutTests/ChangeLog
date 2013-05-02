@@ -1,5 +1,29 @@
 2013-05-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt] Unreviewed. Some more gardening after r149292.
+        https://bugs.webkit.org/show_bug.cgi?id=115372
+
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-and-transform-expected.png:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-and-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-under-transform-expected.png:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/no-compositing-for-sticky-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/qt-5.0-wk2/css3/filters/filtered-compositing-descendant-expected.txt: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-right-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/selectlist-minsize-expected.txt:
+        * platform/qt-5.0-wk2/svg/custom/glyph-selection-bidi-mirror-expected.txt:
+        * platform/qt-5.0-wk2/svg/custom/use-instanceRoot-event-listeners-expected.png:
+
+2013-05-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening after r149457 and r149388.
 
         * platform/qt/TestExpectations:
