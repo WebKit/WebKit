@@ -1,3 +1,9 @@
+2013-05-02  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-05-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed. Some more gardening after r149292.
