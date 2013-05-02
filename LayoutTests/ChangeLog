@@ -1,3 +1,14 @@
+2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt: Added.
+        * platform/efl/svg/text/text-midpoint-split-bug-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+
 2013-05-01  Stephanie Lewis  <slewis@apple.com>
 
         Update Lion results after http://trac.webkit.org/projects/webkit/changeset/149474
