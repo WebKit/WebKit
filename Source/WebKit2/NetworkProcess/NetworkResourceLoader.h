@@ -61,6 +61,7 @@ public:
     uint64_t destinationID() const;
 
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
+    void didConvertHandleToDownload();
 
     virtual void start() OVERRIDE;
     virtual void abort() OVERRIDE;
@@ -125,6 +126,8 @@ private:
     WebCore::ResourceRequest m_suggestedRequestForWillSendRequest;
 
     uint64_t m_bytesReceived;
+
+    bool m_handleConvertedToDownload;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer*);

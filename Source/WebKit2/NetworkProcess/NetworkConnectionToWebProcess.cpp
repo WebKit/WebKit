@@ -172,6 +172,8 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
 
     // Unblock the URL connection operation queue.
     loader->handle()->continueDidReceiveResponse();
+    
+    loader->didConvertHandleToDownload();
 }
 
 void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)

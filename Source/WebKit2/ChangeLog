@@ -1,3 +1,20 @@
+2013-05-02  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (149389) Main resources converted to downloads are immediately cancelled.
+        <rdar://problem/13795795> and https://bugs.webkit.org/show_bug.cgi?id=115530
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload): Call didConvertHandleToDownload
+          on the NetworkResourceLoader.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::didConvertHandleToDownload): Set m_handleConvertedToDownload to true.
+        (WebKit::NetworkResourceLoader::abort): Only cancel the handle if m_handleConvertedToDownload is false.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2013-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13740375> Non-ASCII downloaded file names are garbled when using NetworkProcess

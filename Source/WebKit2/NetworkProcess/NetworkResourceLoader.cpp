@@ -54,6 +54,7 @@ namespace WebKit {
 NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
     : SchedulableLoader(loadParameters, connection)
     , m_bytesReceived(0)
+    , m_handleConvertedToDownload(false)
 {
     ASSERT(isMainThread());
 }
@@ -116,11 +117,17 @@ template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& 
     return result;
 }
 
+void NetworkResourceLoader::didConvertHandleToDownload()
+{
+    ASSERT(m_handle);
+    m_handleConvertedToDownload = true;
+}
+
 void NetworkResourceLoader::abort()
 {
     ASSERT(isMainThread());
 
-    if (m_handle)
+    if (m_handle && !m_handleConvertedToDownload)
         m_handle->cancel();
 
     cleanup();
