@@ -1,5 +1,20 @@
 2013-05-02  Antti Koivisto  <antti@apple.com>
 
+        Remove SiblingTraversalStrategies.h
+        https://bugs.webkit.org/show_bug.cgi?id=115532
+
+        Reviewed by Andreas Kling.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/SiblingTraversalStrategies.h: Removed.
+
+2013-05-02  Antti Koivisto  <antti@apple.com>
+
         Shadow DOM removal: Make SelectorChecker non-generic
         https://bugs.webkit.org/show_bug.cgi?id=115526
 

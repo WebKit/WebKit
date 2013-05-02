@@ -9132,9 +9132,6 @@
     <ClInclude Include="..\css\ShadowValue.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\SiblingTraversalStrategies.h">
-      <Filter>css</Filter>
-    </ClInclude>
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h">
       <Filter>css</Filter>
     </ClInclude>

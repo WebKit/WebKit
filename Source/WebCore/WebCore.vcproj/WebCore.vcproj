@@ -38703,10 +38703,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\SiblingTraversalStrategies.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\StyleInvalidationAnalysis.cpp"
 				>
 			</File>

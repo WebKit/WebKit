@@ -2755,7 +2755,6 @@ webcore_sources += \
 	Source/WebCore/css/SelectorFilter.h \
 	Source/WebCore/css/ShadowValue.cpp \
 	Source/WebCore/css/ShadowValue.h \
-	Source/WebCore/css/SiblingTraversalStrategies.h \
 	Source/WebCore/css/StyleInvalidationAnalysis.cpp \
 	Source/WebCore/css/StyleInvalidationAnalysis.h \
 	Source/WebCore/css/StyleMedia.cpp \
