@@ -1,3 +1,11 @@
+2013-05-02  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip WebAudio test cases on EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-05-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         border-radius clipping a canvas does not always clip
