@@ -1,3 +1,12 @@
+2013-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Documentation for webkit_web_view_run_javascript should indicate what happens when JavaScript is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115492
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp: Clarify the documentation.
+
 2013-05-01  Tim Horton  <timothy_horton@apple.com>
 
         Move knowledge of PDF/PostScript MIME types into MIMETypeRegistry

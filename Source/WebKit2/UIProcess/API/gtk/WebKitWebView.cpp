@@ -2523,7 +2523,8 @@ static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSeri
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
  * @user_data: (closure): the data to pass to callback function
  *
- * Asynchronously run @script in the context of the current page in @web_view.
+ * Asynchronously run @script in the context of the current page in @web_view. If
+ * WebKitWebSettings:enable-javascript is FALSE, this method will do nothing.
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_view_run_javascript_finish() to get the result of the operation.
