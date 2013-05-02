@@ -2246,7 +2246,8 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             // In this case the result range just has to touch the spelling range, so we can handle replacing non-word text such as punctuation.
             ASSERT(resultLength > 0 && resultLocation >= 0);
 
-            if (shouldShowCorrectionPanel && (resultEndLocation < spellingRangeEndOffset || resultType != TextCheckingTypeCorrection))
+            if (shouldShowCorrectionPanel && (resultEndLocation < spellingRangeEndOffset
+                || !(resultType & (TextCheckingTypeReplacement | TextCheckingTypeCorrection))))
                 continue;
 
             // Apply replacement if:

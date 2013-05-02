@@ -1,3 +1,24 @@
+2013-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] Text replacement should use correction indicator
+        https://bugs.webkit.org/show_bug.cgi?id=115471
+
+        Reviewed by Darin Adler.
+
+        Support autocorrection panel for text replacements by making AlternativeTextTypeCorrection
+        handle text replacements as well as automatic spelling correction.
+
+        No new tests. Unfortunately this feature is not testable as is. We need to provide some
+        internals or testRunner methods to make this feature testable in the long term.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Trigger both TextCheckingTypeReplacement
+        and TextCheckingTypeShowCorrectionPanel.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor): Autocorrection panel maybe used for both
+        TextCheckingTypeReplacement and TextCheckingTypeShowCorrectionPanel.
+
 2013-05-01  Tim Horton  <timothy_horton@apple.com>
 
         Move knowledge of PDF/PostScript MIME types into MIMETypeRegistry
