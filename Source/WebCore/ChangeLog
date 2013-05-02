@@ -1,3 +1,14 @@
+2013-05-01  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Fix check-inspector-strings script and fix localized strings
+        https://bugs.webkit.org/show_bug.cgi?id=115495
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, because there is no change in behavior.
+
+        * English.lproj/localizedStrings.js:
+
 2013-05-01  Tim Horton  <timothy_horton@apple.com>
 
         <object data="<some data URL>"> MIME types aren't case-insensitive

@@ -44,7 +44,6 @@ from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
 
 _inspector_directory = "Source/WebCore/inspector/front-end"
-_devtools_directory = "Source/WebKit/chromium/src/js"
 _localized_strings = "Source/WebCore/English.lproj/localizedStrings.js"
 
 _log = logging.getLogger("check-inspector-strings")
@@ -142,7 +141,7 @@ if __name__ == "__main__":
 
     strings_extractor = StringsExtractor([r"(WebInspector\.UIString\(.*)", r"\"((?:[^\"\\]|\\.)*?)\""])
     file_reader = TextFileReader(filesystem, strings_extractor)
-    file_reader.process_paths([_inspector_directory, _devtools_directory])
+    file_reader.process_paths([_inspector_directory])
     localized_strings_extractor = LocalizedStringsExtractor()
     localized_strings_extractor.process_file(_localized_strings)
     raw_ui_strings = frozenset(strings_extractor.strings[0])
