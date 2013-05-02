@@ -1,3 +1,19 @@
+2013-05-02  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Cannot touch scroll readonly text input.
+        https://bugs.webkit.org/show_bug.cgi?id=115378
+
+        Reviewed by Rob Buis.
+
+        PR #332902
+        Reviewed Internally by Mike Fenton.
+        Forgot half the patch.
+        Node::rendererIsEditable() returns false if the input element has the readonly tag set.
+        Check the node type instead.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::canScrollRenderBox):
+
 2013-05-02  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Make scroll position adjustment work with pages with fixed position elements.

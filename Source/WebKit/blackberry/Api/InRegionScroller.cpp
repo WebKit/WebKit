@@ -20,6 +20,7 @@
 #include "InRegionScroller.h"
 
 #include "BackingStoreClient.h"
+#include "DOMSupport.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
@@ -456,7 +457,7 @@ bool InRegionScrollerPrivate::canScrollRenderBox(RenderBox* box)
         return true;
 
     Node* node = box->node();
-    return node && (node->rendererIsEditable() || node->isDocumentNode());
+    return node && (DOMSupport::isShadowHostTextInputElement(node) || node->isDocumentNode());
 }
 
 static RenderLayer* parentLayer(RenderLayer* layer)
