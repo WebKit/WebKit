@@ -1,3 +1,13 @@
+2013-05-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Moved XFrameOptions results from efl-wk2 to efl and rebased source-list-parsing-nonascii.html
+
+        * platform/efl/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Renamed from LayoutTests/platform/efl-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt.
+        * platform/efl/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Renamed from LayoutTests/platform/efl-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt.
+        * platform/efl/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+
 2013-05-02  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.
