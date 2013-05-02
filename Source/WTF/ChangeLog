@@ -1,3 +1,16 @@
+2013-05-01  Michael Saboff  <msaboff@apple.com>
+
+        FastMalloc.cpp should use system defined page size instead of literal constant
+        https://bugs.webkit.org/show_bug.cgi?id=115502
+
+        Reviewed by Geoffrey Garen.
+
+        Updated kPageShift to be PAGE_SHIFT for Mac.  Changed kMaxSize to be fixed at 32K.
+        Updated kNumClasses for 4K and 16K page sizes.
+
+        * wtf/FastMalloc.cpp:
+        kPageShift: Changed this to be PAGE_SHIFT on mac.
+
 2013-05-01  Roger Fong  <roger_fong@apple.com>
 
         Set Path in makefile for AppleWin.

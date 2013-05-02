@@ -628,12 +628,25 @@ static ALWAYS_INLINE uint32_t freedObjectEndPoison()
 // Not all possible combinations of the following parameters make
 // sense.  In particular, if kMaxSize increases, you may have to
 // increase kNumClasses as well.
-static const size_t kPageShift  = 12;
+#if OS(DARWIN)
+#    define K_PAGE_SHIFT PAGE_SHIFT
+#    if (K_PAGE_SHIFT == 12)
+#        define K_NUM_CLASSES 68
+#    elif (K_PAGE_SHIFT == 14)
+#        define K_NUM_CLASSES 77
+#    else
+#        error "Unsupported PAGE_SHIFT amount"
+#    endif
+#else
+#    define K_PAGE_SHIFT 12
+#    define K_NUM_CLASSES 68
+#endif
+static const size_t kPageShift  = K_PAGE_SHIFT;
 static const size_t kPageSize   = 1 << kPageShift;
-static const size_t kMaxSize    = 8u * kPageSize;
+static const size_t kMaxSize    = 32u * 1024;
 static const size_t kAlignShift = 3;
 static const size_t kAlignment  = 1 << kAlignShift;
-static const size_t kNumClasses = 68;
+static const size_t kNumClasses = K_NUM_CLASSES;
 
 // Allocates a big block of memory for the pagemap once we reach more than
 // 128MB
