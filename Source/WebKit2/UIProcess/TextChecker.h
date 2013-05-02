@@ -50,6 +50,11 @@ public:
     static void setAutomaticLinkDetectionEnabled(bool);
     static void setAutomaticTextReplacementEnabled(bool);
 
+    static void didChangeAutomaticTextReplacementEnabled();
+    static void didChangeAutomaticSpellingCorrectionEnabled();
+    static void didChangeAutomaticQuoteSubstitutionEnabled();
+    static void didChangeAutomaticDashSubstitutionEnabled();
+
     static bool isSmartInsertDeleteEnabled();
     static void setSmartInsertDeleteEnabled(bool);
 

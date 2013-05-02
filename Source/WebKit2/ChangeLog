@@ -1,3 +1,29 @@
+2013-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] WebKit doesn't enable or disable autocorrections when system preferences are changed
+        https://bugs.webkit.org/show_bug.cgi?id=115463
+
+        Reviewed by Darin Adler.
+
+        Observe the default notification center and propagate the changes to TextCheckerState and
+        to all WebProcesses when system preferences are updated.
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::shouldAutomaticTextReplacementBeEnabled):
+        (WebKit::shouldAutomaticSpellingCorrectionBeEnabled):
+        (WebKit::shouldAutomaticQuoteSubstitutionBeEnabled):
+        (WebKit::shouldAutomaticDashSubstitutionBeEnabled):
+        (WebKit::initializeState):
+        (WebKit::TextChecker::didChangeAutomaticTextReplacementEnabled):
+        (WebKit::TextChecker::didChangeAutomaticSpellingCorrectionEnabled):
+        (WebKit::TextChecker::didChangeAutomaticQuoteSubstitutionEnabled):
+        (WebKit::TextChecker::didChangeAutomaticDashSubstitutionEnabled):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::registerNotificationObservers):
+        (WebKit::WebContext::unregisterNotificationObservers):
+
 2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [GTK] Fix build break after r149449

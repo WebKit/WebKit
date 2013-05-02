@@ -59,6 +59,7 @@
 #endif
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 #endif
 
@@ -454,9 +455,16 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    RetainPtr<CFTypeRef> m_enhancedAccessibilityObserver;
-    RetainPtr<CFTypeRef> m_customSchemeRegisteredObserver;
-    RetainPtr<CFTypeRef> m_customSchemeUnregisteredObserver;
+    RetainPtr<NSObject> m_enhancedAccessibilityObserver;
+    RetainPtr<NSObject> m_customSchemeRegisteredObserver;
+    RetainPtr<NSObject> m_customSchemeUnregisteredObserver;
+
+    RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
+    RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
+    RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
+#endif
 #endif
 
     String m_overrideDatabaseDirectory;

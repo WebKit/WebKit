@@ -3136,7 +3136,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_cacheModelChangedNotification:) name:WebPreferencesCacheModelChangedInternalNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
@@ -3149,19 +3149,86 @@ static Vector<String> toStringVector(NSArray* patterns)
 
     Font::setDefaultTypesettingFeatures([defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey] ? Kerning | Ligatures : 0);
 
-    automaticQuoteSubstitutionEnabled = [defaults boolForKey:WebAutomaticQuoteSubstitutionEnabled];
+    automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
     automaticLinkDetectionEnabled = [defaults boolForKey:WebAutomaticLinkDetectionEnabled];
-    automaticDashSubstitutionEnabled = [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
-    automaticTextReplacementEnabled = [defaults boolForKey:WebAutomaticTextReplacementEnabled];
-    automaticSpellingCorrectionEnabled = [defaults boolForKey:WebAutomaticSpellingCorrectionEnabled];
+    automaticDashSubstitutionEnabled = [self _shouldAutomaticDashSubstitutionBeEnabled];
+    automaticTextReplacementEnabled = [self _shouldAutomaticTextReplacementBeEnabled];
+    automaticSpellingCorrectionEnabled = [self _shouldAutomaticSpellingCorrectionBeEnabled];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    if (![defaults objectForKey:WebAutomaticTextReplacementEnabled])
-        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
-    if (![defaults objectForKey:WebAutomaticSpellingCorrectionEnabled])
-        automaticSpellingCorrectionEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticTextReplacementEnabled:)
+        name:NSSpellCheckerDidChangeAutomaticTextReplacementNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticSpellingCorrectionEnabled:)
+        name:NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification object:nil];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticQuoteSubstitutionEnabled:)
+        name:NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticDashSubstitutionEnabled:)
+        name:NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification object:nil];
 #endif
 }
+
++ (BOOL)_shouldAutomaticTextReplacementBeEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults objectForKey:WebAutomaticTextReplacementEnabled])
+        return [NSSpellChecker isAutomaticTextReplacementEnabled];
+    return [defaults boolForKey:WebAutomaticTextReplacementEnabled];
+}
+
++ (void)_didChangeAutomaticTextReplacementEnabled:(NSNotification *)notification
+{
+    automaticTextReplacementEnabled = [self _shouldAutomaticTextReplacementBeEnabled];
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
++ (BOOL)_shouldAutomaticSpellingCorrectionBeEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults objectForKey:WebAutomaticSpellingCorrectionEnabled])
+        return [NSSpellChecker isAutomaticTextReplacementEnabled];
+    return [defaults boolForKey:WebAutomaticSpellingCorrectionEnabled];
+}
+
++ (void)_didChangeAutomaticSpellingCorrectionEnabled:(NSNotification *)notification
+{
+    automaticSpellingCorrectionEnabled = [self _shouldAutomaticSpellingCorrectionBeEnabled];
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
++ (BOOL)_shouldAutomaticQuoteSubstitutionBeEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (![defaults objectForKey:WebAutomaticQuoteSubstitutionEnabled])
+        return [NSSpellChecker isAutomaticQuoteSubstitutionEnabled];
+#endif
+    return [defaults boolForKey:WebAutomaticQuoteSubstitutionEnabled];
+}
+
++ (BOOL)_shouldAutomaticDashSubstitutionBeEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (![defaults objectForKey:WebAutomaticDashSubstitutionEnabled])
+        return [NSSpellChecker isAutomaticDashSubstitutionEnabled];
+#endif
+    return [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
++ (void)_didChangeAutomaticQuoteSubstitutionEnabled:(NSNotification *)notification
+{
+    automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
++ (void)_didChangeAutomaticDashSubstitutionEnabled:(NSNotification *)notification
+{
+    automaticDashSubstitutionEnabled = [self _shouldAutomaticDashSubstitutionBeEnabled];
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+#endif
 
 + (void)_applicationWillTerminate
 {   

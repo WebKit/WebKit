@@ -1,3 +1,24 @@
+2011-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] WebKit doesn't enable or disable autocorrections when system preferences are changed
+        https://bugs.webkit.org/show_bug.cgi?id=115463
+
+        Reviewed by Darin Adler.
+
+        Observe the default notification center for changes to autocorrection preferences.
+        Note system preferences may also update WebAutomatic* defaults.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+        (+[WebView _shouldAutomaticTextReplacementBeEnabled]):
+        (+[WebView _didChangeAutomaticTextReplacementEnabled:]):
+        (+[WebView _shouldAutomaticSpellingCorrectionBeEnabled]):
+        (+[WebView _didChangeAutomaticSpellingCorrectionEnabled:]):
+        (+[WebView _shouldAutomaticQuoteSubstitutionBeEnabled]):
+        (+[WebView _shouldAutomaticDashSubstitutionBeEnabled]):
+        (+[WebView _didChangeAutomaticQuoteSubstitutionEnabled:]):
+        (+[WebView _didChangeAutomaticDashSubstitutionEnabled:]):
+
 2013-05-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the function names of r149453

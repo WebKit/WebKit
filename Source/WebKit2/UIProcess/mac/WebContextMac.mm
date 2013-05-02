@@ -28,6 +28,7 @@
 
 #import "PluginProcessManager.h"
 #import "SharedWorkerProcessManager.h"
+#import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterface.h"
@@ -510,24 +511,53 @@ void WebContext::registerNotificationObservers()
         ASSERT([scheme isKindOfClass:[NSString class]]);
         registerSchemeForCustomProtocol(scheme);
     }];
-    
+
     m_customSchemeUnregisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         NSString *scheme = [notification object];
         ASSERT([scheme isKindOfClass:[NSString class]]);
         unregisterSchemeForCustomProtocol(scheme);
     }];
-    
+
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
     }];
+
+    m_automaticTextReplacementNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticTextReplacementNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        TextChecker::didChangeAutomaticTextReplacementEnabled();
+        textCheckerStateChanged();
+    }];
+    
+    m_automaticSpellingCorrectionNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        TextChecker::didChangeAutomaticSpellingCorrectionEnabled();
+        textCheckerStateChanged();
+    }];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    m_automaticQuoteSubstitutionNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        TextChecker::didChangeAutomaticQuoteSubstitutionEnabled();
+        textCheckerStateChanged();
+    }];
+
+    m_automaticDashSubstitutionNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        TextChecker::didChangeAutomaticDashSubstitutionEnabled();
+        textCheckerStateChanged();
+    }];
+#endif
 }
 
 void WebContext::unregisterNotificationObservers()
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:(id)m_customSchemeRegisteredObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:(id)m_customSchemeUnregisteredObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:(id)m_enhancedAccessibilityObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeRegisteredObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeUnregisteredObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:m_automaticTextReplacementNotificationObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_automaticDashSubstitutionNotificationObserver.get()];
+#endif
 }
 
 } // namespace WebKit
