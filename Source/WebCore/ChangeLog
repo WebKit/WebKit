@@ -1,3 +1,13 @@
+2013-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Null check plugInClient earlier in snapshotting path
+        https://bugs.webkit.org/show_bug.cgi?id=115498
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+
 2013-05-01  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Fix check-inspector-strings script and fix localized strings
