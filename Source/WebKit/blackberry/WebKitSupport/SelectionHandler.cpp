@@ -656,7 +656,7 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, Selectio
         m_animationOverlayEndPos = VisiblePosition();
         m_currentAnimationOverlayRegion = IntRectRegion();
         m_nextAnimationOverlayRegion = IntRectRegion();
-        m_selectionViewportRect = WebCore::IntRect();
+        m_selectionSubframeViewportRect = WebCore::IntRect();
     }
 
     // If point is invalid trigger selection based expansion.
@@ -796,7 +796,7 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
         return viewportRect.maxY() >= m_webPage->contentsSize().height() ? viewportRect.maxY() >= point.y() : viewportRect.maxY() >= point.y() + m_scrollMargin.height();
 
     // Scroll position adjustment here is based on main frame. If selecting in a subframe, don't do animation.
-    if (!m_selectionViewportRect.isEmpty())
+    if (!m_selectionSubframeViewportRect.isEmpty())
         return false;
 
     WebCore::IntRect endLocation = m_animationOverlayEndPos.absoluteCaretBounds();
@@ -829,12 +829,9 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
 
 WebCore::IntRect SelectionHandler::selectionViewportRect() const
 {
-    if (m_selectionViewportRect.isEmpty()) {
-        WebCore::IntPoint scrollPosition = m_webPage->scrollPosition();
-        WebCore::IntSize actualVisibleSize = m_webPage->client()->userInterfaceViewportAccessor()->documentViewportRect().size(); // viewport size for both Cascades and browser
-        return WebCore::IntRect(scrollPosition, actualVisibleSize);
-    }
-    return m_selectionViewportRect;
+    if (m_selectionSubframeViewportRect.isEmpty())
+        return WebCore::IntRect(m_webPage->scrollPosition(), m_selectionViewportSize);
+    return m_selectionSubframeViewportRect;
 }
 
 void SelectionHandler::setParagraphExpansionScrollMargin(const WebCore::IntSize& scrollMargin)

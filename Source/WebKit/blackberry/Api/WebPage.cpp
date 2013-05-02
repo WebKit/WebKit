@@ -4432,6 +4432,11 @@ void WebPage::setParagraphExpansionPixelScrollMargin(const Platform::IntSize& sc
     d->m_selectionHandler->setParagraphExpansionScrollMargin(documentScrollMargin);
 }
 
+void WebPage::setSelectionDocumentViewportSize(const Platform::IntSize& selectionDocumentViewportSize)
+{
+    d->m_selectionHandler->setSelectionViewportSize(selectionDocumentViewportSize);
+}
+
 BackingStore* WebPage::backingStore() const
 {
     return d->m_backingStore;

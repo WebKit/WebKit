@@ -264,6 +264,7 @@ public:
     void expandSelection(bool isScrollStarted);
     void setOverlayExpansionPixelHeight(int);
     void setParagraphExpansionPixelScrollMargin(const Platform::IntSize&);
+    void setSelectionDocumentViewportSize(const Platform::IntSize&);
     void selectionCancelled();
     bool selectionContainsDocumentPoint(const Platform::IntPoint&);
 

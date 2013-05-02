@@ -1,3 +1,35 @@
+2013-05-01  Iris Wu  <shuwu@blackberry.com>
+
+         [BlackBerry] Upstream smart selection
+         https://bugs.webkit.org/show_bug.cgi?id=111226
+
+        Reviewed by Rob Buis.
+
+        Calling userInterfaceViewportAccessor()->documentViewportRect() on WK thread
+        caused crash.
+        But viewport from webkitThreadViewportAccessor uses unadjusted size which is
+        wrong for email.
+        The solution here is to get actual viewport size on UI thread and then pass it
+        to WebKit::SelectionHandler.
+
+        PR 333763
+        Reviewed Internally By Jakob Petsovits.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::updateSelectionScrollView):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setSelectionDocumentViewportSize):
+        (WebKit):
+        * Api/WebPage.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        (BlackBerry::WebKit::SelectionHandler::ensureSelectedTextVisible):
+        (BlackBerry::WebKit::SelectionHandler::selectionViewportRect):
+        * WebKitSupport/SelectionHandler.h:
+        (BlackBerry::WebKit::SelectionHandler::setSelectionViewportSize):
+        (BlackBerry::WebKit::SelectionHandler::setSelectionSubframeViewportRect):
+        (SelectionHandler):
+
 2013-04-30  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Cannot touch scroll readonly text input.
