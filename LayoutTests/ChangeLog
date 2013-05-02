@@ -1,3 +1,12 @@
+2013-05-01  Stephanie Lewis  <slewis@apple.com>
+
+        Update Lion results after http://trac.webkit.org/projects/webkit/changeset/149450
+
+        Unreviewed.
+
+        * platform/mac-lion/fast/block/lineboxcontain/block-with-ideographs-expected.png: Added.
+        * platform/mac-lion/fast/block/lineboxcontain/block-with-ideographs-expected.txt: Added.
+
 2013-05-01  Tim Horton  <timothy_horton@apple.com>
 
         <object data="<some data URL>"> MIME types aren't case-insensitive
