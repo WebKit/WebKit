@@ -1,3 +1,15 @@
+2013-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r149422): -[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]
+        broken when second argument is nil
+        https://bugs.webkit.org/show_bug.cgi?id=115505
+        <rdar://problem/13787297>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::loadFile): Pass a URL string
+        to assumeReadAccessToBaseURL, as this is what it takes.
+
 2013-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] WebKit doesn't enable or disable autocorrections when system preferences are changed

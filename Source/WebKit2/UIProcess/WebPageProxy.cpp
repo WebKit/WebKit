@@ -740,18 +740,20 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     if (!fileURL.isLocalFile())
         return;
 
-    String resourceDirectoryPath;
-    if (!resourceDirectoryURLString.isNull()) {
-        KURL resourceDirectoryURL = KURL(KURL(), resourceDirectoryURLString);
+    KURL resourceDirectoryURL;
+    if (resourceDirectoryURLString.isNull())
+        resourceDirectoryURL = KURL(ParsedURLString, ASCIILiteral("file:///"));
+    else {
+        resourceDirectoryURL = KURL(KURL(), resourceDirectoryURLString);
         if (!resourceDirectoryURL.isLocalFile())
             return;
-        resourceDirectoryPath = resourceDirectoryURL.fileSystemPath();
-    } else
-        resourceDirectoryPath = ASCIILiteral("/");
+    }
+
+    String resourceDirectoryPath = resourceDirectoryURL.fileSystemPath();
 
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
-    m_process->assumeReadAccessToBaseURL(resourceDirectoryPath);
+    m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
     m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer()->start();
 }
