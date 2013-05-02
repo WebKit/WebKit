@@ -1,3 +1,16 @@
+2013-05-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Segmentation Fault with Romanian locale. Evolution not starting.
+        https://bugs.webkit.org/show_bug.cgi?id=115484
+
+        Reviewed by Darin Adler.
+
+        Do not translate the property names that are being passed to the g_param_spec_boolean
+        method - it is not required and is causing segfaults with various locales.
+
+        * webkit/webkitviewportattributes.cpp:
+        (webkit_viewport_attributes_class_init):
+
 2013-04-30  Ed Bartosh  <bartosh@gmail.com>
 
         [GTK] --minimal build fails with error: class WebCore::EventHandler' has no member named 'dragSourceEndedAt

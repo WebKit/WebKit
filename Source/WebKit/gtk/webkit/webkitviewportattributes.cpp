@@ -384,7 +384,7 @@ static void webkit_viewport_attributes_class_init(WebKitViewportAttributesClass*
     g_object_class_install_property(gobjectClass,
                                     PROP_USER_SCALABLE,
                                     g_param_spec_boolean(
-                                    _("user-scalable"),
+                                    "user-scalable",
                                     _("User Scalable"),
                                     _("Determines whether or not the user can zoom in and out."),
                                     TRUE,
@@ -403,7 +403,7 @@ static void webkit_viewport_attributes_class_init(WebKitViewportAttributesClass*
     g_object_class_install_property(gobjectClass,
                                     PROP_VALID,
                                     g_param_spec_boolean(
-                                    _("valid"),
+                                    "valid",
                                     _("Valid"),
                                     _("Determines whether or not the attributes are valid, and can be used."),
                                     FALSE,
