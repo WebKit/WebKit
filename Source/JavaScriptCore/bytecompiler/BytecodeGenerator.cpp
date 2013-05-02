@@ -1187,7 +1187,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     unsigned flags = 0;
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = iter.get();
-        if (!currentScope->isVariableObject())
+        if (!currentScope->isStaticScopeObject())
             return ResolveResult::dynamicResolve();
 
         JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);

@@ -571,6 +571,7 @@ public:
 
     bool isGlobalObject() const;
     bool isVariableObject() const;
+    bool isStaticScopeObject() const;
     bool isNameScopeObject() const;
     bool isActivationObject() const;
     bool isErrorInstance() const;
@@ -1080,6 +1081,14 @@ inline bool JSObject::isVariableObject() const
 {
     return structure()->typeInfo().type() >= VariableObjectType;
 }
+
+
+inline bool JSObject::isStaticScopeObject() const
+{
+    JSType type = structure()->typeInfo().type();
+    return type == NameScopeObjectType || type == ActivationObjectType;
+}
+
 
 inline bool JSObject::isNameScopeObject() const
 {
