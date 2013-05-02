@@ -37,6 +37,7 @@
 #include <objc/objc-auto.h>
 #include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/ObjcRuntimeExtras.h>
 #include <wtf/Threading.h>
@@ -53,19 +54,12 @@ void WebCoreObjCFinalizeOnMainThread(Class cls)
 #endif
 }
 
-
-typedef std::pair<Class, id> ClassAndIdPair;
-
-static void deallocCallback(void* context)
+static void deallocCallback(Class cls, id object)
 {
-    ClassAndIdPair* pair = static_cast<ClassAndIdPair*>(context);
-    
-    Method method = class_getInstanceMethod(pair->first, @selector(dealloc));
-    
+    Method method = class_getInstanceMethod(cls, @selector(dealloc));
+
     IMP imp = method_getImplementation(method);
-    wtfCallIMP<void>(imp, pair->second, @selector(dealloc));
-    
-    delete pair;
+    wtfCallIMP<void>(imp, object, @selector(dealloc));
 }
 
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
@@ -74,9 +68,8 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
 
     if (isMainThread())
         return false;
-    
-    ClassAndIdPair* pair = new ClassAndIdPair(cls, object);
-    callOnMainThread(deallocCallback, pair);
+
+    callOnMainThread(bind(deallocCallback, cls, object));
     return true;
 }
 

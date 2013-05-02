@@ -1,3 +1,14 @@
+2013-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Simplify WebCoreObjCExtras by using WTF::bind
+        https://bugs.webkit.org/show_bug.cgi?id=115524
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (deallocCallback):
+        (WebCoreObjCScheduleDeallocateOnMainThread):
+
 2013-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13740375> Non-ASCII downloaded file names are garbled when using NetworkProcess
