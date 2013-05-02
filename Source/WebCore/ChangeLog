@@ -1,3 +1,22 @@
+2013-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        <object data="<some data URL>"> MIME types aren't case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=115494
+
+        Reviewed by Darin Adler.
+
+        Test: fast/images/object-data-url-case-insensitivity.html
+
+        MIME types are defined to be case-insensitive, but many places in WebCore
+        only compare them against lower-case strings. Most entry points for MIME
+        types lower-case them, but mimeTypeFromDataURL doesn't, causing, for example,
+        data:image/png;... to work, but data:iMaGe/PNG;... to fail.
+
+        To fix this, lower-case the string returned from mimeTypeFromDataURL.
+
+        * platform/KURL.cpp:
+        (WebCore::mimeTypeFromDataURL):
+
 2013-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] Text replacement should use correction indicator

@@ -1,3 +1,17 @@
+2013-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        <object data="<some data URL>"> MIME types aren't case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=115494
+
+        Reviewed by Darin Adler.
+
+        Add a testcase that ensures that iMaGe/PNG == image/png when it comes to
+        the MIME type specified in a data URL provided to <object> via its
+        'data' attribute.
+
+        * fast/images/object-data-url-case-insensitivity-expected.html: Added.
+        * fast/images/object-data-url-case-insensitivity.html: Added.
+
 2013-05-01  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Programmatic layout tests fail when subpixel layout is disabled
