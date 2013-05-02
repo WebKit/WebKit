@@ -1,3 +1,15 @@
+2013-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [GTK] Fix build break after r149449
+        https://bugs.webkit.org/show_bug.cgi?id=115500
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unreviewed GTK build fix
+
+        * GNUmakefile.list.am: Added LocalStorageDatabase.[cpp|h] to the list of
+        sources.
+
 2013-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Documentation for webkit_web_view_run_javascript should indicate what happens when JavaScript is disabled
