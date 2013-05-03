@@ -3993,7 +3993,11 @@ static int primarySnapshottedPlugInMinimumHeight = 300;
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 void WebPage::determinePrimarySnapshottedPlugInTimerFired()
 {
-    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
+    if (!m_page)
+        return;
+    
+    Settings* settings = m_page->settings();
+    if (!settings->snapshotAllPlugIns() && settings->primaryPlugInSnapshotDetectionEnabled())
         determinePrimarySnapshottedPlugIn();
 }
 #endif
