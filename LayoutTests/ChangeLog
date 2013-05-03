@@ -1,3 +1,16 @@
+2013-05-03  Viatcheslav Ostapenko  <viatchslav.o@samsung.com>
+
+        [Cairo] Anti-aliasing should not be always disabled for lines
+        https://bugs.webkit.org/show_bug.cgi?id=109535
+
+        Reviewed by Martin Robinson.
+
+        Add pixel test with scaled text lines.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-line-scaled.html: Added.
+        * platform/efl/fast/css3-text/css3-text-decoration/text-decoration-line-scaled-expected.png: Added.
+        * platform/efl/fast/css3-text/css3-text-decoration/text-decoration-line-scaled-expected.txt: Added.
+
 2013-05-03  Stephanie Lewis  <slewis@apple.com>
 
         Revert to old results on Lion.

@@ -297,7 +297,6 @@ static void drawLineOnCairoContext(GraphicsContext* graphicsContext, cairo_t* co
     FloatPoint point2OnPixelBoundaries = point2;
     GraphicsContext::adjustLineToPixelBoundaries(point1OnPixelBoundaries, point2OnPixelBoundaries, strokeThickness, style);
 
-    cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
     if (patternWidth) {
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
