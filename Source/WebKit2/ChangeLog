@@ -1,3 +1,17 @@
+2013-05-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some "what" comments from FindController
+        https://bugs.webkit.org/show_bug.cgi?id=115546
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::countStringMatches):
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::willMoveToWebPage):
+        (WebKit::FindController::mouseEvent):
+        Remove or reword some comments.
+
 2013-05-02  Andy Estes  <aestes@apple.com>
 
         [WK2][CustomProtocols] NSURLProtocolClient methods should be dispatched on NSURLConnection's resource loader run loop

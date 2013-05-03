@@ -91,7 +91,6 @@ void FindController::countStringMatches(const String& string, FindOptions option
         m_webPage->corePage()->unmarkAllTextMatches();
     }
 
-    // Check if we have more matches than allowed.
     if (matchCount > maxMatchCount)
         matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
     
@@ -120,7 +119,6 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         if (!pluginView)
             m_webPage->corePage()->unmarkAllTextMatches();
 
-        // Clear the selection.
         if (selectedFrame)
             selectedFrame->selection()->clear();
 
@@ -145,7 +143,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
                 matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
             }
 
-            // Check if we have more matches than allowed.
+            // If we have a large number of matches, we don't want to take the time to paint the overlay.
             if (matchCount > maxMatchCount) {
                 shouldShowOverlay = false;
                 matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
@@ -154,17 +152,13 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
         m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount));
 
-        if (!(options & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
-            // Either we shouldn't show the find indicator, or we couldn't update it.
+        if (!(options & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay))
             hideFindIndicator();
-        }
     }
 
     if (!shouldShowOverlay) {
-        if (m_findPageOverlay) {
-            // Get rid of the overlay.
+        if (m_findPageOverlay)
             m_webPage->uninstallPageOverlay(m_findPageOverlay, true);
-        }        
     } else {
         if (!m_findPageOverlay) {
             RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
@@ -384,7 +378,6 @@ void FindController::willMoveToWebPage(PageOverlay*, WebPage* webPage)
     if (webPage)
         return;
 
-    // The page overlay is moving away from the web page, reset it.
     ASSERT(m_findPageOverlay);
     m_findPageOverlay = 0;
 }
@@ -461,11 +454,8 @@ void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphic
 
 bool FindController::mouseEvent(PageOverlay*, const WebMouseEvent& mouseEvent)
 {
-    // If we get a mouse down event inside the page overlay we should hide the find UI.
-    if (mouseEvent.type() == WebEvent::MouseDown) {
-        // Dismiss the overlay.
+    if (mouseEvent.type() == WebEvent::MouseDown)
         hideFindUI();
-    }
 
     return false;
 }
