@@ -1,5 +1,14 @@
 2013-05-02  Brent Fulgham  <bfulgham@webkit.org>
 
+        [WinCairo] Unreviewed build fix.
+
+        * WTF.vcxproj/WTF.vcxproj: Use WinCairo FeatureDefines
+        * WTF.vcxproj/WTF.vcxproj.filters: Use WinCairo FeatureDefines
+        * WTF.vcxproj/WTFDebugWinCairo.props: Added.
+        * WTF.vcxproj/WTFReleaseWinCairo.props: Added.
+
+2013-05-02  Brent Fulgham  <bfulgham@webkit.org>
+
         [Windows, WinCairo] Fix crash in fast/js/create-lots-of-workers.html
         https://bugs.webkit.org/show_bug.cgi?id=115130
 
