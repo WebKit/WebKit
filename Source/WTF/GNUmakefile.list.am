@@ -79,7 +79,6 @@ wtf_sources += \
     Source/WTF/wtf/Int8Array.h \
     Source/WTF/wtf/IntegralTypedArrayBase.h \
     Source/WTF/wtf/ListHashSet.h \
-    Source/WTF/wtf/ListRefPtr.h \
     Source/WTF/wtf/Locker.h \
     Source/WTF/wtf/MD5.cpp \
     Source/WTF/wtf/MD5.h \

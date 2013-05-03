@@ -93,7 +93,6 @@ namespace WebCore {
         AtomicString m_name; // The actual frame name (may be empty).
         AtomicString m_uniqueName;
 
-        // FIXME: use ListRefPtr?
         RefPtr<Frame> m_nextSibling;
         Frame* m_previousSibling;
         RefPtr<Frame> m_firstChild;

@@ -27,7 +27,7 @@
 #define FontFamily_h
 
 #include <wtf/RefCounted.h>
-#include <wtf/ListRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -37,6 +37,7 @@ class SharedFontFamily;
 class FontFamily {
 public:
     FontFamily() { }
+    ~FontFamily();
 
     void setFamily(const AtomicString& family) { m_family = family; }
     const AtomicString& family() const { return m_family; }
@@ -49,7 +50,7 @@ public:
 
 private:
     AtomicString m_family;
-    ListRefPtr<SharedFontFamily> m_next;
+    RefPtr<SharedFontFamily> m_next;
 };
 
 class SharedFontFamily : public FontFamily, public RefCounted<SharedFontFamily> {
@@ -65,6 +66,15 @@ private:
 
 bool operator==(const FontFamily&, const FontFamily&);
 inline bool operator!=(const FontFamily& a, const FontFamily& b) { return !(a == b); }
+
+inline FontFamily::~FontFamily()
+{
+    // This code came from removed ListRefPtr to avoid possible overflowing the stack.
+    // FIXME: Do we really need it?
+    RefPtr<SharedFontFamily> reaper = m_next.release();
+    while (reaper && reaper->hasOneRef())
+        reaper = reaper->releaseNext(); // implicitly protects reaper->next, then derefs reaper
+}
 
 inline const FontFamily* FontFamily::next() const
 {

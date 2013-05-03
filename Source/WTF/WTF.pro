@@ -84,7 +84,6 @@ HEADERS += \
     Int32Array.h \
     Int8Array.h \
     ListHashSet.h \
-    ListRefPtr.h \
     Locker.h \
     MainThread.h \
     MallocZoneSupport.h \

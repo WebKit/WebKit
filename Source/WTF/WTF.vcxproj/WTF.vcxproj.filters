@@ -483,9 +483,6 @@
     <ClInclude Include="..\wtf\ListHashSet.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\ListRefPtr.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Locker.h">
       <Filter>wtf</Filter>
     </ClInclude>

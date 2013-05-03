@@ -139,7 +139,6 @@
 		A8A473DF151A825B004123FF /* Int32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472BF151A825A004123FF /* Int32Array.h */; };
 		A8A473E0151A825B004123FF /* IntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472C0151A825A004123FF /* IntegralTypedArrayBase.h */; };
 		A8A473E1151A825B004123FF /* ListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472C1151A825A004123FF /* ListHashSet.h */; };
-		A8A473E2151A825B004123FF /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472C2151A825A004123FF /* ListRefPtr.h */; };
 		A8A473E3151A825B004123FF /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472C3151A825A004123FF /* Locker.h */; };
 		A8A473E4151A825B004123FF /* MainThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C5151A825A004123FF /* MainThreadMac.mm */; };
 		A8A473E5151A825B004123FF /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C6151A825A004123FF /* MainThread.cpp */; };
@@ -415,7 +414,6 @@
 		A8A472BF151A825A004123FF /* Int32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int32Array.h; sourceTree = "<group>"; };
 		A8A472C0151A825A004123FF /* IntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegralTypedArrayBase.h; sourceTree = "<group>"; };
 		A8A472C1151A825A004123FF /* ListHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListHashSet.h; sourceTree = "<group>"; };
-		A8A472C2151A825A004123FF /* ListRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListRefPtr.h; sourceTree = "<group>"; };
 		A8A472C3151A825A004123FF /* Locker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locker.h; sourceTree = "<group>"; };
 		A8A472C5151A825A004123FF /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
 		A8A472C6151A825A004123FF /* MainThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThread.cpp; sourceTree = "<group>"; };
@@ -690,7 +688,6 @@
 				A8A472BD151A825A004123FF /* Int8Array.h */,
 				A8A472C0151A825A004123FF /* IntegralTypedArrayBase.h */,
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
-				A8A472C2151A825A004123FF /* ListRefPtr.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
 				A8A472C6151A825A004123FF /* MainThread.cpp */,
 				A8A472C7151A825B004123FF /* MainThread.h */,
@@ -1004,7 +1001,6 @@
 				26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */,
 				A8A473E0151A825B004123FF /* IntegralTypedArrayBase.h in Headers */,
 				A8A473E1151A825B004123FF /* ListHashSet.h in Headers */,
-				A8A473E2151A825B004123FF /* ListRefPtr.h in Headers */,
 				A8A473E3151A825B004123FF /* Locker.h in Headers */,
 				A8A473E6151A825B004123FF /* MainThread.h in Headers */,
 				A8A473E7151A825B004123FF /* MallocZoneSupport.h in Headers */,

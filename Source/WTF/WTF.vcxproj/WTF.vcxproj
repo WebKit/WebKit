@@ -160,7 +160,6 @@
     <ClInclude Include="..\wtf\Int32Array.h" />
     <ClInclude Include="..\wtf\Int8Array.h" />
     <ClInclude Include="..\wtf\ListHashSet.h" />
-    <ClInclude Include="..\wtf\ListRefPtr.h" />
     <ClInclude Include="..\wtf\Locker.h" />
     <ClInclude Include="..\wtf\MainThread.h" />
     <ClInclude Include="..\wtf\MallocZoneSupport.h" />

@@ -895,10 +895,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\ListRefPtr.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\Locker.h"
 			>
 		</File>

@@ -43,7 +43,6 @@ set(WTF_HEADERS
     HashTraits.h
     HexNumber.h
     ListHashSet.h
-    ListRefPtr.h
     Locker.h
     MD5.h
     MainThread.h
