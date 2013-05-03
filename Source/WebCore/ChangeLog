@@ -1,3 +1,17 @@
+2013-05-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Crash when calling QWebFrame::evaluateJavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=113434
+
+        Reviewed by Simon Hausmann.
+
+        We must take the JS API lock before accessing internal JS methods.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::unwrapBoxedPrimitive):
+        (JSC::Bindings::getGregorianDateTimeUTC):
+        (JSC::Bindings::convertQVariantToValue):
+
 2013-05-02  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Fine tune dependencies for glslang generated files

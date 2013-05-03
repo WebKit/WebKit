@@ -21,6 +21,7 @@
 #include "qt_runtime.h"
 
 #include "APICast.h"
+#include "APIShims.h"
 #include "BooleanObject.h"
 #include "DateInstance.h"
 #include "DatePrototype.h"
@@ -199,8 +200,9 @@ static QString toString(JSStringRef stringRef)
 
 static JSValueRef unwrapBoxedPrimitive(JSContextRef context, JSValueRef value, JSObjectRef obj)
 {
-    JSObject* object = toJS(obj);
     ExecState* exec = toJS(context);
+    APIEntryShim entryShim(exec);
+    JSObject* object = toJS(obj);
     if (object->inherits(&NumberObject::s_info))
         return toRef(exec, jsNumber(object->toNumber(exec)));
     if (object->inherits(&StringObject::s_info))
@@ -281,6 +283,7 @@ static QString toQString(JSContextRef context, JSValueRef value)
 static void getGregorianDateTimeUTC(JSContextRef context, JSRealType type, JSValueRef value, JSObjectRef object, JSValueRef* exception, GregorianDateTime* gdt)
 {
     ExecState* exec = toJS(context);
+    APIEntryShim entryShim(exec);
     if (type == Date) {
         JSObject* jsObject = toJS(object);
         DateInstance* date = asDateInstance(jsObject);
@@ -729,6 +732,7 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         WTF::RefPtr<WTF::Uint8ClampedArray> wtfByteArray = WTF::Uint8ClampedArray::createUninitialized(qtByteArray.length());
         memcpy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
         ExecState* exec = toJS(context);
+        APIEntryShim entryShim(exec);
         return toRef(exec, toJS(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), wtfByteArray.get()));
     }
 
@@ -737,6 +741,7 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         if (!obj)
             return JSValueMakeNull(context);
         ExecState* exec = toJS(context);
+        APIEntryShim entryShim(exec);
         return toRef(exec, QtInstance::getQtInstance(obj, root, QtInstance::QtOwnership)->createRuntimeObject(exec));
     }
 
@@ -751,6 +756,7 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         if (!document)
             return JSValueMakeUndefined(context);
         ExecState* exec = toJS(context);
+        APIEntryShim entryShim(exec);
         return toRef(exec, customRuntimeConversions()->value(type).toJSValueFunc(exec, toJSDOMGlobalObject(document, exec), variant));
     }
 
@@ -800,6 +806,7 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         QObjectList ol = variant.value<QObjectList>();
         JSObjectRef array = JSObjectMakeArray(context, 0, 0, exception);
         ExecState* exec = toJS(context);
+        APIEntryShim entryShim(exec);
         for (int i = 0; i < ol.count(); ++i) {
             JSValueRef jsObject = toRef(exec, QtInstance::getQtInstance(ol.at(i), root, QtInstance::QtOwnership)->createRuntimeObject(exec));
             JSObjectSetPropertyAtIndex(context, array, i, jsObject, /*ignored exception*/0);
