@@ -34,6 +34,8 @@ namespace WTF {
 typedef void (*ThreadFunction)(void* argument);
 
 struct ThreadFunctionInvocation {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     ThreadFunctionInvocation(ThreadFunction function, void* data)
         : function(function)
         , data(data)
