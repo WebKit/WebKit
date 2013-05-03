@@ -357,7 +357,7 @@ dist_audio_DATA = $(audio_DATA)
 endif  # END ENABLE_WEB_AUDIO
 
 # ANGLE tokenizer & parser
-DerivedSources/ANGLE/glslang.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.l
+DerivedSources/ANGLE/glslang.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.l DerivedSources/ANGLE/glslang_tab.cpp
 	$(AM_V_GEN)$(FLEX) --noline --nounistd --outfile="$@" "$<"
 
 DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.y

@@ -1,3 +1,16 @@
+2013-05-02  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Fine tune dependencies for glslang generated files
+        https://bugs.webkit.org/show_bug.cgi?id=115537
+
+        Reviewed by Martin Robinson.
+
+        Make glslang.* explictly depend on glslang_tab.*, since the
+        dependency does exist. Otherwise Make might decide to compile
+        things ahead of time and fail.
+
+        * GNUmakefile.am:
+
 2013-05-02  KyungTae Kim  <ktf.kim@samsung.com>
 
         Fix build warnings on ResourceHandleClient.h
