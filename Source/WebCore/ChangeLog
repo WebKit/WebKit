@@ -1,3 +1,9 @@
+2013-05-02  Roger Fong  <roger_fong@apple.com>
+
+        Following r149463, set Path for WebCore makefile as well.
+
+        * WebCore.vcxproj/WebCore.make:
+
 2013-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed fix for Mac Lion build after r149503.
