@@ -1,3 +1,10 @@
+2013-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed fix for Mac Lion build after r149503.
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+
 2013-05-02  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Move Mac-only symbols into the shared symbol list
