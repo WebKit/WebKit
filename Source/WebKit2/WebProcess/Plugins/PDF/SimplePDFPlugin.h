@@ -73,7 +73,7 @@ protected:
 
     const String& suggestedFilename() { return m_suggestedFilename; }
     
-    NSData *liveData() const;
+    virtual NSData *liveData() const;
     NSData *rawData() const { return (NSData *)m_data.get(); }
 
     bool pdfDocumentWasMutated() const { return m_pdfDocumentWasMutated; }

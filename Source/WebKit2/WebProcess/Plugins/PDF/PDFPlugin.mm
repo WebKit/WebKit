@@ -1099,6 +1099,14 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
     return SimplePDFPlugin::handleWheelEvent(event);
 }
 
+NSData *PDFPlugin::liveData() const
+{
+    if (m_activeAnnotation)
+        m_activeAnnotation->commit();
+
+    return SimplePDFPlugin::liveData();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN)

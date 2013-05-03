@@ -142,6 +142,8 @@ private:
 
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
 
+    virtual NSData *liveData() const OVERRIDE;
+
     enum UpdateCursorMode {
         UpdateIfNeeded,
         ForceUpdate

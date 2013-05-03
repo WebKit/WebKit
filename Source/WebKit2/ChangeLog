@@ -1,5 +1,23 @@
 2013-05-03  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Changes being made to active annotation aren't saved when the PDF is exported
+        https://bugs.webkit.org/show_bug.cgi?id=115544
+        <rdar://problem/13801789>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Commit changes to the active annotation (if there is one) before
+        returning the live PDF data, so that said changes are represented
+        in the exported or printed output.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Override liveData.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::liveData): Commit the active annotation if there is one.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        (SimplePDFPlugin): Make liveData virtual.
+
+2013-05-03  Tim Horton  <timothy_horton@apple.com>
+
         Web process crashes at WebPage::determinePrimarySnapshottedPlugInTimerFired + 8
         https://bugs.webkit.org/show_bug.cgi?id=115056
         <rdar://problem/13719543>
