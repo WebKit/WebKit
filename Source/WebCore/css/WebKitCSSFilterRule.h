@@ -50,7 +50,7 @@ public:
     virtual String cssText() const OVERRIDE;
     virtual void reattach(StyleRuleBase*) OVERRIDE;
 
-    CSSStyleDeclaration* style() const;
+    CSSStyleDeclaration* style();
 
 private:
     WebKitCSSFilterRule(StyleRuleFilter*, CSSStyleSheet* parent);

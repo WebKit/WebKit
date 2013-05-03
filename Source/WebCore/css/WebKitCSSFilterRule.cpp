@@ -51,10 +51,10 @@ WebKitCSSFilterRule::~WebKitCSSFilterRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* WebKitCSSFilterRule::style() const
+CSSStyleDeclaration* WebKitCSSFilterRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_filterRule->mutableProperties(), const_cast<WebKitCSSFilterRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_filterRule->mutableProperties(), this);
     return m_propertiesCSSOMWrapper.get();
 }
 

@@ -109,10 +109,10 @@ WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const
+CSSStyleDeclaration* WebKitCSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->mutableProperties(), const_cast<WebKitCSSKeyframeRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->mutableProperties(), this);
     return m_propertiesCSSOMWrapper.get();
 }
 

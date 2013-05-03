@@ -52,10 +52,10 @@ WebKitCSSViewportRule::~WebKitCSSViewportRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* WebKitCSSViewportRule::style() const
+CSSStyleDeclaration* WebKitCSSViewportRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_viewportRule->mutableProperties(), const_cast<WebKitCSSViewportRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_viewportRule->mutableProperties(), this);
 
     return m_propertiesCSSOMWrapper.get();
 }

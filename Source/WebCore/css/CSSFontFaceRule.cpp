@@ -41,10 +41,10 @@ CSSFontFaceRule::~CSSFontFaceRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* CSSFontFaceRule::style() const
+CSSStyleDeclaration* CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_fontFaceRule->mutableProperties(), const_cast<CSSFontFaceRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_fontFaceRule->mutableProperties(), this);
     return m_propertiesCSSOMWrapper.get();
 }
 

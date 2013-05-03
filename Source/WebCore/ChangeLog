@@ -1,5 +1,36 @@
 2013-05-03  Andreas Kling  <akling@apple.com>
 
+        CSSRule style declarations getters shouldn't be const.
+        <http://webkit.org/b/115572>
+
+        Reviewed by Antti Koivisto.
+
+        Accessing the CSSStyleDeclaration for a CSSRule is a potentially mutating operation,
+        and should not be const.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::style):
+        * css/CSSFontFaceRule.h:
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::style):
+        * css/CSSPageRule.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::style):
+        * css/CSSStyleRule.h:
+        (CSSStyleRule):
+        * css/WebKitCSSFilterRule.cpp:
+        (WebCore::WebKitCSSFilterRule::style):
+        * css/WebKitCSSFilterRule.h:
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::style):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebKitCSSKeyframeRule):
+        * css/WebKitCSSViewportRule.cpp:
+        (WebCore::WebKitCSSViewportRule::style):
+        * css/WebKitCSSViewportRule.h:
+
+2013-05-03  Andreas Kling  <akling@apple.com>
+
         Use NotNull tag for placement new in WebCore.
         <http://webkit.org/b/115569>
 

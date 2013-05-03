@@ -57,10 +57,10 @@ CSSStyleRule::~CSSStyleRule()
     }
 }
 
-CSSStyleDeclaration* CSSStyleRule::style() const
+CSSStyleDeclaration* CSSStyleRule::style()
 {
     if (!m_propertiesCSSOMWrapper) {
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->mutableProperties(), const_cast<CSSStyleRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->mutableProperties(), this);
     }
     return m_propertiesCSSOMWrapper.get();
 }
