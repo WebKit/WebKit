@@ -1,3 +1,11 @@
+2013-05-03  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Skip some failing tests after r149504.
+
+        * platform/efl/TestExpectations:
+
 2013-05-02  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.
