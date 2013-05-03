@@ -1,3 +1,25 @@
+2013-05-03  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Page rendering scale is changed after go back and forward
+        https://bugs.webkit.org/show_bug.cgi?id=115573
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jeff Rogers.
+
+        PR: 326886
+        When navigating back from page A with viewport to page B without
+        viewport, we didn't call setViewMode(); therefore, we didn't change
+        the fixed layout size which was set by page A. In that case, WebCore
+        would just pick up page A's fixed layout size to layout page B which
+        caused this issue.
+        Expecting zoomToInitialScaleOnLoad() or other functions to setViewMode()
+        later is not a good way, because zoomToInitialScaleOnLoad() has never
+        been called in this case. So we should always call setViewMode() to set
+        fixed layout size when a new page is committed.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2013-05-02  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Cannot touch scroll readonly text input.

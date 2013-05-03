@@ -1112,11 +1112,12 @@ void WebPagePrivate::setLoadState(LoadState state)
             } else {
                 Platform::IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
                 m_webPage->setVirtualViewportSize(virtualViewport);
-                if (m_shouldUseFixedDesktopMode)
-                    setViewMode(FixedDesktop);
-                else
-                    setViewMode(Desktop);
             }
+
+            if (m_shouldUseFixedDesktopMode)
+                setViewMode(FixedDesktop);
+            else
+                setViewMode(Desktop);
 
 #if ENABLE(EVENT_MODE_METATAGS)
             didReceiveCursorEventMode(ProcessedCursorEvents);
