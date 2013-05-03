@@ -373,14 +373,6 @@ inline void CSSSelector::setValue(const AtomicString& value)
     m_data.m_value->ref();
 }
 
-inline void move(PassOwnPtr<CSSSelector> from, CSSSelector* to)
-{
-    memcpy(to, from.get(), sizeof(CSSSelector));
-    // We want to free the memory (which was allocated with fastNew), but we
-    // don't want the destructor to run since it will affect the copy we've just made.
-    fastDeleteSkippingDestructor(from.leakPtr());
-}
-
 inline CSSSelector::CSSSelector()
     : m_relation(Descendant)
     , m_match(Unknown)

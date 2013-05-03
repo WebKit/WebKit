@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,17 +37,12 @@ CSSSelectorList::~CSSSelectorList()
     deleteSelectors();
 }
 
-CSSSelectorList::CSSSelectorList(const CSSSelectorList& o)
+CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
-    unsigned length = o.length();
-    if (length == 1) {
-        // Destructor expects a single selector to be allocated by new, multiple with fastMalloc.
-        m_selectorArray = new CSSSelector(o.m_selectorArray[0]);
-        return;
-    }
-    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * length));
-    for (unsigned i = 0; i < length; ++i)
-        new (&m_selectorArray[i]) CSSSelector(o.m_selectorArray[i]);
+    unsigned otherLength = other.length();
+    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * otherLength));
+    for (unsigned i = 0; i < otherLength; ++i)
+        new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
 void CSSSelectorList::adopt(CSSSelectorList& list)
@@ -60,28 +55,24 @@ void CSSSelectorList::adopt(CSSSelectorList& list)
 void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
 {
     deleteSelectors();
-    const size_t vectorSize = selectorVector.size();
     size_t flattenedSize = 0;
-    for (size_t i = 0; i < vectorSize; ++i) {
+    for (size_t i = 0; i < selectorVector.size(); ++i) {
         for (CSSParserSelector* selector = selectorVector[i].get(); selector; selector = selector->tagHistory())
             ++flattenedSize;
     }
     ASSERT(flattenedSize);
-    if (flattenedSize == 1) {
-        m_selectorArray = selectorVector[0]->releaseSelector().leakPtr();
-        m_selectorArray->setLastInSelectorList();
-        ASSERT(m_selectorArray->isLastInTagHistory());
-        selectorVector.shrink(0);
-        return;
-    }
     m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * flattenedSize));
     size_t arrayIndex = 0;
-    for (size_t i = 0; i < vectorSize; ++i) {
+    for (size_t i = 0; i < selectorVector.size(); ++i) {
         CSSParserSelector* current = selectorVector[i].get();
         while (current) {
-            OwnPtr<CSSSelector> selector = current->releaseSelector();
+            {
+                // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
+                CSSSelector* currentSelector = current->releaseSelector().leakPtr();
+                memcpy(&m_selectorArray[arrayIndex], currentSelector, sizeof(CSSSelector));
+                fastDeleteSkippingDestructor(currentSelector);
+            }
             current = current->tagHistory();
-            move(selector.release(), &m_selectorArray[arrayIndex]);
             ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList());
             if (current)
                 m_selectorArray[arrayIndex].setNotLastInTagHistory();
@@ -91,7 +82,7 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
     }
     ASSERT(flattenedSize == arrayIndex);
     m_selectorArray[arrayIndex - 1].setLastInSelectorList();
-    selectorVector.shrink(0);
+    selectorVector.clear();
 }
 
 unsigned CSSSelectorList::length() const
@@ -109,24 +100,9 @@ void CSSSelectorList::deleteSelectors()
     if (!m_selectorArray)
         return;
 
-    // We had two cases in adoptSelectVector. The fast case of a 1 element
-    // vector took the CSSSelector directly, which was allocated with new.
-    // The second case we allocated a new fastMalloc buffer, which should be
-    // freed with fastFree, and the destructors called manually.
-    CSSSelector* s = m_selectorArray;
-    bool done = s->isLastInSelectorList();
-    if (done)
-        delete s;
-    else {
-        while (1) {
-            s->~CSSSelector();
-            if (done)
-                break;
-            ++s;
-            done = s->isLastInSelectorList();
-        }
-        fastFree(m_selectorArray);
-    }
+    for (CSSSelector* s = m_selectorArray; !s->isLastInSelectorList(); ++s)
+        s->~CSSSelector();
+    fastFree(m_selectorArray);
 }
 
 String CSSSelectorList::selectorsText() const

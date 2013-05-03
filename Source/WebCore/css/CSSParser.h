@@ -30,7 +30,6 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
-#include "CSSSelector.h"
 #include "Color.h"
 #include "MediaQuery.h"
 #include <wtf/HashMap.h>

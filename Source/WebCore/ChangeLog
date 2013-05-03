@@ -1,3 +1,30 @@
+2013-01-11  Andreas Kling  <akling@apple.com>
+
+        Simplify CSSSelectorList creation/adoption.
+        <http://webkit.org/b/106649>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the optimization that special-cased construction of CSSSelectorLists with a single entry.
+        This is in preparation for changing the way we store the selector lists on style rules.
+
+        * css/CSSParser.h:
+        * css/CSSSelector.h:
+
+            Remove move(PassOwnPtr<CSSSelector> from, CSSSelector* to), inlining it into
+            CSSSelectorList::adoptSelectorVector instead.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::deleteSelectors):
+
+            Handle all selector list lengths the same way.
+
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+
+            Merge move() from CSSSelector.h into this code since it was the only call site.
+            Also some minor readability cleanups.
+
 2013-05-03  Antti Koivisto  <antti@apple.com>
 
         Remove HTMLShadowElement
