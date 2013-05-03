@@ -33,7 +33,6 @@
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLShadowElement.h"
 #include "Node.h"
 #include "PseudoElement.h"
 #include "RenderFullScreen.h"

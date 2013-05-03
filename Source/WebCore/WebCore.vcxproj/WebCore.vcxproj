@@ -1411,14 +1411,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLShadowElement.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSourceElement.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -9055,14 +9047,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\html\shadow\HTMLShadowElement.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\html\shadow\InsertionPoint.cpp" />
     <ClCompile Include="..\html\shadow\MediaControlElements.cpp" />
     <ClCompile Include="..\html\shadow\MediaControlElementTypes.cpp" />
@@ -10825,7 +10809,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLQuoteElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLScriptElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSelectElement.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLShadowElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSourceElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSpanElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLStyleElement.h" />
@@ -12878,7 +12861,6 @@
     <ClInclude Include="..\html\shadow\DateTimeSymbolicFieldElement.h" />
     <ClInclude Include="..\html\shadow\DetailsMarkerControl.h" />
     <ClInclude Include="..\html\shadow\HTMLContentElement.h" />
-    <ClInclude Include="..\html\shadow\HTMLShadowElement.h" />
     <ClInclude Include="..\html\shadow\InsertionPoint.h" />
     <ClInclude Include="..\html\shadow\MediaControlElements.h" />
     <ClInclude Include="..\html\shadow\MediaControlElementTypes.h" />

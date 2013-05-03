@@ -432,7 +432,6 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
     $(WebCore)/html/shadow/HTMLContentElement.idl \
-    $(WebCore)/html/shadow/HTMLShadowElement.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/TextTrack.idl \

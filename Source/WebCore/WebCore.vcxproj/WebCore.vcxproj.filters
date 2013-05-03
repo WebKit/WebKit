@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -4350,9 +4350,6 @@
     <ClCompile Include="..\html\shadow\HTMLContentElement.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\shadow\HTMLShadowElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\shadow\InsertionPoint.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
@@ -5993,9 +5990,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSelectElement.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLShadowElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSourceElement.cpp">
@@ -11295,9 +11289,6 @@
     <ClInclude Include="..\html\shadow\HTMLContentElement.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\shadow\HTMLShadowElement.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\shadow\InsertionPoint.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
@@ -13521,9 +13512,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSelectElement.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLShadowElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLSourceElement.h">

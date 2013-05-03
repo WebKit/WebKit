@@ -1405,7 +1405,6 @@
 		4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A1E719014E101E400626F9D /* JSHTMLContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E718E14E101E400626F9D /* JSHTMLContentElement.cpp */; };
 		4A1E719114E101E400626F9D /* JSHTMLContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1E718F14E101E400626F9D /* JSHTMLContentElement.h */; };
-		4A1E719614E101F900626F9D /* JSHTMLShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1E719414E101F900626F9D /* JSHTMLShadowElement.h */; };
 		4A1E71A614E106AC00626F9D /* JSShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1E71A414E106AC00626F9D /* JSShadowRoot.h */; };
 		4A38BF5014FE1C0900612512 /* WebSocketDeflateFramer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A38BF4E14FE1C0900612512 /* WebSocketDeflateFramer.cpp */; };
 		4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A38BF4F14FE1C0900612512 /* WebSocketDeflateFramer.h */; };
@@ -1428,7 +1427,6 @@
 		4A9CC82116BF9BB400EC645A /* InspectorCSSOMWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */; };
 		4AAAB4C416D379B5001DA41B /* EventPathWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAAB4C216D379B5001DA41B /* EventPathWalker.cpp */; };
 		4AAAB4C516D379B5001DA41B /* EventPathWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AAAB4C316D379B5001DA41B /* EventPathWalker.h */; };
-		4ABDFF0C14DBE385004D117D /* HTMLShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ABDFF0814DBE312004D117D /* HTMLShadowElement.h */; };
 		4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */; };
 		4ACBC0BF12713CBD0094F9B2 /* ClassList.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ACBC0BD12713CBD0094F9B2 /* ClassList.h */; };
 		4ACBC0C312713CCA0094F9B2 /* DOMSettableTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBC0C012713CCA0094F9B2 /* DOMSettableTokenList.cpp */; };
@@ -7800,7 +7798,6 @@
 		4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormAssociatedElement.h; sourceTree = "<group>"; };
 		4A1E718E14E101E400626F9D /* JSHTMLContentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLContentElement.cpp; sourceTree = "<group>"; };
 		4A1E718F14E101E400626F9D /* JSHTMLContentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLContentElement.h; sourceTree = "<group>"; };
-		4A1E719414E101F900626F9D /* JSHTMLShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLShadowElement.h; sourceTree = "<group>"; };
 		4A1E71A414E106AC00626F9D /* JSShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRoot.h; sourceTree = "<group>"; };
 		4A38BF4E14FE1C0900612512 /* WebSocketDeflateFramer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketDeflateFramer.cpp; path = Modules/websockets/WebSocketDeflateFramer.cpp; sourceTree = "<group>"; };
 		4A38BF4F14FE1C0900612512 /* WebSocketDeflateFramer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketDeflateFramer.h; path = Modules/websockets/WebSocketDeflateFramer.h; sourceTree = "<group>"; };
@@ -7823,8 +7820,6 @@
 		4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSOMWrappers.h; sourceTree = "<group>"; };
 		4AAAB4C216D379B5001DA41B /* EventPathWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPathWalker.cpp; sourceTree = "<group>"; };
 		4AAAB4C316D379B5001DA41B /* EventPathWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPathWalker.h; sourceTree = "<group>"; };
-		4ABDFF0814DBE312004D117D /* HTMLShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLShadowElement.h; sourceTree = "<group>"; };
-		4ABDFF0914DBE312004D117D /* HTMLShadowElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLShadowElement.idl; sourceTree = "<group>"; };
 		4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassList.cpp; sourceTree = "<group>"; };
 		4ACBC0BD12713CBD0094F9B2 /* ClassList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassList.h; sourceTree = "<group>"; };
 		4ACBC0C012713CCA0094F9B2 /* DOMSettableTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMSettableTokenList.cpp; sourceTree = "<group>"; };
@@ -13936,8 +13931,6 @@
 				57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */,
 				57B791A814C6A63300F202D1 /* HTMLContentElement.h */,
 				A7B7749614CF6353004044BB /* HTMLContentElement.idl */,
-				4ABDFF0814DBE312004D117D /* HTMLShadowElement.h */,
-				4ABDFF0914DBE312004D117D /* HTMLShadowElement.idl */,
 				57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */,
 				57CF497314EE36D700ECFF14 /* InsertionPoint.h */,
 				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
@@ -16855,7 +16848,6 @@
 				1AE2ABA50A1CE90500B42B25 /* JSHTMLScriptElement.h */,
 				E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */,
 				E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */,
-				4A1E719414E101F900626F9D /* JSHTMLShadowElement.h */,
 				E4B423710CBFB6E000AF2ECE /* JSHTMLSourceElement.cpp */,
 				E4B423720CBFB6E000AF2ECE /* JSHTMLSourceElement.h */,
 				9752D38B1413104B003305BD /* JSHTMLSpanElement.cpp */,
@@ -22101,7 +22093,6 @@
 				977B3875122883E900B81FF8 /* HTMLScriptRunner.h in Headers */,
 				977B3876122883E900B81FF8 /* HTMLScriptRunnerHost.h in Headers */,
 				A81369D8097374F600D74463 /* HTMLSelectElement.h in Headers */,
-				4ABDFF0C14DBE385004D117D /* HTMLShadowElement.h in Headers */,
 				E44613A80CD6331000FADA75 /* HTMLSourceElement.h in Headers */,
 				977E2DCE12F0E28300C13379 /* HTMLSourceTracker.h in Headers */,
 				978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */,
@@ -22487,7 +22478,6 @@
 				1AE2ABAD0A1CE90500B42B25 /* JSHTMLScriptElement.h in Headers */,
 				E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */,
 				AB4CB4EB0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h in Headers */,
-				4A1E719614E101F900626F9D /* JSHTMLShadowElement.h in Headers */,
 				E446143C0CD689CC00FADA75 /* JSHTMLSourceElement.h in Headers */,
 				9752D38E1413104B003305BD /* JSHTMLSpanElement.h in Headers */,
 				A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */,

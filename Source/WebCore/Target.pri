@@ -768,7 +768,6 @@ SOURCES += \
     html/shadow/DateTimeSymbolicFieldElement.cpp \
     html/shadow/DetailsMarkerControl.cpp \
     html/shadow/HTMLContentElement.cpp \
-    html/shadow/HTMLShadowElement.cpp \
     html/shadow/InsertionPoint.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/MediaControlsApple.cpp \
@@ -1950,7 +1949,6 @@ HEADERS += \
     html/parser/XSSAuditorDelegate.h \
     html/shadow/ContentDistributor.h \
     html/shadow/HTMLContentElement.h \
-    html/shadow/HTMLShadowElement.h \
     html/shadow/MediaControlElementTypes.h \
     html/shadow/MediaControlElements.h \
     html/shadow/MediaControls.h \

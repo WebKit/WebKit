@@ -1,3 +1,35 @@
+2013-05-03  Antti Koivisto  <antti@apple.com>
+
+        Remove HTMLShadowElement
+        https://bugs.webkit.org/show_bug.cgi?id=115555
+
+        Reviewed by Andreas Kling.
+
+        This is not used internally.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ComposedShadowTreeWalker.cpp:
+        * dom/NodeRenderingContext.cpp:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * html/InputType.cpp:
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+        * html/shadow/HTMLShadowElement.cpp: Removed.
+        * html/shadow/HTMLShadowElement.h: Removed.
+        * html/shadow/HTMLShadowElement.idl: Removed.
+        * page/DOMWindow.idl:
+
 2013-05-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove WTF::ListRefPtr class

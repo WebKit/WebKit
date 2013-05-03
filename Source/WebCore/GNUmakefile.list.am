@@ -431,8 +431,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLScriptElement.h \
 	DerivedSources/WebCore/JSHTMLSelectElement.cpp \
 	DerivedSources/WebCore/JSHTMLSelectElement.h \
-	DerivedSources/WebCore/JSHTMLShadowElement.cpp \
-	DerivedSources/WebCore/JSHTMLShadowElement.h \
 	DerivedSources/WebCore/JSHTMLSourceElement.cpp \
 	DerivedSources/WebCore/JSHTMLSourceElement.h \
 	DerivedSources/WebCore/JSHTMLSpanElement.cpp \
@@ -1599,7 +1597,6 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/shadow/HTMLContentElement.idl \
-	$(WebCore)/html/shadow/HTMLShadowElement.idl \
 	$(WebCore)/html/track/AudioTrack.idl \
 	$(WebCore)/html/track/AudioTrackList.idl \
 	$(WebCore)/html/track/TextTrack.idl \
@@ -3404,8 +3401,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.h \
 	Source/WebCore/html/canvas/WebGLExtension.cpp \
 	Source/WebCore/html/canvas/WebGLExtension.h \
-	Source/WebCore/html/shadow/HTMLShadowElement.cpp \
-	Source/WebCore/html/shadow/HTMLShadowElement.h \
 	Source/WebCore/html/DOMSettableTokenList.cpp \
 	Source/WebCore/html/DOMSettableTokenList.h \
 	Source/WebCore/html/DOMTokenList.cpp \

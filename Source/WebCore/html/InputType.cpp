@@ -49,7 +49,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "HTMLShadowElement.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
 #include "InputTypeNames.h"
@@ -487,17 +486,6 @@ void InputType::destroyShadowSubtree()
         return;
 
     root->removeChildren();
-
-    // It's ok to clear contents of all other ShadowRoots because we don't allow
-    // adding AuthorShadowRoot to HTMLInputElement.
-    while ((root = root->youngerShadowRoot())) {
-#if ENABLE(SHADOW_DOM)
-        root->removeChildren();
-        root->appendChild(HTMLShadowElement::create(shadowTag, element()->document()));
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    }
 }
 
 Decimal InputType::parseToNumber(const String&, const Decimal& defaultValue) const

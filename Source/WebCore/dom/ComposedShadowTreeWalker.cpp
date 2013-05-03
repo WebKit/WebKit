@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
-#include "HTMLShadowElement.h"
 #include "InsertionPoint.h"
 #include "PseudoElement.h"
 

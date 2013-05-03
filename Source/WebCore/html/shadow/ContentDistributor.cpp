@@ -29,7 +29,6 @@
 
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
-#include "HTMLShadowElement.h"
 #include "NodeTraversal.h"
 #include "ShadowRoot.h"
 
@@ -223,9 +222,7 @@ void ContentDistributor::distribute(Element* host)
     Vector<bool> distributed(pool.size());
     distributed.fill(false);
 
-    Vector<HTMLShadowElement*, 8> activeShadowInsertionPoints;
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
-        HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
 
         if (ScopeContentDistribution* scope = root->scopeDistribution()) {
             const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
@@ -234,38 +231,12 @@ void ContentDistributor::distribute(Element* host)
                 if (!point->isActive())
                     continue;
 
-                if (isHTMLShadowElement(point)) {
-                    if (!firstActiveShadowInsertionPoint)
-                        firstActiveShadowInsertionPoint = toHTMLShadowElement(point);
-                } else {
-                    distributeSelectionsTo(point, pool, distributed);
-                    if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
-                        shadow->invalidateDistribution();
-                }
+                distributeSelectionsTo(point, pool, distributed);
+                if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
+                    shadow->invalidateDistribution();
             }
         }
-
-        if (firstActiveShadowInsertionPoint)
-            activeShadowInsertionPoints.append(firstActiveShadowInsertionPoint);
     }
-
-#if ENABLE(SHADOW_DOM)
-    for (size_t i = activeShadowInsertionPoints.size(); i > 0; --i) {
-        HTMLShadowElement* shadowElement = activeShadowInsertionPoints[i - 1];
-        ShadowRoot* root = shadowElement->containingShadowRoot();
-        ASSERT(root);
-        if (root->olderShadowRoot()) {
-            distributeNodeChildrenTo(shadowElement, root->olderShadowRoot());
-            root->olderShadowRoot()->ensureScopeDistribution()->setInsertionPointAssignedTo(shadowElement);
-        } else {
-            distributeSelectionsTo(shadowElement, pool, distributed);
-            if (ElementShadow* shadow = shadowElement->parentNode()->isElementNode() ? toElement(shadowElement->parentNode())->shadow() : 0)
-                shadow->invalidateDistribution();
-        }
-    }
-#else
-    ASSERT(!activeShadowInsertionPoints.size());
-#endif
 }
 
 bool ContentDistributor::invalidate(Element* host)
