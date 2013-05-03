@@ -316,7 +316,7 @@
         "Trey Matteson": {"emails": ["trey@usa.net"], "nicks": ["trey"]},
         "Tristan O'Tierney": {"emails": ["tristan@otierney.net", "tristan@apple.com"]},
         "Vangelis Kokkevis": {"emails": ["vangelis@chromium.org"], "nicks": ["vangelis"]},
-        "Viatcheslav Ostapenko": {"emails": ["ostap73@gmail.com", "ostapenko.viatcheslav@nokia.com", "v.ostapenko@samsung.com", "v.ostapenko@sisa.samsung.com"], "nicks": ["ostap"]},
+        "Viatcheslav Ostapenko": {"emails": ["ostap73@gmail.com", "sl.ostapenko@samsung.com", "ostapenko.viatcheslav@nokia.com"], "nicks": ["ostap"]},
         "Victor Carbune": {"emails": ["vcarbune@chromium.org", "victor@rosedu.org"], "nicks": ["vcarbune"]},
         "Victor Wang": {"emails": ["victorw@chromium.org"], "nicks": ["victorw"]},
         "Victoria Kirst": {"emails": ["vrk@chromium.org", "vrk@google.com"], "nicks": ["vrk"]},

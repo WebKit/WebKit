@@ -1,3 +1,9 @@
+2013-05-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed. Update Viatcheslav Ostapenko's email in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-02  Nico Weber  <thakis@chromium.org>
 
         Remove a stale script file.
