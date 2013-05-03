@@ -1,3 +1,12 @@
+2013-05-03  Daniel Bates  <dbates@webkit.org>
+
+        Remove unnecessary include HTMLNames.h from RenderThemeGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=115571
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+
 2013-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] setMetadataURL incorrectly treats path bytes as Latin-1

@@ -35,7 +35,6 @@
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HTMLMediaElement.h"
-#include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
@@ -61,8 +60,6 @@ namespace WebCore {
 // definition depends on including glib.h, negating the benefit of using a forward declaration.
 extern GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType, const char* iconName, gint direction, gint state, gint iconSize);
 extern GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize);
-
-using namespace HTMLNames;
 
 #if ENABLE(VIDEO)
 static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
