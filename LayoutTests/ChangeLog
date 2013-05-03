@@ -1,3 +1,14 @@
+2013-05-03  Stephanie Lewis  <slewis@apple.com>
+
+        Revert to old results on Lion.
+
+        Unreviewed.
+
+        Results were updated in (http://trac.webkit.org/changeset/149503) but that is compiled 
+        out on Lion (http://trac.webkit.org/changeset/149510).
+
+        * platform/mac-lion/media/video-controls-captions-trackmenu-localized-expected.txt: Added.
+
 2013-05-03  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.
