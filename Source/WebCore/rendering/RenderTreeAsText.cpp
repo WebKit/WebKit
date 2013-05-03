@@ -715,6 +715,12 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
     }
 }
 
+static LayoutSize maxLayoutOverflow(const RenderBox* box)
+{
+    LayoutRect overflowRect = box->layoutOverflowRect();
+    return LayoutSize(overflowRect.maxX(), overflowRect.maxY());
+}
+
 static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
@@ -723,7 +729,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     if (rootLayer == l) {
         paintDirtyRect.setWidth(max<LayoutUnit>(paintDirtyRect.width(), rootLayer->renderBox()->layoutOverflowRect().maxX()));
         paintDirtyRect.setHeight(max<LayoutUnit>(paintDirtyRect.height(), rootLayer->renderBox()->layoutOverflowRect().maxY()));
-        l->setSize(l->size().expandedTo(pixelSnappedIntSize(l->renderBox()->maxLayoutOverflow(), LayoutPoint(0, 0))));
+        l->setSize(l->size().expandedTo(pixelSnappedIntSize(maxLayoutOverflow(l->renderBox()), LayoutPoint(0, 0))));
     }
     
     // Calculate the clip rects we should use.

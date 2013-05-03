@@ -1,3 +1,29 @@
+2013-05-03  Andrei Bucur  <abucur@adobe.com>
+
+        Move pixelSnappedLayoutOverflowRect and maxLayoutOverflow from RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=115550
+
+        Reviewed by Simon Fraser.
+
+        The patch moves pixelSnappedLayoutOverflowRect and maxLayoutOverflow out
+        of RenderBox somewhere logically closer to their usage place.
+
+        pixelSnappedLayoutOverflowRect - moved to RenderView because it's called only
+        for RenderView at this moment.
+        There are other places when the overflow rect is pixel snapped but only after
+        the rect is adjusted for writing modes or inflated.
+
+        maxLayoutOverflow - moved to RenderTreeAsText.cpp as a static function because
+        it's used only there.
+
+        Tests: no new functional change.
+
+        * rendering/RenderBox.h: The functions declarations are removed.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::maxLayoutOverflow): 
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pixelSnappedLayoutOverflowRect):
+
 2013-05-03  Andreas Kling  <akling@apple.com>
 
         StyleResolver: Have "list of matched rules" API vend internal types instead of CSSOM wrappers.
