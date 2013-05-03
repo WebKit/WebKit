@@ -51,7 +51,7 @@
 #include <gst/interfaces/streamvolume.h>
 #endif
 
-GST_DEBUG_CATEGORY_STATIC(webkit_media_player_debug);
+GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 using namespace std;

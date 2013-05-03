@@ -1,3 +1,17 @@
+2013-05-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] GStreamer log crashes in MediaPlayerPrivateGStreamerBase because of uninitialized category
+        https://bugs.webkit.org/show_bug.cgi?id=115575
+
+        Reviewed by Philippe Normand.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        Using extern debug category.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Declaring debug category as not static.
+
 2013-05-03  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed VS2010 Build Correction.
