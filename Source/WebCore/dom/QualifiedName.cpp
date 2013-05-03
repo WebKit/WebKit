@@ -131,7 +131,7 @@ void QualifiedName::init()
         // Use placement new to initialize the globals.
         
         AtomicString::init();
-        new ((void*)&anyName) QualifiedName(nullAtom, starAtom, starAtom);
+        new (NotNull, (void*)&anyName) QualifiedName(nullAtom, starAtom, starAtom);
         initialized = true;
     }
 }
@@ -157,12 +157,12 @@ unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 
 void createQualifiedName(void* targetAddress, StringImpl* name, const AtomicString& nameNamespace)
 {
-    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nameNamespace);
+    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nameNamespace);
 }
 
 void createQualifiedName(void* targetAddress, StringImpl* name)
 {
-    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nullAtom);
+    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nullAtom);
 }
 
 }

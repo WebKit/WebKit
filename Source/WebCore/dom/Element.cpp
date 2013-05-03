@@ -3010,7 +3010,7 @@ static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
 PassRefPtr<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
 {
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
-    return adoptRef(new (slot) ShareableElementData(attributes));
+    return adoptRef(new (NotNull, slot) ShareableElementData(attributes));
 }
 
 PassRefPtr<UniqueElementData> UniqueElementData::create()
@@ -3022,7 +3022,7 @@ ShareableElementData::ShareableElementData(const Vector<Attribute>& attributes)
     : ElementData(attributes.size())
 {
     for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&m_attributeArray[i]) Attribute(attributes[i]);
+        new (NotNull, &m_attributeArray[i]) Attribute(attributes[i]);
 }
 
 ShareableElementData::~ShareableElementData()
@@ -3042,7 +3042,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
     }
 
     for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&m_attributeArray[i]) Attribute(other.m_attributeVector.at(i));
+        new (NotNull, &m_attributeArray[i]) Attribute(other.m_attributeVector.at(i));
 }
 
 ElementData::ElementData(const ElementData& other, bool isUnique)
@@ -3093,7 +3093,7 @@ PassRefPtr<UniqueElementData> ElementData::makeUniqueCopy() const
 PassRefPtr<ShareableElementData> UniqueElementData::makeShareableCopy() const
 {
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(m_attributeVector.size()));
-    return adoptRef(new (slot) ShareableElementData(*this));
+    return adoptRef(new (NotNull, slot) ShareableElementData(*this));
 }
 
 void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomicString& value)

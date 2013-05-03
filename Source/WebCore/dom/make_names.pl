@@ -127,7 +127,7 @@ if (length($fontNamesIn)) {
     print F StaticString::GenerateStringAsserts(\%parameters);
 
     while ( my ($name, $identifier) = each %parameters ) {
-        print F "    new ((void*)&$name) AtomicString(${name}Impl);\n";
+        print F "    new (NotNull, (void*)&$name) AtomicString(${name}Impl);\n";
     }
 
     print F "}\n}\n}\n";
@@ -698,7 +698,7 @@ sub printNamesCppFile
     print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
 
     print(F "    // Namespace\n");
-    print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n");
+    print(F "    new (NotNull, (void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n");
     print(F "\n");
     print F StaticString::GenerateStringAsserts(\%allStrings);
 

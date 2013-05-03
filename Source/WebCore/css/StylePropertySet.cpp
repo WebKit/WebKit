@@ -69,7 +69,7 @@ static bool isInitialOrInherit(const String& value)
 PassRefPtr<ImmutableStylePropertySet> ImmutableStylePropertySet::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
     void* slot = WTF::fastMalloc(sizeForImmutableStylePropertySetWithPropertyCount(count));
-    return adoptRef(new (slot) ImmutableStylePropertySet(properties, count, cssParserMode));
+    return adoptRef(new (NotNull, slot) ImmutableStylePropertySet(properties, count, cssParserMode));
 }
 
 PassRefPtr<ImmutableStylePropertySet> StylePropertySet::immutableCopyIfNeeded() const

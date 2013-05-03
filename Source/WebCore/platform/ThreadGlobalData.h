@@ -118,7 +118,7 @@ inline ThreadGlobalData& threadGlobalData()
     if (!ThreadGlobalData::staticData) {
         ThreadGlobalData::staticData = static_cast<ThreadGlobalData*>(fastMalloc(sizeof(ThreadGlobalData)));
         // ThreadGlobalData constructor indirectly uses staticData, so we need to set up the memory before invoking it.
-        new (ThreadGlobalData::staticData) ThreadGlobalData;
+        new (NotNull, ThreadGlobalData::staticData) ThreadGlobalData;
     }
     return *ThreadGlobalData::staticData;
 #endif

@@ -71,7 +71,7 @@ public:
     static PassRefPtr<GlyphPage> createForMixedFontData(GlyphPageTreeNode* owner)
     {
         void* slot = fastMalloc(sizeof(GlyphPage) + sizeof(SimpleFontData*) * GlyphPage::size);
-        return adoptRef(new (slot) GlyphPage(owner));
+        return adoptRef(new (NotNull, slot) GlyphPage(owner));
     }
 
     static PassRefPtr<GlyphPage> createForSingleFontData(GlyphPageTreeNode* owner, const SimpleFontData* fontData)

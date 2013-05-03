@@ -1,3 +1,28 @@
+2013-05-03  Andreas Kling  <akling@apple.com>
+
+        Use NotNull tag for placement new in WebCore.
+        <http://webkit.org/b/115569>
+
+        Reviewed by Antti Koivisto.
+
+        Avoid emitting null checks where we use placement new to construct objects into safe locations.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::ImmutableStylePropertySet::create):
+        * dom/Element.cpp:
+        (WebCore::ShareableElementData::createWithAttributes):
+        (WebCore::ShareableElementData::ShareableElementData):
+        (WebCore::UniqueElementData::makeShareableCopy):
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init):
+        (WebCore::createQualifiedName):
+        * dom/make_names.pl:
+        (printNamesCppFile):
+        * platform/ThreadGlobalData.h:
+        (WebCore::threadGlobalData):
+        * platform/graphics/GlyphPage.h:
+        (WebCore::GlyphPage::createForMixedFontData):
+
 2013-01-11  Andreas Kling  <akling@apple.com>
 
         Simplify CSSSelectorList creation/adoption.
