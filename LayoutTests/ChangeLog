@@ -1,3 +1,11 @@
+2013-05-02  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip html5lib test cases that were skipped due to failure after r143804.
+
+        * platform/efl/TestExpectations:
+
 2013-05-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.
