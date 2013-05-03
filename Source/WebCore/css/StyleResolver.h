@@ -22,7 +22,6 @@
 #ifndef StyleResolver_h
 #define StyleResolver_h
 
-#include "CSSRuleList.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
 #include "DocumentRuleSets.h"
@@ -66,7 +65,6 @@ class CSSImageValue;
 class CSSPageRule;
 class CSSPrimitiveValue;
 class CSSProperty;
-class CSSRuleList;
 class CSSSelector;
 class CSSStyleSheet;
 class CSSValue;
@@ -91,7 +89,6 @@ class RenderScrollbar;
 class RuleData;
 class RuleSet;
 class Settings;
-class StaticCSSRuleList;
 class StyleCustomFilterProgramCache;
 class StyleScopeResolver;
 class StyleImage;
@@ -251,8 +248,8 @@ public:
         AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
-    PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRuleBase> > styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRuleBase> > pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
     // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
     // the correct font size scaled relative to the user's default (medium).

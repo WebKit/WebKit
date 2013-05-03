@@ -829,16 +829,17 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
         // declarations, as well as embedded and inline style declarations.
 
         Document* doc = m_element->document();
-        if (RefPtr<CSSRuleList> rules = doc->ensureStyleResolver()->styleRulesForElement(m_element, StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules)) {
-            for (int i = rules->length(); i > 0; --i) {
-                CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
+        Vector<RefPtr<StyleRuleBase> > rules = doc->ensureStyleResolver()->styleRulesForElement(m_element, StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules);
+        for (int i = rules.size(); i > 0; --i) {
+            if (!rules[i]->isStyleRule())
+                continue;
+            StyleRule* styleRule = static_cast<StyleRule*>(rules[i - 1].get());
 
-                if (rule->styleRule()->properties()->propertyIsImportant(propID))
-                    return rule->styleRule()->properties()->getPropertyValue(propID);
+            if (styleRule->properties()->propertyIsImportant(propID))
+                return styleRule->properties()->getPropertyValue(propID);
 
-                if (!style || style->getPropertyValue(propID).isEmpty())
-                    style = rule->styleRule()->properties();
-            }
+            if (!style || style->getPropertyValue(propID).isEmpty())
+                style = styleRule->properties();
         }
 
         if (!style)

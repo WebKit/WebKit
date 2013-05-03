@@ -68,10 +68,10 @@ StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
     return m_result;
 }
 
-PassRefPtr<CSSRuleList> ElementRuleCollector::matchedRuleList()
+const Vector<RefPtr<StyleRuleBase> >& ElementRuleCollector::matchedRuleList() const
 {
     ASSERT(m_mode == SelectorChecker::CollectingRules);
-    return m_ruleList.release();
+    return m_matchedRuleList;
 }
 
 inline void ElementRuleCollector::addMatchedRule(const RuleData* rule)
@@ -86,13 +86,6 @@ inline void ElementRuleCollector::clearMatchedRules()
     if (!m_matchedRules)
         return;
     m_matchedRules->clear();
-}
-
-inline StaticCSSRuleList* ElementRuleCollector::ensureRuleList()
-{
-    if (!m_ruleList)
-        m_ruleList = StaticCSSRuleList::create();
-    return m_ruleList.get();
 }
 
 inline void ElementRuleCollector::addElementStyleProperties(const StylePropertySet* propertySet, bool isCacheable)
@@ -210,7 +203,7 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
     Vector<const RuleData*, 32>& matchedRules = *m_matchedRules;
     if (m_mode == SelectorChecker::CollectingRules) {
         for (unsigned i = 0; i < matchedRules.size(); ++i)
-            ensureRuleList()->rules().append(matchedRules[i]->rule()->createCSSOMWrapper());
+            m_matchedRuleList.append(matchedRules[i]->rule());
         return;
     }
 

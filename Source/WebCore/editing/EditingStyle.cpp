@@ -1076,12 +1076,10 @@ void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverride
 static PassRefPtr<MutableStylePropertySet> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
 {
     RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
-    RefPtr<CSSRuleList> matchedRules = element->document()->ensureStyleResolver()->styleRulesForElement(element, rulesToInclude);
-    if (matchedRules) {
-        for (unsigned i = 0; i < matchedRules->length(); i++) {
-            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE)
-                style->mergeAndOverrideOnConflict(static_cast<CSSStyleRule*>(matchedRules->item(i))->styleRule()->properties());
-        }
+    Vector<RefPtr<StyleRuleBase> > matchedRules = element->document()->ensureStyleResolver()->styleRulesForElement(element, rulesToInclude);
+    for (unsigned i = 0; i < matchedRules.size(); ++i) {
+        if (matchedRules[i]->isStyleRule())
+            style->mergeAndOverrideOnConflict(static_pointer_cast<StyleRule>(matchedRules[i])->properties());
     }
     
     return style.release();

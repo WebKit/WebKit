@@ -1,3 +1,54 @@
+2013-05-03  Andreas Kling  <akling@apple.com>
+
+        StyleResolver: Have "list of matched rules" API vend internal types instead of CSSOM wrappers.
+        <http://webkit.org/b/115563>
+
+        Reviewed by Antti Koivisto.
+
+        Change styleRulesForElement() and pseudoStyleRulesForElement() to return Vectors of StyleRuleBase
+        instead of CSSRuleLists. This defers instantiating CSSOM wrappers until they're actually needed
+        for exposure to web API.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+
+            Create a StaticCSSRuleList and populate it with CSSOM wrappers for the matched rules.
+            This is the one place where we expose this functionality to the web.
+
+        * css/ElementRuleCollector.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+
+            Collect internal StyleRuleBase pointers here instead of creating wrappers.
+
+        * css/StyleResolver.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleRulesForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+
+            Vend said pointers.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+
+            Dodge CSSOM wrapper instantiation (Woop woop!)
+
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+
+            Split buildObjectForRule() into two versions, one for CSSStyleRule and one for StyleRule.
+            The CSSStyleRule one doesn't need a special path for parent-less rules, since those always
+            come in through the StyleRule interface instead. This factoring can be improved further
+            after this change.
+
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+
+            Tweaked for changes in StyleResolver API.
+
 2013-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r145042): Downloading a file sometimes results in could not create

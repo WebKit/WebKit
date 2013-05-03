@@ -1,3 +1,15 @@
+2013-05-03  Andreas Kling  <akling@apple.com>
+
+        StyleResolver: Have "list of matched rules" API vend internal types instead of CSSOM wrappers.
+        <http://webkit.org/b/115563>
+
+        Reviewed by Antti Koivisto.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
+            Tweaked for changes in StyleResolver API.
+
 2013-04-30  Andreas Kling  <akling@apple.com>
 
         Don't create StyleResolvers just to invalidate them.

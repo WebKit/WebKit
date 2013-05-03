@@ -31,6 +31,7 @@
 #include "BarInfo.h"
 #include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1382,7 +1383,15 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
 
     PseudoId pseudoId = CSSSelector::pseudoId(pseudoType);
 
-    return m_frame->document()->ensureStyleResolver()->pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
+    Vector<RefPtr<StyleRuleBase> > matchedRules = m_frame->document()->ensureStyleResolver()->pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
+    if (matchedRules.isEmpty())
+        return 0;
+
+    RefPtr<StaticCSSRuleList> ruleList = StaticCSSRuleList::create();
+    for (unsigned i = 0; i < matchedRules.size(); ++i)
+        ruleList->rules().append(matchedRules[i]->createCSSOMWrapper());
+
+    return ruleList.release();
 }
 
 PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const
