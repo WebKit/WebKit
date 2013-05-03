@@ -1,3 +1,9 @@
+2013-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Move Mac-only symbols into the shared symbol list
+
+        * WebCore.exp.in: Move symbols.
+
 2013-05-02  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM removal: Get rid of ContentSelectorQuery
