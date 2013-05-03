@@ -1,3 +1,36 @@
+2013-05-02  Andy Estes  <aestes@apple.com>
+
+        [WK2][CustomProtocols] NSURLProtocolClient methods should be dispatched on NSURLConnection's resource loader run loop
+        https://bugs.webkit.org/show_bug.cgi?id=115539
+
+        Reviewed by Alexey Proskuryakov.
+
+        It turns out that calling NSURLProtocolClient methods from a different
+        thread than the one running the NSURLConnection run loop is unsafe.
+        Although I can't capture it reliably in a test case, doing so can
+        sometimes result in a load timing out because the call to
+        -[NSURLProtocolClient URLProtocolDidFinishLoading:] was ignored by
+        NSURLConnection.
+
+        Fix this by dispatching these methods on the NSURLConnection resource
+        load run loop. This matches where NSURLProtocolClient methods are
+        dispatched by typical NSURLProtocol implementations, and in my testing
+        this solves the timeout issue.
+
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h: Declare
+        dispatchOnResourceLoaderRunLoop().
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        Declare +[NSURLConnection resourceLoaderRunLoop] on a category of
+        NSURLConnection. Also include the header that declares it if it's present.
+        (WebKit::CustomProtocolManager::didFailWithError): Call the
+        NSURLProtocolClient method via dispatchOnResourceLoaderRunLoop().
+        (WebKit::CustomProtocolManager::didLoadData): Ditto.
+        (WebKit::CustomProtocolManager::didReceiveResponse): Ditto.
+        (WebKit::CustomProtocolManager::didFinishLoading): Ditto.
+        (WebKit::CustomProtocolManager::dispatchOnResourceLoaderRunLoop):
+        Dispatch a block on the NSURLConnection resource loader run loop and
+        then wake up the run loop.
+
 2013-05-02  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (149389) Main resources converted to downloads are immediately cancelled.

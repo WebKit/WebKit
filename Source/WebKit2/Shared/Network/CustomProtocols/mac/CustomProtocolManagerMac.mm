@@ -43,6 +43,16 @@
 #import "NetworkProcessCreationParameters.h"
 #endif
 
+#ifdef __has_include
+#if __has_include(<Foundation/NSURLConnectionPrivate.h>)
+#import <Foundation/NSURLConnectionPrivate.h>
+#endif
+#endif
+
+@interface NSURLConnection (Details)
++ (CFRunLoopRef)resourceLoaderRunLoop;
+@end
+
 using namespace WebKit;
 
 namespace WebKit {
@@ -186,13 +196,24 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     return m_registeredSchemes.contains(scheme);
 }
 
+static inline void dispatchOnResourceLoaderRunLoop(void (^block)())
+{
+    CFRunLoopPerformBlock([NSURLConnection resourceLoaderRunLoop], kCFRunLoopDefaultMode, block);
+    CFRunLoopWakeUp([NSURLConnection resourceLoaderRunLoop]);
+}
+
 void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
         return;
 
-    [[protocol.get() client] URLProtocol:protocol.get() didFailWithError:error.nsError()];
+    RetainPtr<NSError> nsError = error.nsError();
+
+    dispatchOnResourceLoaderRunLoop(^ {
+        [[protocol.get() client] URLProtocol:protocol.get() didFailWithError:nsError.get()];
+    });
+
     removeCustomProtocol(protocol.get());
 }
 
@@ -201,8 +222,12 @@ void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const CoreIPC
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
         return;
-    
-    [[protocol.get() client] URLProtocol:protocol.get() didLoadData:[NSData dataWithBytes:(void*)data.data() length:data.size()]];
+
+    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+
+    dispatchOnResourceLoaderRunLoop(^ {
+        [[protocol.get() client] URLProtocol:protocol.get() didLoadData:nsData.get()];
+    });
 }
 
 void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
@@ -210,8 +235,12 @@ void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const 
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
         return;
-    
-    [[protocol.get() client] URLProtocol:protocol.get() didReceiveResponse:response.nsURLResponse() cacheStoragePolicy:static_cast<NSURLCacheStoragePolicy>(cacheStoragePolicy)];
+
+    RetainPtr<NSURLResponse> nsResponse = response.nsURLResponse();
+
+    dispatchOnResourceLoaderRunLoop(^ {
+        [[protocol.get() client] URLProtocol:protocol.get() didReceiveResponse:nsResponse.get() cacheStoragePolicy:static_cast<NSURLCacheStoragePolicy>(cacheStoragePolicy)];
+    });
 }
 
 void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
@@ -219,8 +248,11 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
         return;
-    
-    [[protocol.get() client] URLProtocolDidFinishLoading:protocol.get()];
+
+    dispatchOnResourceLoaderRunLoop(^ {
+        [[protocol.get() client] URLProtocolDidFinishLoading:protocol.get()];
+    });
+
     removeCustomProtocol(protocol.get());
 }
 
