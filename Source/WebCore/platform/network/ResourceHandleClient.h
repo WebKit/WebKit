@@ -99,7 +99,7 @@ namespace WebCore {
 #endif
 
 #if USE(SOUP)
-        virtual char* getOrCreateReadBuffer(size_t requestedLength, size_t& actualLength) { return 0; }
+        virtual char* getOrCreateReadBuffer(size_t /*requestedLength*/, size_t& /*actualLength*/) { return 0; }
 #endif
 
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }

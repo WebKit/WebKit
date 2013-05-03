@@ -1,3 +1,15 @@
+2013-05-02  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Fix build warnings on ResourceHandleClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=115540
+
+        Reviewed by Alexey Proskuryakov.
+
+        Comment out the parameter names for 'getOrCreateReadBuffer' to fix -Wunused-parameter build warnings.
+
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::getOrCreateReadBuffer):
+
 2013-05-02  Roger Fong  <roger_fong@apple.com>
 
         Following r149463, set Path for WebCore makefile as well.
