@@ -1,3 +1,20 @@
+2013-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r145042): Downloading a file sometimes results in could not create
+        a sandbox extension Console message and file stays as a .download file
+        https://bugs.webkit.org/show_bug.cgi?id=115559
+        <rdar://problem/13785101>
+
+        Reviewed by Sam Weinig.
+
+        CString is evil, it has two lengths which can be different - specifically, fileSystemRepresentation()
+        creates a string with maximum possible buffer size. This was confusing resolveSymlinksInPath().
+
+        * platform/cf/FileSystemCF.cpp: (WebCore::fileSystemRepresentation):
+        Change fileSystemRepresentation to be less surprising. Really, we should rip apart
+        CString and update callers to use better defined semantics, but this is the one function
+        that repeatedly causes problems in practice.
+
 2013-05-03  Andreas Kling  <akling@apple.com>
 
         CSSRule style declarations getters shouldn't be const.

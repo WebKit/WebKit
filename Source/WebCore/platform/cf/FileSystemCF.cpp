@@ -44,15 +44,14 @@ CString fileSystemRepresentation(const String& path)
 
     CFIndex size = CFStringGetMaximumSizeOfFileSystemRepresentation(cfString.get());
 
-    char* buffer;
-    CString string = CString::newUninitialized(size, buffer);
+    Vector<char> buffer(size);
 
-    if (!CFStringGetFileSystemRepresentation(cfString.get(), buffer, size)) {
+    if (!CFStringGetFileSystemRepresentation(cfString.get(), buffer.data(), buffer.size())) {
         LOG_ERROR("Failed to get filesystem representation to create CString from cfString");
         return CString();
     }
 
-    return string;
+    return CString(buffer.data(), strlen(buffer.data()));
 }
 
 RetainPtr<CFURLRef> pathAsURL(const String& path)
