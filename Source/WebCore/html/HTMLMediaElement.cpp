@@ -3207,7 +3207,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             currentlyEnabledTracks.append(textTrack);
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
-        LOG(Media, "HTMLMediaElement::configureTextTrackGroup -  '%s' track with language '%s' has score %i", String(textTrack->kind()).utf8().data(), String(textTrack->language()).utf8().data(), trackScore);
+        LOG(Media, "HTMLMediaElement::configureTextTrackGroup -  '%s' track with language '%s' has score %i", textTrack->kind().string().utf8().data(), textTrack->language().string().utf8().data(), trackScore);
 
         if (trackScore) {
 
