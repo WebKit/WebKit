@@ -1,3 +1,10 @@
+2013-05-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed VS2010 Build Correction.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Exclude CG-only
+        SubimageCacheWithTimer.cpp from WinCairo build.
+
 2013-05-03  Viatcheslav Ostapenko  <viatchslav.o@samsung.com>
 
         [Cairo] Anti-aliasing should not be always disabled for lines
