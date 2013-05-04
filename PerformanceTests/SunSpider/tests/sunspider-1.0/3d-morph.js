@@ -58,6 +58,6 @@ a = null;
 // says - that sin() has to return a value within 1 ulp of exact - then we still
 // would not be able to do an exact test here since that would allow for just enough
 // low-bit slop to create possibly big errors due to testOutput being a sum.
-var expected = 6;
-if (("" + testOutput)[0] != expected)
-    throw "Error: bad test output: expected leading digit to be " + expected + " but got " + testOutput;
+var epsilon = 1e-13;
+if (Math.abs(testOutput) >= epsilon)
+    throw "Error: bad test output: expected magnitude below " + epsilon + " but got " + testOutput;
