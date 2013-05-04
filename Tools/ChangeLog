@@ -1,3 +1,74 @@
+2013-05-03  Rebecca Hauck  <rhauck@adobe.com>
+
+        Create a script to import W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=111513
+
+        Reviewed by Dirk Pranke.
+
+        Script to automate the import of W3C tests into WebKit. 
+        For the full description of how it works, see the comments
+        at the top of test_importer.py.
+
+        * Scripts/import-w3c-tests: Added.
+        * Scripts/webkitpy/w3c/__init__.py: Added.
+        * Scripts/webkitpy/w3c/test_converter.py: Added.
+        (TestConverter):
+        (TestConverter.__init__):
+        (TestConverter.load_prefixed_prop_list):
+        (TestConverter.load_file):
+        (TestConverter.convert_for_webkit):
+        (TestConverter.convert_testharness_paths):
+        (TestConverter.convert_prefixed_properties):
+        (TestConverter.scrub_unprefixed_props):
+        (TestConverter.replace_tag):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py: Added.
+        (TestConverterTest):
+        (TestConverterTest.testLoadPrefixedPropList):
+        (TestConverterTest.test_convertForWebkitNothingToConvert):
+        (test_convertForWebkitHarnessOnly):
+        (test_convertForWebkitPropsOnly):
+        (test_convertForWebkitHarnessAndProps):
+        (test_convertTestHarnessPaths):
+        (test_convertPrefixedProperties):
+        (verifyTestHarnessPaths):
+        (verifyPrefixedProperties):
+        (generateTestContent):
+        * Scripts/webkitpy/w3c/test_importer.py: Added.
+        (main):
+        (parse_args):
+        (validate_import_directory):
+        (TestImporter):
+        (TestImporter.__init__):
+        (TestImporter.do_import):
+        (TestImporter.get_changeset):
+        (TestImporter.scan_source_directory):
+        (TestImporter.import_tests):
+        (TestImporter.setup_destination_directory):
+        (TestImporter.get_test_status):
+        (TestImporter.remove_deleted_files):
+        (TestImporter.write_import_log):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py: Added.
+        (TestImporterTest):
+        (TestImporterTest.test_ImportDirWithNoTests):
+        * Scripts/webkitpy/w3c/test_parser.py: Added.
+        (TestParser):
+        (TestParser.__init__):
+        (TestParser.load_file):
+        (TestParser.analyze_test):
+        (TestParser.get_reftests):
+        (TestParser.is_jstest):
+        (TestParser.get_support_files):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py: Added.
+        (TestParserTest):
+        (TestParserTest.test_analyzeTestReftestOneMatch):
+        (test_analyzeTestReftestMultipleMatches):
+        (test_analyzeTestReftestMatchAndMismatch):
+        (test_analyzeTestReftestWithRefSupportFiles):
+        (test_analyzeJSTest):
+        (test_analyzePixelTestAllTrue):
+        (test_analyzePixelTestAllFalse):
+        (test_analyzeNonHTMLFile):
+
 2013-05-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed. Update Viatcheslav Ostapenko's email in contributors.json.
