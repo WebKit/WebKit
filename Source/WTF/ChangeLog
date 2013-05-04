@@ -1,3 +1,16 @@
+2013-05-04  Xan Lopez  <xlopez@igalia.com>
+
+        No need to declare JSC::LLInt::Data as friend class of WTF::StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=115587
+
+        Reviewed by Andreas Kling.
+
+        No need to declare LLInt::Data as friend class of WTF::StringImpl,
+        it does not use any private method/data member of the latter.
+
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
 2013-05-03  Brent Fulgham  <bfulgham@webkit.org>
 
         Make ThreadFunctionInvocation fast allocated.

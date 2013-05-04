@@ -51,7 +51,6 @@ typedef const struct __CFString * CFStringRef;
 // Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {
 struct IdentifierASCIIStringTranslator;
-namespace LLInt { class Data; }
 class LLIntOffsetsExtractor;
 template <typename T> struct IdentifierCharBufferTranslator;
 struct IdentifierLCharFromUCharTranslator;
@@ -144,7 +143,6 @@ class StringImpl {
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
-    friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
     
 private:
