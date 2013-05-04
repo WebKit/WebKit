@@ -1,5 +1,18 @@
 2013-05-04  Andreas Kling  <akling@apple.com>
 
+        REGRESSION(r142647): Flaky Test: fast/frames/crash-remove-iframe-during-object-beforeload.html
+        <http://webkit.org/b/115322>
+        <rdar://problem/13810719>
+
+        Reviewed by Anders Carlsson.
+
+        Don't cache the FrameView::renderView() in a local since updating Widgets may blow it away.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
+2013-05-04  Andreas Kling  <akling@apple.com>
+
         Remove GraphicsContext::strokeArc(), which is unused.
 
         From Blink r149608 by <jbroman@chromium.org>
