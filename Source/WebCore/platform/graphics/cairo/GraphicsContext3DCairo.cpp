@@ -265,9 +265,15 @@ bool GraphicsContext3D::makeContextCurrent()
         return false;
     return m_private->makeContextCurrent();
 }
+
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
     return m_private->platformContext();
+}
+
+Platform3DObject GraphicsContext3D::platformTexture() const
+{
+    return m_texture;
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const
