@@ -1,3 +1,20 @@
+2013-05-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        incorrect repainting when a table has a transform
+        https://bugs.webkit.org/show_bug.cgi?id=109867
+
+        Reviewed by Simon Fraser.
+
+        Create tests that resize an element inside a display: table element.
+        Compare to a reference html file where the element has a static size.
+        In the first test, the table like element has a transform. In the
+        second, it has a reflection.
+
+        * fast/repaint/reflection-table-layout-expected.html: Added.
+        * fast/repaint/reflection-table-layout.html: Added.
+        * fast/repaint/transform-table-layout-expected.html: Added.
+        * fast/repaint/transform-table-layout.html: Added.
+
 2013-05-03  Antti Koivisto  <antti@apple.com>
 
         Remove concept of younger and older shadow trees

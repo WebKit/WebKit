@@ -1,3 +1,24 @@
+2013-05-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        incorrect repainting when a table has a transform
+        https://bugs.webkit.org/show_bug.cgi?id=109867
+
+        Reviewed by Simon Fraser.
+
+        Disable LayoutState when table, tableRow or tableSection render
+        objects have transforms or reflections.
+
+        Tests: fast/repaint/reflection-table-layout.html
+               fast/repaint/transform-table-layout.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layout):
+        (WebCore::RenderTableSection::layoutRows):
+
 2013-05-03  Antti Koivisto  <antti@apple.com>
 
         Remove concept of younger and older shadow trees
