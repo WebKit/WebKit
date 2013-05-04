@@ -114,7 +114,12 @@ def parse_output_lines(fd, parse_line_callback):
     output = ''
     read_set = [fd]
     while read_set:
-        rlist, wlist, xlist = select.select(read_set, [], [])
+        try:
+            rlist, wlist, xlist = select.select(read_set, [], [])
+        except select.error as e:
+            parse_line_callback("WARNING: error while waiting for fd %d to become readable\n" % fd)
+            parse_line_callback("    error code: %d, error message: %s\n" % (e[0], e[1]))
+            continue
 
         if fd in rlist:
             try:
