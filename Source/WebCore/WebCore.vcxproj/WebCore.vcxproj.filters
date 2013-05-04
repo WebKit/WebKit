@@ -15196,6 +15196,9 @@
     <None Include="..\inspector\front-end\cm\xml.js">
       <Filter>inspector\front-end</Filter>
     </None>
+    <None Include="..\Resources\plugIns.js">
+      <Filter>Resources</Filter>
+    </None>
     <None Include="WebCorePostBuild.cmd" />
     <None Include="WebCorePreBuild.cmd" />
   </ItemGroup>

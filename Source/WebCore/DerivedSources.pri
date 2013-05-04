@@ -86,6 +86,9 @@ STYLESHEETS_EMBED = \
     $$PWD/css/themeQtNoListboxes.css \
     $$PWD/css/mobileThemeQt.css
 
+PLUGINS_EMBED = \
+    $$PWD/Resources/plugIns.js
+
 IDL_BINDINGS += \
     $$PWD/Modules/filesystem/DOMFileSystem.idl \
     $$PWD/Modules/filesystem/DOMFileSystemSync.idl \
@@ -955,14 +958,23 @@ stylesheets.depends = $$STYLESHEETS_EMBED
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/UserAgentStyleSheets.h
 GENERATORS += stylesheets
 
-# GENERATOR 10: XPATH grammar
+# GENERATOR 10:
+pluginsresources.script = $$PWD/css/make-css-file-arrays.pl
+pluginsresources.output = PlugInsResourcesData.cpp
+pluginsresources.input = pluginsresources.script
+pluginsresources.commands = perl $$pluginsresources.script ${QMAKE_FUNC_FILE_OUT_PATH}/PlugInsResources.h ${QMAKE_FILE_OUT} $$PLUGINS_EMBED
+pluginsresources.depends = $$PLUGINS_EMBED
+pluginsresources.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/PlugInsResources.h
+GENERATORS += pluginsresources
+
+# GENERATOR 11: XPATH grammar
 xpathbison.output = ${QMAKE_FILE_BASE}.cpp
 xpathbison.input = XPATHBISON
 xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
 xpathbison.depends = ${QMAKE_FILE_NAME}
 GENERATORS += xpathbison
 
-# GENERATOR 11: WebKit Version
+# GENERATOR 12: WebKit Version
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in Source/WebKit/mac/Configurations/.
 webkitversion.script = $$PWD/../WebKit/scripts/generate-webkitversion.pl
 webkitversion.output = WebKitVersion.h

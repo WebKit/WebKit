@@ -1,3 +1,26 @@
+2013-05-04  Antoine Quint  <graouts@apple.com>
+
+        Update code generators to handle a new JavaScript file for snapshotted plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=115596
+
+        Reviewed by Dean Jackson.
+
+        In preparation for https://webkit.org/b/115548, adding a new JS file at
+        Resources/plugIns.js that we will use to provide presentation for the
+        snapshotted plug-ins overlay.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Resources/plugIns.js: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-05-04  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r142647): Flaky Test: fast/frames/crash-remove-iframe-during-object-beforeload.html

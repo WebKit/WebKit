@@ -528,6 +528,7 @@
 #include "JSXPathNSResolver.cpp"
 #include "JSXPathResult.cpp"
 #include "JSXSLTProcessor.cpp"
+#include "PlugInsResourcesData.cpp"
 #include "UserAgentStyleSheetsData.cpp"
 
 // On MSVC, including StaticConstructors.h causes all global objects not to be

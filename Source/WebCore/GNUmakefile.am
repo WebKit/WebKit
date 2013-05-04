@@ -279,6 +279,10 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/fullscreen.css \
 	$(WebCore)/css/plugIns.css
 
+# plug-in resources
+PLUG_INS_RESOURCES = \
+	$(WebCore)/Resources/plugIns.js
+
 # new-style JavaScript bindings
 SCRIPTS_FOR_GENERATE_BINDINGS = \
 	$(WebCore)/bindings/scripts/CodeGenerator.pm \
@@ -294,6 +298,10 @@ SCRIPTS_FOR_PREPROCESS_IDLS = \
 DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/UserAgentStyleSheets.h
 DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(feature_defines)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+
+DerivedSources/WebCore/PlugInsResourcesData.cpp: DerivedSources/WebCore/PlugInsResources.h
+DerivedSources/WebCore/PlugInsResources.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES)
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(feature_defines)" $@ DerivedSources/WebCore/PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
 
 DerivedSources/WebCore/WebKitFontFamilyNames.cpp: DerivedSources/WebCore/WebKitFontFamilyNames.h
 DerivedSources/WebCore/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/css/WebKitFontFamilyNames.in
@@ -691,6 +699,7 @@ EXTRA_DIST += \
 	Source/WebCore/page/Settings.in \
 	Source/WebCore/platform/ColorData.gperf \
 	Source/WebCore/platform/text/mac/make-charset-table.pl \
+	Source/WebCore/Resources/plugIns.js \
 	Source/WebCore/svg/svgattrs.in \
 	Source/WebCore/svg/svgtags.in \
 	Source/WebCore/svg/xlinkattrs.in \

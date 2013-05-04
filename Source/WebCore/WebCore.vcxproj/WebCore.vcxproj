@@ -13589,6 +13589,7 @@
     <None Include="..\inspector\front-end\WorkersSidebarPane.js" />
     <None Include="..\inspector\front-end\Workspace.js" />
     <None Include="..\inspector\front-end\cm\xml.js" />
+    <None Include="..\Resources\plugIns.js" />
     <None Include="WebCorePostBuild.cmd" />
     <None Include="WebCorePreBuild.cmd" />
   </ItemGroup>
