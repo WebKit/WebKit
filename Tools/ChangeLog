@@ -1,3 +1,9 @@
+2013-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json: Correcting my igalia.com email address.
+
 2013-05-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unreviewed. Adding Radu Stavila as an Adobe contributor, working on CSSRegions.

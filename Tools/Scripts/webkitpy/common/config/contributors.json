@@ -343,7 +343,7 @@
         "Zhenyao Mo": {"emails": ["zmo@google.com"], "nicks": ["zhenyao"]},
         "Zoltan Arvai": {"emails": ["zarvai@inf.u-szeged.hu"], "nicks": ["azbest_hu"]},
         "Zoltan Horvath": {"emails": ["zoltan@webkit.org", "hzoltan@inf.u-szeged.hu", "horvath.zoltan.6@stud.u-szeged.hu"], "nicks": ["zoltan"]},
-        "\u017dan Dober\u0161ek": {"emails": ["zandobersek@gmail.com", "zandobersek@igalia.com"], "nicks": ["zdobersek"]}
+        "\u017dan Dober\u0161ek": {"emails": ["zandobersek@gmail.com", "zdobersek@igalia.com"], "nicks": ["zdobersek"]}
     },
     "Reviewers": {
         "Abhishek Arya": {"emails": ["inferno@chromium.org"], "nicks": ["inferno-sec"]},
