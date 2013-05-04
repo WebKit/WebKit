@@ -1,3 +1,11 @@
+2013-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13806836> Tweak sandbox profile.
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-05-03  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Changes being made to active annotation aren't saved when the PDF is exported

@@ -271,6 +271,9 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
        (home-literal "/Library/Caches/Cache.db") ;; <rdar://problem/9422957>
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+       (home-subpath "/Library/Caches/com.apple.WebProcess") ;; <rdar://problem/12656814>
+#endif
 
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
