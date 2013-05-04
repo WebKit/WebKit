@@ -72,6 +72,11 @@ static bool parse(const char* string, double& value)
     return sscanf(string, "%lf", &value) == 1;
 }
 
+static bool parse(const char* string, OptionRange& value)
+{
+    return value.init(string);
+}
+
 template<typename T>
 void overrideOptionWithHeuristic(T& variable, const char* name)
 {
@@ -103,6 +108,59 @@ static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
 #endif
 
     return cpusToUse;
+}
+
+bool OptionRange::init(const char* rangeString)
+{
+    // rangeString should be in the form of [!]<low>[:<high>]
+    // where low and high are unsigned
+
+    bool invert = false;
+
+    if (m_state > Uninitialized)
+        return true;
+
+    if (!rangeString) {
+        m_state = InitError;
+        return false;
+    }
+
+    m_rangeString = rangeString;
+
+    if (*rangeString == '!') {
+        invert = true;
+        rangeString++;
+    }
+
+    int scanResult = sscanf(rangeString, " %u:%u", &m_lowLimit, &m_highLimit);
+
+    if (!scanResult || scanResult == EOF) {
+        m_state = InitError;
+        return false;
+    }
+
+    if (scanResult == 1)
+        m_highLimit = m_lowLimit;
+
+    if (m_lowLimit > m_highLimit) {
+        m_state = InitError;
+        return false;
+    }
+
+    m_state = invert ? Inverted : Normal;
+
+    return true;
+}
+
+bool OptionRange::isInRange(unsigned count)
+{
+    if (m_state < Normal)
+        return true;
+
+    if ((m_lowLimit <= count) && (count <= m_highLimit))
+        return m_state == Normal ? true : false;
+
+    return m_state == Normal ? false : true;
 }
 
 Options::Entry Options::s_options[Options::numberOfOptions];
@@ -226,6 +284,9 @@ void Options::dumpOption(OptionID id, FILE* stream, const char* header, const ch
         break;
     case int32Type:
         fprintf(stream, "%d", s_options[id].u.int32Val);
+        break;
+    case optionRangeType:
+        fprintf(stream, "%s", s_options[id].u.optionRangeVal.rangeString());
         break;
     }
     fprintf(stream, "%s", footer);

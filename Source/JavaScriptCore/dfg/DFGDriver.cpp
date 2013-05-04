@@ -76,7 +76,10 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
 
     if (!Options::useDFGJIT())
         return false;
-    
+
+    if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount()))
+        return false;
+
     if (logCompilationChanges())
         dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     

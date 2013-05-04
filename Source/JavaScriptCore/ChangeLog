@@ -1,3 +1,33 @@
+2013-05-03  Michael Saboff  <msaboff@apple.com>
+
+        There should be a runtime option to constrain what functions get DFG compiled
+        https://bugs.webkit.org/show_bug.cgi?id=115576
+
+        Reviewed by Mark Hahnenberg.
+
+        Added OptionRange to Options to allow checking that something is within an option
+        or not.  The new OptionClass supports range strings in the form of [!]<low>[:<high>].
+        If only one value is given, then it will be used for both low and high.  A leading
+        '!' inverts the check.  If no range is given, then checking for a value within a range
+        will always return true.  Added the option "bytecodeRangeToDFGCompile" that takes an
+        OptionRange string to select the bytecode range of code blocks to DFG compile.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile): Added new check for bytecode count within bytecodeRangeToDFGCompile
+        range.
+        * runtime/Options.cpp:
+        (JSC::parse): Added overloaded parse() for OptionRange.
+        (JSC::OptionRange::init): Parse range string and then initialize the range.
+        (JSC::OptionRange::isInRange): Function used by consumer to check if a value is within
+        the specified range.
+        (JSC::Options::dumpOption): Added code to dump OptionRange options.
+        * runtime/Options.h:
+        (OptionRange): New class.
+        (JSC::OptionRange::operator= ): This is really used as a default ctor for use within
+        the Option static array initialization.
+        (JSC::OptionRange::rangeString): This is used for debug.  It assumes that the char*
+        passed into OptionRange::init is valid when this function is called.
+
 2013-05-02  Oliver Hunt  <oliver@apple.com>
 
         Fix potential bug in lookup logic
