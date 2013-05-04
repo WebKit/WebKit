@@ -1,5 +1,20 @@
 2013-05-04  Andreas Kling  <akling@apple.com>
 
+        Remove GraphicsContext::strokeArc(), which is unused.
+
+        From Blink r149608 by <jbroman@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=149608>
+
+        This is no longer used since almost a year ago, when HAVE(PATH_BASED_BORDER_RADIUS_DRAWING) was inlined.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/blackberry/GraphicsContextBlackBerry.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+
+2013-05-04  Andreas Kling  <akling@apple.com>
+
         Remove unused CSSSelector::isCustomPseudoType().
 
         From Blink r149574 by <dominicc@chromium.org>

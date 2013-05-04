@@ -268,9 +268,6 @@ namespace WebCore {
         void fillEllipse(const FloatRect&);
         void strokeEllipse(const FloatRect&);
 
-        // Arc drawing (used by border-radius in CSS) just supports stroking at the moment.
-        void strokeArc(const IntRect&, int startAngle, int angleSpan);
-
         void fillRect(const FloatRect&);
         void fillRect(const FloatRect&, const Color&, ColorSpace);
         void fillRect(const FloatRect&, Generator&);

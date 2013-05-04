@@ -166,14 +166,6 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     platformContext()->addEllipse(FloatRect(rect));
 }
 
-void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
-{
-    if (paintingDisabled())
-        return;
-
-    platformContext()->addArc(rect, startAngle, angleSpan);
-}
-
 void GraphicsContext::drawConvexPolygon(size_t numPoints, const FloatPoint* points, bool)
 {
     if (paintingDisabled())
