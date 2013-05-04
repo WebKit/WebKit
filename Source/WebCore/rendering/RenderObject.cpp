@@ -874,14 +874,13 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             return;
         case DOTTED:
         case DASHED: {
-            graphicsContext->setStrokeColor(color, m_style->colorSpace());
-            graphicsContext->setStrokeThickness(thickness);
-            StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
-            graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
-
             if (thickness > 0) {
                 bool wasAntialiased = graphicsContext->shouldAntialias();
+                StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
                 graphicsContext->setShouldAntialias(antialias);
+                graphicsContext->setStrokeColor(color, m_style->colorSpace());
+                graphicsContext->setStrokeThickness(thickness);
+                graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
 
                 switch (side) {
                     case BSBottom:

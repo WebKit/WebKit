@@ -1,3 +1,16 @@
+2013-05-04  Andreas Kling  <akling@apple.com>
+
+        RenderObject: don't change GraphicsContext state when not drawing dashed/dotted lines.
+
+        From Blink r149546 by <jbroman@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=149546>
+
+        Previously, there was asymmetry between changing and restoring state (certain state
+        would be restored only if thickness was positive, i.e. a line was actually drawn.)
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+
 2013-05-03  Andreas Kling  <akling@apple.com>
 
         Remove CSS selector profiler branches from ElementRuleCollector loop.
