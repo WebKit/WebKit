@@ -1,3 +1,18 @@
+2013-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Set up the TestWebCore in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=115237
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Set up the WebCore unit test program, consisting of the unit tests under the TestWebKitAPI/Tests/WebCore directory.
+        Again the approach of specifying libtool libraries multiple times in the TestWebCore program's LDFLAGS is used as
+        a workaround for the layer violations and circular dependencies between various static libraries. Linking against
+        either libwebkitgtk or libwebkit2gtk shared libraries is avoided due to the unit tests covering WebCore, which
+        shouldn't rely on neither of the two distributable libraries (hence the dirty workaround).
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-05-03  Rebecca Hauck  <rhauck@adobe.com>
 
         Create a script to import W3C tests
