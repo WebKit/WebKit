@@ -403,6 +403,16 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, const Co
 
 void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        doCollectMatchingRulesForList<true>(rules, matchRequest, ruleRange);
+        return;
+    }
+    doCollectMatchingRulesForList<false>(rules, matchRequest, ruleRange);
+}
+
+template<bool hasInspectorFrontends>
+void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
+{
     if (!rules)
         return;
 
@@ -415,25 +425,30 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
             continue;
 
         StyleRule* rule = ruleData.rule();
-        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule, m_inspectorCSSOMWrappers, document()->styleSheetCollection());
+        InspectorInstrumentationCookie cookie;
+        if (hasInspectorFrontends)
+            cookie = InspectorInstrumentation::willMatchRule(document(), rule, m_inspectorCSSOMWrappers, document()->styleSheetCollection());
         PseudoId dynamicPseudo = NOPSEUDO;
         if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             const StylePropertySet* properties = rule->properties();
             if (!properties || (properties->isEmpty() && !matchRequest.includeEmptyRules)) {
-                InspectorInstrumentation::didMatchRule(cookie, false);
+                if (hasInspectorFrontends)
+                    InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
             // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.
             if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin()) {
-                InspectorInstrumentation::didMatchRule(cookie, false);
+                if (hasInspectorFrontends)
+                    InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
             if (dynamicPseudo != NOPSEUDO && m_pseudoStyleRequest.pseudoId == NOPSEUDO) {
                 if (m_mode == SelectorChecker::CollectingRules) {
-                    InspectorInstrumentation::didMatchRule(cookie, false);
+                    if (hasInspectorFrontends)
+                        InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
                 }
                 if (dynamicPseudo < FIRST_INTERNAL_PSEUDOID)
@@ -446,11 +461,13 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
 
                 // Add this rule to our list of matched rules.
                 addMatchedRule(&ruleData);
-                InspectorInstrumentation::didMatchRule(cookie, true);
+                if (hasInspectorFrontends)
+                    InspectorInstrumentation::didMatchRule(cookie, true);
                 continue;
             }
         }
-        InspectorInstrumentation::didMatchRule(cookie, false);
+        if (hasInspectorFrontends)
+            InspectorInstrumentation::didMatchRule(cookie, false);
     }
 }
 

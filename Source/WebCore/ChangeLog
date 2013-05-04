@@ -1,3 +1,21 @@
+2013-05-03  Andreas Kling  <akling@apple.com>
+
+        Remove CSS selector profiler branches from ElementRuleCollector loop.
+        <http://webkit.org/b/115581>
+
+        Reviewed by Antti Koivisto.
+
+        Templatize the method so we don't have to check for active inspector frontends on every
+        pass through the loop.
+
+        Time spent in this loop goes down from 0.5% to 0.2% on iTunes Store, WebCore binary size
+        goes up 480 bytes (sorry Benjamin, I'll make it up to you.)
+
+        * css/ElementRuleCollector.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::ElementRuleCollector::doCollectMatchingRulesForList):
+
 2013-04-30  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r140907): Incorrect baseline on cells after updating vertical-align

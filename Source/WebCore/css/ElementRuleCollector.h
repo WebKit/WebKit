@@ -92,6 +92,9 @@ private:
     void clearMatchedRules();
         
 private:
+    template<bool hasInspectorFrontends>
+    void doCollectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, StyleResolver::RuleRange&);
+
     const StyleResolver::State& m_state;
     DocumentRuleSets& m_ruleSets;
     SelectorFilter& m_selectorFilter;
