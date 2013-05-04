@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
-    void* pointers[3];
+struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
+    void* pointers[1];
     unsigned countersAndFlags[1];
 };
 
@@ -54,8 +54,6 @@ enum ShadowRootUsageOriginType {
 ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     : DocumentFragment(0, CreateShadowRoot)
     , TreeScope(this, document)
-    , m_prev(0)
-    , m_next(0)
     , m_numberOfStyles(0)
     , m_applyAuthorStyles(false)
     , m_resetStyleInheritance(false)
@@ -67,9 +65,6 @@ ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
 
 ShadowRoot::~ShadowRoot()
 {
-    ASSERT(!m_prev);
-    ASSERT(!m_next);
-
     // We cannot let ContainerNode destructor call willBeDeletedFrom()
     // for this ShadowRoot instance because TreeScope destructor
     // clears Node::m_treeScope thus ContainerNode is no longer able

@@ -1,5 +1,22 @@
 2013-05-04  Andreas Kling  <akling@apple.com>
 
+        Remove ShadowRoot's previous/next ShadowRoot pointers.
+        <http://webkit.org/b/115588>
+
+        Reviewed by Anders Carlsson.
+
+        ShadowRoot no longer inherits from DoublyLinkedListNode<ShadowRoot> because that code wasn't
+        doing anything anymore. Shrinks ShadowRoot by two pointers.
+
+        * dom/ElementShadow.h:
+        * dom/ShadowRoot.cpp:
+        (SameSizeAsShadowRoot):
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        * dom/ShadowRoot.h:
+
+2013-05-04  Andreas Kling  <akling@apple.com>
+
         RenderObject: don't change GraphicsContext state when not drawing dashed/dotted lines.
 
         From Blink r149546 by <jbroman@chromium.org>

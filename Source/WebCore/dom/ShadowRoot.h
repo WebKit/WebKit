@@ -33,7 +33,6 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "TreeScope.h"
-#include <wtf/DoublyLinkedList.h>
 
 namespace WebCore {
 
@@ -102,8 +101,6 @@ private:
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !host(); }
 
-    ShadowRoot* m_prev;
-    ShadowRoot* m_next;
     OwnPtr<ScopeContentDistribution> m_scopeDistribution;
     unsigned m_numberOfStyles : 28;
     unsigned m_applyAuthorStyles : 1;
