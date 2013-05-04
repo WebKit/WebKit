@@ -89,8 +89,6 @@ private:
         ASSERT(m_node);
         if (canCrossUpperBoundary())
             ASSERT(!m_node->isShadowRoot());
-        else
-            ASSERT(!m_node->isShadowRoot() || toShadowRoot(m_node)->isYoungest());
         ASSERT(!isActiveInsertionPoint(m_node));
 #endif
     }
@@ -119,12 +117,11 @@ private:
     static Node* traverseSiblings(const Node*, TraversalDirection);
     static Node* traverseDistributedNodes(const Node*, const InsertionPoint*, TraversalDirection);
 
-    static Node* traverseBackToYoungerShadowRoot(const Node*, TraversalDirection);
     static Node* escapeFallbackContentElement(const Node*, TraversalDirection);
 
     Node* traverseNodeEscapingFallbackContents(const Node*, ParentTraversalDetails* = 0) const;
     Node* traverseParentInCurrentTree(const Node*, ParentTraversalDetails* = 0) const;
-    Node* traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot*, ParentTraversalDetails* = 0) const;
+    Node* traverseParentBackToShadowRootOrHost(const ShadowRoot*, ParentTraversalDetails* = 0) const;
 
     const Node* m_node;
     Policy m_policy;

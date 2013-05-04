@@ -151,7 +151,7 @@ void SVGTRefElement::updateReferencedText(Element* target)
         textContent = target->textContent();
 
     ASSERT(shadow());
-    ShadowRoot* root = shadow()->oldestShadowRoot();
+    ShadowRoot* root = shadow()->shadowRoot();
     if (!root->firstChild())
         root->appendChild(Text::create(document(), textContent), ASSERT_NO_EXCEPTION);
     else {
@@ -168,7 +168,7 @@ void SVGTRefElement::detachTarget()
     String emptyContent;
 
     ASSERT(shadow());
-    Node* container = shadow()->oldestShadowRoot()->firstChild();
+    Node* container = shadow()->shadowRoot()->firstChild();
     if (container)
         container->setTextContent(emptyContent, IGNORE_EXCEPTION);
 

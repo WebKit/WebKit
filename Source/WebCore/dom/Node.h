@@ -282,7 +282,7 @@ public:
     // Deprecated. Should use shadowHost() and check the return value.
     Node* deprecatedShadowAncestorNode() const;
     ShadowRoot* containingShadowRoot() const;
-    ShadowRoot* youngestShadowRoot() const;
+    ShadowRoot* shadowRoot() const;
 
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();

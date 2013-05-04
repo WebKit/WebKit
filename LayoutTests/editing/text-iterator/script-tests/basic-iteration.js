@@ -8,7 +8,7 @@ function appendBrElement(node)
 function addShadowTreeWithDivElement(node)
 {
     node.webkitCreateShadowRoot();
-    internals.oldestShadowRoot(node).innerHTML = '<div>b</div>';
+    internals.shadowRoot(node).innerHTML = '<div>b</div>';
 }
 
 var subframe = document.createElement('iframe');
@@ -44,9 +44,9 @@ shouldBe('range.setStartBefore(testDocument.body); range.setEndAfter(testDocumen
 
 testDocument.body.innerHTML = '<input id="a" value="b" />';
 var input = testDocument.querySelector('input');
-shouldBe('range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range)', '"b"');
+shouldBe('range.selectNodeContents(internals.shadowRoot(input)); internals.rangeAsText(range)', '"b"');
 
-shouldBe('appendBrElement(internals.oldestShadowRoot(input).childNodes[0]); range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range)', '"b"');
+shouldBe('appendBrElement(internals.shadowRoot(input).childNodes[0]); range.selectNodeContents(internals.shadowRoot(input)); internals.rangeAsText(range)', '"b"');
 
 document.body.removeChild(subframe);
 

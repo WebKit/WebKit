@@ -47,10 +47,9 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
         return;
 
     if (ElementShadow* shadow = toElement(node)->shadow()) {
-        ShadowRootVector roots(shadow);
-        for (size_t i = 0; i < roots.size(); ++i) {
-            if (node->inDocument() && roots[i]->host() == node)
-                notifyNodeInsertedIntoDocument(roots[i].get());
+        if (RefPtr<ShadowRoot> root = shadow->shadowRoot()) {
+            if (node->inDocument() && root->host() == node)
+                notifyNodeInsertedIntoDocument(root.get());
         }
     }
 }
@@ -62,7 +61,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode*
             notifyNodeInsertedIntoTree(toContainerNode(child));
     }
 
-    for (ShadowRoot* root = node->youngestShadowRoot(); root; root = root->olderShadowRoot())
+    if (ShadowRoot* root = node->shadowRoot())
         notifyNodeInsertedIntoTree(root);
 }
 
@@ -84,10 +83,9 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
         node->document()->setCSSTarget(0);
 
     if (ElementShadow* shadow = toElement(node)->shadow()) {
-        ShadowRootVector roots(shadow);
-        for (size_t i = 0; i < roots.size(); ++i) {
-            if (!node->inDocument() && roots[i]->host() == node)
-                notifyNodeRemovedFromDocument(roots[i].get());
+        if (RefPtr<ShadowRoot> root = shadow->shadowRoot()) {
+            if (!node->inDocument() && root->host() == node)
+                notifyNodeRemovedFromDocument(root.get());
         }
     }
 }
@@ -103,15 +101,14 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode* no
         return;
 
     if (ElementShadow* shadow = toElement(node)->shadow()) {
-        ShadowRootVector roots(shadow);
-        for (size_t i = 0; i < roots.size(); ++i)
-            notifyNodeRemovedFromTree(roots[i].get());
+        if (RefPtr<ShadowRoot> root = shadow->shadowRoot())
+            notifyNodeRemovedFromTree(root.get());
     }
 }
 
 void ChildFrameDisconnector::collectFrameOwners(ElementShadow* shadow)
 {
-    for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
+    if (ShadowRoot* root = shadow->shadowRoot())
         collectFrameOwners(root);
 }
 
@@ -125,7 +122,7 @@ unsigned assertConnectedSubrameCountIsConsistent(Node* node)
             count++;
 
         if (ElementShadow* shadow = toElement(node)->shadow()) {
-            for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            if (ShadowRoot* root = shadow->shadowRoot())
                 count += assertConnectedSubrameCountIsConsistent(root);
         }
     }

@@ -72,7 +72,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
                 moveTreeToNewScope(attrs[i].get());
         }
 
-        for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot()) {
+        if (ShadowRoot* shadow = node->shadowRoot()) {
             shadow->setParentTreeScope(m_newScope);
             if (willMoveToNewDocument)
                 moveTreeToNewDocument(shadow, oldDocument, newDocument);
@@ -86,7 +86,7 @@ void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, 
 {
     for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
-        for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot())
+        if (ShadowRoot* shadow = node->shadowRoot())
             moveTreeToNewDocument(shadow, oldDocument, newDocument);
     }
 }

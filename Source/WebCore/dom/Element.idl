@@ -124,7 +124,7 @@
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Reflect=pseudo, ImplementedAs=pseudo] attribute DOMString webkitPseudo;
     [ImplementedAs=createShadowRoot] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
-    [ImplementedAs=shadowRoot] readonly attribute ShadowRoot webkitShadowRoot;
+    [ImplementedAs=authorShadowRoot] readonly attribute ShadowRoot webkitShadowRoot;
     [ImplementedAs=insertionParentForBinding] readonly attribute Node webkitInsertionParent;
 #endif
 

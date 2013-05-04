@@ -1534,12 +1534,12 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     return ensureShadow()->addShadowRoot(this, ShadowRoot::AuthorShadowRoot);
 }
 
-ShadowRoot* Element::shadowRoot() const
+ShadowRoot* Element::authorShadowRoot() const
 {
     ElementShadow* elementShadow = shadow();
     if (!elementShadow)
         return 0;
-    ShadowRoot* shadowRoot = elementShadow->youngestShadowRoot();
+    ShadowRoot* shadowRoot = elementShadow->shadowRoot();
     if (shadowRoot->type() == ShadowRoot::AuthorShadowRoot)
         return shadowRoot;
     return 0;
@@ -1548,7 +1548,7 @@ ShadowRoot* Element::shadowRoot() const
 ShadowRoot* Element::userAgentShadowRoot() const
 {
     if (ElementShadow* elementShadow = shadow()) {
-        if (ShadowRoot* shadowRoot = elementShadow->oldestShadowRoot()) {
+        if (ShadowRoot* shadowRoot = elementShadow->shadowRoot()) {
             ASSERT(shadowRoot->type() == ShadowRoot::UserAgentShadowRoot);
             return shadowRoot;
         }
@@ -1559,10 +1559,11 @@ ShadowRoot* Element::userAgentShadowRoot() const
 
 ShadowRoot* Element::ensureUserAgentShadowRoot()
 {
-    if (ShadowRoot* shadowRoot = userAgentShadowRoot())
-        return shadowRoot;
-    ShadowRoot* shadowRoot = ensureShadow()->addShadowRoot(this, ShadowRoot::UserAgentShadowRoot);
-    didAddUserAgentShadowRoot(shadowRoot);
+    ShadowRoot* shadowRoot = userAgentShadowRoot();
+    if (!shadowRoot) {
+        shadowRoot = ensureShadow()->addShadowRoot(this, ShadowRoot::UserAgentShadowRoot);
+        didAddUserAgentShadowRoot(shadowRoot);
+    }
     return shadowRoot;
 }
 

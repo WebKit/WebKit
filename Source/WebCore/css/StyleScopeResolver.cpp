@@ -207,12 +207,9 @@ bool StyleScopeResolver::styleSharingCandidateMatchesHostRules(const Element* el
     // add a new flag to ElementShadow and cache whether any@host @-rules are
     // applied to the element or not. So we can avoid always traversing
     // shadow roots.
-    for (ShadowRoot* shadowRoot = shadow->youngestShadowRoot(); shadowRoot; shadowRoot = shadowRoot->olderShadowRoot()) {
+    if (ShadowRoot* shadowRoot = shadow->shadowRoot()) {
         if (atHostRuleSetFor(shadowRoot))
             return true;
-
-        if (!ScopeContentDistribution::hasShadowElement(shadowRoot))
-            break;
     }
     return false;
 }
@@ -230,11 +227,9 @@ void StyleScopeResolver::matchHostRules(const Element* element, Vector<RuleSet*>
     // add a new flag to ElementShadow and cache whether any @host @-rules are
     // applied to the element or not. So we can quickly exit this method
     // by using the flag.
-    for (ShadowRoot* shadowRoot = shadow->youngestShadowRoot(); shadowRoot; shadowRoot = shadowRoot->olderShadowRoot()) { 
+    if (ShadowRoot* shadowRoot = shadow->shadowRoot()) {
         if (RuleSet* ruleSet = atHostRuleSetFor(shadowRoot))
             matchedRules.append(ruleSet);
-        if (!ScopeContentDistribution::hasShadowElement(shadowRoot))
-            break;
     }
 }
 

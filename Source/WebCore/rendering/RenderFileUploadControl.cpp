@@ -230,7 +230,7 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 
     ASSERT(input->shadow());
 
-    Node* buttonNode = input->shadow()->oldestShadowRoot()->firstChild();
+    Node* buttonNode = input->shadow()->shadowRoot()->firstChild();
     return buttonNode && buttonNode->isHTMLElement() && buttonNode->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(buttonNode) : 0;
 }
 

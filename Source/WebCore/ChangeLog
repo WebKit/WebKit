@@ -1,3 +1,103 @@
+2013-05-03  Antti Koivisto  <antti@apple.com>
+
+        Remove concept of younger and older shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=115570
+
+        Reviewed by Andreas Kling.
+
+        Younger and older shadow trees are an obscure corner of the Shadow DOM spec.
+        
+        Support only one shadow tree per element. This simplifies many things. 
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseChild):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingInCurrentTree):
+        (WebCore):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::ComposedShadowTreeWalker::traverseParentInCurrentTree):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToShadowRootOrHost):
+        * dom/ComposedShadowTreeWalker.h:
+        (WebCore::ComposedShadowTreeWalker::assertPrecondition):
+        (ComposedShadowTreeWalker):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree):
+        (WebCore::ChildFrameDisconnector::collectFrameOwners):
+        (WebCore::assertConnectedSubrameCountIsConsistent):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/Element.cpp:
+        (WebCore::Element::authorShadowRoot):
+        (WebCore::Element::userAgentShadowRoot):
+        (WebCore::Element::ensureUserAgentShadowRoot):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::hasAuthorShadowRoot):
+        * dom/Element.idl:
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::addShadowRoot):
+        
+        Allow only one ShadowRoot per ElementShadow. Remove linked list handling.
+        
+        (WebCore::ElementShadow::removeAllShadowRoots):
+        (WebCore::ElementShadow::attach):
+        (WebCore::ElementShadow::detach):
+        (WebCore::ElementShadow::childNeedsStyleRecalc):
+        (WebCore::ElementShadow::needsStyleRecalc):
+        (WebCore::ElementShadow::recalcStyle):
+        (WebCore::ElementShadow::removeAllEventListeners):
+        * dom/ElementShadow.h:
+        (WebCore::ElementShadow::shadowRoot):
+        (ElementShadow):
+        (WebCore::ElementShadow::host):
+        (WebCore::Node::shadowRoot):
+        (WebCore):
+        * dom/Node.cpp:
+        (WebCore):
+        (WebCore::Node::showNodePathForThis):
+        (WebCore::traverseTreeAndMark):
+        (WebCore::showSubTreeAcrossFrame):
+        * dom/Node.h:
+        (Node):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertedInto):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        
+            Remove LinkedList base.
+        
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::invalidate):
+        (WebCore::ContentDistributor::ensureSelectFeatureSet):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::FocusNavigationScope):
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByShadowHost):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::uploadButton):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::detachTarget):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::clearResourceReferences):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::buildShadowTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot):
+        (WebCore::Internals::shadowRoot):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2013-05-03  Martin Robinson  <mrobinson@igalia.com>
 
         Simplify the #ifdefs in GraphicsContext3D.h

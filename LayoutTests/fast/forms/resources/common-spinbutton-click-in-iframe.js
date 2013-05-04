@@ -7,7 +7,7 @@ function getSpinButton(input)
 {
     if (!window.internals)
         return null;
-    return getElementByPseudoId(internals.oldestShadowRoot(input), "-webkit-inner-spin-button");
+    return getElementByPseudoId(internals.shadowRoot(input), "-webkit-inner-spin-button");
 }
 
 function mouseClick()

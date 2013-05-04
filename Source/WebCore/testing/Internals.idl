@@ -40,17 +40,10 @@
     ShadowRoot ensureShadowRoot(Element host) raises (DOMException);
     ShadowRoot createShadowRoot(Element host) raises (DOMException);
     ShadowRoot shadowRoot(Element host) raises (DOMException);
-    ShadowRoot youngestShadowRoot(Element host) raises (DOMException);
-    ShadowRoot oldestShadowRoot(Element host) raises (DOMException);
-    ShadowRoot youngerShadowRoot(Node root) raises (DOMException);
-    ShadowRoot olderShadowRoot(Node root) raises (DOMException);
 #else
     Node ensureShadowRoot(Element host) raises (DOMException);
     Node createShadowRoot(Element host) raises (DOMException);
     Node shadowRoot(Element host) raises (DOMException);
-    Node youngestShadowRoot(Element host) raises (DOMException);
-    Node oldestShadowRoot(Element host) raises (DOMException);
-    Node youngerShadowRoot(Node root) raises (DOMException);
 #endif
     DOMString shadowRootType(Node root) raises (DOMException);
     boolean hasShadowInsertionPoint(Node root) raises (DOMException);

@@ -184,7 +184,7 @@ Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode* inser
 {
     DocumentFragment::insertedInto(insertionPoint);
 
-    if (!insertionPoint->inDocument() || !isOldest())
+    if (!insertionPoint->inDocument())
         return InsertionDone;
 
     // FIXME: When parsing <video controls>, insertedInto() is called many times without invoking removedFrom.

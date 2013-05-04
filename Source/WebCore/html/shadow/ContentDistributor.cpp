@@ -222,8 +222,7 @@ void ContentDistributor::distribute(Element* host)
     Vector<bool> distributed(pool.size());
     distributed.fill(false);
 
-    for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
-
+    if (ShadowRoot* root = host->shadowRoot()) {
         if (ScopeContentDistribution* scope = root->scopeDistribution()) {
             const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
             for (size_t i = 0; i < insertionPoints.size(); ++i) {
@@ -244,7 +243,7 @@ bool ContentDistributor::invalidate(Element* host)
     ASSERT(needsInvalidation());
     bool needsReattach = (m_validity == Undetermined) || !m_nodeToInsertionPoint.isEmpty();
 
-    for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+    if (ShadowRoot* root = host->shadowRoot()) {
         if (ScopeContentDistribution* scope = root->scopeDistribution()) {
             scope->setInsertionPointAssignedTo(0);
             const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
@@ -358,7 +357,7 @@ const SelectRuleFeatureSet& ContentDistributor::ensureSelectFeatureSet(ElementSh
         return m_selectFeatures;
 
     m_selectFeatures.clear();
-    for (ShadowRoot* root = shadow->oldestShadowRoot(); root; root = root->youngerShadowRoot())
+    if (ShadowRoot* root = shadow->shadowRoot())
         collectSelectFeatureSetFrom(root);
     m_needsSelectFeatureSet = false;
     return m_selectFeatures;

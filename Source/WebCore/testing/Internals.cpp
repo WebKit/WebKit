@@ -698,7 +698,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
     }
 
     if (ElementShadow* shadow = host->shadow())
-        return shadow->youngestShadowRoot();
+        return shadow->shadowRoot();
 
     return host->createShadowRoot(ec).get();
 }
@@ -714,53 +714,13 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::createShadowRoot(Eleme
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* host, ExceptionCode& ec)
 {
-    // FIXME: Internals::shadowRoot() in tests should be converted to youngestShadowRoot() or oldestShadowRoot().
-    // https://bugs.webkit.org/show_bug.cgi?id=78465
-    return youngestShadowRoot(host, ec);
-}
-
-Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngestShadowRoot(Element* host, ExceptionCode& ec)
-{
     if (!host) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
-
     if (ElementShadow* shadow = host->shadow())
-        return shadow->youngestShadowRoot();
+        return shadow->shadowRoot();
     return 0;
-}
-
-Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Element* host, ExceptionCode& ec)
-{
-    if (!host) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    if (ElementShadow* shadow = host->shadow())
-        return shadow->oldestShadowRoot();
-    return 0;
-}
-
-Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngerShadowRoot(Node* shadow, ExceptionCode& ec)
-{
-    if (!shadow || !shadow->isShadowRoot()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return toShadowRoot(shadow)->youngerShadowRoot();
-}
-
-Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::olderShadowRoot(Node* shadow, ExceptionCode& ec)
-{
-    if (!shadow || !shadow->isShadowRoot()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return toShadowRoot(shadow)->olderShadowRoot();
 }
 
 String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const

@@ -34,13 +34,13 @@ namespace WebCore {
 
 ShadowRoot* ElementShadow::addShadowRoot(Element* shadowHost, ShadowRoot::ShadowRootType type)
 {
-    RefPtr<ShadowRoot> shadowRoot = ShadowRoot::create(shadowHost->document(), type);
+    ASSERT(!m_shadowRoot);
+    m_shadowRoot = ShadowRoot::create(shadowHost->document(), type);
 
-    shadowRoot->setParentOrShadowHostNode(shadowHost);
-    shadowRoot->setParentTreeScope(shadowHost->treeScope());
-    m_shadowRoots.push(shadowRoot.get());
+    m_shadowRoot->setParentOrShadowHostNode(shadowHost);
+    m_shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_distributor.didShadowBoundaryChange(shadowHost);
-    ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
+    ChildNodeInsertionNotifier(shadowHost).notify(m_shadowRoot.get());
 
     // Existence of shadow roots requires the host and its children to do traversal using ComposedShadowTreeWalker.
     shadowHost->setNeedsShadowTreeWalker();
@@ -51,28 +51,26 @@ ShadowRoot* ElementShadow::addShadowRoot(Element* shadowHost, ShadowRoot::Shadow
     if (shadowHost->attached())
         shadowHost->lazyReattach();
 
-    InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
+    InspectorInstrumentation::didPushShadowRoot(shadowHost, m_shadowRoot.get());
 
-    return shadowRoot.get();
+    return m_shadowRoot.get();
 }
 
-void ElementShadow::removeAllShadowRoots()
+void ElementShadow::removeShadowRoot()
 {
     // Dont protect this ref count.
     Element* shadowHost = host();
 
-    while (RefPtr<ShadowRoot> oldRoot = m_shadowRoots.head()) {
+    if (RefPtr<ShadowRoot> oldRoot = m_shadowRoot) {
         InspectorInstrumentation::willPopShadowRoot(shadowHost, oldRoot.get());
         shadowHost->document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
         if (oldRoot->attached())
             oldRoot->detach();
 
-        m_shadowRoots.removeHead();
+        m_shadowRoot = 0;
         oldRoot->setParentOrShadowHostNode(0);
         oldRoot->setParentTreeScope(shadowHost->document());
-        oldRoot->setPrev(0);
-        oldRoot->setNext(0);
         ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 
@@ -81,9 +79,9 @@ void ElementShadow::removeAllShadowRoots()
 
 void ElementShadow::attach()
 {
-    ContentDistributor::ensureDistribution(youngestShadowRoot());
+    ContentDistributor::ensureDistribution(shadowRoot());
 
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+    if (ShadowRoot* root = shadowRoot()) {
         if (!root->attached())
             root->attach();
     }
@@ -91,7 +89,7 @@ void ElementShadow::attach()
 
 void ElementShadow::detach()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+    if (ShadowRoot* root = shadowRoot()) {
         if (root->attached())
             root->detach();
     }
@@ -99,33 +97,25 @@ void ElementShadow::detach()
 
 bool ElementShadow::childNeedsStyleRecalc() const
 {
-    ASSERT(youngestShadowRoot());
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        if (root->childNeedsStyleRecalc())
-            return true;
-
-    return false;
+    ASSERT(shadowRoot());
+    return shadowRoot()->childNeedsStyleRecalc();
 }
 
 bool ElementShadow::needsStyleRecalc() const
 {
-    ASSERT(youngestShadowRoot());
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        if (root->needsStyleRecalc())
-            return true;
-
-    return false;
+    ASSERT(shadowRoot());
+    return shadowRoot()->needsStyleRecalc();
 }
 
 void ElementShadow::recalcStyle(Node::StyleChange change)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+    if (ShadowRoot* root = shadowRoot())
         root->recalcStyle(change);
 }
 
 void ElementShadow::removeAllEventListeners()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+    if (ShadowRoot* root = shadowRoot()) {
         for (Node* node = root; node; node = NodeTraversal::next(node))
             node->removeAllEventListeners();
     }

@@ -70,7 +70,6 @@ FocusNavigationScope::FocusNavigationScope(TreeScope* treeScope)
     : m_rootTreeScope(treeScope)
 {
     ASSERT(treeScope);
-    ASSERT(!treeScope->rootNode()->isShadowRoot() || toShadowRoot(treeScope->rootNode())->isYoungest());
 }
 
 Node* FocusNavigationScope::rootNode() const
@@ -102,7 +101,7 @@ FocusNavigationScope FocusNavigationScope::focusNavigationScopeOf(Node* node)
 FocusNavigationScope FocusNavigationScope::focusNavigationScopeOwnedByShadowHost(Node* node)
 {
     ASSERT(isShadowHost(node));
-    return FocusNavigationScope(toElement(node)->shadow()->youngestShadowRoot());
+    return FocusNavigationScope(toElement(node)->shadow()->shadowRoot());
 }
 
 FocusNavigationScope FocusNavigationScope::focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement* frame)

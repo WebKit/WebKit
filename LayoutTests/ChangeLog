@@ -1,3 +1,18 @@
+2013-05-03  Antti Koivisto  <antti@apple.com>
+
+        Remove concept of younger and older shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=115570
+
+        Reviewed by Andreas Kling.
+
+        * editing/text-iterator/basic-iteration-expected.txt:
+        * editing/text-iterator/script-tests/basic-iteration.js:
+        (addShadowTreeWithDivElement):
+        * fast/forms/resources/common-spinbutton-change-and-input-events.js:
+        (testSpinButtonChangeAndInputEvents):
+        * fast/forms/resources/common-spinbutton-click-in-iframe.js:
+        (getSpinButton):
+
 2013-05-03  Viatcheslav Ostapenko  <viatchslav.o@samsung.com>
 
         [Cairo] Anti-aliasing should not be always disabled for lines

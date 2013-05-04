@@ -40,8 +40,7 @@ namespace WebCore {
 class ElementShadow;
 class ScopeContentDistribution;
 
-class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
-    friend class WTF::DoublyLinkedListNode<ShadowRoot>;
+class ShadowRoot : public DocumentFragment, public TreeScope {
 public:
     // FIXME: We will support multiple shadow subtrees, however current implementation does not work well
     // if a shadow root is dynamically created. So we prohibit multiple shadow subtrees
@@ -73,12 +72,6 @@ public:
     void setInnerHTML(const String&, ExceptionCode&);
 
     Element* activeElement() const;
-
-    ShadowRoot* youngerShadowRoot() const { return prev(); }
-    ShadowRoot* olderShadowRoot() const { return next(); }
-
-    bool isYoungest() const { return !youngerShadowRoot(); }
-    bool isOldest() const { return !olderShadowRoot(); }
 
     virtual void attach();
 
