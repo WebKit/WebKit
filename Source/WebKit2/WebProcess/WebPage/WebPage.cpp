@@ -1410,13 +1410,13 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
 
 void WebPage::setHeaderPageBanner(PassRefPtr<PageBanner> pageBanner)
 {
-    if (m_headerBanner) {
+    if (m_headerBanner)
         m_headerBanner->detachFromPage();
-        m_headerBanner = 0;
-    }
 
     m_headerBanner = pageBanner;
-    m_headerBanner->addToPage(PageBanner::Header, this);
+
+    if (m_headerBanner)
+        m_headerBanner->addToPage(PageBanner::Header, this);
 }
 
 PageBanner* WebPage::headerPageBanner()
@@ -1426,13 +1426,13 @@ PageBanner* WebPage::headerPageBanner()
 
 void WebPage::setFooterPageBanner(PassRefPtr<PageBanner> pageBanner)
 {
-    if (m_footerBanner) {
+    if (m_footerBanner)
         m_footerBanner->detachFromPage();
-        m_footerBanner = 0;
-    }
 
     m_footerBanner = pageBanner;
-    m_footerBanner->addToPage(PageBanner::Footer, this);
+
+    if (m_footerBanner)
+        m_footerBanner->addToPage(PageBanner::Footer, this);
 }
 
 PageBanner* WebPage::footerPageBanner()
