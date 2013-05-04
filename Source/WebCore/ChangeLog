@@ -1,3 +1,19 @@
+2013-04-30  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r140907): Incorrect baseline on cells after updating vertical-align
+        https://bugs.webkit.org/show_bug.cgi?id=115432
+
+        Reviewed by Julien Chaffraix.
+
+        If a cell changes vertical-align any intrinsic padding it has is now redundant. It
+        needs to calculate its new height from RenderTableRow::layout() and then find its
+        new intrinsic padding in RenderTableSection::layoutRows().
+
+        Test: fast/table/correct-baseline-after-style-change.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange):
+
 2013-05-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         incorrect repainting when a table has a transform
