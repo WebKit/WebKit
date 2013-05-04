@@ -1,5 +1,15 @@
 2013-05-04  Andreas Kling  <akling@apple.com>
 
+        Remove unused CSSSelector::isCustomPseudoType().
+
+        From Blink r149574 by <dominicc@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=149574>
+
+        * css/CSSSelector.h:
+        * css/CSSSelector.cpp:
+
+2013-05-04  Andreas Kling  <akling@apple.com>
+
         Remove ShadowRoot's previous/next ShadowRoot pointers.
         <http://webkit.org/b/115588>
 

@@ -452,12 +452,6 @@ CSSSelector::PseudoType CSSSelector::parsePseudoType(const AtomicString& name)
     return PseudoUnknown;
 }
 
-bool CSSSelector::isCustomPseudoType(const AtomicString& name)
-{
-    CSSSelector::PseudoType type = parsePseudoType(name);
-    return type == PseudoUserAgentCustomElement || type == PseudoWebKitCustomElement;
-}
-
 void CSSSelector::extractPseudoType() const
 {
     if (m_match != PseudoClass && m_match != PseudoElement && m_match != PagePseudoClass)

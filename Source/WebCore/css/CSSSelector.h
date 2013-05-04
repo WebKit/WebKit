@@ -201,7 +201,6 @@ namespace WebCore {
         }
 
         static PseudoType parsePseudoType(const AtomicString&);
-        static bool isCustomPseudoType(const AtomicString&);        
         static PseudoId pseudoId(PseudoType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
