@@ -30,7 +30,6 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <WebKit/WebAuthenticationPanel.h>
-#import <WebKit/WebNSDictionaryExtras.h>
 #import <wtf/Assertions.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
@@ -50,10 +49,11 @@ WebPanelAuthenticationHandler *sharedHandler;
 {
     self = [super init];
     if (self != nil) {
-        windowToPanel = [[NSMutableDictionary alloc] init];
-        challengeToWindow = [[NSMutableDictionary alloc] init];
-        windowToChallengeQueue = [[NSMutableDictionary alloc] init];
+        windowToPanel = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+        challengeToWindow = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+        windowToChallengeQueue = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
     }
+
     return self;
 }
 
@@ -68,9 +68,9 @@ WebPanelAuthenticationHandler *sharedHandler;
 -(void)enqueueChallenge:(NSURLAuthenticationChallenge *)challenge forWindow:(id)window
 {
     NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
-    if (queue == nil) {
+    if (!queue) {
         queue = [[NSMutableArray alloc] init];
-        [windowToChallengeQueue _webkit_setObject:queue forUncopiedKey:window];
+        [windowToChallengeQueue setObject:queue forKey:window];
         [queue release];
     }
     [queue addObject:challenge];
@@ -79,15 +79,13 @@ WebPanelAuthenticationHandler *sharedHandler;
 -(void)tryNextChallengeForWindow:(id)window
 {
     NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
-    if (queue == nil) {
+    if (!queue)
         return;
-    }
 
     NSURLAuthenticationChallenge *challenge = [[queue objectAtIndex:0] retain];
     [queue removeObjectAtIndex:0];
-    if ([queue count] == 0) {
+    if (![queue count])
         [windowToChallengeQueue removeObjectForKey:window];
-    }
 
     NSURLCredential *latestCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[challenge protectionSpace]];
 
@@ -122,24 +120,24 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 
     WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)];
-    [challengeToWindow _webkit_setObject:window forUncopiedKey:challenge];
-    [windowToPanel _webkit_setObject:panel forUncopiedKey:window];
+    [challengeToWindow setObject:window forKey:challenge];
+    [windowToPanel setObject:panel forKey:window];
     [panel release];
     
-    if (window == WebModalDialogPretendWindow) {
+    if (window == WebModalDialogPretendWindow)
         [panel runAsModalDialogWithChallenge:challenge];
-    } else {
+    else
         [panel runAsSheetOnWindow:window withChallenge:challenge];
-    }
 }
 
 -(void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge
 {
     id window = [challengeToWindow objectForKey:challenge];
-    if (window != nil) {
-        WebAuthenticationPanel *panel = [windowToPanel objectForKey:window];
-        [panel cancel:self];
-    }
+    if (!window)
+        return;
+
+    WebAuthenticationPanel *panel = [windowToPanel objectForKey:window];
+    [panel cancel:self];
 }
 
 -(void)_authenticationDoneWithChallenge:(NSURLAuthenticationChallenge *)challenge result:(NSURLCredential *)credential

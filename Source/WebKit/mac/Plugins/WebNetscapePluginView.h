@@ -96,7 +96,7 @@ typedef union PluginPort {
     int32_t specifiedWidth;
             
     HashSet<RefPtr<WebNetscapePluginStream> > streams;
-    RetainPtr<NSMutableDictionary> _pendingFrameLoads;
+    RetainPtr<NSMapTable> _pendingFrameLoads;
     
     BOOL _isFlash;
     BOOL _isSilverlight;

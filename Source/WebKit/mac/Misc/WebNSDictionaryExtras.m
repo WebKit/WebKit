@@ -82,10 +82,6 @@
 @end
 
 @implementation NSMutableDictionary (WebNSDictionaryExtras)
--(void)_webkit_setObject:(id)object forUncopiedKey:(id)key
-{
-    CFDictionarySetValue((CFMutableDictionaryRef)self, key, object);
-}
 
 -(void)_webkit_setInt:(int)value forKey:(id)key
 {

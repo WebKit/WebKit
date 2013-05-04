@@ -33,9 +33,9 @@
 
 @interface WebPanelAuthenticationHandler : NSObject
 {
-    NSMutableDictionary *windowToPanel;
-    NSMutableDictionary *challengeToWindow;
-    NSMutableDictionary *windowToChallengeQueue;
+    NSMapTable *windowToPanel;
+    NSMapTable *challengeToWindow;
+    NSMapTable *windowToChallengeQueue;
 }
 
 + (id)sharedHandler;

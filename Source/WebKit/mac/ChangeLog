@@ -1,3 +1,29 @@
+2013-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of -[NSMutableDictionary _webkit_setObject:forUncopiedKey:]
+        https://bugs.webkit.org/show_bug.cgi?id=115592
+
+        Reviewed by Beth Dakin.
+
+        Using CFDictionarySetValue to set a key without having to copy it is not supported. Use NSMapTable with strong pointers instead.
+
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        * Panels/WebPanelAuthenticationHandler.h:
+        (NSURLAuthenticationChallenge):
+        * Panels/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler init]):
+        (-[WebPanelAuthenticationHandler enqueueChallenge:forWindow:]):
+        (-[WebPanelAuthenticationHandler tryNextChallengeForWindow:]):
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        (-[WebPanelAuthenticationHandler cancelAuthentication:]):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView destroyPlugin]):
+        (-[WebNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        (-[WebNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebNetscapePluginView loadPluginRequest:]):
+
 2011-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] WebKit doesn't enable or disable autocorrections when system preferences are changed

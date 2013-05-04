@@ -39,7 +39,6 @@
 @end
 
 @interface NSMutableDictionary (WebNSDictionaryExtras)
-- (void)_webkit_setObject:(id)object forUncopiedKey:(id)key;
 - (void)_webkit_setInt:(int)value forKey:(id)key;
 - (void)_webkit_setFloat:(float)value forKey:(id)key;
 - (void)_webkit_setBool:(BOOL)value forKey:(id)key;

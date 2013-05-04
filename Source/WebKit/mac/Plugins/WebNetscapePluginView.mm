@@ -1188,8 +1188,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     copyToVector(streams, streamsCopy);
     for (size_t i = 0; i < streamsCopy.size(); i++)
         streamsCopy[i]->stop();
-    
-    [[_pendingFrameLoads.get() allKeys] makeObjectsPerformSelector:@selector(_setInternalLoadDelegate:) withObject:nil];
+
+    for (WebFrame *frame in [_pendingFrameLoads keyEnumerator])
+        [frame _setInternalLoadDelegate:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
@@ -1335,9 +1336,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually element:element];
     if (!self)
         return nil;
- 
-    _pendingFrameLoads = adoptNS([[NSMutableDictionary alloc] init]);
-    
+
+    _pendingFrameLoads = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0]);
+
     // load the plug-in if it is not already loaded
     if (![pluginPackage load]) {
         [self release];
@@ -1620,7 +1621,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(_isStarted);
     
-    WebPluginRequest *pluginRequest = [_pendingFrameLoads.get() objectForKey:webFrame];
+    WebPluginRequest *pluginRequest = [_pendingFrameLoads objectForKey:webFrame];
     ASSERT(pluginRequest != nil);
     ASSERT([pluginRequest sendNotification]);
         
@@ -1631,7 +1632,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     [self didCallPlugInFunction];
     
-    [_pendingFrameLoads.get() removeObjectForKey:webFrame];
+    [_pendingFrameLoads removeObjectForKey:webFrame];
     [webFrame _setInternalLoadDelegate:nil];
 }
 
@@ -1697,7 +1698,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 ASSERT([view isKindOfClass:[WebNetscapePluginView class]]);
                 [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
             }
-            [_pendingFrameLoads.get() _webkit_setObject:pluginRequest forUncopiedKey:frame];
+            [_pendingFrameLoads setObject:pluginRequest forKey:frame];
             [frame _setInternalLoadDelegate:self];
         }
     }
