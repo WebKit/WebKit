@@ -459,6 +459,9 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
 void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     m_webPage->setDeviceScaleFactor(deviceScaleFactor);
+
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
+        it->value->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 void TiledCoreAnimationDrawingArea::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
