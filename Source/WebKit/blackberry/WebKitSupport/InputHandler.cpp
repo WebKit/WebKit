@@ -672,21 +672,6 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
     m_request = spellCheckRequest;
 }
 
-void InputHandler::spellCheckingRequestCancelled(int32_t)
-{
-    SpellingLog(Platform::LogLevelWarn,
-        "InputHandler::spellCheckingRequestCancelled Expected transaction id %d, received %d. %s",
-        transactionId,
-        m_processingTransactionId,
-        transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
-
-    if (m_request) {
-        m_request->didCancel();
-        m_request = 0;
-    }
-    m_processingTransactionId = -1;
-}
-
 void InputHandler::spellCheckingRequestProcessed(int32_t, spannable_string_t* spannableString)
 {
     SpellingLog(Platform::LogLevelWarn,

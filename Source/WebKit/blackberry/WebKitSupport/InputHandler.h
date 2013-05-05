@@ -148,7 +148,6 @@ public:
 
     void requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest>);
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
-    void spellCheckingRequestCancelled(int32_t transactionId);
     void stopPendingSpellCheckRequests();
     void spellCheckTextBlock(WebCore::Element* = 0);
 

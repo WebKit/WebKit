@@ -4281,11 +4281,6 @@ void WebPage::setSpellCheckingEnabled(bool enabled)
         d->m_inputHandler->stopPendingSpellCheckRequests();
 }
 
-void WebPage::spellCheckingRequestCancelled(int32_t transactionId)
-{
-    d->m_inputHandler->spellCheckingRequestCancelled(transactionId);
-}
-
 void WebPage::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
 {
     d->m_inputHandler->spellCheckingRequestProcessed(transactionId, spannableString);
