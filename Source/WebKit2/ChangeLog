@@ -1,3 +1,17 @@
+2013-05-04  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION(r148312): Crash when calling WKPageClose(page) followed by WKPageTerminate(page)
+        <rdar://problem/13702008>
+        https://bugs.webkit.org/show_bug.cgi?id=115607
+
+        Reviewed by Benjamin Poulain.
+
+        API Test: WebKit2.CloseThenTerminate
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Don't try to reset the state if the page is closed, it won't work and its not worth it.
+
 2013-05-04  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=115574
