@@ -1,5 +1,21 @@
 2013-05-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Get rid of special cases in AddIncludesForTypeInImpl
+        https://bugs.webkit.org/show_bug.cgi?id=115602
+
+        Reviewed by Benjamin Poulain.
+
+        Get rid of the special cases in AddIncludesForTypeInImpl subroutine in the
+        JS bindings generator. Those are no longer needed and special cases should
+        be avoided in the generator.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForTypeInImpl):
+
+2013-05-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Get rid of AddIncludesForSVGAnimatedType in bindings generator
         https://bugs.webkit.org/show_bug.cgi?id=115603
 

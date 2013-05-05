@@ -192,25 +192,6 @@ sub AddIncludesForTypeInImpl
     my $isCallback = @_ ? shift : 0;
     
     AddIncludesForType($type, $isCallback, \%implIncludes);
-    
-    # additional includes (things needed to compile the bindings but not the header)
-    if ($type eq "CanvasRenderingContext2D") {
-        $implIncludes{"CanvasGradient.h"} = 1;
-        $implIncludes{"CanvasPattern.h"} = 1;
-        $implIncludes{"CanvasStyle.h"} = 1;
-    }
-
-    if ($type eq "CanvasGradient" or $type eq "XPathNSResolver" or $type eq "MessagePort") {
-        $implIncludes{"<wtf/text/WTFString.h>"} = 1;
-    }
-
-    if ($type eq "Document") {
-        $implIncludes{"NodeFilter.h"} = 1;
-    }
-
-    if ($type eq "MediaQueryListListener") {
-        $implIncludes{"MediaQueryListListener.h"} = 1;
-    }
 }
 
 sub AddIncludesForTypeInHeader
