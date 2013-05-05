@@ -72,7 +72,7 @@ Vector<String> PluginInfoStore::pluginsDirectories()
     if (!mozillaPaths.isEmpty()) {
         Vector<String> paths;
         mozillaPaths.split(UChar(':'), /* allowEmptyEntries */ false, paths);
-        result.append(paths);
+        result.appendVector(paths);
     }
 
     return result;

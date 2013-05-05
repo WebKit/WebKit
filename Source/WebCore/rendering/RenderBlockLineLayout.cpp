@@ -1349,7 +1349,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // If we encountered any nested isolate runs, just move them
         // to the top resolver's list for later processing.
         if (!isolatedResolver.isolatedRuns().isEmpty()) {
-            topResolver.isolatedRuns().append(isolatedResolver.isolatedRuns());
+            topResolver.isolatedRuns().appendVector(isolatedResolver.isolatedRuns());
             isolatedResolver.isolatedRuns().clear();
         }
     }

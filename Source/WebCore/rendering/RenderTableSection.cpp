@@ -1322,7 +1322,7 @@ void RenderTableSection::splitColumn(unsigned pos, unsigned first)
         Row& r = m_grid[row].row;
         r.insert(pos + 1, CellStruct());
         if (r[pos].hasCells()) {
-            r[pos + 1].cells.append(r[pos].cells);
+            r[pos + 1].cells.appendVector(r[pos].cells);
             RenderTableCell* cell = r[pos].primaryCell();
             ASSERT(cell);
             ASSERT(cell->colSpan() >= (r[pos].inColSpan ? 1u : 0));

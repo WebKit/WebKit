@@ -103,8 +103,8 @@ Vector<String> FileChooserSettings::acceptTypes() const
 {
     Vector<String> acceptTypes;
     acceptTypes.reserveCapacity(acceptMIMETypes.size() + acceptFileExtensions.size());
-    acceptTypes.append(acceptMIMETypes);
-    acceptTypes.append(acceptFileExtensions);
+    acceptTypes.appendVector(acceptMIMETypes);
+    acceptTypes.appendVector(acceptFileExtensions);
     return acceptTypes;
 }
 

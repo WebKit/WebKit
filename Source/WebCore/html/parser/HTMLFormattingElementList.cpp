@@ -158,7 +158,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
     if (candidates.size() < kNoahsArkCapacity)
         return; // There's room for the new element in the ark. There's no need to copy out the remainingCandidates.
 
-    remainingCandidates.append(candidates);
+    remainingCandidates.appendVector(candidates);
 }
 
 void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)

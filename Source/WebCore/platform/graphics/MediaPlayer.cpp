@@ -902,7 +902,7 @@ void MediaPlayer::getSitesInMediaCache(Vector<String>& sites)
             continue;
         Vector<String> engineSites;
         engines[i]->getSitesInMediaCache(engineSites);
-        sites.append(engineSites);
+        sites.appendVector(engineSites);
     }
 }
 

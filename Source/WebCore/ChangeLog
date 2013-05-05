@@ -1,5 +1,90 @@
 2013-05-05  Anders Carlsson  <andersca@apple.com>
 
+        Remove the Vector::append overload that takes a Vector
+        https://bugs.webkit.org/show_bug.cgi?id=115535
+
+        Reviewed by Andreas Kling.
+
+        Use Vector::appendVector instead.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::IDBBackingStore::putRecord):
+        (WebCore::IDBBackingStore::putIndexDataForRecord):
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeStringWithLength):
+        (WebCore::IDBLevelDBCoding::encodeIDBKey):
+        (WebCore::IDBLevelDBCoding::encodeIDBKeyPath):
+        (WebCore::IDBLevelDBCoding::SchemaVersionKey::encode):
+        (WebCore::IDBLevelDBCoding::MaxDatabaseIdKey::encode):
+        (WebCore::IDBLevelDBCoding::DataVersionKey::encode):
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::DatabaseNameKey::encode):
+        (WebCore::IDBLevelDBCoding::DatabaseMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ExistsEntryKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::encode):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::clear):
+        (WebCore::AudioContext::scheduleNodeDeletion):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::cells):
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::add):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addToMatchedPropertiesCache):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::collectActiveCSSStyleSheetsFromSeamlessParents):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/Range.cpp:
+        (WebCore::Range::getBorderAndTextQuads):
+        * html/FormController.cpp:
+        (WebCore::FormController::getReferencedFilePaths):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setLineDash):
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+        * html/track/WebVTTToken.h:
+        (WebCore::WebVTTToken::addNewClass):
+        (WebCore::WebVTTToken::addNewAnnotation):
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::CaptionUserPreferencesMac::preferredLanguages):
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooserSettings::acceptTypes):
+        * platform/SharedBufferChunkReader.cpp:
+        (WebCore::SharedBufferChunkReader::nextChunk):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::getSitesInMediaCache):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::createWritableTypesForImage):
+        (WebCore::writableTypesForImage):
+        (WebCore::Pasteboard::writeSelectionForTypes):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::generateUniqueBoundaryString):
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::constructBidiRunsForSegment):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::OverlapMap::popCompositingContainer):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::splitColumn):
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::collectGlyphsForString):
+        * xml/XPathNodeSet.h:
+        (WebCore::XPath::NodeSet::append):
+
+2013-05-05  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         Make plugIns.js have a non-zero length.

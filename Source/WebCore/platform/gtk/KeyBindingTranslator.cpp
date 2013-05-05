@@ -209,7 +209,7 @@ void KeyBindingTranslator::getEditorCommandsForKeyEvent(GdkEventKey* event, Even
 #endif
 
     if (!m_pendingEditorCommands.isEmpty()) {
-        commandList.append(m_pendingEditorCommands);
+        commandList.appendVector(m_pendingEditorCommands);
         return;
     }
 

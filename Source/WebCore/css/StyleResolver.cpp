@@ -1827,7 +1827,7 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
 
     ASSERT(hash);
     MatchedPropertiesCacheItem cacheItem;
-    cacheItem.matchedProperties.append(matchResult.matchedProperties);
+    cacheItem.matchedProperties.appendVector(matchResult.matchedProperties);
     cacheItem.ranges = matchResult.ranges;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.

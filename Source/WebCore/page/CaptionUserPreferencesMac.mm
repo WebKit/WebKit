@@ -475,7 +475,7 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     for (CFIndex i = 0; i < languageCount; i++)
         userPreferredLanguages.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
 
-    userPreferredLanguages.append(platformLanguages);
+    userPreferredLanguages.appendVector(platformLanguages);
 
     return userPreferredLanguages;
 }

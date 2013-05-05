@@ -91,7 +91,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparat
             m_separatorIndex++;
             if (m_separatorIndex == m_separator.size()) {
                 if (includeSeparator)
-                    chunk.append(m_separator);
+                    chunk.appendVector(m_separator);
                 m_separatorIndex = 0;
                 return true;
             }

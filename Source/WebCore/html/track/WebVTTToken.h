@@ -149,7 +149,7 @@ public:
         ASSERT(m_type == Type::StartTag);
         if (!m_classes.isEmpty())
             m_classes.append(' ');
-        m_classes.append(m_currentBuffer);
+        m_classes.appendVector(m_currentBuffer);
         m_currentBuffer.clear();
     }
     
@@ -167,7 +167,7 @@ public:
     {
         ASSERT(m_type == Type::StartTag);
         m_annotation.clear();
-        m_annotation.append(m_currentBuffer);
+        m_annotation.appendVector(m_currentBuffer);
         m_currentBuffer.clear();
     }
     

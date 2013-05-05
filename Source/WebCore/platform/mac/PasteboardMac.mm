@@ -106,7 +106,7 @@ static inline Vector<String> createWritableTypesForImage()
     Vector<String> types;
     
     types.append(String(NSTIFFPboardType));
-    types.append(writableTypesForURL());
+    types.appendVector(writableTypesForURL());
     types.append(String(NSRTFDPboardType));
     return types;
 }
@@ -114,7 +114,7 @@ static inline Vector<String> createWritableTypesForImage()
 static Vector<String> writableTypesForImage()
 {
     Vector<String> types;
-    types.append(createWritableTypesForImage());
+    types.appendVector(createWritableTypesForImage());
     return types;
 }
 
@@ -187,7 +187,7 @@ void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, b
     Vector<String> clientTypes;
     Vector<RefPtr<SharedBuffer> > clientData;
     frame->editor()->client()->getClientPasteboardDataForRange(frame->editor()->selectedRange().get(), clientTypes, clientData);
-    types.append(clientTypes);
+    types.appendVector(clientTypes);
 
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
     frame->editor()->client()->didSetSelectionTypesForPasteboard();

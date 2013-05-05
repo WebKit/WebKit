@@ -130,7 +130,7 @@ void TiledBackingStore::updateTileBuffers()
     unsigned size = dirtyTiles.size();
     for (unsigned n = 0; n < size; ++n) {
         Vector<IntRect> paintedRects = dirtyTiles[n]->updateBackBuffer();
-        paintedArea.append(paintedRects);
+        paintedArea.appendVector(paintedRects);
         dirtyTiles[n]->swapBackBufferToFront();
     }
 

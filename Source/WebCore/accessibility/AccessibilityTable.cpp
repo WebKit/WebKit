@@ -377,7 +377,7 @@ void AccessibilityTable::addChildren()
                 m_children.append(row);
 #if PLATFORM(GTK)
             else
-                m_children.append(row->children());
+                m_children.appendVector(row->children());
 #endif
             appendedRows.add(row);
         }
@@ -466,11 +466,8 @@ void AccessibilityTable::cells(AccessibilityObject::AccessibilityChildrenVector&
     
     updateChildrenIfNecessary();
     
-    int numRows = m_rows.size();
-    for (int row = 0; row < numRows; ++row) {
-        AccessibilityChildrenVector rowChildren = m_rows[row]->children();
-        cells.append(rowChildren);
-    }
+    for (size_t row = 0; row < m_rows.size(); ++row)
+        cells.appendVector(m_rows[row]->children());
 }
     
 unsigned AccessibilityTable::columnCount()

@@ -428,7 +428,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     Vector<String> mozPaths;
     String mozPath(getenv("MOZ_PLUGIN_PATH"));
     mozPath.split(UChar(':'), /* allowEmptyEntries */ false, mozPaths);
-    paths.append(mozPaths);
+    paths.appendVector(mozPaths);
 #elif defined(XP_MACOSX)
     String userPluginPath = homeDirectoryPath();
     userPluginPath.append(String("/Library/Internet Plug-Ins"));
@@ -445,7 +445,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     Vector<String> qtPaths;
     String qtPath(qgetenv("QTWEBKIT_PLUGIN_PATH").constData());
     qtPath.split(UChar(':'), /* allowEmptyEntries */ false, qtPaths);
-    paths.append(qtPaths);
+    paths.appendVector(qtPaths);
 #endif
 
     return paths;

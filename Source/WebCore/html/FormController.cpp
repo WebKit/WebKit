@@ -510,8 +510,8 @@ Vector<String> FormController::getReferencedFilePaths(const Vector<String>& stat
     Vector<String> toReturn;
     SavedFormStateMap map;
     formStatesFromStateVector(stateVector, map);
-    for (SavedFormStateMap::const_iterator it = map.begin(); it != map.end(); ++it)
-        toReturn.append(it->value->getReferencedFilePaths());
+    for (SavedFormStateMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
+        toReturn.appendVector(it->value->getReferencedFilePaths());
     return toReturn;
 }
 

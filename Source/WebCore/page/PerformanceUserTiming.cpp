@@ -170,7 +170,7 @@ static Vector<RefPtr<PerformanceEntry> > convertToEntrySequence(const Performanc
     Vector<RefPtr<PerformanceEntry> > entries;
 
     for (PerformanceEntryMap::const_iterator it = performanceEntryMap.begin(); it != performanceEntryMap.end(); ++it)
-        entries.append(it->value);
+        entries.appendVector(it->value);
 
     return entries;
 }
@@ -181,7 +181,7 @@ static Vector<RefPtr<PerformanceEntry> > getEntrySequenceByName(const Performanc
 
     PerformanceEntryMap::const_iterator it = performanceEntryMap.find(name);
     if (it != performanceEntryMap.end())
-        entries.append(it->value);
+        entries.appendVector(it->value);
 
     return entries;
 }

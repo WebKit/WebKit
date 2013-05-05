@@ -124,7 +124,7 @@ public:
             RefPtr<GlyphMapNode> node = currentLayer->get(character);
             if (!node)
                 break;
-            glyphs.append(node->glyphs);
+            glyphs.appendVector(node->glyphs);
             currentLayer = &node->children;
             textIterator.advance(clusterLength);
         }

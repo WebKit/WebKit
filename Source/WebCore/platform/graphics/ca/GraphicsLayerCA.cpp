@@ -1284,7 +1284,7 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     PlatformCALayerList& childListForSublayers = m_structuralLayer ? structuralLayerChildren : primaryLayerChildren;
 
     if (customSublayers)
-        primaryLayerChildren.append(*customSublayers);
+        primaryLayerChildren.appendVector(*customSublayers);
 
     if (m_structuralLayer) {
         if (m_replicaLayer)

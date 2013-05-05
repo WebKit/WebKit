@@ -56,7 +56,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     const BlobDataItemList& items = data->items();
     for (size_t i = 0, count = items.size(); i < count; ++i) {
         if (items[i].type == BlobDataItem::Blob)
-            sandboxExtensions.append(m_sandboxExtensions.get(items[i].url.string()));
+            sandboxExtensions.appendVector(m_sandboxExtensions.get(items[i].url.string()));
     }
 
     blobRegistry().registerBlobURL(url, data);

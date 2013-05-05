@@ -543,7 +543,7 @@ void CanvasRenderingContext2D::setLineDash(const Vector<float>& dash)
     // Spec requires the concatenation of two copies the dash list when the
     // number of elements is odd
     if (dash.size() % 2)
-        modifiableState().m_lineDash.append(dash);
+        modifiableState().m_lineDash.appendVector(dash);
 
     applyLineDash();
 }

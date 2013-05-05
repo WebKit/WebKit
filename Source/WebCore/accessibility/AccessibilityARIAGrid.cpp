@@ -76,7 +76,7 @@ bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSe
     if (!row->accessibilityIsIgnored())
         m_children.append(row);
     else
-        m_children.append(row->children());
+        m_children.appendVector(row->children());
 
     appendedRows.add(row);
     return true;

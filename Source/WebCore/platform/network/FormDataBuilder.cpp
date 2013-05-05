@@ -135,7 +135,7 @@ Vector<char> FormDataBuilder::generateUniqueBoundaryString()
         randomBytes.append(alphaNumericEncodingMap[randomness & 0x3F]);
     }
 
-    boundary.append(randomBytes);
+    boundary.appendVector(randomBytes);
     boundary.append(0); // Add a 0 at the end so we can use this as a C-style string.
     return boundary;
 }

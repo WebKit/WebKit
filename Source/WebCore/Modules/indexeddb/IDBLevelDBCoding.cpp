@@ -326,7 +326,7 @@ String decodeString(const char* start, const char* end)
 Vector<char> encodeStringWithLength(const String& s)
 {
     Vector<char> ret = encodeVarInt(s.length());
-    ret.append(encodeString(s));
+    ret.appendVector(encodeString(s));
     return ret;
 }
 
@@ -419,30 +419,30 @@ void encodeIDBKey(const IDBKey& key, Vector<char, DefaultInlineBufferSize>& into
     case IDBKey::InvalidType:
     case IDBKey::MinType:
         ASSERT_NOT_REACHED();
-        into.append(encodeByte(IDBKeyNullTypeByte));
+        into.appendVector(encodeByte(IDBKeyNullTypeByte));
         return;
     case IDBKey::ArrayType: {
-        into.append(encodeByte(IDBKeyArrayTypeByte));
+        into.appendVector(encodeByte(IDBKeyArrayTypeByte));
         size_t length = key.array().size();
-        into.append(encodeVarInt(length));
+        into.appendVector(encodeVarInt(length));
         for (size_t i = 0; i < length; ++i)
             encodeIDBKey(*key.array()[i], into);
         ASSERT_UNUSED(previousSize, into.size() > previousSize);
         return;
     }
     case IDBKey::StringType:
-        into.append(encodeByte(IDBKeyStringTypeByte));
-        into.append(encodeStringWithLength(key.string()));
+        into.appendVector(encodeByte(IDBKeyStringTypeByte));
+        into.appendVector(encodeStringWithLength(key.string()));
         ASSERT_UNUSED(previousSize, into.size() > previousSize);
         return;
     case IDBKey::DateType:
-        into.append(encodeByte(IDBKeyDateTypeByte));
-        into.append(encodeDouble(key.date()));
+        into.appendVector(encodeByte(IDBKeyDateTypeByte));
+        into.appendVector(encodeDouble(key.date()));
         ASSERT_UNUSED(previousSize, into.size() - previousSize == 9);
         return;
     case IDBKey::NumberType:
-        into.append(encodeByte(IDBKeyNumberTypeByte));
-        into.append(encodeDouble(key.number()));
+        into.appendVector(encodeByte(IDBKeyNumberTypeByte));
+        into.appendVector(encodeDouble(key.number()));
         ASSERT_UNUSED(previousSize, into.size() - previousSize == 9);
         return;
     }
@@ -668,14 +668,14 @@ Vector<char> encodeIDBKeyPath(const IDBKeyPath& keyPath)
     case IDBKeyPath::NullType:
         break;
     case IDBKeyPath::StringType:
-        ret.append(encodeStringWithLength(keyPath.string()));
+        ret.appendVector(encodeStringWithLength(keyPath.string()));
         break;
     case IDBKeyPath::ArrayType: {
         const Vector<String>& array = keyPath.array();
         size_t count = array.size();
-        ret.append(encodeVarInt(count));
+        ret.appendVector(encodeVarInt(count));
         for (size_t i = 0; i < count; ++i)
-            ret.append(encodeStringWithLength(array[i]));
+            ret.appendVector(encodeStringWithLength(array[i]));
         break;
     }
     }
@@ -1088,9 +1088,9 @@ Vector<char> KeyPrefix::encodeInternal(int64_t databaseId, int64_t objectStoreId
     COMPILE_ASSERT(kMaxDatabaseIdSizeBits + kMaxObjectStoreIdSizeBits + kMaxIndexIdSizeBits == sizeof(firstByte) * 8, CANT_ENCODE_IDS);
     Vector<char, DefaultInlineBufferSize> ret;
     ret.append(firstByte);
-    ret.append(databaseIdString);
-    ret.append(objectStoreIdString);
-    ret.append(indexIdString);
+    ret.appendVector(databaseIdString);
+    ret.appendVector(objectStoreIdString);
+    ret.appendVector(indexIdString);
 
     ASSERT(ret.size() <= DefaultInlineBufferSize);
     return ret;
@@ -1135,21 +1135,21 @@ KeyPrefix::Type KeyPrefix::type() const
 Vector<char> SchemaVersionKey::encode()
 {
     Vector<char> ret = KeyPrefix::encodeEmpty();
-    ret.append(encodeByte(SchemaVersionTypeByte));
+    ret.appendVector(encodeByte(SchemaVersionTypeByte));
     return ret;
 }
 
 Vector<char> MaxDatabaseIdKey::encode()
 {
     Vector<char> ret = KeyPrefix::encodeEmpty();
-    ret.append(encodeByte(MaxDatabaseIdTypeByte));
+    ret.appendVector(encodeByte(MaxDatabaseIdTypeByte));
     return ret;
 }
 
 Vector<char> DataVersionKey::encode()
 {
     Vector<char> ret = KeyPrefix::encodeEmpty();
-    ret.append(encodeByte(DataVersionTypeByte));
+    ret.appendVector(encodeByte(DataVersionTypeByte));
     return ret;
 }
 
@@ -1180,8 +1180,8 @@ const char* DatabaseFreeListKey::decode(const char* start, const char* limit, Da
 Vector<char> DatabaseFreeListKey::encode(int64_t databaseId)
 {
     Vector<char> ret = KeyPrefix::encodeEmpty();
-    ret.append(encodeByte(DatabaseFreeListTypeByte));
-    ret.append(encodeVarInt(databaseId));
+    ret.appendVector(encodeByte(DatabaseFreeListTypeByte));
+    ret.appendVector(encodeVarInt(databaseId));
     return ret;
 }
 
@@ -1227,9 +1227,9 @@ const char* DatabaseNameKey::decode(const char* start, const char* limit, Databa
 Vector<char> DatabaseNameKey::encode(const String& origin, const String& databaseName)
 {
     Vector<char> ret = KeyPrefix::encodeEmpty();
-    ret.append(encodeByte(DatabaseNameTypeByte));
-    ret.append(encodeStringWithLength(origin));
-    ret.append(encodeStringWithLength(databaseName));
+    ret.appendVector(encodeByte(DatabaseNameTypeByte));
+    ret.appendVector(encodeStringWithLength(origin));
+    ret.appendVector(encodeStringWithLength(databaseName));
     return ret;
 }
 
@@ -1255,7 +1255,7 @@ Vector<char> DatabaseMetaDataKey::encode(int64_t databaseId, MetaDataType metaDa
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(metaDataType));
+    ret.appendVector(encodeByte(metaDataType));
     return ret;
 }
 
@@ -1294,9 +1294,9 @@ Vector<char> ObjectStoreMetaDataKey::encode(int64_t databaseId, int64_t objectSt
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(ObjectStoreMetaDataTypeByte));
-    ret.append(encodeVarInt(objectStoreId));
-    ret.append(encodeByte(metaDataType));
+    ret.appendVector(encodeByte(ObjectStoreMetaDataTypeByte));
+    ret.appendVector(encodeVarInt(objectStoreId));
+    ret.appendVector(encodeByte(metaDataType));
     return ret;
 }
 
@@ -1369,10 +1369,10 @@ Vector<char> IndexMetaDataKey::encode(int64_t databaseId, int64_t objectStoreId,
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(IndexMetaDataTypeByte));
-    ret.append(encodeVarInt(objectStoreId));
-    ret.append(encodeVarInt(indexId));
-    ret.append(encodeByte(metaDataType));
+    ret.appendVector(encodeByte(IndexMetaDataTypeByte));
+    ret.appendVector(encodeVarInt(objectStoreId));
+    ret.appendVector(encodeVarInt(indexId));
+    ret.appendVector(encodeByte(metaDataType));
     return ret;
 }
 
@@ -1432,8 +1432,8 @@ Vector<char> ObjectStoreFreeListKey::encode(int64_t databaseId, int64_t objectSt
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(ObjectStoreFreeListTypeByte));
-    ret.append(encodeVarInt(objectStoreId));
+    ret.appendVector(encodeByte(ObjectStoreFreeListTypeByte));
+    ret.appendVector(encodeVarInt(objectStoreId));
     return ret;
 }
 
@@ -1489,9 +1489,9 @@ Vector<char> IndexFreeListKey::encode(int64_t databaseId, int64_t objectStoreId,
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(IndexFreeListTypeByte));
-    ret.append(encodeVarInt(objectStoreId));
-    ret.append(encodeVarInt(indexId));
+    ret.appendVector(encodeByte(IndexFreeListTypeByte));
+    ret.appendVector(encodeVarInt(objectStoreId));
+    ret.appendVector(encodeVarInt(indexId));
     return ret;
 }
 
@@ -1545,8 +1545,8 @@ Vector<char> ObjectStoreNamesKey::encode(int64_t databaseId, const String& objec
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(ObjectStoreNamesTypeByte));
-    ret.append(encodeStringWithLength(objectStoreName));
+    ret.appendVector(encodeByte(ObjectStoreNamesTypeByte));
+    ret.appendVector(encodeStringWithLength(objectStoreName));
     return ret;
 }
 
@@ -1588,9 +1588,9 @@ Vector<char> IndexNamesKey::encode(int64_t databaseId, int64_t objectStoreId, co
 {
     KeyPrefix prefix(databaseId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(IndexNamesKeyTypeByte));
-    ret.append(encodeVarInt(objectStoreId));
-    ret.append(encodeStringWithLength(indexName));
+    ret.appendVector(encodeByte(IndexNamesKeyTypeByte));
+    ret.appendVector(encodeVarInt(objectStoreId));
+    ret.appendVector(encodeStringWithLength(indexName));
     return ret;
 }
 
@@ -1620,7 +1620,7 @@ Vector<char> ObjectStoreDataKey::encode(int64_t databaseId, int64_t objectStoreI
 {
     KeyPrefix prefix(KeyPrefix::createWithSpecialIndex(databaseId, objectStoreId, SpecialIndexNumber));
     Vector<char> ret = prefix.encode();
-    ret.append(encodedUserKey);
+    ret.appendVector(encodedUserKey);
 
     return ret;
 }
@@ -1662,7 +1662,7 @@ Vector<char> ExistsEntryKey::encode(int64_t databaseId, int64_t objectStoreId, c
 {
     KeyPrefix prefix(KeyPrefix::createWithSpecialIndex(databaseId, objectStoreId, SpecialIndexNumber));
     Vector<char> ret = prefix.encode();
-    ret.append(encodedKey);
+    ret.appendVector(encodedKey);
     return ret;
 }
 
@@ -1733,9 +1733,9 @@ Vector<char> IndexDataKey::encode(int64_t databaseId, int64_t objectStoreId, int
 {
     KeyPrefix prefix(databaseId, objectStoreId, indexId);
     Vector<char> ret = prefix.encode();
-    ret.append(encodedUserKey);
-    ret.append(encodeVarInt(sequenceNumber));
-    ret.append(encodedPrimaryKey);
+    ret.appendVector(encodedUserKey);
+    ret.appendVector(encodeVarInt(sequenceNumber));
+    ret.appendVector(encodedPrimaryKey);
     return ret;
 }
 

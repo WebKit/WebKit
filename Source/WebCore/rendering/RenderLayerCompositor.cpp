@@ -139,7 +139,7 @@ public:
 
     void popCompositingContainer()
     {
-        m_overlapStack[m_overlapStack.size() - 2].append(m_overlapStack.last());
+        m_overlapStack[m_overlapStack.size() - 2].appendVector(m_overlapStack.last());
         m_overlapStack.removeLast();
     }
 

@@ -190,7 +190,7 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
 
     if (!messagesToPutBack.isEmpty()) {
         MutexLocker locker(m_mutex);
-        m_messagesToDispatchWhileWaitingForSyncReply.append(messagesToPutBack);
+        m_messagesToDispatchWhileWaitingForSyncReply.appendVector(messagesToPutBack);
     }
 }
 

@@ -232,7 +232,7 @@ void AudioContext::clear()
     // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
     do {
         deleteMarkedNodes();
-        m_nodesToDelete.append(m_nodesMarkedForDeletion);
+        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
         m_nodesMarkedForDeletion.clear();
     } while (m_nodesToDelete.size());
 
@@ -793,7 +793,7 @@ void AudioContext::scheduleNodeDeletion()
 
     // Make sure to call deleteMarkedNodes() on main thread.    
     if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
-        m_nodesToDelete.append(m_nodesMarkedForDeletion);
+        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
         m_nodesMarkedForDeletion.clear();
 
         m_isDeletionScheduled = true;

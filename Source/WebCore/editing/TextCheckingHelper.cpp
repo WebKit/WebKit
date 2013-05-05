@@ -681,7 +681,7 @@ void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int leng
         if (results.isEmpty())
             results.swap(spellingResult);
         else
-            results.append(spellingResult);
+            results.appendVector(spellingResult);
     }
 #endif
 }

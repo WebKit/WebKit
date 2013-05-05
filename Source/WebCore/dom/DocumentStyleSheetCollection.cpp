@@ -441,7 +441,7 @@ static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyl
     HTMLIFrameElement* seamlessParentIFrame = document->seamlessParentIFrame();
     if (!seamlessParentIFrame)
         return;
-    sheets.append(seamlessParentIFrame->document()->styleSheetCollection()->activeAuthorStyleSheets());
+    sheets.appendVector(seamlessParentIFrame->document()->styleSheetCollection()->activeAuthorStyleSheets());
 }
 
 bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag)
@@ -462,8 +462,8 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     collectActiveStyleSheets(activeStyleSheets);
 
     Vector<RefPtr<CSSStyleSheet> > activeCSSStyleSheets;
-    activeCSSStyleSheets.append(injectedAuthorStyleSheets());
-    activeCSSStyleSheets.append(documentAuthorStyleSheets());
+    activeCSSStyleSheets.appendVector(injectedAuthorStyleSheets());
+    activeCSSStyleSheets.appendVector(documentAuthorStyleSheets());
     collectActiveCSSStyleSheetsFromSeamlessParents(activeCSSStyleSheets, m_document);
     filterEnabledCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 

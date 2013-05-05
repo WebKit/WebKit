@@ -907,7 +907,7 @@ bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64
     const Vector<char> objectStoredataKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, key);
 
     Vector<char> v;
-    v.append(encodeVarInt(version));
+    v.appendVector(encodeVarInt(version));
     RefPtr<SharedBuffer> value = prpValue;
     ASSERT(value);
     v.append(value->data(), value->size());
@@ -1190,8 +1190,8 @@ bool IDBBackingStore::putIndexDataForRecord(IDBBackingStore::Transaction* transa
     const Vector<char> indexDataKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, encodeIDBKey(key), recordIdentifier.primaryKey());
 
     Vector<char> data;
-    data.append(encodeVarInt(recordIdentifier.version()));
-    data.append(recordIdentifier.primaryKey());
+    data.appendVector(encodeVarInt(recordIdentifier.version()));
+    data.appendVector(recordIdentifier.primaryKey());
 
     levelDBTransaction->put(indexDataKey, data);
     return true;

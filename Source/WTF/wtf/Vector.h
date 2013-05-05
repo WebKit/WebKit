@@ -620,7 +620,6 @@ namespace WTF {
         template<typename U> void append(const U*, size_t);
         template<typename U> void append(const U&);
         template<typename U> void uncheckedAppend(const U& val);
-        template<size_t otherCapacity> void append(const Vector<T, otherCapacity>&);
         template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
         template<typename U> bool tryAppend(const U*, size_t);
 
@@ -1060,15 +1059,6 @@ namespace WTF {
         const U* ptr = &val;
         new (NotNull, end()) T(*ptr);
         ++m_size;
-    }
-
-    // This method should not be called append, a better name would be appendElements.
-    // It could also be eliminated entirely, and call sites could just use
-    // appendRange(val.begin(), val.end()).
-    template<typename T, size_t inlineCapacity, typename OverflowHandler> template<size_t otherCapacity>
-    inline void Vector<T, inlineCapacity, OverflowHandler>::append(const Vector<T, otherCapacity>& val)
-    {
-        append(val.begin(), val.size());
     }
 
     template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t otherCapacity>

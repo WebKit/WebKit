@@ -65,8 +65,8 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     end = other.attrsInRules.end();
     for (HashSet<AtomicStringImpl*>::const_iterator it = other.attrsInRules.begin(); it != end; ++it)
         attrsInRules.add(*it);
-    siblingRules.append(other.siblingRules);
-    uncommonAttributeRules.append(other.uncommonAttributeRules);
+    siblingRules.appendVector(other.siblingRules);
+    uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
     usesBeforeAfterRules = usesBeforeAfterRules || other.usesBeforeAfterRules;
 }
