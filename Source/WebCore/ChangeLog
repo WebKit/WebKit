@@ -1,3 +1,11 @@
+2013-05-05  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        Make plugIns.js have a non-zero length.
+
+        * Resources/plugIns.js:
+
 2013-05-04  Dean Jackson  <dino@apple.com>
 
         Animations and Transitions should not start when globally suspended
