@@ -1,3 +1,13 @@
+2013-05-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-checked not exposed correctly on menuitemcheckbox or menuitemradio roles
+        https://bugs.webkit.org/show_bug.cgi?id=115499
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/accessibility/aria-menuitem-checked-value-expected.txt: Added.
+        * platform/mac/accessibility/aria-menuitem-checked-value.html: Added.
+
 2013-05-04  Dean Jackson  <dino@apple.com>
 
         Animations and Transitions should not start when globally suspended

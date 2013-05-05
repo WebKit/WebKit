@@ -2296,7 +2296,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         return m_object->stringValue();
     }
-    
+
+    if ([attributeName isEqualToString:(NSString *)kAXMenuItemMarkCharAttribute]) {
+        const unichar ch = 0x2713; // ✓ used on Mac for selected menu items.
+        return (m_object->isChecked()) ? [NSString stringWithCharacters:&ch length:1] : nil;
+    }
+
     if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute])
         return [NSNumber numberWithFloat:m_object->minValueForRange()];
     

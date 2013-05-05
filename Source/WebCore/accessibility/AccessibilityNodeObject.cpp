@@ -649,14 +649,20 @@ bool AccessibilityNodeObject::isChecked() const
         return inputElement->shouldAppearChecked();
 
     // Else, if this is an ARIA checkbox or radio, respect the aria-checked attribute
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole == RadioButtonRole || ariaRole == CheckBoxRole) {
-        if (equalIgnoringCase(getAttribute(aria_checkedAttr), "true"))
-            return true;
-        return false;
+    bool validRole = false;
+    switch (ariaRoleAttribute()) {
+    case RadioButtonRole:
+    case CheckBoxRole:
+    case MenuItemRole:
+        validRole = true;
+        break;
+    default:
+        break;
     }
+    
+    if (validRole && equalIgnoringCase(getAttribute(aria_checkedAttr), "true"))
+        return true;
 
-    // Otherwise it's not checked
     return false;
 }
 
