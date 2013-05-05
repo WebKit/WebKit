@@ -252,19 +252,6 @@ sub AddIncludesForType
     }
 }
 
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub AddIncludesForSVGAnimatedType
-{
-    my $type = shift;
-    $type =~ s/SVGAnimated//;
-
-    if ($type eq "Point" or $type eq "Rect") {
-        $implIncludes{"Float$type.h"} = 1;
-    } elsif ($type eq "String") {
-        $implIncludes{"<wtf/text/WTFString.h>"} = 1;
-    }
-}
-
 sub AddToImplIncludes
 {
     my $header = shift;
@@ -1555,8 +1542,6 @@ sub GenerateImplementation
 
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
-
-    AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
 
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"};
