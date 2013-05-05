@@ -34,12 +34,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<PageBanner> PageBanner::create(CALayer* layer, int height, Client* client)
+PassRefPtr<PageBanner> PageBanner::create(CALayer *layer, int height, Client* client)
 {
     return adoptRef(new PageBanner(layer, height, client));
 }
 
-PageBanner::PageBanner(CALayer* layer, int height, Client* client)
+PageBanner::PageBanner(CALayer *layer, int height, Client* client)
     : m_type(NotSet)
     , m_client(client)
     , m_webPage(0)
