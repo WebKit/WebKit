@@ -99,6 +99,7 @@ public:
 
     // CSS Animation testing.
     unsigned numberOfActiveAnimations() const;
+    bool animationsAreSuspended(Document*, ExceptionCode&) const;
     void suspendAnimations(Document*, ExceptionCode&) const;
     void resumeAnimations(Document*, ExceptionCode&) const;
     bool pauseAnimationAtTimeOnElement(const String& animationName, double pauseTime, Element*, ExceptionCode&);

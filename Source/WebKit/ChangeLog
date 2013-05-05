@@ -1,3 +1,14 @@
+2013-05-04  Dean Jackson  <dino@apple.com>
+
+        Animations and Transitions should not start when globally suspended
+        https://bugs.webkit.org/show_bug.cgi?id=114915
+
+        Reviewed by Sam Weinig.
+
+        Export AnimationController::isSuspended
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-05-04  Sam Weinig  <sam@webkit.org>
 
         Move PopupMenuMac and SearchPopupMenuMac to Source/WebKit/mac

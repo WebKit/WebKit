@@ -2396,7 +2396,7 @@ void Document::implicitClose()
     Frame* f = frame();
     if (f) {
         f->loader()->icon()->startLoader();
-        f->animation()->resumeAnimationsForDocument(this);
+        f->animation()->startAnimationsIfNotSuspended(this);
     }
 
     ImageLoader::dispatchPendingBeforeLoadEvents();

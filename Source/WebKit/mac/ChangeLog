@@ -1,3 +1,23 @@
+2013-05-04  Dean Jackson  <dino@apple.com>
+
+        Animations and Transitions should not start when globally suspended
+        https://bugs.webkit.org/show_bug.cgi?id=114915
+
+        Reviewed by Sam Weinig.
+
+        The WebView private API cssAnimationsSuspended did not necessarily
+        reflect the reality of the Frame's AnimationController value because it
+        was caching rather than asking directly. While the WebCore part of this
+        patch ensured loading the Document wouldn't resume all animations, it
+        is still better to ask directly.
+
+        * WebView/WebView.mm:
+        (-[WebView cssAnimationsSuspended]): Call into AnimationController.
+        (-[WebView setCSSAnimationsSuspended:]): Ditto.
+        * WebView/WebViewData.h: Remove cssAnimationsSuspended boolean.
+        * WebView/WebViewData.mm: Ditto.
+        (-[WebViewPrivate init]):
+
 2013-05-04  Sam Weinig  <sam@webkit.org>
 
         Move PopupMenuMac and SearchPopupMenuMac to Source/WebKit/mac

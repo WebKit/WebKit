@@ -1,3 +1,25 @@
+2013-04-30  Dean Jackson  <dino@apple.com>
+
+        Animations and Transitions should not start when globally suspended
+        https://bugs.webkit.org/show_bug.cgi?id=114915
+
+        Reviewed by Sam Weinig.
+
+        Two new tests. Add an animation or transition to
+        the document when the global animation controller is suspended.
+        In the animation case, nothing should happen until the
+        animations are resumed. In the transition case, the style
+        change should happen immediately and not fire any events.
+
+        * animations/added-while-suspended-expected.txt: Added.
+        * animations/added-while-suspended.html: Added.
+        * animations/suspend-transform-animation.html: Make sure to resume suspended animations
+            before quitting the test.
+        * transitions/started-while-suspended-expected.txt: Added.
+        * transitions/started-while-suspended.html: Added.
+        * transitions/suspend-transform-transition.html: Make sure to resume suspended animations
+            before quitting the test.
+
 2013-04-30  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r140907): Incorrect baseline on cells after updating vertical-align

@@ -37,8 +37,10 @@
             internals.suspendAnimations(document);
 
         window.setTimeout(function() {
-            if (window.testRunner)
+            if (window.testRunner) {
+                internals.resumeAnimations(document);
                 testRunner.notifyDone();
+            }
         }, 250);
     }
     

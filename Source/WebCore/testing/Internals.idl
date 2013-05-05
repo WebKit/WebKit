@@ -65,6 +65,7 @@
     unsigned long numberOfActiveAnimations();
     void suspendAnimations(Document document) raises (DOMException);
     void resumeAnimations(Document document) raises (DOMException);
+    boolean animationsAreSuspended(in Document document) raises (DOMException);
     boolean pauseAnimationAtTimeOnElement(DOMString animationName, double pauseTime, Element element) raises (DOMException);
     boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, double pauseTime, Element element, DOMString pseudoId) raises (DOMException);
 

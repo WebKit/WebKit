@@ -80,7 +80,6 @@ LayerFlushController::LayerFlushController(WebView* webView)
     allowsUndo = YES;
     usesPageCache = YES;
     shouldUpdateWhileOffscreen = YES;
-    cssAnimationsSuspended = NO;
 
     zoomMultiplier = 1;
     zoomsTextOnly = NO;

@@ -41,6 +41,12 @@
 
 namespace WebCore {
 
+CompositeAnimation::CompositeAnimation(AnimationControllerPrivate* animationController)
+    : m_animationController(animationController)
+{
+    m_suspended = animationController->isSuspended();
+}
+
 CompositeAnimation::~CompositeAnimation()
 {
     // Toss the refs to all animations, but make sure we remove them from
@@ -92,7 +98,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
     if (targetStyle->transitions()) {
         for (size_t i = 0; i < targetStyle->transitions()->size(); ++i) {
             const Animation* anim = targetStyle->transitions()->animation(i);
-            bool isActiveTransition = anim->duration() || anim->delay() > 0;
+            bool isActiveTransition = !m_suspended && (anim->duration() || anim->delay() > 0);
 
             Animation::AnimationMode mode = anim->animationMode();
             if (mode == Animation::AnimateNone)
@@ -252,7 +258,11 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
                     keyframeAnim->setIndex(i);
                 } else if ((anim->duration() || anim->delay()) && anim->iterationCount() && animationName != none) {
                     keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, this, targetStyle);
-                    LOG(Animations, "Creating KeyframeAnimation %p with keyframes %s duration %.2f delay %.2f, iterations %.2f", keyframeAnim.get(), anim->name().utf8().data(), anim->duration(), anim->delay(), anim->iterationCount());
+                    LOG(Animations, "Creating KeyframeAnimation %p with keyframes %s, duration %.2f, delay %.2f, iterations %.2f", keyframeAnim.get(), anim->name().utf8().data(), anim->duration(), anim->delay(), anim->iterationCount());
+                    if (m_suspended) {
+                        keyframeAnim->updatePlayState(AnimPlayStatePaused);
+                        LOG(Animations, "  (created in suspended/paused state)");
+                    }
 #if !LOG_DISABLED
                     HashSet<CSSPropertyID>::const_iterator endProperties = keyframeAnim->keyframes().endProperties();
                     for (HashSet<CSSPropertyID>::const_iterator it = keyframeAnim->keyframes().beginProperties(); it != endProperties; ++it)

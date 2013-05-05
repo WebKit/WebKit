@@ -467,6 +467,20 @@ unsigned Internals::numberOfActiveAnimations() const
     return 0;
 }
 
+bool Internals::animationsAreSuspended(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    AnimationController* controller = document->frame()->animation();
+    if (!controller)
+        return false;
+
+    return controller->isSuspended();
+}
+
 void Internals::suspendAnimations(Document* document, ExceptionCode& ec) const
 {
     if (!document || !document->frame()) {

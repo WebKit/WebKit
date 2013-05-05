@@ -1,3 +1,95 @@
+2013-04-30  Dean Jackson  <dino@apple.com>
+
+        Animations and Transitions should not start when globally suspended
+        https://bugs.webkit.org/show_bug.cgi?id=114915
+
+        Reviewed by Sam Weinig.
+
+        When the Document's AnimationController was suspended, we still
+        started new transitions and animations. Change this so that
+        animations enter a paused-but-new state, where they are frozen
+        until the AnimationController resumes. At that time, it is as
+        if they had just appeared: any delay counts down before
+        the animation starts.
+
+        For transitions, the change in value must still happen, but
+        it does so immediately. No transitionend event should be fired.
+        This produces a slightly confusing behaviour, because any
+        in-progress transitions are suspended, but any new style changes
+        happen instantly. This might sound contradictory, but in general
+        suspending the document is a rare (and dangerous) thing to do.
+
+        Previously, the Document would call resumeAnimations as it loaded,
+        effectively starting all the animations. This meant if you suspended
+        animations before loading a document, it was ignored as soon as the
+        load finished. Now there is a separate method startAnimationsIfNotSuspended
+        which checks to see if the document is suspended as it loads.
+
+        In order to handle this case, I added a new state to the Animation
+        machinery: AnimationStatePausedNew. This is an animation that was created
+        in the suspended state.
+
+        Tests: animations/added-while-suspended.html
+               transitions/started-while-suspended.html
+
+        * WebCore.exp.in: Export AnimationController::isSuspended().
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+            resumeAnimationsForDocument() -> startAnimationsIfNotSuspended()
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::nameForState): New name for AnimationStatePausedNew.
+        (WebCore::AnimationBase::updateStateMachine): Handle new state AnimationStatePausedNew. The
+            most important change is that when go from PausedNew to Running, we jump back into
+            the New state and continue from there.
+        (WebCore::AnimationBase::updatePlayState): suspended -> isSuspended
+        * page/animation/AnimationBase.h: New state: AnimationStatePausedNew
+        (WebCore::AnimationBase::waitingToStart): Add AnimationStatePausedNew.
+        (WebCore::AnimationBase::paused): Add AnimationStatePausedNew.
+        (WebCore::AnimationBase::isNew): Add AnimationStatePausedNew.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate): Initialise m_suspended.
+        (WebCore::AnimationControllerPrivate::clear): suspended -> isSuspended
+        (WebCore::AnimationControllerPrivate::updateAnimations): Ditto.
+        (WebCore::AnimationControllerPrivate::updateAnimationTimerForRenderer): Ditto.
+        (WebCore::AnimationControllerPrivate::suspendAnimations): Update m_suspended.
+        (WebCore::AnimationControllerPrivate::resumeAnimations): Ditto.
+        (WebCore::AnimationControllerPrivate::suspendAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::resumeAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::startAnimationsIfNotSuspended): New method that will
+            only resume animations if we were not globally suspended.
+        (WebCore::AnimationController::isSuspended): New method.
+        (WebCore::AnimationController::suspendAnimations): Add logging.
+        (WebCore::AnimationController::resumeAnimations): Add logging.
+        (WebCore::AnimationController::suspendAnimationsForDocument): Add logging.
+        (WebCore::AnimationController::resumeAnimationsForDocument): Add logging.
+        (WebCore::AnimationController::startAnimationsIfNotSuspended): Calls private method.
+        * page/animation/AnimationController.h:
+        (AnimationController): Add isSuspended() and animationsForDocumentMayStart().
+        * page/animation/AnimationControllerPrivate.h:
+        (WebCore::AnimationControllerPrivate::isSuspended): New method.
+        (AnimationControllerPrivate): Add m_isSuspended member.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::CompositeAnimation): Moved from header - initialise m_isSuspended.
+        (WebCore::CompositeAnimation::updateTransitions): Do not create ImplicitAnimation if suspended.
+        (WebCore::CompositeAnimation::updateKeyframeAnimations): Move to AnimationStatePausedNew if suspended.
+        (WebCore::CompositeAnimation::suspendAnimations): m_suspended -> m_isSuspended
+        (WebCore::CompositeAnimation::resumeAnimations): Ditto.
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::isSuspended): Renamed from suspended()
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate): If we're in the AnimationStatePausedNew state, then
+            we need to go to the first frame (to handle fill mode).
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::animationsAreSuspended): New exposed method to reflect AnimationController.
+        * testing/Internals.h: Add animationsAreSuspended.
+        * testing/Internals.idl: Ditto.
+
 2013-05-04  Sam Weinig  <sam@webkit.org>
 
         Move PopupMenuMac and SearchPopupMenuMac to Source/WebKit/mac

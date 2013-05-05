@@ -1,3 +1,14 @@
+2013-04-30  Dean Jackson  <dino@apple.com>
+
+        Animations and Transitions should not start when globally suspended
+        https://bugs.webkit.org/show_bug.cgi?id=114915
+
+        Reviewed by Sam Weinig.
+
+        Export AnimationController::isSuspended().
+
+        * Source/autotools/symbols.filter:
+
 2013-05-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the remaining wscript

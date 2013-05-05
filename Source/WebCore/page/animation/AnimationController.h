@@ -63,6 +63,7 @@ public:
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;
 
+    bool isSuspended() const;
     void suspendAnimations();
     void resumeAnimations();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -71,6 +72,7 @@ public:
 
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);
+    void startAnimationsIfNotSuspended(Document*);
 
     void beginAnimationUpdate();
     void endAnimationUpdate();

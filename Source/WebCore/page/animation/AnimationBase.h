@@ -78,6 +78,7 @@ public:
         AnimationStateStartWaitResponse,    // animation started, waiting for response
         AnimationStateLooping,              // response received, animation running, loop timer running, waiting for fire
         AnimationStateEnding,               // received, animation running, end timer running, waiting for fire
+        AnimationStatePausedNew,            // in pause mode when animation was created
         AnimationStatePausedWaitTimer,      // in pause mode when animation started
         AnimationStatePausedWaitStyleAvailable, // in pause mode when waiting for style setup
         AnimationStatePausedWaitResponse,   // animation paused when in STARTING state
@@ -115,7 +116,7 @@ public:
     void updatePlayState(EAnimPlayState);
     bool playStatePlaying() const;
 
-    bool waitingToStart() const { return m_animState == AnimationStateNew || m_animState == AnimationStateStartWaitTimer; }
+    bool waitingToStart() const { return m_animState == AnimationStateNew || m_animState == AnimationStateStartWaitTimer || m_animState == AnimationStatePausedNew; }
     bool preActive() const
     {
         return m_animState == AnimationStateNew || m_animState == AnimationStateStartWaitTimer || m_animState == AnimationStateStartWaitStyleAvailable || m_animState == AnimationStateStartWaitResponse;
@@ -124,8 +125,8 @@ public:
     bool postActive() const { return m_animState == AnimationStateDone; }
     bool active() const { return !postActive() && !preActive(); }
     bool running() const { return !isNew() && !postActive(); }
-    bool paused() const { return m_pauseTime >= 0; }
-    bool isNew() const { return m_animState == AnimationStateNew; }
+    bool paused() const { return m_pauseTime >= 0 || m_animState == AnimationStatePausedNew; }
+    bool isNew() const { return m_animState == AnimationStateNew || m_animState == AnimationStatePausedNew; }
     bool waitingForStartTime() const { return m_animState == AnimationStateStartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animState == AnimationStateStartWaitStyleAvailable; }
 

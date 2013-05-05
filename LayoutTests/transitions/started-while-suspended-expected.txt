@@ -1,0 +1,13 @@
+This test sets the left property on the box below. It will only have reproducible output when run in the test system
+
+*** Starting test.
+Transitions should not be suspended: PASS
+*** Setting left property to 100px. We should see transition events.
+Transition ended on element with id: box
+*** Suspending Animations/Transitions
+Transitions should be suspended: PASS
+*** Setting left property to 200px. We should NOT see transition events.
+*** Resuming Animations/Transitions
+Transitions should not be suspended: PASS
+*** Test finished
+

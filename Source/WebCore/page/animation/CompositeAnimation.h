@@ -64,7 +64,7 @@ public:
 
     void suspendAnimations();
     void resumeAnimations();
-    bool suspended() const { return m_suspended; }
+    bool isSuspended() const { return m_suspended; }
     
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
@@ -80,11 +80,7 @@ public:
     unsigned numberOfActiveAnimations() const;
 
 private:
-    CompositeAnimation(AnimationControllerPrivate* animationController)
-        : m_animationController(animationController)
-        , m_suspended(false)
-    {
-    }
+    CompositeAnimation(AnimationControllerPrivate*);
 
     void updateTransitions(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
     void updateKeyframeAnimations(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);

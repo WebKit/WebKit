@@ -2769,17 +2769,20 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 - (BOOL)cssAnimationsSuspended
 {
-    return _private->cssAnimationsSuspended;
+    // should ask the page!
+    Frame* frame = core([self mainFrame]);
+    if (frame)
+        return frame->animation()->isSuspended();
+
+    return false;
 }
 
 - (void)setCSSAnimationsSuspended:(BOOL)suspended
 {
-    if (suspended == _private->cssAnimationsSuspended)
+    Frame* frame = core([self mainFrame]);
+    if (suspended == frame->animation()->isSuspended())
         return;
         
-    _private->cssAnimationsSuspended = suspended;
-    
-    Frame* frame = core([self mainFrame]);
     if (suspended)
         frame->animation()->suspendAnimations();
     else

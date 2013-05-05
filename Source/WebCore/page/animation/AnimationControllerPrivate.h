@@ -75,6 +75,7 @@ public:
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
 
+    bool isSuspended() const { return m_isSuspended; }
     void suspendAnimations();
     void resumeAnimations();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -83,6 +84,7 @@ public:
 
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);
+    void startAnimationsIfNotSuspended(Document*);
 
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
@@ -139,6 +141,7 @@ private:
     WaitingAnimationsSet m_animationsWaitingForStyle;
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
     bool m_waitingForAsyncStartNotification;
+    bool m_isSuspended;
 };
 
 } // namespace WebCore
