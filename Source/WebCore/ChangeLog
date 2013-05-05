@@ -1,3 +1,17 @@
+2013-05-04  Sam Weinig  <sam@webkit.org>
+
+        Move PopupMenuMac and SearchPopupMenuMac to Source/WebKit/mac
+        matching where they are in WebKit2.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/PopupMenuMac.h: Removed.
+        * platform/mac/PopupMenuMac.mm: Removed.
+        * platform/mac/SearchPopupMenuMac.h: Removed.
+        * platform/mac/SearchPopupMenuMac.mm: Removed.
+
 2013-05-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of special cases in AddIncludesForTypeInImpl

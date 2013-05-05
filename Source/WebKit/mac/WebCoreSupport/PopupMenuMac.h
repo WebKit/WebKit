@@ -20,39 +20,31 @@
 #ifndef PopupMenuMac_h
 #define PopupMenuMac_h
 
-#include "IntRect.h"
-#include "PopupMenu.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <WebCore/PopupMenu.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS NSPopUpButtonCell;
+@class NSPopUpButtonCell;
 
 namespace WebCore {
-
 class PopupMenuClient;
-class FrameView;
-class Scrollbar;
+}
 
-class PopupMenuMac : public PopupMenu {
+class PopupMenuMac : public WebCore::PopupMenu {
 public:
-    PopupMenuMac(PopupMenuClient*);
+    PopupMenuMac(WebCore::PopupMenuClient*);
     ~PopupMenuMac();
 
-    virtual void show(const IntRect&, FrameView*, int index);
-    virtual void hide();
-    virtual void updateFromElement();
-    virtual void disconnectClient();
+    virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
+    virtual void hide() override;
+    virtual void updateFromElement() override;
+    virtual void disconnectClient() override;
 
 private:
     void clear();
     void populate();
-    PopupMenuClient* client() const { return m_popupClient; }
 
-    PopupMenuClient* m_popupClient;
+    WebCore::PopupMenuClient* m_client;
     RetainPtr<NSPopUpButtonCell> m_popup;
 };
-
-}
 
 #endif // PopupMenuMac_h

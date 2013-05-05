@@ -31,6 +31,8 @@
 
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
+#import "PopupMenuMac.h"
+#import "SearchPopupMenuMac.h"
 #import "WebBasePluginPackage.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
@@ -74,9 +76,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
-#import <WebCore/PopupMenuMac.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/SearchPopupMenuMac.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>

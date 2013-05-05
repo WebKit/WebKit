@@ -131,6 +131,10 @@
 		65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */; };
 		65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65FFB7FB0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm */; };
 		7A8FF0D11075024A00A80A08 /* WebInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8FF0D01075024A00A80A08 /* WebInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB81173435C900C5D807 /* PopupMenuMac.h */; };
+		7C01CB86173435C900C5D807 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
+		7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */; };
+		7C01CB88173435C900C5D807 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */; };
 		9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9304B2FF0B02341500F7850D /* WebIconDatabaseInternal.h */; };
@@ -556,6 +560,10 @@
 		7082F56F038EADAA00A80180 /* WebKitNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNSStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7082F570038EADAA00A80180 /* WebKitNSStringExtras.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; indentWidth = 4; path = WebKitNSStringExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7A8FF0D01075024A00A80A08 /* WebInspectorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorPrivate.h; sourceTree = "<group>"; };
+		7C01CB81173435C900C5D807 /* PopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuMac.h; sourceTree = "<group>"; };
+		7C01CB82173435C900C5D807 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
+		7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuMac.h; sourceTree = "<group>"; };
+		7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchPopupMenuMac.mm; sourceTree = "<group>"; };
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptDebugDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		830E81E005853AC000AD0891 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -1256,6 +1264,10 @@
 			children = (
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
+				7C01CB81173435C900C5D807 /* PopupMenuMac.h */,
+				7C01CB82173435C900C5D807 /* PopupMenuMac.mm */,
+				7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */,
+				7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */,
 				CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */,
 				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
@@ -1559,6 +1571,7 @@
 				1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */,
 				939810350824BF01008DF038 /* WebPlugin.h in Headers */,
 				939810360824BF01008DF038 /* WebPluginContainer.h in Headers */,
+				7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */,
 				939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */,
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
 				939810370824BF01008DF038 /* WebPluginController.h in Headers */,
@@ -1602,6 +1615,7 @@
 				939810750824BF01008DF038 /* WebUIDelegate.h in Headers */,
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
+				7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */,
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
@@ -1867,6 +1881,7 @@
 				511F3FD80CECC88F00852565 /* WebDatabaseManagerClient.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,
 				939810ED0824BF01008DF038 /* WebDataSource.mm in Sources */,
+				7C01CB88173435C900C5D807 /* SearchPopupMenuMac.mm in Sources */,
 				939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.mm in Sources */,
 				9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */,
 				939810F00824BF01008DF038 /* WebDefaultPolicyDelegate.m in Sources */,
@@ -1883,6 +1898,7 @@
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */,
 				939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */,
+				7C01CB86173435C900C5D807 /* PopupMenuMac.mm in Sources */,
 				939810F20824BF01008DF038 /* WebFrame.mm in Sources */,
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,

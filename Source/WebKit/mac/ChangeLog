@@ -1,3 +1,16 @@
+2013-05-04  Sam Weinig  <sam@webkit.org>
+
+        Move PopupMenuMac and SearchPopupMenuMac to Source/WebKit/mac
+        matching where they are in WebKit2.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/PopupMenuMac.h: Copied from WebCore/platform/mac/PopupMenuMac.h.
+        * WebCoreSupport/PopupMenuMac.mm: Copied from WebCore/platform/mac/PopupMenuMac.mm.
+        * WebCoreSupport/SearchPopupMenuMac.h: Copied from WebCore/platform/mac/SearchPopupMenuMac.h.
+        * WebCoreSupport/SearchPopupMenuMac.mm: Copied from WebCore/platform/mac/SearchPopupMenuMac.mm.
+        * WebCoreSupport/WebChromeClient.mm:
+
 2013-05-04  Anders Carlsson  <andersca@apple.com>
 
         Get rid of -[NSMutableDictionary _webkit_setObject:forUncopiedKey:]

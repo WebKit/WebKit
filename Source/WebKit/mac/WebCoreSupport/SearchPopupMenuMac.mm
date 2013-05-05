@@ -18,19 +18,23 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#import "config.h"
 #import "SearchPopupMenuMac.h"
 
+#include "PopupMenuMac.h"
 #include <wtf/text/AtomicString.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 SearchPopupMenuMac::SearchPopupMenuMac(PopupMenuClient* client)
     : m_popup(adoptRef(new PopupMenuMac(client)))
 {
 }
 
-static NSString* autosaveKey(const String& name)
+SearchPopupMenuMac::~SearchPopupMenuMac()
+{
+}
+
+static NSString *autosaveKey(const String& name)
 {
     return [@"com.apple.WebKit.searchField:" stringByAppendingString:name];
 }
@@ -50,16 +54,16 @@ void SearchPopupMenuMac::saveRecentSearches(const AtomicString& name, const Vect
     if (name.isEmpty())
         return;
 
-    size_t size = searchItems.size();
-    if (size == 0)
+    if (searchItems.isEmpty()) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:autosaveKey(name)];
-    else {
-        NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:size];
-        for (size_t i = 0; i < size; ++i)
-            [items addObject:searchItems[i]];
-        [[NSUserDefaults standardUserDefaults] setObject:items forKey:autosaveKey(name)];
-        [items release];
+        return;
     }
+
+    RetainPtr<NSMutableArray> items = adoptNS([[NSMutableArray alloc] initWithCapacity:searchItems.size()]);
+    for (const auto& searchItem: searchItems)
+        [items addObject:searchItem];
+
+    [[NSUserDefaults standardUserDefaults] setObject:items.get() forKey:autosaveKey(name)];
 }
 
 void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
@@ -68,13 +72,8 @@ void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<Str
         return;
 
     searchItems.clear();
-    NSArray* items = [[NSUserDefaults standardUserDefaults] arrayForKey:autosaveKey(name)];
-    size_t size = [items count];
-    for (size_t i = 0; i < size; ++i) {
-        NSString* item = [items objectAtIndex:i];
+    for (NSString *item in [[NSUserDefaults standardUserDefaults] arrayForKey:autosaveKey(name)]) {
         if ([item isKindOfClass:[NSString class]])
             searchItems.append(item);
     }
-}
-
 }
