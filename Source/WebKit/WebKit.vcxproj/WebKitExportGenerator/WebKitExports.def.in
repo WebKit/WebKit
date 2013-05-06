@@ -332,6 +332,7 @@ EXPORTS
         ?viewportArguments@Page@WebCore@@QBE?AUViewportArguments@2@XZ
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
         ?isActive@InsertionPoint@WebCore@@QBE_NXZ
+        ?isSuspended@AnimationController@WebCore@@QBE_NXZ
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
@@ -447,4 +448,3 @@ EXPORTS
         ?nearest@TimeRanges@WebCore@@QBENN@Z
         ?add@TimeRanges@WebCore@@QAEXNN@Z
 #endif
-

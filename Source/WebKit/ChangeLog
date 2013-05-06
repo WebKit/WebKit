@@ -1,3 +1,9 @@
+2013-05-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-05-04  Dean Jackson  <dino@apple.com>
 
         Animations and Transitions should not start when globally suspended
