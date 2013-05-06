@@ -2,6 +2,29 @@
 
         Unreviewed EFL gardening.
 
+        Rebaseline several repaint test cases after r149292.
+
+        * fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt:
+        * fast/css-grid-layout/grid-element-change-rows-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-column-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-row-repaint-expected.txt:
+        * fast/repaint/layer-full-repaint-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+        * fast/repaint/reflection-table-layout-expected.txt:
+        * fast/repaint/selection-gap-absolute-child-expected.txt:
+        * fast/repaint/selection-gap-fixed-child-expected.txt:
+        * fast/repaint/selection-gap-flipped-absolute-child-expected.txt:
+        * fast/repaint/selection-gap-flipped-fixed-child-expected.txt:
+        * fast/repaint/selection-gap-transformed-absolute-child-expected.txt:
+        * fast/repaint/selection-gap-transformed-fixed-child-expected.txt:
+        * fast/repaint/transform-table-layout-expected.txt:
+        * platform/efl/fast/images/repaint-subrect-grid-expected.txt:
+        * svg/repaint/repaint-webkit-svg-shadow-container-expected.txt:
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Skip remaining Shadow DOM test and new accessibility test introduced in
         r115659.
 
