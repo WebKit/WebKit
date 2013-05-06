@@ -1,3 +1,16 @@
+2013-05-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [jhbuild] bump jhbuild version to take advantage of new improvements
+        https://bugs.webkit.org/show_bug.cgi?id=115558
+
+        Reviewed by Martin Robinson.
+
+        One of the important improvements is jhbuild no longer fetches git
+        repositories if they are already at the expected revision, which should
+        make the EWS bots more robust to git servers unavailability.
+
+        * jhbuild/jhbuild-wrapper: bump jhbuild to 496974221c3a8ac4fbbc3b0a577c71cac224130d.
+
 2013-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Add webkit_uri_scheme_request_finish_error
