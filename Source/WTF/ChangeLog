@@ -1,3 +1,20 @@
+2013-05-06  Cosmin Truta  <ctruta@blackberry.com>
+
+        Cherry-pick fixes to bignum from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=115658
+
+        Reviewed by Darin Adler.
+
+        Cherry-picked the following change lists:
+
+        Fix bug in bignum implementation
+        http://codereview.chromium.org/13454019
+
+        Make VS2005 project files compile without errors
+        http://codereview.chromium.org/6286135
+
+        * wtf/dtoa/bignum.cc:
+
 2013-05-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Change HashTraits<RefPtr<P> >::PassOutType to PassRefPtr for better performance
