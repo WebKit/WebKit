@@ -49,6 +49,8 @@ public:
     void importItems(WebCore::StorageMap&);
 
     void setItem(const String& key, const String& value);
+    void removeItem(const String& key);
+    void clear();
 
 private:
     LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>);
@@ -75,6 +77,7 @@ private:
     bool m_didImportItems;
 
     bool m_didScheduleDatabaseUpdate;
+    bool m_shouldClearItems;
     HashMap<String, String> m_changedItems;
 };
 

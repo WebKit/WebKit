@@ -1,5 +1,29 @@
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Handle removeItem and clear in LocalStorageDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=115664
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::removeItem):
+        Call itemDidChange with a null value, indicating that we want to remove this item.
+
+        (WebKit::LocalStorageDatabase::clear):
+        Clear items, set m_shouldClearItems and schedule a database update.
+
+        (WebKit::LocalStorageDatabase::updateDatabase):
+        If m_shouldClearItems is true, clear all items.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::removeItem):
+        Call through to the local storage database.
+
+        (WebKit::StorageManager::StorageArea::clear):
+        Ditto.
+
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
         Write storage changes to disk
         https://bugs.webkit.org/show_bug.cgi?id=115660
 

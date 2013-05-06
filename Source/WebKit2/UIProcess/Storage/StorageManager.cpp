@@ -174,6 +174,9 @@ void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnecti
     if (oldValue.isNull())
         return;
 
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->removeItem(key);
+
     dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
 }
 
@@ -185,6 +188,9 @@ void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, u
         return;
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->clear();
 
     dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
 }

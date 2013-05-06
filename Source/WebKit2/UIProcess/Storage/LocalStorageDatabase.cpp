@@ -54,6 +54,7 @@ LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassR
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
     , m_didScheduleDatabaseUpdate(false)
+    , m_shouldClearItems(false)
 {
 }
 
@@ -189,6 +190,19 @@ void LocalStorageDatabase::setItem(const String& key, const String& value)
     itemDidChange(key, value);
 }
 
+void LocalStorageDatabase::removeItem(const String& key)
+{
+    itemDidChange(key, String());
+}
+
+void LocalStorageDatabase::clear()
+{
+    m_changedItems.clear();
+    m_shouldClearItems = true;
+
+    scheduleDatabaseUpdate();
+}
+
 void LocalStorageDatabase::itemDidChange(const String& key, const String& value)
 {
     m_changedItems.set(key, value);
@@ -210,7 +224,21 @@ void LocalStorageDatabase::updateDatabase()
 
     m_didScheduleDatabaseUpdate = false;
 
-    // FIXME: Handle clearing.
+    if (m_shouldClearItems) {
+        m_shouldClearItems = false;
+
+        SQLiteStatement clearStatement(m_database, "DELETE FROM ItemTable");
+        if (clearStatement.prepare() != SQLResultOk) {
+            LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
+            return;
+        }
+
+        int result = clearStatement.step();
+        if (result != SQLResultDone) {
+            LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
+            return;
+        }
+    }
 
     HashMap<String, String> changedItems;
     if (m_changedItems.size() > maximumItemsToUpdate) {
