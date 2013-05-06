@@ -52,6 +52,9 @@ public:
     void removeItem(const String& key);
     void clear();
 
+    // Will block until all pending changes have been written to disk.
+    void close();
+
 private:
     LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>);
 
@@ -68,6 +71,7 @@ private:
 
     void scheduleDatabaseUpdate();
     void updateDatabase();
+    void updateDatabaseWithChangedItems(const HashMap<String, String>&);
 
     String m_databaseFilename;
     RefPtr<WorkQueue> m_queue;
@@ -75,6 +79,7 @@ private:
     WebCore::SQLiteDatabase m_database;
     bool m_failedToOpenDatabase;
     bool m_didImportItems;
+    bool m_isClosed;
 
     bool m_didScheduleDatabaseUpdate;
     bool m_shouldClearItems;

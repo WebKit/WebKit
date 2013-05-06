@@ -117,6 +117,9 @@ StorageManager::StorageArea::~StorageArea()
 {
     ASSERT(m_eventListeners.isEmpty());
 
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->close();
+
     if (m_localStorageNamespace)
         m_localStorageNamespace->didDestroyStorageArea(this);
 }

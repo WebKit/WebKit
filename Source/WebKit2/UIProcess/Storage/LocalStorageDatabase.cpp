@@ -53,6 +53,7 @@ LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassR
     , m_queue(queue)
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
+    , m_isClosed(false)
     , m_didScheduleDatabaseUpdate(false)
     , m_shouldClearItems(false)
 {
@@ -60,6 +61,7 @@ LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassR
 
 LocalStorageDatabase::~LocalStorageDatabase()
 {
+    ASSERT(m_isClosed);
 }
 
 void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
@@ -203,6 +205,19 @@ void LocalStorageDatabase::clear()
     scheduleDatabaseUpdate();
 }
 
+void LocalStorageDatabase::close()
+{
+    ASSERT(!m_isClosed);
+    m_isClosed = true;
+
+    if (m_didScheduleDatabaseUpdate) {
+        updateDatabaseWithChangedItems(m_changedItems);
+        m_changedItems.clear();
+    }
+
+    // FIXME: Delete the database if it's empty.
+}
+
 void LocalStorageDatabase::itemDidChange(const String& key, const String& value)
 {
     m_changedItems.set(key, value);
@@ -220,10 +235,35 @@ void LocalStorageDatabase::scheduleDatabaseUpdate()
 
 void LocalStorageDatabase::updateDatabase()
 {
-    ASSERT(m_didScheduleDatabaseUpdate);
+    if (m_isClosed)
+        return;
 
+    ASSERT(m_didScheduleDatabaseUpdate);
     m_didScheduleDatabaseUpdate = false;
 
+    HashMap<String, String> changedItems;
+    if (m_changedItems.size() <= maximumItemsToUpdate) {
+        // There are few enough changed items that we can just always write all of them.
+        m_changedItems.swap(changedItems);
+    } else {
+        for (int i = 0; i < maximumItemsToUpdate; ++i) {
+            auto it = m_changedItems.begin();
+            changedItems.add(it->key, it->value);
+
+            m_changedItems.remove(it);
+        }
+
+        ASSERT(changedItems.size() <= maximumItemsToUpdate);
+
+        // Reschedule the update for the remaining items.
+        scheduleDatabaseUpdate();
+    }
+
+    updateDatabaseWithChangedItems(changedItems);
+}
+
+void LocalStorageDatabase::updateDatabaseWithChangedItems(const HashMap<String, String>& changedItems)
+{
     if (m_shouldClearItems) {
         m_shouldClearItems = false;
 
@@ -239,24 +279,6 @@ void LocalStorageDatabase::updateDatabase()
             return;
         }
     }
-
-    HashMap<String, String> changedItems;
-    if (m_changedItems.size() > maximumItemsToUpdate) {
-        for (int i = 0; i < maximumItemsToUpdate; ++i) {
-            auto it = m_changedItems.begin();
-            changedItems.add(it->key, it->value);
-
-            m_changedItems.remove(it);
-        }
-
-        // Reschedule the update for the remaining items.
-        scheduleDatabaseUpdate();
-    } else {
-        // There are few enough changed items that we can just always write all of them.
-        m_changedItems.swap(changedItems);
-    }
-
-    ASSERT(changedItems.size() <= maximumItemsToUpdate);
 
     SQLiteStatement insertStatement(m_database, "INSERT INTO ItemTable VALUES (?, ?)");
     if (insertStatement.prepare() != SQLResultOk) {

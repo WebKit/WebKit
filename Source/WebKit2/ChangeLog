@@ -1,3 +1,31 @@
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Handle closing the local storage database
+        https://bugs.webkit.org/show_bug.cgi?id=115669
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        Initialize m_isClosed.
+    
+        (WebKit::LocalStorageDatabase::~LocalStorageDatabase):
+        Assert that m_isClosed is false.
+
+        (WebKit::LocalStorageDatabase::close):
+        Set m_isClosed to true and write any pending changes to disk.
+
+        (WebKit::LocalStorageDatabase::updateDatabase):
+        Compute the changed items and pass them to updateDatabaseWithChangedItems.
+
+        (WebKit::LocalStorageDatabase::updateDatabaseWithChangedItems):
+        Split out the code that actually writes to the database from updateDatabase and into this function.
+
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::~StorageArea):
+        Call close().
+
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Make the WebNetworkInfoManagerProxy a supplement to the WebContext
