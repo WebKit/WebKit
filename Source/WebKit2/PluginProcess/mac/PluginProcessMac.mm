@@ -44,6 +44,8 @@
 
 using namespace WebCore;
 
+const CFStringRef kLSPlugInBundleIdentifierKey = CFSTR("LSPlugInBundleIdentifierKey");
+
 namespace WebKit {
 
 class FullscreenWindowTracker {
@@ -280,26 +282,18 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
-static String loadSandboxProfileForDirectory(const String& pluginPath, NSString *sandboxProfileDirectoryPath)
+static String loadSandboxProfileForDirectory(const String& bundleIdentifier, NSString *sandboxProfileDirectoryPath)
 {
-    RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
-    if (!pluginURL)
-        return String();
-
-    RetainPtr<CFBundleRef> pluginBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, pluginURL.get()));
-    if (!pluginBundle)
-        return String();
-
-    String bundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
     if (bundleIdentifier.isEmpty())
         return String();
 
     // Fold all / characters to : to prevent the plugin bundle-id from trying to escape the profile directory
-    bundleIdentifier.replace('/', ':');
+    String sanitizedBundleIdentifier = bundleIdentifier;
+    sanitizedBundleIdentifier.replace('/', ':');
 
     RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, (CFStringRef)sandboxProfileDirectoryPath, kCFURLPOSIXPathStyle, TRUE));
 
-    RetainPtr<CFStringRef> sandboxFileName = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier.createCFString().get()));
+    RetainPtr<CFStringRef> sandboxFileName = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), sanitizedBundleIdentifier.createCFString().get()));
     RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
 
     RetainPtr<NSString> profileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
@@ -315,15 +309,15 @@ static String loadSandboxProfileForDirectory(const String& pluginPath, NSString 
     return [commonProfileString.get() stringByAppendingString:profileString.get()];
 }
 
-static String loadSandboxProfile(const String& pluginPath)
+static String loadSandboxProfile(const String& bundleIdentifier)
 {
     // First look in the WebKit2 bundle.
-    String sandboxProfile = loadSandboxProfileForDirectory(pluginPath, [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"]);
+    String sandboxProfile = loadSandboxProfileForDirectory(bundleIdentifier, [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"]);
     if (!sandboxProfile.isEmpty())
         return sandboxProfile;
 
     // Then try /System/Library/Sandbox/Profiles/.
-    sandboxProfile = loadSandboxProfileForDirectory(pluginPath, @"/System/Library/Sandbox/Profiles/");
+    sandboxProfile = loadSandboxProfileForDirectory(bundleIdentifier, @"/System/Library/Sandbox/Profiles/");
     if (!sandboxProfile.isEmpty())
         return sandboxProfile;
 
@@ -364,17 +358,31 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
     [defaults release];
 #endif
+
+    RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, m_pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
+    if (!pluginURL)
+        return;
+
+    RetainPtr<CFBundleRef> pluginBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, pluginURL.get()));
+    if (!pluginBundle)
+        return;
+
+    m_pluginBundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
 }
 
 void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)", "visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name."), [[(NSString *)m_pluginPath lastPathComponent] stringByDeletingPathExtension], (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (!m_pluginBundleIdentifier.isEmpty())
+        WKSetApplicationInformationItem(kLSPlugInBundleIdentifierKey, m_pluginBundleIdentifier.createCFString().get());
+#endif
 }
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    String sandboxProfile = loadSandboxProfile(m_pluginPath);
+    String sandboxProfile = loadSandboxProfile(m_pluginBundleIdentifier);
     if (sandboxProfile.isEmpty())
         return;
 

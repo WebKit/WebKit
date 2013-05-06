@@ -97,6 +97,10 @@ private:
     // The plug-in path.
     String m_pluginPath;
 
+#if PLATFORM(MAC)
+    String m_pluginBundleIdentifier;
+#endif
+
     // The plug-in module.
     RefPtr<NetscapePluginModule> m_pluginModule;
     

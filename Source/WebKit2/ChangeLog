@@ -1,3 +1,21 @@
+2013-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13479806> [Mac] Pass plug-in bundle ID to LaunchServices
+        https://bugs.webkit.org/show_bug.cgi?id=115483
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/PluginProcess.h: Added m_pluginBundleIdentifier. We now need it
+        in multiple places, so it's easier to pre-compute it.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::loadSandboxProfileForDirectory): Changed to use precomputed bundle ID.
+        (WebKit::loadSandboxProfile): Ditto.
+        (WebKit::PluginProcess::platformInitializeProcess): Pre-compute bundle ID.
+        (WebKit::PluginProcess::initializeProcessName): Pass it to LaunchServices.
+        (WebKit::PluginProcess::initializeSandbox): Pass precomputed bundle ID instead of
+        a path.
+
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
         Handle removeItem and clear in LocalStorageDatabase
