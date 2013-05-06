@@ -244,6 +244,9 @@ public:
     bool applyDeviceScaleFactorInCompositor() const;
     void setApplyDeviceScaleFactorInCompositor(bool);
 
+    bool isTextAutosizingEnabled() const;
+    void setTextAutosizingEnabled(bool);
+
 private:
     WebSettingsPrivate* m_private;
     WebSettings();

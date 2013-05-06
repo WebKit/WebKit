@@ -223,6 +223,12 @@ else ()
     )
 endif ()
 
+if (ENABLE_TEXT_AUTOSIZING)
+    list(APPEND WebCore_SOURCES
+        ${WEBCORE_DIR}/rendering/TextAutosizer.cpp
+    )
+endif ()
+
 # To speed up linking when working on accel comp, you can move this whole chunk
 # to Source/WebKit/blackberry/CMakeListsBlackBerry.txt.
 # Append to WebKit_SOURCES instead of WebCore_SOURCES.

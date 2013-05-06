@@ -1,3 +1,14 @@
+2013-05-06  Mike Lattanzio  <mlattanzio@blackberry.com>
+
+        [BlackBerry] Enable and Expose Text Autosizing through BlackBerry::WebKit::WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=113808
+
+        Reviewed by Rob Buis.
+
+        Added TextAutosizer.cpp to the BlackBerry build.
+
+        * PlatformBlackBerry.cmake:
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use OwnPtr instead of deleteAllValues in SVGAttributeToPropertyMap

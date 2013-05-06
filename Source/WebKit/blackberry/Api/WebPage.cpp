@@ -5936,6 +5936,10 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     updateBackgroundColor(webSettings->backgroundColor());
 
     m_page->setDeviceScaleFactor(webSettings->devicePixelRatio());
+
+#if ENABLE(TEXT_AUTOSIZING)
+    coreSettings->setTextAutosizingEnabled(webSettings->isTextAutosizingEnabled());
+#endif
 }
 
 BlackBerry::Platform::String WebPage::textHasAttribute(const BlackBerry::Platform::String& query) const

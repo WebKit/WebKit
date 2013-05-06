@@ -1,3 +1,14 @@
+2013-05-06  Mike Lattanzio  <mlattanzio@blackberry.com>
+
+        [BlackBerry] Enable and Expose Text Autosizing through BlackBerry::WebKit::WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=113808
+
+        Reviewed by Rob Buis.
+
+        Set the ENABLE_TEXT_AUTOSIZING default to ON for BlackBerry.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Shadow DOM should be disabled at compile time

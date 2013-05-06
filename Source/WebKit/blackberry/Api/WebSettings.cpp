@@ -96,6 +96,7 @@ DEFINE_STATIC_LOCAL(String, WebKitStandardFontFamily, (ASCIILiteral("WebKitStand
 DEFINE_STATIC_LOCAL(String, WebKitUserStyleSheetLocation, (ASCIILiteral("WebKitUserStyleSheetLocation")));
 DEFINE_STATIC_LOCAL(String, WebKitWebSocketsEnabled, (ASCIILiteral("WebKitWebSocketsEnabled")));
 DEFINE_STATIC_LOCAL(String, WebKitXSSAuditorEnabled, (ASCIILiteral("WebKitXSSAuditorEnabled")));
+DEFINE_STATIC_LOCAL(String, WebKitTextAutosizingEnabled, (ASCIILiteral("WebKitTextAutosizingEnabled")));
 
 static HashSet<String>* s_supportedObjectMIMETypes;
 
@@ -200,6 +201,7 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setInteger(WebKitMaximumPagesInCache, 0);
     settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
+    settings->m_private->setBoolean(WebKitTextAutosizingEnabled, false);
 
     settings->m_private->setString(WebKitFixedFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-monospace", ""));
     settings->m_private->setString(WebKitSansSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-sans-serif", ""));
@@ -841,6 +843,16 @@ bool WebSettings::applyDeviceScaleFactorInCompositor() const
 void WebSettings::setApplyDeviceScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
 {
     m_private->setBoolean(BlackBerryApplyDeviceScaleFactorInCompositor, applyDeviceScaleFactorInCompositor);
+}
+
+bool WebSettings::isTextAutosizingEnabled() const
+{
+    return m_private->getBoolean(WebKitTextAutosizingEnabled);
+}
+
+void WebSettings::setTextAutosizingEnabled(bool textAutosizingEnabled)
+{
+    m_private->setBoolean(WebKitTextAutosizingEnabled, textAutosizingEnabled);
 }
 
 } // namespace WebKit
