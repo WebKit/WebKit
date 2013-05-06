@@ -2448,6 +2448,26 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('long int a : 30;', errmsg)
         self.assert_lint('int a = 1 ? 0 : 30;', '')
 
+    def test_webcore_platform_layering_violation(self):
+        errmsg = ('Do not add platform specific code in WebCore outside of platform.  [build/webcore_platform_layering_violation] [5]')
+
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data('Source/WebCore/loader/NavigationAction.cpp', 'cpp', ['#if PLATFORM(MAC)', '#endif'], error_collector)
+        self.assertEqual(1, error_collector.result_list().count(errmsg))
+
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data('Source/WebCore/platform/PlatformEvent.cpp', 'cpp', ['#if PLATFORM(MAC)', '#endif'], error_collector)
+        self.assertEqual(0, error_collector.result_list().count(errmsg))
+
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data('Source/WebCore/loader/NavigationAction.cpp', 'cpp', ['#if PLATFORM ( MAC )', '#endif'], error_collector)
+        self.assertEqual(1, error_collector.result_list().count(errmsg))
+
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data('Source/WebCore/loader/NavigationAction.cpp', 'cpp', ['// #if PLATFORM(MAC)', '#endif'], error_collector)
+        self.assertEqual(0, error_collector.result_list().count(errmsg))
+
+
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):
         lines = ['Line 1',

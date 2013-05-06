@@ -1,3 +1,23 @@
+2013-05-06  Jessie Berlin  <jberlin@apple.com>
+
+        check-webkit-style should complain about a layering violation if platform-specific guards are
+        used in WebCore outside of the platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=115567
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_webcore_platform_layering_violation):
+        If the file is in WebCore but not in platform and contains #if PLATFORM(SOMETHING), emit an error.
+        (process_line):
+        Add the check_for_webcore_platform_layering_violation.
+        (CppChecker):
+        List the new check.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_webcore_platform_layering_violation):
+        Add tests.
+
 2013-05-06  David Kilzer  <ddkilzer@apple.com>
 
         webkit-patch: fix 'upload' command with Bugzilla 4.2.5
