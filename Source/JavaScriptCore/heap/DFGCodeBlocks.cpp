@@ -38,14 +38,12 @@ DFGCodeBlocks::DFGCodeBlocks() { }
 
 DFGCodeBlocks::~DFGCodeBlocks()
 {
-    Vector<CodeBlock*, 16> toRemove;
+    Vector<OwnPtr<CodeBlock>, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
         if ((*iter)->m_dfgData->isJettisoned)
-            toRemove.append(*iter);
+            toRemove.append(adoptPtr(*iter));
     }
-    
-    WTF::deleteAllValues(toRemove);
 }
 
 void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
@@ -75,14 +73,12 @@ void DFGCodeBlocks::clearMarks()
 
 void DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks()
 {
-    Vector<CodeBlock*, 16> toRemove;
+    Vector<OwnPtr<CodeBlock>, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
         if ((*iter)->m_dfgData->isJettisoned && !(*iter)->m_dfgData->mayBeExecuting)
-            toRemove.append(*iter);
+            toRemove.append(adoptPtr(*iter));
     }
-    
-    WTF::deleteAllValues(toRemove);
 }
 
 void DFGCodeBlocks::traceMarkedCodeBlocks(SlotVisitor& visitor)

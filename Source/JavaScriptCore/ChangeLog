@@ -1,3 +1,16 @@
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Stop using WTF::deleteAllValues in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=115670
+
+        Reviewed by Oliver Hunt.
+
+        Change the Vectors used to Vectors of OwnPtrs instead.
+
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+
 2013-05-06  Andras Becsi  <andras.becsi@digia.com>
 
         Build with GCC 4.8 fails because of -Wmaybe-uninitialized
