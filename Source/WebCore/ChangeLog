@@ -1,3 +1,76 @@
+2013-05-02  David Hyatt  <hyatt@apple.com>
+
+        Improve the performance of RenderDeprecatedFlexibleBox.
+        https://bugs.webkit.org/show_bug.cgi?id=115543.
+
+        Optimize deprecated flexible box layout to be much faster. This patch implements
+        the following optimizations in the deprecated flexible box:
+        
+        (1) Defer repainting of children until they have been placed into their final
+        positions. This is done by collecting all of the old frame rects into a Vector
+        and then doing a walk after layout is finished to repaint any of the children if
+        they moved from that position. This code matches the new RenderFlexibleBox's system
+        for repainting moved children.
+        
+        (2) Implement support for layout deltas. We keep a Vector of layout deltas for each
+        child as we shift them around, and every time we lay a child out again, we apply that
+        child's current layout delta to avoid repainting at the new position. RenderFlexibleBox
+        does not have support for layout deltas yet, so we'll need to implement this in the
+        new flexbox code as well.
+        
+        (3) Optimize flexible objects to avoid laying them out unflexed. When laying out
+        horizontal and vertical boxes now, we lay out the inflexible items first. We then
+        check to see if the inflexible extent of all those children has changed.
+        
+        If this extent didn't change, and the flexible items either don't need layout or there
+        is only one flexing item, then we avoid laying out the item in an unflexed state
+        and simply lay out one time with the flex applied instead. The new RenderFlexibleBox
+        does not have these optimizations and would benefit from them in the block-direction box
+        case (it uses preferred logical widths in the inline-direction box case, and so avoided
+        layouts in that direction already).
+        
+        Reviewed by Beth Dakin.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::appendChildFrameRects):
+        Cache all of the old child frame rects so that we can compare them with the final
+        positions for repaintDuringLayoutIfMoved. This collection is identical to what the
+        new flexbox code does.
+        
+        (WebCore::appendChildLayoutDeltas):
+        Build up a vector that tracks layout deltas. We apply these layout deltas every
+        time we lay out a child so that any repainting done during layout ignores our shifted
+        position and just keeps using the old position. The new flexbox does not have this
+        code yet.
+
+        (WebCore::repaintChildrenDuringLayoutIfMoved):
+        After final placement of children, we do a single pass over all of the children and
+        repaint them if they shifted their positions. This matches how the new flexbox works.
+        
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        Collect the frame rects and layout deltas, and defer repainting of children to the
+        end of layout.
+        
+        (WebCore::gatherFlexChildrenInfo):
+        Don't clear flex overrides when gathering flex information. Add additional information
+        such as the number of flexing items so that we can use it to optimize flex layout.
+        
+        (WebCore::layoutChildIfNeededApplyingDelta):
+        A helper for applying your current layout delta for a child when laying that child out.
+        
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        Both methods are patched to aggregate layout deltas as children move around during
+        the multiple passes. In addition we now optimize layout in a couple of cases, such
+        as when the inflexible space stays the same (thus giving a flexible object the
+        same amount of available space, avoiding a need to lay out unflexed first).
+        
+        (WebCore::RenderDeprecatedFlexibleBox::placeChild):
+        Patched to add to our cached layout delta for that child when we do a movement.
+
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        Changes to method signatures.
+
 2013-05-04  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r125592): Reproducible crash in DOMWindow::open when a delegate closes the new window in decidePolicyForNavigationAction
