@@ -114,6 +114,9 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
 
 static const char* kBarHTML = "<html><body>Bar</body></html>";
 static const char* kEchoHTMLFormat = "<html><body>%s</body></html>";
+static const char* errorDomain = "test";
+static const int errorCode = 10;
+static const char* errorMessage = "Error message.";
 
 class URISchemeTest: public LoadTrackingTest {
 public:
@@ -122,22 +125,19 @@ public:
     struct URISchemeHandler {
         URISchemeHandler()
             : replyLength(0)
-            , replyWithPath(false)
         {
         }
 
-        URISchemeHandler(const char* reply, int replyLength, const char* mimeType, bool replyWithPath = false)
+        URISchemeHandler(const char* reply, int replyLength, const char* mimeType)
             : reply(reply)
             , replyLength(replyLength)
             , mimeType(mimeType)
-            , replyWithPath(replyWithPath)
         {
         }
 
         CString reply;
         int replyLength;
         CString mimeType;
-        bool replyWithPath;
     };
 
     static void uriSchemeRequestCallback(WebKitURISchemeRequest* request, gpointer userData)
@@ -151,22 +151,30 @@ public:
         GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inputStream.get()));
 
-        String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request)));
-        g_assert(!scheme.isEmpty());
-        g_assert(test->m_handlersMap.contains(scheme));
-        const URISchemeHandler& handler = test->m_handlersMap.get(scheme);
+        const char* scheme = webkit_uri_scheme_request_get_scheme(request);
+        g_assert(scheme);
+        g_assert(test->m_handlersMap.contains(String::fromUTF8(scheme)));
 
-        if (handler.replyWithPath) {
+        if (!g_strcmp0(scheme, "error")) {
+            GOwnPtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, errorMessage));
+            webkit_uri_scheme_request_finish_error(request, error.get());
+            return;
+        }
+
+        const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
+
+        if (!g_strcmp0(scheme, "echo")) {
             char* replyHTML = g_strdup_printf(handler.reply.data(), webkit_uri_scheme_request_get_path(request));
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), replyHTML, strlen(replyHTML), g_free);
         } else if (!handler.reply.isNull())
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.data(), handler.reply.length(), 0);
+
         webkit_uri_scheme_request_finish(request, inputStream.get(), handler.replyLength, handler.mimeType.data());
     }
 
-    void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType, bool replyWithPath = false)
+    void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType)
     {
-        m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType, replyWithPath));
+        m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType));
         webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
@@ -184,7 +192,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_cmpint(mainResourceDataSize, ==, strlen(kBarHTML));
     g_assert(!strncmp(mainResourceData, kBarHTML, mainResourceDataSize));
 
-    test->registerURISchemeHandler("echo", kEchoHTMLFormat, -1, "text/html", true);
+    test->registerURISchemeHandler("echo", kEchoHTMLFormat, -1, "text/html");
     test->loadURI("echo:hello world");
     test->waitUntilLoadFinished();
     GOwnPtr<char> echoHTML(g_strdup_printf(kEchoHTMLFormat, webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get())));
@@ -205,6 +213,15 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    test->registerURISchemeHandler("error", 0, 0, 0);
+    test->m_loadEvents.clear();
+    test->loadURI("error:error");
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
+    g_assert_cmpstr(test->m_error->message, ==, errorMessage);
 }
 
 static void testWebContextSpellChecker(Test* test, gconstpointer)

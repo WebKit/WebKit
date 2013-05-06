@@ -27,6 +27,7 @@
 #include "WebPageProxy.h"
 #include "WebSoupRequestManagerProxy.h"
 #include <WebCore/GOwnPtrSoup.h>
+#include <WebCore/ResourceError.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -212,4 +213,26 @@ void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStr
     request->priv->mimeType = mimeType;
     g_input_stream_read_async(inputStream, request->priv->readBuffer, gReadBufferSize, G_PRIORITY_DEFAULT, request->priv->cancellable.get(),
                               reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
+}
+
+/**
+ * webkit_uri_scheme_request_finish_error:
+ * @request: a #WebKitURISchemeRequest
+ * @error: a #GError that will be passed to the #WebKitWebView
+ *
+ * Finish a #WebKitURISchemeRequest with a #GError.
+ *
+ * Since: 2.2
+ */
+void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GError* error)
+{
+    g_return_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request));
+    g_return_if_fail(error);
+
+    WebKitURISchemeRequestPrivate* priv = request->priv;
+
+    WebCore::ResourceError resourceError(g_quark_to_string(error->domain), error->code, priv->uri.data(), String::fromUTF8(error->message));
+    priv->webRequestManager->didFailURIRequest(resourceError, priv->requestID);
+
+    webkitWebContextDidFinishURIRequest(priv->webContext, priv->requestID);
 }

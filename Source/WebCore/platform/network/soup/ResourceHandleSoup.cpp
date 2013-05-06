@@ -526,7 +526,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     ResourceHandleInternal* d = handle->getInternal();
     gssize bytesSkipped = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
-        handle->client()->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::genericGError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -1317,7 +1317,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
 
     if (error) {
-        handle->client()->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::genericGError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }

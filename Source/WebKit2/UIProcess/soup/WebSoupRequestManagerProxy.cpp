@@ -116,4 +116,13 @@ void WebSoupRequestManagerProxy::didFailToLoadURIRequest(uint64_t requestID)
     m_client.didFailToLoadURIRequest(this, requestID);
 }
 
+void WebSoupRequestManagerProxy::didFailURIRequest(const WebCore::ResourceError& error, uint64_t requestID)
+{
+    if (!context())
+        return;
+
+    m_loadFailed = true;
+    context()->sendToAllProcesses(Messages::WebSoupRequestManager::DidFailURIRequest(error, requestID));
+}
+
 } // namespace WebKit

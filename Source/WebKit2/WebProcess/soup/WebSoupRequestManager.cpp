@@ -155,6 +155,22 @@ void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReferenc
         m_requestMap.remove(requestID);
 }
 
+void WebSoupRequestManager::didFailURIRequest(const WebCore::ResourceError& error, uint64_t requestID)
+{
+    WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
+    ASSERT(data);
+    GRefPtr<GSimpleAsyncResult> result = data->releaseResult();
+    ASSERT(result.get());
+
+    g_simple_async_result_take_error(result.get(),
+        g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
+            error.errorCode(),
+            error.localizedDescription().utf8().data()));
+    g_simple_async_result_complete(result.get());
+
+    m_requestMap.remove(requestID);
+}
+
 void WebSoupRequestManager::send(GSimpleAsyncResult* result, GCancellable* cancellable)
 {
     GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result))));

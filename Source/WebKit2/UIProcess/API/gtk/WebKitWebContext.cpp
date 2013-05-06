@@ -568,8 +568,9 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * #WebKitWebContext, the #WebKitURISchemeRequestCallback registered will be called with a
  * #WebKitURISchemeRequest.
  * It is possible to handle URI scheme requests asynchronously, by calling g_object_ref() on the
- * #WebKitURISchemeRequest and calling webkit_uri_scheme_request_finish() later when the data of
- * the request is available.
+ * #WebKitURISchemeRequest and calling webkit_uri_scheme_request_finish() later
+ * when the data of the request is available or
+ * webkit_uri_scheme_request_finish_error() in case of error.
  *
  * <informalexample><programlisting>
  * static void
@@ -587,12 +588,19 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  *         /<!-- -->* Create a GInputStream with the contents of memory about page, and set its length to stream_length *<!-- -->/
  *     } else if (!g_strcmp0 (path, "applications")) {
  *         /<!-- -->* Create a GInputStream with the contents of applications about page, and set its length to stream_length *<!-- -->/
- *     } else {
+ *     } else if (!g_strcmp0 (path, "example")) {
  *         gchar *contents;
  *
- *         contents = g_strdup_printf ("&lt;html&gt;&lt;body&gt;&lt;p&gt;Invalid about:%s page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;", path);
+ *         contents = g_strdup_printf ("&lt;html&gt;&lt;body&gt;&lt;p&gt;Example about page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;");
  *         stream_length = strlen (contents);
  *         stream = g_memory_input_stream_new_from_data (contents, stream_length, g_free);
+ *     } else {
+ *         GError *error;
+ *
+ *         error = g_error_new (ABOUT_HANDLER_ERROR, ABOUT_HANDLER_ERROR_INVALID, "Invalid about:%s page.", path);
+ *         webkit_uri_scheme_request_finish_error (request, error);
+ *         g_error_free (error);
+ *         return;
  *     }
  *     webkit_uri_scheme_request_finish (request, stream, stream_length, "text/html");
  *     g_object_unref (stream);

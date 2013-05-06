@@ -58,7 +58,7 @@ ResourceError ResourceError::httpError(SoupMessage* message, GError* error, Soup
         return transportError(request, message->status_code,
             String::fromUTF8(message->reason_phrase));
     else
-        return genericIOError(error, request);
+        return genericGError(error, request);
 }
 
 ResourceError ResourceError::authenticationError(SoupMessage* message)
@@ -68,9 +68,9 @@ ResourceError ResourceError::authenticationError(SoupMessage* message)
         failingURI(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
 }
 
-ResourceError ResourceError::genericIOError(GError* error, SoupRequest* request)
+ResourceError ResourceError::genericGError(GError* error, SoupRequest* request)
 {
-    return ResourceError(g_quark_to_string(G_IO_ERROR), error->code,
+    return ResourceError(g_quark_to_string(error->domain), error->code,
         failingURI(request), String::fromUTF8(error->message));
 }
 

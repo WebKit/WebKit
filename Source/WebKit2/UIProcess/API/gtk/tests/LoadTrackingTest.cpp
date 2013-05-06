@@ -63,6 +63,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
 static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError* error, LoadTrackingTest* test)
 {
     test->m_loadFailed = true;
+    test->m_error.set(g_error_copy(error));
 
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
@@ -153,6 +154,7 @@ void LoadTrackingTest::loadURI(const char* uri)
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::loadURI(uri);
 }
 
@@ -160,6 +162,7 @@ void LoadTrackingTest::loadHtml(const char* html, const char* baseURI)
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::loadHtml(html, baseURI);
 }
 
@@ -167,6 +170,7 @@ void LoadTrackingTest::loadPlainText(const char* plainText)
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::loadPlainText(plainText);
 }
 
@@ -174,6 +178,7 @@ void LoadTrackingTest::loadRequest(WebKitURIRequest* request)
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::loadRequest(request);
 }
 
@@ -181,6 +186,7 @@ void LoadTrackingTest::reload()
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     webkit_web_view_reload(m_webView);
 }
 
@@ -188,6 +194,7 @@ void LoadTrackingTest::goBack()
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::goBack();
 }
 
@@ -195,5 +202,6 @@ void LoadTrackingTest::goForward()
 {
     m_loadEvents.clear();
     m_estimatedProgress = 0;
+    m_error.clear();
     WebViewTest::goForward();
 }

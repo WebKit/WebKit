@@ -24,4 +24,5 @@ messages -> WebSoupRequestManager {
     RegisterURIScheme(WTF::String uriScheme);
     DidHandleURIRequest(CoreIPC::DataReference requestData, uint64_t contentLength, WTF::String mimeType, uint64_t requestID);
     DidReceiveURIRequestData(CoreIPC::DataReference requestData, uint64_t requestID);
+    DidFailURIRequest(WebCore::ResourceError error, uint64_t requestID);
 }

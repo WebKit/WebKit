@@ -22,6 +22,7 @@
 
 #include "DataReference.h"
 #include "MessageReceiver.h"
+#include <WebCore/ResourceError.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -53,6 +54,7 @@ private:
 
     void didHandleURIRequest(const CoreIPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
     void didReceiveURIRequestData(const CoreIPC::DataReference&, uint64_t requestID);
+    void didFailURIRequest(const WebCore::ResourceError&, uint64_t requestID);
 
     WebProcess* m_process;
     GRefPtr<GPtrArray> m_schemes;
