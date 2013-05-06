@@ -106,6 +106,8 @@ bool isFixedPositionOrHasFixedPositionAncestor(WebCore::RenderObject*);
 WebCore::Element* selectionContainerElement(const WebCore::VisibleSelection&);
 BlackBerry::Platform::RequestedHandlePosition elementHandlePositionAttribute(const WebCore::Element*);
 
+bool isElementAndDocumentAttached(const WebCore::Element*);
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

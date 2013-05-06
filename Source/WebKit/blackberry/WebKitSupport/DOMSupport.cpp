@@ -662,6 +662,11 @@ BlackBerry::Platform::RequestedHandlePosition elementHandlePositionAttribute(con
     return position;
 }
 
+bool isElementAndDocumentAttached(const WebCore::Element* element)
+{
+    return element && element->attached() && element->document() && element->document()->attached();
+}
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

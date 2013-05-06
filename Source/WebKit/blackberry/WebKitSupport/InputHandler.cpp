@@ -857,7 +857,7 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
 
 void InputHandler::setElementUnfocused(bool refocusOccuring)
 {
-    if (isActiveTextEdit() && m_currentFocusElement->attached() && m_currentFocusElement->document()->attached()) {
+    if (isActiveTextEdit() && DOMSupport::isElementAndDocumentAttached(m_currentFocusElement.get())) {
         FocusLog(Platform::LogLevelInfo, "InputHandler::setElementUnfocused");
 
         // Pass any text into the field to IMF to learn.
@@ -918,7 +918,10 @@ void InputHandler::setInputModeEnabled(bool active)
     m_inputModeEnabled = active;
 
     // If the frame selection isn't focused, focus it.
-    if (isInputModeEnabled() && isActiveTextEdit() && !m_currentFocusElement->document()->frame()->selection()->isFocused())
+    if (isInputModeEnabled()
+        && isActiveTextEdit()
+        && DOMSupport::isElementAndDocumentAttached(m_currentFocusElement.get())
+        && !m_currentFocusElement->document()->frame()->selection()->isFocused())
         m_currentFocusElement->document()->frame()->selection()->setFocused(true);
 }
 

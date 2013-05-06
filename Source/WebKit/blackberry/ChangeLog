@@ -1,5 +1,25 @@
 2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
+        [BlackBerry] Ensure document is attached before accessing its FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=115565
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR 312101
+        We need to make sure that the node and document
+        are attached before accessing the FrameSelection. This was
+        handled earlier but not all call paths were covered.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::isActiveTextEdit):
+        (WebKit):
+        * WebKitSupport/InputHandler.h:
+
+2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
         [BlackBerry] Do not spellcheck when composition is active.
         https://bugs.webkit.org/show_bug.cgi?id=115562
 
