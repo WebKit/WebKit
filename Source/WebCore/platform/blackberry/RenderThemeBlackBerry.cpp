@@ -43,10 +43,8 @@
 namespace WebCore {
 
 // Sizes (unit px)
-const unsigned smallRadius = 1;
-const unsigned largeRadius = 3;
-const unsigned lineWidth = 1;
-const float marginSize = 4;
+const float progressMinWidth = 16;
+const float progressTextureUnitWidth = 9.0;
 const float mediaControlsHeight = 44;
 const float mediaBackButtonHeight = 33;
 // Scale exit-fullscreen button size.
@@ -59,18 +57,6 @@ const float mediaSliderThumbHeight = 25;
 const float mediaSliderThumbRadius = 3;
 const float sliderThumbWidth = 15;
 const float sliderThumbHeight = 25;
-
-// Checkbox check scalers
-const float checkboxLeftX = 7 / 40.0;
-const float checkboxLeftY = 1 / 2.0;
-const float checkboxMiddleX = 19 / 50.0;
-const float checkboxMiddleY = 7 / 25.0;
-const float checkboxRightX = 33 / 40.0;
-const float checkboxRightY = 1 / 5.0;
-const float checkboxStrokeThickness = 6.5;
-
-// Radio button scaler
-const float radioButtonCheckStateScaler = 7 / 30.0;
 
 // Multipliers
 const unsigned paddingDivisor = 10;
@@ -92,52 +78,7 @@ const float widthRatio = 3;
 const float heightRatio = 0.23;
 
 // Colors
-const RGBA32 caretBottom = 0xff2163bf;
-const RGBA32 caretTop = 0xff69a5fa;
-
-const RGBA32 regularBottom = 0xffdcdee4;
-const RGBA32 regularTop = 0xfff7f2ee;
-const RGBA32 hoverBottom = 0xffb5d3fc;
-const RGBA32 hoverTop = 0xffcceaff;
-const RGBA32 depressedBottom = 0xff3388ff;
-const RGBA32 depressedTop = 0xff66a0f2;
-const RGBA32 disabledBottom = 0xffe7e7e7;
-const RGBA32 disabledTop = 0xffefefef;
-
-const RGBA32 regularBottomOutline = 0xff6e7073;
-const RGBA32 regularTopOutline = 0xffb9b8b8;
-const RGBA32 hoverBottomOutline = 0xff2163bf;
-const RGBA32 hoverTopOutline = 0xff69befa;
-const RGBA32 depressedBottomOutline = 0xff0c3d81;
-const RGBA32 depressedTopOutline = 0xff1d4d70;
-const RGBA32 disabledOutline = 0xffd5d9de;
-
-const RGBA32 progressRegularBottom = caretTop;
-const RGBA32 progressRegularTop = caretBottom;
-
-const RGBA32 rangeSliderRegularBottom = 0xfff6f2ee;
-const RGBA32 rangeSliderRegularTop = 0xffdee0e5;
-const RGBA32 rangeSliderRollBottom = 0xffc9e8fe;
-const RGBA32 rangeSliderRollTop = 0xffb5d3fc;
-
-const RGBA32 rangeSliderRegularBottomOutline = 0xffb9babd;
-const RGBA32 rangeSliderRegularTopOutline = 0xffb7b7b7;
-const RGBA32 rangeSliderRollBottomOutline = 0xff67abe0;
-const RGBA32 rangeSliderRollTopOutline = 0xff69adf9;
-
-const RGBA32 dragRegularLight = 0xfffdfdfd;
-const RGBA32 dragRegularDark = 0xffbababa;
-const RGBA32 dragRollLight = 0xfff2f2f2;
-const RGBA32 dragRollDark = 0xff69a8ff;
-
-const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
-
-const RGBA32 mediaSliderTrackOutline = 0xff848587;
-const RGBA32 mediaSliderTrackPlayed = 0xff2b8fff;
-const RGBA32 mediaSliderTrackBuffered = 0xffbbbdbf;
-
-const RGBA32 selection = 0xff2b8fff;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
 
@@ -145,14 +86,6 @@ const String& RenderThemeBlackBerry::defaultGUIFont()
 {
     DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Slate Pro")));
     return fontFace;
-}
-
-static PassRefPtr<Gradient> createLinearGradient(RGBA32 top, RGBA32 bottom, const IntPoint& a, const IntPoint& b)
-{
-    RefPtr<Gradient> gradient = Gradient::create(a, b);
-    gradient->addColorStop(0.0, Color(top));
-    gradient->addColorStop(1.0, Color(bottom));
-    return gradient.release();
 }
 
 static RenderSlider* determineRenderSlider(RenderObject* object)
@@ -732,36 +665,8 @@ bool RenderThemeBlackBerry::paintSliderTrack(RenderObject* object, const PaintIn
         rect2.setX(rect.x() + (rect.width() - SliderTrackHeight) / 2);
         rect2.setY(rect.y());
     }
-    return paintSliderTrackRect(object, info, rect2);
-}
-
-bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    return paintSliderTrackRect(object, info, rect, rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline, rangeSliderRegularTop, rangeSliderRegularBottom);
-}
-
-bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
-{
-    FloatSize smallCorner(mediaSliderTrackRadius, mediaSliderTrackRadius);
-
-    info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
-
-#if USE(SKIA)
-    info.context->setStrokeGradient(createLinearGradient(strokeColorStart, strokeColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    info.context->setFillGradient(createLinearGradient(fillColorStart, fillColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-#else
-    info.context->setStrokeColor(strokeColorStart, ColorSpaceDeviceRGB);
-    info.context->setFillColor(fillColorStart, ColorSpaceDeviceRGB);
-#endif
-
-    Path path;
-    path.addRoundedRect(rect, smallCorner);
-    info.context->fillPath(path);
-
-    info.context->restore();
-    return false;
+    static Image* sliderTrack = Image::loadPlatformResource("core_slider_bg").leakRef();
+    return paintSliderTrackRect(object, info, rect2, sliderTrack);
 }
 
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, Image* inactive)
@@ -1175,6 +1080,36 @@ double RenderThemeBlackBerry::animationDurationForProgressBar(RenderProgress* re
     return renderProgress->isDeterminate() ? 0.0 : 2.0;
 }
 
+bool RenderThemeBlackBerry::paintProgressTrackRect(const PaintInfo& info, const IntRect& rect, Image* image)
+{
+    ASSERT(info.context);
+    info.context->save();
+    GraphicsContext* context = info.context;
+    drawThreeSliceHorizontal(context, rect, image, mediumSlice);
+    context->restore();
+    return false;
+}
+
+static void drawProgressTexture(GraphicsContext* gc, const FloatRect& rect, int n, Image* image)
+{
+    if (!image)
+        return;
+    float finalTexturePercentage = (int(rect.width()) % int(progressTextureUnitWidth)) / progressTextureUnitWidth;
+    FloatSize dstSlice(progressTextureUnitWidth, rect.height() - 2);
+    FloatRect srcRect(1, 2, image->width() - 2, image->height() - 4);
+    FloatRect dstRect(FloatPoint(rect.location().x() + 1, rect.location().y() + 1), dstSlice);
+
+    for (int i = 0; i < n; i++) {
+        gc->drawImage(image, ColorSpaceDeviceRGB, dstRect, srcRect);
+        dstRect.move(dstSlice.width(), 0);
+    }
+    if (finalTexturePercentage) {
+        srcRect.setWidth(srcRect.width() * finalTexturePercentage * finalTexturePercentage);
+        dstRect.setWidth(dstRect.width() * finalTexturePercentage * finalTexturePercentage);
+        gc->drawImage(image, ColorSpaceDeviceRGB, dstRect, srcRect);
+    }
+}
+
 bool RenderThemeBlackBerry::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     if (!object->isProgress())
@@ -1182,42 +1117,33 @@ bool RenderThemeBlackBerry::paintProgressBar(RenderObject* object, const PaintIn
 
     RenderProgress* renderProgress = toRenderProgress(object);
 
-    FloatSize smallCorner(smallRadius, smallRadius);
+    static Image* progressTrack = Image::loadPlatformResource("core_progressindicator_bg").leakRef();
+    static Image* progressBar = Image::loadPlatformResource("core_progressindicator_progress").leakRef();
+    static Image* progressPattern = Image::loadPlatformResource("core_progressindicator_pattern").leakRef();
+    static Image* progressComplete = Image::loadPlatformResource("core_progressindicator_complete").leakRef();
 
-    info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
+    paintProgressTrackRect(info, rect, progressTrack);
 
-    info.context->setStrokeGradient(createLinearGradient(rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    info.context->setFillGradient(createLinearGradient(rangeSliderRegularTop, rangeSliderRegularBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    IntRect progressRect = rect;
+    progressRect.setX(progressRect.x() + 1);
+    progressRect.setHeight(progressRect.height() - 2);
+    progressRect.setY(progressRect.y() + 1);
 
-    Path path;
-    path.addRoundedRect(rect, smallCorner);
-    info.context->fillPath(path);
-
-    IntRect rect2 = rect;
-    rect2.setX(rect2.x() + 1);
-    rect2.setHeight(rect2.height() - 2);
-    rect2.setY(rect2.y() + 1);
-    info.context->setStrokeStyle(NoStroke);
-    info.context->setStrokeThickness(0);
-    if (renderProgress->isDeterminate()) {
-        rect2.setWidth(rect2.width() * renderProgress->position() - 2);
-        info.context->setFillGradient(createLinearGradient(progressRegularTop, progressRegularBottom, rect2.maxXMinYCorner(), rect2.maxXMaxYCorner()));
-    } else {
+    if (renderProgress->isDeterminate())
+        progressRect.setWidth((progressRect.width() - progressMinWidth) * renderProgress->position() + progressMinWidth - 2);
+    else {
         // Animating
-        rect2.setWidth(rect2.width() - 2);
-        RefPtr<Gradient> gradient = Gradient::create(rect2.minXMaxYCorner(), rect2.maxXMaxYCorner());
-        gradient->addColorStop(0.0, Color(progressRegularBottom));
-        gradient->addColorStop(renderProgress->animationProgress(), Color(progressRegularTop));
-        gradient->addColorStop(1.0, Color(progressRegularBottom));
-        info.context->setFillGradient(gradient);
+        progressRect.setWidth(progressRect.width() - 2);
     }
-    Path path2;
-    path2.addRoundedRect(rect2, smallCorner);
-    info.context->fillPath(path2);
 
-    info.context->restore();
+    if (renderProgress->position() < 1) {
+        paintProgressTrackRect(info, progressRect, progressBar);
+        int loop = floor((progressRect.width() - 2) / progressTextureUnitWidth);
+        progressRect.setWidth(progressRect.width() - 2);
+        drawProgressTexture(info.context, progressRect, loop, progressPattern);
+    } else
+        paintProgressTrackRect(info, progressRect, progressComplete);
+
     return false;
 }
 

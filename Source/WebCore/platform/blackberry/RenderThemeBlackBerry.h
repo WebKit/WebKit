@@ -116,11 +116,9 @@ private:
 
     bool paintTextFieldOrTextAreaOrSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
-    bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&);
-
-    bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, RGBA32, RGBA32, RGBA32, RGBA32);
-
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, Image*);
+
+    bool paintProgressTrackRect(const PaintInfo&, const IntRect&, Image*);
 
     IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const;
 

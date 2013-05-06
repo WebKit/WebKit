@@ -1,3 +1,25 @@
+2013-05-06  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update HTML5 progress bar UX.
+        https://bugs.webkit.org/show_bug.cgi?id=115284.
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 331729.
+        Internally Reviewed by Jeff Rogers.
+
+        Use GL render to paint progress bar to meet UX specs.
+        Also change the slider range to GL render.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintProgressTrackRect):
+        (WebCore::drawProgressTexture):
+        (WebCore::RenderThemeBlackBerry::paintProgressBar):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+
 2013-05-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] remove unused -webkit-wrap property
