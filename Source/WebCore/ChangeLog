@@ -1,3 +1,17 @@
+2013-05-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Heap-use-after-free in WebCore::InlineFlowBox::deleteLine
+        https://bugs.webkit.org/show_bug.cgi?id=114772
+
+        Reviewed by David Hyatt.
+
+        Fix the new use after free issues in Ruby.
+
+        Test: fast/ruby/ruby-svg-crash.html
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+
 2013-05-06  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r140024): child of fixed div inside of absolute div does not get resized when window is resized

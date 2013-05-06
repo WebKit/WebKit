@@ -167,17 +167,13 @@ void RenderRubyRun::removeChild(RenderObject* child)
             // Ruby run without a base can happen only at the first run.
             RenderRubyRun* rightRun = toRenderRubyRun(rightNeighbour);
             if (rightRun->hasRubyBase()) {
-                RenderRubyBase* rightBase = rightRun->rubyBase();
-                if (!rightBase)
-                    moveChildTo(rightRun, base);
-                else {
-                    // We need to preserve child order, so we have to append the 
-                    // rightBase's children to base, and then put them back.
-                    rightBase->moveChildren(base);
-                    base->moveChildren(rightBase);
-                }
+                RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
+                // Collect all children in a single base, then swap the bases.
+                rightBase->moveChildren(base);
+                moveChildTo(rightRun, base);
+                rightRun->moveChildTo(this, rightBase);
                 // The now empty ruby base will be removed below.
-                ASSERT(!rubyBase() || !rubyBase()->firstChild());
+                ASSERT(!rubyBase()->firstChild());
             }
         }
     }
