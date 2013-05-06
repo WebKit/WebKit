@@ -2,6 +2,14 @@
 
         Unreviewed EFL gardening.
 
+        Skip repaint test that regressed after r149292.
+
+        * platform/efl/TestExpectations:
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline several repaint test cases after r149292.
 
         * fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt:
