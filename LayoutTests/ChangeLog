@@ -1,5 +1,11 @@
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding new failure expectations and adjusting an old one.
+
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Rebaselining after r148720, r149088 and r149407.
 
         * platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
