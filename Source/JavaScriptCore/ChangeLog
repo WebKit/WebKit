@@ -1,3 +1,35 @@
+2013-05-06  Julien Brianceau  <jbrianceau@nds.com>
+
+        Misc bugfix and cleaning in sh4 base JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=115627
+
+        Reviewed by Oliver Hunt.
+
+        Get rid of loadX(RegisterID r0, RegisterID src, RegisterID dest) functions.
+        Remove misplaced extuw() implementation from MacroAssemblerSH4.
+        Add movbRegMemr0 and movwRegMemr0 functions in SH4Assembler.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::add32): Skip operation when first operand is a zero immediate.
+        (JSC::MacroAssemblerSH4::sub32): Skip operation when first operand is a zero immediate.
+        (JSC::MacroAssemblerSH4::load32): Fix wrong usage of r0 register.
+        (JSC::MacroAssemblerSH4::load8Signed): Handle "base == r0" case.
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::load16): Handle "base == r0" case.
+        (JSC::MacroAssemblerSH4::load16Unaligned): Use extuw() implementation from SH4Assembler.
+        (JSC::MacroAssemblerSH4::load16Signed): Cosmetic change.
+        (JSC::MacroAssemblerSH4::store8): Fix unhandled BaseIndex offset and handle (base == r0) case.
+        (JSC::MacroAssemblerSH4::store16): Fix unhandled BaseIndex offset and handle (base == r0) case.
+        (JSC::MacroAssemblerSH4::store32):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::movwRegMemr0):
+        (SH4Assembler):
+        (JSC::SH4Assembler::movbRegMemr0):
+        (JSC::SH4Assembler::placeConstantPoolBarrier): Cosmetic change.
+        (JSC::SH4Assembler::maxJumpReplacementSize):
+        (JSC::SH4Assembler::replaceWithJump): Correct branch range and save an opcode.
+        (JSC::SH4Assembler::printInstr):
+
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
         Stop using WTF::deleteAllValues in JavaScriptCore

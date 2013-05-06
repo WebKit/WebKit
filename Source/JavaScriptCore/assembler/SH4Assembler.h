@@ -115,6 +115,7 @@ enum {
     MOVL_READ_OFFPC_OPCODE = 0xd000,
     MOVL_READ_OFFRM_OPCODE = 0x5000,
     MOVW_WRITE_RN_OPCODE = 0x2001,
+    MOVW_WRITE_R0RN_OPCODE = 0x0005,
     MOVW_READ_RM_OPCODE = 0x6001,
     MOVW_READ_R0RM_OPCODE = 0x000d,
     MOVW_READ_OFFRM_OPCODE = 0x8500,
@@ -1060,6 +1061,12 @@ public:
         oneShortOp(opc);
     }
 
+    void movwRegMemr0(RegisterID src, RegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(MOVW_WRITE_R0RN_OPCODE, dst, src);
+        oneShortOp(opc);
+    }
+
     void movlRegMem(RegisterID src, int offset, RegisterID base)
     {
         ASSERT((offset <= 15) && (offset >= 0));
@@ -1123,6 +1130,12 @@ public:
     void movbMemReg(RegisterID src, RegisterID dst)
     {
         uint16_t opc = getOpcodeGroup1(MOVB_READ_RM_OPCODE, dst, src);
+        oneShortOp(opc);
+    }
+
+    void movbRegMemr0(RegisterID src, RegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(MOVB_WRITE_R0RN_OPCODE, dst, src);
         oneShortOp(opc);
     }
 
@@ -1380,7 +1393,7 @@ public:
 
     static SH4Buffer::TwoShorts placeConstantPoolBarrier(int offset)
     {
-        ASSERT(((offset >> 1) <=2047) && ((offset >> 1) >= -2048));
+        ASSERT(((offset >> 1) <= 2047) && ((offset >> 1) >= -2048));
 
         SH4Buffer::TwoShorts m_barrier;
         m_barrier.high = (BRA_OPCODE | (offset >> 1));
@@ -1474,7 +1487,7 @@ public:
 
     static ptrdiff_t maxJumpReplacementSize()
     {
-        return sizeof(SH4Word) * 7;
+        return sizeof(SH4Word) * 6;
     }
 
     static void replaceWithJump(void *instructionStart, void *to)
@@ -1483,20 +1496,20 @@ public:
         intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + 2 * sizeof(SH4Word));
         int nbinst = 0;
 
-        if ((difference >= -2048) && (difference <= 2047)) {
+        if ((difference >= -4096) && (difference <= 4094)) {
             instruction[0] = getOpcodeGroup6(BRA_OPCODE, difference >> 1);
             instruction[1] = NOP_OPCODE;
             cacheFlush(instruction, sizeof(SH4Word) * 2);
             return;
         }
 
-        if (reinterpret_cast<unsigned>(instruction) & 3)
-            instruction[nbinst++] = NOP_OPCODE;
-
         instruction[nbinst++] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, scratchReg2, 1);
         instruction[nbinst++] = getOpcodeGroup2(JMP_OPCODE, scratchReg2);
         instruction[nbinst++] = NOP_OPCODE;
-        instruction[nbinst++] = NOP_OPCODE;
+
+        if (!(reinterpret_cast<unsigned>(instruction) & 3))
+            instruction[nbinst++] = NOP_OPCODE;
+
         instruction[nbinst++] = reinterpret_cast<unsigned>(to) & 0xffff;
         instruction[nbinst++] = reinterpret_cast<unsigned>(to) >> 16;
         cacheFlush(instruction, sizeof(SH4Word) * nbinst);
@@ -1947,6 +1960,9 @@ public:
             break;
         case MOVW_READ_R0RM_OPCODE:
             format = "    MOV.W @(R0, R%d), R%d\n";
+            break;
+        case MOVW_WRITE_R0RN_OPCODE:
+            format = "    MOV.W R%d, @(R0, R%d)\n";
             break;
         case EXTUB_OPCODE:
             format = "    EXTU.B R%d, R%d\n";
