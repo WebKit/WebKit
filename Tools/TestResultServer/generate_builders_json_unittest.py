@@ -54,35 +54,21 @@ class GenerateBuildersJsonTest(unittest.TestCase):
             def dummy_fetch_json(url):
                 fetched_urls.append(url)
 
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders':
-                    return {'WebKit Win': None, 'WebKit Linux': None, 'WebKit Mac': None}
                 if url == 'http://build.webkit.org/json/builders':
-                    return {'Apple Mac SnowLeopard Tests': None, 'Chromium Mac Builder': None, 'GTK': None}
+                    return {'Apple Mac SnowLeopard Tests': None, 'EFL Linux Builder': None, 'GTK Linux Tests': None}
 
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux':
-                    return {'cachedBuilds': [1, 2], 'currentBuilds': []}
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Win':
-                    return {'cachedBuilds': [1, 2], 'currentBuilds': []}
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Mac':
-                    return {'cachedBuilds': [1, 2], 'currentBuilds': []}
                 if url == 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests':
                     return {'cachedBuilds': [1, 2], 'currentBuilds': []}
-                if url == 'http://build.webkit.org/json/builders/Chromium%20Mac%20Builder':
+                if url == 'http://build.webkit.org/json/builders/EFL%20Linux%20Builder':
                     return {'cachedBuilds': [1, 2, 3], 'currentBuilds': [3]}
-                if url == 'http://build.webkit.org/json/builders/GTK':
+                if url == 'http://build.webkit.org/json/builders/GTK%20Linux%20Tests':
                     return {'cachedBuilds': [2], 'currentBuilds': []}
 
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux/builds/2':
-                    return {'steps': [{'name': 'webkit_tests'}, {'name': 'browser_tests'}, {'name': 'mini_installer_test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Win/builds/2':
-                    return {'steps': [{'name': 'webkit_tests'}, {'name': 'mini_installer_test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
-                if url == 'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Mac/builds/2':
-                    return {'steps': [{'name': 'browser_tests'}, {'name': 'mini_installer_test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
                 if url == 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2':
                     return {'steps': [{'name': 'layout-test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
-                if url == 'http://build.webkit.org/json/builders/Chromium%20Mac%20Builder/builds/2':
+                if url == 'http://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2':
                     return {'steps': [{'name': 'compile'}]}
-                if url == 'http://build.webkit.org/json/builders/GTK/builds/2':
+                if url == 'http://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2':
                     return {'steps': [{'name': 'layout-test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
 
                 logging.error('Cannot fetch fake url: %s' % url)
@@ -90,42 +76,30 @@ class GenerateBuildersJsonTest(unittest.TestCase):
             generate_builders_json.fetch_json = dummy_fetch_json
 
             masters = [
-                {'name': 'ChromiumWebkit', 'url': 'http://build.chromium.org/p/chromium.webkit'},
                 {'name': 'webkit.org', 'url': 'http://build.webkit.org'},
             ]
 
             generate_builders_json.insert_builder_and_test_data(masters)
 
             expected_fetched_urls = [
-                'http://build.chromium.org/p/chromium.webkit/json/builders',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux/builds/2',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Mac',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Mac/builds/2',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Win',
-                'http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Win/builds/2',
                 'http://build.webkit.org/json/builders',
                 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests',
                 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2',
-                'http://build.webkit.org/json/builders/GTK',
-                'http://build.webkit.org/json/builders/GTK/builds/2',
-                'http://build.webkit.org/json/builders/Chromium%20Mac%20Builder',
-                'http://build.webkit.org/json/builders/Chromium%20Mac%20Builder/builds/2']
+                'http://build.webkit.org/json/builders/GTK%20Linux%20Tests',
+                'http://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2',
+                'http://build.webkit.org/json/builders/EFL%20Linux%20Builder',
+                'http://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2']
             self.assertEqual(fetched_urls, expected_fetched_urls)
 
             expected_masters = [
                 {
-                    'url': 'http://build.chromium.org/p/chromium.webkit',
-                    'tests': {
-                        'browser_tests': {'builders': ['WebKit Linux', 'WebKit Mac']},
-                        'mini_installer_test': {'builders': ['WebKit Linux', 'WebKit Mac', 'WebKit Win']},
-                        'layout-tests': {'builders': ['WebKit Linux', 'WebKit Win']}},
-                    'name': 'ChromiumWebkit'},
-                {
                     'url': 'http://build.webkit.org',
                     'tests': {
-                        'layout-tests': {'builders': ['Apple Mac SnowLeopard Tests', 'GTK']}},
-                    'name': 'webkit.org'}]
+                        'layout-tests': {'builders': ['Apple Mac SnowLeopard Tests', 'GTK Linux Tests']},
+                    },
+                    'name': 'webkit.org'
+                },
+            ]
             self.assertEqual(masters, expected_masters)
 
         finally:

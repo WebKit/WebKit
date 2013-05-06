@@ -1,5 +1,23 @@
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Flakiness Dashboard] Remove everything Chromium from the builders.json-generating script
+        https://bugs.webkit.org/show_bug.cgi?id=114603
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/generate_builders_json.py:
+        (insert_builder_and_test_data): Only process the 'layout-tests' steps, but force the name that's used
+        to represent these to be 'layout-test', for backwards compatibility.
+        (main): Remove all the build.chromium.org masters.
+        * TestResultServer/generate_builders_json_unittest.py: Clean up the Chromium-related test cases and update other ones.
+        (GenerateBuildersJsonTest.test_generate_json_data.dummy_fetch_json):
+        (GenerateBuildersJsonTest):
+        (GenerateBuildersJsonTest.test_generate_json_data):
+        * TestResultServer/static-dashboards/builders.jsonp: Updated after changes to the script, now only lists the
+        test-running builders from the webkit.org master.
+
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [Flakiness Dashboard] Update expected outcome in a couple of unit tests after r148778
         https://bugs.webkit.org/show_bug.cgi?id=114988
 
