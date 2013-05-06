@@ -33,7 +33,6 @@
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"
 #include "WorkQueue.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
 
@@ -83,7 +82,6 @@ public:
     ~LocalStorageNamespace();
 
     StorageManager* storageManager() const { return m_storageManager; }
-    String databaseFilename(SecurityOrigin*) const;
 
     PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
     void didDestroyStorageArea(StorageArea*);
@@ -111,7 +109,7 @@ StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageName
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
     if (m_localStorageNamespace)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->databaseFilename(m_securityOrigin.get()), m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker);
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.get());
 }
 
 StorageManager::StorageArea::~StorageArea()
@@ -242,16 +240,6 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(m_storageAreaMap.isEmpty());
 }
 
-String StorageManager::LocalStorageNamespace::databaseFilename(SecurityOrigin* securityOrigin) const
-{
-    if (!makeAllDirectories(m_storageManager->m_localStorageDirectory)) {
-        LOG_ERROR("Unabled to create LocalStorage database path %s", m_storageManager->m_localStorageDirectory.utf8().data());
-        return String();
-    }
-
-    return pathByAppendingComponent(m_storageManager->m_localStorageDirectory, securityOrigin->databaseIdentifier() + ".localstorage");
-}
-
 PassRefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
     HashMap<RefPtr<SecurityOrigin>, StorageArea*>::AddResult result = m_storageAreaMap.add(securityOrigin, 0);
@@ -355,7 +343,7 @@ StorageManager::~StorageManager()
 
 void StorageManager::setLocalStorageDirectory(const String& localStorageDirectory)
 {
-    m_queue->dispatch(bind(&StorageManager::setLocalStorageDirectoryInternal, this, localStorageDirectory.isolatedCopy()));
+    m_localStorageDatabaseTracker->setLocalStorageDirectory(localStorageDirectory);
 }
 
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
@@ -497,11 +485,6 @@ void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapI
 
     storageArea->clear(connection, sourceStorageAreaID, urlString);
     connection->send(Messages::StorageAreaMap::DidClear(), storageMapID);
-}
-
-void StorageManager::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
-{
-    m_localStorageDirectory = localStorageDirectory;
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

@@ -29,6 +29,11 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class SecurityOrigin;
+}
 
 class WorkQueue;
 
@@ -39,10 +44,17 @@ public:
     static PassRefPtr<LocalStorageDatabaseTracker> create(PassRefPtr<WorkQueue>);
     ~LocalStorageDatabaseTracker();
 
+    void setLocalStorageDirectory(const String&);
+    String databaseFilename(WebCore::SecurityOrigin*) const;
+
 private:
     explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);
 
+    void setLocalStorageDirectoryInternal(const String&);
+
     RefPtr<WorkQueue> m_queue;
+
+    String m_localStorageDirectory;
 };
 
 } // namespace WebKit

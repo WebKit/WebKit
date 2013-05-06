@@ -27,6 +27,11 @@
 #include "LocalStorageDatabaseTracker.h"
 
 #include "WorkQueue.h"
+#include <WebCore/FileSystem.h>
+#include <WebCore/SecurityOrigin.h>
+#include <wtf/text/CString.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -42,6 +47,26 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(PassRefPtr<WorkQueue> q
 
 LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 {
+}
+
+void LocalStorageDatabaseTracker::setLocalStorageDirectory(const String& localStorageDirectory)
+{
+    m_queue->dispatch(bind(&LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal, this, localStorageDirectory.isolatedCopy()));
+}
+
+String LocalStorageDatabaseTracker::databaseFilename(SecurityOrigin* securityOrigin) const
+{
+    if (!makeAllDirectories(m_localStorageDirectory)) {
+        LOG_ERROR("Unabled to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
+        return String();
+    }
+
+    return pathByAppendingComponent(m_localStorageDirectory, securityOrigin->databaseIdentifier() + ".localstorage");
+}
+
+void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
+{
+    m_localStorageDirectory = localStorageDirectory;
 }
 
 } // namespace WebKit

@@ -35,6 +35,7 @@
 class WorkQueue;
 
 namespace WebCore {
+class SecurityOrigin;
 class StorageMap;
 }
 
@@ -44,7 +45,7 @@ class LocalStorageDatabaseTracker;
 
 class LocalStorageDatabase : public ThreadSafeRefCounted<LocalStorageDatabase> {
 public:
-    static PassRefPtr<LocalStorageDatabase> create(const String& databaseFilename, PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>);
+    static PassRefPtr<LocalStorageDatabase> create(PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>, WebCore::SecurityOrigin*);
     ~LocalStorageDatabase();
 
     // Will block until the import is complete.
@@ -58,7 +59,7 @@ public:
     void close();
 
 private:
-    LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>);
+    LocalStorageDatabase(PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>, WebCore::SecurityOrigin*);
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
@@ -75,10 +76,10 @@ private:
     void updateDatabase();
     void updateDatabaseWithChangedItems(const HashMap<String, String>&);
 
-    String m_databaseFilename;
     RefPtr<WorkQueue> m_queue;
     RefPtr<LocalStorageDatabaseTracker> m_tracker;
 
+    String m_databaseFilename;
     WebCore::SQLiteDatabase m_database;
     bool m_failedToOpenDatabase;
     bool m_didImportItems;
