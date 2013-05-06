@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,12 @@
 #ifndef LocalStorageDatabaseTracker_h
 #define LocalStorageDatabaseTracker_h
 
+#include <WebCore/SQLiteDatabase.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,9 +55,23 @@ private:
 
     void setLocalStorageDirectoryInternal(const String&);
 
-    RefPtr<WorkQueue> m_queue;
+    String databaseFilename(const String&) const;
+    String trackerDatabasePath() const;
 
+    enum DatabaseOpeningStrategy {
+        CreateIfNonExistent,
+        SkipIfNonExistent
+    };
+    void openTrackerDatabase(DatabaseOpeningStrategy);
+
+    void importOriginIdentifiers();
+    void updateTrackerDatabaseFromLocalStorageDatabaseFiles();
+
+    RefPtr<WorkQueue> m_queue;
     String m_localStorageDirectory;
+
+    WebCore::SQLiteDatabase m_database;
+    HashSet<String> m_origins;
 };
 
 } // namespace WebKit

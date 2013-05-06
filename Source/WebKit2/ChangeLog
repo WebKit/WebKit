@@ -1,3 +1,32 @@
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
+        More work on LocalStorageDatabaseTracker
+        https://bugs.webkit.org/show_bug.cgi?id=115680
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databaseFilename):
+        Call the new databaseFilename that takes a string.
+
+        (WebKit::LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal):
+        Assert that we don't call this more than once. Dispatch a call to import origin identifiers.
+
+        (WebKit::LocalStorageDatabaseTracker::trackerDatabasePath):
+        New helper function that returns the tracker database path.
+
+        (WebKit::LocalStorageDatabaseTracker::openTrackerDatabase):
+        Open the database and create the Origins table if needed.
+
+        (WebKit::LocalStorageDatabaseTracker::importOriginIdentifiers):
+        Open the database and import the origin identifiers from it, then synchronize it with whatever files are on disk.
+
+        (WebKit::LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseFiles):
+        Bring the tracker database up to date from the database files on disk.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        (LocalStorageDatabaseTracker):
+
 2013-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13479806> [Mac] Pass information about open pages to LaunchServices
