@@ -1,3 +1,38 @@
+2013-05-06  Antti Koivisto  <antti@apple.com>
+
+        Remove more code that was only needed for younger/older shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=115662
+
+        Reviewed by Andreas Kling.
+
+        This is dead code.
+
+        * WebCore.exp.in:
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::nodeCanBeDistributed):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToShadowRootOrHost):
+        * dom/EventPathWalker.cpp:
+        (WebCore::EventPathWalker::moveToParent):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ScopeContentDistribution::ScopeContentDistribution):
+        (WebCore::ScopeContentDistribution::registerInsertionPoint):
+        (WebCore::ScopeContentDistribution::unregisterInsertionPoint):
+        (WebCore):
+        (WebCore::ScopeContentDistribution::hasInsertionPoint):
+        (WebCore::ContentDistributor::invalidate):
+        * html/shadow/ContentDistributor.h:
+        (ScopeContentDistribution):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::contains):
+        (WebCore::resolveReprojection):
+        (WebCore::collectInsertionPointsWhereNodeIsDistributed):
+        * html/shadow/InsertionPoint.h:
+        * testing/Internals.cpp:
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2013-05-06  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update HTML5 progress bar UX.

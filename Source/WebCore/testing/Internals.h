@@ -90,7 +90,6 @@ public:
     ShadowRootIfShadowDOMEnabledOrNode* createShadowRoot(Element* host, ExceptionCode&);
     ShadowRootIfShadowDOMEnabledOrNode* shadowRoot(Element* host, ExceptionCode&);
     String shadowRootType(const Node*, ExceptionCode&) const;
-    bool hasShadowInsertionPoint(const Node*, ExceptionCode&) const;
     bool hasContentElement(const Node*, ExceptionCode&) const;
     size_t countElementShadow(const Node*, ExceptionCode&) const;
     Element* includerFor(Node*, ExceptionCode&);

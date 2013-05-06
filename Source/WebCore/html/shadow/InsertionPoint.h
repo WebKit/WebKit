@@ -44,7 +44,6 @@ namespace WebCore {
 class InsertionPoint : public HTMLElement {
 public:
     enum Type {
-        ShadowInsertionPoint,
         ContentInsertionPoint
     };
 

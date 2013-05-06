@@ -75,12 +75,8 @@ class ScopeContentDistribution {
 public:
     ScopeContentDistribution();
 
-    InsertionPoint* insertionPointAssignedTo() const { return m_insertionPointAssignedTo; }
-    void setInsertionPointAssignedTo(InsertionPoint* insertionPoint) { m_insertionPointAssignedTo = insertionPoint; }
-
     void registerInsertionPoint(InsertionPoint*);
     void unregisterInsertionPoint(InsertionPoint*);
-    bool hasShadowElementChildren() const { return m_numberOfShadowElementChildren > 0; }
     bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
 
     void registerElementShadow() { ++m_numberOfElementShadowChildren; }
@@ -93,16 +89,12 @@ public:
 
     bool isUsedForRendering() const;
 
-    static bool hasShadowElement(const ShadowRoot*);
     static bool hasContentElement(const ShadowRoot*);
     static bool hasInsertionPoint(const ShadowRoot*);
     static bool hasElementShadow(const ShadowRoot* holder) { return countElementShadow(holder); }
     static unsigned countElementShadow(const ShadowRoot*);
-    static InsertionPoint* assignedTo(const ShadowRoot*);
 
 private:
-    InsertionPoint* m_insertionPointAssignedTo;
-    unsigned m_numberOfShadowElementChildren;
     unsigned m_numberOfContentElementChildren;
     unsigned m_numberOfElementShadowChildren;
     bool m_insertionPointListIsValid;
