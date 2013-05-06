@@ -30,6 +30,7 @@
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
+#include "WebContextSupplement.h"
 #include "WebNetworkInfoProvider.h"
 #include <wtf/Forward.h>
 
@@ -38,20 +39,28 @@ namespace WebKit {
 class WebContext;
 class WebNetworkInfo;
 
-class WebNetworkInfoManagerProxy : public TypedAPIObject<APIObject::TypeNetworkInfoManager>, private CoreIPC::MessageReceiver {
+class WebNetworkInfoManagerProxy : public TypedAPIObject<APIObject::TypeNetworkInfoManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
+    static const char* supplementName();
+
     static PassRefPtr<WebNetworkInfoManagerProxy> create(WebContext*);
     virtual ~WebNetworkInfoManagerProxy();
-
-    void invalidate();
-    void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKNetworkInfoProvider*);
 
     void providerDidChangeNetworkInformation(const WTF::AtomicString& eventType, WebNetworkInfo*);
 
+    using APIObject::ref;
+    using APIObject::deref;
+
 private:
     explicit WebNetworkInfoManagerProxy(WebContext*);
+
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

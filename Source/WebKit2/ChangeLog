@@ -1,3 +1,36 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Make the WebNetworkInfoManagerProxy a supplement to the WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=115654
+
+        Reviewed by Andreas Kling.
+
+        Rather than holding a RefPtr to the WebNetworkInfoManagerProxy object in WebContext, change the WebNetworkInfoManagerProxy
+        to implement the WebContextSupplement interface and handle the object as such in WebContext, simplifying its
+        construction and cleanup, removing the specific RefPtr member variable and its correlating getter method.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetNetworkInfoManager): Retrieve the WebNetworkInfoManagerProxy object from the suppplements of the WebContext.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Add the WebNetworkInfoManagerProxy object as a supplement instead of assigning it to
+        the now-removed member variable.
+        (WebKit::WebContext::~WebContext): No need for the specific cleanup, the equivalent is achieved when iterating through the
+        supplements vector.
+        (WebKit::WebContext::disconnectProcess): Ditto.
+        * UIProcess/WebContext.h:
+        (WebContext): Remove the WebNetworkInfoManagerProxy RefPtr member variable and its getter method.
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::supplementName): Specift the supplement's name.
+        (WebKit::WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy): Initialize as a WebContextSupplement.
+        (WebKit::WebNetworkInfoManagerProxy::providerDidChangeNetworkInformation): Adjust to use the context() method instead of
+        accessing the private m_context directly.
+        (WebKit::WebNetworkInfoManagerProxy::contextDestroyed): Stop updating when invoked.
+        (WebKit::WebNetworkInfoManagerProxy::processDidClose): Ditto.
+        (WebKit::WebNetworkInfoManagerProxy::refWebContextSupplement): Call APIObject::ref.
+        (WebKit::WebNetworkInfoManagerProxy::derefWebContextSupplement): Call APIObject::deref.
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        (WebNetworkInfoManagerProxy): Inherit from WebContextSupplement, declare the newly-inherited methods.
+
 2013-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13479806> [Mac] Pass plug-in bundle ID to LaunchServices

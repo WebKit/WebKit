@@ -156,9 +156,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_iconDatabase = WebIconDatabase::create(this);
-#if ENABLE(NETWORK_INFO)
-    m_networkInfoManagerProxy = WebNetworkInfoManagerProxy::create(this);
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager = WebPluginSiteDataManager::create(this);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
@@ -178,6 +175,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManagerProxy>();
+#endif
+#if ENABLE(NETWORK_INFO)
+    addSupplement<WebNetworkInfoManagerProxy>();
 #endif
 
     contexts().append(this);
@@ -225,11 +225,6 @@ WebContext::~WebContext()
     m_iconDatabase->invalidate();
     m_iconDatabase->clearContext();
     
-#if ENABLE(NETWORK_INFO)
-    m_networkInfoManagerProxy->invalidate();
-    m_networkInfoManagerProxy->clearContext();
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();
@@ -670,10 +665,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     WebContextSupplementMap::const_iterator end = m_supplements.end();
     for (; it != end; ++it)
         it->value->processDidClose(process);
-
-#if ENABLE(NETWORK_INFO)
-    m_networkInfoManagerProxy->invalidate();
-#endif
 
     // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data
     // manager just because the web process crashes since it's not involved.

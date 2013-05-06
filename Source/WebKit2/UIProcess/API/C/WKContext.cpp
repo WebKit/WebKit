@@ -49,6 +49,9 @@
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManagerProxy.h"
 #endif
+#if ENABLE(NETWORK_INFO)
+#include "WebNetworkInfoManagerProxy.h"
+#endif
 
 using namespace WebKit;
 
@@ -232,7 +235,7 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
 WKNetworkInfoManagerRef WKContextGetNetworkInfoManager(WKContextRef contextRef)
 {
 #if ENABLE(NETWORK_INFO)
-    return toAPI(toImpl(contextRef)->networkInfoManagerProxy());
+    return toAPI(toImpl(contextRef)->supplement<WebNetworkInfoManagerProxy>());
 #else
     return 0;
 #endif

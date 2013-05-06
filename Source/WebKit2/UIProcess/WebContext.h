@@ -211,9 +211,6 @@ public:
     WebContextClient& client() { return m_client; }
 
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
-#if ENABLE(NETWORK_INFO)
-    WebNetworkInfoManagerProxy* networkInfoManagerProxy() const { return m_networkInfoManagerProxy.get(); }
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
 #endif
@@ -429,9 +426,6 @@ private:
     double m_memorySamplerInterval;
 
     RefPtr<WebIconDatabase> m_iconDatabase;
-#if ENABLE(NETWORK_INFO)
-    RefPtr<WebNetworkInfoManagerProxy> m_networkInfoManagerProxy;
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
