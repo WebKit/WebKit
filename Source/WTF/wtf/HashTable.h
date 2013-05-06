@@ -300,7 +300,7 @@ namespace WTF {
     template<typename HashFunctions> class IdentityHashTranslator {
     public:
         template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
-        template<typename T> static bool equal(const T& a, const T& b) { return HashFunctions::equal(a, b); }
+        template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
         template<typename T, typename U> static void translate(T& location, const U&, const T& value) { location = value; }
     };
 
