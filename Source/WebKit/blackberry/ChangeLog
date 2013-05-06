@@ -1,5 +1,24 @@
 2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
+        [BlackBerry] Do not spellcheck when composition is active.
+        https://bugs.webkit.org/show_bug.cgi?id=115562
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR331344
+        Typing can trigger rechecking since layout changes. Ensure
+        extra work is only done when we need it, and that it won't
+        be triggered when composition is active. If the user hasn't
+        finished a word yet, it is likely future key events will be
+        arriving, so checking the string at this point is extraneous.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+
+2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
         [BlackBerry] Reduce the spellcheck checking range
         https://bugs.webkit.org/show_bug.cgi?id=115479
 

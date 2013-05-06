@@ -623,6 +623,7 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
 
     // Check if the field should be spellchecked.
     if (!isActiveTextEdit() || !shouldSpellCheckElement(m_currentFocusElement.get()) || requestLength < 2) {
+        SpellingLog(Platform::LogLevelWarn, "InputHandler::requestCheckingOfString request cancelled");
         spellCheckRequest->didCancel();
         return;
     }
@@ -1150,14 +1151,25 @@ bool InputHandler::shouldSpellCheckElement(const Element* element) const
     return m_spellCheckStatusConfirmed ? m_globalSpellCheckStatus : true;
 }
 
-void InputHandler::stopPendingSpellCheckRequests()
+void InputHandler::stopPendingSpellCheckRequests(bool isRestartRequired)
 {
     m_spellingHandler->setSpellCheckActive(false);
-    // Prevent response from propagating through
+    // Prevent response from propagating through.
     m_processingTransactionId = 0;
+
     // Reject requests until lastRequestSequence. This helps us clear the queue of stale requests.
-    if (SpellChecker* spellChecker = getSpellChecker())
-        m_minimumSpellCheckingRequestSequence = spellChecker->lastRequestSequence();
+    if (SpellChecker* spellChecker = getSpellChecker()) {
+        if (spellChecker->lastRequestSequence() != spellChecker->lastProcessedSequence()) {
+            SpellingLog(LogLevelInfo, "InputHandler::stopPendingSpellCheckRequests will block requests up to lastRequest=%d [lastProcessed=%d]"
+                , spellChecker->lastRequestSequence(), spellChecker->lastProcessedSequence());
+            // Prevent requests in queue from executing.
+            m_minimumSpellCheckingRequestSequence = spellChecker->lastRequestSequence();
+            if (isRestartRequired && !compositionActive()) {
+                // Create new spellcheck requests to replace those that were invalidated.
+                spellCheckTextBlock();
+            }
+        }
+    }
 }
 
 void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)

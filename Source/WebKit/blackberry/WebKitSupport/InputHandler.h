@@ -148,7 +148,7 @@ public:
 
     void requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest>);
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
-    void stopPendingSpellCheckRequests();
+    void stopPendingSpellCheckRequests(bool isRestartRequired = false);
     void spellCheckTextBlock(WebCore::Element* = 0);
 
     bool shouldRequestSpellCheckingOptionsForPoint(const Platform::IntPoint& documentContentPosition, const WebCore::Element*, imf_sp_text_t&);

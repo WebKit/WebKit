@@ -1557,8 +1557,7 @@ void WebPagePrivate::overflowExceedsContentsSize()
 void WebPagePrivate::layoutFinished()
 {
     // If a layout change has occurred, we need to invalidate any current spellcheck requests and trigger a new run.
-    m_inputHandler->stopPendingSpellCheckRequests();
-    m_inputHandler->spellCheckTextBlock();
+    m_inputHandler->stopPendingSpellCheckRequests(true /* isRestartRequired */);
 
     if (!m_contentsSizeChanged && !m_overflowExceedsContentsSize)
         return;
