@@ -153,9 +153,9 @@ test('platformAndBuildType', 30, function() {
     // FIXME: These platforms should match whatever we use in the TestExpectations format.
     runPlatformAndBuildTypeTest('Lion Release (Tests)', 'APPLE_MAC_LION_WK1', 'RELEASE');
     runPlatformAndBuildTypeTest('Lion Debug (Tests)', 'APPLE_MAC_LION_WK1', 'DEBUG');
-    runPlatformAndBuildTypeTest('SnowLeopard Intel Release (Tests)', 'APPLE_MAC_SNOWLEOPARD_WK1', 'RELEASE');
-    runPlatformAndBuildTypeTest('SnowLeopard Intel Leaks', 'APPLE_MAC_SNOWLEOPARD_WK1', 'RELEASE');
-    runPlatformAndBuildTypeTest('SnowLeopard Intel Debug (Tests)', 'APPLE_MAC_SNOWLEOPARD_WK1', 'DEBUG');
+    runPlatformAndBuildTypeTest('MountainLion Release (Tests)', 'APPLE_MAC_MOUNTAINLION_WK1', 'RELEASE');
+    runPlatformAndBuildTypeTest('MountainLion Leaks', 'APPLE_MAC_MOUNTAINLION_WK1', 'RELEASE');
+    runPlatformAndBuildTypeTest('MountainLion Debug (Tests)', 'APPLE_MAC_MOUNTAINLION_WK1', 'DEBUG');
     runPlatformAndBuildTypeTest('GTK Linux 32-bit Release', 'GTK_LINUX_WK1', 'RELEASE');
     runPlatformAndBuildTypeTest('GTK Linux 32-bit Debug', 'GTK_LINUX_WK1', 'DEBUG');
     runPlatformAndBuildTypeTest('GTK Linux 64-bit Debug', 'GTK_LINUX_WK1', 'DEBUG');
@@ -165,8 +165,8 @@ test('platformAndBuildType', 30, function() {
     runPlatformAndBuildTypeTest('Windows XP Debug (Tests)', 'APPLE_WIN_XP', 'DEBUG');
     
     // FIXME: Should WebKit2 be it's own platform?
-    runPlatformAndBuildTypeTest('SnowLeopard Intel Release (WebKit2 Tests)', 'APPLE_MAC_SNOWLEOPARD_WK2', 'RELEASE');
-    runPlatformAndBuildTypeTest('SnowLeopard Intel Debug (WebKit2 Tests)', 'APPLE_MAC_SNOWLEOPARD_WK2', 'DEBUG');
+    runPlatformAndBuildTypeTest('MountainLion Release (WebKit2 Tests)', 'APPLE_MAC_MOUNTAINLION_WK2', 'RELEASE');
+    runPlatformAndBuildTypeTest('MountainLion Debug (WebKit2 Tests)', 'APPLE_MAC_MOUNTAINLION_WK2', 'DEBUG');
     runPlatformAndBuildTypeTest('Windows 7 Release (WebKit2 Tests)', 'APPLE_WIN_WIN7', 'RELEASE');    
 });
 

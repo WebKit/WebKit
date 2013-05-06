@@ -366,10 +366,10 @@ function determineBuilderPlatform(builderNameUpperCase)
     if (string.contains(builderNameUpperCase, 'QT LINUX'))
         return 'QT_LINUX';
 
+    if (string.contains(builderNameUpperCase, 'MOUNTAINLION'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOUNTAINLION');
     if (string.contains(builderNameUpperCase, 'LION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
-    if (string.contains(builderNameUpperCase, 'SNOWLEOPARD'))
-        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_SNOWLEOPARD');
     if (string.contains(builderNameUpperCase, 'GTK LINUX'))
         return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
     if (string.contains(builderNameUpperCase, 'EFL'))
