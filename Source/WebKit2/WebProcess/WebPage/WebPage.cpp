@@ -3952,22 +3952,26 @@ void WebPage::didCancelCheckingText(uint64_t requestID)
 
 void WebPage::didCommitLoad(WebFrame* frame)
 {
+    if (!frame->isMainFrame())
+        return;
+
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
     // Most likely, this is actually the first load to be committed in this page.
-    if (frame->isMainFrame() && frame->coreFrame()->loader()->previousURL().isValid())
+    if (frame->coreFrame()->loader()->previousURL().isValid())
         reportUsedFeatures();
 
     // Only restore the scale factor for standard frame loads (of the main frame).
-    if (frame->isMainFrame() && frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
+    if (frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
         Page* page = frame->coreFrame()->page();
         if (page && page->pageScaleFactor() != 1)
             scalePage(1, IntPoint());
     }
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    if (frame->isMainFrame())
-        resetPrimarySnapshottedPlugIn();
+    resetPrimarySnapshottedPlugIn();
 #endif
+
+    WebProcess::shared().updateActivePages();
 }
 
 void WebPage::didFinishLoad(WebFrame* frame)

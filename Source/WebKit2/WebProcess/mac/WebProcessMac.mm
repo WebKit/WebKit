@@ -30,6 +30,7 @@
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "WKFullKeyboardAccessWatcher.h"
+#import "WebFrame.h"
 #import "WebInspector.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
@@ -39,6 +40,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
@@ -54,6 +56,8 @@
 
 using namespace WebCore;
 using namespace std;
+
+const CFStringRef kLSActivePageUserVisibleOriginsKey = CFSTR("LSActivePageUserVisibleOriginsKey");
 
 namespace WebKit {
 
@@ -218,6 +222,27 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
+}
+
+void WebProcess::updateActivePages()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<CFMutableArrayRef> activePageURLs = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    for (const auto& iter: m_pageMap) {
+        WebPage* page = iter.value.get();
+        WebFrame* mainFrame = page->mainWebFrame();
+        if (!mainFrame)
+            continue;
+        String mainFrameOriginString;
+        RefPtr<SecurityOrigin> mainFrameOrigin = SecurityOrigin::createFromString(mainFrame->url());
+        if (!mainFrameOrigin->isUnique())
+            mainFrameOriginString = mainFrameOrigin->toRawString();
+        else
+            mainFrameOriginString = KURL(KURL(), mainFrame->url()).protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
+        CFArrayAppendValue(activePageURLs.get(), userVisibleString([NSURL URLWithString:mainFrameOriginString]));
+    }
+    WKSetApplicationInformationItem(kLSActivePageUserVisibleOriginsKey, activePageURLs.get());
+#endif
 }
 
 } // namespace WebKit

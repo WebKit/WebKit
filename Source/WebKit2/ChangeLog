@@ -1,3 +1,24 @@
+2013-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13479806> [Mac] Pass information about open pages to LaunchServices
+        https://bugs.webkit.org/show_bug.cgi?id=115665
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::didCommitLoad): Moved repeated
+        check for frame->isMainFrame() to the top, matching oter similar functions.
+        Call updateActivePages().
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed): Removed an obsolete FIXME.
+        (WebKit::WebProcess::updateActivePages): Empty implementation for platforms
+        that don't need to do anything here.
+
+        * WebProcess/WebProcess.h: Added updateActivePages().
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::WebProcess::updateActivePages):
+        Collect user visible origins of pages in the process and pass them to LS.
+
 2013-05-06  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13775921> Switch off a deprecated API.

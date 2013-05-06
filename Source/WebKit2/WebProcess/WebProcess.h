@@ -184,8 +184,10 @@ public:
     
     void pageDidEnterWindow(WebPage*);
     void pageWillLeaveWindow(WebPage*);
-    
+
     void nonVisibleProcessCleanupTimerFired(WebCore::Timer<WebProcess>*);
+
+    void updateActivePages();
 
 private:
     WebProcess();

@@ -1033,8 +1033,6 @@ NetworkProcessConnection* WebProcess::networkConnection()
 
 void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connection)
 {
-    // FIXME (NetworkProcess): How do we handle not having the connection when the WebProcess needs it?
-    // If the NetworkProcess crashed, for example.  Do we respawn it?
     ASSERT(m_networkProcessConnection);
     ASSERT(m_networkProcessConnection == connection);
 
@@ -1123,6 +1121,11 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters&, 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
 }
+
+void WebProcess::updateActivePages()
+{
+}
+
 #endif
     
 void WebProcess::pageDidEnterWindow(WebPage*)
