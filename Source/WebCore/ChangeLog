@@ -1,3 +1,10 @@
+2013-05-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][Win] Unreviewed buildfix after r149579.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addQtWebKitPluginPath):
+
 2013-05-06  Antoine Quint  <graouts@apple.com>
 
         Manage the presentation of the snapshotted plug-in using JavaScript

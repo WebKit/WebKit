@@ -413,7 +413,7 @@ static inline void addQtWebKitPluginPath(Vector<String>& directories)
     Vector<String> qtPaths;
     String qtPath(qgetenv("QTWEBKIT_PLUGIN_PATH").constData());
     qtPath.split(UChar(';'), false, qtPaths);
-    directories.append(qtPaths);
+    directories.appendVector(qtPaths);
 }
 #endif
 
