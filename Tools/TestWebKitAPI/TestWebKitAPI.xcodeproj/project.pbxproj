@@ -35,6 +35,8 @@
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
 		26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
+		290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */; };
+		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */; };
 		290F427B172A23A500939FF0 /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4279172A23A500939FF0 /* TestProtocol.mm */; };
@@ -236,6 +238,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
 				C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */,
 				C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */,
@@ -307,6 +310,8 @@
 		26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CancelLoadFromResourceLoadDelegate.html; sourceTree = "<group>"; };
 		26F1B44215CA434F00D1E4BF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = WTF/AtomicString.cpp; sourceTree = "<group>"; };
 		26F1B44315CA434F00D1E4BF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringImpl.cpp; path = WTF/StringImpl.cpp; sourceTree = "<group>"; };
+		290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseNewWindowInNavigationPolicyDelegate.mm; sourceTree = "<group>"; };
+		290A9BB81735F42300D71BBC /* OpenNewWindow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OpenNewWindow.html; sourceTree = "<group>"; };
 		290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-protocol-sync-xhr.html"; sourceTree = "<group>"; };
 		290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomProtocolsSyncXHRTest.mm; sourceTree = "<group>"; };
 		290F4279172A23A500939FF0 /* TestProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestProtocol.mm; sourceTree = "<group>"; };
@@ -822,6 +827,7 @@
 				B55F119F1516834F00915916 /* AttributedString.mm */,
 				00CD9F6215BE312C002DA2CE /* BackForwardList.mm */,
 				26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */,
+				290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */,
 				5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */,
 				3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */,
 				939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */,
@@ -871,6 +877,7 @@
 				9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */,
 				E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */,
 				517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */,
+				290A9BB81735F42300D71BBC /* OpenNewWindow.html */,
 				A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */,
 				52B8CF9415868CF000281053 /* SetDocumentURI.html */,
 				C540F783152E5A7800A40C8C /* verboseMarkup.html */,
@@ -1118,6 +1125,7 @@
 				BC55F5F914AD78EE00484BE1 /* Vector.cpp in Sources */,
 				BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */,
 				37200B9213A16230007A4FAD /* VectorReverse.cpp in Sources */,
+				290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
 				FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */,
 				520BCF4D141EB09E00937EA8 /* WebArchive.cpp in Sources */,
 				0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,

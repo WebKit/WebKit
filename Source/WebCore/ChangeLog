@@ -1,3 +1,23 @@
+2013-05-04  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r125592): Reproducible crash in DOMWindow::open when a delegate closes the new window in decidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=115609
+
+        Reviewed by Oliver Hunt.
+
+        When a window created by window.open() is navigated, the embedder might
+        close it in decidePolicyForNavigationAction. If this happens, we end up
+        with a pointer to a deleted Frame.
+
+        Fix this by keeping a strong reference to the Frame created by
+        createWindow(). We can later determine if the window was closed by
+        checking if the new Frame has a detached Page.
+
+        Added an API test: WebKit1.CloseNewWindowInNavigationPolicyDelegate.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move GeolocationProviderGeoclue into libPlatform

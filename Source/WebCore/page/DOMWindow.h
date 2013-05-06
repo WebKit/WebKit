@@ -426,7 +426,7 @@ namespace WebCore {
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
 
-        static Frame* createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
+        static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
             DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,
             PrepareDialogFunction = 0, void* functionContext = 0);
         bool isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString);

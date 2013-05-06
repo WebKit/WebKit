@@ -1885,7 +1885,7 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& ur
     return true;
 }
 
-Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures& windowFeatures,
+PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures& windowFeatures,
     DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame, PrepareDialogFunction function, void* functionContext)
 {
     Frame* activeFrame = activeWindow->frame();
@@ -1907,7 +1907,7 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
     bool created;
-    Frame* newFrame = WebCore::createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
+    RefPtr<Frame> newFrame = WebCore::createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
@@ -1915,7 +1915,7 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     newFrame->page()->setOpenedByDOM();
 
     if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
-        return newFrame;
+        return newFrame.release();
 
     if (function)
         function(newFrame->document()->domWindow(), functionContext);
@@ -1927,7 +1927,11 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
         newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->document()->securityOrigin(), completedURL.string(), referrer, lockHistory, false);
     }
 
-    return newFrame;
+    // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.
+    if (!newFrame->page())
+        return 0;
+
+    return newFrame.release();
 }
 
 PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
@@ -1985,7 +1989,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     }
 
     WindowFeatures windowFeatures(windowFeaturesString);
-    Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
+    RefPtr<Frame> result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
     return result ? result->document()->domWindow() : 0;
 }
 
@@ -2005,7 +2009,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         return;
 
     WindowFeatures windowFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view()));
-    Frame* dialogFrame = createWindow(urlString, emptyAtom, windowFeatures,
+    RefPtr<Frame> dialogFrame = createWindow(urlString, emptyAtom, windowFeatures,
         activeWindow, firstFrame, m_frame, function, functionContext);
     if (!dialogFrame)
         return;
