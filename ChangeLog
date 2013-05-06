@@ -1,3 +1,15 @@
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Shadow DOM should be disabled at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=115635
+
+        Reviewed by Andreas Kling.
+
+        Disable Shadow DOM at compile time for EFL port. Shadow DOM code
+        is being removed from the tree.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-05-04  Dean Jackson  <dino@apple.com>
 
         Animations and Transitions should not start when globally suspended
