@@ -1,3 +1,20 @@
+2013-05-06  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r140024): child of fixed div inside of absolute div does not get resized when window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=115379
+
+        Reviewed by David Hyatt.
+
+        When detecting whether a fixed pos object needed to move with an absolute ancestor we checked
+        whether the logical width of the fixed pos object had changed. This check prevented the fixed pos
+        object from detecting later on that it needed to relayout its children in layoutBlock(). So recompute the width
+        for our check instead of updating it.
+
+        Test: fast/block/positioning/child-of-fixed-pos-after-movement.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+
 2013-05-06  Mike Lattanzio  <mlattanzio@blackberry.com>
 
         [BlackBerry] Enable and Expose Text Autosizing through BlackBerry::WebKit::WebSettings
