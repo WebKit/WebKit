@@ -292,7 +292,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
                 while (true) {
                     GradientStop newStop = stops[originalFirstStopIndex + srcStopOrdinal];
                     newStop.offset = currOffset;
-                    stops.prepend(newStop);
+                    stops.insert(0, newStop);
                     ++originalFirstStopIndex;
                     if (currOffset < 0)
                         break;

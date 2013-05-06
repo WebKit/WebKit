@@ -491,12 +491,12 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     while (!it.atEnd()) {
         // iterate to get chunks until the searchFunction returns a non-zero value.
         if (!inTextSecurityMode) 
-            string.prepend(it.characters(), it.length());
+            string.insert(0, it.characters(), it.length());
         else {
             // Treat bullets used in the text security mode as regular characters when looking for boundaries
             String iteratorString(it.characters(), it.length());
             iteratorString.fill('x');
-            string.prepend(iteratorString.characters(), iteratorString.length());
+            string.insert(0, iteratorString.characters(), iteratorString.length());
         }
         next = searchFunction(string.data(), string.size(), string.size() - suffixLength, MayHaveMoreContext, needMoreContext);
         if (next > 1) // FIXME: This is a work around for https://webkit.org/b/115070. We need to provide more contexts in general case.
@@ -547,7 +547,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
             const UChar* characters = backwardsIterator.characters();
             int length = backwardsIterator.length();
             int i = startOfLastWordBoundaryContext(characters, length);
-            string.prepend(characters + i, length - i);
+            string.insert(0, characters + i, length - i);
             prefixLength += length - i;
             if (i > 0)
                 break;

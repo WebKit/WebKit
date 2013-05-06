@@ -327,7 +327,7 @@ static inline int timeToDay(double time)
 void HistoryItem::padDailyCountsForNewVisit(double time)
 {
     if (m_dailyVisitCounts.isEmpty())
-        m_dailyVisitCounts.prepend(m_visitCount);
+        m_dailyVisitCounts.insert(0, m_visitCount);
 
     int daysElapsed = timeToDay(time) - timeToDay(m_lastVisitedTime);
 
@@ -336,7 +336,7 @@ void HistoryItem::padDailyCountsForNewVisit(double time)
 
     Vector<int> padding;
     padding.fill(0, daysElapsed);
-    m_dailyVisitCounts.prepend(padding);
+    m_dailyVisitCounts.insert(0, padding);
 }
 
 static const size_t daysPerWeek = 7;
@@ -350,7 +350,7 @@ void HistoryItem::collapseDailyVisitsToWeekly()
         for (size_t i = 0; i < daysPerWeek; i++)
             oldestWeekTotal += m_dailyVisitCounts[m_dailyVisitCounts.size() - daysPerWeek + i];
         m_dailyVisitCounts.shrink(m_dailyVisitCounts.size() - daysPerWeek);
-        m_weeklyVisitCounts.prepend(oldestWeekTotal);
+        m_weeklyVisitCounts.insert(0, oldestWeekTotal);
     }
 
     if (m_weeklyVisitCounts.size() > maxWeeklyCounts)

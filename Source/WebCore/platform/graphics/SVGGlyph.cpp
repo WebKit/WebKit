@@ -101,7 +101,7 @@ Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool 
     // Start identifying arabic forms
     if (rtl) {
         for (int i = length - 1; i >= 0; --i)
-            forms.prepend(processArabicFormDetection(input[i], lastCharShapesRight, forms.isEmpty() ? 0 : &forms.first()));
+            forms.insert(0, processArabicFormDetection(input[i], lastCharShapesRight, forms.isEmpty() ? 0 : &forms.first()));
     } else {
         for (unsigned i = 0; i < length; ++i)
             forms.append(processArabicFormDetection(input[i], lastCharShapesRight, forms.isEmpty() ? 0 : &forms.last()));

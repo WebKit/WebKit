@@ -627,10 +627,6 @@ namespace WTF {
         template<typename U> void insert(size_t position, const U&);
         template<typename U, size_t c> void insert(size_t position, const Vector<U, c>&);
 
-        template<typename U> void prepend(const U*, size_t);
-        template<typename U> void prepend(const U&);
-        template<typename U, size_t c> void prepend(const Vector<U, c>&);
-
         void remove(size_t position);
         void remove(size_t position, size_t length);
 
@@ -1108,24 +1104,6 @@ namespace WTF {
         insert(position, val.begin(), val.size());
     }
 
-    template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-    void Vector<T, inlineCapacity, OverflowHandler>::prepend(const U* data, size_t dataSize)
-    {
-        insert(0, data, dataSize);
-    }
-
-    template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-    inline void Vector<T, inlineCapacity, OverflowHandler>::prepend(const U& val)
-    {
-        insert(0, val);
-    }
-   
-    template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t c>
-    inline void Vector<T, inlineCapacity, OverflowHandler>::prepend(const Vector<U, c>& val)
-    {
-        insert(0, val.begin(), val.size());
-    }
-    
     template<typename T, size_t inlineCapacity, typename OverflowHandler>
     inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position)
     {

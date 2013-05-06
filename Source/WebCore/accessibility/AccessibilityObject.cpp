@@ -1768,12 +1768,14 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
     // Search up the parent chain and create a vector of all scrollable parent objects
     // and ending with this object itself.
     Vector<const AccessibilityObject*> objects;
-    AccessibilityObject* parentObject;
-    for (parentObject = this->parentObject(); parentObject; parentObject = parentObject->parentObject()) {
-        if (parentObject->getScrollableAreaIfScrollable())
-            objects.prepend(parentObject);
-    }
+
     objects.append(this);
+    for (AccessibilityObject* parentObject = this->parentObject(); parentObject; parentObject = parentObject->parentObject()) {
+        if (parentObject->getScrollableAreaIfScrollable())
+            objects.append(parentObject);
+    }
+
+    objects.reverse();
 
     // Start with the outermost scrollable (the main window) and try to scroll the
     // next innermost object to the given point.

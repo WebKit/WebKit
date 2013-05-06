@@ -4540,9 +4540,10 @@ const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
 
         // Put it at the front to ensure that icons seen later take precedence as required by the spec.
         IconURL newURL(linkElement->href(), linkElement->iconSizes(), linkElement->type(), linkElement->iconType());
-        m_iconURLs.prepend(newURL);
+        m_iconURLs.append(newURL);
     }
 
+    m_iconURLs.reverse();
     return m_iconURLs;
 }
 

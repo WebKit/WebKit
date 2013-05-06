@@ -54,7 +54,7 @@ public:
     CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].get(); }
 
     void append(PassRefPtr<CSSValue> value) { m_values.append(value); }
-    void prepend(PassRefPtr<CSSValue> value) { m_values.prepend(value); }
+    void prepend(PassRefPtr<CSSValue> value) { m_values.insert(0, value); }
     bool removeAll(CSSValue*);
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();

@@ -71,10 +71,11 @@ inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMo
     const LChar* hexDigits = Internal::hexDigitsForMode(mode);
     Vector<LChar, 8> result;
     do {
-        result.prepend(hexDigits[number % 16]);
+        result.append(hexDigits[number % 16]);
         number >>= 4;
     } while (number > 0);
 
+    result.reverse();
     destination.append(result.data(), result.size());
 }
 
@@ -87,11 +88,12 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
     const LChar* hexDigits = Internal::hexDigitsForMode(mode);
     Vector<LChar, 8> result;
     do {
-        result.prepend(hexDigits[number % 16]);
+        result.append(hexDigits[number % 16]);
         number >>= 4;
     } while (result.size() < desiredDigits);
 
     ASSERT(result.size() == desiredDigits);
+    result.reverse();
     destination.append(result.data(), result.size());
 }
 

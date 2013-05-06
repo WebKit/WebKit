@@ -1,5 +1,22 @@
 2013-05-05  Anders Carlsson  <andersca@apple.com>
 
+        Remove Vector::prepend
+        https://bugs.webkit.org/show_bug.cgi?id=115618
+
+        Reviewed by Geoffrey Garen.
+
+        Given the performance characteristics of prepending something to a Vector, not having prepend
+        will hopefully make developers think about whether prepending is necessary at all. For example,
+        the functions in HexNumber.h were easily converted to using Vector::append and then Vector::reverse.
+
+        * wtf/HexNumber.h:
+        (WTF::appendUnsignedAsHex):
+        (WTF::appendUnsignedAsHexFixedSize):
+        * wtf/Vector.h:
+        (Vector):
+
+2013-05-05  Anders Carlsson  <andersca@apple.com>
+
         Remove the Vector::append overload that takes a Vector
         https://bugs.webkit.org/show_bug.cgi?id=115535
 

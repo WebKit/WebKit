@@ -130,7 +130,7 @@ ScriptValue InjectedScriptHost::InspectableObject::get(ScriptState*)
 
 void InjectedScriptHost::addInspectedObject(PassOwnPtr<InjectedScriptHost::InspectableObject> object)
 {
-    m_inspectedObjects.prepend(object);
+    m_inspectedObjects.insert(0, object);
     while (m_inspectedObjects.size() > 5)
         m_inspectedObjects.removeLast();
 }
