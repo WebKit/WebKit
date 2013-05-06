@@ -1,5 +1,28 @@
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Add LocalStorageDatabaseTracker class
+        https://bugs.webkit.org/show_bug.cgi?id=115671
+
+        Reviewed by Andreas Kling.
+
+        Somewhat unsurprisingly, this class will be used for tracking local storage databases.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp: Added.
+        (WebKit::LocalStorageDatabaseTracker::create):
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+        (WebKit::LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h: Added.
+        (LocalStorageDatabaseTracker):
+        
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageManager):
+        Create a local storage database tracker.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
         Handle closing the local storage database
         https://bugs.webkit.org/show_bug.cgi?id=115669
 

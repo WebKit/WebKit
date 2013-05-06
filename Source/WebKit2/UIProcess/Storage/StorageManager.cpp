@@ -27,6 +27,7 @@
 #include "StorageManager.h"
 
 #include "LocalStorageDatabase.h"
+#include "LocalStorageDatabaseTracker.h"
 #include "SecurityOriginData.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
@@ -344,6 +345,7 @@ PassRefPtr<StorageManager> StorageManager::create()
 
 StorageManager::StorageManager()
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
+    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue))
 {
 }
 

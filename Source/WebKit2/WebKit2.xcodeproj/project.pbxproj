@@ -181,6 +181,8 @@
 		1A7865BA16CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */; };
 		1A7C6CDA1378950800B9C04D /* EnvironmentVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C6CD81378950800B9C04D /* EnvironmentVariables.cpp */; };
 		1A7C6CDB1378950800B9C04D /* EnvironmentVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7C6CD91378950800B9C04D /* EnvironmentVariables.h */; };
+		1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */; };
+		1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */; };
 		1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EF4C91252403700F7067F /* PluginControllerProxy.h */; };
 		1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */; };
 		1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */; };
@@ -1597,6 +1599,8 @@
 		1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
 		1A7C6CD81378950800B9C04D /* EnvironmentVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentVariables.cpp; sourceTree = "<group>"; };
 		1A7C6CD91378950800B9C04D /* EnvironmentVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvironmentVariables.h; sourceTree = "<group>"; };
+		1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageDatabaseTracker.cpp; sourceTree = "<group>"; };
+		1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabaseTracker.h; sourceTree = "<group>"; };
 		1A8EF4C91252403700F7067F /* PluginControllerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginControllerProxy.h; sourceTree = "<group>"; };
 		1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginControllerProxy.cpp; sourceTree = "<group>"; };
 		1A8EF9411252AE8400F7067F /* PluginControllerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginControllerProxy.messages.in; sourceTree = "<group>"; };
@@ -3022,6 +3026,8 @@
 			children = (
 				1A1D8B9F1731A36300141DA4 /* LocalStorageDatabase.cpp */,
 				1A1D8BA01731A36300141DA4 /* LocalStorageDatabase.h */,
+				1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */,
+				1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */,
 				1A44B95916B73F9F00B7BBD8 /* StorageManager.cpp */,
 				1A44B95A16B73F9F00B7BBD8 /* StorageManager.h */,
 				1AB31A9316BC65AB00F6DBC9 /* StorageManager.messages.in */,
@@ -5532,6 +5538,7 @@
 				BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebFrameLoaderClient.h in Headers */,
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
+				1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */,
 				BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */,
 				BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */,
 				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
@@ -6855,6 +6862,7 @@
 				318BE1671473433700A8FBB2 /* WebNotificationManagerProxyMessageReceiver.cpp in Sources */,
 				31A2EC4D148997C200810D71 /* WebNotificationProvider.cpp in Sources */,
 				BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */,
+				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,
 				BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */,

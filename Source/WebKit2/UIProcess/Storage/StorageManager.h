@@ -36,6 +36,7 @@ class WorkQueue;
 namespace WebKit {
 
 struct SecurityOriginData;
+class LocalStorageDatabaseTracker;
 class WebProcessProxy;
 
 class StorageManager : public CoreIPC::Connection::WorkQueueMessageReceiver {
@@ -88,6 +89,7 @@ private:
 
     String m_localStorageDirectory;
 
+    RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
     HashMap<uint64_t, RefPtr<LocalStorageNamespace> > m_localStorageNamespaces;
 
     class SessionStorageNamespace;
