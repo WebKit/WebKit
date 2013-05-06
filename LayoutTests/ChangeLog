@@ -1,3 +1,12 @@
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip remaining Shadow DOM test and new accessibility test introduced in
+        r115659.
+
+        * platform/efl/TestExpectations:
+
 2013-05-06  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] shape-inside rounded rectangle tests fail when subpixel layout is disabled

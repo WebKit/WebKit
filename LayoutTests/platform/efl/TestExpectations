@@ -368,6 +368,7 @@ perf/mouse-event.html [ WontFix ]
 # Shadow DOM is disabled.
 Bug(EFL) editing/shadow [ WontFix ]
 Bug(EFL) fast/dom/shadow [ WontFix ]
+Bug(EFL) editing/text-iterator/basic-iteration-shadowdom.html [ WontFix ]
 
 # Rounding issues when running on 32-bits machines.
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
@@ -1815,6 +1816,9 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
+
+# New accessibility test added in r149155 is failing.
+webkit.org/b/115659 accessibility/meter-element.html [ Failure ]
 
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
