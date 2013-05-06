@@ -61,6 +61,7 @@
        (subpath "/Library/Fonts")
        (subpath "/Library/Frameworks")
        (subpath "/Library/Managed Preferences")
+       (subpath "/Library/Speech/Synthesizers")
        (regex #"^/private/etc/(hosts|group|passwd)$")
 
        ;; System and user preferences
