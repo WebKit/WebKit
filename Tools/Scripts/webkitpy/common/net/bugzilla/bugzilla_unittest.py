@@ -336,6 +336,15 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=False, expected='+', username='reviewer@webkit.org')
         assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=True, expected='+', username='reviewer@webkit.org')
 
+    def test__check_create_bug_response(self):
+        bugzilla = Bugzilla()
+
+        title_html_bugzilla_323 = "<title>Bug 101640 Submitted</title>"
+        self.assertEqual(bugzilla._check_create_bug_response(title_html_bugzilla_323), '101640')
+
+        title_html_bugzilla_425 = "<title>Bug 101640 Submitted &ndash; Testing webkit-patch again</title>"
+        self.assertEqual(bugzilla._check_create_bug_response(title_html_bugzilla_425), '101640')
+
 
 class BugzillaQueriesTest(unittest.TestCase):
     _sample_request_page = """

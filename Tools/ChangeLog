@@ -1,3 +1,17 @@
+2013-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        webkit-patch: fix 'upload' command with Bugzilla 4.2.5
+        <http://webkit.org/b/115667>
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._check_create_bug_response): Update regex to work with
+        Bugzilla 3.2.3 and 4.2.5.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test__check_create_bug_response): Add new test that covers both
+        old and new <title> variations.
+
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [Flakiness Dashboard] Stop decoding SnowLeopard builder names into platforms

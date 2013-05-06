@@ -629,7 +629,7 @@ class Bugzilla(object):
 
     # FIXME: There has to be a more concise way to write this method.
     def _check_create_bug_response(self, response_html):
-        match = re.search("<title>Bug (?P<bug_id>\d+) Submitted</title>",
+        match = re.search("<title>Bug (?P<bug_id>\d+) Submitted[^<]*</title>",
                           response_html)
         if match:
             return match.group('bug_id')
