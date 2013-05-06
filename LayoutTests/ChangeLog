@@ -2,6 +2,18 @@
 
         Unreviewed EFL gardening.
 
+        Rebaseline several test cases for EFL port.
+
+        * platform/efl/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
+        * platform/efl/editing/selection/extend-inside-transforms-backward-expected.png: Added.
+        * platform/efl/editing/selection/extend-inside-transforms-backward-expected.txt: Added.
+        * platform/efl/fast/block/margin-collapse/block-inside-inline/025-expected.png:
+        * platform/efl/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Mark several test cases as failing after r149292 due to missing repaint rect
         dumping.
 
