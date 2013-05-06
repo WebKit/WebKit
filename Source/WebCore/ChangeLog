@@ -1,3 +1,37 @@
+2013-05-06  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [texmap] draw content if graphics layer displays a video
+        https://bugs.webkit.org/show_bug.cgi?id=114742
+
+        Reviewed by Noam Rosenthal.
+
+        Bug #86410 focuses on having composited/accelerated video using the
+        TextureMapper. But the video is not rendered fast by using the
+        repaint() method. In the case of the TextureMapper it is required to
+        call a content display as fast as possible.
+
+        This patch adds the class TextureMapperPlatformLayer::Client with the
+        method setLayerNeedsDisplay(). The GraphicsLayerTextureMapper
+        implements this new class and the new method calls
+        setContentsNeedsDisplay(), causing a faster content display when
+        requested.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia): sets itself
+        as the TextureMapperPlatformLayer's client
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::GraphicsLayerTextureMapper::setLayerNeedsDisplay):
+        TextureMapperPlatformLayer::Client::setLayerNeedsDisplay implementation
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (Client): New class
+        (WebCore::TextureMapperPlatformLayer::TextureMapperPlatformLayer):
+        (WebCore::TextureMapperPlatformLayer::setClient): client setter
+        (WebCore::TextureMapperPlatformLayer::setLayerNeedsDisplay): facade
+        for client's method
+
 2013-05-02  David Hyatt  <hyatt@apple.com>
 
         Improve the performance of RenderDeprecatedFlexibleBox.

@@ -31,6 +31,12 @@ namespace WebCore {
 
 class TextureMapperPlatformLayer {
 public:
+    class Client {
+    public:
+        virtual void setPlatformLayerNeedsDisplay() = 0;
+    };
+
+    TextureMapperPlatformLayer() : m_client(0) { }
     virtual ~TextureMapperPlatformLayer() { }
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) = 0;
     virtual void swapBuffers() { }
@@ -38,12 +44,22 @@ public:
     {
         textureMapper->drawBorder(color, borderWidth, targetRect, transform);
     }
+    void setClient(TextureMapperPlatformLayer::Client* client)
+    {
+        m_client = client;
+    }
 #if USE(GRAPHICS_SURFACE)
     virtual IntSize platformLayerSize() const { return IntSize(); }
     virtual uint32_t copyToGraphicsSurface() { return 0; }
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const { return GraphicsSurfaceToken(); }
     virtual GraphicsSurface::Flags graphicsSurfaceFlags() const { return  GraphicsSurface::SupportsTextureTarget | GraphicsSurface::SupportsSharing; }
 #endif
+
+protected:
+    TextureMapperPlatformLayer::Client* client() { return m_client; }
+
+private:
+    TextureMapperPlatformLayer::Client* m_client;
 };
 
 };

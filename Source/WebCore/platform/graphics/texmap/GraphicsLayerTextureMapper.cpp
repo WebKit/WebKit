@@ -383,6 +383,8 @@ void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* 
     GraphicsLayer::setContentsToMedia(media);
     notifyChange(ContentChange);
     m_contentsLayer = media;
+
+    m_contentsLayer->setClient(this);
 }
 
 void GraphicsLayerTextureMapper::setShowDebugBorder(bool show)

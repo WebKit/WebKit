@@ -24,12 +24,13 @@
 #include "GraphicsLayerClient.h"
 #include "Image.h"
 #include "TextureMapperLayer.h"
+#include "TextureMapperPlatformLayer.h"
 #include "TextureMapperTiledBackingStore.h"
 #include "Timer.h"
 
 namespace WebCore {
 
-class GraphicsLayerTextureMapper : public GraphicsLayer {
+class GraphicsLayerTextureMapper : public GraphicsLayer, public TextureMapperPlatformLayer::Client {
 public:
     explicit GraphicsLayerTextureMapper(GraphicsLayerClient*);
     virtual ~GraphicsLayerTextureMapper();
@@ -107,6 +108,8 @@ private:
     void updateBackingStoreIfNeeded();
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
+
+    virtual void setPlatformLayerNeedsDisplay() OVERRIDE { setContentsNeedsDisplay(); }
 
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.
