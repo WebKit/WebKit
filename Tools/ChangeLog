@@ -1,3 +1,19 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Flakiness Dashboard] Simplify builder-name-based platform recognition
+        https://bugs.webkit.org/show_bug.cgi?id=114957
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (determineBuilderPlatform): Renamed from nonChromiumPlatform.
+        (chromiumPlatform): Removed, unnecessary.
+        (platformAndBuildType): With Chromium builders are gone, meaning determineBuilderPlatform can be called by default
+        to determine the platform of the builder. No need to check for 'DBG' substring in the builder name to determine whether
+        the builder operates with debug builds, no webkit.org builders are named this way.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (platformAndBuildTypes): Remove Chromium-specific test cases, reducing the number of expected assertions this test will make.
+
 2013-05-06  Andy Estes  <aestes@apple.com>
 
         Added two files I neglected to commit in r149589.

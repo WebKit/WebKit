@@ -357,7 +357,7 @@ function determineWKPlatform(builderName, basePlatform)
     return basePlatform + (isWK2Builder ? '_WK2' : '_WK1');
 }
 
-function nonChromiumPlatform(builderNameUpperCase)
+function determineBuilderPlatform(builderNameUpperCase)
 {
     if (string.contains(builderNameUpperCase, 'WINDOWS 7'))
         return 'APPLE_WIN_WIN7';
@@ -376,45 +376,15 @@ function nonChromiumPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'EFL_LINUX');
 }
 
-function chromiumPlatform(builderNameUpperCase)
-{
-    if (string.contains(builderNameUpperCase, 'MAC')) {
-        if (string.contains(builderNameUpperCase, '10.7'))
-            return 'CHROMIUM_LION';
-        // The webkit.org 'Chromium Mac Release (Tests)' bot runs SnowLeopard.
-        return 'CHROMIUM_SNOWLEOPARD';
-    }
-    if (string.contains(builderNameUpperCase, 'WIN7'))
-        return 'CHROMIUM_WIN7';
-    if (string.contains(builderNameUpperCase, 'VISTA'))
-        return 'CHROMIUM_VISTA';
-    if (string.contains(builderNameUpperCase, 'WIN') || string.contains(builderNameUpperCase, 'XP'))
-        return 'CHROMIUM_XP';
-    if (string.contains(builderNameUpperCase, 'LINUX'))
-        return 'CHROMIUM_LUCID';
-    if (string.contains(builderNameUpperCase, 'ANDROID'))
-        return 'CHROMIUM_ANDROID';
-    // The interactive bot is XP, but doesn't have an OS in it's name.
-    if (string.contains(builderNameUpperCase, 'INTERACTIVE'))
-        return 'CHROMIUM_XP';
-}
-
-
 function platformAndBuildType(builderName)
 {
     if (!g_perBuilderPlatformAndBuildType[builderName]) {
         var builderNameUpperCase = builderName.toUpperCase();
-        
-        var platform = '';
-        if (g_history.isLayoutTestResults() && currentBuilderGroupName() == '@ToT - webkit.org' && !string.contains(builderNameUpperCase, 'CHROMIUM'))
-            platform = nonChromiumPlatform(builderNameUpperCase);
-        else
-            platform = chromiumPlatform(builderNameUpperCase);
-        
+        var platform = determineBuilderPlatform(builderNameUpperCase);
         if (!platform)
             console.error('Could not resolve platform for builder: ' + builderName);
 
-        var buildType = string.contains(builderNameUpperCase, 'DBG') || string.contains(builderNameUpperCase, 'DEBUG') ? 'DEBUG' : 'RELEASE';
+        var buildType = string.contains(builderNameUpperCase, 'DEBUG') ? 'DEBUG' : 'RELEASE';
         g_perBuilderPlatformAndBuildType[builderName] = {platform: platform, buildType: buildType};
     }
     return g_perBuilderPlatformAndBuildType[builderName];
