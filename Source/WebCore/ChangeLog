@@ -1,3 +1,26 @@
+2013-05-06  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r140907) - Backport blink r149612 to fix vertical-align and rowspan issue
+        https://bugs.webkit.org/show_bug.cgi?id=115611
+
+        Patch by Julien Chaffraix.
+        Reviewed by Benjamin Poulain.
+
+        Backport phttps://src.chromium.org/viewvc/blink?view=rev&revision=149612 from 
+        https://chromiumcodereview.appspot.com/14105010
+        
+        Fix the rows' height computation with vertical-align: baseline and rowspan.
+        r140907 was careful in avoiding updating the baseline descent for
+        spanning cells. However it still added the non-spanning cells baseline
+        descent to the spanning cells' row height computation.
+        This change avoids the previous issue by not adding the baseline
+        descent in this case.
+
+        Test: fast/table/baseline-align-rowspan.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2013-05-05  Anders Carlsson  <andersca@apple.com>
 
         Remove Vector::prepend

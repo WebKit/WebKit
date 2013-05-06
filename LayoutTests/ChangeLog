@@ -1,3 +1,13 @@
+2013-05-06  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r140907) - Backport blink r149612 to fix vertical-align and rowspan issue
+        https://bugs.webkit.org/show_bug.cgi?id=115611
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/table/baseline-align-rowspan-expected.txt: Added.
+        * fast/table/baseline-align-rowspan.html: Added.
+
 2013-05-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-checked not exposed correctly on menuitemcheckbox or menuitemradio roles
