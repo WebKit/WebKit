@@ -1,3 +1,15 @@
+2013-05-06  Andreas Kling  <akling@apple.com>
+
+        Flaky Test: fast/frames/crash-remove-iframe-during-object-beforeload.html
+        <http://webkit.org/b/115674>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't cache the Document::renderer() in a local since layout may blow it away.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
         More work on LocalStorageDatabaseTracker

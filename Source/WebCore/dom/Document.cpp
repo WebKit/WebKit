@@ -2448,7 +2448,6 @@ void Document::implicitClose()
     }
 
     frame()->loader()->checkCallImplicitClose();
-    RenderObject* renderObject = renderer();
     
     // We used to force a synchronous display and flush here.  This really isn't
     // necessary and can in fact be actively harmful if pages are loading at a rate of > 60fps
@@ -2458,25 +2457,25 @@ void Document::implicitClose()
         updateStyleIfNeeded();
         
         // Always do a layout after loading if needed.
-        if (view() && renderObject && (!renderObject->firstChild() || renderObject->needsLayout()))
+        if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
             view()->layout();
     }
 
     m_processingLoadEvent = false;
 
 #if PLATFORM(MAC)
-    if (f && renderObject && AXObjectCache::accessibilityEnabled()) {
+    if (f && renderer() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is 
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
-        axObjectCache()->getOrCreate(renderObject);
+        axObjectCache()->getOrCreate(renderer());
         if (this == topDocument())
-            axObjectCache()->postNotification(renderObject, AXObjectCache::AXLoadComplete, true);
+            axObjectCache()->postNotification(renderer(), AXObjectCache::AXLoadComplete, true);
         else {
             // AXLoadComplete can only be posted on the top document, so if it's a document
             // in an iframe that just finished loading, post AXLayoutComplete instead.
-            axObjectCache()->postNotification(renderObject, AXObjectCache::AXLayoutComplete, true);
+            axObjectCache()->postNotification(renderer(), AXObjectCache::AXLayoutComplete, true);
         }
     }
 #endif
