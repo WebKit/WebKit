@@ -6,6 +6,7 @@
 #include "SpellingHandler.h"
 
 #include "DOMSupport.h"
+#include "Frame.h"
 #include "InputHandler.h"
 #include "Range.h"
 #include "SpellChecker.h"
@@ -41,10 +42,20 @@ SpellingHandler::~SpellingHandler()
 {
 }
 
-void SpellingHandler::spellCheckTextBlock(const WebCore::VisibleSelection& visibleSelection, WebCore::TextCheckingProcessType textCheckingProcessType)
+void SpellingHandler::spellCheckTextBlock(const WebCore::Element* element, WebCore::TextCheckingProcessType textCheckingProcessType)
 {
     SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckTextBlock received request of type %s",
         textCheckingProcessType == TextCheckingProcessBatch ? "Batch" : "Incremental");
+
+    if (!(element->document() && element->document()->frame() && element->document()->frame()->selection()))
+        return;
+
+    VisiblePosition caretPosition = element->document()->frame()->selection()->start();
+    // Expand the range to include the previous line. This should handle cases when the user hits enter to finish composing a word and create a new line.
+    // Account for word wrapping by jumping to the start of the previous line, then moving to the start of any word which might be there.
+    VisibleSelection visibleSelection = VisibleSelection(
+        startOfWord(startOfLine(previousLinePosition(caretPosition, caretPosition.lineDirectionPointForBlockDirectionNavigation()))),
+        endOfWord(endOfLine(caretPosition)));
 
     // Check if this request can be sent off in one message, or if it needs to be broken down.
     RefPtr<Range> rangeForSpellChecking = visibleSelection.toNormalizedRange();

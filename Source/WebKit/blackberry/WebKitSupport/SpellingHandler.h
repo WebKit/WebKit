@@ -30,7 +30,7 @@ public:
     SpellingHandler(InputHandler*);
     ~SpellingHandler();
 
-    void spellCheckTextBlock(const WebCore::VisibleSelection&, const WebCore::TextCheckingProcessType);
+    void spellCheckTextBlock(const WebCore::Element*, const WebCore::TextCheckingProcessType);
     bool isSpellCheckActive() { return m_isSpellCheckActive; }
     void setSpellCheckActive(bool active) { m_isSpellCheckActive = active; }
 

@@ -630,16 +630,7 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
     if (requestLength >= MaxSpellCheckingStringLength) {
         // Cancel this request and send it off in newly created chunks.
         spellCheckRequest->didCancel();
-        if (m_currentFocusElement->document() && m_currentFocusElement->document()->frame() && m_currentFocusElement->document()->frame()->selection()) {
-            VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->start();
-            // Convert from position back to selection so we can expand the range to include the previous line. This should handle cases when the user hits
-            // enter to finish composing a word and create a new line. Account for word wrapping by jumping to the start of the previous line, then moving
-            // to the start of any word which might be there.
-            VisibleSelection visibleSelection = VisibleSelection(
-                startOfWord(startOfLine(previousLinePosition(caretPosition, caretPosition.lineDirectionPointForBlockDirectionNavigation()))),
-                endOfWord(endOfLine(caretPosition)));
-            m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessIncremental);
-        }
+        m_spellingHandler->spellCheckTextBlock(m_currentFocusElement.get(), TextCheckingProcessIncremental);
         return;
     }
 
@@ -1118,10 +1109,6 @@ void InputHandler::setElementFocused(Element* element)
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Focusing the field took %f seconds.", timer.elapsed());
 #endif
 
-    // Check if the field should be spellchecked.
-    if (!shouldSpellCheckElement(element) || !isActiveTextEdit())
-        return;
-
     // Spellcheck the field in its entirety.
     spellCheckTextBlock(element);
 
@@ -1139,8 +1126,12 @@ void InputHandler::spellCheckTextBlock(Element* element)
 
         element = m_currentFocusElement.get();
     }
-    const VisibleSelection visibleSelection = DOMSupport::visibleSelectionForFocusedBlock(element);
-    m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessBatch);
+
+    // Check if the field should be spellchecked.
+    if (!shouldSpellCheckElement(element) || !isActiveTextEdit())
+        return;
+
+    m_spellingHandler->spellCheckTextBlock(element, TextCheckingProcessBatch);
 }
 
 bool InputHandler::shouldSpellCheckElement(const Element* element) const

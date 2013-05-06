@@ -1,5 +1,31 @@
 2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
+        [BlackBerry] Reduce the spellcheck checking range
+        https://bugs.webkit.org/show_bug.cgi?id=115479
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR332773
+        Previously we were spellchecking the entire field on focus. If relayouting
+        occurred we rechecked this region, which is very costly. Switch to check
+        only a small region around the caret in both cases, which should alleviate
+        much of the delays experienced in very large contenteditable fields. This
+        allows for faster key input response and less time processing these requests
+        on the WebKit thread.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckTextBlock):
+        * WebKitSupport/SpellingHandler.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        * WebKitSupport/SpellingHandler.h:
+        (SpellingHandler):
+
+2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
         [BlackBerry] Use a more descriptive timer name
         https://bugs.webkit.org/show_bug.cgi?id=115481
 
