@@ -155,9 +155,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     addMessageReceiver(WebContextLegacyMessages::messageReceiverName(), this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
-#if ENABLE(BATTERY_STATUS)
-    m_batteryManagerProxy = WebBatteryManagerProxy::create(this);
-#endif
     m_iconDatabase = WebIconDatabase::create(this);
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy = WebNetworkInfoManagerProxy::create(this);
@@ -178,6 +175,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #endif
 #if USE(SOUP)
     addSupplement<WebSoupRequestManagerProxy>();
+#endif
+#if ENABLE(BATTERY_STATUS)
+    addSupplement<WebBatteryManagerProxy>();
 #endif
 
     contexts().append(this);
@@ -221,11 +221,6 @@ WebContext::~WebContext()
         it->value->contextDestroyed();
         it->value->clearContext();
     }
-
-#if ENABLE(BATTERY_STATUS)
-    m_batteryManagerProxy->invalidate();
-    m_batteryManagerProxy->clearContext();
-#endif
 
     m_iconDatabase->invalidate();
     m_iconDatabase->clearContext();
@@ -676,9 +671,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     for (; it != end; ++it)
         it->value->processDidClose(process);
 
-#if ENABLE(BATTERY_STATUS)
-    m_batteryManagerProxy->invalidate();
-#endif
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy->invalidate();
 #endif

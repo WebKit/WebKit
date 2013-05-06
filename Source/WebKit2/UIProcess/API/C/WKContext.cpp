@@ -46,6 +46,9 @@
 #if ENABLE(SQL_DATABASE)
 #include "WebDatabaseManagerProxy.h"
 #endif
+#if ENABLE(BATTERY_STATUS)
+#include "WebBatteryManagerProxy.h"
+#endif
 
 using namespace WebKit;
 
@@ -206,7 +209,7 @@ WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef co
 WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef contextRef)
 {
 #if ENABLE(BATTERY_STATUS)
-    return toAPI(toImpl(contextRef)->batteryManagerProxy());
+    return toAPI(toImpl(contextRef)->supplement<WebBatteryManagerProxy>());
 #else
     return 0;
 #endif

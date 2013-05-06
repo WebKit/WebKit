@@ -31,28 +31,37 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "WebBatteryProvider.h"
+#include "WebContextSupplement.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
 
 class WebContext;
 class WebBatteryStatus;
-class WebBatteryManagerProxy : public TypedAPIObject<APIObject::TypeBatteryManager>, private CoreIPC::MessageReceiver {
 
+class WebBatteryManagerProxy : public TypedAPIObject<APIObject::TypeBatteryManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
+    static const char* supplementName();
+
     static PassRefPtr<WebBatteryManagerProxy> create(WebContext*);
     virtual ~WebBatteryManagerProxy();
-
-    void invalidate();
-    void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKBatteryProvider*);
 
     void providerDidChangeBatteryStatus(const WTF::AtomicString&, WebBatteryStatus*);
     void providerUpdateBatteryStatus(WebBatteryStatus*);
 
+    using APIObject::ref;
+    using APIObject::deref;
+
 private:
     explicit WebBatteryManagerProxy(WebContext*);
+
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -62,7 +71,6 @@ private:
 
     bool m_isUpdating;
 
-    WebContext* m_context;
     WebBatteryProvider m_provider;
 };
 

@@ -34,30 +34,69 @@
 
 namespace WebKit {
 
+const char* WebBatteryManagerProxy::supplementName()
+{
+    return "WebBatteryManagerProxy";
+}
+
 PassRefPtr<WebBatteryManagerProxy> WebBatteryManagerProxy::create(WebContext* context)
 {
     return adoptRef(new WebBatteryManagerProxy(context));
 }
 
 WebBatteryManagerProxy::WebBatteryManagerProxy(WebContext* context)
-    : m_isUpdating(false)
-    , m_context(context)
+    : WebContextSupplement(context)
+    , m_isUpdating(false)
 {
-    m_context->addMessageReceiver(Messages::WebBatteryManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebBatteryManagerProxy::messageReceiverName(), this);
 }
 
 WebBatteryManagerProxy::~WebBatteryManagerProxy()
 {
 }
 
-void WebBatteryManagerProxy::invalidate()
+void WebBatteryManagerProxy::initializeProvider(const WKBatteryProvider* provider)
+{
+    m_provider.initialize(provider);
+}
+
+
+void WebBatteryManagerProxy::providerDidChangeBatteryStatus(const WTF::AtomicString& eventType, WebBatteryStatus* status)
+{
+    if (!context())
+        return;
+
+    context()->sendToAllProcesses(Messages::WebBatteryManager::DidChangeBatteryStatus(eventType, status->data()));
+}
+
+void WebBatteryManagerProxy::providerUpdateBatteryStatus(WebBatteryStatus* status)
+{
+    if (!context())
+        return;
+
+    context()->sendToAllProcesses(Messages::WebBatteryManager::UpdateBatteryStatus(status->data()));
+}
+
+// WebContextSupplement
+
+void WebBatteryManagerProxy::contextDestroyed()
 {
     stopUpdating();
 }
 
-void WebBatteryManagerProxy::initializeProvider(const WKBatteryProvider* provider)
+void WebBatteryManagerProxy::processDidClose(WebProcessProxy*)
 {
-    m_provider.initialize(provider);
+    stopUpdating();
+}
+
+void WebBatteryManagerProxy::refWebContextSupplement()
+{
+    APIObject::ref();
+}
+
+void WebBatteryManagerProxy::derefWebContextSupplement()
+{
+    APIObject::deref();
 }
 
 void WebBatteryManagerProxy::startUpdating()
@@ -76,22 +115,6 @@ void WebBatteryManagerProxy::stopUpdating()
 
     m_provider.stopUpdating(this);
     m_isUpdating = false;
-}
-
-void WebBatteryManagerProxy::providerDidChangeBatteryStatus(const WTF::AtomicString& eventType, WebBatteryStatus* status)
-{
-    if (!m_context)
-        return;
-
-    m_context->sendToAllProcesses(Messages::WebBatteryManager::DidChangeBatteryStatus(eventType, status->data()));
-}
-
-void WebBatteryManagerProxy::providerUpdateBatteryStatus(WebBatteryStatus* status)
-{
-    if (!m_context)
-        return;
-
-    m_context->sendToAllProcesses(Messages::WebBatteryManager::UpdateBatteryStatus(status->data()));
 }
 
 } // namespace WebKit

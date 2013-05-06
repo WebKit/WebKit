@@ -75,9 +75,6 @@ struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 
-#if ENABLE(BATTERY_STATUS)
-class WebBatteryManagerProxy;
-#endif
 #if ENABLE(NETWORK_INFO)
 class WebNetworkInfoManagerProxy;
 #endif
@@ -213,9 +210,6 @@ public:
     WebHistoryClient& historyClient() { return m_historyClient; }
     WebContextClient& client() { return m_client; }
 
-#if ENABLE(BATTERY_STATUS)
-    WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
-#endif
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManagerProxy* networkInfoManagerProxy() const { return m_networkInfoManagerProxy.get(); }
@@ -434,9 +428,6 @@ private:
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
-#if ENABLE(BATTERY_STATUS)
-    RefPtr<WebBatteryManagerProxy> m_batteryManagerProxy;
-#endif
     RefPtr<WebIconDatabase> m_iconDatabase;
 #if ENABLE(NETWORK_INFO)
     RefPtr<WebNetworkInfoManagerProxy> m_networkInfoManagerProxy;
