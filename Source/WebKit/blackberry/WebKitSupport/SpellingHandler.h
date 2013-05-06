@@ -42,7 +42,7 @@ private:
 
     InputHandler* m_inputHandler;
 
-    WebCore::Timer<SpellingHandler> m_timer;
+    WebCore::Timer<SpellingHandler> m_iterationDelayTimer;
     WebCore::VisiblePosition m_startPosition;
     WebCore::VisiblePosition m_endPosition;
     WebCore::VisiblePosition m_cachedEndPosition;

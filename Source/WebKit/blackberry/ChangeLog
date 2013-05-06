@@ -1,3 +1,21 @@
+2013-05-06  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Use a more descriptive timer name
+        https://bugs.webkit.org/show_bug.cgi?id=115481
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        Changing m_timer to m_iterationDelayTimer.
+
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::SpellingHandler):
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+        * WebKitSupport/SpellingHandler.h:
+        (SpellingHandler):
+
 2013-05-04  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Clean up unused spellcheck code

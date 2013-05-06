@@ -32,7 +32,7 @@ namespace WebKit {
 
 SpellingHandler::SpellingHandler(InputHandler* inputHandler)
     : m_inputHandler(inputHandler)
-    , m_timer(this, &SpellingHandler::parseBlockForSpellChecking)
+    , m_iterationDelayTimer(this, &SpellingHandler::parseBlockForSpellChecking)
     , m_isSpellCheckActive(false)
 {
 }
@@ -57,8 +57,8 @@ void SpellingHandler::spellCheckTextBlock(const WebCore::VisibleSelection& visib
     // from a previously focused element.
     if (m_textCheckingProcessType == TextCheckingProcessBatch) {
         // If a previous request is being processed, stop it before continueing.
-        if (m_timer.isActive())
-            m_timer.stop();
+        if (m_iterationDelayTimer.isActive())
+            m_iterationDelayTimer.stop();
     }
 
     m_isSpellCheckActive = true;
@@ -79,7 +79,7 @@ void SpellingHandler::spellCheckTextBlock(const WebCore::VisibleSelection& visib
     m_endOfRange = visibleSelection.visibleEnd();
     m_cachedEndPosition = m_endOfRange;
 
-    m_timer.startOneShot(0);
+    m_iterationDelayTimer.startOneShot(0);
 }
 
 void SpellingHandler::createSpellCheckRequest(const PassRefPtr<WebCore::Range> rangeForSpellCheckingPtr)
@@ -122,7 +122,7 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
         }
 
         incrementSentinels(false /* shouldIncrementStartPosition */);
-        m_timer.startOneShot(s_timeout);
+        m_iterationDelayTimer.startOneShot(s_timeout);
         return;
     }
 
@@ -131,7 +131,7 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
         createSpellCheckRequest(rangeForSpellChecking);
 
     if (isSpellCheckActive())
-        m_timer.startOneShot(s_timeout);
+        m_iterationDelayTimer.startOneShot(s_timeout);
 }
 
 PassRefPtr<Range> SpellingHandler::handleOversizedRange()
