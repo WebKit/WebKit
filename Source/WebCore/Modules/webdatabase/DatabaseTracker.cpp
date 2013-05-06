@@ -77,8 +77,6 @@ DatabaseTracker::DatabaseTracker(const String& databasePath)
     : m_client(0)
 {
     setDatabaseDirectoryPath(databasePath);
-    
-    SQLiteFileSystem::registerSQLiteVFS();
 }
 
 void DatabaseTracker::setDatabaseDirectoryPath(const String& path)

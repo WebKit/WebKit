@@ -1,3 +1,15 @@
+2013-05-05  Sam Weinig  <sam@webkit.org>
+
+        Remove empty function SQLiteFileSystem::registerSQLiteVFS() and its callers
+        https://bugs.webkit.org/show_bug.cgi?id=115619
+
+        Reviewed by Dan Bernstein.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        * platform/sql/SQLiteFileSystem.cpp:
+        * platform/sql/SQLiteFileSystem.h:
+        * storage/StorageTracker.cpp:
+
 2013-05-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-checked not exposed correctly on menuitemcheckbox or menuitemradio roles

@@ -44,9 +44,6 @@ class SQLiteDatabase;
 // by the WebKit database code.
 class SQLiteFileSystem {
 public:
-    // Registers a user-defined SQLite VFS.
-    static void registerSQLiteVFS();
-
     // Opens a database file.
     //
     // fileName - The name of the database file.

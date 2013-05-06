@@ -72,7 +72,6 @@ void StorageTracker::internalInitialize()
     // FIXME (<rdar://problem/9127819>): Is there a more explicit way of doing this besides accessing the UTF8Encoding?
     UTF8Encoding();
     
-    SQLiteFileSystem::registerSQLiteVFS();
     storageTracker->setIsActive(true);
     storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
