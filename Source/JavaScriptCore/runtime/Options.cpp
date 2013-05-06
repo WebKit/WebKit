@@ -245,6 +245,7 @@ bool Options::setOption(const char* arg)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_)    \
     if (!strncmp(arg, #name_, equalStr - arg)) {        \
         type_ value;                                    \
+        value = 0;                                      \
         bool success = parse(valueStr, value);          \
         if (success) {                                  \
             name_() = value;                            \

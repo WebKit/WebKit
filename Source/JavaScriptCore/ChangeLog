@@ -1,3 +1,16 @@
+2013-05-06  Andras Becsi  <andras.becsi@digia.com>
+
+        Build with GCC 4.8 fails because of -Wmaybe-uninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=115648
+
+        Reviewed by Michael Saboff.
+
+        Initialize values in Options::setOption since from
+        there we end up calling OptionRange::init with
+        uninitialized members.
+
+        * runtime/Options.cpp:
+
 2013-05-06  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         JSC ARM traditional failing on Octane NavierStokes test
