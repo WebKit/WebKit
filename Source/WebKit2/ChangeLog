@@ -1,3 +1,40 @@
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Write storage changes to disk
+        https://bugs.webkit.org/show_bug.cgi?id=115660
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        Initialize new member variables.
+
+        (WebKit::LocalStorageDatabase::tryToOpenDatabase):
+        Disable database threading checks.
+
+        (WebKit::LocalStorageDatabase::importItems):
+        Only import the items once.
+
+        (WebKit::LocalStorageDatabase::setItem):
+        Call itemDidChange.
+
+        (WebKit::LocalStorageDatabase::itemDidChange):
+        Record the change and schedule a database update.
+
+        (WebKit::LocalStorageDatabase::scheduleDatabaseUpdate):
+        Use WorkQueue::dispatchAfterDelay to schedule a datbase update.
+
+        (WebKit::LocalStorageDatabase::updateDatabase):
+        Write changes to disk. If there are more than 100 pending items, only write the first 100 and then schedule
+        another database update for the remaining items.
+
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        Add new member variables.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::setItem):
+        Call LocalStorageDatabase::setItem.
+
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Make the WebBatteryManagerProxy a supplement to the WebContext

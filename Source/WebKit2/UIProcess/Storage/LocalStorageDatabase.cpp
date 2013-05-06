@@ -37,6 +37,10 @@
 
 using namespace WebCore;
 
+static const double databaseUpdateIntervalInSeconds = 1.0;
+
+static const int maximumItemsToUpdate = 100;
+
 namespace WebKit {
 
 PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(const String& databaseFilename, PassRefPtr<WorkQueue> queue)
@@ -48,6 +52,8 @@ LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassR
     : m_databaseFilename(databaseFilename)
     , m_queue(queue)
     , m_failedToOpenDatabase(false)
+    , m_didImportItems(false)
+    , m_didScheduleDatabaseUpdate(false)
 {
 }
 
@@ -82,6 +88,10 @@ bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStra
         LOG_ERROR("Failed to open database file %s for local storage", m_databaseFilename.utf8().data());
         return false;
     }
+
+    // Since a WorkQueue isn't bound to a specific thread, we have to disable threading checks
+    // even though we never access the database from different threads simultaneously.
+    m_database.disableThreadingChecks();
 
     if (!migrateItemTableIfNeeded()) {
         // We failed to migrate the item table. In order to avoid trying to migrate the table over and over,
@@ -138,8 +148,15 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
 
 void LocalStorageDatabase::importItems(StorageMap& storageMap)
 {
+    if (m_didImportItems)
+        return;
+
     // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
+
+    // We set this to true even if we don't end up importing any items due to failure because
+    // there's really no good way to recover other than not importing anything.
+    m_didImportItems = true;
 
     openDatabase(SkipIfNonExistent);
     if (!m_database.isOpen())
@@ -165,6 +182,89 @@ void LocalStorageDatabase::importItems(StorageMap& storageMap)
     }
 
     storageMap.importItems(items);
+}
+
+void LocalStorageDatabase::setItem(const String& key, const String& value)
+{
+    itemDidChange(key, value);
+}
+
+void LocalStorageDatabase::itemDidChange(const String& key, const String& value)
+{
+    m_changedItems.set(key, value);
+    scheduleDatabaseUpdate();
+}
+
+void LocalStorageDatabase::scheduleDatabaseUpdate()
+{
+    if (m_didScheduleDatabaseUpdate)
+        return;
+
+    m_didScheduleDatabaseUpdate = true;
+    m_queue->dispatchAfterDelay(bind(&LocalStorageDatabase::updateDatabase, this), databaseUpdateIntervalInSeconds);
+}
+
+void LocalStorageDatabase::updateDatabase()
+{
+    ASSERT(m_didScheduleDatabaseUpdate);
+
+    m_didScheduleDatabaseUpdate = false;
+
+    // FIXME: Handle clearing.
+
+    HashMap<String, String> changedItems;
+    if (m_changedItems.size() > maximumItemsToUpdate) {
+        for (int i = 0; i < maximumItemsToUpdate; ++i) {
+            auto it = m_changedItems.begin();
+            changedItems.add(it->key, it->value);
+
+            m_changedItems.remove(it);
+        }
+
+        // Reschedule the update for the remaining items.
+        scheduleDatabaseUpdate();
+    } else {
+        // There are few enough changed items that we can just always write all of them.
+        m_changedItems.swap(changedItems);
+    }
+
+    ASSERT(changedItems.size() <= maximumItemsToUpdate);
+
+    SQLiteStatement insertStatement(m_database, "INSERT INTO ItemTable VALUES (?, ?)");
+    if (insertStatement.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
+        return;
+    }
+
+    SQLiteStatement deleteStatement(m_database, "DELETE FROM ItemTable WHERE key=?");
+    if (deleteStatement.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare delete statement - cannot write to local storage database");
+        return;
+    }
+
+    SQLiteTransaction transaction(m_database);
+    transaction.begin();
+
+    for (auto it = changedItems.begin(), end = changedItems.end(); it != end; ++it) {
+        // A null value means that the key/value pair should be deleted.
+        SQLiteStatement& statement = it->value.isNull() ? deleteStatement : insertStatement;
+
+        statement.bindText(1, it->key);
+
+        // If we're inserting a key/value pair, bind the value as well.
+        if (!it->value.isNull())
+            statement.bindBlob(2, it->value);
+
+        int result = statement.step();
+        if (result != SQLResultDone) {
+            LOG_ERROR("Failed to update item in the local storage database - %i", result);
+            break;
+        }
+
+        statement.reset();
+    }
+
+    transaction.commit();
 }
 
 } // namespace WebKit

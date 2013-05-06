@@ -28,6 +28,7 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -47,6 +48,8 @@ public:
     // Will block until the import is complete.
     void importItems(WebCore::StorageMap&);
 
+    void setItem(const String& key, const String& value);
+
 private:
     LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>);
 
@@ -59,13 +62,20 @@ private:
 
     bool migrateItemTableIfNeeded();
 
-    void performImport();
+    void itemDidChange(const String& key, const String& value);
+
+    void scheduleDatabaseUpdate();
+    void updateDatabase();
 
     String m_databaseFilename;
     RefPtr<WorkQueue> m_queue;
 
     WebCore::SQLiteDatabase m_database;
     bool m_failedToOpenDatabase;
+    bool m_didImportItems;
+
+    bool m_didScheduleDatabaseUpdate;
+    HashMap<String, String> m_changedItems;
 };
 
 

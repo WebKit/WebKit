@@ -153,8 +153,13 @@ void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection,
     if (newStorageMap)
         m_storageMap = newStorageMap.release();
 
-    if (!quotaException)
-        dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
+    if (quotaException)
+        return;
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->setItem(key, value);
+
+    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
 }
 
 void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
