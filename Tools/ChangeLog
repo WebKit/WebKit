@@ -1,5 +1,18 @@
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Flakiness Dashboard] Update expected outcome in a couple of unit tests after r148778
+        https://bugs.webkit.org/show_bug.cgi?id=114988
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js: Update the expected platforms list, the Chromium
+        and Apple Mac Snow Leopard platforms were removed with the Apple Mac Mountain Lion platform being added.
+        * TestResultServer/static-dashboards/loader_unittests.js: Update the list of the expected loaded expectations platforms,
+        mac-snowleopard isn't loaded anymore due to the support for the platform being removed, while the mac-wk2 is loaded twice,
+        once for the Apple Mac Lion and once for the Apple Mac Mountain Lion platform.
+
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [Flakiness Dashboard] Remove the remaining traces of platform modifier unions
         https://bugs.webkit.org/show_bug.cgi?id=114954
 
