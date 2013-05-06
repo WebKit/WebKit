@@ -171,8 +171,8 @@ test('platformAndBuildType', 30, function() {
 });
 
 test('realModifiers', 3, function() {
-    equal(realModifiers('BUG(Foo) LINUX LION WIN DEBUG SLOW'), 'SLOW');
-    equal(realModifiers('BUG(Foo) LUCID MAC XP RELEASE SKIP'), 'SKIP');
+    equal(realModifiers('BUG(Foo) DEBUG SLOW'), 'SLOW');
+    equal(realModifiers('BUG(Foo) RELEASE'), '');
     equal(realModifiers('BUG(Foo)'), '');
 });
 

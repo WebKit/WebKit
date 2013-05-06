@@ -816,33 +816,6 @@ function processExpectationsForPlatform(platformObject, platformName, expectatio
         var modifiers = expectationsArray[i].modifiers;
         var expectations = expectationsArray[i].expectations;
 
-        var shouldProcessExpectation = false;
-        var hasPlatformModifierUnions = false;
-        if (platformObject.fallbackPlatforms) {
-            platformObject.fallbackPlatforms.forEach(function(fallbackPlatform) {
-                if (shouldProcessExpectation)
-                    return;
-
-                var fallbackPlatformObject = platformObjectForName(fallbackPlatform);
-                if (!fallbackPlatformObject.platformModifierUnions)
-                    return;
-
-                modifiers.split(' ').forEach(function(modifier) {
-                    if (modifier in fallbackPlatformObject.platformModifierUnions) {
-                        hasPlatformModifierUnions = true;
-                        if (fallbackPlatformObject.platformModifierUnions[modifier].indexOf(platformName) != -1)
-                            shouldProcessExpectation = true;
-                    }
-                });
-            });
-        }
-
-        if (!hasPlatformModifierUnions)
-            shouldProcessExpectation = true;
-
-        if (!shouldProcessExpectation)
-            continue;
-
         getAllTestsTrie().forEach(function(triePath) {
             addTestToAllExpectationsForPlatform(triePath, platformName, expectations, modifiers);
         }, path);
@@ -1565,29 +1538,7 @@ function realModifiers(modifierString)
 {
     var modifiers = modifierString.split(' ');;
     return modifiers.filter(function(modifier) {
-        if (modifier in BUILD_TYPES || string.startsWith(modifier, 'BUG'))
-            return false;
-
-        var matchesPlatformOrUnion = false;
-        traversePlatformsTree(function(platform, platformName) {
-            if (matchesPlatformOrUnion)
-                return;
-
-            if (platform.fallbackPlatforms) {
-                platform.fallbackPlatforms.forEach(function(fallbackPlatform) {
-                    if (matchesPlatformOrUnion)
-                        return;
-
-                    var fallbackPlatformObject = platformObjectForName(fallbackPlatform);
-                    if (!fallbackPlatformObject.platformModifierUnions)
-                        return;
-
-                    matchesPlatformOrUnion = modifier in fallbackPlatformObject.subPlatforms || modifier in fallbackPlatformObject.platformModifierUnions;
-                });
-            }
-        });
-
-        return !matchesPlatformOrUnion;
+        return !(modifier in BUILD_TYPES || string.startsWith(modifier, 'BUG'));
     }).join(' ');
 }
 
