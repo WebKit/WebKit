@@ -1,5 +1,14 @@
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed EFL gardening.
+
+        Remove duplicate Shadow DOM test cases from TestExpectation files.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Unreviewed. Remove duplicate tests from EFL TestExpectation files.
 
         * platform/efl-wk2/TestExpectations:

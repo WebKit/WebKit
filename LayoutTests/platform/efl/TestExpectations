@@ -398,8 +398,6 @@ webkit.org/b/86623 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/86623 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/86623 editing/selection/drag-text-delay.html [ Failure ]
 webkit.org/b/86623 fast/block/positioning/hittest-on-relative-positioned-children.html
-webkit.org/b/86623 fast/dom/shadow/drop-event-for-input-in-shadow.html [ Failure ]
-webkit.org/b/86623 fast/dom/shadow/drop-event-in-shadow.html [ Failure ]
 webkit.org/b/86623 fast/events/5056619.html
 webkit.org/b/86623 fast/events/bogus-dropEffect-effectAllowed.html
 webkit.org/b/86623 fast/events/click-count.html
@@ -856,7 +854,6 @@ Bug(EFL) fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 # EFL's EventSender does not implement gesture-related callbacks
 Bug(EFL) fast/events/touch/gesture
 Bug(EFL) fast/events/touch/page-scaled-touch-gesture-click.html
-Bug(EFL) fast/dom/shadow/gesture-tap.html
 
 # EventSender.beginDragWithFiles is not implemented
 webkit.org/b/84333 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Failure ]
@@ -1347,24 +1344,6 @@ webkit.org/b/86597 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Failure ]
 webkit.org/b/86187 media/media-fullscreen-inline.html
 
-# Selection problem in Shadow DOM test (passes on GTK)
-Bug(EFL) fast/dom/shadow/selections-in-shadow.html [ Failure ]
-
-# Shadow DOM for replaced elements is not rendered correctly yet.
-webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ ImageOnlyFailure Pass ]
-webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/95439 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/95439 fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html [ ImageOnlyFailure ]
-
-# a:enabled and area:enabled are not correctly implemented yet.
-webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ ImageOnlyFailure ]
-webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
-
 # This test is specific to QuickTime media engine.
 Bug(EFL) media/video-does-not-loop.html
 
@@ -1732,9 +1711,6 @@ webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 # empty position:fixed element gets a layer. Should not happen after r141039
 webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ Failure ]
 
-# Test introduced in r143191 and failing on EFL port.
-webkit.org/b/110109 fast/dom/shadow/shadow-dom-event-dispatching-distributed-child.html [ Failure ]
-
 webkit.org/b/67921 [ Release ] perf/show-hide-table-rows.html [ Failure Pass Slow ]
 
 # Spellchecker behavior tests.
@@ -1763,9 +1739,6 @@ webkit.org/b/109950 fast/dom/Window/webkitConvertPoint.html [ Failure ]
 
 # Failing after r142758.
 webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
-
-# Newly added test in r142855 is failing.
-webkit.org/b/109949 fast/dom/shadow/distributed-pseudo-element-scoped.html [ ImageOnlyFailure ]
 
 # Newly added test in r142979 is failing.
 webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
@@ -1866,46 +1839,3 @@ webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 webkit.org/b/115419 media/video-poster-background.html [ ImageOnlyFailure ]
 
-# Failing after r149504.
-webkit.org/b/115549 fast/dom/shadow/content-reprojection-complex.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/content-reprojection-fallback-reprojection.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/content-reprojection-fallback.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/content-reprojection-order.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distributed-pseudo-element-nested.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distributed-pseudo-element-reprojection.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distributed-pseudo-element-specifiers-in-left-side.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distribution-attribute-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distribution-className-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/distribution-id-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/no-style-sharing-with-distributed-nodes.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-checked-input.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-disabled-button.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-disabled-fieldset.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-disabled-input.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-disabled-select.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-disabled-textarea.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-enabled-button.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-enabled-fieldset.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-enabled-input.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-enabled-select.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-enabled-textarea.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-indeterminate-input.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-indeterminate-progress.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-link-anchor.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-link-area.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-target.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-visited-anchor.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/pseudoclass-update-visited-area.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/reprojection-attribute-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/reprojection-className-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/reprojection-id-modified.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-contents-select.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-reprojection-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-reprojection-fallback.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-reprojection.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-reprojection2.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadow-root-resetStyleInheritance.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadowdom-for-button-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadowdom-reprojection-1.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadowdom-reprojection-2.html [ ImageOnlyFailure ]
-webkit.org/b/115549 fast/dom/shadow/shadowroot-of-insertionpoint.html [ ImageOnlyFailure ]
