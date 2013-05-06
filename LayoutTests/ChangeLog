@@ -1,3 +1,11 @@
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip Shadow DOM tests for EFL port as the feature is being removed.
+
+        * platform/efl/TestExpectations:
+
 2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

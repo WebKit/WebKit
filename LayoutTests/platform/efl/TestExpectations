@@ -365,6 +365,10 @@ perf/array-binary-search.html [ WontFix ]
 perf/array-nested-loop.html [ WontFix ]
 perf/mouse-event.html [ WontFix ]
 
+# Shadow DOM is disabled.
+Bug(EFL) editing/shadow [ WontFix ]
+Bug(EFL) fast/dom/shadow [ WontFix ]
+
 # Rounding issues when running on 32-bits machines.
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
