@@ -6084,6 +6084,9 @@ platform_sources += \
 	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
 	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
@@ -6181,9 +6184,6 @@ webcoregtk_sources += \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
-	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
-	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
-	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \

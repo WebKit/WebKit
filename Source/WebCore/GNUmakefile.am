@@ -114,7 +114,6 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/page/gtk \
 	-I$(srcdir)/Source/WebCore/platform/cairo \
 	-I$(srcdir)/Source/WebCore/platform/audio/gstreamer \
-	-I$(srcdir)/Source/WebCore/platform/geoclue \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/Source/WebCore/platform/graphics/freetype \
 	-I$(srcdir)/Source/WebCore/platform/graphics/glx \

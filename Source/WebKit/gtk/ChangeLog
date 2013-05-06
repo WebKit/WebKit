@@ -1,3 +1,12 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move GeolocationProviderGeoclue into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115591
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add platform_webcore_cppflags to the list of libwebkitgtk's CPPFLAGS.
+
 2013-05-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Segmentation Fault with Romanian locale. Evolution not starting.

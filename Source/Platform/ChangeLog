@@ -1,3 +1,13 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move GeolocationProviderGeoclue into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115591
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: List the Source/WebCore/platform/geoclue directory under platform_webcore_cppflags.
+        Add Geoclue dependency CPPFLAGS to the list of libPlatform's CPPFLAGS.
+
 2013-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move image decoders, some other GStreamer, Cairo and Soup sources to libPlatform

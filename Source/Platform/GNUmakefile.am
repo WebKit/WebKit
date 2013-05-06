@@ -24,6 +24,7 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/animation \
 	-I$(srcdir)/Source/WebCore/platform/audio \
 	-I$(srcdir)/Source/WebCore/platform/cairo \
+	-I$(srcdir)/Source/WebCore/platform/geoclue \
 	-I$(srcdir)/Source/WebCore/platform/graphics \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
@@ -66,6 +67,7 @@ libPlatform_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 

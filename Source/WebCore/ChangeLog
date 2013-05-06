@@ -1,3 +1,15 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move GeolocationProviderGeoclue into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115591
+
+        Reviewed by Martin Robinson.
+
+        No new tests - no new functionality.
+
+        * GNUmakefile.am: Remove the Source/WebCore/platform/geoclue directory from the webkitgtk_cppflags list.
+        * GNUmakefile.list.am: Move the GeolocationProviderGeoclue(Client) sources under platform_sources.
+
 2013-05-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Win] Unreviewed buildfix after r149579.
