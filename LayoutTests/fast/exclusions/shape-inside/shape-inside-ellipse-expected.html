@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/subpixel-utils.js"></script>
 <style>
     #shape-inside {
         position: relative;
@@ -15,9 +16,9 @@
     }
 
     #shape-content {
+        top: 130.435px;
+        left: 130.975px;
         position: absolute;
-        top: 130px;
-        left: 131px;
         font: 178px/1 Ahem, sans-serif;
         color: green;
     }
@@ -31,4 +32,10 @@
         </svg>
     </div>
 </body>
+<script>
+if (!SubPixelLayout.isEnabled()) {
+    document.getElementById("shape-content").style.left = "128px";
+    document.getElementById("shape-content").style.top = "131px";
+}
+</script>
 </html>

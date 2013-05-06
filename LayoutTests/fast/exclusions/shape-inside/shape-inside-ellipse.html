@@ -8,8 +8,9 @@
 <style>
     /* The Ahem font's size is equal to a little less than the size of the largest square that will 
        fit within the ellipse.  Solving the ellipse equation when x = y, produces the size of the 
-       square: 2 * rx * ry / sqrt(rx^2 + ry^2).  For rx=200 and ry=100, that's 178.885.  I've reduced
-       the value to 178 so non-subpixel layout truncation will not change the layout.
+       square: 2 * rx * ry / sqrt(rx^2 + ry^2).  For rx=200 and ry=100, that's 178.885.  To eliminate
+       the impact of subpixel layout on the square's size (but not it's origin), we've reduced its
+       size to 178.
     */
     #shape-inside {
         position: relative;

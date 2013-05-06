@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/subpixel-utils.js"></script>
 <style>
     #shape-inside {
         position: relative;
@@ -38,4 +39,13 @@
         </svg>
     </div>
 </body>
+
+<script>
+// The ExclusionShape::firstIncludedIntervalLogicalTop() methods use ceiledLayoutUnit() to ensure that their 
+// return value is within the shape. If subpixel layout is disabled, that's the same as just ceil(), which 
+// move the top of the "shape-content" div to ceil(129.289) = 130.
+if (!SubPixelLayout.isEnabled())
+    document.getElementById("shape-content").style.top = "130px";
+</script>
+
 </html>

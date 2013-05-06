@@ -1,3 +1,22 @@
+2013-05-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] shape-inside rounded rectangle tests fail when subpixel layout is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115490
+
+        Second round of changes to restore platform/mac exclusion tests that started failing when
+        subpixel layout was turned off. This set of changes just restores four ref-tests that place
+        a single square Ahem character cell within a circle or an ellipse. When subpixel layout isn't
+        enabled the expected origin of the character is adjusted.
+
+        Reviewed by Dirk Schulze.
+
+        * fast/exclusions/shape-inside/shape-inside-circle-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-circle-padding-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-ellipse-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-ellipse-padding-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-ellipse.html:
+        * platform/mac/TestExpectations:
+
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.
