@@ -1,3 +1,14 @@
+2013-05-06  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13775921> Switch off a deprecated API.
+
+        Reviewed by Oliver Hunt.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled): When disabling process suppression,
+        begin an activity that doesn't disable idle sleep, sudden termination or automatic termination.
+        When enabling process suppression, end the activity.
+
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
         Move local storage directory handling to LocalStorageDatabaseTracker

@@ -65,13 +65,13 @@ void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
     if (this->processSuppressionEnabled() == processSuppressionEnabled)
         return;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (processSuppressionEnabled)
+    if (processSuppressionEnabled) {
+        [[NSProcessInfo processInfo] endActivity:m_processSuppressionAssertion.get()];
         m_processSuppressionAssertion.clear();
-    else
-        m_processSuppressionAssertion = [[NSProcessInfo processInfo] beginSuspensionOfSystemBehaviors:WKProcessSuppressionSystemBehaviors reason:@"Process Suppression Disabled"];
-#pragma clang diagnostic pop
+    } else {
+        NSActivityOptions options = NSActivityUserInitiatedAllowingIdleSystemSleep & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
+        m_processSuppressionAssertion = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"Process Suppression Disabled"];
+    }
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
