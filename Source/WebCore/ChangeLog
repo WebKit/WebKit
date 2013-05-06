@@ -1,3 +1,78 @@
+2013-05-06  Antoine Quint  <graouts@apple.com>
+
+        Manage the presentation of the snapshotted plug-in using JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=115548
+
+        Reviewed by Dean Jackson.
+
+        * Resources/plugIns.js:
+        (createOverlay):
+        Implement the createOverlay(shadowRoot, titleText, subtitleText) method
+        that is called from WebCore (HTMLPlugInImageElement::didAddUserAgentShadowRoot)
+        to allow the injected script to customize the shadow root for a snapshotted
+        plug-in. This is a default implementation, clients are expected to customize
+        this by providing their own JS file with enhanced behavior.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        Since we no longer have a default shadow tree generated in C++, it makes little
+        sense for clients to extend the default snapshotted plug-in stylesheet, so we
+        only insert it if no custom one is provided by the chrome client.
+
+        * css/plugIns.css:
+        Better styling of the default snapshotted plug-in overlay look by using CSS
+        flex boxes. Also using more explicit selector as an optimization.
+
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        Expose a new method to allow HTMLPlugInImageElement instances to ensure that
+        the JavaScript code required to customize the snapshotted plug-in's shadow root
+        is indeed injected in the current document. The actual injection would only
+        happen once per document so all snapshotted plug-ins share the same scripting
+        context.
+
+        * dom/Document.h:
+        Expose the new ensurePlugInsInjectedScript method and the m_hasInjectedPlugInsScript
+        property used to ensure injection happens only once per document.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::titleText):
+        (WebCore::subtitleText):
+        Store the localized strings for each mime-type in a static hash map as it can be
+        costly to retrieve them each time from the client. It is expected the chrome client
+        will want to provide localized strings taking into account the snapshotted plug-in's
+        mime-type, so we're adding this as a parameter.
+        (WebCore::HTMLPlugInImageElement::checkSnapshotStatus):
+        Dispatch a "resize" event to the shadow root to notify the injected script that the
+        snapshotted plug-in's metrics have changed and to allow the overlay to update itself
+        as a result.
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        Remove all the DOM generation code in favor of an approach where we create a shared
+        DOM scripting world in which we inject JavaScript code that will perform the same
+        task but will additionally be provided by the client in order to provide a completely
+        custom overlay for the snapshotted plug-in. The sole contract is for the JavaScript
+        to implement a createOverlay(shadowRoot, titleText, subtitleText) method.
+        (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay):
+        Renamed method to be generic to the overlay as opposed to text labels and use the
+        element with CSS class name "snapshot-overlay" as the comparison node.
+
+        * html/HTMLPlugInImageElement.h:
+        (HTMLPlugInImageElement):
+        Removing a couple of unused members since we no longer generate the shadow DOM from C++
+        and rename the partOfSnapshotLabel method to partOfSnapshotOverlay.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::plugInStartLabelTitle):
+        (WebCore::ChromeClient::plugInStartLabelSubtitle):
+        (WebCore::ChromeClient::plugInExtraScript):
+        Pass in the mime-type to plugInStartLabelTitle and plugInStartLabelSubtitle and expose
+        a new plugInExtraScript method to allow the chrome client to provide a custom JS file
+        for the management of the shadow root.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::handleEvent):
+        Update the terminology from "label" to "overlay" per the changes made in HTMLPlugInImageElement.
+
 2013-05-06  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r140907) - Backport blink r149612 to fix vertical-align and rowspan issue

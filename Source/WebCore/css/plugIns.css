@@ -29,20 +29,19 @@
  * with the following structure:
  *
  * <object>
- *   #ShadowRoot
- *     <div class="snapshot-container">
- *       <div class="snapshot-overlay"></div> <!-- e.g. for dimming content -->
- *         <div class="snapshot-label">
- *           <div class="snapshot-title">Snapshotted Plug-In</div>
- *           <div class="snapshot-subtitle">Click to restart</div>
+ *     #ShadowRoot
+ *         <div pseudo="-webkit-snapshotted-plugin-content">
+ *             <div class="snapshot-overlay" aria-label="[Title]: [Subtitle]" role="button">
+ *                 <div class="snapshot-label">
+ *                     <div class="snapshot-title">[Title]</div>
+ *                     <div class="snapshot-subtitle">[Subtitle]</div>
+ *                 </div>
+ *             </div>
  *         </div>
- *       </div>
- *     </div>
- *
  */
 
-object::-webkit-snapshotted-plugin-content,
-embed::-webkit-snapshotted-plugin-content
+embed::-webkit-snapshotted-plugin-content,
+object::-webkit-snapshotted-plugin-content
 {
     position: relative;
     display: inline-block;
@@ -50,41 +49,44 @@ embed::-webkit-snapshotted-plugin-content
     height: 100%;
 }
 
-object::-webkit-snapshotted-plugin-content .snapshot-container,
-embed::-webkit-snapshotted-plugin-content .snapshot-container
+embed::-webkit-snapshotted-plugin-content > .snapshot-overlay,
+object::-webkit-snapshotted-plugin-content > .snapshot-overlay
 {
     position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-overlay,
-embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-overlay
-{
-    display: none;
-}
-
-object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label,
-embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label
-{
-    position: absolute;
-    background-color: white;
-    color: black;
-    margin: 1em;
-    padding: 0.25em 2em;
-    text-align: center;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    background-color: rgba(255, 255, 255, 0.75);
     cursor: pointer;
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+}
+
+embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label,
+object::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label
+{
+    color: black;
     -webkit-user-select: none;
 }
 
-object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-title,
-embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-title
+embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > div,
+object::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > div
+{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > .snapshot-title,
+object::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > .snapshot-title
 {
     font-weight: bold;
 }
 
-object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-subtitle,
-embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-subtitle
+embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > .snapshot-subtitle,
+object::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > .snapshot-subtitle
 {
     font-style: italic;
     color: #444;

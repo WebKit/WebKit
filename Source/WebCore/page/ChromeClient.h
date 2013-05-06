@@ -369,9 +369,10 @@ public:
 
     virtual bool isEmptyChromeClient() const { return false; }
 
-    virtual String plugInStartLabelTitle() const { return String(); }
-    virtual String plugInStartLabelSubtitle() const { return String(); }
+    virtual String plugInStartLabelTitle(const String& mimeType) const { UNUSED_PARAM(mimeType); return String(); }
+    virtual String plugInStartLabelSubtitle(const String& mimeType) const { UNUSED_PARAM(mimeType); return String(); }
     virtual String plugInExtraStyleSheet() const { return String(); }
+    virtual String plugInExtraScript() const { return String(); }
 
     // FIXME: Port should return true using heuristic based on scrollable(RenderBox).
     virtual bool shouldAutoscrollForDragAndDrop(RenderBox*) const { return false; }

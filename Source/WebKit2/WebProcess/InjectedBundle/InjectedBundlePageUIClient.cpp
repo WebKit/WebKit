@@ -163,21 +163,21 @@ uint64_t InjectedBundlePageUIClient::didExceedDatabaseQuota(WebPage* page, WebSe
     return m_client.didExceedDatabaseQuota(toAPI(page), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes, m_client.clientInfo);
 }
 
-String InjectedBundlePageUIClient::plugInStartLabelTitle() const
+String InjectedBundlePageUIClient::plugInStartLabelTitle(const String& mimeType) const
 {
     if (!m_client.createPlugInStartLabelTitle)
         return String();
 
-    RefPtr<WebString> title = adoptRef(toImpl(m_client.createPlugInStartLabelTitle(m_client.clientInfo)));
+    RefPtr<WebString> title = adoptRef(toImpl(m_client.createPlugInStartLabelTitle(toAPI(mimeType.impl()), m_client.clientInfo)));
     return title ? title->string() : String();
 }
 
-String InjectedBundlePageUIClient::plugInStartLabelSubtitle() const
+String InjectedBundlePageUIClient::plugInStartLabelSubtitle(const String& mimeType) const
 {
     if (!m_client.createPlugInStartLabelSubtitle)
         return String();
 
-    RefPtr<WebString> subtitle = adoptRef(toImpl(m_client.createPlugInStartLabelSubtitle(m_client.clientInfo)));
+    RefPtr<WebString> subtitle = adoptRef(toImpl(m_client.createPlugInStartLabelSubtitle(toAPI(mimeType.impl()), m_client.clientInfo)));
     return subtitle ? subtitle->string() : String();
 }
 
@@ -188,6 +188,15 @@ String InjectedBundlePageUIClient::plugInExtraStyleSheet() const
 
     RefPtr<WebString> styleSheet = adoptRef(toImpl(m_client.createPlugInExtraStyleSheet(m_client.clientInfo)));
     return styleSheet ? styleSheet->string() : String();
+}
+
+String InjectedBundlePageUIClient::plugInExtraScript() const
+{
+    if (!m_client.createPlugInExtraScript)
+        return String();
+
+    RefPtr<WebString> script = adoptRef(toImpl(m_client.createPlugInExtraScript(m_client.clientInfo)));
+    return script ? script->string() : String();
 }
 
 } // namespace WebKit

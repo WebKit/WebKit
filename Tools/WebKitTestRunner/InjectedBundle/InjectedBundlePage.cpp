@@ -372,6 +372,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*plugInStartLabelTitle*/
         0, /*plugInStartLabelSubtitle*/
         0, /*plugInExtraStyleSheet*/
+        0, /*plugInExtraScript*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

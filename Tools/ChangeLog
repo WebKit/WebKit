@@ -1,3 +1,17 @@
+2013-05-06  Antoine Quint  <graouts@apple.com>
+
+        Manage the presentation of the snapshotted plug-in using JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=115548
+
+        Reviewed by Dean Jackson.
+
+        Take into account the new plugInExtraScript method added to support
+        the injection of a JS file from the chrome client to customize the
+        rendering of a snapshotted plug-in's shadow tree.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2013-05-05  Anders Carlsson  <andersca@apple.com>
 
         Remove the Vector::append overload that takes a Vector

@@ -78,6 +78,7 @@ class DOMImplementation;
 class DOMNamedFlowCollection;
 class DOMSelection;
 class DOMWindow;
+class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
 class DocumentFragment;
@@ -1203,6 +1204,8 @@ public:
     PassRefPtr<FontLoader> fontloader();
 #endif
 
+    void ensurePlugInsInjectedScript(DOMWrapperWorld*);
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1581,6 +1584,7 @@ private:
     Timer<Document> m_didAssociateFormControlsTimer;
     HashSet<RefPtr<Element> > m_associatedFormControls;
 
+    bool m_hasInjectedPlugInsScript;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

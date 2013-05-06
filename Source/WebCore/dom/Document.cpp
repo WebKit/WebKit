@@ -129,6 +129,7 @@
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformLocale.h"
+#include "PlugInsResources.h"
 #include "PluginDocument.h"
 #include "PointerLockController.h"
 #include "PopStateEvent.h"
@@ -149,6 +150,8 @@
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
 #include "ScriptRunner.h"
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -487,6 +490,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_fontloader(0)
 #endif
     , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
+    , m_hasInjectedPlugInsScript(false)
 {
     m_printing = false;
     m_paginatedForScreen = false;
@@ -6048,6 +6052,21 @@ void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
 
     frame()->page()->chrome()->client()->didAssociateFormControls(associatedFormControls);
     m_associatedFormControls.clear();
+}
+
+void Document::ensurePlugInsInjectedScript(DOMWrapperWorld* world)
+{
+    if (m_hasInjectedPlugInsScript)
+        return;
+
+    // Use the JS file provided by the Chrome client, or fallback to the default one.
+    String jsString = page()->chrome()->client()->plugInExtraScript();
+    if (!jsString)
+        jsString = plugInsJavaScript;
+
+    page()->mainFrame()->script()->evaluateInWorld(ScriptSourceCode(jsString), world);
+
+    m_hasInjectedPlugInsScript = true;
 }
 
 } // namespace WebCore

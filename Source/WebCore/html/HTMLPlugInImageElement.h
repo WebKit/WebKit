@@ -83,7 +83,7 @@ public:
     void subframeLoaderDidCreatePlugIn(const Widget*);
 
     void setIsPrimarySnapshottedPlugIn(bool);
-    bool partOfSnapshotLabel(Node*);
+    bool partOfSnapshotOverlay(Node*);
 
     bool needsCheckForSizeChange() const { return m_needsCheckForSizeChange; }
     void setNeedsCheckForSizeChange() { m_needsCheckForSizeChange = true; }
@@ -155,8 +155,6 @@ private:
     Timer<HTMLPlugInImageElement> m_swapRendererTimer;
     Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
-    RefPtr<Element> m_shadowContainer;
-    RefPtr<Element> m_snapshotLabel;
     bool m_createdDuringUserGesture;
     bool m_isRestartedPlugin;
     bool m_needsCheckForSizeChange;

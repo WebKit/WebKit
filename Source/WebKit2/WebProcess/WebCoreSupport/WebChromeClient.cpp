@@ -824,19 +824,24 @@ void WebChromeClient::logDiagnosticMessage(const String& message, const String& 
     m_page->injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(m_page, message, description, success);
 }
 
-String WebChromeClient::plugInStartLabelTitle() const
+String WebChromeClient::plugInStartLabelTitle(const String& mimeType) const
 {
-    return m_page->injectedBundleUIClient().plugInStartLabelTitle();
+    return m_page->injectedBundleUIClient().plugInStartLabelTitle(mimeType);
 }
 
-String WebChromeClient::plugInStartLabelSubtitle() const
+String WebChromeClient::plugInStartLabelSubtitle(const String& mimeType) const
 {
-    return m_page->injectedBundleUIClient().plugInStartLabelSubtitle();
+    return m_page->injectedBundleUIClient().plugInStartLabelSubtitle(mimeType);
 }
 
 String WebChromeClient::plugInExtraStyleSheet() const
 {
     return m_page->injectedBundleUIClient().plugInExtraStyleSheet();
+}
+
+String WebChromeClient::plugInExtraScript() const
+{
+    return m_page->injectedBundleUIClient().plugInExtraScript();
 }
 
 } // namespace WebKit
