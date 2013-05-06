@@ -43,6 +43,10 @@
 namespace WebCore {
 
 // Sizes (unit px)
+const unsigned smallRadius = 1;
+const unsigned largeRadius = 3;
+const unsigned lineWidth = 1;
+const float marginSize = 4;
 const float mediaControlsHeight = 44;
 const float mediaBackButtonHeight = 33;
 // Scale exit-fullscreen button size.
@@ -55,6 +59,18 @@ const float mediaSliderThumbHeight = 25;
 const float mediaSliderThumbRadius = 3;
 const float sliderThumbWidth = 15;
 const float sliderThumbHeight = 25;
+
+// Checkbox check scalers
+const float checkboxLeftX = 7 / 40.0;
+const float checkboxLeftY = 1 / 2.0;
+const float checkboxMiddleX = 19 / 50.0;
+const float checkboxMiddleY = 7 / 25.0;
+const float checkboxRightX = 33 / 40.0;
+const float checkboxRightY = 1 / 5.0;
+const float checkboxStrokeThickness = 6.5;
+
+// Radio button scaler
+const float radioButtonCheckStateScaler = 7 / 30.0;
 
 // Multipliers
 const unsigned paddingDivisor = 10;
@@ -76,7 +92,52 @@ const float widthRatio = 3;
 const float heightRatio = 0.23;
 
 // Colors
+const RGBA32 caretBottom = 0xff2163bf;
+const RGBA32 caretTop = 0xff69a5fa;
+
+const RGBA32 regularBottom = 0xffdcdee4;
+const RGBA32 regularTop = 0xfff7f2ee;
+const RGBA32 hoverBottom = 0xffb5d3fc;
+const RGBA32 hoverTop = 0xffcceaff;
+const RGBA32 depressedBottom = 0xff3388ff;
+const RGBA32 depressedTop = 0xff66a0f2;
+const RGBA32 disabledBottom = 0xffe7e7e7;
+const RGBA32 disabledTop = 0xffefefef;
+
+const RGBA32 regularBottomOutline = 0xff6e7073;
+const RGBA32 regularTopOutline = 0xffb9b8b8;
+const RGBA32 hoverBottomOutline = 0xff2163bf;
+const RGBA32 hoverTopOutline = 0xff69befa;
+const RGBA32 depressedBottomOutline = 0xff0c3d81;
+const RGBA32 depressedTopOutline = 0xff1d4d70;
+const RGBA32 disabledOutline = 0xffd5d9de;
+
+const RGBA32 progressRegularBottom = caretTop;
+const RGBA32 progressRegularTop = caretBottom;
+
+const RGBA32 rangeSliderRegularBottom = 0xfff6f2ee;
+const RGBA32 rangeSliderRegularTop = 0xffdee0e5;
+const RGBA32 rangeSliderRollBottom = 0xffc9e8fe;
+const RGBA32 rangeSliderRollTop = 0xffb5d3fc;
+
+const RGBA32 rangeSliderRegularBottomOutline = 0xffb9babd;
+const RGBA32 rangeSliderRegularTopOutline = 0xffb7b7b7;
+const RGBA32 rangeSliderRollBottomOutline = 0xff67abe0;
+const RGBA32 rangeSliderRollTopOutline = 0xff69adf9;
+
+const RGBA32 dragRegularLight = 0xfffdfdfd;
+const RGBA32 dragRegularDark = 0xffbababa;
+const RGBA32 dragRollLight = 0xfff2f2f2;
+const RGBA32 dragRollDark = 0xff69a8ff;
+
+const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
+
+const RGBA32 mediaSliderTrackOutline = 0xff848587;
+const RGBA32 mediaSliderTrackPlayed = 0xff2b8fff;
+const RGBA32 mediaSliderTrackBuffered = 0xffbbbdbf;
+
+const RGBA32 selection = 0xff2b8fff;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
 
@@ -84,6 +145,14 @@ const String& RenderThemeBlackBerry::defaultGUIFont()
 {
     DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Slate Pro")));
     return fontFace;
+}
+
+static PassRefPtr<Gradient> createLinearGradient(RGBA32 top, RGBA32 bottom, const IntPoint& a, const IntPoint& b)
+{
+    RefPtr<Gradient> gradient = Gradient::create(a, b);
+    gradient->addColorStop(0.0, Color(top));
+    gradient->addColorStop(1.0, Color(bottom));
+    return gradient.release();
 }
 
 static RenderSlider* determineRenderSlider(RenderObject* object)
@@ -663,8 +732,36 @@ bool RenderThemeBlackBerry::paintSliderTrack(RenderObject* object, const PaintIn
         rect2.setX(rect.x() + (rect.width() - SliderTrackHeight) / 2);
         rect2.setY(rect.y());
     }
-    static Image* sliderTrack = Image::loadPlatformResource("core_slider_bg").leakRef();
-    return paintSliderTrackRect(object, info, rect2, sliderTrack);
+    return paintSliderTrackRect(object, info, rect2);
+}
+
+bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    return paintSliderTrackRect(object, info, rect, rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline, rangeSliderRegularTop, rangeSliderRegularBottom);
+}
+
+bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
+{
+    FloatSize smallCorner(mediaSliderTrackRadius, mediaSliderTrackRadius);
+
+    info.context->save();
+    info.context->setStrokeStyle(SolidStroke);
+    info.context->setStrokeThickness(lineWidth);
+
+#if USE(SKIA)
+    info.context->setStrokeGradient(createLinearGradient(strokeColorStart, strokeColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    info.context->setFillGradient(createLinearGradient(fillColorStart, fillColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+#else
+    info.context->setStrokeColor(strokeColorStart, ColorSpaceDeviceRGB);
+    info.context->setFillColor(fillColorStart, ColorSpaceDeviceRGB);
+#endif
+
+    Path path;
+    path.addRoundedRect(rect, smallCorner);
+    info.context->fillPath(path);
+
+    info.context->restore();
+    return false;
 }
 
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, Image* inactive)
@@ -1076,6 +1173,52 @@ double RenderThemeBlackBerry::animationRepeatIntervalForProgressBar(RenderProgre
 double RenderThemeBlackBerry::animationDurationForProgressBar(RenderProgress* renderProgress) const
 {
     return renderProgress->isDeterminate() ? 0.0 : 2.0;
+}
+
+bool RenderThemeBlackBerry::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    if (!object->isProgress())
+        return true;
+
+    RenderProgress* renderProgress = toRenderProgress(object);
+
+    FloatSize smallCorner(smallRadius, smallRadius);
+
+    info.context->save();
+    info.context->setStrokeStyle(SolidStroke);
+    info.context->setStrokeThickness(lineWidth);
+
+    info.context->setStrokeGradient(createLinearGradient(rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    info.context->setFillGradient(createLinearGradient(rangeSliderRegularTop, rangeSliderRegularBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+
+    Path path;
+    path.addRoundedRect(rect, smallCorner);
+    info.context->fillPath(path);
+
+    IntRect rect2 = rect;
+    rect2.setX(rect2.x() + 1);
+    rect2.setHeight(rect2.height() - 2);
+    rect2.setY(rect2.y() + 1);
+    info.context->setStrokeStyle(NoStroke);
+    info.context->setStrokeThickness(0);
+    if (renderProgress->isDeterminate()) {
+        rect2.setWidth(rect2.width() * renderProgress->position() - 2);
+        info.context->setFillGradient(createLinearGradient(progressRegularTop, progressRegularBottom, rect2.maxXMinYCorner(), rect2.maxXMaxYCorner()));
+    } else {
+        // Animating
+        rect2.setWidth(rect2.width() - 2);
+        RefPtr<Gradient> gradient = Gradient::create(rect2.minXMaxYCorner(), rect2.maxXMaxYCorner());
+        gradient->addColorStop(0.0, Color(progressRegularBottom));
+        gradient->addColorStop(renderProgress->animationProgress(), Color(progressRegularTop));
+        gradient->addColorStop(1.0, Color(progressRegularBottom));
+        info.context->setFillGradient(gradient);
+    }
+    Path path2;
+    path2.addRoundedRect(rect2, smallCorner);
+    info.context->fillPath(path2);
+
+    info.context->restore();
+    return false;
 }
 
 Color RenderThemeBlackBerry::platformActiveTextSearchHighlightColor() const

@@ -1,3 +1,22 @@
+2013-05-06  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update HTML5 progress bar UX.
+        https://bugs.webkit.org/show_bug.cgi?id=115284.
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 331729.
+        Internally Reviewed by Jeff Rogers.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::createLinearGradient):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect):
+        (WebCore::RenderThemeBlackBerry::paintProgressBar):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+
 2013-05-06  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [texmap] draw content if graphics layer displays a video
