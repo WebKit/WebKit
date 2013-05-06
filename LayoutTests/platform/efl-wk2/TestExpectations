@@ -209,8 +209,8 @@ webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
 webkit.org/b/103396 [ Debug ] fast/forms/state-restore-per-form.html [ Failure Pass ]
 webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]
 
-webkit.org/b/103400 [ Debug ] compositing/overflow/content-gains-scrollbars.html [ Crash Pass ]
-webkit.org/b/103400 [ Debug ] compositing/overflow/content-loses-scrollbars.html [ Crash Pass ]
+webkit.org/b/103400 [ Debug ] compositing/overflow/content-gains-scrollbars.html [ Crash Failure ]
+webkit.org/b/103400 [ Debug ] compositing/overflow/content-loses-scrollbars.html [ Crash Failure ]
 
 webkit.org/b/103883 css3/selectors3/html/css3-modsel-1.html [ Failure Pass ]
 webkit.org/b/103883 css3/selectors3/xml/css3-modsel-1.xml [ Failure Pass ]
@@ -218,7 +218,7 @@ webkit.org/b/103883 css3/selectors3/xhtml/css3-modsel-1.xml [ Failure Pass ]
 
 # Assertion failure and incorrect results on our port after r140999 (webkit.org/b/106142)
 webkit.org/b/108257 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Failure ]
-webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
+webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Missing Failure ]
 
 # Asserts when destroying WebCore::Database (possibly because r141207)
 webkit.org/b/108355 fast/js/caller-property.html [ Crash Pass ]
@@ -547,8 +547,6 @@ compositing/masks/mask-layer-size.html [ Failure ]
 compositing/overflow-trumps-transform-style.html [ Failure ]
 compositing/overflow/clip-descendents.html [ Failure ]
 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-compositing/overflow/content-gains-scrollbars.html [ Failure ]
-compositing/overflow/content-loses-scrollbars.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
 compositing/overflow/resize-painting.html [ Failure ]
 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
@@ -576,7 +574,6 @@ compositing/visibility/layer-visible-content.html [ Failure ]
 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
 
 compositing/iframes/invisible-nested-iframe-show.html [ Missing ]
-compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Missing ]
 compositing/tiling/huge-layer-add-remove-child.html [ Missing ]
 compositing/tiling/rotated-tiled-clamped.html [ Missing ]
 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing ]

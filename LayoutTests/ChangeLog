@@ -1,5 +1,12 @@
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed. Remove duplicate tests from EFL TestExpectation files.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Unreviewed EFL gardening.
 
         Skip Shadow DOM tests for EFL port as the feature is being removed.

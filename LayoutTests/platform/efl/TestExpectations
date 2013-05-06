@@ -1753,7 +1753,7 @@ Bug(EFL) http/tests/inspector/console-websocket-error.html [ Failure Pass ]
 # Failing after r142947.
 webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]
 webkit.org/b/83869 media/media-controls-clone.html [ Failure ]
-webkit.org/b/83869 media/track/track-cue-rendering-horizontal.html [ Failure ]
+webkit.org/b/83869 media/track/track-cue-rendering-horizontal.html [ Failure Crash ]
 webkit.org/b/83869 media/track/track-cue-rendering-vertical.html [ Failure ]
 webkit.org/b/83869 media/video-empty-source.html [ Failure ]
 webkit.org/b/83869 media/video-no-audio.html [ Failure ]
@@ -1864,7 +1864,6 @@ webkit.org/b/115419 http/tests/media/video-served-as-text.html [ Failure ]
 webkit.org/b/115419 http/tests/media/video-throttled-load-metadata.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
-webkit.org/b/115419 media/track/track-cue-rendering-horizontal.html [ Crash Pass ]
 webkit.org/b/115419 media/video-poster-background.html [ ImageOnlyFailure ]
 
 # Failing after r149504.
