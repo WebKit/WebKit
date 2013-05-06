@@ -27,15 +27,19 @@
 
 namespace WebCore {
 
-void SVGAttributeToPropertyMap::addProperties(SVGAttributeToPropertyMap& map)
+void SVGAttributeToPropertyMap::addProperties(const SVGAttributeToPropertyMap& map)
 {
-    AttributeToPropertiesMap::iterator end = map.m_map.end();
-    for (AttributeToPropertiesMap::iterator it = map.m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->value;
+    AttributeToPropertiesMap::const_iterator end = map.m_map.end();
+    for (AttributeToPropertiesMap::const_iterator it = map.m_map.begin(); it != end; ++it) {
+        const PropertiesVector* vector = it->value.get();
         ASSERT(vector);
 
-        PropertiesVector::iterator vectorEnd = vector->end();
-        for (PropertiesVector::iterator vectorIt = vector->begin(); vectorIt != vectorEnd; ++vectorIt)
+        // FIXME: This looks up the attribute name in the hash table for each property, even though all the
+        // properties in a single vector are guaranteed to have the same attribute name.
+        // FIXME: This grows the vector one item at a time, even though we know up front exactly how many
+        // elements we are adding to the vector.
+        PropertiesVector::const_iterator vectorEnd = vector->end();
+        for (PropertiesVector::const_iterator vectorIt = vector->begin(); vectorIt != vectorEnd; ++vectorIt)
             addProperty(*vectorIt);
     }
 }
@@ -48,9 +52,10 @@ void SVGAttributeToPropertyMap::addProperty(const SVGPropertyInfo* info)
         vector->append(info);
         return;
     }
-    PropertiesVector* vector = new PropertiesVector;
+    // FIXME: This does a second hash table lookup, but with HashMap::add we could instead do only one.
+    OwnPtr<PropertiesVector> vector = adoptPtr(new PropertiesVector);
     vector->append(info);
-    m_map.set(info->attributeName, vector);
+    m_map.set(info->attributeName, vector.release());
 }
 
 void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty> >& properties)
@@ -81,7 +86,7 @@ void SVGAttributeToPropertyMap::synchronizeProperties(SVGElement* contextElement
     ASSERT(contextElement);
     AttributeToPropertiesMap::iterator end = m_map.end();
     for (AttributeToPropertiesMap::iterator it = m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->value;
+        PropertiesVector* vector = it->value.get();
         ASSERT(vector);
 
         PropertiesVector::iterator vectorEnd = vector->end();

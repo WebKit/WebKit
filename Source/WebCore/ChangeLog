@@ -1,3 +1,28 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues in SVGAttributeToPropertyMap
+        https://bugs.webkit.org/show_bug.cgi?id=115653
+
+        Reviewed by Andreas Kling.
+
+        Also made a few style fixes to the code at the same time.
+
+        * svg/properties/SVGAttributeToPropertyMap.cpp:
+        (WebCore::SVGAttributeToPropertyMap::addProperties): Changed argument to
+        const because there was no reason for it to be non-const. Added calls to
+        get() since the items in the map are now OwnPtr. Added a couple FIXMEs
+        about performance mistakes.
+        (WebCore::SVGAttributeToPropertyMap::addProperty): Added a FIXME about
+        a small performance mistake, and updated to use OwnPtr instead of raw
+        pointers.
+        (WebCore::SVGAttributeToPropertyMap::synchronizeProperties): Added a call
+        to get().
+
+        * svg/properties/SVGAttributeToPropertyMap.h: Removed now-unneeded
+        constructor and destructor definitions. Changed the type for the
+        addProperties to be const&. Added a comment about incorrect function
+        naming. Changed the type of the map data member to use OwnPtr.
+
 2013-05-06  Antti Koivisto  <antti@apple.com>
 
         Remove more code that was only needed for younger/older shadow trees
