@@ -1,3 +1,32 @@
+2013-05-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] remove unused -webkit-wrap property
+        https://bugs.webkit.org/show_bug.cgi?id=102105
+
+        Reviewed by Darin Adler.
+
+        Remove -webkit-wrap property and all mentions. This property doesn't
+        exist in the spec anymore, and was never implemented more than just
+        parsing the property.
+
+        * WebCore.order:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue):
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        (WebCore):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
         Write storage changes to disk

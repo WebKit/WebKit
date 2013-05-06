@@ -427,7 +427,6 @@ z-index
 -webkit-shape-padding
 -webkit-wrap-flow
 -webkit-wrap-through
--webkit-wrap
 #endif
 #if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
 max-zoom

@@ -1,3 +1,19 @@
+2013-05-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] remove unused -webkit-wrap property
+        https://bugs.webkit.org/show_bug.cgi?id=102105
+
+        Reviewed by Darin Adler.
+
+        Delete tests for the -webkit-wrap property.
+
+        * fast/exclusions/css-exclusions-disabled.html: Remove use of -webkit-wrap.
+        * fast/exclusions/script-tests/wrap-parsing.js: Removed.
+        * fast/exclusions/wrap-parsing-expected.txt: Removed.
+        * fast/exclusions/wrap-parsing.html: Removed.
+        * svg/css/style-change-crash-expected.txt: Removed.
+        * svg/css/style-change-crash.html: Removed.
+
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.

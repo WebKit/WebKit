@@ -2841,9 +2841,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitTransformOriginX:
         case CSSPropertyWebkitTransformOriginY:
         case CSSPropertyWebkitTransformOriginZ:
-#if ENABLE(CSS_EXCLUSIONS)
-        case CSSPropertyWebkitWrap:
-#endif
 #if ENABLE(CSS_SHADERS)
         case CSSPropertyMix:
         case CSSPropertyParameters:
