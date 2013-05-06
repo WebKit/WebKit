@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Add EFL-specific result for fast/events/event-attribute.html as global expectation
+        was changed in r149088.
+
+        * platform/efl/fast/events/event-attribute-expected.txt: Added.
+
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline several test cases for EFL port.
 
         * platform/efl/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
