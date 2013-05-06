@@ -1,5 +1,19 @@
 2013-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Every LocalStorageDatabase should know about its tracker
+        https://bugs.webkit.org/show_bug.cgi?id=115673
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::StorageArea):
+
+2013-05-06  Anders Carlsson  <andersca@apple.com>
+
         Add LocalStorageDatabaseTracker class
         https://bugs.webkit.org/show_bug.cgi?id=115671
 

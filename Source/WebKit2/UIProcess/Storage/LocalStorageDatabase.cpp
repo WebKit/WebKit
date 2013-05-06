@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LocalStorageDatabase.h"
 
+#include "LocalStorageDatabaseTracker.h"
 #include "WorkQueue.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
@@ -43,14 +44,15 @@ static const int maximumItemsToUpdate = 100;
 
 namespace WebKit {
 
-PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(const String& databaseFilename, PassRefPtr<WorkQueue> queue)
+PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(const String& databaseFilename, PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker)
 {
-    return adoptRef(new LocalStorageDatabase(databaseFilename, queue));
+    return adoptRef(new LocalStorageDatabase(databaseFilename, queue, tracker));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue> queue)
+LocalStorageDatabase::LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker)
     : m_databaseFilename(databaseFilename)
     , m_queue(queue)
+    , m_tracker(tracker)
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
     , m_isClosed(false)

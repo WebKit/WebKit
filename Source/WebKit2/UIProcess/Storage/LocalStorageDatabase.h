@@ -40,9 +40,11 @@ class StorageMap;
 
 namespace WebKit {
 
+class LocalStorageDatabaseTracker;
+
 class LocalStorageDatabase : public ThreadSafeRefCounted<LocalStorageDatabase> {
 public:
-    static PassRefPtr<LocalStorageDatabase> create(const String& databaseFilename, PassRefPtr<WorkQueue>);
+    static PassRefPtr<LocalStorageDatabase> create(const String& databaseFilename, PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>);
     ~LocalStorageDatabase();
 
     // Will block until the import is complete.
@@ -56,7 +58,7 @@ public:
     void close();
 
 private:
-    LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>);
+    LocalStorageDatabase(const String& databaseFilename, PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>);
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
@@ -75,6 +77,7 @@ private:
 
     String m_databaseFilename;
     RefPtr<WorkQueue> m_queue;
+    RefPtr<LocalStorageDatabaseTracker> m_tracker;
 
     WebCore::SQLiteDatabase m_database;
     bool m_failedToOpenDatabase;

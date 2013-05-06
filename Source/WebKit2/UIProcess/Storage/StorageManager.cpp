@@ -111,7 +111,7 @@ StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageName
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
     if (m_localStorageNamespace)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->databaseFilename(m_securityOrigin.get()), m_localStorageNamespace->storageManager()->m_queue);
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->databaseFilename(m_securityOrigin.get()), m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker);
 }
 
 StorageManager::StorageArea::~StorageArea()
