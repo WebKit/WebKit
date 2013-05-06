@@ -1,3 +1,12 @@
+2013-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r148720, r149088 and r149407.
+
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/gtk/fast/images/crossfade-client-not-removed-crash-expected.txt: Added.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt:
+
 2013-05-06  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r140907) - Backport blink r149612 to fix vertical-align and rowspan issue
