@@ -1,3 +1,10 @@
+2013-05-06  Andy Estes  <aestes@apple.com>
+
+        Added two files I neglected to commit in r149589.
+
+        * TestWebKitAPI/Tests/mac/CloseNewWindowInNavigationPolicyDelegate.mm: Added.
+        * TestWebKitAPI/Tests/mac/OpenNewWindow.html: Added.
+
 2013-05-04  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r125592): Reproducible crash in DOMWindow::open when a delegate closes the new window in decidePolicyForNavigationAction
