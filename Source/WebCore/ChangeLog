@@ -1,3 +1,24 @@
+2013-05-07  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues in SVGResourcesCache
+        https://bugs.webkit.org/show_bug.cgi?id=115729
+
+        Reviewed by Benjamin Poulain.
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::~SVGResourcesCache): Removed call to deleteAllValues.
+        (WebCore::SVGResourcesCache::addResourcesFromRenderObject): Use adoptPtr and release
+        to create new SVGResources object.
+        (WebCore::SVGResourcesCache::removeResourcesFromRenderObject): Use take to remove
+        the SVGResources from the map rather than a get combined with delete/take.
+        (WebCore::SVGResourcesCache::cachedResourcesForRenderObject): Removed unneeded
+        call to contains, since get already returns 0 if there is no item in the map.
+        (WebCore::SVGResourcesCache::resourceDestroyed): Use typedef for the map type so
+        we don't have to repeat the type.
+
+        * rendering/svg/SVGResourcesCache.h: Added typedef CacheMap, and changed value
+        type to OwnPtr.
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r149647): Assertion failure in LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal

@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "RenderStyleConstants.h"
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -61,7 +62,8 @@ private:
     void addResourcesFromRenderObject(RenderObject*, const RenderStyle*);
     void removeResourcesFromRenderObject(RenderObject*);
 
-    HashMap<const RenderObject*, SVGResources*> m_cache;
+    typedef HashMap<const RenderObject*, OwnPtr<SVGResources> > CacheMap;
+    CacheMap m_cache;
 };
 
 }
