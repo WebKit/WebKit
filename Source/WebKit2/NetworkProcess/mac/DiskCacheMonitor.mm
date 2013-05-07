@@ -30,20 +30,11 @@
 #import "NetworkProcessConnectionMessages.h"
 #import "NetworkResourceLoader.h"
 #import "WebCoreArgumentCoders.h"
-#import <WebCore/SoftLinking.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
-SOFT_LINK_FRAMEWORK(CFNetwork)
-
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
-static void CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef response, CFCachedURLResponseCallBackBlock callback, dispatch_queue_t queue)
-{
-    typedef void (*SetCallbackFunctionType)(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
-    static SetCallbackFunctionType softResponseSetBecameFileBackedCallBackBlock = (SetCallbackFunctionType) dlsym(CFNetworkLibrary(), "_CFCachedURLResponseSetBecameFileBackedCallBackBlock");
-    if (softResponseSetBecameFileBackedCallBackBlock)
-        return softResponseSetBecameFileBackedCallBackBlock(response, callback, queue);
-}
+extern "C" void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
 
 using namespace WebCore;
 
@@ -94,7 +85,7 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
         monitor->send(Messages::NetworkProcessConnection::DidCacheResource(monitor->resourceRequest(), handle));
     };
 
-    CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());
+    _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());
 }
 
 CoreIPC::Connection* DiskCacheMonitor::connection() const

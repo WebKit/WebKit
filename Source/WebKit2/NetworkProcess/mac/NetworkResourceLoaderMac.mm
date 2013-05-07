@@ -30,7 +30,6 @@
 #import "ShareableResource.h"
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SoftLinking.h>
 
 using namespace WebCore;
 
@@ -39,27 +38,8 @@ typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
-
-SOFT_LINK_FRAMEWORK(CFNetwork)
-static CFDataRef CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef response)
-{
-    typedef CFDataRef (*functionType)(CFCachedURLResponseRef);
-    static functionType softGetMemMappedData = (functionType) dlsym(CFNetworkLibrary(), "_CFCachedURLResponseGetMemMappedData");
-    
-    if (softGetMemMappedData)
-        return softGetMemMappedData(response);
-    return NULL;
-}
-
-static bool CFURLCacheIsMemMappedData(CFURLCacheRef cache, CFDataRef data)
-{
-    typedef CFBooleanRef (*functionType)(CFURLCacheRef cache, CFDataRef data);
-    static functionType softLinkIsCacheMMAPedData = (functionType) dlsym(CFNetworkLibrary(), "_CFURLCacheIsResponseDataMemMapped");
-   
-    if (softLinkIsCacheMMAPedData)
-        return softLinkIsCacheMMAPedData(cache, data) == kCFBooleanTrue;
-    return false;
-}
+extern "C" CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
+extern "C" bool _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
 #endif
 
 @interface NSCachedURLResponse (NSCachedURLResponseDetails)
@@ -88,7 +68,7 @@ static void tryGetShareableHandleFromCFData(ShareableResource::Handle& handle, C
 
 void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle& handle, CFCachedURLResponseRef cachedResponse)
 {
-    CFDataRef data = CFCachedURLResponseGetMemMappedData(cachedResponse);
+    CFDataRef data = _CFCachedURLResponseGetMemMappedData(cachedResponse);
 
     tryGetShareableHandleFromCFData(handle, data);
 }
@@ -100,7 +80,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
         return;
 
     RetainPtr<CFDataRef> data = adoptCF(buffer->createCFData());
-    if (!CFURLCacheIsMemMappedData(cache.get(), data.get()))
+    if (!_CFURLCacheIsResponseDataMemMapped(cache.get(), data.get()))
         return;
 
     tryGetShareableHandleFromCFData(handle, data.get());
