@@ -1,3 +1,22 @@
+2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Replaceable] attributes must be readonly
+        https://bugs.webkit.org/show_bug.cgi?id=115692
+
+        Reviewed by Kentaro Hara.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/ac61fbfe875d3c3c37d529683139ceb0ad4330bb.
+
+        Web IDL specification says [Replaceable] attributes are readonly:
+        http://www.w3.org/TR/2012/CR-WebIDL-20120419/#Replaceable
+
+        Update the two instances of [Replaceable] in WebCore that didn't have readonly modifier to match
+        the specifcation and the rest of WebCore. There should be no behavioral changes as the code generator
+        already assumed [Replaceable] attributes are readonly.
+
+        * html/HTMLDocument.idl:
+        * page/DOMWindow.idl:
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use OwnPtr instead of deleteAllValues in DocumentMarkerController

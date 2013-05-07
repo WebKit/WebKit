@@ -210,7 +210,7 @@
     DOMString btoa([TreatNullAs=NullString,Default=Undefined] optional DOMString string)
         raises(DOMException);
 
-    attribute [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] DOMWindowCSS CSS;
+    readonly attribute [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] DOMWindowCSS CSS;
 
     // Events
     attribute EventListener onabort;
