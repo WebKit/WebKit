@@ -1,3 +1,13 @@
+2013-05-07  Brady Eidson  <beidson@apple.com>
+
+        Add JoinExistingSession to the Networking XPC.
+        <rdar://problem/12902288> and https://bugs.webkit.org/show_bug.cgi?id=114991
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist:
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r149647): Assertion failure in LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal
