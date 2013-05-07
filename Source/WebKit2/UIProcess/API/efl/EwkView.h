@@ -138,6 +138,8 @@ public:
     void setThemePath(const char* theme);
     const char* customTextEncodingName() const;
     void setCustomTextEncodingName(const String& encoding);
+    const char* userAgent() const { return m_userAgent; }
+    void setUserAgent(const char* userAgent);
 
     bool mouseEventsEnabled() const { return m_mouseEventsEnabled; }
     void setMouseEventsEnabled(bool enabled);
@@ -270,6 +272,7 @@ private:
     mutable WKEinaSharedString m_title;
     WKEinaSharedString m_theme;
     mutable WKEinaSharedString m_customEncoding;
+    WKEinaSharedString m_userAgent;
     bool m_mouseEventsEnabled;
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;

@@ -1,3 +1,25 @@
+2013-05-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add ewk APIs for setting and getting user agent
+        https://bugs.webkit.org/show_bug.cgi?id=114429
+
+        Reviewed by Andreas Kling.
+
+        Provide ewk_view_user_agent_get/set APIs which wraps WK APIs.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::setUserAgent):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::userAgent):
+        (EwkView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_user_agent_get):
+        (ewk_view_user_agent_set):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance

@@ -267,6 +267,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_backForwardList(EwkBackForwardList::create(WKPageGetBackForwardList(wkPage())))
     , m_settings(EwkSettings::create(this))
     , m_cursorIdentifier(0)
+    , m_userAgent(WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage())))
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
@@ -684,6 +685,19 @@ void EwkView::setCustomTextEncodingName(const String& encoding)
 {
     WKRetainPtr<WKStringRef> wkEncoding = adoptWK(toCopiedAPI(encoding));
     WKPageSetCustomTextEncodingName(wkPage(), wkEncoding.get());
+}
+
+void EwkView::setUserAgent(const char* userAgent)
+{
+    if (m_userAgent == userAgent)
+        return;
+
+    WKRetainPtr<WKStringRef> wkUserAgent = adoptWK(WKStringCreateWithUTF8CString(userAgent));
+    WKPageSetCustomUserAgent(wkPage(), wkUserAgent.get());
+
+    // When 'userAgent' is 0, user agent is set as a standard user agent by WKPageSetCustomUserAgent()
+    // so m_userAgent needs to be updated using WKPageCopyUserAgent().
+    m_userAgent = WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage()));
 }
 
 void EwkView::setMouseEventsEnabled(bool enabled)

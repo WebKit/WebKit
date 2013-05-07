@@ -997,3 +997,17 @@ TEST_F(EWK2UnitTestBase, ewk_view_source_mode)
     //       such as excuting the JavaScript, 'window.document.body.innerText'.
     //       https://bugs.webkit.org/show_bug.cgi?id=101904.
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_user_agent)
+{
+    const char* defaultUserAgent = eina_stringshare_add(ewk_view_user_agent_get(webView()));
+    const char customUserAgent[] = "Foo";
+
+    ASSERT_TRUE(ewk_view_user_agent_set(webView(), customUserAgent));
+    ASSERT_STREQ(customUserAgent, ewk_view_user_agent_get(webView()));
+
+    // Set the default user agent string.
+    ASSERT_TRUE(ewk_view_user_agent_set(webView(), 0));
+    ASSERT_STREQ(defaultUserAgent, ewk_view_user_agent_get(webView()));
+    eina_stringshare_del(defaultUserAgent);
+}

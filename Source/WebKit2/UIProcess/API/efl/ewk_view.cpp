@@ -348,6 +348,22 @@ Eina_Bool ewk_view_custom_encoding_set(Evas_Object* ewkView, const char* encodin
     return true;
 }
 
+const char* ewk_view_user_agent_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
+
+    return impl->userAgent();
+}
+
+Eina_Bool ewk_view_user_agent_set(Evas_Object* ewkView, const char* userAgent)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    impl->setUserAgent(userAgent);
+
+    return true;
+}
+
 // EwkFindOptions should be matched up orders with WkFindOptions.
 COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_CASE_INSENSITIVE, kWKFindOptionsCaseInsensitive);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_AT_WORD_STARTS, kWKFindOptionsAtWordStarts);
