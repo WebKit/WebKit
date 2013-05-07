@@ -1,3 +1,16 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION(r149647): Assertion failure in LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal
+        https://bugs.webkit.org/show_bug.cgi?id=115711
+
+        Reviewed by Andreas Kling.
+
+        Handle setting the local storage directory more than once.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal):
+        Close the database (if necessary) and clear the origins map before importing the origin identifiers.
+
 2013-05-07  Antoine Quint  <graouts@apple.com>
 
         Re-establish autostart timeout extension on user interaction

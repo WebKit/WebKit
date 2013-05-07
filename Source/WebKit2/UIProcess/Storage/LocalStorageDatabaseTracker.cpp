@@ -62,7 +62,11 @@ String LocalStorageDatabaseTracker::databaseFilename(SecurityOrigin* securityOri
 
 void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
 {
+    if (m_database.isOpen())
+        m_database.close();
+
     m_localStorageDirectory = localStorageDirectory;
+    m_origins.clear();
 
     m_queue->dispatch(bind(&LocalStorageDatabaseTracker::importOriginIdentifiers, this));
 }
