@@ -29,7 +29,7 @@
 #include "npfunctions.h"
 #include "npruntime.h"
 
-#ifdef XP_UNIX
+#if defined(MOZ_X11)
     #include <X11/Xresource.h>
 
     #undef None
