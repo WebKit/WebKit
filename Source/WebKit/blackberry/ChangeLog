@@ -1,5 +1,31 @@
 2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
+        [BlackBerry] Read-only fields should not get keyboard focus
+        https://bugs.webkit.org/show_bug.cgi?id=115725
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR332887
+        Prevent keyboard focus and FCC from displaying when the user taps on a
+        read-only field. Further, ensure form controls skip over these fields
+        with the next/previous buttons.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementIsReadOnly):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::focusedNodeChanged):
+        (BlackBerry::WebKit::InputHandler::setInputModeEnabled):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfKeyboardVisibilityChange):
+        (BlackBerry::WebKit::InputHandler::isActiveTextEdit):
+        (WebKit):
+        * WebKitSupport/InputHandler.h:
+
+2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
         [BlackBerry] Expand spellcheck logging
         https://bugs.webkit.org/show_bug.cgi?id=115482
 

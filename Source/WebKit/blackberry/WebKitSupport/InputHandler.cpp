@@ -441,12 +441,12 @@ void InputHandler::focusedNodeChanged()
             return;
         }
 
-        if (DOMSupport::isTextBasedContentEditableElement(element)) {
+        if (DOMSupport::isTextBasedContentEditableElement(element) && !DOMSupport::isElementReadOnly(element)) {
             // Focused node is a text based input field, textarea or content editable field.
             setElementFocused(element);
             return;
         }
-    } else if (node && DOMSupport::isTextBasedContentEditableElement(node->parentElement())) {
+    } else if (node && DOMSupport::isTextBasedContentEditableElement(node->parentElement()) && !DOMSupport::isElementReadOnly(node->parentElement())) {
         setElementFocused(node->parentElement());
         return;
     }
@@ -959,7 +959,7 @@ void InputHandler::updateFormState()
         // Previous
         for (int previousElementId = focusElementId - 1; previousElementId >= 0; previousElementId--) {
             Element* element = const_cast<HTMLElement*>(toHTMLElement(formElementList[previousElementId]));
-            if (DOMSupport::isTextBasedContentEditableElement(element)) {
+            if (DOMSupport::isTextBasedContentEditableElement(element) && !DOMSupport::isElementReadOnly(element)) {
                 m_previousFocusableTextElement = element;
                 InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState found previous element");
                 break;
@@ -968,7 +968,7 @@ void InputHandler::updateFormState()
         // Next
         for (int nextElementId = focusElementId + 1; nextElementId < formElementCount; nextElementId++) {
             Element* element = const_cast<HTMLElement*>(toHTMLElement(formElementList[nextElementId]));
-            if (DOMSupport::isTextBasedContentEditableElement(element)) {
+            if (DOMSupport::isTextBasedContentEditableElement(element) && !DOMSupport::isElementReadOnly(element)) {
                 m_nextFocusableTextElement = element;
                 InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState found next element");
                 break;

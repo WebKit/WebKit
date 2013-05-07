@@ -232,6 +232,11 @@ AttributeState elementSupportsSpellCheck(const Element* element)
     return elementAttributeState(element, HTMLNames::spellcheckAttr);
 }
 
+bool isElementReadOnly(const Element* element)
+{
+    return element->fastHasAttribute(HTMLNames::readonlyAttr);
+}
+
 AttributeState elementAttributeState(const Element* element, const QualifiedName& attributeName)
 {
     // First we check the input item itself. If the attribute is not defined,

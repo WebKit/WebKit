@@ -65,6 +65,7 @@ AttributeState elementAttributeState(const WebCore::Element*, const WebCore::Qua
 AttributeState elementSupportsAutocorrect(const WebCore::Element*);
 AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 AttributeState elementSupportsSpellCheck(const WebCore::Element*);
+bool isElementReadOnly(const WebCore::Element*);
 
 bool elementHasContinuousSpellCheckingEnabled(const PassRefPtr<WebCore::Element>);
 
