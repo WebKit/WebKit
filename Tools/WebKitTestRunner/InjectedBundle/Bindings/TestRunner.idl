@@ -47,6 +47,7 @@ interface TestRunner {
     void dumpWillCacheResponse();
     void dumpApplicationCacheDelegateCallbacks();
     void dumpDatabaseCallbacks();
+    void dumpDOMAsWebArchive();
 
     // Special options.
     void keepWebHistory();

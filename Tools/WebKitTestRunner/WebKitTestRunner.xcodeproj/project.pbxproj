@@ -44,6 +44,8 @@
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
+		5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */; };
+		5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
 		6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */; };
@@ -149,6 +151,9 @@
 		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
 		583913D014335E95008307E5 /* JSAccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityController.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		583913D114335E95008307E5 /* JSAccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityController.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityController.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebArchiveDumpSupportMac.mm; path = mac/WebArchiveDumpSupportMac.mm; sourceTree = SOURCE_ROOT; };
+		5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = SOURCE_ROOT; };
+		5C45C31217398E480079714E /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = SOURCE_ROOT; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
 		6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
@@ -327,9 +332,19 @@
 			name = Accessibility;
 			sourceTree = "<group>";
 		};
+		5C45C31017398E370079714E /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */,
+				5C45C31217398E480079714E /* WebArchiveDumpSupport.h */,
+			);
+			name = cf;
+			sourceTree = "<group>";
+		};
 		65EB859E11EC67CC0034D300 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */,
 				65EB859F11EC67CC0034D300 /* ActivateFonts.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
 				0FAF67EE160D6C100077CB2B /* InjectedBundlePageMac.mm */,
@@ -357,6 +372,7 @@
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
+				5C45C31017398E370079714E /* cf */,
 				BC952C0A11F3B939003398B4 /* Bindings */,
 				BC14E4E0120E02F900826C0C /* Controllers */,
 				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
@@ -515,6 +531,8 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -626,6 +644,8 @@
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
 				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
 				BCC9981811D3F51E0017BCA2 /* TestRunner.cpp in Sources */,
+				5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */,
+				5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */,
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 			);

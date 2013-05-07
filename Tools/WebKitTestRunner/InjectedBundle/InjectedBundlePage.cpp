@@ -48,6 +48,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if USE(CF)
+#include "WebArchiveDumpSupport.h"
+#endif
+
 #if PLATFORM(QT)
 #include "DumpRenderTreeSupportQt.h"
 #endif
@@ -837,6 +841,17 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
     dumpDescendantFramesText(frame, stringBuilder);
 }
 
+
+void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
+{
+#if USE(CF)
+    WKDataRef wkData = WKBundleFrameCopyWebArchive(frame);
+    RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData), WKDataGetSize(wkData)));
+    RetainPtr<CFStringRef> cfString = adoptCF(createXMLStringFromWebArchiveData(cfData.get()));
+    stringBuilder.append(cfString.get());
+#endif
+}
+
 void InjectedBundlePage::dump()
 {
     ASSERT(InjectedBundle::shared().isTestRunning());
@@ -867,6 +882,9 @@ void InjectedBundlePage::dump()
         dumpAllFramesText(stringBuilder);
         break;
     case TestRunner::Audio:
+        break;
+    case TestRunner::DOMAsWebArchive:
+        dumpDOMAsWebArchive(frame, stringBuilder);
         break;
     }
 

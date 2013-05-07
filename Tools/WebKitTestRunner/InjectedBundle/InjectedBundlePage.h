@@ -166,6 +166,7 @@ private:
 
     void dumpAllFramesText(WTF::StringBuilder&);
     void dumpAllFrameScrollPositions(WTF::StringBuilder&);
+    void dumpDOMAsWebArchive(WKBundleFrameRef, WTF::StringBuilder&);
 
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
 

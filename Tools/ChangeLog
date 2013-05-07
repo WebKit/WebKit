@@ -1,5 +1,45 @@
 2013-05-07  Alex Christensen  <achristensen@apple.com>
 
+        WebKitTestRunner needs testRunner.dumpDOMAsWebArchive
+        https://bugs.webkit.org/show_bug.cgi?id=42324
+        <rdar://problem/8193633>
+
+        Reviewed by Tim Horton.
+
+        * Tools/WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        Added dumpDOMAsWebArchive JavaScript function to be called by test cases.
+        * Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        Added dumpDOMAsWebArchive code that is called when dumping.        
+        (WTR::InjectedBundlePage::dump):
+        Made DOMAsWebArchive case when dumping call dumpDOMAsWebArchive.
+        * Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+        Added dumpDOMAsWebArchive declaration.
+        * Tools/WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpDOMAsWebArchive):
+        Added dumpDOMAsWebArchive JS callback function that sets m_whatToDump to DOMAsWebArchive.
+        * Tools/WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Added WebArchiveDumpSupport.cpp, WebArchiveDumpSupport.h, WebArchiveDumpSupportMac.mm to project.
+        * Tools/WebKitTestRunner/cf: Added.
+        * Tools/WebKitTestRunner/cf/WebArchiveDumpSupport.cpp: Added.
+        Copied from Tools/DumpRenderTree/cf for createXMLStringFromWebArchiveData and other functions it uses.
+        (convertMIMEType):
+        (convertWebResourceDataToString):
+        (normalizeHTTPResponseHeaderFields):
+        (normalizeWebResourceURL):
+        (convertWebResourceResponseToDictionary):
+        (compareResourceURLs):
+        (createXMLStringFromWebArchiveData):
+        * Tools/WebKitTestRunner/cf/WebArchiveDumpSupport.h: Added.
+        Copied from Tools/DumpRenderTree/cf for used symbol declarations.
+        * Tools/WebKitTestRunner/mac/WebArchiveDumpSupportMac.mm: Added.
+        Copied from Tools/DumpRenderTree/mac for used functions.
+        (createCFURLResponseFromResponseData):
+        (supportedNonImageMIMETypes):
+
+2013-05-07  Alex Christensen  <achristensen@apple.com>
+
         Updated style of WebArchiveDumpSupport before putting it into WebKitTestRunner.
         https://bugs.webkit.org/show_bug.cgi?id=115745
 
