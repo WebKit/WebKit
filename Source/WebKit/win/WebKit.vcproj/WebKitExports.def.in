@@ -123,7 +123,6 @@ EXPORTS
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?didBeginFrame@InspectorController@WebCore@@QAEXXZ
         ?didCancelFrame@InspectorController@WebCore@@QAEXXZ
-        ??0InspectorMemoryAgent@WebCore@@AAE@PAVInstrumentingAgents@1@PAVInspectorCompositeState@1@@Z
 #endif
         ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
@@ -396,7 +395,6 @@ EXPORTS
         ?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderObject@2@ABVString@WTF@@N@Z
         ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z
         ?ensureSelectFeatureSet@ContentDistributor@WebCore@@QAEABVSelectRuleFeatureSet@2@PAVElementShadow@2@@Z
-        ?hasShadowElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
         ?hasContentElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
         ?countElementShadow@ScopeContentDistribution@WebCore@@SAIPBVShadowRoot@2@@Z
         ?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ
