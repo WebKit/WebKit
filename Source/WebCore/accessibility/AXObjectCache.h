@@ -150,7 +150,7 @@ public:
     bool nodeIsTextControl(const Node*);
 
     AXID platformGenerateAXID() const;
-    AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id).get(); }
+    AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id); }
 
     // Text marker utilities.
     void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);

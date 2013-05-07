@@ -66,7 +66,7 @@ HostRecord* NetworkResourceLoadScheduler::hostForURL(const WebCore::KURL& url, C
 
     m_hosts.checkConsistency();
     String hostName = url.host();
-    HostRecord* host = m_hosts.get(hostName).get();
+    HostRecord* host = m_hosts.get(hostName);
     if (!host && createHostPolicy == CreateIfNotFound) {
         RefPtr<HostRecord> newHost = HostRecord::create(hostName, maxRequestsInFlightPerHost);
         host = newHost.get();

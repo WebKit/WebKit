@@ -101,7 +101,7 @@ public:
     template <typename T>
     T* supplement()
     {
-        return static_cast<T*>(m_supplements.get(T::supplementName()).get());
+        return static_cast<T*>(m_supplements.get(T::supplementName()));
     }
 
     template <typename T>

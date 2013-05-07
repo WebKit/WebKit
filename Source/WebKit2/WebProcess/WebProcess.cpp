@@ -543,7 +543,7 @@ WebPage* WebProcess::focusedWebPage() const
     
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {
-    return m_pageMap.get(pageID).get();
+    return m_pageMap.get(pageID);
 }
 
 void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
@@ -694,7 +694,7 @@ WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
 
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
 {
-    return m_pageGroupMap.get(pageGroupID).get();
+    return m_pageGroupMap.get(pageGroupID);
 }
 
 WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)

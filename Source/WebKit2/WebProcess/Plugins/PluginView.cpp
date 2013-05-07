@@ -1291,7 +1291,7 @@ void PluginView::cancelStreamLoad(uint64_t streamID)
 {
     // Keep a reference to the stream. Stream::cancel might remove the stream from the map, and thus
     // releasing its last reference.
-    RefPtr<Stream> stream = m_streams.get(streamID).get();
+    RefPtr<Stream> stream = m_streams.get(streamID);
     if (!stream)
         return;
 

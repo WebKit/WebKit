@@ -2705,7 +2705,7 @@ void WebPage::mayPerformUploadDragDestinationAction()
 
 WebUndoStep* WebPage::webUndoStep(uint64_t stepID)
 {
-    return m_undoStepMap.get(stepID).get();
+    return m_undoStepMap.get(stepID);
 }
 
 void WebPage::addWebUndoStep(uint64_t stepID, WebUndoStep* entry)
@@ -3932,7 +3932,7 @@ void WebPage::addTextCheckingRequest(uint64_t requestID, PassRefPtr<TextChecking
 
 void WebPage::didFinishCheckingText(uint64_t requestID, const Vector<TextCheckingResult>& result)
 {
-    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID).get();
+    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID);
     if (!request)
         return;
 
@@ -3942,7 +3942,7 @@ void WebPage::didFinishCheckingText(uint64_t requestID, const Vector<TextCheckin
 
 void WebPage::didCancelCheckingText(uint64_t requestID)
 {
-    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID).get();
+    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID);
     if (!request)
         return;
 

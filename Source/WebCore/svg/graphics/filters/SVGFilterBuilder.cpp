@@ -57,13 +57,13 @@ FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
         if (m_lastEffect)
             return m_lastEffect.get();
 
-        return m_builtinEffects.get(SourceGraphic::effectName()).get();
+        return m_builtinEffects.get(SourceGraphic::effectName());
     }
 
     if (m_builtinEffects.contains(id))
-        return m_builtinEffects.get(id).get();
+        return m_builtinEffects.get(id);
 
-    return m_namedEffects.get(id).get();
+    return m_namedEffects.get(id);
 }
 
 void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> prpEffect, RenderObject* object)

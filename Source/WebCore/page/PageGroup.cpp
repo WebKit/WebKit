@@ -269,7 +269,7 @@ StorageNamespace* PageGroup::transientLocalStorage(const SecurityOrigin* topOrig
     if (!m_transientLocalStorage.get(topOriginString))
         m_transientLocalStorage.set(topOriginString, StorageNamespace::sessionStorageNamespace(*this->pages().begin()));
 
-    return m_transientLocalStorage.get(topOriginString).get();
+    return m_transientLocalStorage.get(topOriginString);
 }
 
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,

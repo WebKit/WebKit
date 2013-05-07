@@ -1796,7 +1796,7 @@ void GraphicsLayerCA::updateMaskLayer()
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {            
-            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->key).get() : 0;
+            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->key) : 0;
             it->value->setMask(maskClone);
         }
     }

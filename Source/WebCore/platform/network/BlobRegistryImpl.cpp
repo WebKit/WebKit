@@ -186,7 +186,7 @@ void BlobRegistryImpl::unregisterBlobURL(const KURL& url)
 BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const KURL& url) const
 {
     ASSERT(isMainThread());
-    return m_blobs.get(url.string()).get();
+    return m_blobs.get(url.string());
 }
 
 } // namespace WebCore

@@ -3573,7 +3573,7 @@ void StyleResolver::loadPendingSVGDocuments()
         if (filterOperation->getOperationType() == FilterOperation::REFERENCE) {
             ReferenceFilterOperation* referenceFilter = static_cast<ReferenceFilterOperation*>(filterOperation.get());
 
-            WebKitCSSSVGDocumentValue* value = state.pendingSVGDocuments().get(referenceFilter).get();
+            WebKitCSSSVGDocumentValue* value = state.pendingSVGDocuments().get(referenceFilter);
             if (!value)
                 continue;
             CachedSVGDocument* cachedDocument = value->load(cachedResourceLoader);

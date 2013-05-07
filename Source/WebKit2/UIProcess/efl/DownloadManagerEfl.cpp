@@ -153,7 +153,7 @@ void DownloadManagerEfl::registerDownloadJob(WKDownloadRef download, EwkView* vi
 
 EwkDownloadJob* DownloadManagerEfl::ewkDownloadJob(WKDownloadRef wkDownload)
 {
-    return m_downloadJobs.get(WKDownloadGetID(wkDownload)).get();
+    return m_downloadJobs.get(WKDownloadGetID(wkDownload));
 }
 
 void DownloadManagerEfl::unregisterDownloadJob(WKDownloadRef wkDownload)

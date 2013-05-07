@@ -1,3 +1,49 @@
+2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance
+        https://bugs.webkit.org/show_bug.cgi?id=115646
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::hostForURL):
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::get):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::cloneSessionStorageNamespaceInternal):
+        (WebKit::StorageManager::findStorageArea):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::supplement):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::webBackForwardItem):
+        (WebKit::WebProcessProxy::webFrame):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::ewkDownloadJob):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        (WebKit::WebResourceLoadScheduler::webResourceLoaderForIdentifier):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::streamFromID):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::pluginProcessCrashed):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::cancelStreamLoad):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::itemForID):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webUndoStep):
+        (WebKit::WebPage::didFinishCheckingText):
+        (WebKit::WebPage::didCancelCheckingText):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webPage):
+        (WebKit::WebProcess::webPageGroup):
+            Updated accordingly to new HashMap<.., RefPtr>::get() semantics.
+
 2013-05-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed buildfix after r149637.

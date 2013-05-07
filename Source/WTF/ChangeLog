@@ -1,3 +1,16 @@
+2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance
+        https://bugs.webkit.org/show_bug.cgi?id=115646
+
+        Reviewed by Darin Adler.
+
+        HashTraits<RefPtr<P> >::PeekType should be raw pointer so that we
+        can obviate multiple RefPtr copying when invoking HashMap<.., RefPtr>::get()
+        method.
+
+        * wtf/HashTraits.h:
+
 2013-05-06  Cosmin Truta  <ctruta@blackberry.com>
 
         Cherry-pick fixes to bignum from upstream

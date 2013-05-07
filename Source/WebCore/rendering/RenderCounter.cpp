@@ -298,7 +298,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
 
     if (object->hasCounterNodeMap()) {
         if (CounterMap* nodeMap = counterMaps().get(object)) {
-            if (CounterNode* node = nodeMap->get(identifier).get())
+            if (CounterNode* node = nodeMap->get(identifier))
                 return node;
         }
     }
@@ -333,7 +333,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
         skipDescendants = false;
         if (!currentRenderer->hasCounterNodeMap())
             continue;
-        CounterNode* currentCounter = maps.get(currentRenderer)->get(identifier).get();
+        CounterNode* currentCounter = maps.get(currentRenderer)->get(identifier);
         if (!currentCounter)
             continue;
         skipDescendants = true;
@@ -627,7 +627,7 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
         fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
             current->nextSibling(), current->hasCounterNodeMap() ?
-            counterName ? WebCore::counterMaps().get(current)->get(identifier).get() : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
+            counterName ? WebCore::counterMaps().get(current)->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
     }
     fflush(stderr);
 }

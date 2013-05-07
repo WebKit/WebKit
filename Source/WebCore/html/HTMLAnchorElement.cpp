@@ -606,7 +606,7 @@ Element* HTMLAnchorElement::rootEditableElementForSelectionOnMouseDown() const
 {
     if (!m_hasRootEditableElementForSelectionOnMouseDown)
         return 0;
-    return rootEditableElementMap().get(this).get();
+    return rootEditableElementMap().get(this);
 }
 
 void HTMLAnchorElement::clearRootEditableElementForSelectionOnMouseDown()

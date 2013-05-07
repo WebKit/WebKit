@@ -167,7 +167,7 @@ void NetworkConnectionToWebProcess::startDownload(bool privateBrowsingEnabled, u
 
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    NetworkResourceLoader* loader = m_networkResourceLoaders.get(mainResourceLoadIdentifier).get();
+    NetworkResourceLoader* loader = m_networkResourceLoaders.get(mainResourceLoadIdentifier);
     NetworkProcess::shared().downloadManager().convertHandleToDownload(downloadID, loader->handle(), request, response);
 
     // Unblock the URL connection operation queue.

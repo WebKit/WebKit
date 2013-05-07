@@ -129,7 +129,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                 RenderStyle* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
 
                 // See if there is a current transition for this prop
-                ImplicitAnimation* implAnim = m_transitions.get(prop).get();
+                ImplicitAnimation* implAnim = m_transitions.get(prop);
                 bool equal = true;
 
                 if (implAnim) {
@@ -521,7 +521,7 @@ bool CompositeAnimation::pauseTransitionAtTime(CSSPropertyID property, double t)
     if ((property < firstCSSProperty) || (property >= firstCSSProperty + numCSSProperties))
         return false;
 
-    ImplicitAnimation* implAnim = m_transitions.get(property).get();
+    ImplicitAnimation* implAnim = m_transitions.get(property);
     if (!implAnim) {
         // Check to see if this property is being animated via a shorthand.
         // This code is only used for testing, so performance is not critical here.

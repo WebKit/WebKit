@@ -529,7 +529,7 @@ bool NetscapePlugin::shouldLoadSrcURL()
 
 NetscapePluginStream* NetscapePlugin::streamFromID(uint64_t streamID)
 {
-    return m_streams.get(streamID).get();
+    return m_streams.get(streamID);
 }
 
 void NetscapePlugin::stopAllStreams()

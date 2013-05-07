@@ -175,7 +175,7 @@ void NetscapePluginHostProxy::removePluginInstance(NetscapePluginInstanceProxy* 
 
 NetscapePluginInstanceProxy* NetscapePluginHostProxy::pluginInstance(uint32_t pluginID)
 {
-    NetscapePluginInstanceProxy* result = m_instances.get(pluginID).get();
+    NetscapePluginInstanceProxy* result = m_instances.get(pluginID);
     ASSERT(!result || result->hostProxy() == this);
     return result;
 }

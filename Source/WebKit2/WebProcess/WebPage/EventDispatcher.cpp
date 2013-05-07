@@ -88,7 +88,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 {
 #if ENABLE(THREADED_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
-    if (ScrollingTree* scrollingTree = m_scrollingTrees.get(pageID).get()) {
+    if (ScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
         PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
 
         // FIXME: It's pretty horrible that we're updating the back/forward state here.

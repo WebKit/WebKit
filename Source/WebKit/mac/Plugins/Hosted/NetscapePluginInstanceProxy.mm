@@ -361,7 +361,7 @@ bool NetscapePluginInstanceProxy::cancelStreamLoad(uint32_t streamID, NPReason r
     if (m_manualStream && streamID == 1)
         stream = m_manualStream.get();
     else
-        stream = m_streams.get(streamID).get();
+        stream = m_streams.get(streamID);
     
     if (!stream)
         return false;

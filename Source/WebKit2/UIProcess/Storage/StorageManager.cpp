@@ -415,7 +415,7 @@ void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, ui
     ASSERT(result.isNewEntry);
 
     ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace> >::isValidKey(storageNamespaceID)));
-    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID).get();
+    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
 
     // FIXME: These should be message checks.
     ASSERT(sessionStorageNamespace);
@@ -510,10 +510,10 @@ void StorageManager::setAllowedSessionStorageNamespaceConnectionInternal(uint64_
 
 void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
-    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID).get();
+    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
     ASSERT(sessionStorageNamespace);
 
-    SessionStorageNamespace* newSessionStorageNamespace = m_sessionStorageNamespaces.get(newStorageNamespaceID).get();
+    SessionStorageNamespace* newSessionStorageNamespace = m_sessionStorageNamespaces.get(newStorageNamespaceID);
     ASSERT(newSessionStorageNamespace);
 
     sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
@@ -541,7 +541,7 @@ StorageManager::StorageArea* StorageManager::findStorageArea(CoreIPC::Connection
     if (!HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair))
         return 0;
 
-    return m_storageAreasByConnection.get(connectionAndStorageMapIDPair).get();
+    return m_storageAreasByConnection.get(connectionAndStorageMapIDPair);
 }
 
 StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)

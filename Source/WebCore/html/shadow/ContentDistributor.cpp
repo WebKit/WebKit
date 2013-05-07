@@ -162,7 +162,7 @@ ContentDistributor::~ContentDistributor()
 
 InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
 {
-    return m_nodeToInsertionPoint.get(key).get();
+    return m_nodeToInsertionPoint.get(key);
 }
 
 void ContentDistributor::populate(Node* node, ContentDistribution& pool)

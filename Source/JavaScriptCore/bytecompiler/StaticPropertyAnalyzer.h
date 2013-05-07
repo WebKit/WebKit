@@ -78,7 +78,7 @@ inline void StaticPropertyAnalyzer::newObject(int dst, unsigned offsetOfInlineCa
 
 inline void StaticPropertyAnalyzer::putById(int dst, unsigned propertyIndex)
 {
-    StaticPropertyAnalysis* analysis = m_analyses.get(dst).get();
+    StaticPropertyAnalysis* analysis = m_analyses.get(dst);
     if (!analysis)
         return;
     analysis->addPropertyIndex(propertyIndex);

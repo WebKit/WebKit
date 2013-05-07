@@ -619,7 +619,7 @@ HTMLFormControlElement* HTMLFormElement::elementForAlias(const AtomicString& ali
 {
     if (alias.isEmpty() || !m_elementAliases)
         return 0;
-    return m_elementAliases->get(alias.impl()).get();
+    return m_elementAliases->get(alias.impl());
 }
 
 void HTMLFormElement::addElementAlias(HTMLFormControlElement* element, const AtomicString& alias)

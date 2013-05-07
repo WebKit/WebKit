@@ -195,7 +195,7 @@ AccessibilityObject* AXObjectCache::get(Widget* widget)
     if (!axID)
         return 0;
     
-    return m_objects.get(axID).get();    
+    return m_objects.get(axID);    
 }
     
 AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
@@ -208,7 +208,7 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     if (!axID)
         return 0;
 
-    return m_objects.get(axID).get();    
+    return m_objects.get(axID);    
 }
 
 AccessibilityObject* AXObjectCache::get(Node* node)
@@ -231,12 +231,12 @@ AccessibilityObject* AXObjectCache::get(Node* node)
     }
 
     if (renderID)
-        return m_objects.get(renderID).get();
+        return m_objects.get(renderID);
 
     if (!nodeID)
         return 0;
 
-    return m_objects.get(nodeID).get();
+    return m_objects.get(nodeID);
 }
 
 // FIXME: This probably belongs on Node.
@@ -482,7 +482,7 @@ void AXObjectCache::remove(AXID axID)
         return;
     
     // first fetch object to operate some cleanup functions on it 
-    AccessibilityObject* obj = m_objects.get(axID).get();
+    AccessibilityObject* obj = m_objects.get(axID);
     if (!obj)
         return;
     

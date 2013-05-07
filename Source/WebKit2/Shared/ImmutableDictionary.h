@@ -70,7 +70,7 @@ public:
 
     APIObject* get(const String& key)
     {
-        return m_map.get(key).get();
+        return m_map.get(key);
     }
 
     PassRefPtr<ImmutableArray> keys() const;

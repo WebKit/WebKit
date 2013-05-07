@@ -1,3 +1,52 @@
+2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance
+        https://bugs.webkit.org/show_bug.cgi?id=115646
+
+        Reviewed by Darin Adler.
+
+        No new tests, no new functionality.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::remove):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::objectFromAXID):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::getImage):
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::getWrapperForRuleInSheets):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::rootEditableElementForSelectionOnMouseDown):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elementForAlias):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::findInsertionPointFor):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::resourceForURL):
+        * loader/archive/ArchiveResourceCollection.cpp:
+        (WebCore::ArchiveResourceCollection::archiveResourceForURL):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::transientLocalStorage):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::pauseTransitionAtTime):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::getBlobDataFromURL):
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::pluginForMIMEType):
+        (WebCore::PluginDatabase::MIMETypeForExtension):
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (showCounterRendererTree):
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::getEffectById):
+            Updated accordingly to new HashMap<.., RefPtr>::get() semantics.
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use OwnPtr instead of deleteAllValues in KeyframeValueList

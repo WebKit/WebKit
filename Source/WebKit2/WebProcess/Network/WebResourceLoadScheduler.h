@@ -58,7 +58,7 @@ public:
 
     virtual void setSerialLoadingEnabled(bool) OVERRIDE;
 
-    WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier).get(); }
+    WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
 
     void networkProcessCrashed();
 

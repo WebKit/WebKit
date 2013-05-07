@@ -210,7 +210,7 @@ Vector<WebPageProxy*> WebProcessProxy::pages() const
 
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
 {
-    return m_backForwardListItemMap.get(itemID).get();
+    return m_backForwardListItemMap.get(itemID);
 }
 
 void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* item)
@@ -463,7 +463,7 @@ WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
     if (!WebFrameProxyMap::isValidKey(frameID))
         return 0;
 
-    return m_frameMap.get(frameID).get();
+    return m_frameMap.get(frameID);
 }
 
 bool WebProcessProxy::canCreateFrame(uint64_t frameID) const
