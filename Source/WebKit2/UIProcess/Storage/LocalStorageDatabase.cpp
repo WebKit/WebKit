@@ -31,6 +31,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -44,15 +45,16 @@ static const int maximumItemsToUpdate = 100;
 
 namespace WebKit {
 
-PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, SecurityOrigin* securityOrigin)
+PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, PassRefPtr<SecurityOrigin> securityOrigin)
 {
     return adoptRef(new LocalStorageDatabase(queue, tracker, securityOrigin));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, SecurityOrigin* securityOrigin)
+LocalStorageDatabase::LocalStorageDatabase(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, PassRefPtr<SecurityOrigin> securityOrigin)
     : m_queue(queue)
     , m_tracker(tracker)
-    , m_databaseFilename(m_tracker->databaseFilename(securityOrigin))
+    , m_securityOrigin(securityOrigin)
+    , m_databaseFilename(m_tracker->databaseFilename(m_securityOrigin.get()))
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
     , m_isClosed(false)

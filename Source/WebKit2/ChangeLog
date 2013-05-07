@@ -1,3 +1,18 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Each local storage database should know its origin
+        https://bugs.webkit.org/show_bug.cgi?id=115737
+
+        Reviewed by Andreas Kling.
+
+        Store the security origin in a member variable. It'll be used to communicate database state changes to the tracker.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        (LocalStorageDatabase):
+
 2013-05-07  Brady Eidson  <beidson@apple.com>
 
         Remove some unnecessary soft linking in NetworkProcess. (Take 2)
