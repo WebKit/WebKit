@@ -186,7 +186,7 @@ EOF
         push(@contents, "\n    // Attributes\n\n");
         foreach my $attribute (@attributes) {
             push(@contents, "    static JSValueRef @{[$self->_getterName($attribute)]}(JSContextRef, JSObjectRef, JSStringRef, JSValueRef*);\n");
-            push(@contents, "    static bool @{[$self->_setterName($attribute)]}(JSContextRef, JSObjectRef, JSStringRef, JSValueRef, JSValueRef*);\n") unless $attribute->type =~ /^readonly/;
+            push(@contents, "    static bool @{[$self->_setterName($attribute)]}(JSContextRef, JSObjectRef, JSStringRef, JSValueRef, JSValueRef*);\n") unless $attribute->isReadOnly;
         }
     }
 
@@ -330,7 +330,7 @@ JSValueRef ${className}::${getterName}(JSContextRef context, JSObjectRef object,
 }
 EOF
 
-            unless ($attribute->type =~ /^readonly/) {
+            unless ($attribute->isReadOnly) {
                 push(@contents, <<EOF);
 
 bool ${className}::@{[$self->_setterName($attribute)]}(JSContextRef context, JSObjectRef object, JSStringRef, JSValueRef value, JSValueRef* exception)
@@ -555,11 +555,10 @@ sub _staticValuesGetterImplementation
         return if $_->signature->extendedAttributes->{"NoImplementation"};
 
         my $attributeName = $_->signature->name;
-        my $attributeIsReadonly = $_->type =~ /^readonly/;
         my $getterName = $self->_getterName($_);
-        my $setterName = $attributeIsReadonly ? "0" : $self->_setterName($_);
+        my $setterName = $_->isReadOnly ? "0" : $self->_setterName($_);
         my @attributes = qw(kJSPropertyAttributeDontDelete);
-        push(@attributes, "kJSPropertyAttributeReadOnly") if $attributeIsReadonly;
+        push(@attributes, "kJSPropertyAttributeReadOnly") if $_->isReadOnly;
         push(@attributes, "kJSPropertyAttributeDontEnum") if $_->signature->extendedAttributes->{"DontEnum"};
 
         return "{ \"$attributeName\", $getterName, $setterName, " . join(" | ", @attributes) . " }";

@@ -386,7 +386,6 @@ sub GetWriteableProperties {
     my @result = ();
 
     foreach my $property (@{$properties}) {
-        my $writeable = $property->type !~ /^readonly/;
         my $gtype = GetGValueTypeName($property->signature->type);
         my $hasGtypeSignature = ($gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
                                  $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
@@ -395,7 +394,7 @@ sub GetWriteableProperties {
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
         my $replaceable = $property->signature->extendedAttributes->{"Replaceable"};
-        if ($writeable && $hasGtypeSignature && !$replaceable) {
+        if (!$property->isReadOnly && $hasGtypeSignature && !$replaceable) {
             push(@result, $property);
         }
     }
@@ -460,7 +459,7 @@ sub GenerateProperty {
 
     my $gtype = GetGValueTypeName($propType);
     my $gparamflag = "WEBKIT_PARAM_READABLE";
-    my $writeable = $attribute->type !~ /^readonly/;
+    my $writeable = !$attribute->isReadOnly;
     my $const = "read-only ";
     my $custom = $attribute->signature->extendedAttributes->{"Custom"};
     if ($writeable && $custom) {
@@ -1233,8 +1232,7 @@ sub GenerateFunctions {
 
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
-        if ($attribute->type =~ /^readonly/ ||
-            $attribute->signature->extendedAttributes->{"Replaceable"}) {
+        if ($attribute->isReadOnly || $attribute->signature->extendedAttributes->{"Replaceable"}) {
             next TOP;
         }
         

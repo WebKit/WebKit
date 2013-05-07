@@ -439,7 +439,6 @@ sub GenerateHeader
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
-            my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
             my $property = "";
             
             $property .= "#if ${attributeConditionalString}\n" if $attributeConditionalString;
@@ -455,7 +454,7 @@ sub GenerateHeader
 
             $property .= $declarationSuffix;
             push(@headerAttributes, $property);
-            if (!$attributeIsReadonly and !$attribute->signature->extendedAttributes->{"Replaceable"}) {
+            if (!$attribute->isReadOnly and !$attribute->signature->extendedAttributes->{"Replaceable"}) {
                 $property = "    void $setterName($attributeType)";
                 $property .= $declarationSuffix;
                 push(@headerAttributes, $property); 
@@ -696,7 +695,6 @@ sub GenerateImplementation
 
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
-            my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
             my $attributeIsNullable = $attribute->signature->isNullable;
 
             $attributeNames{$attributeName} = 1;
@@ -763,7 +761,7 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
 
             # - SETTER
-            if (!$attributeIsReadonly and !$attribute->signature->extendedAttributes->{"Replaceable"}) {
+            if (!$attribute->isReadOnly and !$attribute->signature->extendedAttributes->{"Replaceable"}) {
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
 

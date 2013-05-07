@@ -66,6 +66,7 @@ struct( domFunction => {
 struct( domAttribute => {
     type => '$',              # Attribute type (including namespace)
     isStatic => '$',
+    isReadOnly => '$',
     signature => '$',         # Attribute signature
     getterExceptions => '@',  # Possibly raised exceptions.
     setterExceptions => '@',  # Possibly raised exceptions.
@@ -1141,7 +1142,8 @@ sub parseAttributeRest
     if ($next->value() =~ /$nextAttributeRest_1/) {
         my $newDataNode = domAttribute->new();
         if ($self->parseReadOnly()) {
-            $newDataNode->type("readonly attribute");
+            $newDataNode->type("attribute");
+            $newDataNode->isReadOnly(1);
         } else {
             $newDataNode->type("attribute");
         }
@@ -1498,7 +1500,8 @@ sub parseExceptionField
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
         my $newDataNode = domAttribute->new();
-        $newDataNode->type("readonly attribute");
+        $newDataNode->type("attribute");
+        $newDataNode->isReadOnly(1);
         $newDataNode->signature(domSignature->new());
         $newDataNode->signature->type($self->parseType());
         my $token = $self->getToken();
@@ -2414,7 +2417,8 @@ sub parseAttributeRestOld
     if ($next->value() =~ /$nextAttributeRest_1/) {
         my $newDataNode = domAttribute->new();
         if ($self->parseReadOnly()) {
-            $newDataNode->type("readonly attribute");
+            $newDataNode->type("attribute");
+            $newDataNode->isReadOnly(1);
         } else {
             $newDataNode->type("attribute");
         }

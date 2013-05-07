@@ -265,7 +265,7 @@ sub IsScriptProfileType
 sub IsReadonly
 {
     my $attribute = shift;
-    return $attribute->type =~ /readonly/ && !$attribute->signature->extendedAttributes->{"Replaceable"};
+    return $attribute->isReadOnly && !$attribute->signature->extendedAttributes->{"Replaceable"};
 }
 
 sub AddTypedefForScriptProfileType

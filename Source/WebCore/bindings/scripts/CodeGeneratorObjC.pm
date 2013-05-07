@@ -788,9 +788,7 @@ sub GenerateHeader
             }
 
             my $attributeType = GetObjCType($attribute->signature->type);
-            my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
-
-            my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attributeIsReadonly);
+            my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attribute->isReadOnly);
             # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
             $attributeName =~ s/operator/_operator/ if ($attributeName =~ /operator/);
             $property .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName;
@@ -1166,7 +1164,6 @@ sub GenerateImplementation
 
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetObjCType($attribute->signature->type);
-            my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
             my $attributeClassName = GetClassName($attribute->signature->type);
 
             my $attributeInterfaceName = $attributeName;
@@ -1381,7 +1378,7 @@ sub GenerateImplementation
             push(@implContent, "}\n");
 
             # - SETTER
-            if (!$attributeIsReadonly) {
+            if (!$attribute->isReadOnly) {
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
 

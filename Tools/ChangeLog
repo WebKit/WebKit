@@ -1,3 +1,17 @@
+2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an 'isReadOnly' member to IDL parse tree structure
+        https://bugs.webkit.org/show_bug.cgi?id=115704
+
+        Reviewed by Kentaro Hara.
+
+        Use newly added isReadOnly attribute.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_generateHeaderFile):
+        (_generateImplementationFile):
+        (_staticValuesGetterImplementation):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Remove AlwaysInline.h from WTF
