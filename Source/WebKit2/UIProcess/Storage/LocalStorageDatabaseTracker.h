@@ -48,7 +48,7 @@ public:
     ~LocalStorageDatabaseTracker();
 
     void setLocalStorageDirectory(const String&);
-    String databaseFilename(WebCore::SecurityOrigin*) const;
+    String databasePath(WebCore::SecurityOrigin*) const;
 
     void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
     void deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*);
@@ -58,7 +58,7 @@ private:
 
     void setLocalStorageDirectoryInternal(const String&);
 
-    String databaseFilename(const String&) const;
+    String databasePath(const String& filename) const;
     String trackerDatabasePath() const;
 
     enum DatabaseOpeningStrategy {
@@ -69,6 +69,10 @@ private:
 
     void importOriginIdentifiers();
     void updateTrackerDatabaseFromLocalStorageDatabaseFiles();
+
+    void addDatabaseWithOriginIdentifier(const String& originIdentifier, const String& databasePath);
+    void removeDatabaseWithOriginIdentifier(const String& originIdentifier);
+    String pathForDatabaseWithOriginIdentifier(const String& originIdentifier);
 
     RefPtr<WorkQueue> m_queue;
     String m_localStorageDirectory;

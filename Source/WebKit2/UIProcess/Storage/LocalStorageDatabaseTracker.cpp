@@ -55,17 +55,19 @@ void LocalStorageDatabaseTracker::setLocalStorageDirectory(const String& localSt
     m_queue->dispatch(bind(&LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal, this, localStorageDirectory.isolatedCopy()));
 }
 
-String LocalStorageDatabaseTracker::databaseFilename(SecurityOrigin* securityOrigin) const
+String LocalStorageDatabaseTracker::databasePath(SecurityOrigin* securityOrigin) const
 {
-    return databaseFilename(securityOrigin->databaseIdentifier() + ".localstorage");
+    return databasePath(securityOrigin->databaseIdentifier() + ".localstorage");
 }
 
-void LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*)
+void LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin(SecurityOrigin* securityOrigin)
 {
+    addDatabaseWithOriginIdentifier(securityOrigin->databaseIdentifier(), databasePath(securityOrigin));
 }
 
-void LocalStorageDatabaseTracker::deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*)
+void LocalStorageDatabaseTracker::deleteEmptyDatabaseWithOrigin(SecurityOrigin* securityOrigin)
 {
+    removeDatabaseWithOriginIdentifier(securityOrigin->databaseIdentifier());
 }
 
 void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
@@ -79,7 +81,7 @@ void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String&
     m_queue->dispatch(bind(&LocalStorageDatabaseTracker::importOriginIdentifiers, this));
 }
 
-String LocalStorageDatabaseTracker::databaseFilename(const String& filename) const
+String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
     if (!makeAllDirectories(m_localStorageDirectory)) {
         LOG_ERROR("Unabled to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
@@ -91,11 +93,14 @@ String LocalStorageDatabaseTracker::databaseFilename(const String& filename) con
 
 String LocalStorageDatabaseTracker::trackerDatabasePath() const
 {
-    return databaseFilename("StorageTracker.db");
+    return databasePath("StorageTracker.db");
 }
 
 void LocalStorageDatabaseTracker::openTrackerDatabase(DatabaseOpeningStrategy openingStrategy)
 {
+    if (m_database.isOpen())
+        return;
+
     String databasePath = trackerDatabasePath();
 
     if (!fileExists(databasePath) && openingStrategy == SkipIfNonExistent)
@@ -159,7 +164,9 @@ void LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseF
 
         String originIdentifier = filename.substring(0, filename.length() - strlen(".localstorage"));
 
-        // FIXME: Insert the origin and database pair.
+        if (!m_origins.contains(originIdentifier))
+            addDatabaseWithOriginIdentifier(originIdentifier, path);
+
         originsFromLocalStorageDatabaseFiles.add(originIdentifier);
     }
 
@@ -168,9 +175,85 @@ void LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseF
         if (origins.contains(originIdentifier))
             continue;
 
-        // This origin doesn't have a database file, delete it from the database.
-        // FIXME: Do this.
+        removeDatabaseWithOriginIdentifier(originIdentifier);
     }
+}
+
+void LocalStorageDatabaseTracker::addDatabaseWithOriginIdentifier(const String& originIdentifier, const String& databasePath)
+{
+    openTrackerDatabase(CreateIfNonExistent);
+    if (!m_database.isOpen())
+        return;
+
+    SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
+    if (statement.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.utf8().data());
+        return;
+    }
+
+    statement.bindText(1, originIdentifier);
+    statement.bindText(2, databasePath);
+
+    if (statement.step() != SQLResultDone)
+        LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.utf8().data());
+
+    m_origins.add(originIdentifier);
+
+    // FIXME: Tell clients that the origin was added.
+}
+
+void LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier(const String& originIdentifier)
+{
+    openTrackerDatabase(SkipIfNonExistent);
+    if (!m_database.isOpen())
+        return;
+
+    String path = pathForDatabaseWithOriginIdentifier(originIdentifier);
+    if (path.isEmpty())
+        return;
+
+    SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins where origin=?");
+    if (deleteStatement.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to prepare deletion of origin '%s'", originIdentifier.ascii().data());
+        return;
+    }
+    deleteStatement.bindText(1, originIdentifier);
+    if (!deleteStatement.executeCommand()) {
+        LOG_ERROR("Unable to execute deletion of origin '%s'", originIdentifier.ascii().data());
+        return;
+    }
+
+    deleteFile(path);
+
+    m_origins.remove(originIdentifier);
+    if (m_origins.isEmpty()) {
+        // There are no origins left, go ahead and delete the tracker database.
+        m_database.close();
+        deleteFile(trackerDatabasePath());
+        deleteEmptyDirectory(m_localStorageDirectory);
+    }
+
+    // FIXME: Tell clients that the origin was removed.
+}
+
+String LocalStorageDatabaseTracker::pathForDatabaseWithOriginIdentifier(const String& originIdentifier)
+{
+    if (!m_database.isOpen())
+        return String();
+
+    SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
+    if (pathStatement.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.utf8().data());
+        return String();
+    }
+
+    pathStatement.bindText(1, originIdentifier);
+
+    int result = pathStatement.step();
+    if (result != SQLResultRow)
+        return String();
+
+    return pathStatement.getColumnText(0);
 }
 
 } // namespace WebKit

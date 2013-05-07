@@ -54,7 +54,7 @@ LocalStorageDatabase::LocalStorageDatabase(PassRefPtr<WorkQueue> queue, PassRefP
     : m_queue(queue)
     , m_tracker(tracker)
     , m_securityOrigin(securityOrigin)
-    , m_databaseFilename(m_tracker->databaseFilename(m_securityOrigin.get()))
+    , m_databasePath(m_tracker->databasePath(m_securityOrigin.get()))
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
     , m_isClosed(false)
@@ -83,16 +83,16 @@ void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
 
 bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStrategy)
 {
-    if (!fileExists(m_databaseFilename) && openingStrategy == SkipIfNonExistent)
+    if (!fileExists(m_databasePath) && openingStrategy == SkipIfNonExistent)
         return true;
 
-    if (m_databaseFilename.isEmpty()) {
+    if (m_databasePath.isEmpty()) {
         LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
         return false;
     }
 
-    if (!m_database.open(m_databaseFilename)) {
-        LOG_ERROR("Failed to open database file %s for local storage", m_databaseFilename.utf8().data());
+    if (!m_database.open(m_databasePath)) {
+        LOG_ERROR("Failed to open database file %s for local storage", m_databasePath.utf8().data());
         return false;
     }
 

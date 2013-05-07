@@ -1,5 +1,53 @@
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
+        Add and remove databases and origins from the database tracker
+        https://bugs.webkit.org/show_bug.cgi?id=115752
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        Rename m_databaseFilename to m_databasePath.
+
+        (WebKit::LocalStorageDatabase::tryToOpenDatabase):
+        Rename m_databaseFilename to m_databasePath.
+
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        Rename m_databaseFilename to m_databasePath.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath):
+        Rename databaseFilename to databasePath.
+
+        (WebKit::LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin):
+        Call addDatabaseWithOriginIdentifier.
+
+        (WebKit::LocalStorageDatabaseTracker::deleteEmptyDatabaseWithOrigin):
+        Call removeDatabaseWithOriginIdentifier.
+
+        (WebKit::LocalStorageDatabaseTracker::trackerDatabasePath):
+        Call databasePath instead of databaseFile.
+
+        (WebKit::LocalStorageDatabaseTracker::openTrackerDatabase):
+        Bail if the database is already open.
+
+        (WebKit::LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseFiles):
+        Call addDatabaseWithOriginIdentifier if this is an origin we don't know about.
+
+        (WebKit::LocalStorageDatabaseTracker::addDatabaseWithOriginIdentifier):
+        Add the database to the Origins table.
+
+        (WebKit::LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier):
+        remove the database from the Origins table and delete it.
+
+        (WebKit::LocalStorageDatabaseTracker::pathForDatabaseWithOriginIdentifier):
+        Helper function that looks up a database path given its identifier.
+        
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        Rename databaseFile to databasePath.
+
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
         The storage database tracker should know when databases come and go
         https://bugs.webkit.org/show_bug.cgi?id=115748
 

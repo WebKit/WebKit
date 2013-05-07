@@ -82,7 +82,7 @@ private:
     RefPtr<LocalStorageDatabaseTracker> m_tracker;
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 
-    String m_databaseFilename;
+    String m_databasePath;
     WebCore::SQLiteDatabase m_database;
     bool m_failedToOpenDatabase;
     bool m_didImportItems;
