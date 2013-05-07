@@ -1,3 +1,41 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues in KeyframeValueList
+        https://bugs.webkit.org/show_bug.cgi?id=115652
+
+        Reviewed by Simon Fraser.
+
+        Also made a few related style fixes in the functions touched.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::KeyframeValueList::insert): Change argument type to PassOwnPtr
+        and update use of m_values since it has OwnPtr now instead of raw pointer.
+
+        * platform/graphics/GraphicsLayer.h: Move conditional includes to a
+        separate paragraph, removed an unneeded forward class declaration.
+        (WebCore::AnimationValue::AnimationValue): Marked this constructor explicit
+        and removed an unneeded if statement.
+        (WebCore::AnimationValue::clone): Changed to use adoptPtr and PassOwnPtr.
+        (WebCore::FloatAnimationValue::clone): Changed this to return a PassOwnPtr.
+        (WebCore::TransformAnimationValue::TransformAnimationValue): Marked explicit.
+        (WebCore::TransformAnimationValue::clone): Changed to use adoptPtr and PassOwnPtr.
+        (WebCore::FilterAnimationValue::FilterAnimationValue): Marked explicit.
+        (WebCore::FilterAnimationValue::clone): Changed to use adoptPtr and PassOwnPtr.
+        (WebCore::KeyframeValueList::KeyframeValueList): Marked explicit.
+        (WebCore::KeyframeValueList::~KeyframeValueList): Removed, since the default
+        destructor works without an explicit deleteAllValues call.
+        (WebCore::KeyframeValueList::at): Added call to get needed since the vector
+        contains OwnPtr now.
+        (WebCore::KeyframeValueList::insert): Changed to take PassOwnPtr and then
+        removed now-redundant comment saying "takes ownership of the pointer".
+        (WebCore::KeyframeValueList::m_values): Changed type to Vector<OwnPtr>.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation): Added adoptPtr next to the
+        all the places new was done before calling KeyframeValueList::insert. Also
+        simplified the booleans and #if in this function.
+        (WebCore::RenderLayerBacking::startTransition): Ditto.
+
 2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Replaceable] attributes must be readonly

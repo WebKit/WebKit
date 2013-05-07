@@ -2107,39 +2107,31 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         
         bool isFirstOrLastKeyframe = key == 0 || key == 1;
         if ((hasTransform && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitTransform))
-            transformVector.insert(new TransformAnimationValue(key, &(keyframeStyle->transform()), tf));
+            transformVector.insert(adoptPtr(new TransformAnimationValue(key, &(keyframeStyle->transform()), tf)));
         
         if ((hasOpacity && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyOpacity))
-            opacityVector.insert(new FloatAnimationValue(key, keyframeStyle->opacity(), tf));
+            opacityVector.insert(adoptPtr(new FloatAnimationValue(key, keyframeStyle->opacity(), tf)));
 
 #if ENABLE(CSS_FILTERS)
         if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitFilter))
-            filterVector.insert(new FilterAnimationValue(key, &(keyframeStyle->filter()), tf));
+            filterVector.insert(adoptPtr(new FilterAnimationValue(key, &(keyframeStyle->filter()), tf)));
 #endif
     }
 
-    bool didAnimateTransform = false;
-    bool didAnimateOpacity = false;
-#if ENABLE(CSS_FILTERS)
-    bool didAnimateFilter = false;
-#endif
+    bool didAnimate = false;
     
     if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
-        didAnimateTransform = true;
+        didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
-        didAnimateOpacity = true;
+        didAnimate = true;
 
 #if ENABLE(CSS_FILTERS)
     if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize(), anim, keyframes.animationName(), timeOffset))
-        didAnimateFilter = true;
+        didAnimate = true;
 #endif
 
-#if ENABLE(CSS_FILTERS)
-    return didAnimateTransform || didAnimateOpacity || didAnimateFilter;
-#else
-    return didAnimateTransform || didAnimateOpacity;
-#endif
+    return didAnimate;
 }
 
 void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
@@ -2154,11 +2146,7 @@ void RenderLayerBacking::animationFinished(const String& animationName)
 
 bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
 {
-    bool didAnimateOpacity = false;
-    bool didAnimateTransform = false;
-#if ENABLE(CSS_FILTERS)
-    bool didAnimateFilter = false;
-#endif
+    bool didAnimate = false;
 
     ASSERT(property != CSSPropertyInvalid);
 
@@ -2166,13 +2154,13 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         const Animation* opacityAnim = toStyle->transitionForProperty(CSSPropertyOpacity);
         if (opacityAnim && !opacityAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList opacityVector(AnimatedPropertyOpacity);
-            opacityVector.insert(new FloatAnimationValue(0, compositingOpacity(fromStyle->opacity())));
-            opacityVector.insert(new FloatAnimationValue(1, compositingOpacity(toStyle->opacity())));
+            opacityVector.insert(adoptPtr(new FloatAnimationValue(0, compositingOpacity(fromStyle->opacity()))));
+            opacityVector.insert(adoptPtr(new FloatAnimationValue(1, compositingOpacity(toStyle->opacity()))));
             // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
             if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
                 // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
                 updateOpacity(toStyle);
-                didAnimateOpacity = true;
+                didAnimate = true;
             }
         }
     }
@@ -2181,12 +2169,12 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyWebkitTransform);
         if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
-            transformVector.insert(new TransformAnimationValue(0, &fromStyle->transform()));
-            transformVector.insert(new TransformAnimationValue(1, &toStyle->transform()));
+            transformVector.insert(adoptPtr(new TransformAnimationValue(0, &fromStyle->transform())));
+            transformVector.insert(adoptPtr(new TransformAnimationValue(1, &toStyle->transform())));
             if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final transform.
                 updateTransform(toStyle);
-                didAnimateTransform = true;
+                didAnimate = true;
             }
         }
     }
@@ -2196,22 +2184,18 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyWebkitFilter);
         if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
-            filterVector.insert(new FilterAnimationValue(0, &fromStyle->filter()));
-            filterVector.insert(new FilterAnimationValue(1, &toStyle->filter()));
+            filterVector.insert(adoptPtr(new FilterAnimationValue(0, &fromStyle->filter())));
+            filterVector.insert(adoptPtr(new FilterAnimationValue(1, &toStyle->filter())));
             if (m_graphicsLayer->addAnimation(filterVector, IntSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
                 // To ensure that the correct filter is visible when the animation ends, also set the final filter.
                 updateFilters(toStyle);
-                didAnimateFilter = true;
+                didAnimate = true;
             }
         }
     }
 #endif
 
-#if ENABLE(CSS_FILTERS)
-    return didAnimateOpacity || didAnimateTransform || didAnimateFilter;
-#else
-    return didAnimateOpacity || didAnimateTransform;
-#endif
+    return didAnimate;
 }
 
 void RenderLayerBacking::transitionPaused(double timeOffset, CSSPropertyID property)

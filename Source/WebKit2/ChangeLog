@@ -1,3 +1,14 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues in KeyframeValueList
+        https://bugs.webkit.org/show_bug.cgi?id=115652
+
+        Reviewed by Simon Fraser.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::ArgumentCoder<GraphicsLayerAnimation>::decode): Added adoptPtr
+        next to new when calling KeyframeValueList::insert.
+
 2013-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, build fix on EFL port

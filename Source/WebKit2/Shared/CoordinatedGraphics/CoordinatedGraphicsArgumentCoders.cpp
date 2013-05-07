@@ -733,14 +733,14 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             float value;
             if (!decoder.decode(value))
                 return false;
-            keyframes.insert(new FloatAnimationValue(keyTime, value, timingFunction));
+            keyframes.insert(adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction)));
             break;
         }
         case AnimatedPropertyWebkitTransform: {
             TransformOperations transform;
             if (!decoder.decode(transform))
                 return false;
-            keyframes.insert(new TransformAnimationValue(keyTime, &transform, timingFunction));
+            keyframes.insert(adoptPtr(new TransformAnimationValue(keyTime, &transform, timingFunction)));
             break;
         }
 #if ENABLE(CSS_FILTERS)
@@ -748,7 +748,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             FilterOperations filter;
             if (!decoder.decode(filter))
                 return false;
-            keyframes.insert(new FilterAnimationValue(keyTime, &filter, timingFunction));
+            keyframes.insert(adoptPtr(new FilterAnimationValue(keyTime, &filter, timingFunction)));
             break;
         }
 #endif

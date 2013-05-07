@@ -53,10 +53,10 @@ static RepaintMap& repaintRectMap()
     return map;
 }
 
-void KeyframeValueList::insert(const AnimationValue* value)
+void KeyframeValueList::insert(PassOwnPtr<const AnimationValue> value)
 {
     for (size_t i = 0; i < m_values.size(); ++i) {
-        const AnimationValue* curValue = m_values[i];
+        const AnimationValue* curValue = m_values[i].get();
         if (curValue->keyTime() == value->keyTime()) {
             ASSERT_NOT_REACHED();
             // insert after
