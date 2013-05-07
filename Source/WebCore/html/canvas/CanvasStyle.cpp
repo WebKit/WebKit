@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -125,14 +125,24 @@ CanvasStyle::CanvasStyle(float c, float m, float y, float k, float a)
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasGradient> gradient)
     : m_type(Gradient)
-    , m_gradient(gradient)
+    , m_gradient(gradient.leakRef())
 {
+    m_gradient->ref();
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
     : m_type(ImagePattern)
-    , m_pattern(pattern)
+    , m_pattern(pattern.leakRef())
 {
+    m_pattern->ref();
+}
+
+CanvasStyle::~CanvasStyle()
+{
+    if (m_type == Gradient)
+        m_gradient->deref();
+    else if (m_type == ImagePattern)
+        m_pattern->deref();
 }
 
 PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color, Document* document)

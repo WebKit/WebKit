@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,11 @@ namespace WebCore {
     class HTMLCanvasElement;
 
     class CanvasStyle : public RefCounted<CanvasStyle> {
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(CanvasStyle);
     public:
+        ~CanvasStyle();
+
         static PassRefPtr<CanvasStyle> createFromRGBA(RGBA32 rgba) { return adoptRef(new CanvasStyle(rgba)); }
         static PassRefPtr<CanvasStyle> createFromString(const String& color, Document* = 0);
         static PassRefPtr<CanvasStyle> createFromStringWithOverrideAlpha(const String& color, float alpha);
@@ -56,8 +60,8 @@ namespace WebCore {
         float overrideAlpha() const { ASSERT(m_type == CurrentColorWithOverrideAlpha); return m_overrideAlpha; }
 
         String color() const { ASSERT(m_type == RGBA || m_type == CMYKA); return Color(m_rgba).serialized(); }
-        CanvasGradient* canvasGradient() const { return m_gradient.get(); }
-        CanvasPattern* canvasPattern() const { return m_pattern.get(); }
+        CanvasGradient* canvasGradient() const;
+        CanvasPattern* canvasPattern() const;
 
         void applyFillColor(GraphicsContext*);
         void applyStrokeColor(GraphicsContext*);
@@ -82,10 +86,9 @@ namespace WebCore {
         union {
             RGBA32 m_rgba;
             float m_overrideAlpha;
+            CanvasGradient* m_gradient;
+            CanvasPattern* m_pattern;
         };
-
-        RefPtr<CanvasGradient> m_gradient;
-        RefPtr<CanvasPattern> m_pattern;
 
         struct CMYKAValues {
             CMYKAValues() : c(0), m(0), y(0), k(0), a(0) { }
@@ -100,6 +103,20 @@ namespace WebCore {
 
     RGBA32 currentColor(HTMLCanvasElement*);
     bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement*);
+
+    inline CanvasGradient* CanvasStyle::canvasGradient() const
+    {
+        if (m_type == Gradient)
+            return m_gradient;
+        return 0;
+    }
+
+    inline CanvasPattern* CanvasStyle::canvasPattern() const
+    {
+        if (m_type == ImagePattern)
+            return m_pattern;
+        return 0;
+    }
 
 } // namespace WebCore
 

@@ -1,3 +1,23 @@
+2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Move CanvasGradient and CanvasPattern in the union of CanvasStyle
+        https://bugs.webkit.org/show_bug.cgi?id=115759
+
+        Reviewed by Andreas Kling.
+
+        The Gradient and Pattern are exclusive with the other values, but they
+        were left out of the union because they are ref-counted.
+
+        This patch moves them in the union, and simply does the ref-counting manually.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::~CanvasStyle):
+        * html/canvas/CanvasStyle.h:
+        (CanvasStyle):
+        (WebCore::CanvasStyle::canvasGradient):
+        (WebCore::CanvasStyle::canvasPattern):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Remove custom allocator support from PODArena
