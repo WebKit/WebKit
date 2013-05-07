@@ -1,3 +1,25 @@
+2013-05-07  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] POST requests sometimes fail.
+        https://bugs.webkit.org/show_bug.cgi?id=111844
+
+        Reviewed by Brent Fulgham.
+
+        Curl adds the header 'Expect: 100-Continue' when sending a POST request.
+        When we receive the header 'HTTP/1.1 100 Continue', we should not call
+        ResourceHandleClient::didReceiveResponse(), as this will cancel the request,
+        because the MIME type is empty in this case, causing the POST request to fail.
+        This header is only sent as an info header, or provisional response.
+        
+        In addition, this patch changes the classification of http code 304 (Not modified).
+        It is not reported as a redirect anymore, but as a response
+        (ResourceHandleClient::didReceiveResponse() is called.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::isHttpInfo): Added helper method to determine if http code is http info.
+        (WebCore::isHttpRedirect): Added helper method to determine if http code is http redirect.
+        (WebCore::headerCallback): Just return when receiving the header'HTTP/1.1 100 Continue'.
+
 2013-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [X11][BlackBerry] Check if MOZ_X11 is defined instead of XP_UNIX npruntime_internal.h
