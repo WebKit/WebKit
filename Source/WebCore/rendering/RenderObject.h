@@ -659,7 +659,7 @@ public:
 
     virtual RenderObject* hoverAncestor() const { return parent(); }
 
-    Element* offsetParent() const;
+    RenderBoxModelObject* offsetParent() const;
 
     void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
     void setNeedsLayout(bool needsLayout, MarkingBehavior = MarkContainingBlockChain);

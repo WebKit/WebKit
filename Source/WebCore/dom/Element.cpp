@@ -548,8 +548,10 @@ Element* Element::bindingsOffsetParent()
 Element* Element::offsetParent()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderObject* renderer = this->renderer())
-        return renderer->offsetParent();
+    if (RenderObject* renderer = this->renderer()) {
+        if (RenderObject* offsetParent = renderer->offsetParent())
+            return toElement(offsetParent->node());
+    }
     return 0;
 }
 

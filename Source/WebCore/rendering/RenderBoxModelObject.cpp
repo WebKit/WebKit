@@ -488,11 +488,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the left border edge 
     // of the element and stop this algorithm.
-    Element* element = offsetParent();
-    if (!element)
-        return referencePoint;
-
-    if (const RenderBoxModelObject* offsetParent = element->renderBoxModelObject()) {
+    if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (offsetParent->isBox() && !offsetParent->isBody())
             referencePoint.move(-toRenderBox(offsetParent)->borderLeft(), -toRenderBox(offsetParent)->borderTop());
         if (!isOutOfFlowPositioned()) {

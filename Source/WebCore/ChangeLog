@@ -1,3 +1,33 @@
+2013-05-06  Beth Dakin  <bdakin@apple.com>
+
+        Reproducible crash in RenderBoxModelObject::adjustedPositionRelativeToOffsetParent()
+        https://bugs.webkit.org/show_bug.cgi?id=115685
+        -and corresponding-
+        <rdar://problem/13700734>
+
+        Reviewed by Sam Weinig.
+
+        This fix here is just to rollout the change that caused this regression, which is 
+        http://trac.webkit.org/changeset/147395 . That change was not intended to cause any 
+        behavioral differences. The change made it so RenderObject::offsetParent() returned 
+        an Element* instead of a RenderBoxModelObject*. However, can muddle things when the 
+        object we are returning is a continuation. Multiple RenderObjects have the same 
+        Element in a continuation, so this new code can lead to a crash in 
+        adjustedPositionRelativeToOffsetParent() when we expect to walk the RenderObject 
+        chain and find the offsetParent in the Element’s parent chain. But we might crash in 
+        some complicated continuation scenarios because we lost this disambiguation of which 
+        RenderObject to start with.
+
+        Roll out.
+        * dom/Element.cpp:
+        (WebCore::Element::offsetParent):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unify ways to cache named item in HTMLCollections
