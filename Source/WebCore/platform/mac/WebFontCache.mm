@@ -161,6 +161,12 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
 // we then do a search based on the family names of the installed fonts.
 + (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
+
+    if ([desiredFamily compare:@"-webkit-system-font" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+        // We ignore italic for system font.
+        return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
+    }
+
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
     // Do a simple case insensitive search for a matching font family.

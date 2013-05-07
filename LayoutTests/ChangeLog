@@ -1,3 +1,15 @@
+2013-05-06  Enrica Casucci  <enrica@apple.com>
+
+        Support -webkit-system-font on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=115758
+        <rdar://problem/13433854>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/fast/text/systemFont.html: Added.
+        * platform/mac/platform/mac/fast/text/systemFont-expected.png: Added.
+        * platform/mac/platform/mac/fast/text/systemFont-expected.txt: Added.
+
 2013-05-07  Alexey Proskuryakov  <ap@apple.com>
 
         Combine html and js parts fast/url script-tests

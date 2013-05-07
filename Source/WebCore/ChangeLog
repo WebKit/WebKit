@@ -1,3 +1,16 @@
+2013-05-06  Enrica Casucci  <enrica@apple.com>
+
+        Support -webkit-system-font on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=115758
+        <rdar://problem/13433854>
+
+        Reviewed by Dean Jackson.
+
+        Test: platform/mac/fast/text/systemFont.html
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]):
+
 2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Move CanvasGradient and CanvasPattern in the union of CanvasStyle
