@@ -44,43 +44,10 @@ namespace WebCore {
 
 class PODArena : public RefCounted<PODArena> {
 public:
-    // The arena is configured with an allocator, which is responsible
-    // for allocating and freeing chunks of memory at a time.
-    class Allocator : public RefCounted<Allocator> {
-    public:
-        virtual void* allocate(size_t size) = 0;
-        virtual void free(void* ptr) = 0;
-    protected:
-        virtual ~Allocator() { }
-        friend class WTF::RefCounted<Allocator>;
-    };
-
-    // The Arena's default allocator, which uses fastMalloc and
-    // fastFree to allocate chunks of storage.
-    class FastMallocAllocator : public Allocator {
-    public:
-        static PassRefPtr<FastMallocAllocator> create()
-        {
-            return adoptRef(new FastMallocAllocator);
-        }
-
-        virtual void* allocate(size_t size) { return fastMalloc(size); }
-        virtual void free(void* ptr) { fastFree(ptr); }
-
-    protected:
-        FastMallocAllocator() { }
-    };
-
     // Creates a new PODArena configured with a FastMallocAllocator.
     static PassRefPtr<PODArena> create()
     {
         return adoptRef(new PODArena);
-    }
-
-    // Creates a new PODArena configured with the given Allocator.
-    static PassRefPtr<PODArena> create(PassRefPtr<Allocator> allocator)
-    {
-        return adoptRef(new PODArena(allocator));
     }
 
     // Allocates an object from the arena.
@@ -106,13 +73,7 @@ protected:
     friend class WTF::RefCounted<PODArena>;
 
     PODArena()
-        : m_allocator(FastMallocAllocator::create())
-        , m_current(0)
-        , m_currentChunkSize(DefaultChunkSize) { }
-
-    explicit PODArena(PassRefPtr<Allocator> allocator)
-        : m_allocator(allocator)
-        , m_current(0)
+        : m_current(0)
         , m_currentChunkSize(DefaultChunkSize) { }
 
     // Returns the alignment requirement for classes and structs on the
@@ -132,7 +93,7 @@ protected:
         if (!ptr) {
             if (roundedSize > m_currentChunkSize)
                 m_currentChunkSize = roundedSize;
-            m_chunks.append(adoptPtr(new Chunk(m_allocator.get(), m_currentChunkSize)));
+            m_chunks.append(adoptPtr(new Chunk(m_currentChunkSize)));
             m_current = m_chunks.last().get();
             ptr = m_current->allocate(roundedSize);
         }
@@ -152,19 +113,18 @@ protected:
     public:
         // Allocates a block of memory of the given size from the passed
         // Allocator.
-        Chunk(Allocator* allocator, size_t size)
-            : m_allocator(allocator)
-            , m_size(size)
+        Chunk(size_t size)
+            : m_size(size)
             , m_currentOffset(0)
         {
-            m_base = static_cast<uint8_t*>(m_allocator->allocate(size));
+            m_base = static_cast<uint8_t*>(fastMalloc(size));
         }
 
         // Frees the memory allocated from the Allocator in the
         // constructor.
         virtual ~Chunk()
         {
-            m_allocator->free(m_base);
+            fastFree(m_base);
         }
 
         // Returns a pointer to "size" bytes of storage, or 0 if this
@@ -184,13 +144,11 @@ protected:
         }
 
     protected:
-        Allocator* m_allocator;
         uint8_t* m_base;
         size_t m_size;
         size_t m_currentOffset;
     };
 
-    RefPtr<Allocator> m_allocator;
     Chunk* m_current;
     size_t m_currentChunkSize;
     Vector<OwnPtr<Chunk> > m_chunks;

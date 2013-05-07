@@ -1,5 +1,24 @@
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
+        Remove custom allocator support from PODArena
+        https://bugs.webkit.org/show_bug.cgi?id=115762
+
+        Reviewed by Andreas Kling.
+
+        Nobody uses PODArena with a custom allocator, so just get rid of it and always use fastMalloc/fastFree.
+
+        * platform/PODArena.h:
+        (WebCore::PODArena::PODArena):
+        (WebCore::PODArena::allocateBase):
+        (WebCore::PODArena::Chunk::Chunk):
+        (WebCore::PODArena::Chunk::~Chunk):
+        (Chunk):
+        * platform/PODFreeListArena.h:
+        (WebCore::PODFreeListArena::allocate):
+        (WebCore::PODFreeListArena::FreeListChunk::FreeListChunk):
+
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
         Clean up KeyframeValueList and related classes
         https://bugs.webkit.org/show_bug.cgi?id=115738
 

@@ -40,12 +40,6 @@ public:
         return adoptRef(new PODFreeListArena);
     }
 
-    // Creates a new PODArena configured with the given Allocator.
-    static PassRefPtr<PODFreeListArena> create(PassRefPtr<Allocator> allocator)
-    {
-        return adoptRef(new PODFreeListArena(allocator));
-    }
-
     template<class Argument1Type> T* allocateObject(const Argument1Type& argument1)
     {
         size_t roundedSize = roundUp(sizeof(T), minAlignment<T>());
@@ -71,9 +65,6 @@ private:
     PODFreeListArena()
         : PODArena() { }
 
-    explicit PODFreeListArena(PassRefPtr<Allocator> allocator)
-        : PODArena(allocator) { }
-
     void* allocate(size_t size)
     {
         void* ptr = 0;
@@ -97,7 +88,7 @@ private:
         if (!ptr) {
             if (size > m_currentChunkSize)
                 m_currentChunkSize = size;
-            m_chunks.append(adoptPtr(new FreeListChunk(m_allocator.get(), m_currentChunkSize)));
+            m_chunks.append(adoptPtr(new FreeListChunk(m_currentChunkSize)));
             m_current = m_chunks.last().get();
             ptr = m_current->allocate(size);
         }
@@ -111,8 +102,8 @@ private:
             FreeCell *m_next;
         };
     public:
-        FreeListChunk(Allocator* allocator, size_t size)
-            : Chunk(allocator, size)
+        explicit FreeListChunk(size_t size)
+            : Chunk(size)
             , m_freeList(0) { }
 
         void* allocate(size_t size)
