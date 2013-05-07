@@ -87,7 +87,7 @@ private:
 
     typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
     typedef Vector<SVGSMILElement*> AnimationsVector;
-    typedef HashMap<ElementAttributePair, AnimationsVector* > GroupedAnimationsMap;
+    typedef HashMap<ElementAttributePair, OwnPtr<AnimationsVector> > GroupedAnimationsMap;
     GroupedAnimationsMap m_scheduledAnimations;
 
     SVGSVGElement* m_ownerSVGElement;

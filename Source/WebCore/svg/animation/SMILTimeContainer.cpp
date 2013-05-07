@@ -59,7 +59,6 @@ SMILTimeContainer::~SMILTimeContainer()
 #ifndef NDEBUG
     ASSERT(!m_preventScheduledAnimationsChanges);
 #endif
-    deleteAllValues(m_scheduledAnimations);
 }
 
 void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, const QualifiedName& attributeName)
@@ -73,11 +72,9 @@ void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, 
 #endif
 
     ElementAttributePair key(target, attributeName);
-    AnimationsVector* scheduled = m_scheduledAnimations.get(key);
-    if (!scheduled) {
-        scheduled = new AnimationsVector();
-        m_scheduledAnimations.set(key, scheduled);
-    }
+    OwnPtr<AnimationsVector>& scheduled = m_scheduledAnimations.add(key, nullptr).iterator->value;
+    if (!scheduled)
+        scheduled = adoptPtr(new AnimationsVector);
     ASSERT(!scheduled->contains(animation));
     scheduled->append(animation);
 
@@ -191,7 +188,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
 #endif
     GroupedAnimationsMap::iterator end = m_scheduledAnimations.end();
     for (GroupedAnimationsMap::iterator it = m_scheduledAnimations.begin(); it != end; ++it) {
-        AnimationsVector* scheduled = it->value;
+        AnimationsVector* scheduled = it->value.get();
         unsigned size = scheduled->size();
         for (unsigned n = 0; n < size; n++)
             scheduled->at(n)->reset();
@@ -269,7 +266,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     AnimationsVector animationsToApply;
     GroupedAnimationsMap::iterator end = m_scheduledAnimations.end();
     for (GroupedAnimationsMap::iterator it = m_scheduledAnimations.begin(); it != end; ++it) {
-        AnimationsVector* scheduled = it->value;
+        AnimationsVector* scheduled = it->value.get();
 
         // Sort according to priority. Elements with later begin time have higher priority.
         // In case of a tie, document order decides. 
