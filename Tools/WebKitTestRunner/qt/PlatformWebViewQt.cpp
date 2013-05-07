@@ -65,7 +65,9 @@ private Q_SLOTS:
         if (PlatformWebView::windowShapshotEnabled()) {
             setSurfaceType(OpenGLSurface);
             create();
+#if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
             QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
+#endif
         } else
             m_view->experimental()->setRenderToOffscreenBuffer(true);
 

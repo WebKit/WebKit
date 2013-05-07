@@ -1,3 +1,16 @@
+2013-05-07  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WTR] QQuickWindowPrivate::setRenderWithoutShowing has been removed from Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=114808
+
+        Reviewed by Jocelyn Turcotte.
+
+        QQuickWindow::grabWindow() has been implemented for isVisible=false for Qt 5.1.
+        (https://codereview.qt-project.org/#change,54234)
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+
 2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed. Add my email to EFL and BindingsScripts watchlists.
