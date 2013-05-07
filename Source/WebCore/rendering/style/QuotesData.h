@@ -31,22 +31,24 @@ namespace WebCore {
 
 class QuotesData : public RefCounted<QuotesData> {
 public:
-    static PassRefPtr<QuotesData> create() { return adoptRef(new QuotesData()); }
-    static PassRefPtr<QuotesData> create(const String open, const String close);
-    static PassRefPtr<QuotesData> create(const String open1, const String close1, const String open2, const String close2);
+    static PassRefPtr<QuotesData> create(const String& open1, const String& close1, const String& open2, const String& close2);
+    static PassRefPtr<QuotesData> create(const Vector<std::pair<String, String> >& quotes);
 
-    // FIXME: this should be an operator==.
-    static bool equals(const QuotesData*, const QuotesData*);
+    friend bool operator==(const QuotesData&, const QuotesData&);
 
-    void addPair(const std::pair<String, String>& quotePair);
-    const String getOpenQuote(int index) const;
-    const String getCloseQuote(int index) const;
+    const String& openQuote(unsigned index) const;
+    const String& closeQuote(unsigned index) const;
 
 private:
     QuotesData() { }
 
     Vector<std::pair<String, String> > m_quotePairs;
 };
+
+inline bool operator!=(const QuotesData& a, const QuotesData& b)
+{
+    return !(a == b);
+}
 
 } // namespace WebCore
 

@@ -24,53 +24,49 @@
 
 namespace WebCore {
 
-PassRefPtr<QuotesData> QuotesData::create(String open, String close)
+PassRefPtr<QuotesData> QuotesData::create(const String& open1, const String& close1, const String& open2, const String& close2)
 {
-    RefPtr<QuotesData> data = QuotesData::create();
-    data->addPair(std::make_pair(open, close));
-    return data;
+    Vector<std::pair<String, String> > quotes;
+    quotes.reserveInitialCapacity(2);
+    quotes.uncheckedAppend(std::make_pair(open1, close1));
+    quotes.uncheckedAppend(std::make_pair(open2, close2));
+
+    return QuotesData::create(quotes);
 }
 
-PassRefPtr<QuotesData> QuotesData::create(String open1, String close1, String open2, String close2)
+PassRefPtr<QuotesData> QuotesData::create(const Vector<std::pair<String, String> >& quotes)
 {
-    RefPtr<QuotesData> data = QuotesData::create();
-    data->addPair(std::make_pair(open1, close1));
-    data->addPair(std::make_pair(open2, close2));
-    return data;
+    RefPtr<QuotesData> quotesData = adoptRef(new QuotesData);
+    quotesData->m_quotePairs = quotes;
+
+    return quotesData.release();
 }
 
-void QuotesData::addPair(const std::pair<String, String>& quotePair)
+const String& QuotesData::openQuote(unsigned index) const
 {
-    m_quotePairs.append(quotePair);
-}
-
-const String QuotesData::getOpenQuote(int index) const
-{
-    ASSERT(index >= 0);
-    if (!m_quotePairs.size() || index < 0)
+    if (!m_quotePairs.isEmpty())
         return emptyString();
-    if ((size_t)index >= m_quotePairs.size())
+
+    if (index >= m_quotePairs.size())
         return m_quotePairs.last().first;
-    return m_quotePairs.at(index).first;
+
+    return m_quotePairs[index].first;
 }
 
-const String QuotesData::getCloseQuote(int index) const
+const String& QuotesData::closeQuote(unsigned index) const
 {
-    ASSERT(index >= -1);
-    if (!m_quotePairs.size() || index < 0)
+    if (m_quotePairs.isEmpty())
         return emptyString();
-    if ((size_t)index >= m_quotePairs.size())
+
+    if (index >= m_quotePairs.size())
         return m_quotePairs.last().second;
+
     return m_quotePairs.at(index).second;
 }
 
-bool QuotesData::equals(const QuotesData* a, const QuotesData* b)
+bool operator==(const QuotesData& a, const QuotesData& b)
 {
-    if (a == b)
-        return true;
-    if (!a || !b)
-        return false;
-    return a->m_quotePairs == b->m_quotePairs;
+    return a.m_quotePairs == b.m_quotePairs;
 }
 
 } // namespace WebCore

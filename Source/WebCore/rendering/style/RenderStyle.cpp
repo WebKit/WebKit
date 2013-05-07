@@ -613,7 +613,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return StyleDifferenceLayout;
     }
 
-    if (!QuotesData::equals(rareInheritedData->quotes.get(), other->rareInheritedData->quotes.get()))
+    const QuotesData* quotesDataA = rareInheritedData->quotes.get();
+    const QuotesData* quotesDataB = other->rareInheritedData->quotes.get();
+    if (!(quotesDataA == quotesDataB || (quotesDataA && quotesDataB && *quotesDataA == *quotesDataB)))
         return StyleDifferenceLayout;
 
 #if ENABLE(SVG)
@@ -750,8 +752,9 @@ void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 
 void RenderStyle::setQuotes(PassRefPtr<QuotesData> q)
 {
-    if (QuotesData::equals(rareInheritedData->quotes.get(), q.get()))
+    if (rareInheritedData->quotes == q || (rareInheritedData->quotes && q && *rareInheritedData->quotes == *q))
         return;
+
     rareInheritedData.access()->quotes = q;
 }
 

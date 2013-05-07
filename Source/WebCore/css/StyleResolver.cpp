@@ -2356,7 +2356,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         if (value->isValueList()) {
             CSSValueList* list = static_cast<CSSValueList*>(value);
-            RefPtr<QuotesData> quotes = QuotesData::create();
+            Vector<std::pair<String, String> > quotes;
             for (size_t i = 0; i < list->length(); i += 2) {
                 CSSValue* first = list->itemWithoutBoundsCheck(i);
                 // item() returns null if out of bounds so this is safe.
@@ -2367,14 +2367,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 ASSERT_WITH_SECURITY_IMPLICATION(second->isPrimitiveValue());
                 String startQuote = static_cast<CSSPrimitiveValue*>(first)->getStringValue();
                 String endQuote = static_cast<CSSPrimitiveValue*>(second)->getStringValue();
-                quotes->addPair(std::make_pair(startQuote, endQuote));
+                quotes.append(std::make_pair(startQuote, endQuote));
             }
-            state.style()->setQuotes(quotes);
+            state.style()->setQuotes(QuotesData::create(quotes));
             return;
         }
         if (primitiveValue) {
             if (primitiveValue->getIdent() == CSSValueNone)
-                state.style()->setQuotes(QuotesData::create());
+                state.style()->setQuotes(QuotesData::create(Vector<std::pair<String, String> >()));
         }
         return;
     // Shorthand properties.

@@ -240,9 +240,9 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     case NO_CLOSE_QUOTE:
         return StringImpl::empty();
     case CLOSE_QUOTE:
-        return quotesData()->getCloseQuote(m_depth - 1).impl();
+        return quotesData()->closeQuote(m_depth - 1).impl();
     case OPEN_QUOTE:
-        return quotesData()->getOpenQuote(m_depth).impl();
+        return quotesData()->openQuote(m_depth).impl();
     }
     ASSERT_NOT_REACHED();
     return StringImpl::empty();

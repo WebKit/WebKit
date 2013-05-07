@@ -1,3 +1,47 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Begin unraveling the mess that is QuotesData
+        https://bugs.webkit.org/show_bug.cgi?id=115765
+
+        Reviewed by Andreas Kling.
+
+        Change QuotesData to be an immutable object and fix other things that are broken.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        QuotesData::addPair is gone. Instead, create the Vector up front and pass it to QuotesData.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::originalText):
+        Update for renames.
+
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::create):
+        Remove the create overload that wasn't used. Add a new create overload that takes a Vector.
+
+        (WebCore::QuotesData::openQuote):
+        Rename this from getOpenQuote and clean it up.
+
+        (WebCore::QuotesData::closeQuote):
+        Rename this from getCloseQuote and clean it up.
+
+        (WebCore::operator==):
+        Replace the equals member function with a proper equality operator.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        Stop calling QuotesData::equals. Use the same idiom as used for other properties.
+
+        (WebCore::RenderStyle::setQuotes):
+        * rendering/style/StyleRareInheritedData.cpp:
+        Use operator==.
+
+        (WebCore::quotesDataEquivalent):
+        Add helper function.
+
+        (WebCore::StyleRareInheritedData::operator==):
+        Call quotesDataEquivalent.
+
 2013-05-06  Enrica Casucci  <enrica@apple.com>
 
         Support -webkit-system-font on OS X.

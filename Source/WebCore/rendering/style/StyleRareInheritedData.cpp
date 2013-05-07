@@ -217,6 +217,15 @@ static bool cursorDataEquivalent(const CursorList* c1, const CursorList* c2)
     return (*c1 == *c2);
 }
 
+static bool quotesDataEquivalent(const QuotesData* q1, const QuotesData* q2)
+{
+    if (q1 == q2)
+        return true;
+    if ((!q1 && q2) || (q1 && !q2))
+        return false;
+    return (*q1 == *q2);
+}
+
 bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 {
     return textStrokeColor == o.textStrokeColor
@@ -267,7 +276,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
-        && QuotesData::equals(quotes.get(), o.quotes.get())
+        && quotesDataEquivalent(quotes.get(), o.quotes.get())
         && m_tabSize == o.m_tabSize
         && m_lineGrid == o.m_lineGrid
 #if ENABLE(CSS_IMAGE_ORIENTATION)
