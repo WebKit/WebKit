@@ -214,6 +214,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_layerFlushThrottlingEnabled(false)
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
     , m_hasPendingLayerFlush(false)
+    , m_paintRelatedMilestonesTimer(this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
     , m_obligateCompositedLayerCount(0)
@@ -372,8 +373,8 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
 
-    if (frameView)
-        frameView->firePaintRelatedMilestones();
+    if (!m_paintRelatedMilestonesTimer.isActive())
+        m_paintRelatedMilestonesTimer.startOneShot(0);
 
     if (!m_viewportConstrainedLayersNeedingUpdate.isEmpty()) {
         HashSet<RenderLayer*>::const_iterator end = m_viewportConstrainedLayersNeedingUpdate.end();
@@ -3186,6 +3187,13 @@ void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>*)
     if (!m_hasPendingLayerFlush)
         return;
     scheduleLayerFlushNow();
+}
+
+void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*)
+{
+    FrameView* frameView = m_renderView ? m_renderView->frameView() : 0;
+    if (frameView)
+        frameView->firePaintRelatedMilestones();
 }
 
 } // namespace WebCore

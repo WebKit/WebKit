@@ -385,6 +385,8 @@ private:
     void startLayerFlushTimerIfNeeded();
     void layerFlushTimerFired(Timer<RenderLayerCompositor>*);
 
+    void paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*);
+
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer*);
     void logLayerInfo(const RenderLayer*, int depth);
@@ -449,6 +451,8 @@ private:
     bool m_layerFlushThrottlingEnabled;
     bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
     bool m_hasPendingLayerFlush;
+
+    Timer<RenderLayerCompositor> m_paintRelatedMilestonesTimer;
 
 #if !LOG_DISABLED
     int m_rootLayerUpdateCount;
