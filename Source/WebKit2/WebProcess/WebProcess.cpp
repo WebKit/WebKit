@@ -865,8 +865,12 @@ void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<unsigned, double
     m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<unsigned, double>&>(hashes));
 }
 
-void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
+void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
+    if (pageOrigin.isEmpty())
+        return;
+
+    unsigned plugInOriginHash = hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType);
     if (!plugInOriginHash)
         return;
 

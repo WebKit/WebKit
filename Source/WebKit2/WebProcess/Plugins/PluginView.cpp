@@ -49,6 +49,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
+#include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
@@ -1660,9 +1661,6 @@ bool PluginView::shouldAlwaysAutoStart() const
 
 void PluginView::pluginDidReceiveUserInteraction()
 {
-    // FIXME: Extend autostart timeout when this codepath is hit.
-    // http://webkit.org/b/113232
-
     if (frame() && !frame()->settings()->plugInSnapshottingEnabled())
         return;
 
@@ -1670,6 +1668,13 @@ void PluginView::pluginDidReceiveUserInteraction()
         return;
 
     m_didReceiveUserInteraction = true;
+
+    WebCore::HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
+    String pageOrigin = plugInImageElement->document()->page()->mainFrame()->document()->baseURL().host();
+    String pluginOrigin = plugInImageElement->loadedUrl().host();
+    String mimeType = plugInImageElement->loadedMimeType();
+
+    WebProcess::shared().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType);
 }
 
 bool PluginView::shouldCreateTransientPaintingSnapshot() const
