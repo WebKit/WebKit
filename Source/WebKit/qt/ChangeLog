@@ -1,3 +1,18 @@
+2013-05-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Crash when calling QWebFrame::evaluateJavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=113434
+
+        Reviewed by Simon Hausmann.
+
+        Ensure we hold the JSLock when converting JSValue to JSValueRef.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        (QWebElement::evaluateJavaScript):
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::evaluateJavaScript):
+
 2013-05-03  Andreas Kling  <akling@apple.com>
 
         StyleResolver: Have "list of matched rules" API vend internal types instead of CSSOM wrappers.

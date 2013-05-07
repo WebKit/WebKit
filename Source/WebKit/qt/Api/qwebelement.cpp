@@ -45,6 +45,7 @@
 #include "NodeList.h"
 #include "RenderImage.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include "StaticNodeList.h"
 #include "StyleResolver.h"
@@ -710,7 +711,7 @@ QWebFrame *QWebElement::webFrame() const
     return frameAdapter->apiHandle();
 }
 
-static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValue, ScriptState*& state, ScriptController*& scriptController)
+static bool setupScriptContext(WebCore::Element* element, ScriptState*& state, ScriptController*& scriptController)
 {
     if (!element)
         return false;
@@ -731,10 +732,6 @@ static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValu
     if (!state)
         return false;
 
-    thisValue = toJS(state, deprecatedGlobalObjectForPrototype(state), element);
-    if (!thisValue)
-        return false;
-
     return true;
 }
 
@@ -747,21 +744,29 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
         return QVariant();
 
     ScriptState* state = 0;
-    JSC::JSValue thisValue;
     ScriptController* scriptController = 0;
 
-    if (!setupScriptContext(m_element, thisValue, state, scriptController))
+    if (!setupScriptContext(m_element, state, scriptController))
         return QVariant();
-    String script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
+
+    JSC::JSLockHolder lock(state);
+    RefPtr<Element> protect = m_element;
+
+    JSC::JSValue thisValue = toJS(state, toJSDOMGlobalObject(m_element->document(), state), m_element);
+    if (!thisValue)
+        return QVariant();
+
+    ScriptSourceCode sourceCode(scriptSource);
 
     JSC::JSValue evaluationException;
-    JSC::JSValue evaluationResult = JSC::evaluate(state, JSC::makeSource(script), thisValue, &evaluationException);
+    JSC::JSValue evaluationResult = JSC::evaluate(state, sourceCode.jsSourceCode(), thisValue, &evaluationException);
     if (evaluationException)
         return QVariant();
+    JSValueRef evaluationResultRef = toRef(state, evaluationResult);
 
     int distance = 0;
     JSValueRef* ignoredException = 0;
-    return JSC::Bindings::convertValueToQVariant(toRef(state), toRef(state, evaluationResult), QMetaType::Void, &distance, ignoredException);
+    return JSC::Bindings::convertValueToQVariant(toRef(state), evaluationResultRef, QMetaType::Void, &distance, ignoredException);
 }
 
 /*!
