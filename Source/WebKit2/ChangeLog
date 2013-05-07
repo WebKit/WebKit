@@ -1,3 +1,15 @@
+2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r149647): Assertion failure in LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal
+        https://bugs.webkit.org/show_bug.cgi?id=115711    
+
+        Rubber-stamped by Anders Carlsson.
+
+        Temporarily removed the assertion. Andres is going to investigate it tomorrow.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal):
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use OwnPtr instead of deleteAllValues in KeyframeValueList
