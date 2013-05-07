@@ -26,17 +26,17 @@
 #include "config.h"
 #include "WebArchiveDumpSupport.h"
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <CFNetwork/CFNetwork.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 
 extern "C" {
 
-CFURLRef CFURLResponseGetURL(CFURLResponseRef response);
-CFStringRef CFURLResponseGetMIMEType(CFURLResponseRef response);
-CFStringRef CFURLResponseGetTextEncodingName(CFURLResponseRef response);
-SInt64 CFURLResponseGetExpectedContentLength(CFURLResponseRef response);
-CFHTTPMessageRef CFURLResponseGetHTTPResponse(CFURLResponseRef response);
+CFURLRef CFURLResponseGetURL(CFURLResponseRef);
+CFStringRef CFURLResponseGetMIMEType(CFURLResponseRef);
+CFStringRef CFURLResponseGetTextEncodingName(CFURLResponseRef);
+SInt64 CFURLResponseGetExpectedContentLength(CFURLResponseRef);
+CFHTTPMessageRef CFURLResponseGetHTTPResponse(CFURLResponseRef);
 
 CFTypeID CFURLResponseGetTypeID(void);
 
@@ -149,7 +149,7 @@ static CFComparisonResult compareResourceURLs(const void *val1, const void *val2
 {
     CFStringRef url1 = static_cast<CFStringRef>(CFDictionaryGetValue(static_cast<CFDictionaryRef>(val1), CFSTR("WebResourceURL")));
     CFStringRef url2 = static_cast<CFStringRef>(CFDictionaryGetValue(static_cast<CFDictionaryRef>(val2), CFSTR("WebResourceURL")));
- 
+
     return CFStringCompare(url1, url2, kCFCompareAnchored);
 }
 

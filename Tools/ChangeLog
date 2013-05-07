@@ -1,3 +1,14 @@
+2013-05-07  Alex Christensen  <achristensen@apple.com>
+
+        Updated style of WebArchiveDumpSupport before putting it into WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=115745
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (compareResourceURLs):
+        Updated style.
+
 2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an 'isReadOnly' member to IDL parse tree structure
