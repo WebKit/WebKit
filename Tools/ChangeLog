@@ -1,3 +1,9 @@
+2013-05-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed. Add my email to EFL and BindingsScripts watchlists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-05-06  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK1][PerformanceTests] Adopt --no-timeout option implementation to DumpRenderTree
