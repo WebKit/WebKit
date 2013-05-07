@@ -664,8 +664,12 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::SpellCheckRequest
     m_request = spellCheckRequest;
 }
 
-void InputHandler::spellCheckingRequestProcessed(int32_t, spannable_string_t* spannableString)
+void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
 {
+#if !ENABLE_SPELLING_LOG
+    UNUSED_PARAM(transactionId)
+#endif
+
     SpellingLog(Platform::LogLevelWarn,
         "InputHandler::spellCheckingRequestProcessed Expected transaction id %d, received %d. %s",
         m_processingTransactionId,
@@ -1043,7 +1047,7 @@ void InputHandler::setElementFocused(Element* element)
     ASSERT(DOMSupport::isTextBasedContentEditableElement(element));
     ASSERT(element && element->document() && element->document()->frame());
 
-#ifdef ENABLE_SPELLING_LOG
+#if ENABLE_SPELLING_LOG
     BlackBerry::Platform::StopWatch timer;
     timer.start();
 #endif
@@ -1109,20 +1113,22 @@ void InputHandler::setElementFocused(Element* element)
     if (!m_delayKeyboardVisibilityChange)
         notifyClientOfKeyboardVisibilityChange(true, true /* triggeredByFocusChange */);
 
-#ifdef ENABLE_SPELLING_LOG
+#if ENABLE_SPELLING_LOG
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Focusing the field took %f seconds.", timer.elapsed());
 #endif
 
     // Spellcheck the field in its entirety.
     spellCheckTextBlock(element);
 
-#ifdef ENABLE_SPELLING_LOG
+#if ENABLE_SPELLING_LOG
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Spellchecking the field increased the total time to focus to %f seconds.", timer.elapsed());
 #endif
 }
 
 void InputHandler::spellCheckTextBlock(Element* element)
 {
+    SpellingLog(Platform::LogLevelInfo, "InputHandler::spellCheckTextBlock");
+
     if (!element) {
         // Fall back to a valid focused element.
         if (!m_currentFocusElement)

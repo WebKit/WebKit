@@ -14,6 +14,7 @@
 
 #include <BlackBerryPlatformIMF.h>
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformStopWatch.h>
 
 #define ENABLE_SPELLING_LOG 0
 
@@ -78,6 +79,7 @@ void SpellingHandler::spellCheckTextBlock(const WebCore::Element* element, WebCo
     if (m_textCheckingProcessType == TextCheckingProcessBatch) {
         // If total block text is under the limited amount, send the entire chunk.
         if (rangeForSpellChecking->text().length() < MaxSpellCheckingStringLength) {
+            SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckTextBlock creating single batch request");
             createSpellCheckRequest(rangeForSpellChecking);
             return;
         }
@@ -90,6 +92,7 @@ void SpellingHandler::spellCheckTextBlock(const WebCore::Element* element, WebCo
     m_endOfRange = visibleSelection.visibleEnd();
     m_cachedEndPosition = m_endOfRange;
 
+    SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckTextBlock starting first iteration");
     m_iterationDelayTimer.startOneShot(0);
 }
 
@@ -110,6 +113,10 @@ void SpellingHandler::createSpellCheckRequest(const PassRefPtr<WebCore::Range> r
 
 void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>*)
 {
+#if ENABLE_SPELLING_LOG
+    BlackBerry::Platform::StopWatch timer;
+    timer.start();
+#endif
     SpellingLog(Platform::LogLevelInfo, "SpellingHandler::parseBlockForSpellChecking m_startPosition = %d, m_endPosition = %d, m_cachedEndPosition = %d, m_endOfRange = %d"
         , DOMSupport::offsetFromStartOfBlock(m_startPosition)
         , DOMSupport::offsetFromStartOfBlock(m_endPosition)
@@ -133,6 +140,9 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
         }
 
         incrementSentinels(false /* shouldIncrementStartPosition */);
+#if ENABLE_SPELLING_LOG
+        SpellingLog(Platform::LogLevelInfo, "SpellingHandler::parseBlockForSpellChecking spellcheck iteration took %lf seconds", timer.elapsed());
+#endif
         m_iterationDelayTimer.startOneShot(s_timeout);
         return;
     }
@@ -141,8 +151,12 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
     if (rangeForSpellChecking = handleOversizedRange())
         createSpellCheckRequest(rangeForSpellChecking);
 
-    if (isSpellCheckActive())
+    if (isSpellCheckActive()) {
+#if ENABLE_SPELLING_LOG
+        SpellingLog(Platform::LogLevelInfo, "SpellingHandler::parseBlockForSpellChecking spellcheck iteration took %lf seconds", timer.elapsed());
+#endif
         m_iterationDelayTimer.startOneShot(s_timeout);
+    }
 }
 
 PassRefPtr<Range> SpellingHandler::handleOversizedRange()

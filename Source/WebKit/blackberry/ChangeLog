@@ -1,3 +1,26 @@
+2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Expand spellcheck logging
+        https://bugs.webkit.org/show_bug.cgi?id=115482
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        Fix some build errors when SpellingLog was turned on and expand on the debug
+        statements to be more verbose. Set up timers and print the duration of each
+        iteration as we traverse the text to create a range to send out for checking.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::spellCheckTextBlock):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+
 2013-05-06  Mike Lattanzio  <mlattanzio@blackberry.com>
 
         [BlackBerry] Enable and Expose Text Autosizing through BlackBerry::WebKit::WebSettings
