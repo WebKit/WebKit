@@ -33,13 +33,22 @@
 
 using namespace WebCore;
 
+#ifdef __has_include
+#if __has_include(<CFNetwork/CFURLCache.h>)
+#include <CFNetwork/CFURLCache.h>
+#endif
+#if __has_include(<CFNetwork/CFURLCachePriv.h>)
+#include <CFNetwork/CFURLCachePriv.h>
+#endif
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
 extern "C" CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
-extern "C" bool _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
+extern "C" CFBooleanRef _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
 #endif
 
 @interface NSCachedURLResponse (NSCachedURLResponseDetails)
@@ -80,7 +89,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
         return;
 
     RetainPtr<CFDataRef> data = adoptCF(buffer->createCFData());
-    if (!_CFURLCacheIsResponseDataMemMapped(cache.get(), data.get()))
+    if (_CFURLCacheIsResponseDataMemMapped(cache.get(), data.get()) == kCFBooleanFalse)
         return;
 
     tryGetShareableHandleFromCFData(handle, data.get());

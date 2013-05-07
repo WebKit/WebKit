@@ -31,6 +31,12 @@
 #import "NetworkResourceLoader.h"
 #import "WebCoreArgumentCoders.h"
 
+#ifdef __has_include
+#if __has_include(<CFNetwork/CFURLCachePriv.h>)
+#include <CFNetwork/CFURLCachePriv.h>
+#endif
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);

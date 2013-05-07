@@ -1,3 +1,17 @@
+2013-05-07  Brady Eidson  <beidson@apple.com>
+
+        Remove some unnecessary soft linking in NetworkProcess. (Take 2)
+        <rdar://problem/13821779> and https://bugs.webkit.org/show_bug.cgi?id=115683
+
+        Reviewed by Dean Jackson and owned by Andreas Kling.
+
+        As a followup to r149651, include the private headers conditionally.
+        Also, fix a bug introduced with r149651 (bool vs CFBooleanRef).
+
+        * NetworkProcess/mac/DiskCacheMonitor.mm:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer):
+
 2013-05-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add ewk APIs for setting and getting user agent
