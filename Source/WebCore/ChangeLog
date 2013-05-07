@@ -1,3 +1,15 @@
+2013-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Bug 115694 - Fix bad cast to RenderHTMLCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=115694
+
+        Reviewed by Ryosuke Niwa.
+
+        Don't cast to RenderHTML until we check what kind of object it is.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         The storage database tracker should know when databases come and go

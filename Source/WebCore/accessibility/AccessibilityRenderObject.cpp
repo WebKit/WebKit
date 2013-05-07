@@ -1274,9 +1274,12 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isCanvas()) {
         if (canvasHasFallbackContent())
             return false;
-        RenderHTMLCanvas* canvas = toRenderHTMLCanvas(m_renderer);
-        if (canvas->height() <= 1 || canvas->width() <= 1)
-            return true;
+
+        if (m_renderer->isBox()) {
+            RenderBox* canvasBox = toRenderBox(m_renderer);
+            if (canvasBox->height() <= 1 || canvasBox->width() <= 1)
+                return true;
+        }
         // Otherwise fall through; use presence of help text, title, or description to decide.
     }
 
