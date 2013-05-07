@@ -1,3 +1,9 @@
+2013-05-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed buildfix after r149637.
+
+        * Target.pri:
+
 2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r149647): Assertion failure in LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal
