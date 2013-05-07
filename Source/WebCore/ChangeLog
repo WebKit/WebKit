@@ -1,5 +1,54 @@
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
+        Clean up KeyframeValueList and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=115738
+
+        Reviewed by Simon Fraser.
+
+        Add static create() functions to the AnimationValue subclasses, and change a bunch of parameters
+        and return values that can never be null from pointer types to reference types to better indicate this.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::filterOperationsAt):
+        (WebCore::GraphicsLayer::validateFilterOperations):
+        (WebCore::operationsAt):
+        (WebCore::GraphicsLayer::validateTransformOperations):
+        * platform/graphics/GraphicsLayer.h:
+        (AnimationValue):
+        (WebCore::AnimationValue::AnimationValue):
+        (WebCore::FloatAnimationValue::create):
+        (FloatAnimationValue):
+        (WebCore::FloatAnimationValue::FloatAnimationValue):
+        (WebCore::TransformAnimationValue::create):
+        (TransformAnimationValue):
+        (WebCore::TransformAnimationValue::value):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+        (WebCore::FilterAnimationValue::create):
+        (WebCore::FilterAnimationValue::value):
+        (WebCore::FilterAnimationValue::FilterAnimationValue):
+        (FilterAnimationValue):
+        (WebCore::KeyframeValueList::~KeyframeValueList):
+        (KeyframeValueList):
+        (WebCore::KeyframeValueList::at):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::animationHasStepsTimingFunction):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue):
+        (WebCore::GraphicsLayerCA::setAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::setFilterAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
         Add and remove databases and origins from the database tracker
         https://bugs.webkit.org/show_bug.cgi?id=115752
 

@@ -39,27 +39,27 @@ static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, Fil
 }
 
 
-static FilterOperations applyFilterAnimation(const FilterOperations* from, const FilterOperations* to, double progress, const IntSize& boxSize)
+static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const IntSize& boxSize)
 {
     // First frame of an animation.
     if (!progress)
-        return *from;
+        return from;
 
     // Last frame of an animation.
     if (progress == 1)
-        return *to;
+        return to;
 
-    if (!from->isEmpty() && !to->isEmpty() && !from->operationsMatch(*to))
-        return *to;
+    if (!from.isEmpty() && !to.isEmpty() && !from.operationsMatch(to))
+        return to;
 
     FilterOperations result;
 
-    size_t fromSize = from->operations().size();
-    size_t toSize = to->operations().size();
+    size_t fromSize = from.operations().size();
+    size_t toSize = to.operations().size();
     size_t size = std::max(fromSize, toSize);
     for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from->operations()[i].get() : 0;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to->operations()[i].get() : 0;
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
         RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), progress, boxSize) : (fromOp ? blendFunc(0, fromOp.get(), progress, boxSize, true) : 0);
         if (blendedOp)
             result.operations().append(blendedOp);
@@ -155,58 +155,58 @@ static inline float applyTimingFunction(const TimingFunction* timingFunction, fl
     return progress;
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations* from, const TransformOperations* to, double progress, const IntSize& boxSize, bool listsMatch)
+static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const IntSize& boxSize, bool listsMatch)
 {
     TransformationMatrix matrix;
 
     // First frame of an animation.
     if (!progress) {
-        from->apply(boxSize, matrix);
+        from.apply(boxSize, matrix);
         return matrix;
     }
 
     // Last frame of an animation.
     if (progress == 1) {
-        to->apply(boxSize, matrix);
+        to.apply(boxSize, matrix);
         return matrix;
     }
 
     // If we have incompatible operation lists, we blend the resulting matrices.
     if (!listsMatch) {
         TransformationMatrix fromMatrix;
-        to->apply(boxSize, matrix);
-        from->apply(boxSize, fromMatrix);
+        to.apply(boxSize, matrix);
+        from.apply(boxSize, fromMatrix);
         matrix.blend(fromMatrix, progress);
         return matrix;
     }
 
     // Animation to "-webkit-transform: none".
-    if (!to->size()) {
-        TransformOperations blended(*from);
+    if (!to.size()) {
+        TransformOperations blended(from);
         for (size_t i = 0; i < blended.operations().size(); ++i)
             blended.operations()[i]->blend(0, progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
     // Animation from "-webkit-transform: none".
-    if (!from->size()) {
-        TransformOperations blended(*to);
+    if (!from.size()) {
+        TransformOperations blended(to);
         for (size_t i = 0; i < blended.operations().size(); ++i)
             blended.operations()[i]->blend(0, 1. - progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
     // Normal animation with a matching operation list.
-    TransformOperations blended(*to);
+    TransformOperations blended(to);
     for (size_t i = 0; i < blended.operations().size(); ++i)
-        blended.operations()[i]->blend(from->at(i), progress, !from->at(i))->apply(matrix, boxSize);
+        blended.operations()[i]->blend(from.at(i), progress, !from.at(i))->apply(matrix, boxSize);
     return matrix;
 }
 
-static const TimingFunction* timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
+static const TimingFunction* timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation* anim)
 {
-    if (animValue->timingFunction())
-        return animValue->timingFunction();
+    if (animValue.timingFunction())
+        return animValue.timingFunction();
     if (anim->timingFunction())
         return anim->timingFunction().get();
 
@@ -227,18 +227,18 @@ GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const Keyfram
 {
 }
 
-void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue* from, const AnimationValue* to, float progress)
+void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedPropertyOpacity:
-        client->setAnimatedOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue*>(from)->value()), (static_cast<const FloatAnimationValue*>(to)->value()), progress));
+        client->setAnimatedOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress));
         return;
     case AnimatedPropertyWebkitTransform:
-        client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_listsMatch));
+        client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch));
         return;
 #if ENABLE(CSS_FILTERS)
     case AnimatedPropertyWebkitFilter:
-        client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue*>(from)->value(), static_cast<const FilterAnimationValue*>(to)->value(), progress, m_boxSize));
+        client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize));
         return;
 #endif
     default:
@@ -304,12 +304,12 @@ void GraphicsLayerAnimation::apply(Client* client)
     }
 
     for (size_t i = 0; i < m_keyframes.size() - 1; ++i) {
-        const AnimationValue* from = m_keyframes.at(i);
-        const AnimationValue* to = m_keyframes.at(i + 1);
-        if (from->keyTime() > normalizedValue || to->keyTime() < normalizedValue)
+        const AnimationValue& from = m_keyframes.at(i);
+        const AnimationValue& to = m_keyframes.at(i + 1);
+        if (from.keyTime() > normalizedValue || to.keyTime() < normalizedValue)
             continue;
 
-        normalizedValue = (normalizedValue - from->keyTime()) / (to->keyTime() - from->keyTime());
+        normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
         const TimingFunction* timingFunction = timingFunctionForAnimationValue(from, m_animation.get());
         normalizedValue = applyTimingFunction(timingFunction, normalizedValue, m_animation->duration());
         applyInternal(client, from, to, normalizedValue);

@@ -342,8 +342,8 @@ void CoordinatedLayerTreeHost::prepareCustomFilterProxiesIfNeeded(CoordinatedGra
             if (keyframes.property() != AnimatedPropertyWebkitFilter)
                 continue;
             for (size_t j = 0; j < keyframes.size(); ++j) {
-                const FilterAnimationValue* filterValue = static_cast<const FilterAnimationValue*>(keyframes.at(i));
-                checkCustomFilterProgramProxies(*filterValue->value());
+                const FilterAnimationValue& filterValue = static_cast<const FilterAnimationValue&>(keyframes.at(i));
+                checkCustomFilterProgramProxies(filterValue.value());
             }
         }
     }

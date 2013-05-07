@@ -242,9 +242,10 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
         return true;
     
     for (unsigned i = 0; i < valueList.size(); ++i) {
-        const TimingFunction* timingFunction = valueList.at(i)->timingFunction();
-        if (timingFunction && timingFunction->isStepsTimingFunction())
-            return true;
+        if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
+            if (timingFunction->isStepsTimingFunction())
+                return true;
+        }
     }
 
     return false;
@@ -2091,7 +2092,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
     bool hasBigRotation;
     int listIndex = validateTransformOperations(valueList, hasBigRotation);
-    const TransformOperations* operations = (listIndex >= 0) ? static_cast<const TransformAnimationValue*>(valueList.at(listIndex))->value() : 0;
+    const TransformOperations* operations = (listIndex >= 0) ? &static_cast<const TransformAnimationValue&>(valueList.at(listIndex)).value() : 0;
 
     // We need to fall back to software animation if we don't have setValueFunction:, and
     // we would need to animate each incoming transform function separately. This is the
@@ -2181,21 +2182,21 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
     if (listIndex < 0)
         return false;
         
-    const FilterOperations* operations = static_cast<const FilterAnimationValue*>(valueList.at(listIndex))->value();
+    const FilterOperations& operations = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
     // Make sure the platform layer didn't fallback to using software filter compositing instead.
-    if (!PlatformCALayer::filtersCanBeComposited(*operations))
+    if (!PlatformCALayer::filtersCanBeComposited(operations))
         return false;
 
-    int numAnimations = operations->size();
+    int numAnimations = operations.size();
 
     // FIXME: We can't currently hardware animate shadows.
     for (int i = 0; i < numAnimations; ++i) {
-        if (operations->at(i)->getOperationType() == FilterOperation::DROP_SHADOW)
+        if (operations.at(i)->getOperationType() == FilterOperation::DROP_SHADOW)
             return false;
     }
 
     for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations->operations().at(animationIndex).get(), animation, animationName, animationIndex, timeOffset))
+        if (!appendToUncommittedAnimations(valueList, operations.operations().at(animationIndex).get(), animation, animationName, animationIndex, timeOffset))
             return false;
     }
 
@@ -2253,12 +2254,12 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
     propertyAnim->setFillMode(fillMode);
 }
 
-const TimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
+const TimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation& anim)
 {
-    if (animValue->timingFunction())
-        return animValue->timingFunction();
-    if (anim->isTimingFunctionSet())
-        return anim->timingFunction().get();
+    if (animValue.timingFunction())
+        return animValue.timingFunction();
+    if (anim.isTimingFunctionSet())
+        return anim.timingFunction().get();
     
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
@@ -2272,8 +2273,8 @@ bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, 
     
     switch (valueList.property()) {
     case AnimatedPropertyOpacity: {
-        basicAnim->setFromValue(static_cast<const FloatAnimationValue*>(valueList.at(fromIndex))->value());
-        basicAnim->setToValue(static_cast<const FloatAnimationValue*>(valueList.at(toIndex))->value());
+        basicAnim->setFromValue(static_cast<const FloatAnimationValue&>(valueList.at(fromIndex)).value());
+        basicAnim->setToValue(static_cast<const FloatAnimationValue&>(valueList.at(toIndex)).value());
         break;
     }
     default:
@@ -2283,7 +2284,7 @@ bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, 
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
-    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), *animation);
     if (timingFunction)
         basicAnim->setTimingFunction(timingFunction, !forwards);
 
@@ -2300,13 +2301,13 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
     
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const AnimationValue* curValue = valueList.at(index);
-        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+        const AnimationValue& curValue = valueList.at(index);
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         switch (valueList.property()) {
         case AnimatedPropertyOpacity: {
-            const FloatAnimationValue* floatValue = static_cast<const FloatAnimationValue*>(curValue);
-            values.append(floatValue->value());
+            const FloatAnimationValue& floatValue = static_cast<const FloatAnimationValue&>(curValue);
+            values.append(floatValue.value());
             break;
         }
         default:
@@ -2315,7 +2316,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
@@ -2334,13 +2335,13 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
     
-    const TransformAnimationValue* startValue = static_cast<const TransformAnimationValue*>(valueList.at(fromIndex));
-    const TransformAnimationValue* endValue = static_cast<const TransformAnimationValue*>(valueList.at(toIndex));
+    const TransformAnimationValue& startValue = static_cast<const TransformAnimationValue&>(valueList.at(fromIndex));
+    const TransformAnimationValue& endValue = static_cast<const TransformAnimationValue&>(valueList.at(toIndex));
     
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue->value()->apply(boxSize, fromTransform);
-        endValue->value()->apply(boxSize, toTransform);
+        startValue.value().apply(boxSize, fromTransform);
+        endValue.value().apply(boxSize, toTransform);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -2351,34 +2352,34 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             float toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
             FloatPoint3D fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             FloatPoint3D toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else {
             TransformationMatrix fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             TransformationMatrix toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         }
     }
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
-    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), *animation);
     basicAnim->setTimingFunction(timingFunction, !forwards);
 
     PlatformCAAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
@@ -2400,12 +2401,12 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const TransformAnimationValue* curValue = static_cast<const TransformAnimationValue*>(valueList.at(index));
-        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+        const TransformAnimationValue& curValue = static_cast<const TransformAnimationValue&>(valueList.at(index));
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue->value()->apply(boxSize, transform);
+            curValue.value().apply(boxSize, transform);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -2413,7 +2414,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
             transformationMatrixValues.append(transform);
         } else {
-            const TransformOperation* transformOp = curValue->value()->at(functionIndex);
+            const TransformOperation* transformOp = curValue.value().at(functionIndex);
             if (isTransformTypeNumber(transformOpType)) {
                 float value;
                 getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
@@ -2430,7 +2431,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
@@ -2461,11 +2462,11 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
 
-    const FilterAnimationValue* fromValue = static_cast<const FilterAnimationValue*>(valueList.at(fromIndex));
-    const FilterAnimationValue* toValue = static_cast<const FilterAnimationValue*>(valueList.at(toIndex));
+    const FilterAnimationValue& fromValue = static_cast<const FilterAnimationValue&>(valueList.at(fromIndex));
+    const FilterAnimationValue& toValue = static_cast<const FilterAnimationValue&>(valueList.at(toIndex));
 
-    const FilterOperation* fromOperation = fromValue->value()->at(functionIndex);
-    const FilterOperation* toOperation = toValue->value()->at(functionIndex);
+    const FilterOperation* fromOperation = fromValue.value().at(functionIndex);
+    const FilterOperation* toOperation = toValue.value().at(functionIndex);
 
     RefPtr<DefaultFilterOperation> defaultFromOperation;
     RefPtr<DefaultFilterOperation> defaultToOperation;
@@ -2487,7 +2488,7 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
-    basicAnim->setTimingFunction(timingFunctionForAnimationValue(valueList.at(0), animation), !forwards);
+    basicAnim->setTimingFunction(timingFunctionForAnimationValue(valueList.at(0), *animation), !forwards);
 
     return true;
 }
@@ -2503,11 +2504,11 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const FilterAnimationValue* curValue = static_cast<const FilterAnimationValue*>(valueList.at(index));
-        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+        const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
-        if (curValue->value()->operations().size() > static_cast<size_t>(functionIndex))
-            values.append(curValue->value()->operations()[functionIndex]);
+        if (curValue.value().operations().size() > static_cast<size_t>(functionIndex))
+            values.append(curValue.value().operations()[functionIndex]);
         else {
             if (!defaultOperation)
                 defaultOperation = DefaultFilterOperation::create(filterOp);
@@ -2515,7 +2516,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);

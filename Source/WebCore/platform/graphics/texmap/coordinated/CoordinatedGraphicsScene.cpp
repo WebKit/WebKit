@@ -712,8 +712,8 @@ void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(TextureMapperLayer* la
         if (keyframes.property() != AnimatedPropertyWebkitFilter)
             continue;
         for (size_t j = 0; j < keyframes.size(); ++j) {
-            const FilterAnimationValue* filterValue = static_cast<const FilterAnimationValue*>(keyframes.at(i));
-            injectCachedCustomFilterPrograms(*filterValue->value());
+            const FilterAnimationValue& filterValue = static_cast<const FilterAnimationValue&>(keyframes.at(i));
+            injectCachedCustomFilterPrograms(filterValue.value());
         }
     }
 #endif

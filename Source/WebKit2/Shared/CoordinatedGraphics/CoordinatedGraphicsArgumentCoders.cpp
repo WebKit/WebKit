@@ -645,19 +645,19 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder& encoder, con
     encoder.encodeEnum(keyframes.property());
     encoder << static_cast<uint32_t>(keyframes.size());
     for (size_t i = 0; i < keyframes.size(); ++i) {
-        const AnimationValue* value = keyframes.at(i);
-        encoder << value->keyTime();
-        encodeTimingFunction(encoder, value->timingFunction());
+        const AnimationValue& value = keyframes.at(i);
+        encoder << value.keyTime();
+        encodeTimingFunction(encoder, value.timingFunction());
         switch (keyframes.property()) {
         case AnimatedPropertyOpacity:
-            encoder << static_cast<const FloatAnimationValue*>(value)->value();
+            encoder << static_cast<const FloatAnimationValue&>(value).value();
             break;
         case AnimatedPropertyWebkitTransform:
-            encoder << *static_cast<const TransformAnimationValue*>(value)->value();
+            encoder << static_cast<const TransformAnimationValue&>(value).value();
             break;
 #if ENABLE(CSS_FILTERS)
         case AnimatedPropertyWebkitFilter:
-            encoder << *static_cast<const FilterAnimationValue*>(value)->value();
+            encoder << static_cast<const FilterAnimationValue&>(value).value();
             break;
 #endif
         default:
@@ -733,14 +733,14 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             float value;
             if (!decoder.decode(value))
                 return false;
-            keyframes.insert(adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction)));
+            keyframes.insert(FloatAnimationValue::create(keyTime, value, timingFunction));
             break;
         }
         case AnimatedPropertyWebkitTransform: {
             TransformOperations transform;
             if (!decoder.decode(transform))
                 return false;
-            keyframes.insert(adoptPtr(new TransformAnimationValue(keyTime, &transform, timingFunction)));
+            keyframes.insert(TransformAnimationValue::create(keyTime, transform, timingFunction));
             break;
         }
 #if ENABLE(CSS_FILTERS)
@@ -748,7 +748,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             FilterOperations filter;
             if (!decoder.decode(filter))
                 return false;
-            keyframes.insert(adoptPtr(new FilterAnimationValue(keyTime, &filter, timingFunction)));
+            keyframes.insert(FilterAnimationValue::create(keyTime, filter, timingFunction));
             break;
         }
 #endif

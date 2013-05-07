@@ -72,17 +72,18 @@ class TransformationMatrix;
 class AnimationValue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AnimationValue(float keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
-        : m_keyTime(keyTime)
-        , m_timingFunction(timingFunction)
-    {
-    }
-    
     virtual ~AnimationValue() { }
 
     float keyTime() const { return m_keyTime; }
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     virtual PassOwnPtr<AnimationValue> clone() const = 0;
+
+protected:
+    AnimationValue(float keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
+        : m_keyTime(keyTime)
+        , m_timingFunction(timingFunction)
+    {
+    }
 
 private:
     float m_keyTime;
@@ -93,16 +94,25 @@ private:
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
 public:
-    FloatAnimationValue(float keyTime, float value, PassRefPtr<TimingFunction> timingFunction = 0)
-        : AnimationValue(keyTime, timingFunction)
-        , m_value(value)
+    static PassOwnPtr<FloatAnimationValue> create(float keyTime, float value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
+        return adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction));
     }
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE { return adoptPtr(new FloatAnimationValue(*this)); }
+
+    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    {
+        return adoptPtr(new FloatAnimationValue(*this));
+    }
 
     float value() const { return m_value; }
 
 private:
+    FloatAnimationValue(float keyTime, float value, PassRefPtr<TimingFunction> timingFunction)
+        : AnimationValue(keyTime, timingFunction)
+        , m_value(value)
+    {
+    }
+
     float m_value;
 };
 
@@ -110,17 +120,25 @@ private:
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
 public:
-    explicit TransformAnimationValue(float keyTime, const TransformOperations* value = 0, PassRefPtr<TimingFunction> timingFunction = 0)
-        : AnimationValue(keyTime, timingFunction)
+    static PassOwnPtr<TransformAnimationValue> create(float keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
-        if (value)
-            m_value = *value;
+        return adoptPtr(new TransformAnimationValue(keyTime, value, timingFunction));
     }
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE { return adoptPtr(new TransformAnimationValue(*this)); }
 
-    const TransformOperations* value() const { return &m_value; }
+    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    {
+        return adoptPtr(new TransformAnimationValue(*this));
+    }
+
+    const TransformOperations& value() const { return m_value; }
 
 private:
+    TransformAnimationValue(float keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction)
+        : AnimationValue(keyTime, timingFunction)
+        , m_value(value)
+    {
+    }
+
     TransformOperations m_value;
 };
 
@@ -129,17 +147,25 @@ private:
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
 public:
-    explicit FilterAnimationValue(float keyTime, const FilterOperations* value = 0, PassRefPtr<TimingFunction> timingFunction = 0)
-        : AnimationValue(keyTime, timingFunction)
+    static PassOwnPtr<FilterAnimationValue> create(float keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
-        if (value)
-            m_value = *value;
+        return adoptPtr(new FilterAnimationValue(keyTime, value, timingFunction));
     }
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE { return adoptPtr(new FilterAnimationValue(*this)); }
 
-    const FilterOperations* value() const { return &m_value; }
+    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    {
+        return adoptPtr(new FilterAnimationValue(*this));
+    }
+
+    const FilterOperations& value() const { return m_value; }
 
 private:
+    FilterAnimationValue(float keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction)
+        : AnimationValue(keyTime, timingFunction)
+        , m_value(value)
+    {
+    }
+
     FilterOperations m_value;
 };
 #endif
@@ -161,6 +187,10 @@ public:
             m_values.append(other.m_values[i]->clone());
     }
 
+    ~KeyframeValueList()
+    {
+    }
+
     KeyframeValueList& operator=(const KeyframeValueList& other)
     {
         KeyframeValueList copy(other);
@@ -177,7 +207,7 @@ public:
     AnimatedPropertyID property() const { return m_property; }
 
     size_t size() const { return m_values.size(); }
-    const AnimationValue* at(size_t i) const { return m_values.at(i).get(); }
+    const AnimationValue& at(size_t i) const { return *m_values.at(i); }
     
     // Insert, sorted by keyTime.
     void insert(PassOwnPtr<const AnimationValue>);

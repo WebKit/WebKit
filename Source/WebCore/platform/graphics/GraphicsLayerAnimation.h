@@ -66,7 +66,7 @@ public:
     bool listsMatch() const { return m_listsMatch; }
 
 private:
-    void applyInternal(Client*, const AnimationValue* from, const AnimationValue* to, float progress);
+    void applyInternal(Client*, const AnimationValue& from, const AnimationValue& to, float progress);
     KeyframeValueList m_keyframes;
     IntSize m_boxSize;
     RefPtr<Animation> m_animation;
