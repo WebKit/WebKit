@@ -50,6 +50,9 @@ public:
     void setLocalStorageDirectory(const String&);
     String databaseFilename(WebCore::SecurityOrigin*) const;
 
+    void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
+    void deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*);
+
 private:
     explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);
 

@@ -57,7 +57,15 @@ void LocalStorageDatabaseTracker::setLocalStorageDirectory(const String& localSt
 
 String LocalStorageDatabaseTracker::databaseFilename(SecurityOrigin* securityOrigin) const
 {
-    return databaseFilename(securityOrigin->databaseIdentifier());
+    return databaseFilename(securityOrigin->databaseIdentifier() + ".localstorage");
+}
+
+void LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*)
+{
+}
+
+void LocalStorageDatabaseTracker::deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*)
+{
 }
 
 void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)

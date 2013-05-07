@@ -76,6 +76,8 @@ private:
     void updateDatabase();
     void updateDatabaseWithChangedItems(const HashMap<String, String>&);
 
+    bool databaseIsEmpty();
+
     RefPtr<WorkQueue> m_queue;
     RefPtr<LocalStorageDatabaseTracker> m_tracker;
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;

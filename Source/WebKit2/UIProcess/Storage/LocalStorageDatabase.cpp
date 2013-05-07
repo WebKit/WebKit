@@ -73,8 +73,12 @@ void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
     ASSERT(!m_database.isOpen());
     ASSERT(!m_failedToOpenDatabase);
 
-    if (!tryToOpenDatabase(openingStrategy))
+    if (!tryToOpenDatabase(openingStrategy)) {
         m_failedToOpenDatabase = true;
+        return;
+    }
+
+    m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin.get());
 }
 
 bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStrategy)
@@ -86,10 +90,6 @@ bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStra
         LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
         return false;
     }
-
-    // FIXME:
-    // A StorageTracker thread may have been scheduled to delete the db we're
-    // reopening, so cancel possible deletion.
 
     if (!m_database.open(m_databaseFilename)) {
         LOG_ERROR("Failed to open database file %s for local storage", m_databaseFilename.utf8().data());
@@ -219,7 +219,13 @@ void LocalStorageDatabase::close()
         m_changedItems.clear();
     }
 
-    // FIXME: Delete the database if it's empty.
+    bool isEmpty = databaseIsEmpty();
+
+    if (m_database.isOpen())
+        m_database.close();
+
+    if (isEmpty)
+        m_tracker->deleteEmptyDatabaseWithOrigin(m_securityOrigin.get());
 }
 
 void LocalStorageDatabase::itemDidChange(const String& key, const String& value)
@@ -319,6 +325,26 @@ void LocalStorageDatabase::updateDatabaseWithChangedItems(const HashMap<String, 
     }
 
     transaction.commit();
+}
+
+bool LocalStorageDatabase::databaseIsEmpty()
+{
+    if (!m_database.isOpen())
+        return false;
+
+    SQLiteStatement query(m_database, "SELECT COUNT(*) FROM ItemTable");
+    if (query.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
+        return false;
+    }
+
+    int result = query.step();
+    if (result != SQLResultRow) {
+        LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
+        return false;
+    }
+
+    return !query.getColumnInt(0);
 }
 
 } // namespace WebKit
