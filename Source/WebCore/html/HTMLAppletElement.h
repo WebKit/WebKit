@@ -43,9 +43,6 @@ private:
     virtual void updateWidget(PluginCreationOption) OVERRIDE;
 
     bool canEmbedJava() const;
-
-    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
-    virtual bool shouldRegisterAsExtraNamedItem() const OVERRIDE { return true; }
 };
 
 }

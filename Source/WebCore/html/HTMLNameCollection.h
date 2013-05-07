@@ -33,19 +33,54 @@ class Document;
 
 class HTMLNameCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLNameCollection> create(Node* document, CollectionType type, const AtomicString& name)
-    {
-        return adoptRef(new HTMLNameCollection(document, type, name));
-    }
-
     ~HTMLNameCollection();
 
-private:
+protected:
     HTMLNameCollection(Node*, CollectionType, const AtomicString& name);
 
-    virtual Element* virtualItemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
-
     AtomicString m_name;
+};
+
+class WindowNameCollection : public HTMLNameCollection {
+public:
+    static PassRefPtr<WindowNameCollection> create(Node* document, CollectionType type, const AtomicString& name)
+    {
+        return adoptRef(new WindowNameCollection(document, type, name));
+    }
+
+    bool nodeMatches(Element* element) const { return nodeMatches(element, m_name); }
+
+    static bool nodeMatchesIfIdAttributeMatch(Element*) { return true; }
+    static bool nodeMatchesIfNameAttributeMatch(Element*);
+    static bool nodeMatches(Element*, const AtomicString&);
+
+private:
+    WindowNameCollection(Node* document, CollectionType type, const AtomicString& name)
+        : HTMLNameCollection(document, type, name)
+    {
+        ASSERT(type == WindowNamedItems);
+    }
+};
+
+class DocumentNameCollection : public HTMLNameCollection {
+public:
+    static PassRefPtr<DocumentNameCollection> create(Node* document, CollectionType type, const AtomicString& name)
+    {
+        return adoptRef(new DocumentNameCollection(document, type, name));
+    }
+
+    static bool nodeMatchesIfIdAttributeMatch(Element*);
+    static bool nodeMatchesIfNameAttributeMatch(Element*);
+    bool nodeMatches(Element* element) const { return nodeMatches(element, m_name); }
+
+    static bool nodeMatches(Element*, const AtomicString&);
+
+private:
+    DocumentNameCollection(Node* document, CollectionType type, const AtomicString& name)
+        : HTMLNameCollection(document, type, name)
+    {
+        ASSERT(type == DocumentNamedItems);
+    }
 };
 
 }

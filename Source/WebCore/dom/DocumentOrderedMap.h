@@ -47,12 +47,16 @@ public:
     void clear();
 
     bool contains(AtomicStringImpl*) const;
+    bool containsSingle(AtomicStringImpl*) const;
     bool containsMultiple(AtomicStringImpl*) const;
     // concrete instantiations of the get<>() method template
     Element* getElementById(AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementByName(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByMapName(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByLowercasedMapName(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByLabelForAttribute(AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementByWindowNamedItem(AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementByDocumentNamedItem(AtomicStringImpl*, const TreeScope*) const;
 
     void checkConsistency() const;
 
@@ -68,6 +72,11 @@ private:
     mutable HashCountedSet<AtomicStringImpl*> m_duplicateCounts;
 };
 
+inline bool DocumentOrderedMap::containsSingle(AtomicStringImpl* id) const
+{
+    return (m_map.contains(id) ? 1 : 0) + m_duplicateCounts.count(id) == 1;
+}
+
 inline bool DocumentOrderedMap::contains(AtomicStringImpl* id) const
 {
     return m_map.contains(id) || m_duplicateCounts.contains(id);
@@ -75,7 +84,7 @@ inline bool DocumentOrderedMap::contains(AtomicStringImpl* id) const
 
 inline bool DocumentOrderedMap::containsMultiple(AtomicStringImpl* id) const
 {
-    return m_duplicateCounts.contains(id);
+    return (m_map.contains(id) ? 1 : 0) + m_duplicateCounts.count(id) > 1;
 }
 
 } // namespace WebCore

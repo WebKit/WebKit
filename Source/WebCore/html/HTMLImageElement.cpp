@@ -124,8 +124,22 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         BlendMode blendOp = BlendModeNormal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeSourceOver;
-    } else
+    } else {
+        if (name == nameAttr) {
+            bool willHaveName = !value.isNull();
+            if (hasName() != willHaveName && inDocument() && document()->isHTMLDocument()) {
+                HTMLDocument* document = toHTMLDocument(this->document());
+                const AtomicString& id = getIdAttribute();
+                if (!id.isEmpty()) {
+                    if (willHaveName)
+                        document->documentNamedItemMap().add(id.impl(), this);
+                    else
+                        document->documentNamedItemMap().remove(id.impl(), this);
+                }
+            }
+        }
         HTMLElement::parseAttribute(name, value);
+    }
 }
 
 String HTMLImageElement::altText() const

@@ -79,7 +79,6 @@ protected:
     void appendNameCache(const AtomicString& name, Element* element) const { append(m_nameCache, name, element); }
 
 private:
-    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
     Element* traverseNextElement(unsigned& offsetInArray, Element* previous, ContainerNode* root) const;
 
     virtual bool isLiveNodeList() const OVERRIDE { ASSERT_NOT_REACHED(); return true; }

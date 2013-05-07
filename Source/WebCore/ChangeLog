@@ -1,3 +1,143 @@
+2013-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unify ways to cache named item in HTMLCollections
+        https://bugs.webkit.org/show_bug.cgi?id=115584
+
+        Reviewed by Antti Koivisto.
+
+        Refactor the code to share the same infrastructure for both id and name attributes maps.
+
+        Also get rid of shouldRegisterAsNamedItem and shouldRegisterAsExtraNamedItem from various Element subclasses
+        as these member functions were duplicating the information in HTMLNameCollection.cpp. Nevertheless, HTMLImageElement
+        and HTMLObjectElement still update HTMLDocument's window and document name getter maps when their presence as named
+        item changes due to an attribute change and children changes respectively.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter): Use windowNamedItemMap().containsSingle() instead of collection->hasExactlyOneItem() to
+        avoid instantiating HTMLCollection until we know for sure we're returning multiple items.
+        (WebCore::JSDOMWindow::getOwnPropertySlot): Call windowNamedItemMap().contains() instead of document->hasNamedItem()
+        since the latter has been removed.
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex): Ditto.
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor): Ditto.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName): Call documentNamedItemMap().contains() instead of
+        document->hasExtraNamedItem() since the latter has been removed.
+        (WebCore::JSHTMLDocument::nameGetter): Use documentNamedItemMap().containsSingle() instead of
+        collection->hasExactlyOneItem() to avoid instantiating HTMLCollection when we're returning the first item.
+
+        * dom/Document.cpp:
+        (WebCore::Document::windowNamedItems): Instantiate WindowNameCollection, which is a subclass of HTMLNameCollection,
+        instead of HTMLNameCollection since the latter class no longer has a public constructor.
+        (WebCore::Document::documentNamedItems): Ditto; instantiate DocumentNameCollection.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesName): Added for name attribute.
+        (WebCore::keyMatchesWindowNamedItem): Added for window name getter.
+        (WebCore::keyMatchesDocumentNamedItem): Added for document name getter.
+        (WebCore::DocumentOrderedMap::getElementByName): Added for name attribute.
+        (WebCore::DocumentOrderedMap::getElementByWindowNamedItem): Added for window name getter.
+        (WebCore::DocumentOrderedMap::getElementByDocumentNamedItem): Added for document name getter.
+
+        * dom/DocumentOrderedMap.h:
+        (WebCore::DocumentOrderedMap::containsSingle): Added.
+        (WebCore::DocumentOrderedMap::containsMultiple): Fixed the bug that containsMultiple returns true even when
+        the duplicate count has been reduced to 1. Unfortunately this behavior change is not testable because the old code
+        worked properly (though less efficient) even if this function returned a wrong value.
+
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::updateName): Added. Updates TreeScope's name attribute map as well as HTMLDocument's window name
+        and document name maps.
+        (WebCore::Element::updateId): Added the code to update HTMLDocument's window name and document name maps.
+
+        * dom/Element.h:
+        (Element): Removed shouldRegisterAsNamedItem, shouldRegisterAsExtraNamedItem, updateNamedItemRegistration, and
+        updateExtraNamedItemRegistration as they're no longer used.
+
+        * dom/TreeScope.cpp:
+        (SameSizeAsTreeScope):
+        (WebCore::TreeScope::getElementByName): Added.
+        (WebCore::TreeScope::addElementByName): Added.
+        (WebCore::TreeScope::removeElementByName): Added.
+
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::hasElementWithName): Added.
+        (WebCore::TreeScope::containsMultipleElementsWithName): Added.
+
+        * html/HTMLAppletElement.h:
+        (HTMLAppletElement):
+
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingElement): Use HTMLNameCollection subclasses' nodeMatches.
+        (WebCore::HTMLCollection::namedItem): Added a fast path for named item.
+        (WebCore::HTMLCollection::hasNamedItem): Use namedItem to avoid the work in the fast path.
+
+        * html/HTMLCollection.h:
+        (HTMLCollection): Removed checkForNameMatch.
+        * html/HTMLDocument.cpp:
+        (WebCore): Removed various member functions related to m_namedItemCounts and m_extraNamedItemCounts.
+
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::documentNamedItemMap): Added.
+        (WebCore::HTMLDocument::windowNamedItemMap): Added.
+        (HTMLDocument): Replaced m_namedItemCounts and m_extraNamedItemCounts by m_documentNamedItem and m_windowNamedItem.
+        Note that they're not one to one.
+
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+
+        * html/HTMLFormElement.h:
+        (HTMLFormElement):
+
+        * html/HTMLIFrameElement.cpp: Removed the code to track the element's name since we already do this in Element.
+        (WebCore::HTMLIFrameElement::parseAttribute):
+
+        * html/HTMLIFrameElement.h:
+        (HTMLIFrameElement):
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Update the HTMLDocument's maps when the name attribute's existence
+        changes its presence on window and document name getters in turn. This behavior change, again, appears to be
+        untestable due to the old being more graceful when DocumentOrderedMap returned a wrong value.
+
+        * html/HTMLImageElement.h:
+
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection): No longer overrides itemAfter. This enables backwards traversals
+        of the tree along with other optimizations in HTMLCollection.
+
+        (WebCore::WindowNameCollection::nodeMatchesIfNameAttributeMatch): Added. Used in Element::updateName to determine
+        whether add() or remove() should be called on HTMLDocument's maps.
+        (WebCore::WindowNameCollection::nodeMatches): Added.
+
+        (WebCore::DocumentNameCollection::nodeMatchesIfIdAttributeMatch): Added. Used in Element::updateName to determine
+        whether add() or remove() should be called on HTMLDocument's maps.
+        (WebCore::DocumentNameCollection::nodeMatchesIfNameAttributeMatch): Ditto.
+        (WebCore::DocumentNameCollection::nodeMatches): Added.
+
+        * html/HTMLNameCollection.h:
+        (HTMLNameCollection): Removed create since this class shouldn't be instantiated on its own.
+
+        (WebCore::WindowNameCollection): Added.
+        (WebCore::WindowNameCollection::create): Added.
+        (WebCore::WindowNameCollection::nodeMatches): Added.
+        (WebCore::WindowNameCollection::nodeMatchesIfIdAttributeMatch): Added.
+        (WebCore::WindowNameCollection::WindowNameCollection): Added.
+        (WebCore::DocumentNameCollection): Added.
+        (WebCore::DocumentNameCollection::create): Added.
+        (WebCore::DocumentNameCollection::nodeMatches): Added.
+        (WebCore::DocumentNameCollection::DocumentNameCollection): Added.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem): Update both window and document getter maps of HTMLDocument when
+        the visibility of this element changes due to the DOM mutations in the subtree.
+
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement):
+        (WebCore::toHTMLObjectElement): Added.
+
 2013-05-06  Andreas Kling  <akling@apple.com>
 
         Flaky Test: fast/frames/crash-remove-iframe-during-object-beforeload.html

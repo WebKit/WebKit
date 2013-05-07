@@ -61,6 +61,12 @@ public:
     void addElementById(const AtomicString& elementId, Element*);
     void removeElementById(const AtomicString& elementId, Element*);
 
+    Element* getElementByName(const AtomicString&) const;
+    bool hasElementWithName(AtomicStringImpl*) const;
+    bool containsMultipleElementsWithName(const AtomicString&) const;
+    void addElementByName(const AtomicString&, Element*);
+    void removeElementByName(const AtomicString&, Element*);
+
     Document* documentScope() const { return m_documentScope; }
 
     Node* ancestorInThisScope(Node*) const;
@@ -161,6 +167,7 @@ private:
     int m_guardRefCount;
 
     OwnPtr<DocumentOrderedMap> m_elementsById;
+    OwnPtr<DocumentOrderedMap> m_elementsByName;
     OwnPtr<DocumentOrderedMap> m_imageMapsByName;
     OwnPtr<DocumentOrderedMap> m_labelsByForAttribute;
 
@@ -178,6 +185,17 @@ inline bool TreeScope::hasElementWithId(AtomicStringImpl* id) const
 inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) const
 {
     return m_elementsById && m_elementsById->containsMultiple(id.impl());
+}
+
+inline bool TreeScope::hasElementWithName(AtomicStringImpl* id) const
+{
+    ASSERT(id);
+    return m_elementsByName && m_elementsByName->contains(id);
+}
+
+inline bool TreeScope::containsMultipleElementsWithName(const AtomicString& name) const
+{
+    return m_elementsByName && m_elementsByName->containsMultiple(name.impl());
 }
 
 Node* nodeFromPoint(Document*, int x, int y, LayoutPoint* localPoint = 0);

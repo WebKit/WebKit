@@ -54,7 +54,7 @@ using namespace HTMLNames;
 bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, PropertyName propertyName)
 {
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-    return atomicPropertyName && (document->hasNamedItem(atomicPropertyName) || document->hasExtraNamedItem(atomicPropertyName));
+    return atomicPropertyName && document->documentNamedItemMap().contains(atomicPropertyName);
 }
 
 JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
@@ -62,22 +62,23 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
     JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = toHTMLDocument(thisObj->impl());
 
-    RefPtr<HTMLCollection> collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
-
-    if (collection->isEmpty())
+    AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
+    if (!atomicPropertyName || !document->documentNamedItemMap().contains(atomicPropertyName))
         return jsUndefined();
 
-    if (collection->hasExactlyOneItem()) {
-        Node* node = collection->item(0);
+    if (UNLIKELY(!document->documentNamedItemMap().containsSingle(atomicPropertyName))) {
+        RefPtr<HTMLCollection> collection = document->documentNamedItems(atomicPropertyName);
+        ASSERT(!collection->isEmpty());
+        ASSERT(!collection->hasExactlyOneItem());
+        return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
+    }
 
-        Frame* frame;
-        if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toJS(exec, frame);
+    Node* node = document->documentNamedItemMap().getElementByDocumentNamedItem(atomicPropertyName, document);
+    Frame* frame;
+    if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
+        return toJS(exec, frame);
 
-        return toJS(exec, thisObj->globalObject(), node);
-    } 
-
-    return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
+    return toJS(exec, thisObj->globalObject(), node);
 }
 
 // Custom attributes

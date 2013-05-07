@@ -33,6 +33,7 @@
 
 #include "Element.h"
 #include "HTMLMapElement.h"
+#include "HTMLNameCollection.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "TreeScope.h"
@@ -44,6 +45,11 @@ using namespace HTMLNames;
 inline bool keyMatchesId(AtomicStringImpl* key, Element* element)
 {
     return element->getIdAttribute().impl() == key;
+}
+
+inline bool keyMatchesName(AtomicStringImpl* key, Element* element)
+{
+    return element->getNameAttribute().impl() == key;
 }
 
 inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)
@@ -59,6 +65,16 @@ inline bool keyMatchesLowercasedMapName(AtomicStringImpl* key, Element* element)
 inline bool keyMatchesLabelForAttribute(AtomicStringImpl* key, Element* element)
 {
     return element->hasTagName(labelTag) && element->getAttribute(forAttr).impl() == key;
+}
+
+inline bool keyMatchesWindowNamedItem(AtomicStringImpl* key, Element* element)
+{
+    return WindowNameCollection::nodeMatches(element, key);
+}
+
+inline bool keyMatchesDocumentNamedItem(AtomicStringImpl* key, Element* element)
+{
+    return DocumentNameCollection::nodeMatches(element, key);
 }
 
 void DocumentOrderedMap::clear()
@@ -142,6 +158,11 @@ Element* DocumentOrderedMap::getElementById(AtomicStringImpl* key, const TreeSco
     return get<keyMatchesId>(key, scope);
 }
 
+Element* DocumentOrderedMap::getElementByName(AtomicStringImpl* key, const TreeScope* scope) const
+{
+    return get<keyMatchesName>(key, scope);
+}
+
 Element* DocumentOrderedMap::getElementByMapName(AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesMapName>(key, scope);
@@ -155,6 +176,16 @@ Element* DocumentOrderedMap::getElementByLowercasedMapName(AtomicStringImpl* key
 Element* DocumentOrderedMap::getElementByLabelForAttribute(AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesLabelForAttribute>(key, scope);
+}
+
+Element* DocumentOrderedMap::getElementByWindowNamedItem(AtomicStringImpl* key, const TreeScope* scope) const
+{
+    return get<keyMatchesWindowNamedItem>(key, scope);
+}
+
+Element* DocumentOrderedMap::getElementByDocumentNamedItem(AtomicStringImpl* key, const TreeScope* scope) const
+{
+    return get<keyMatchesDocumentNamedItem>(key, scope);
 }
 
 } // namespace WebCore
