@@ -1,3 +1,18 @@
+2013-05-07  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Increase the padding size for caret based scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=115749
+
+        Reviewed by Rob Buis.
+
+        PR 322670.
+
+        Increasing the padding size for scrolling in order to optimize the
+        number of scrolls required during typing.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Maintain touch event state throughout processing

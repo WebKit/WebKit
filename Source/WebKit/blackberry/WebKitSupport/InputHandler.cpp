@@ -1367,6 +1367,14 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         }
     }
 
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+    if (scrollType == EdgeIfNeeded
+        && (viewportAccessor->documentViewportRect().contains(selectionFocusRect))
+        && zoomScaleRequired == m_webPage->currentScale()) {
+        // Already in view and no zoom is required, return early.
+        return;
+    }
+
     bool shouldConstrainScrollingToContentEdge = true;
     Position start = elementFrame->selection()->start();
     if (start.anchorNode() && start.anchorNode()->renderer()) {
@@ -1409,8 +1417,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             // Pad the rect to improve the visual appearance.
             // Convert the padding back from transformed to ensure a consistent padding regardless of
             // zoom level as controls do not zoom.
-            static const int s_focusRectPaddingSize = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
-            const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+            static const int s_focusRectPaddingSize = Graphics::Screen::primaryScreen()->heightInMMToPixels(12);
             selectionFocusRect.inflate(std::ceilf(viewportAccessor->documentFromPixelContents(Platform::FloatSize(0, s_focusRectPaddingSize)).height()));
 
             WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, selectionFocusRect,
