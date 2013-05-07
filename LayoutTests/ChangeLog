@@ -1,3 +1,55 @@
+2013-05-07  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Convert remaining fast/regions/webkit-flow* pixel tests to reftests
+        https://bugs.webkit.org/show_bug.cgi?id=115422
+
+        Reviewed by Andreas Kling.
+
+        Converted following tests from pixel tests to ref tests:
+          - webkit-flow-double-pagination-float-push
+          - webkit-flow-float-pushed-to-last-region
+          - webkit-flow-float-unable-to-push
+          - webkit-flow-floats-inside-regions-bounds
+
+        * fast/regions/webkit-flow-double-pagination-float-push-expected.html: Added.
+        * fast/regions/webkit-flow-float-pushed-to-last-region-expected.html: Added.
+        * fast/regions/webkit-flow-float-pushed-to-last-region.html:
+        * fast/regions/webkit-flow-float-unable-to-push-expected.html: Added.
+        * fast/regions/webkit-flow-float-unable-to-push.html:
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.html: Added.
+        * platform/efl/fast/regions/webkit-flow-double-pagination-float-push-expected.png: Removed.
+        * platform/efl/fast/regions/webkit-flow-double-pagination-float-push-expected.txt: Removed.
+        * platform/efl/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png: Removed.
+        * platform/efl/fast/regions/webkit-flow-float-pushed-to-last-region-expected.txt: Removed.
+        * platform/efl/fast/regions/webkit-flow-float-unable-to-push-expected.png: Removed.
+        * platform/efl/fast/regions/webkit-flow-float-unable-to-push-expected.txt: Removed.
+        * platform/efl/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Removed.
+        * platform/efl/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+        * platform/gtk/fast/regions/webkit-flow-double-pagination-float-push-expected.png: Removed.
+        * platform/gtk/fast/regions/webkit-flow-double-pagination-float-push-expected.txt: Removed.
+        * platform/gtk/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png: Removed.
+        * platform/gtk/fast/regions/webkit-flow-float-pushed-to-last-region-expected.txt: Removed.
+        * platform/gtk/fast/regions/webkit-flow-float-unable-to-push-expected.png: Removed.
+        * platform/gtk/fast/regions/webkit-flow-float-unable-to-push-expected.txt: Removed.
+        * platform/gtk/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Removed.
+        * platform/gtk/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+        * platform/mac/fast/regions/webkit-flow-double-pagination-float-push-expected.png: Removed.
+        * platform/mac/fast/regions/webkit-flow-double-pagination-float-push-expected.txt: Removed.
+        * platform/mac/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png: Removed.
+        * platform/mac/fast/regions/webkit-flow-float-pushed-to-last-region-expected.txt: Removed.
+        * platform/mac/fast/regions/webkit-flow-float-unable-to-push-expected.png: Removed.
+        * platform/mac/fast/regions/webkit-flow-float-unable-to-push-expected.txt: Removed.
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Removed.
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+        * platform/qt/fast/regions/webkit-flow-double-pagination-float-push-expected.png: Removed.
+        * platform/qt/fast/regions/webkit-flow-double-pagination-float-push-expected.txt: Removed.
+        * platform/qt/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png: Removed.
+        * platform/qt/fast/regions/webkit-flow-float-pushed-to-last-region-expected.txt: Removed.
+        * platform/qt/fast/regions/webkit-flow-float-unable-to-push-expected.png: Removed.
+        * platform/qt/fast/regions/webkit-flow-float-unable-to-push-expected.txt: Removed.
+        * platform/qt/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Removed.
+        * platform/qt/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+
 2013-05-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Heap-use-after-free in WebCore::InlineFlowBox::deleteLine
