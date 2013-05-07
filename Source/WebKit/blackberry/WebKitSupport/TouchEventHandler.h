@@ -47,6 +47,9 @@ public:
 
     void drawTapHighlight();
 
+    // This value should reset to false on MouseReleased
+    bool m_userTriggeredTouchPressOnTextInput;
+
 private:
     void handleFatFingerPressed(bool shiftActive = false, bool altActive = false, bool ctrlActive = false);
 

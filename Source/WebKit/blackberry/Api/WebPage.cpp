@@ -3933,6 +3933,9 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 
         // Fat fingers can deal with shadow content.
         node = lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
+
+        // Save mouse event state for later. This allows us to know why some responses have occurred, namely selection changes.
+        m_touchEventHandler->m_userTriggeredTouchPressOnTextInput = mouseEvent.type() == WebCore::PlatformEvent::MousePressed && lastFatFingersResult.isTextInput();
     }
 
     if (!node) {

@@ -1,5 +1,29 @@
 2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
+        [BlackBerry] Maintain touch event state throughout processing
+        https://bugs.webkit.org/show_bug.cgi?id=115663
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Otto Cheung and Genevieve Mak.
+
+        PR 297691
+        By maintaining our touch event state, we can get a better idea
+        of what triggered an update to selection and respond appropriately.
+        On touch press we set userTouchTriggered to give the UI thread
+        some context.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        (BlackBerry::WebKit::WebPage::setExtraPluginDirectory):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+
+2013-05-07  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
         [BlackBerry] Read-only fields should not get keyboard focus
         https://bugs.webkit.org/show_bug.cgi?id=115725
 

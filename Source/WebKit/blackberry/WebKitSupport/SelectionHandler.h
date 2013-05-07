@@ -85,7 +85,7 @@ public:
     WebCore::IntRect selectionViewportRect() const;
 
 private:
-    void notifyCaretPositionChangedIfNeeded(bool userTouchTriggered = true);
+    void notifyCaretPositionChangedIfNeeded(bool userTouchTriggeredOnTextField);
     void caretPositionChanged(bool userTouchTriggered);
     void regionForTextQuads(WTF::Vector<WebCore::FloatQuad>&, BlackBerry::Platform::IntRectRegion&, bool shouldClipToVisibleContent = true) const;
     WebCore::IntRect clippingRectForVisibleContent() const;
