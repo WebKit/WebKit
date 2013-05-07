@@ -1,3 +1,22 @@
+2013-05-07  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] shape-inside, shape-padding, polygon test failing when subpixel layout is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115649
+
+        Reviewed by Dirk Schulze.
+
+        Another correction of a padded shape test that failed when subpixel layout was disabled.
+        This test puts a cross pattern made of five Ahem characters on three lines, within a padded
+        diamond polygon. The left edges of each line depend on the intersection of the padded polygon's
+        edges with the top of each line, which makes predicting the exact values unreliable. So we
+        just verify that the left edges of each line are within a pixel of the ideal value. This
+        change is very similar to the one made for bug 115490.
+
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-002-expected.html: Removed.
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-002-expected.txt: Added.
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html:
+        * platform/mac/TestExpectations:
+
 2013-05-06  Enrica Casucci  <enrica@apple.com>
 
         Support -webkit-system-font on OS X.

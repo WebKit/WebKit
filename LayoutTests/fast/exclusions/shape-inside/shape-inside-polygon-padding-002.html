@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
     if (window.internals)
         window.internals.settings.setCSSExclusionsEnabled(true);
@@ -37,7 +38,30 @@ offsets 20.
         <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
             <polygon points="300,100 500,300 300,500 100,300" stroke="blue" fill="none"/>
         </svg>
-    X XXX X
+    <span id="a">X</span> <span id="b">XXX</span> <span id="c">X</span>
     </div>
+    <div id="console"></div>
 </body>
+<script>
+  function shapeInsideRect(elementId) 
+  {
+      var s = document.getElementById("shape-inside").getBoundingClientRect();
+      var r = document.getElementById(elementId).getBoundingClientRect();
+      return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
+  }
+
+  var quiet = true; // PASS output depends on if subpixel layout has been enabled
+
+  shouldBe("shapeInsideRect('a').top", "150");
+  shouldBeCloseTo("shapeInsideRect('a').left", 250, 1, quiet);
+  shouldBe("shapeInsideRect('a').width", "100");
+
+  shouldBe("shapeInsideRect('b').top", "250");
+  shouldBeCloseTo("shapeInsideRect('b').left", 150, 1, quiet)
+  shouldBe("shapeInsideRect('b').width", "300");
+
+  shouldBe("shapeInsideRect('c').top", "350"); 
+  shouldBeCloseTo("shapeInsideRect('c').left", 250, 1, quiet);
+  shouldBe("shapeInsideRect('c').width", "100"); 
+</script>
 </html>
