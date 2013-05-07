@@ -1,3 +1,10 @@
+2013-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r149637.
+
+        * GNUmakefile.list.am: Add LocalStorageDatabaseTracker sources to
+        the build.
+
 2013-05-06  Brady Eidson  <beidson@apple.com>
 
         Remove some unnecessary soft linking in NetworkProcess.
