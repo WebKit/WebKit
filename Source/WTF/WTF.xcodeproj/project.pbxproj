@@ -56,7 +56,6 @@
 		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
 		A8A4737F151A825B004123FF /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47254151A825A004123FF /* Alignment.h */; };
-		A8A47380151A825B004123FF /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47255151A825A004123FF /* AlwaysInline.h */; };
 		A8A47381151A825B004123FF /* ArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47256151A825A004123FF /* ArrayBuffer.cpp */; };
 		A8A47382151A825B004123FF /* ArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47257151A825A004123FF /* ArrayBuffer.h */; };
 		A8A47383151A825B004123FF /* ArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47258151A825A004123FF /* ArrayBufferView.cpp */; };
@@ -328,7 +327,6 @@
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		A876DBD7151816E500DADB95 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		A8A47254151A825A004123FF /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alignment.h; sourceTree = "<group>"; };
-		A8A47255151A825A004123FF /* AlwaysInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlwaysInline.h; sourceTree = "<group>"; };
 		A8A47256151A825A004123FF /* ArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBuffer.cpp; sourceTree = "<group>"; };
 		A8A47257151A825A004123FF /* ArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBuffer.h; sourceTree = "<group>"; };
 		A8A47258151A825A004123FF /* ArrayBufferView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferView.cpp; sourceTree = "<group>"; };
@@ -609,7 +607,6 @@
 				A8A47339151A825B004123FF /* threads */,
 				A8A47348151A825B004123FF /* unicode */,
 				A8A47254151A825A004123FF /* Alignment.h */,
-				A8A47255151A825A004123FF /* AlwaysInline.h */,
 				A8A47256151A825A004123FF /* ArrayBuffer.cpp */,
 				A8A47257151A825A004123FF /* ArrayBuffer.h */,
 				A8A47258151A825A004123FF /* ArrayBufferView.cpp */,
@@ -918,7 +915,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8A4737F151A825B004123FF /* Alignment.h in Headers */,
-				A8A47380151A825B004123FF /* AlwaysInline.h in Headers */,
 				1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */,
 				A8A47382151A825B004123FF /* ArrayBuffer.h in Headers */,
 				A8A47384151A825B004123FF /* ArrayBufferView.h in Headers */,

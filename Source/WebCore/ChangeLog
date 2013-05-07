@@ -1,3 +1,23 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove AlwaysInline.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=115727
+
+        Reviewed by Brent Fulgham.
+
+        The macro that used to be in AlwaysInline.h is now in Compiler.h so there's no reason
+        to keep AlwaysInline.h around anymore.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * rendering/InlineIterator.h:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderText.cpp:
+
 2013-05-07  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] POST requests sometimes fail.

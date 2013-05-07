@@ -25,7 +25,6 @@
 
 #if USE(GLIB)
 
-#include <wtf/AlwaysInline.h>
 #include <wtf/RefPtr.h>
 #include <algorithm>
 

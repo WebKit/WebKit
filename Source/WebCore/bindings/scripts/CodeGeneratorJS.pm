@@ -655,7 +655,6 @@ sub GenerateHeader
 
     if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"}) {
         $headerIncludes{"<runtime/Lookup.h>"} = 1;
-        $headerIncludes{"<wtf/AlwaysInline.h>"} = 1;
     }
 
     if ($hasParent && $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {

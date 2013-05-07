@@ -22,7 +22,6 @@
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
 #include "SecurityOrigin.h"
-#include <wtf/AlwaysInline.h>
 
 namespace WebCore {
 

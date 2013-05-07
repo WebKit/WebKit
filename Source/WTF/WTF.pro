@@ -21,7 +21,6 @@ wince* {
 
 HEADERS += \
     Alignment.h \
-    AlwaysInline.h \
     ArrayBuffer.h \
     ArrayBufferView.h \
     ASCIICType.h \

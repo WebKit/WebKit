@@ -4,7 +4,6 @@ wtf_sources += \
     Source/WTF/wtf/ASCIICType.h \
     Source/WTF/wtf/AVLTree.h \
     Source/WTF/wtf/Alignment.h \
-    Source/WTF/wtf/AlwaysInline.h \
     Source/WTF/wtf/ArrayBuffer.cpp \
     Source/WTF/wtf/ArrayBuffer.h \
     Source/WTF/wtf/ArrayBufferView.cpp \

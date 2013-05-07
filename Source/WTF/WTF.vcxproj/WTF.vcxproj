@@ -94,7 +94,6 @@
   <ItemGroup>
     <ClInclude Include="..\WTF\config.h" />
     <ClInclude Include="..\wtf\Alignment.h" />
-    <ClInclude Include="..\wtf\AlwaysInline.h" />
     <ClInclude Include="..\wtf\ArrayBuffer.h" />
     <ClInclude Include="..\wtf\ArrayBufferView.h" />
     <ClInclude Include="..\wtf\ASCIICType.h" />

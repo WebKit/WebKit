@@ -324,9 +324,6 @@
     <ClInclude Include="..\wtf\WTFThreadData.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\AlwaysInline.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\ArrayBuffer.h">
       <Filter>wtf</Filter>
     </ClInclude>

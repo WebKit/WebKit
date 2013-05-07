@@ -1,3 +1,18 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove AlwaysInline.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=115727
+
+        Reviewed by Brent Fulgham.
+
+        The macro that used to be in AlwaysInline.h is now in Compiler.h so there's no reason
+        to keep AlwaysInline.h around anymore.
+
+        * jit/JSInterfaceJIT.h:
+        * parser/Lexer.h:
+        * runtime/JSCJSValue.h:
+        * runtime/SymbolTable.h:
+
 2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance

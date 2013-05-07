@@ -575,10 +575,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\AlwaysInline.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\ArrayBuffer.cpp"
 			>
 		</File>

@@ -31,7 +31,6 @@
 
 #include "JSObject.h"
 #include "Watchpoint.h"
-#include <wtf/AlwaysInline.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/StringImpl.h>
 

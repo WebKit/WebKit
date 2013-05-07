@@ -28,7 +28,6 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "Filter.h"
-#include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

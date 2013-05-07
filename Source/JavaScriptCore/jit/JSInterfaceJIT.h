@@ -33,7 +33,6 @@
 #include "JSStack.h"
 #include "JSString.h"
 #include "MacroAssembler.h"
-#include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(JIT)

@@ -36,7 +36,6 @@
 #include "dtoa.h"
 
 #include <stdio.h>
-#include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

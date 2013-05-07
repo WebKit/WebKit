@@ -26,7 +26,6 @@
 #ifndef BloomFilter_h
 #define BloomFilter_h
 
-#include <wtf/AlwaysInline.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WTF {

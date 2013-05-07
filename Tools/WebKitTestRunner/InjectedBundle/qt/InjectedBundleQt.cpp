@@ -32,7 +32,6 @@
 #include <QStyleFactory>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
 
 namespace WTR {
