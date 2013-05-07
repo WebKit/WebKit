@@ -606,6 +606,12 @@ public:
         releaseScratch(scr);
     }
 
+    void load8PostInc(RegisterID base, RegisterID dest)
+    {
+        m_assembler.movbMemRegIn(base, dest);
+        m_assembler.extub(dest, dest);
+    }
+
     void load8Signed(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
@@ -736,8 +742,7 @@ public:
             add32(TrustedImm32(address.offset), scr);
 
         add32(address.base, scr);
-        load8(scr, scr1);
-        add32(TrustedImm32(1), scr);
+        load8PostInc(scr, scr1);
         load8(scr, dest);
         m_assembler.shllImm8r(8, dest);
         or32(scr1, dest);
@@ -760,6 +765,12 @@ public:
     void load16(BaseIndex address, RegisterID dest)
     {
         load16Signed(address, dest);
+        m_assembler.extuw(dest, dest);
+    }
+
+    void load16PostInc(RegisterID base, RegisterID dest)
+    {
+        m_assembler.movwMemRegIn(base, dest);
         m_assembler.extuw(dest, dest);
     }
 
@@ -1029,11 +1040,10 @@ public:
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant(address.offset, scr);
+        m_assembler.loadConstant(address.offset + 8, scr);
         m_assembler.addlRegReg(address.base, scr);
-        m_assembler.fmovsWriterm((FPRegisterID)(src + 1), scr);
-        m_assembler.addlImm8r(4, scr);
-        m_assembler.fmovsWriterm(src, scr);
+        m_assembler.fmovsWriterndec(src, scr);
+        m_assembler.fmovsWriterndec((FPRegisterID)(src + 1), scr);
         releaseScratch(scr);
     }
 
@@ -1044,12 +1054,10 @@ public:
         move(address.index, scr);
         lshift32(TrustedImm32(address.scale), scr);
         add32(address.base, scr);
-        if (address.offset)
-            add32(TrustedImm32(address.offset), scr);
+        add32(TrustedImm32(address.offset + 8), scr);
 
-        m_assembler.fmovsWriterm((FPRegisterID)(src + 1), scr);
-        m_assembler.addlImm8r(4, scr);
-        m_assembler.fmovsWriterm(src, scr);
+        m_assembler.fmovsWriterndec(src, scr);
+        m_assembler.fmovsWriterndec((FPRegisterID)(src + 1), scr);
 
         releaseScratch(scr);
     }
@@ -1159,11 +1167,11 @@ public:
         if (address.offset)
             add32(TrustedImm32(address.offset), scr);
 
-        m_assembler.ensureSpace(m_assembler.maxInstructionSize + 68, sizeof(uint32_t));
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize + 58, sizeof(uint32_t));
         move(scr, SH4Registers::r0);
-        m_assembler.andlImm8r(0x3, SH4Registers::r0);
-        m_assembler.cmpEqImmR0(0x0, SH4Registers::r0);
+        m_assembler.testlImm8r(0x3, SH4Registers::r0);
         m_jump = Jump(m_assembler.jne(), SH4Assembler::JumpNear);
+
         if (dest != SH4Registers::r0)
             move(scr1, SH4Registers::r0);
 
@@ -1171,27 +1179,23 @@ public:
         end.append(Jump(m_assembler.bra(), SH4Assembler::JumpNear));
         m_assembler.nop();
         m_jump.link(this);
-        m_assembler.andlImm8r(0x1, SH4Registers::r0);
-        m_assembler.cmpEqImmR0(0x0, SH4Registers::r0);
+        m_assembler.testlImm8r(0x1, SH4Registers::r0);
 
         if (dest != SH4Registers::r0)
             move(scr1, SH4Registers::r0);
 
         m_jump = Jump(m_assembler.jne(), SH4Assembler::JumpNear);
-        load16(scr, scr1);
-        add32(TrustedImm32(2), scr);
+        load16PostInc(scr, scr1);
         load16(scr, dest);
         m_assembler.shllImm8r(16, dest);
         or32(scr1, dest);
         end.append(Jump(m_assembler.bra(), SH4Assembler::JumpNear));
         m_assembler.nop();
         m_jump.link(this);
-        load8(scr, scr1);
-        add32(TrustedImm32(1), scr);
-        load16(scr, dest);
+        load8PostInc(scr, scr1);
+        load16PostInc(scr, dest);
         m_assembler.shllImm8r(8, dest);
         or32(dest, scr1);
-        add32(TrustedImm32(2), scr);
         load8(scr, dest);
         m_assembler.shllImm8r(8, dest);
         m_assembler.shllImm8r(16, dest);

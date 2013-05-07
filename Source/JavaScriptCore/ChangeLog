@@ -1,3 +1,23 @@
+2013-05-07  Julien Brianceau  <jbrianceau@nds.com>
+
+        Take advantage of pre-decrement and post-increment opcodes for sh4 base JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=115722
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load8PostInc):
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::load16Unaligned):
+        (JSC::MacroAssemblerSH4::load16PostInc):
+        (JSC::MacroAssemblerSH4::storeDouble):
+        (JSC::MacroAssemblerSH4::load32WithUnalignedHalfWords):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::movwMemRegIn):
+        (SH4Assembler):
+        (JSC::SH4Assembler::movbMemRegIn):
+        (JSC::SH4Assembler::printInstr):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Remove AlwaysInline.h from WTF

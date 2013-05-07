@@ -117,6 +117,7 @@ enum {
     MOVW_WRITE_RN_OPCODE = 0x2001,
     MOVW_WRITE_R0RN_OPCODE = 0x0005,
     MOVW_READ_RM_OPCODE = 0x6001,
+    MOVW_READ_RMINC_OPCODE = 0x6005,
     MOVW_READ_R0RM_OPCODE = 0x000d,
     MOVW_READ_OFFRM_OPCODE = 0x8500,
     MOVW_READ_OFFPC_OPCODE = 0x9000,
@@ -1038,6 +1039,12 @@ public:
         oneShortOp(opc);
     }
 
+    void movwMemRegIn(RegisterID base, RegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(MOVW_READ_RMINC_OPCODE, dst, base);
+        oneShortOp(opc);
+    }
+
     void movwPCReg(int offset, RegisterID base, RegisterID dst)
     {
         ASSERT(base == SH4Registers::pc);
@@ -1130,6 +1137,12 @@ public:
     void movbMemReg(RegisterID src, RegisterID dst)
     {
         uint16_t opc = getOpcodeGroup1(MOVB_READ_RM_OPCODE, dst, src);
+        oneShortOp(opc);
+    }
+
+    void movbMemRegIn(RegisterID base, RegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(MOVB_READ_RMINC_OPCODE, dst, base);
         oneShortOp(opc);
     }
 
@@ -1957,6 +1970,9 @@ public:
             break;
         case MOVW_READ_RM_OPCODE:
             format = "    MOV.W @R%d, R%d\n";
+            break;
+        case MOVW_READ_RMINC_OPCODE:
+            format = "    MOV.W @R%d+, R%d\n";
             break;
         case MOVW_READ_R0RM_OPCODE:
             format = "    MOV.W @(R0, R%d), R%d\n";
