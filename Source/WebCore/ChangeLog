@@ -1,3 +1,43 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=115655
+
+        Reviewed by Andreas Kling.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::~DocumentMarkerController): Added here
+        so the destructor isn't implicitly inline.
+        (WebCore::DocumentMarkerController::detach): Removed now-unneeded code to
+        call deleteAllValues. Also moved code to set m_possiblyExistingMarkerTypes
+        to after clearing m_markers to be consistent with how other functions do it.
+        (WebCore::DocumentMarkerController::addMarker): Changed code to use the
+        add idiom to avoid double hash table lookup. Changed to use adoptPtr since
+        the map now contains OwnPtr.
+        (WebCore::DocumentMarkerController::removeMarkers): Removed explicit calls
+        to delete list since removing the entry from the map now deletes the list.
+        Moved the code to check if m_markers has become empty so it's only called
+        when we actually remove something from m_markers.
+        (WebCore::DocumentMarkerController::markerContainingPoint): Added get().
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers): Added get().
+        (WebCore::DocumentMarkerController::removeMarkers): Changed to use a new
+        interface to removeMarkersFromList. This eliminated the need to copy the
+        entire map when removing markers; instead we can just copy the keys.
+        (WebCore::DocumentMarkerController::removeMarkersFromList): Changed to use
+        an iterator instead of being passed the key/value pair from the map. Also
+        rearranged the logic so there is less repeated code and removed some now-
+        unneeded comments.
+        (WebCore::DocumentMarkerController::repaintMarkers): Added get().
+        (WebCore::DocumentMarkerController::invalidateRenderedRectsForMarkersInRect):
+        Added get().
+        (WebCore::DocumentMarkerController::showMarkers): Added get().
+
+        * dom/DocumentMarkerController.h: Removed implementation of the destructor
+        that called the detach function; that was just sharing the now-unneeded
+        call to deleteAllValues. Changed the type of the map to use an OwnPtr for
+        the value. Changed the interface of removeMarkersFromList to take a map
+        iterator instead of a key/value pair.
+
 2013-05-06  Beth Dakin  <bdakin@apple.com>
 
         Reproducible crash in RenderBoxModelObject::adjustedPositionRelativeToOffsetParent()

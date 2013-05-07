@@ -45,7 +45,7 @@ class DocumentMarkerController {
 public:
 
     DocumentMarkerController();
-    ~DocumentMarkerController() { detach(); }
+    ~DocumentMarkerController();
 
     void detach();
     void addMarker(Range*, DocumentMarker::MarkerType);
@@ -87,9 +87,9 @@ private:
     void addMarker(Node*, const DocumentMarker&);
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
-    typedef HashMap<RefPtr<Node>, MarkerList*> MarkerMap;
+    typedef HashMap<RefPtr<Node>, OwnPtr<MarkerList> > MarkerMap;
     bool possiblyHasMarkers(DocumentMarker::MarkerTypes);
-    void removeMarkersFromList(Node*, MarkerList*, DocumentMarker::MarkerTypes);
+    void removeMarkersFromList(MarkerMap::iterator, DocumentMarker::MarkerTypes);
 
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
