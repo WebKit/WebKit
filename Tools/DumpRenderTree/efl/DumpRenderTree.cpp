@@ -69,6 +69,7 @@ static bool dumpPixelsForCurrentTest;
 static int dumpPixelsForAllTests = false;
 static int dumpTree = true;
 static int printSeparators = true;
+static int useTimeoutWatchdog = true;
 
 static String dumpFramesAsText(Evas_Object* frame)
 {
@@ -167,6 +168,11 @@ static void sendPixelResultsEOF()
     fflush(stderr);
 }
 
+bool shouldSetWaitToDumpWatchdog()
+{
+    return !waitToDumpWatchdog && useTimeoutWatchdog;
+}
+
 static void invalidateAnyPreviousWaitToDumpWatchdog()
 {
     if (waitToDumpWatchdog) {
@@ -201,6 +207,7 @@ static bool parseCommandLineOptions(int argc, char** argv)
         {"notree", no_argument, &dumpTree, false},
         {"pixel-tests", no_argument, &dumpPixelsForAllTests, true},
         {"tree", no_argument, &dumpTree, true},
+        {"no-timeout", no_argument, &useTimeoutWatchdog, false},
         {0, 0, 0, 0}
     };
 

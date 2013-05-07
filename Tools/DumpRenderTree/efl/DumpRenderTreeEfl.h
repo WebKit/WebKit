@@ -40,4 +40,6 @@ extern bool policyDelegateEnabled;
 extern bool policyDelegatePermissive;
 extern Ecore_Timer* waitToDumpWatchdog;
 
+bool shouldSetWaitToDumpWatchdog();
+
 #endif /* DumpRenderTreeEfl_h */

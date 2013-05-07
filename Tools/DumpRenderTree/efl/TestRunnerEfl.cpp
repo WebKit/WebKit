@@ -288,7 +288,7 @@ void TestRunner::setWaitToDump(bool waitUntilDone)
     static const double timeoutSeconds = 30;
 
     m_waitToDump = waitUntilDone;
-    if (m_waitToDump && !waitToDumpWatchdog)
+    if (m_waitToDump && shouldSetWaitToDumpWatchdog())
         waitToDumpWatchdog = ecore_timer_add(timeoutSeconds, waitToDumpWatchdogFired, 0);
 }
 
