@@ -1,3 +1,9 @@
+2013-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, build fix on EFL port
+
+        * CMakeLists.txt: Add LocalStorageDatabaseTracker.cpp
+
 2013-05-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r149637.
