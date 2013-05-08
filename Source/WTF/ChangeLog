@@ -1,5 +1,19 @@
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
+        Remove RetainPtr::adoptNS and RetainPtr::adoptCF
+        https://bugs.webkit.org/show_bug.cgi?id=115817
+
+        Reviewed by Jessie Berlin.
+
+        These functions are now unused so remove them. The preferred way to create a RetainPtr with an
+        adopted reference is to use the adoptNS/adoptCF free functions.
+        
+        Rewrite the move assignment operators to just call CFRelease explicitly.
+
+        * wtf/RetainPtr.h:
+
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
         Remove ThreadingNone.cpp
 
         Rubber-stamped by Beth Dakin.

@@ -120,9 +120,6 @@ namespace WTF {
         RetainPtr& operator=(std::nullptr_t) { clear(); return *this; }
 #endif
 
-        void adoptCF(PtrType);
-        void adoptNS(PtrType);
-        
         void swap(RetainPtr&);
 
     private:
@@ -130,7 +127,7 @@ namespace WTF {
 
         PtrType m_ptr;
     };
-    
+
     template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const RetainPtr<U>& o)
         : m_ptr(o.get())
     {
@@ -164,7 +161,7 @@ namespace WTF {
             CFRelease(ptr);
         return *this;
     }
-    
+
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr<U>& o)
     {
         PtrType optr = o.get();
@@ -202,34 +199,23 @@ namespace WTF {
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<T>&& o)
     {
-        adoptCF(o.leakRef());
+        PtrType ptr = m_ptr;
+        m_ptr = o.leakRef();
+        if (ptr)
+            CFRelease(ptr);
+
         return *this;
     }
-    
+
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<U>&& o)
     {
-        adoptCF(o.leakRef());
+        PtrType ptr = m_ptr;
+        m_ptr = o.leakRef();
+        if (ptr)
+            CFRelease(ptr);
         return *this;
     }
 #endif
-
-    template<typename T> inline void RetainPtr<T>::adoptCF(PtrType optr)
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            CFRelease(ptr);
-    }
-
-    template<typename T> inline void RetainPtr<T>::adoptNS(PtrType optr)
-    {
-        adoptNSReference(optr);
-        
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            CFRelease(ptr);
-    }
 
     template<typename T> inline void RetainPtr<T>::swap(RetainPtr<T>& o)
     {
