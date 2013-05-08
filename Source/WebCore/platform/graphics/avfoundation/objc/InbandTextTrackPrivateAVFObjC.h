@@ -26,7 +26,7 @@
 #ifndef InbandTextTrackPrivateAVFObjC_h
 #define InbandTextTrackPrivateAVFObjC_h
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 
 #include "InbandTextTrackPrivateAVF.h"
 #include <wtf/RetainPtr.h>

@@ -1,3 +1,57 @@
+2013-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Inband text tracks are not in track menu on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=115740
+
+        Reviewed by Dean Jackson.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Remove m_legacyWebKitClosedCaptionsVisible.
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible): Set m_closedCaptionsVisible
+            to false immediately, it will be reset to the appropriate value if necessary.
+        (WebCore::HTMLMediaElement::setWebkitClosedCaptionsVisible): Remove m_legacyWebKitClosedCaptionsVisible.
+        (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): Remove m_legacyWebKitClosedCaptionsVisible.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Remove 
+            HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT) requirement. AVFOUNDATION_TEXT_TRACK_SUPPORT ->
+            AVFOUNDATION_MEDIA_SELECTION_GROUP
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h: Ditto.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp: 
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::seek): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::trackModeChanged): Ditto.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:  Ditto.
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h:  Ditto.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::kind): Don't look at media characteristics, 
+            a legacy CC track is always Captions.
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::isClosedCaptions): Ditto.
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::containsOnlyForcedSubtitles): Ditto.
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::isMainProgramContent): Ditto.
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::isEasyToRead): Ditto.
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::label): Use different AVFoundation API on 10.7.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): AVFOUNDATION_TEXT_TRACK_SUPPORT ->
+            AVFOUNDATION_MEDIA_SELECTION_GROUP.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible): Do nothing. AVFOUNDATION_TEXT_TRACK_SUPPORT ->
+            AVFOUNDATION_MEDIA_SELECTION_GROUP.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Support legacy CC tracks
+            only on 10.8. AVFOUNDATION_TEXT_TRACK_SUPPORT -> AVFOUNDATION_MEDIA_SELECTION_GROUP
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): AVFOUNDATION_TEXT_TRACK_SUPPORT -> 
+            AVFOUNDATION_MEDIA_SELECTION_GROUP
+
 2013-05-08  Sergio Villar Senin  <svillar@igalia.com>
 
         Allow blank spaces before colon (:) on CSS variable definition

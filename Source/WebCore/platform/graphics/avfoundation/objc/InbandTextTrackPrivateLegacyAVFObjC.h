@@ -26,7 +26,7 @@
 #ifndef InbandTextTrackPrivateLegacyAVFObjC_h
 #define InbandTextTrackPrivateLegacyAVFObjC_h
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT) && !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT) && !PLATFORM(IOS)
 
 #include "InbandTextTrackPrivateAVF.h"
 #include <wtf/RetainPtr.h>
@@ -68,5 +68,6 @@ protected:
 
 }
 
-#endif
+#endif // ENABLE(VIDEO) && USE(AVFOUNDATION) && !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT) && !PLATFORM(IOS)
+
 #endif

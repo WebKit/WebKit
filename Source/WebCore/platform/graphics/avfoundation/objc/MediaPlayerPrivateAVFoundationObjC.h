@@ -68,7 +68,7 @@ public:
     void setAsset(id);
     virtual void tracksChanged();
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
     void processCue(NSArray *, double);
 #endif
@@ -167,18 +167,18 @@ private:
 
     virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+    void processMediaSelectionOptions();
+    AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
+#endif
+
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
     virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE { return m_currentTrack; }
-    void processMediaSelectionOptions();
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >&);
     void clearTextTracks();
-    AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();
-#endif
-
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -208,13 +208,11 @@ private:
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_sessionIDToRequestMap;
 #endif
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 #endif
     
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     InbandTextTrackPrivateAVF* m_currentTrack;
-#endif
 };
 
 }

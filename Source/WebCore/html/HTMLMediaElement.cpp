@@ -294,7 +294,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_sendProgressEvents(true)
     , m_isFullscreen(false)
     , m_closedCaptionsVisible(false)
-    , m_legacyWebKitClosedCaptionsVisible(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
@@ -4445,6 +4444,8 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 {
     LOG(Media, "HTMLMediaElement::setClosedCaptionsVisible(%s)", boolString(closedCaptionVisible));
 
+    m_closedCaptionsVisible = false;
+
     if (!m_player || !hasClosedCaptions())
         return;
 
@@ -4464,14 +4465,12 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
 void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
 {
-    m_legacyWebKitClosedCaptionsVisible = visible;
     setClosedCaptionsVisible(visible);
-    m_legacyWebKitClosedCaptionsVisible = m_closedCaptionsVisible;
 }
 
 bool HTMLMediaElement::webkitClosedCaptionsVisible() const
 {
-    return m_legacyWebKitClosedCaptionsVisible;
+    return m_closedCaptionsVisible;
 }
 
 
