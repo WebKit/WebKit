@@ -1,3 +1,20 @@
+2013-05-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add layout test that lists all global constructors
+        https://bugs.webkit.org/show_bug.cgi?id=115724
+
+        Reviewed by Ryosuke Niwa.
+
+        Update fast/js/global-constructors-attributes.html so that it lists all
+        global constructors instead of just a few.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * fast/js/script-tests/global-constructors-attributes.js:
+        (classNameForObject):
+        (constructorPropertiesOnWindow):
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt: Added.
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt: Added.
+
 2013-05-08  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening, mac port.
