@@ -1,3 +1,10 @@
+2013-05-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Update WebKitLibraries/win to handle different architectures properly.
+
+        * win/lib32: Copied from win/lib.
+        * win/tools/WinTools.make:
+
 2013-05-02  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Windows build fix.
