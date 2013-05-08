@@ -1,3 +1,17 @@
+2013-05-07  Alex Christensen  <achristensen@apple.com>
+
+        Fix a memory leak introduced in r149692
+        https://bugs.webkit.org/show_bug.cgi?id=115766
+
+        Reviewed by Mark Rowe.
+
+        In r149692, the fix for <http://webkit.org/b/42324>, a call to WKBundleFrameCopyWebArchive was added without any 
+        matching call to WKRelease. An earlier attempted fix in r149697 introduced a RetainPtr but failed to adopt the object.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        Fix the memory leak by switching to WKRetainPtr and adopting the returned object.
+
 2013-05-07  Darin Adler  <darin@apple.com>
 
         [Win] Fix storage leak in Windows DumpRenderTree

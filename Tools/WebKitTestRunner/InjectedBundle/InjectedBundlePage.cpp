@@ -845,7 +845,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
 #if USE(CF)
-    RetainPtr<WKDataRef> wkData = WKBundleFrameCopyWebArchive(frame);
+    WKRetainPtr<WKDataRef> wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     RetainPtr<CFStringRef> cfString = adoptCF(createXMLStringFromWebArchiveData(cfData.get()));
     stringBuilder.append(cfString.get());
