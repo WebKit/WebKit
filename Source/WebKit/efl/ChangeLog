@@ -1,3 +1,14 @@
+2013-05-08  Jose Lejin PJ  <jose.lejin@gmail.com>
+
+        [EFL] Correct documentation for ewk_settings APIs
+        https://bugs.webkit.org/show_bug.cgi?id=115507
+
+        Reviewed by Gyuyoung Kim.
+
+        Corrected documentation for ewk_settings APIs.
+
+        * ewk/ewk_settings.h:
+
 2013-05-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Remove the ewk_settings_shadow_dom_enable_set/get APIs from unit test
