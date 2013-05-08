@@ -1,3 +1,14 @@
+2013-05-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Remove the ewk_settings_shadow_dom_enable_set/get APIs from unit test
+        https://bugs.webkit.org/show_bug.cgi?id=115771
+
+        Reviewed by Gyuyoung Kim.
+
+        Unit test is failing since r149702. Remove the test case related to shadow dom.
+
+        * tests/test_ewk_setting.cpp:
+
 2013-04-26  Jose Lejin PJ  <jose.lejin@gmail.com>
 
         [EFL] Add unit test cases for ewk_settings APIs

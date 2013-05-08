@@ -157,20 +157,6 @@ TEST_F(EWKTestBase, ewk_settings_object_cache_enable)
 }
 
 /**
- * @brief Unit test for checking set/get of Shadow DOM functionality Enables/Disables status by ewk settings API.
- */
-TEST_F(EWKTestBase, ewk_settings_shadow_dom_enable)
-{
-    ASSERT_FALSE(ewk_settings_shadow_dom_enable_get());
-
-    ewk_settings_shadow_dom_enable_set(true);
-    ASSERT_TRUE(ewk_settings_shadow_dom_enable_get());
-
-    ewk_settings_shadow_dom_enable_set(false);
-    ASSERT_FALSE(ewk_settings_shadow_dom_enable_get());
-}
-
-/**
  * @brief Unit test for checking set/get of maximum number of pages in the memory page cache by ewk settings API.
  */
 TEST_F(EWKTestBase, ewk_settings_page_cache_capacity)
