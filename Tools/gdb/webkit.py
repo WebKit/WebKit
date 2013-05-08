@@ -155,7 +155,7 @@ class WTFStringPrinter(StringPrinter):
 class JSCIdentifierPrinter(StringPrinter):
     "Print a JSC::Identifier"
     def to_string(self):
-        return WTFStringImplPrinter(self.val['m_string']).to_string()
+        return WTFStringPrinter(self.val['m_string']).to_string()
 
 
 class JSCJSStringPrinter(StringPrinter):

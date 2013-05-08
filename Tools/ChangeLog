@@ -1,3 +1,18 @@
+2013-05-08  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        Update JSCIdentifier pretty printer in Tools/gdb/webkit.py
+        https://bugs.webkit.org/show_bug.cgi?id=115808
+
+        Reviewed by Darin Adler.
+
+        The pretty printer for the JSCIdentifier in Tools/gdb/webkit.py
+        was left outdated after r127191, when the m_string member was changed
+        from UString to String. This patch calls the right pretty printer for it.
+
+        * gdb/webkit.py:
+        (JSCIdentifierPrinter.to_string): Use WTFPrettyPrinter instead of
+        WTFImplPrettyPrinter.
+
 2013-05-08  Andy Estes  <aestes@apple.com>
 
         [WebKit2] REGRESSION (Custom Protocols): Reproducible crash when navigating to URL with an invalid scheme
