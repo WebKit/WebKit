@@ -1,3 +1,36 @@
+2013-05-08  Tim Horton  <timothy_horton@apple.com>
+
+        Coalesce WKView visibleRect changes
+        https://bugs.webkit.org/show_bug.cgi?id=115792
+        <rdar://problem/13776842>
+
+        Reviewed by Simon Fraser.
+
+        The system can call renewGState much more often than we actually want
+        to update the WebProcess' notion of the exposed rect. Most importantly,
+        within an autolayout pass it is called many times, and often sees
+        [WKView visibleRect] be an intermediate value which will never be
+        flushed to the screen. We only care about the final value, so we should
+        wait until AppKit has finished - with a zero-delay timer - to inform the
+        WebProcess of exposed rect changes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Add exposedRectChangedTimer.
+        (WebKit::WebPageProxy::close):
+        Cancel exposedRectChangedTimer when tearing down the WebPageProxy.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        Add exposedRectChangedTimerFired, the timer itself, and two rects:
+        the most recent exposed rect from the WKView, and the last one we actually
+        sent across to the WebProcess.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::viewExposedRectChanged):
+        Instead of immediately sending exposed rect changes to the WebProcess,
+        start a zero-delay timer to do so.
+        (WebKit::WebPageProxy::exposedRectChangedTimerFired):
+        Once the zero-delay timer fires, send the new exposed rect to the WebProcess.
+
 2013-05-08  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13776220> 13A451: PluginProcess(2225) deny file-read-data ~/Library/InputManagers

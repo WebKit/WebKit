@@ -155,7 +155,22 @@ void WebPageProxy::viewExposedRectChanged(const FloatRect& exposedRect)
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::ViewExposedRectChanged(exposedRect), m_pageID);
+    m_exposedRect = exposedRect;
+
+    if (!m_exposedRectChangedTimer.isActive())
+        m_exposedRectChangedTimer.startOneShot(0);
+}
+
+void WebPageProxy::exposedRectChangedTimerFired(Timer<WebPageProxy>*)
+{
+    if (!isValid())
+        return;
+
+    if (m_exposedRect == m_lastSentExposedRect)
+        return;
+
+    process()->send(Messages::WebPage::ViewExposedRectChanged(m_exposedRect), m_pageID);
+    m_lastSentExposedRect = m_exposedRect;
 }
 
 void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)

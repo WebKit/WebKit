@@ -309,6 +309,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateInWindowState(false)
+#if PLATFORM(MAC)
+    , m_exposedRectChangedTimer(this, &WebPageProxy::exposedRectChangedTimerFired)
+#endif
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
@@ -628,6 +631,10 @@ void WebPageProxy::close()
 #endif
 
     m_drawingArea = nullptr;
+
+#if PLATFORM(MAC)
+    m_exposedRectChangedTimer.stop();
+#endif
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
