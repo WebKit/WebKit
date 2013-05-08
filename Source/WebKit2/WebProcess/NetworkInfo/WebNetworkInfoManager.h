@@ -31,20 +31,23 @@
 #include "MessageReceiver.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebNetworkInfo.h"
+#include "WebProcessSupplement.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebKit {
 
-class WebProcess;
 class WebPage;
+class WebProcess;
 
-class WebNetworkInfoManager : private CoreIPC::MessageReceiver {
+class WebNetworkInfoManager : public WebProcessSupplement, private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNetworkInfoManager);
 public:
     explicit WebNetworkInfoManager(WebProcess*);
     ~WebNetworkInfoManager();
+
+    static const char* supplementName();
 
     void registerWebPage(WebPage*);
     void unregisterWebPage(WebPage*);

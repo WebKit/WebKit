@@ -40,27 +40,27 @@ WebNetworkInfoClient::~WebNetworkInfoClient()
 
 double WebNetworkInfoClient::bandwidth() const
 {
-    return WebProcess::shared().networkInfoManager().bandwidth(m_page);
+    return WebProcess::shared().supplement<WebNetworkInfoManager>()->bandwidth(m_page);
 }
 
 bool WebNetworkInfoClient::metered() const
 {
-    return WebProcess::shared().networkInfoManager().metered(m_page);
+    return WebProcess::shared().supplement<WebNetworkInfoManager>()->metered(m_page);
 }
 
 void WebNetworkInfoClient::startUpdating()
 {
-    WebProcess::shared().networkInfoManager().registerWebPage(m_page);
+    WebProcess::shared().supplement<WebNetworkInfoManager>()->registerWebPage(m_page);
 }
 
 void WebNetworkInfoClient::stopUpdating()
 {
-    WebProcess::shared().networkInfoManager().unregisterWebPage(m_page);
+    WebProcess::shared().supplement<WebNetworkInfoManager>()->unregisterWebPage(m_page);
 }
 
 void WebNetworkInfoClient::networkInfoControllerDestroyed()
 {
-    WebProcess::shared().networkInfoManager().unregisterWebPage(m_page);
+    WebProcess::shared().supplement<WebNetworkInfoManager>()->unregisterWebPage(m_page);
     delete this;
 }
 

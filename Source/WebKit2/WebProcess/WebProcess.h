@@ -57,10 +57,6 @@ QT_END_NAMESPACE
 #include <dispatch/dispatch.h>
 #endif
 
-#if ENABLE(NETWORK_INFO)
-#include "WebNetworkInfoManager.h"
-#endif
-
 namespace WebCore {
 class PageGroup;
 class ResourceRequest;
@@ -147,9 +143,6 @@ public:
 
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
-#endif
-#if ENABLE(NETWORK_INFO)
-    WebNetworkInfoManager& networkInfoManager() { return m_networkInfoManager; }
 #endif
 #if USE(SOUP)
     WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
@@ -310,9 +303,6 @@ private:
 
     TextCheckerState m_textCheckerState;
 
-#if ENABLE(NETWORK_INFO)
-    WebNetworkInfoManager m_networkInfoManager;
-#endif
     WebIconDatabaseProxy* m_iconDatabaseProxy;
 
 #if ENABLE(NETWORK_PROCESS)

@@ -40,6 +40,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const char* WebNetworkInfoManager::supplementName()
+{
+    return "WebNetworkInfoManager";
+}
+
 WebNetworkInfoManager::WebNetworkInfoManager(WebProcess* process)
     : m_process(process)
 {

@@ -1,5 +1,34 @@
 2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] Make the WebNetworkInfoManager a supplement to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115716
+
+        Reviewed by Andreas Kling.
+
+        WebNetworkInfoManager should inherit from WebProcessSupplement and should be used
+        as such by the WebProcess. This removes the need for the m_networkInfoManager member
+        variable in the WebProcess class and brings the WebNetworkInfoManager in line with
+        other manager classes of which instances are controlled by the WebProcess class.
+
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.cpp:
+        (WebKit::WebNetworkInfoManager::supplementName): Specify the supplement's name.
+        (WebKit):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.h:
+        (WebKit): Alphabetically reorder the two forwarding declarations.
+        (WebNetworkInfoManager): Inherit from the WebProcessSupplement interface.
+        * WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp:
+        (WebKit::WebNetworkInfoClient::bandwidth): Access the WebNetworkInfoManager as a supplement.
+        (WebKit::WebNetworkInfoClient::metered): Ditto.
+        (WebKit::WebNetworkInfoClient::startUpdating): Ditto.
+        (WebKit::WebNetworkInfoClient::stopUpdating): Ditto.
+        (WebKit::WebNetworkInfoClient::networkInfoControllerDestroyed): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Add the WebNetworkInfoManager instance as a supplement.
+        * WebProcess/WebProcess.h:
+        (WebProcess): Remove the m_networkInfoManager member variable and its getter method.
+
+2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] Make the WebBatteryManager a supplement to the WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=115715
 

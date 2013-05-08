@@ -86,6 +86,7 @@
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(NETWORK_INFO)
+#include "WebNetworkInfoManager.h"
 #include "WebNetworkInfoManagerMessages.h"
 #endif
 
@@ -164,9 +165,6 @@ WebProcess::WebProcess()
     , m_networkAccessManager(0)
 #endif
     , m_textCheckerState()
-#if ENABLE(NETWORK_INFO)
-    , m_networkInfoManager(this)
-#endif
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
@@ -210,6 +208,9 @@ WebProcess::WebProcess()
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManager>();
+#endif
+#if ENABLE(NETWORK_INFO)
+    addSupplement<WebNetworkInfoManager>();
 #endif
 }
 
