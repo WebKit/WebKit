@@ -59,7 +59,7 @@ namespace WebCore {
         bool hasOverrideAlpha() const { return m_type == CurrentColorWithOverrideAlpha; }
         float overrideAlpha() const { ASSERT(m_type == CurrentColorWithOverrideAlpha); return m_overrideAlpha; }
 
-        String color() const { ASSERT(m_type == RGBA || m_type == CMYKA); return Color(m_rgba).serialized(); }
+        String color() const;
         CanvasGradient* canvasGradient() const;
         CanvasPattern* canvasPattern() const;
 
@@ -72,6 +72,19 @@ namespace WebCore {
 
     private:
         enum Type { RGBA, CMYKA, Gradient, ImagePattern, CurrentColor, CurrentColorWithOverrideAlpha };
+        struct CMYKAValues {
+            WTF_MAKE_FAST_ALLOCATED;
+            WTF_MAKE_NONCOPYABLE(CMYKAValues);
+        public:
+            CMYKAValues() : rgba(0), c(0), m(0), y(0), k(0), a(0) { }
+            CMYKAValues(RGBA32 rgba, float cyan, float magenta, float yellow, float black, float alpha) : rgba(rgba), c(cyan), m(magenta), y(yellow), k(black), a(alpha) { }
+            RGBA32 rgba;
+            float c;
+            float m;
+            float y;
+            float k;
+            float a;
+        };
 
         CanvasStyle(Type, float overrideAlpha = 0);
         CanvasStyle(RGBA32 rgba);
@@ -88,17 +101,8 @@ namespace WebCore {
             float m_overrideAlpha;
             CanvasGradient* m_gradient;
             CanvasPattern* m_pattern;
+            CMYKAValues* m_cmyka;
         };
-
-        struct CMYKAValues {
-            CMYKAValues() : c(0), m(0), y(0), k(0), a(0) { }
-            CMYKAValues(float cyan, float magenta, float yellow, float black, float alpha) : c(cyan), m(magenta), y(yellow), k(black), a(alpha) { }
-            float c;
-            float m;
-            float y;
-            float k;
-            float a;
-        } m_cmyka;
     };
 
     RGBA32 currentColor(HTMLCanvasElement*);
@@ -116,6 +120,14 @@ namespace WebCore {
         if (m_type == ImagePattern)
             return m_pattern;
         return 0;
+    }
+
+    inline String CanvasStyle::color() const
+    {
+        ASSERT(m_type == RGBA || m_type == CMYKA);
+        if (m_type == RGBA)
+            return Color(m_rgba).serialized();
+        return Color(m_cmyka->rgba).serialized();
     }
 
 } // namespace WebCore

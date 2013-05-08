@@ -118,8 +118,7 @@ CanvasStyle::CanvasStyle(float r, float g, float b, float a)
 
 CanvasStyle::CanvasStyle(float c, float m, float y, float k, float a)
     : m_type(CMYKA)
-    , m_rgba(makeRGBAFromCMYKA(c, m, y, k, a))
-    , m_cmyka(c, m, y, k, a)
+    , m_cmyka(new CMYKAValues(makeRGBAFromCMYKA(c, m, y, k, a), c, m, y, k, a))
 {
 }
 
@@ -141,6 +140,8 @@ CanvasStyle::~CanvasStyle()
         m_gradient->deref();
     else if (m_type == ImagePattern)
         m_pattern->deref();
+    else if (m_type == CMYKA)
+        delete m_cmyka;
 }
 
 PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color, Document* document)
@@ -200,11 +201,11 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
     case RGBA:
         return m_rgba == other.m_rgba;
     case CMYKA:
-        return m_cmyka.c == other.m_cmyka.c
-            && m_cmyka.m == other.m_cmyka.m
-            && m_cmyka.y == other.m_cmyka.y
-            && m_cmyka.k == other.m_cmyka.k
-            && m_cmyka.a == other.m_cmyka.a;
+        return m_cmyka->c == other.m_cmyka->c
+            && m_cmyka->m == other.m_cmyka->m
+            && m_cmyka->y == other.m_cmyka->y
+            && m_cmyka->k == other.m_cmyka->k
+            && m_cmyka->a == other.m_cmyka->a;
     case Gradient:
     case ImagePattern:
     case CurrentColor:
@@ -229,11 +230,11 @@ bool CanvasStyle::isEquivalentCMYKA(float c, float m, float y, float k, float a)
     if (m_type != CMYKA)
         return false;
 
-    return c == m_cmyka.c
-        && m == m_cmyka.m
-        && y == m_cmyka.y
-        && k == m_cmyka.k
-        && a == m_cmyka.a;
+    return c == m_cmyka->c
+        && m == m_cmyka->m
+        && y == m_cmyka->y
+        && k == m_cmyka->k
+        && a == m_cmyka->a;
 }
 
 void CanvasStyle::applyStrokeColor(GraphicsContext* context)
@@ -248,15 +249,15 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
         // FIXME: Do this through platform-independent GraphicsContext API.
         // We'll need a fancier Color abstraction to support CMYKA correctly
 #if USE(CG)
-        CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
 #elif PLATFORM(QT)
         QPen currentPen = context->platformContext()->pen();
         QColor clr;
-        clr.setCmykF(m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        clr.setCmykF(m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
         currentPen.setColor(clr);
         context->platformContext()->setPen(currentPen);
 #else
-        context->setStrokeColor(m_rgba, ColorSpaceDeviceRGB);
+        context->setStrokeColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
 #endif
         break;
     }
@@ -285,15 +286,15 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         // FIXME: Do this through platform-independent GraphicsContext API.
         // We'll need a fancier Color abstraction to support CMYKA correctly
 #if USE(CG)
-        CGContextSetCMYKFillColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        CGContextSetCMYKFillColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
 #elif PLATFORM(QT)
         QBrush currentBrush = context->platformContext()->brush();
         QColor clr;
-        clr.setCmykF(m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        clr.setCmykF(m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
         currentBrush.setColor(clr);
         context->platformContext()->setBrush(currentBrush);
 #else
-        context->setFillColor(m_rgba, ColorSpaceDeviceRGB);
+        context->setFillColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
 #endif
         break;
     }

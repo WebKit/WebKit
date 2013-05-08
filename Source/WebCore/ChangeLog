@@ -1,3 +1,29 @@
+2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make CanvasStyle's CMYKAValues allocated on the heap and move the pointer in the union.
+        https://bugs.webkit.org/show_bug.cgi?id=115764
+
+        Reviewed by Andreas Kling.
+
+        CMYKA input is uncommon enough that we should not pay the price for
+        every CanvasStyle.
+        Make those values heap allocated and put the pointer in the union. Since
+        the RGBA32 values are needed for CMYKA, a RGBA32 value is added to the structure.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::~CanvasStyle):
+        (WebCore::CanvasStyle::isEquivalentColor):
+        (WebCore::CanvasStyle::isEquivalentCMYKA):
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/canvas/CanvasStyle.h:
+        (CanvasStyle):
+        (CMYKAValues):
+        (WebCore::CanvasStyle::CMYKAValues::CMYKAValues):
+        (WebCore::CanvasStyle::color):
+        (WebCore):
+
 2013-05-07  Darin Adler  <darin@apple.com>
 
         Use OwnPtr instead of deleteAllValues for requests in PluginView
