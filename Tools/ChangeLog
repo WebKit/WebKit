@@ -1,3 +1,11 @@
+2013-05-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed. Added Anton Obzhirov to the list of contributors and myself
+        to the watchlist for Accessibility.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added Anton Obzhirov.
+        * Scripts/webkitpy/common/config/watchlist: Added myself.
+
 2013-05-08  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Build fails with clang
