@@ -1,3 +1,16 @@
+2013-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Simplify RetainPtrObjectHashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=115822
+
+        Reviewed by Benjamin Poulain.
+
+        RetainPtrObjectHashTraits is inherited from SimpleClassHashTraits
+        instead of GenericHashTraits re-using more shared functionality.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtrObjectHashTraits::emptyValue):
+
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
         Assert at compile time that we don't pass Objective-C object pointers to adoptCF

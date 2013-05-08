@@ -301,16 +301,12 @@ namespace WTF {
     template<typename P> struct DefaultHash<RetainPtr<P> > { typedef PtrHash<RetainPtr<P> > Hash; };
 
     template <typename P>
-    struct RetainPtrObjectHashTraits : GenericHashTraits<RetainPtr<P> > {
-        static const bool emptyValueIsZero = true;
+    struct RetainPtrObjectHashTraits : SimpleClassHashTraits<RetainPtr<P> > {
         static const RetainPtr<P>& emptyValue()
         {
             static RetainPtr<P>& null = *(new RetainPtr<P>);
             return null;
         }
-        static const bool needsDestruction = true;
-        static void constructDeletedValue(RetainPtr<P>& slot) { new (&slot) RetainPtr<P>(HashTableDeletedValue); }
-        static bool isDeletedValue(const RetainPtr<P>& value) { return value.isHashTableDeletedValue(); }
     };
 
     template <typename P>
