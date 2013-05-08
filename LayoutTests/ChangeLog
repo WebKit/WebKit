@@ -1,3 +1,11 @@
+2013-05-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening, mac port.
+        These tests should use testRunner, not layoutTestController.
+
+        * fast/js/parse-error-external-script-in-eval.html:
+        * fast/js/parse-error-external-script-in-new-Function.html:
+
 2013-05-08  Darin Adler  <darin@apple.com>
 
         REGRESSION(r149700): fast/css-generated-content/close-quote-negative-depth.html
