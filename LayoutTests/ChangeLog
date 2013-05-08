@@ -1,3 +1,24 @@
+2013-05-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r149292.
+        https://bugs.webkit.org/show_bug.cgi?id=115372
+
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-element-change-rows-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-item-change-column-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-item-change-row-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/layer-full-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-flipped-writing-mode-table-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/reflection-table-layout-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-absolute-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-fixed-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-flipped-absolute-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-flipped-fixed-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-transformed-absolute-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-transformed-fixed-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/transform-table-layout-expected.txt: Added.
+        * platform/qt-5.0-wk2/svg/repaint/repaint-webkit-svg-shadow-container-expected.txt: Added.
+
 2013-05-08  Rijubrata Bhaumik  <rijubrata.bhaumik@intel.com>
 
         [EFL] Unreviewed EFL gardening
