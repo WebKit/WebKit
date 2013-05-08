@@ -1,3 +1,14 @@
+2013-05-08  Rijubrata Bhaumik  <rijubrata.bhaumik@intel.com>
+
+        [EFL] Unreviewed EFL gardening
+        https://bugs.webkit.org/show_bug.cgi?id=115791
+
+        Unreviewed EFL gardening
+
+        Skip fast/regions/ test cases which are failing after r149668.
+
+        * platform/efl/TestExpectations:
+
 2013-05-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping some failing fast/region tests.
