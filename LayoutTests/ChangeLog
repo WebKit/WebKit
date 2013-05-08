@@ -1,3 +1,10 @@
+2013-05-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping some failing fast/region tests.
+        https://bugs.webkit.org/show_bug.cgi?id=115785
+
+        * platform/qt/TestExpectations:
+
 2013-05-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed EFL gardening.

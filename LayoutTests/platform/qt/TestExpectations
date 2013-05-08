@@ -2341,6 +2341,12 @@ fast/regions/overflow-in-uniform-regions.html
 webkit.org/b/114807 fast/gradients/css3-color-stop-invalid.html [ Skip ]
 webkit.org/b/115512 compositing/layer-creation/deep-tree.html [ Skip ]
 
+# [Qt][EFL][GTK] Failing CSS region tests
+webkit.org/b/115785 fast/regions/webkit-flow-double-pagination-float-push.html [ Skip ]
+webkit.org/b/115785 fast/regions/webkit-flow-float-pushed-to-last-region.html [ Skip ]
+webkit.org/b/115785 fast/regions/webkit-flow-float-unable-to-push.html [ Skip ]
+webkit.org/b/115785 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ Skip ]
+
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080
 fast/css/sticky/inline-sticky-abspos-child.html
