@@ -1,3 +1,37 @@
+2013-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Store the quotes in the same allocation as the QuotesData object
+        https://bugs.webkit.org/show_bug.cgi?id=115768
+
+        Reviewed by Andreas Kling.
+
+        Since the QuotesData object is immutable we don't need a Vector to store the quote pairs,
+        they can just be stored after the class data.
+
+        * rendering/style/QuotesData.cpp:
+        (WebCore::sizeForQuotesDataWithQuoteCount):
+        Helper function for computing the allocation size.
+
+        (WebCore::QuotesData::create):
+        Use fastMalloc + placement new.
+
+        (WebCore::QuotesData::QuotesData):
+        Use placement new to allocate the quote pairs.
+
+        (WebCore::QuotesData::~QuotesData):
+        Destroy the quote pairs.
+
+        (WebCore::QuotesData::openQuote):
+        Stop using Vector.
+
+        (WebCore::QuotesData::closeQuote):
+        Ditto.
+
+        (WebCore::operator==):
+        Ditto.
+
+        * rendering/style/QuotesData.h:
+
 2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
 
         We should not ref() the RefPtr twice in CanvasStyle

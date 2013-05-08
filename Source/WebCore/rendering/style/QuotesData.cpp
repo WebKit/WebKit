@@ -24,6 +24,11 @@
 
 namespace WebCore {
 
+static size_t sizeForQuotesDataWithQuoteCount(unsigned count)
+{
+    return sizeof(QuotesData) + sizeof(std::pair<String, String>) * count;
+}
+
 PassRefPtr<QuotesData> QuotesData::create(const String& open1, const String& close1, const String& open2, const String& close2)
 {
     Vector<std::pair<String, String> > quotes;
@@ -36,37 +41,56 @@ PassRefPtr<QuotesData> QuotesData::create(const String& open1, const String& clo
 
 PassRefPtr<QuotesData> QuotesData::create(const Vector<std::pair<String, String> >& quotes)
 {
-    RefPtr<QuotesData> quotesData = adoptRef(new QuotesData);
-    quotesData->m_quotePairs = quotes;
+    void* slot = fastMalloc(sizeForQuotesDataWithQuoteCount(quotes.size()));
+    return adoptRef(new (NotNull, slot) QuotesData(quotes));
+}
 
-    return quotesData.release();
+QuotesData::QuotesData(const Vector<std::pair<String, String> >& quotes)
+    : m_quoteCount(quotes.size())
+{
+    for (unsigned i = 0; i < m_quoteCount; ++i)
+        new (NotNull, &m_quotePairs[i]) std::pair<String, String>(quotes[i]);
+}
+
+QuotesData::~QuotesData()
+{
+    for (unsigned i = 0; i < m_quoteCount; ++i)
+        m_quotePairs[i].~pair<String, String>();
 }
 
 const String& QuotesData::openQuote(unsigned index) const
 {
-    if (!m_quotePairs.isEmpty())
+    if (!m_quoteCount)
         return emptyString();
 
-    if (index >= m_quotePairs.size())
-        return m_quotePairs.last().first;
+    if (index >= m_quoteCount)
+        return m_quotePairs[m_quoteCount - 1].first;
 
     return m_quotePairs[index].first;
 }
 
 const String& QuotesData::closeQuote(unsigned index) const
 {
-    if (m_quotePairs.isEmpty())
+    if (!m_quoteCount)
         return emptyString();
 
-    if (index >= m_quotePairs.size())
-        return m_quotePairs.last().second;
+    if (index >= m_quoteCount)
+        return m_quotePairs[m_quoteCount - 1].second;
 
-    return m_quotePairs.at(index).second;
+    return m_quotePairs[index].second;
 }
 
 bool operator==(const QuotesData& a, const QuotesData& b)
 {
-    return a.m_quotePairs == b.m_quotePairs;
+    if (a.m_quoteCount != b.m_quoteCount)
+        return false;
+
+    for (unsigned i = 0; i < a.m_quoteCount; ++i) {
+        if (a.m_quotePairs[i] != b.m_quotePairs[i])
+            return false;
+    }
+
+    return true;
 }
 
 } // namespace WebCore
