@@ -1,3 +1,24 @@
+2013-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Add layout tests for test cases in Bug 5206
+        <http://webkit.org/b/5206>
+
+        Reviewed by Eric Seidel.
+
+        These issues were likely fixed in r89257 for Bug 62613.
+
+        * fast/js/parse-error-external-script-in-eval-expected.txt: Added.
+        * fast/js/parse-error-external-script-in-eval.html: Added.
+        * fast/js/parse-error-external-script-in-new-Function-expected.txt: Added.
+        Note that the line number in this result is relative to the line
+        number of the second argument to the new Function() method.
+        * fast/js/parse-error-external-script-in-new-Function.html: Added.
+        * fast/js/resources/parse-error-external-script-in-eval.js: Added.
+        * fast/js/resources/parse-error-external-script-in-new-Function.js: Added.
+
+        * platform/chromium/fast/js/parse-error-external-script-in-eval-expected.txt: Added.
+        * platform/chromium/fast/js/parse-error-external-script-in-new-Function-expected.txt: Added.
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Inband text tracks are not in track menu on Lion

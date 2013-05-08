@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 3: SyntaxError: Expected an identifier but found 'error' instead
+This tests that a line number and error message is printed for a parse error in a separate source file using new Function().
