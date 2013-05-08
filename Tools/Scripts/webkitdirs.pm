@@ -1925,6 +1925,7 @@ sub buildAutotoolsProject($@)
     # Configurable features listed here should be kept in sync with the
     # features for which there exists a configuration option in configure.ac.
     my %configurableFeatures = (
+        "battery-status" => 1,
         "gamepad" => 1,
         "geolocation" => 1,
         "svg" => 1,

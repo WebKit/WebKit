@@ -1,3 +1,19 @@
+2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Plumb the Automake build system for the Battery Status API feature
+        https://bugs.webkit.org/show_bug.cgi?id=115718
+
+        Reviewed by Martin Robinson.
+
+        No new tests - no new functionality. The feature is not enabled yet, though all the relevant tests
+        pass when it is.
+
+        * GNUmakefile.am: Add the Modules/battery directory to the list of search paths for header inclusions.
+        Include the same directory under the IDL_PATH variable so the IDL files it contains are processed.
+        List these IDL files using a wildcard under the EXTRA_DIST list.
+        * GNUmakefile.list.am: Add the build targets for the module source files, IDLs and resulting JS bindings.
+        * bindings/gobject/GNUmakefile.am: Add the build targets for the GObject DOM bindings.
+
 2013-05-08  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin VS2010 build fix.

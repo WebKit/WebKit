@@ -3,6 +3,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMAttrPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMBarInfo.cpp \
 	DerivedSources/webkitdom/WebKitDOMBarInfoPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMBatteryManager.cpp \
+	DerivedSources/webkitdom/WebKitDOMBatteryManagerPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMBlob.cpp \
 	DerivedSources/webkitdom/WebKitDOMBlobPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMCDATASection.cpp \
@@ -283,6 +285,7 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMXPathResultPrivate.h
 
 webkitgtk_gdom_built_h_api += \
+	DerivedSources/webkitdom/WebKitDOMBatteryManager.h \
 	DerivedSources/webkitdom/WebKitDOMCSSRule.h \
 	DerivedSources/webkitdom/WebKitDOMCSSRuleList.h \
 	DerivedSources/webkitdom/WebKitDOMCSSStyleDeclaration.h \

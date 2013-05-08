@@ -1,3 +1,17 @@
+2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Plumb the Automake build system for the Battery Status API feature
+        https://bugs.webkit.org/show_bug.cgi?id=115718
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/FindDependencies.m4: Check for the upower-glib dependency if the feature is enabled.
+        * Source/autotools/PrintBuildConfiguration.m4: Print out the feature status.
+        * Source/autotools/ReadCommandLineArguments.m4: Check for the --enable-battery-status option. The deafult,
+        when the option is not given, is to disable the feature.
+        * Source/autotools/SetupWebKitFeatures.m4: Treat the ENABLE_BATTERY_STATUS define as configurable.
+        * Source/autotools/symbols.filter: Export a couple of symbols that are used in the WebCore internals library.
+
 2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] Pass --no-demangle to the linker by default to get the mangled symbols

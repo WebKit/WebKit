@@ -71,6 +71,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioTrackList.h \
 	DerivedSources/WebCore/JSBarInfo.cpp \
 	DerivedSources/WebCore/JSBarInfo.h \
+	DerivedSources/WebCore/JSBatteryManager.cpp \
+	DerivedSources/WebCore/JSBatteryManager.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
 	DerivedSources/WebCore/JSBeforeLoadEvent.h \
 	DerivedSources/WebCore/JSBiquadFilterNode.cpp \
@@ -1214,6 +1216,8 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGZoomEvent.h
 
 dom_binding_idls += \
+	$(WebCore)/Modules/battery/BatteryManager.idl \
+	$(WebCore)/Modules/battery/NavigatorBattery.idl \
 	$(WebCore)/Modules/filesystem/DOMFileSystem.idl \
 	$(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
 	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
@@ -1814,6 +1818,15 @@ dom_binding_idls += \
 	$(WebCore)/xml/XSLTProcessor.idl
 
 webcore_modules_sources += \
+	Source/WebCore/Modules/battery/BatteryClient.h \
+	Source/WebCore/Modules/battery/BatteryController.cpp \
+	Source/WebCore/Modules/battery/BatteryController.h \
+	Source/WebCore/Modules/battery/BatteryManager.cpp \
+	Source/WebCore/Modules/battery/BatteryManager.h \
+	Source/WebCore/Modules/battery/BatteryStatus.cpp \
+	Source/WebCore/Modules/battery/BatteryStatus.h \
+	Source/WebCore/Modules/battery/NavigatorBattery.cpp \
+	Source/WebCore/Modules/battery/NavigatorBattery.h \
 	Source/WebCore/Modules/filesystem/AsyncFileWriter.h \
 	Source/WebCore/Modules/filesystem/AsyncFileWriterClient.h \
 	Source/WebCore/Modules/filesystem/DOMFilePath.cpp \

@@ -9,6 +9,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/KHR \
 	-I$(srcdir)/Source/WebCore \
+	-I$(srcdir)/Source/WebCore/Modules/battery \
 	-I$(srcdir)/Source/WebCore/Modules/filesystem \
 	-I$(srcdir)/Source/WebCore/Modules/gamepad \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
@@ -372,6 +373,7 @@ DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glsla
 DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 
 IDL_PATH := \
+    $(WebCore)/Modules/battery \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
@@ -601,6 +603,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(XT_CFLAGS)
 
 EXTRA_DIST += \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/battery/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/filesystem/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/gamepad/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \

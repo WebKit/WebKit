@@ -124,6 +124,13 @@ AC_ARG_ENABLE(web_audio,
     [enable_web_audio="no"])
 AC_MSG_RESULT([$enable_web_audio])
 
+AC_MSG_CHECKING([whether to enable Battery Status API support])
+AC_ARG_ENABLE(battery_status,
+    AC_HELP_STRING([--enable-battery-status], [enable support for Battery Status API [default=no]]),
+    [],
+    [enable_battery_status="no"])
+AC_MSG_RESULT([$enable_battery_status])
+
 AC_MSG_CHECKING([whether to enable code coverage support])
 AC_ARG_ENABLE(coverage,
     AC_HELP_STRING([--enable-coverage], [enable code coverage support [default=no]]),

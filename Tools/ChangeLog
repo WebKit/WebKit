@@ -1,3 +1,14 @@
+2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Plumb the Automake build system for the Battery Status API feature
+        https://bugs.webkit.org/show_bug.cgi?id=115718
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): List battery-status as a configurable feature, meaning its value will be adjusted
+        through the --(enable|disable)-battery-status flag passed to configure.
+
 2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         new-run-webkit-websocketserver doesn't work after Chromium removal

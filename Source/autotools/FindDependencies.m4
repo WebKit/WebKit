@@ -488,6 +488,13 @@ if test "$enable_gamepad" = "yes"; then
     AC_SUBST(GAMEPAD_LIBS)
 fi
 
+if test "$enable_battery_status" = "yes"; then
+    PKG_CHECK_MODULES([UPOWER_GLIB], [upower-glib])
+
+    AC_SUBST(UPOWER_GLIB_CFLAGS)
+    AC_SUBST(UPOWER_GLIB_LIBS)
+fi
+
 # Check whether to enable code coverage support.
 if test "$enable_coverage" = "yes"; then
     COVERAGE_CFLAGS="-MD"
