@@ -1,5 +1,12 @@
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
+        [Mac] Unreviewed buildfix after r149741.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible):
+
+2013-05-08  Eric Carlson  <eric.carlson@apple.com>
+
         [Mac] Inband text tracks are not in track menu on Lion
         https://bugs.webkit.org/show_bug.cgi?id=115740
 
