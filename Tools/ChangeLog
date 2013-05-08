@@ -1,3 +1,15 @@
+2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Flakiness Dashboard] Remove the Chromium fallback platforms listing from the legend popup
+        https://bugs.webkit.org/show_bug.cgi?id=115636
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (showLegend): Remove the listing of the Chromium fallback platforms from the legend popup. The code iterated
+        through the platforms in the g_fallbacksMap dictionary to construct this part of the legend, but the dictionary,
+        while Chromium-specific, can't be removed just yet as there's more code that uses it.
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use adoptCF and adoptNS in more places, test code and code not compiled on Mac

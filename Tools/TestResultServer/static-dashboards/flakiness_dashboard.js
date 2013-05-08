@@ -2440,11 +2440,6 @@ g_fallbacksMap['MAC-LION'] = ['chromium-mac', 'chromium'];
 g_fallbacksMap['LINUX-32'] = ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium'];
 g_fallbacksMap['LINUX-64'] = ['chromium-linux', 'chromium-win', 'chromium'];
 
-function htmlForFallbackHelp(fallbacks)
-{
-    return '<ol class=fallback-list><li>' + fallbacks.join('</li><li>') + '</li></ol>';
-}
-
 function showLegend()
 {
     var legend = $('legend');
@@ -2460,18 +2455,11 @@ function showLegend()
         html += '<div class=' + expectation + '>' + expectationsMap()[expectation] + '</div>';
 
     html += '<div class=merge>WEBKIT MERGE</div>';
-    if (g_history.isLayoutTestResults()) {
-      html += '</div><br style="clear:both">' +
-          '</div><h3>Test expectatons fallback order.</h3>';
-
-      for (var platform in g_fallbacksMap)
-          html += '<div class=fallback-header>' + platform + '</div>' + htmlForFallbackHelp(g_fallbacksMap[platform]);
-
-      html += '<div>TIMES:</div>' +
+    if (g_history.isLayoutTestResults())
+      html += '</div><br style="clear:both"><div>TIMES:</div>' +
           htmlForSlowTimes(MIN_SECONDS_FOR_SLOW_TEST) +
           '<div>DEBUG TIMES:</div>' +
           htmlForSlowTimes(MIN_SECONDS_FOR_SLOW_TEST_DEBUG);
-    }
 
     legend.innerHTML = html;
 }
