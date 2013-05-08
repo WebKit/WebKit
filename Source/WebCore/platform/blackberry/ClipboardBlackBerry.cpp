@@ -70,11 +70,11 @@ bool ClipboardBlackBerry::setData(const String& type, const String& text)
         return false;
 
     if (type == "text/plain")
-        BlackBerry::Platform::Clipboard::writePlainText(text.utf8().data());
+        BlackBerry::Platform::Clipboard::writePlainText(text);
     else if (type == "text/html")
-        BlackBerry::Platform::Clipboard::writeHTML(text.utf8().data());
+        BlackBerry::Platform::Clipboard::writeHTML(text);
     else if (type == "text/url")
-        BlackBerry::Platform::Clipboard::writeURL(text.utf8().data());
+        BlackBerry::Platform::Clipboard::writeURL(text);
     return true;
 }
 
@@ -111,7 +111,7 @@ void ClipboardBlackBerry::declareAndWriteDragImage(Element*, const KURL&, const 
 void ClipboardBlackBerry::writeURL(const KURL& url, const String&, Frame*)
 {
     ASSERT(!url.isEmpty());
-    BlackBerry::Platform::Clipboard::writeURL(url.string().utf8().data());
+    BlackBerry::Platform::Clipboard::writeURL(url.string());
 }
 
 void ClipboardBlackBerry::writeRange(Range*, Frame*)
@@ -121,7 +121,7 @@ void ClipboardBlackBerry::writeRange(Range*, Frame*)
 
 void ClipboardBlackBerry::writePlainText(const String& text)
 {
-    BlackBerry::Platform::Clipboard::writePlainText(text.utf8().data());
+    BlackBerry::Platform::Clipboard::writePlainText(text);
 }
 
 bool ClipboardBlackBerry::hasData()

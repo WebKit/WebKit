@@ -40,8 +40,8 @@ const double ActiveTextFadeAnimationDuration = 0.3;
 const double OverlayShrinkAnimationDuration = 0.5;
 const double OverlayInitialScale = 2.0;
 
-static const char* fadeAnimationName() { return "fade"; }
-static const char* shrinkAnimationName() { return "shrink"; }
+STATIC_LOCAL_STRING(s_fadeAnimationName, "fade");
+STATIC_LOCAL_STRING(s_shrinkAnimationName, "shrink");
 
 DefaultTapHighlight::DefaultTapHighlight(WebPagePrivate* page)
     : m_page(page)
@@ -81,18 +81,18 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
         m_page->m_webPage->addOverlay(m_overlay.get());
     }
 
-    m_overlay->removeAnimation(shrinkAnimationName());
+    m_overlay->removeAnimation(s_shrinkAnimationName);
     m_overlay->resetOverrides();
     m_overlay->setPosition(rect.location());
     m_overlay->setSize(rect.size());
     m_overlay->setDrawsContent(true);
-    m_overlay->removeAnimation(fadeAnimationName());
+    m_overlay->removeAnimation(s_fadeAnimationName);
     m_overlay->setOpacity(1.0);
     m_overlay->invalidate();
 
     // Animate overlay scale to indicate selection is started.
     if (isStartOfSelection) {
-        WebAnimation shrinkAnimation = WebAnimation::shrinkAnimation(shrinkAnimationName(), OverlayInitialScale, 1, OverlayShrinkAnimationDuration);
+        WebAnimation shrinkAnimation = WebAnimation::shrinkAnimation(s_shrinkAnimationName, OverlayInitialScale, 1, OverlayShrinkAnimationDuration);
         m_overlay->addAnimation(shrinkAnimation);
     }
 }
@@ -111,7 +111,7 @@ void DefaultTapHighlight::hide()
 
     // Since WebAnimation is not thread safe, we create a new one each time instead of reusing the same object on different
     // threads (that would introduce race conditions).
-    WebAnimation fadeAnimation = WebAnimation::fadeAnimation(fadeAnimationName(), 1.0, 0.0, ActiveTextFadeAnimationDuration);
+    WebAnimation fadeAnimation = WebAnimation::fadeAnimation(s_fadeAnimationName, 1.0, 0.0, ActiveTextFadeAnimationDuration);
 
     // Normally, this method is called on the WebKit thread, but it can also be
     // called from the compositing thread.

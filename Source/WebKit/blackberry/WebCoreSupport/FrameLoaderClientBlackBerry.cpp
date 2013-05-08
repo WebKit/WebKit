@@ -629,7 +629,7 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
             String title = linkElement->title();
 
             if (WTF::equalIgnoringCase(linkElement->rel(), "apple-touch-icon"))
-                m_webPagePrivate->m_client->setLargeIcon(href.latin1().data());
+                m_webPagePrivate->m_client->setLargeIcon(href);
             else if (WTF::equalIgnoringCase(linkElement->rel(), "search")) {
                 if (WTF::equalIgnoringCase(linkElement->type(), "application/opensearchdescription+xml"))
                     m_webPagePrivate->m_client->setSearchProviderDetails(title, href);
@@ -1254,7 +1254,7 @@ void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
     base64Encode(static_cast<const char*>(data->data()), data->size(), out);
     out.append('\0'); // Make it null-terminated.
     String iconUrl = iconDatabase().synchronousIconURLForPageURL(url);
-    m_webPagePrivate->m_client->setFavicon(out.data(), iconUrl);
+    m_webPagePrivate->m_client->setFavicon(BlackBerry::Platform::String::fromAscii(out.data(), out.size()), iconUrl);
     data->unref();
 }
 

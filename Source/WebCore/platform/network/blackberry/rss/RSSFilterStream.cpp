@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -434,7 +434,7 @@ RSSFilterStream::RSSFilterStream()
 {
 }
 
-void RSSFilterStream::notifyStatusReceived(int status, const char* message)
+void RSSFilterStream::notifyStatusReceived(int status, const BlackBerry::Platform::String& message)
 {
     // Non-HTTP errors have no data to display, and redirects will never be displayed,
     // so no need to check if they have RSS data
@@ -455,13 +455,13 @@ void RSSFilterStream::notifyHeadersReceived(const NetworkRequest::HeaderList& he
         NetworkRequest::HeaderList::const_iterator end = headers.end();
         NetworkRequest::HeaderList::const_iterator iter = headers.begin();
         for (; iter != end; ++iter) {
-            if (equalIgnoringCase(iter->first, s_contentTypeHeaderKey)) {
+            if (equalIgnoringCase(iter->first.toStdString(), s_contentTypeHeaderKey)) {
                 if (iter->second.find("xml") != std::string::npos) {
                     m_contentTypeIndex = std::distance(NetworkRequest::HeaderList::const_iterator(headers.begin()), iter);
-                    ResourceType type = RSSTypeFromContentType(iter->second);
+                    ResourceType type = RSSTypeFromContentType(iter->second.toStdString());
                     if (isRSSContent(type))
                         m_resourceType = type;
-                    else if (!isPotentialRSSMIMEType(iter->second))
+                    else if (!isPotentialRSSMIMEType(iter->second.toStdString()))
                         m_resourceType = TypeNotRSS;
                 }
                 break;
@@ -517,7 +517,7 @@ void RSSFilterStream::notifyClose(int status)
 bool RSSFilterStream::convertContentToHtml(std::string& result)
 {
     bool success = false;
-    const std::string& base = url();
+    const std::string& base = url().toStdString();
     const std::string& enc = encoding();
 
     OwnPtr<RSSParserBase> parser = createParser(m_resourceType);
@@ -578,7 +578,7 @@ const std::string& RSSFilterStream::charset()
     static const int charsetPrefixLen = strlen(charsetPrefix);
     size_t pos = (m_headers.at(m_contentTypeIndex).second).find(charsetPrefix);
     if (pos != std::string::npos) {
-        m_charset = m_headers.at(m_contentTypeIndex).second.substr(pos + charsetPrefixLen);
+        m_charset = m_headers.at(m_contentTypeIndex).second.substr(pos + charsetPrefixLen).toStdString();
         stripWhiteSpace(m_charset);
     }
 
@@ -623,39 +623,38 @@ void RSSFilterStream::saveHeaders(const BlackBerry::Platform::NetworkRequest::He
     m_headers = headers;
 }
 
-void RSSFilterStream::removeHeader(const std::string& key)
+void RSSFilterStream::removeHeader(const char* key)
 {
     NetworkRequest::HeaderList::iterator end = m_headers.end();
     for (NetworkRequest::HeaderList::iterator iter = m_headers.begin(); iter != end; ++iter) {
-        if (!strcasecmp(iter->first.c_str(), key.c_str())) {
+        if (!strcasecmp(iter->first.c_str(), key)) {
             m_headers.erase(iter);
             return;
         }
     }
 }
 
-void RSSFilterStream::updateHeader(const std::string& key, const std::string& value)
+void RSSFilterStream::updateHeader(const char* key, const BlackBerry::Platform::String& value)
 {
     NetworkRequest::HeaderList::iterator iter = m_headers.begin();
     NetworkRequest::HeaderList::iterator end = m_headers.end();
     for (; iter != end; ++iter) {
-        if (!strcasecmp(iter->first.c_str(), key.c_str())) {
+        if (!strcasecmp(iter->first.c_str(), key)) {
             iter->second = value;
             return;
         }
     }
 
-    m_headers.insert(iter, std::make_pair(key, value));
+    m_headers.insert(iter, std::make_pair(BlackBerry::Platform::String::fromAscii(key), value));
 }
 
 void RSSFilterStream::updateRSSHeaders(size_t size)
 {
-    removeHeader(s_contentEncodingHeaderKey);
-    updateHeader(s_contentTypeHeaderKey, "text/html; charset=utf-8");
+    STATIC_LOCAL_STRING(s_htmlContentType, "text/html; charset=utf-8");
 
-    char buffer[16];
-    snprintf(buffer, 16, "%d", size);
-    updateHeader(s_contentLengthHeaderKey, std::string(buffer, 16));
+    removeHeader(s_contentEncodingHeaderKey);
+    updateHeader(s_contentTypeHeaderKey, s_htmlContentType);
+    updateHeader(s_contentLengthHeaderKey, BlackBerry::Platform::String::number(size));
 }
 
 void RSSFilterStream::sendSavedHeaders()

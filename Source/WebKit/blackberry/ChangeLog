@@ -1,3 +1,37 @@
+2013-05-08  Eli Fidler  <efidler@blackberry.com>
+
+        [BlackBerry] Fix usage of BlackBerry::Platform::String
+        https://bugs.webkit.org/show_bug.cgi?id=115781
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PRs 304193 and 327181
+        Internally Reviewed by Mike Lattanzio, Arvid Nilsson, Joe Mason, Jeff Rogers, and George Staikos
+
+        We currently have a problem where we're passing UTF-8 encoded data into
+        the char* constructors of BlackBerry::Platform::String. This means the string
+        thinks its data is not UTF-8.
+
+        * Api/JavaScriptVariant.cpp:
+        (BlackBerry::WebKit::JSValueRefToBlackBerryJavaScriptVariant):
+        * Api/WebKitTextCodec.cpp:
+        (BlackBerry::WebKit::base64Encode):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::loadFile):
+        (BlackBerry::WebKit::WebPage::textEncoding):
+        (BlackBerry::WebKit::WebPage::textHasAttribute):
+        (BlackBerry::WebKit::WebPagePrivate::defaultUserAgent):
+        * Api/WebPage.h:
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidReceiveIcon):
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+        (BlackBerry::WebKit::DefaultTapHighlight::hide):
+
 2013-05-08  Rob Buis  <rbuis@rim.com>
 
         Fix some compiler warnings (miscellaneous)

@@ -42,7 +42,7 @@ namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    ResourceData data = ResourceStore::instance()->requestResource(BlackBerry::Platform::String(name));
+    ResourceData data = ResourceStore::instance()->requestResource(BlackBerry::Platform::String::fromUtf8(name));
     if (!data.data())
         return BitmapImage::nullImage();
 

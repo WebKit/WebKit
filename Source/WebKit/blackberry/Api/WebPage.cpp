@@ -718,10 +718,12 @@ void WebPagePrivate::load(const Platform::NetworkRequest& netReq, bool needRefer
 
 void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerry::Platform::String& overrideContentType)
 {
+    STATIC_LOCAL_STRING(s_filePrefix, "file://");
+    STATIC_LOCAL_STRING(s_fileRootPrefix, "file:///");
     BlackBerry::Platform::String fileUrl(path);
-    if (fileUrl.startsWith("/"))
-        fileUrl = BlackBerry::Platform::String("file://", 7) + fileUrl;
-    else if (!fileUrl.startsWith("file:///"))
+    if (fileUrl.startsWith('/'))
+        fileUrl = s_filePrefix + fileUrl;
+    else if (!fileUrl.startsWith(s_fileRootPrefix))
         return;
 
     Platform::NetworkRequest netRequest;
@@ -4172,11 +4174,11 @@ BlackBerry::Platform::String WebPage::textEncoding()
 {
     Frame* frame = d->focusedOrMainFrame();
     if (!frame)
-        return "";
+        return BlackBerry::Platform::String::emptyString();
 
     Document* document = frame->document();
     if (!document)
-        return "";
+        return BlackBerry::Platform::String::emptyString();
 
     return document->loader()->writer()->encoding();
 }
@@ -5942,7 +5944,7 @@ BlackBerry::Platform::String WebPage::textHasAttribute(const BlackBerry::Platfor
     if (Document* doc = d->m_page->focusController()->focusedOrMainFrame()->document())
         return doc->queryCommandValue(query);
 
-    return "";
+    return BlackBerry::Platform::String::emptyString();
 }
 
 void WebPage::setJavaScriptCanAccessClipboard(bool enabled)
@@ -5992,7 +5994,7 @@ const BlackBerry::Platform::String& WebPagePrivate::defaultUserAgent()
         if (uaSize <= 0 || uaSize >= 256)
             BLACKBERRY_CRASH();
 
-        defaultUserAgent = new BlackBerry::Platform::String(uaBuffer, uaSize);
+        defaultUserAgent = new BlackBerry::Platform::String(BlackBerry::Platform::String::fromUtf8(uaBuffer, uaSize));
     }
 
     return *defaultUserAgent;

@@ -52,7 +52,7 @@ JavaScriptVariant JSValueRefToBlackBerryJavaScriptVariant(const JSGlobalContextR
         size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
         WTF::Vector<char> buffer(bufferSize);
         size_t rc = JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
-        returnValue.setString(BlackBerry::Platform::String(buffer.data(), rc - 1));
+        returnValue.setString(BlackBerry::Platform::String::fromUtf8(buffer.data(), rc - 1));
         JSStringRelease(stringRef);
         break;
     }

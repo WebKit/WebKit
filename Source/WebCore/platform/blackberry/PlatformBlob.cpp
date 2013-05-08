@@ -33,7 +33,7 @@ BlackBerry::Platform::WebBlobDataItem* PlatformBlob::nextDataItem()
     m_platformBlobItem.m_isData = item.type == BlobDataItem::Data;
     m_platformBlobItem.m_buffer = m_platformBlobItem.m_isData ? item.data->data() + static_cast<int>(item.offset) : 0;
     m_platformBlobItem.m_bufferLength = m_platformBlobItem.m_isData ? static_cast<size_t>(item.length) : 0;
-    m_platformBlobItem.m_fileName = m_platformBlobItem.m_isData ? std::string() : item.path.utf8().data();
+    m_platformBlobItem.m_fileName = m_platformBlobItem.m_isData ? emptyString() : item.path;
     m_platformBlobItem.m_fileStart = m_platformBlobItem.m_isData ? 0 : item.offset;
     m_platformBlobItem.m_fileLength = m_platformBlobItem.m_isData ? 0 : item.length;
     m_platformBlobItem.m_expectedFileModificationTime = m_platformBlobItem.m_isData ? BlackBerry::Platform::WebBlobDataItem::DONOTCHECKFILECHANGE : item.expectedModificationTime;

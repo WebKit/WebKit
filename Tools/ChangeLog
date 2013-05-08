@@ -1,3 +1,25 @@
+2013-05-08  Eli Fidler  <efidler@blackberry.com>
+
+        [BlackBerry] Fix usage of BlackBerry::Platform::String
+        https://bugs.webkit.org/show_bug.cgi?id=115781
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PRs 304193 and 327181
+        Internally Reviewed by Mike Lattanzio, Arvid Nilsson, Joe Mason, Jeff Rogers, and George Staikos
+
+        We currently have a problem where we're passing UTF-8 encoded data into
+        the char* constructors of BlackBerry::Platform::String. This means the string
+        thinks its data is not UTF-8.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (BlackBerry::WebKit::dumpHistoryItem):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        (TestRunner::setUserStyleSheetLocation):
+        * DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp:
+        (LoadHTMLStringItem::invoke):
+
 2013-05-08  Alberto Garcia  <agarcia@igalia.com>
 
         Tools: add new BlackBerry include dirs.

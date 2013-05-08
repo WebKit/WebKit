@@ -62,7 +62,8 @@ bool LoadHTMLStringItem::invoke() const
     JSStringGetUTF8CString(m_content.get(), content.get(), contentSize);
     JSStringGetUTF8CString(m_baseURL.get(), baseURL.get(), baseURLSize);
     JSStringGetUTF8CString(m_unreachableURL.get(), unreachableURL.get(), unreachableURLSize);
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->loadString(content.get(), baseURL.get(), "text/html", unreachableURLSize ? unreachableURL.get() : "");
+    STATIC_LOCAL_STRING(s_textHtml, "text/html");
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->loadString(BlackBerry::Platform::String::fromUtf8(content.get()), BlackBerry::Platform::String::fromUtf8(baseURL.get()), s_textHtml, unreachableURLSize ? BlackBerry::Platform::String::fromUtf8(unreachableURL.get()) : BlackBerry::Platform::String::emptyString());
     return true;
 }
 

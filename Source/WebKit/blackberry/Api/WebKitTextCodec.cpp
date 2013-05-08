@@ -113,7 +113,7 @@ bool base64Encode(const std::vector<char>& binary, BlackBerry::Platform::String&
 
     WTF::base64Encode(&binary[0], binary.size(), result, static_cast<WTF::Base64EncodePolicy>(policy));
 
-    base64 = BlackBerry::Platform::String(&result[0], result.size());
+    base64 = BlackBerry::Platform::String::fromAscii(&result[0], result.size());
 
     return true;
 }

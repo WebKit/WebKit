@@ -169,7 +169,7 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
     setAuthCredentials(platformRequest, guardJob->getInternal()->m_proxyWebChallenge);
 
     if (!request.overrideContentType().isEmpty())
-        platformRequest.setOverrideContentType(request.overrideContentType().latin1().data());
+        platformRequest.setOverrideContentType(request.overrideContentType());
 
     NetworkJob* networkJob = new NetworkJob;
     if (!networkJob)

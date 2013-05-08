@@ -194,18 +194,15 @@ void MediaPlayerPrivate::load(const WTF::String& url)
 
     deleteGuardedObject(m_platformPlayer);
 #if USE(ACCELERATED_COMPOSITING)
-    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, true, modifiedUrl.utf8().data());
+    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, true, modifiedUrl);
 #else
-    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, false, modifiedUrl.utf8().data());
+    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, false, modifiedUrl);
 #endif
 
     WTF::String cookiePairs;
     if (!url.isEmpty())
-        cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url.utf8().data()), WithHttpOnlyCookies);
-    if (!cookiePairs.isEmpty() && cookiePairs.utf8().data())
-        m_platformPlayer->load(playerID, modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), cookiePairs.utf8().data());
-    else
-        m_platformPlayer->load(playerID, modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), 0);
+        cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url), WithHttpOnlyCookies);
+    m_platformPlayer->load(playerID, modifiedUrl, m_webCorePlayer->userAgent(), cookiePairs);
 }
 
 void MediaPlayerPrivate::cancelLoad()
@@ -766,9 +763,7 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
     if (result != AuthenticationChallengeSuccess || !url.isValid())
         return;
 
-    m_platformPlayer->reloadWithCredential(credential.user().utf8(WTF::String::StrictConversion).data(),
-        credential.password().utf8(WTF::String::StrictConversion).data(),
-        static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
+    m_platformPlayer->reloadWithCredential(credential.user(), credential.password(), static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
 }
 
 void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const
@@ -822,7 +817,7 @@ int MediaPlayerPrivate::onShowErrorDialog(PlatformPlayer::Error type)
 
 static WebMediaStreamSource toWebMediaStreamSource(MediaStreamSource* src)
 {
-    return WebMediaStreamSource(src->id().utf8().data(), static_cast<WebMediaStreamSource::Type>(src->type()), src->name().utf8().data());
+    return WebMediaStreamSource(src->id(), static_cast<WebMediaStreamSource::Type>(src->type()), src->name());
 }
 
 static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor* d)
@@ -835,7 +830,7 @@ static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor
     for (size_t i = 0; i < d->numberOfVideoComponents(); i++)
         videoSources.push_back(toWebMediaStreamSource(d->videoComponent(i)->source()));
 
-    return WebMediaStreamDescriptor(d->id().utf8().data(), audioSources, videoSources);
+    return WebMediaStreamDescriptor(d->id(), audioSources, videoSources);
 }
 
 WebMediaStreamDescriptor MediaPlayerPrivate::lookupMediaStream(const BlackBerry::Platform::String& url)

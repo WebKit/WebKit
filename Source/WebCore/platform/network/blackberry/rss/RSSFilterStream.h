@@ -38,7 +38,7 @@ public:
 
     RSSFilterStream();
 
-    virtual void notifyStatusReceived(int status, const char* message);
+    virtual void notifyStatusReceived(int status, const BlackBerry::Platform::String& message);
     virtual void notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList&);
     virtual void notifyDataReceived(BlackBerry::Platform::NetworkBuffer*);
     virtual void notifyClose(int status);
@@ -51,8 +51,8 @@ private:
     const std::string& encoding();
 
     void saveHeaders(const BlackBerry::Platform::NetworkRequest::HeaderList&);
-    void removeHeader(const std::string& key);
-    void updateHeader(const std::string& key, const std::string& value);
+    void removeHeader(const char* key);
+    void updateHeader(const char* key, const BlackBerry::Platform::String& value);
     void updateRSSHeaders(size_t);
     void sendSavedHeaders();
 

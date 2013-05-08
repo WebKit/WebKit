@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,72 +61,72 @@ bool WorkerAsyncFileSystemBlackBerry::waitForOperationToComplete()
 
 void WorkerAsyncFileSystemBlackBerry::openFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    WebFileSystem::openFileSystem(webKitThreadMessageClient(), basePath.utf8().data(), storageIdentifier.utf8().data(), static_cast<WebFileSystem::Type>(type), size, create, callbacks, 0);
+    WebFileSystem::openFileSystem(webKitThreadMessageClient(), basePath, storageIdentifier, static_cast<WebFileSystem::Type>(type), size, create, callbacks, 0);
 }
 
 void WorkerAsyncFileSystemBlackBerry::deleteFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType type, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    WebFileSystem::deleteFileSystem(webKitThreadMessageClient(), basePath.utf8().data(), storageIdentifier.utf8().data(), static_cast<WebFileSystem::Type>(type), callbacks);
+    WebFileSystem::deleteFileSystem(webKitThreadMessageClient(), basePath, storageIdentifier, static_cast<WebFileSystem::Type>(type), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::moveOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& sourcePath, const KURL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->move(fileSystemURLToPath(sourcePath).utf8().data(), fileSystemURLToPath(destinationPath).utf8().data(), callbacks);
+    platformFileSystem->move(fileSystemURLToPath(sourcePath), fileSystemURLToPath(destinationPath), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::copyOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& sourcePath, const KURL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->copy(fileSystemURLToPath(sourcePath).utf8().data(), fileSystemURLToPath(destinationPath).utf8().data(), callbacks);
+    platformFileSystem->copy(fileSystemURLToPath(sourcePath), fileSystemURLToPath(destinationPath), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::removeOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->remove(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->remove(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::removeRecursivelyOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->removeRecursively(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->removeRecursively(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::readMetadataOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->readMetadata(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->readMetadata(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::createFileOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->createFile(fileSystemURLToPath(path).utf8().data(), exclusive, callbacks);
+    platformFileSystem->createFile(fileSystemURLToPath(path), exclusive, callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::createDirectoryOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->createDirectory(fileSystemURLToPath(path).utf8().data(), exclusive, callbacks);
+    platformFileSystem->createDirectory(fileSystemURLToPath(path), exclusive, callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::fileExistsOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->fileExists(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->fileExists(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::directoryExistsOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->directoryExists(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->directoryExists(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::readDirectoryOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->readDirectory(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->readDirectory(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::createWriterOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, AsyncFileWriterClient*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    WebFileWriter::createWriter(platformFileSystem, fileSystemURLToPath(path).utf8().data(), callbacks);
+    WebFileWriter::createWriter(platformFileSystem, fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::createSnapshotFileAndReadMetadataOnMainThread(ScriptExecutionContext*, WebFileSystem* platformFileSystem, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks* callbacks)
 {
-    platformFileSystem->createSnapshotFileAndReadMetadata(fileSystemURLToPath(path).utf8().data(), callbacks);
+    platformFileSystem->createSnapshotFileAndReadMetadata(fileSystemURLToPath(path), callbacks);
 }
 
 void WorkerAsyncFileSystemBlackBerry::openFileSystem(WorkerContext* context, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

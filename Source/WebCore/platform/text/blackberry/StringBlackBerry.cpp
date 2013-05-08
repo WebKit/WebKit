@@ -38,7 +38,7 @@ String::operator BlackBerry::Platform::String() const
         return BlackBerry::Platform::String::emptyString();
 
     if (is8Bit())
-        return BlackBerry::Platform::String(reinterpret_cast<const char*>(characters8()), length());
+        return BlackBerry::Platform::String::fromLatin1(reinterpret_cast<const char*>(characters8()), length());
 
     return BlackBerry::Platform::String(characters(), length());
 }

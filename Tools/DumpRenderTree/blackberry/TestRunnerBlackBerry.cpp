@@ -283,7 +283,7 @@ void TestRunner::setUserStyleSheetEnabled(bool flag)
 void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
     String pathStr = jsStringRefToWebCoreString(path);
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setUserStyleSheetLocation(pathStr.utf8().data());
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setUserStyleSheetLocation(pathStr);
 }
 
 void TestRunner::waitForPolicyDelegate()

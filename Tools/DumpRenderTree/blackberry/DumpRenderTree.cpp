@@ -315,10 +315,13 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     settings->setDefaultFontSize(16);
     settings->setDefaultFixedFontSize(13);
     settings->setMinimumFontSize(1);
-    settings->setSerifFontFamily("Times");
-    settings->setFixedFontFamily("Courier New");
-    settings->setSansSerifFontFamily("Arial");
-    settings->setStandardFontFamily("Times");
+    STATIC_LOCAL_STRING(s_arial, "Arial");
+    STATIC_LOCAL_STRING(s_courier, "Courier New");
+    STATIC_LOCAL_STRING(s_times, "Times");
+    settings->setSerifFontFamily(s_times);
+    settings->setFixedFontFamily(s_courier);
+    settings->setSansSerifFontFamily(s_arial);
+    settings->setStandardFontFamily(s_times);
     settings->setXSSAuditorEnabled(false);
     settings->setMaximumPagesInCache(0);
     settings->setPluginsEnabled(true);
@@ -469,7 +472,7 @@ static String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int indent,
         start = 6;
     }
     for (int i = start; i < indent; i++)
-        result = result + " ";
+        result = result + ' ';
 
     String url = item->urlString();
     if (url.contains("file://")) {
@@ -491,7 +494,7 @@ static String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int indent,
 
     if (item->isTargetItem())
         result = result + "  **nav target**";
-    result = result + "\n";
+    result = result + '\n';
 
     WebCore::HistoryItemVector children = item->children();
     // Must sort to eliminate arbitrary result ordering which defeats reproducible testing.

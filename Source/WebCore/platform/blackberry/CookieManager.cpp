@@ -271,7 +271,7 @@ void CookieManager::getRawCookies(Vector<RefPtr<ParsedCookie> > &stackOfCookies,
 
     // IP addresses are stored in a particular format (due to ipv6). Reduce the ip address so we can match
     // it with the one in memory.
-    string canonicalIP = BlackBerry::Platform::getCanonicalIPFormat(requestURL.host().utf8().data());
+    BlackBerry::Platform::String canonicalIP = BlackBerry::Platform::getCanonicalIPFormat(requestURL.host());
     if (!canonicalIP.empty())
         delimitedHost.append(String(canonicalIP.c_str()));
     else
@@ -514,7 +514,7 @@ void CookieManager::getBackingStoreCookies()
         RefPtr<ParsedCookie> newCookie = cookies[i];
 
         // The IP flag is not persisted in the database.
-        if (BlackBerry::Platform::isIPAddress(newCookie->domain().utf8().data()))
+        if (BlackBerry::Platform::isIPAddress(newCookie->domain()))
             newCookie->setDomain(newCookie->domain(), true);
 
         checkAndTreatCookie(newCookie, BackingStoreCookieEntry);
