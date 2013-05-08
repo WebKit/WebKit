@@ -1,3 +1,11 @@
+2013-05-08  Lucas Forschler  <lforschler@apple.com>
+
+        Add Scheduler for Mac MtnLion 32bit Release builder.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-05-08  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         Update JSCIdentifier pretty printer in Tools/gdb/webkit.py
