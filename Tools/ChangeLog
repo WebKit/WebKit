@@ -1,3 +1,10 @@
+2013-05-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed. Update to show my apple.com address.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added
+        my apple.com e-mail address.
+
 2013-05-08  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r149579): Use Vector::appendVector() instead of Vector::append()
