@@ -1,3 +1,11 @@
+2013-05-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed AppleWin build fix.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        (MediaPlayerPrivateAVFoundationCF):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTrack):
+
 2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Plumb the Automake build system for the Battery Status API feature

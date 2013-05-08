@@ -40,6 +40,9 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
+    //FIXME: this needs to be implemented
+    virtual InbandTextTrackPrivateAVF* currentTrack() const { return 0; }
+
 private:
     MediaPlayerPrivateAVFoundationCF(MediaPlayer*);
 
