@@ -9057,7 +9057,6 @@
     <ClCompile Include="..\html\shadow\MediaControlsApple.cpp" />
     <ClCompile Include="..\html\shadow\MeterShadowElement.cpp" />
     <ClCompile Include="..\html\shadow\ProgressShadowElement.cpp" />
-    <ClCompile Include="..\html\shadow\SelectRuleFeatureSet.cpp" />
     <ClCompile Include="..\html\shadow\SliderThumbElement.cpp" />
     <ClCompile Include="..\html\shadow\SpinButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\TextControlInnerElements.cpp" />
@@ -12874,7 +12873,6 @@
     <ClInclude Include="..\html\shadow\MediaControlsApple.h" />
     <ClInclude Include="..\html\shadow\MeterShadowElement.h" />
     <ClInclude Include="..\html\shadow\ProgressShadowElement.h" />
-    <ClInclude Include="..\html\shadow\SelectRuleFeatureSet.h" />
     <ClInclude Include="..\html\shadow\SliderThumbElement.h" />
     <ClInclude Include="..\html\shadow\SpinButtonElement.h" />
     <ClInclude Include="..\html\shadow\TextControlInnerElements.h" />

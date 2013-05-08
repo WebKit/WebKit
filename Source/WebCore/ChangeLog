@@ -1,3 +1,10 @@
+2013-05-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2013-05-08  Darin Adler  <darin@apple.com>
 
         REGRESSION(r149700): fast/css-generated-content/close-quote-negative-depth.html
