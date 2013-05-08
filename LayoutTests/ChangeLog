@@ -1,3 +1,17 @@
+2013-05-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip two spelling tests as they started passing after r149366.
+
+        * platform/efl-wk2/TestExpectations:
+        Unskip spelling-exactly-selected-word.html and
+        spelling-with-punctuation-selection.html
+
+        * platform/efl/TestExpectations:
+        Remove spelling tests from efl/TestExpectations as the failing tests
+        are already skipped for both efl-wk1 and global wk2.
+
 2013-05-08  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed EFL gardening.

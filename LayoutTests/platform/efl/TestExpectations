@@ -1716,15 +1716,6 @@ webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ 
 
 webkit.org/b/67921 [ Release ] perf/show-hide-table-rows.html [ Failure Pass Slow ]
 
-# Spellchecker behavior tests.
-webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-multiple-words.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-multiword-selection.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-should-select-multiple-words.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-subword-selection.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
-
 # This test has slightly networking different output on the build bots but the
 # result still looks OK.
 Bug(EFL) http/tests/inspector/console-websocket-error.html [ Failure Pass ]
