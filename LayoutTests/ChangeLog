@@ -1,3 +1,10 @@
+2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an image only failure expectation to fast/css-generated-content/close-quote-negative-depth.html per
+        bug 115776 after r149700. r149707 tried to fix its regression but this test is still failing.
+
+        * TestExpectations:
+
 2013-05-07  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] shape-inside, shape-padding, polygon test failing when subpixel layout is disabled
