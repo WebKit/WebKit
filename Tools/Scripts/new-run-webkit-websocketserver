@@ -36,6 +36,7 @@ import tempfile
 
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.servers import websocket_server
+from webkitpy.port import platform_options
 
 
 def main():
@@ -71,6 +72,11 @@ def main():
     option_parser.add_option('-v', '--verbose', action='store_true',
                              default=False,
                              help='Include debug-level logging.')
+
+    option_group = optparse.OptionGroup(option_parser, "Platform options")
+    option_group.add_options(platform_options())
+    option_parser.add_option_group(option_group)
+
     options, args = option_parser.parse_args()
 
     if not options.port:
@@ -97,8 +103,7 @@ def main():
         kwds['pidfile'] = options.pidfile
 
     host = Host()
-    # FIXME: Make this work with other ports as well.
-    port_obj = host.port_factory.get(port_name='chromium', options=options)
+    port_obj = host.port_factory.get(options.platform, options=options)
     pywebsocket = websocket_server.PyWebSocket(port_obj, options.output_dir, **kwds)
 
     log_level = logging.WARN

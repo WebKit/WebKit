@@ -1,3 +1,15 @@
+2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        new-run-webkit-websocketserver doesn't work after Chromium removal
+        https://bugs.webkit.org/show_bug.cgi?id=115816
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix the bug by instantiating the correct port object.
+
+        * Scripts/new-run-webkit-websocketserver:
+        (main):
+
 2013-05-07  Lucas Forschler  <lforschler@apple.com>
 
         Configure buildbot for 32bit builder.
