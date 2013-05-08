@@ -176,7 +176,7 @@ wstring lastPathComponent(const wstring& urlString)
         return urlString;
 
     RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
-    RetainPtr<CFStringRef> lastPathComponent(CFURLCopyLastPathComponent(url.get()));
+    RetainPtr<CFStringRef> lastPathComponent = adoptCF(CFURLCopyLastPathComponent(url.get()));
 
     return cfStringRefToWString(lastPathComponent.get());
 }
