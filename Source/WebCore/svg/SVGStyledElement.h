@@ -44,7 +44,7 @@ public:
 
     virtual bool supportsMarkers() const { return false; }
 
-    virtual PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
+    PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
 
     bool isKnownAttribute(const QualifiedName&);
 
