@@ -177,7 +177,7 @@ void ImageDocumentParser::finish()
 // --------
 
 ImageDocument::ImageDocument(Frame* frame, const KURL& url)
-    : HTMLDocument(frame, url)
+    : HTMLDocument(frame, url, ImageDocumentClass)
     , m_imageElement(0)
     , m_imageSizeIsKnown(false)
     , m_didShrinkImage(false)

@@ -51,7 +51,6 @@ private:
     ImageDocument(Frame*, const KURL&);
 
     virtual PassRefPtr<DocumentParser> createParser();
-    virtual bool isImageDocument() const { return true; }
     
     void createDocumentStructure();
     void resizeImageToFit();

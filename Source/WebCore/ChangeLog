@@ -1,3 +1,52 @@
+2013-05-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Devirtualize Document class type checking
+        https://bugs.webkit.org/show_bug.cgi?id=115755
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/dae5adc768d5ce6bff301df6515745da8ea24950
+
+        Document has a bunch of virtual bool is*Document() methods on it, but it also has
+        two bools for XHTML and HTML documents which is silly. We can merge them all
+        together into an enum of values and devirtualize the type checking methods.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createElement):
+        * dom/Document.h:
+        (WebCore::Document::create):
+        (WebCore::Document::createXHTML):
+        (WebCore::Document::isHTMLDocument):
+        (WebCore::Document::isXHTMLDocument):
+        (WebCore::Document::isImageDocument):
+        (WebCore::Document::isSVGDocument):
+        (WebCore::Document::isPluginDocument):
+        (WebCore::Document::isMediaDocument):
+        (WebCore::Document):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * html/ImageDocument.h:
+        (WebCore::ImageDocument):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::MediaDocument):
+        * html/MediaDocument.h:
+        (WebCore::MediaDocument):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * html/PluginDocument.h:
+        (WebCore::PluginDocument):
+        * loader/PlaceholderDocument.h:
+        (WebCore::PlaceholderDocument::PlaceholderDocument):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Begin unraveling the mess that is QuotesData
