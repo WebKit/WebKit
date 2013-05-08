@@ -57,10 +57,6 @@ QT_END_NAMESPACE
 #include <dispatch/dispatch.h>
 #endif
 
-#if ENABLE(BATTERY_STATUS)
-#include "WebBatteryManager.h"
-#endif
-
 #if ENABLE(NETWORK_INFO)
 #include "WebNetworkInfoManager.h"
 #endif
@@ -151,9 +147,6 @@ public:
 
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
-#endif
-#if ENABLE(BATTERY_STATUS)
-    WebBatteryManager& batteryManager() { return m_batteryManager; }
 #endif
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManager& networkInfoManager() { return m_networkInfoManager; }
@@ -317,9 +310,6 @@ private:
 
     TextCheckerState m_textCheckerState;
 
-#if ENABLE(BATTERY_STATUS)
-    WebBatteryManager m_batteryManager;
-#endif
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManager m_networkInfoManager;
 #endif

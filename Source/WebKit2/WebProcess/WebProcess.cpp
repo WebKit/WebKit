@@ -114,6 +114,10 @@
 #include "WebDatabaseManager.h"
 #endif
 
+#if ENABLE(BATTERY_STATUS)
+#include "WebBatteryManager.h"
+#endif
+
 #if ENABLE(NETWORK_PROCESS)
 #include "WebResourceLoadScheduler.h"
 #endif
@@ -160,9 +164,6 @@ WebProcess::WebProcess()
     , m_networkAccessManager(0)
 #endif
     , m_textCheckerState()
-#if ENABLE(BATTERY_STATUS)
-    , m_batteryManager(this)
-#endif
 #if ENABLE(NETWORK_INFO)
     , m_networkInfoManager(this)
 #endif
@@ -206,6 +207,9 @@ WebProcess::WebProcess()
 #endif
 #if ENABLE(CUSTOM_PROTOCOLS)
     addSupplement<CustomProtocolManager>();
+#endif
+#if ENABLE(BATTERY_STATUS)
+    addSupplement<WebBatteryManager>();
 #endif
 }
 

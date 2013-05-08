@@ -38,17 +38,17 @@ namespace WebKit {
 
 void WebBatteryClient::startUpdating()
 {
-    WebProcess::shared().batteryManager().registerWebPage(m_page);
+    WebProcess::shared().supplement<WebBatteryManager>()->registerWebPage(m_page);
 }
 
 void WebBatteryClient::stopUpdating()
 {
-    WebProcess::shared().batteryManager().unregisterWebPage(m_page);
+    WebProcess::shared().supplement<WebBatteryManager>()->unregisterWebPage(m_page);
 }
 
 void WebBatteryClient::batteryControllerDestroyed()
 {
-    WebProcess::shared().batteryManager().unregisterWebPage(m_page);
+    WebProcess::shared().supplement<WebBatteryManager>()->unregisterWebPage(m_page);
     delete this;
 }
 

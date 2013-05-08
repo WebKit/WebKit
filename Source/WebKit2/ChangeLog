@@ -1,3 +1,29 @@
+2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Make the WebBatteryManager a supplement to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115715
+
+        Reviewed by Andreas Kling.
+
+        WebBatteryManager should inherit from WebProcessSupplement and should be used as such
+        by the WebProcess. This removes the need for the m_batteryManager member variable in
+        the WebProcess class and brings the WebBatteryManager in line with other manager classes
+        of which instances are controlled by the WebProcess class.
+
+        * WebProcess/Battery/WebBatteryManager.cpp:
+        (WebKit::WebBatteryManager::supplementName): Specify the supplement's name.
+        (WebKit):
+        * WebProcess/Battery/WebBatteryManager.h:
+        (WebBatteryManager): Inherit from the WebProcessSupplement interface.
+        * WebProcess/WebCoreSupport/WebBatteryClient.cpp:
+        (WebKit::WebBatteryClient::startUpdating): Access the WebBatteryManager as a supplement.
+        (WebKit::WebBatteryClient::stopUpdating): Ditto.
+        (WebKit::WebBatteryClient::batteryControllerDestroyed): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Add the WebBatteryManager instance as a supplement.
+        * WebProcess/WebProcess.h:
+        (WebProcess): Remove the m_batteryManager member variable and its getter method.
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use adoptCF and adoptNS in more places

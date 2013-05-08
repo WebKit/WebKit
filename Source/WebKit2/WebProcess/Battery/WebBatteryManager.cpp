@@ -40,6 +40,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const char* WebBatteryManager::supplementName()
+{
+    return "WebBatteryManager";
+}
+
 WebBatteryManager::WebBatteryManager(WebProcess* process)
     : m_process(process)
 {
