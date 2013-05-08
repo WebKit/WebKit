@@ -1,3 +1,69 @@
+2013-05-08  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Heap-use-after-free in WebCore::AudioNodeOutput::pull
+        https://bugs.webkit.org/show_bug.cgi?id=111362
+
+        Reviewed by Chris Rogers.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::createFromAudioFileData):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::AudioNodeInput):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        * Modules/webaudio/AudioNodeInput.h:
+        (AudioNodeInput):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        (WebCore::AudioNodeOutput::updateInternalBus):
+        (WebCore::AudioNodeOutput::pull):
+        (WebCore::AudioNodeOutput::bus):
+        * Modules/webaudio/AudioNodeOutput.h:
+        (AudioNodeOutput):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        (OfflineAudioDestinationNode):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::createBySampleRateConverting):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/AudioBus.h:
+        (AudioBus):
+        * platform/audio/AudioFileReader.h:
+        (WebCore):
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::AudioResampler):
+        (WebCore::AudioResampler::configureChannels):
+        * platform/audio/AudioResampler.h:
+        (AudioResampler):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::getConcatenatedImpulseResponsesForSubject):
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        * platform/audio/MultiChannelResampler.cpp:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::initialize):
+        * platform/audio/Reverb.h:
+        (Reverb):
+        * platform/audio/efl/AudioBusEfl.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (AudioFileReader):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/gtk/AudioBusGtk.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/mac/AudioFileReaderMac.h:
+        (AudioFileReader):
+        * platform/audio/qt/AudioBusQt.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+
 2013-05-08  Eli Fidler  <efidler@blackberry.com>
 
         [BlackBerry] Fix usage of BlackBerry::Platform::String

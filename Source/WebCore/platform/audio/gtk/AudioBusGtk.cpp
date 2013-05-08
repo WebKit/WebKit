@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
+PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     GOwnPtr<gchar> filename(g_strdup_printf("%s.wav", name));
     const char* environmentPath = getenv("AUDIO_RESOURCES_PATH");

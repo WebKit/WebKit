@@ -46,7 +46,7 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(AudioContext* context, 
     , m_renderThread(0)
     , m_startedRendering(false)
 {
-    m_renderBus = adoptPtr(new AudioBus(renderTarget->numberOfChannels(), renderQuantumSize));
+    m_renderBus = adoptRef(new AudioBus(renderTarget->numberOfChannels(), renderQuantumSize));
 }
 
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()

@@ -60,7 +60,7 @@ public:
 private:
     double m_rate;
     Vector<OwnPtr<AudioResamplerKernel> > m_kernels;
-    OwnPtr<AudioBus> m_sourceBus;
+    RefPtr<AudioBus> m_sourceBus;
 };
 
 } // namespace WebCore

@@ -29,7 +29,7 @@
 #include "AudioNode.h"
 #include "AudioParam.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -129,12 +129,11 @@ private:
     unsigned m_numberOfChannels;
     unsigned m_desiredNumberOfChannels;
     
-    // m_internalBus must only be changed in the audio thread with the context's graph lock (or constructor).
-    OwnPtr<AudioBus> m_internalBus;
-
-    // m_actualDestinationBus is set in pull() and will either point to one of our internal busses or to the in-place bus.
-    // It must only be changed in the audio thread (or constructor).
-    AudioBus* m_actualDestinationBus;
+    // m_internalBus and m_inPlaceBus must only be changed in the audio thread with the context's graph lock (or constructor).
+    RefPtr<AudioBus> m_internalBus;
+    RefPtr<AudioBus> m_inPlaceBus;
+    // If m_isInPlace is true, use m_inPlaceBus as the valid AudioBus; If false, use the default m_internalBus.
+    bool m_isInPlace;
 
     HashSet<AudioNodeInput*> m_inputs;
     typedef HashSet<AudioNodeInput*>::iterator InputsIterator;

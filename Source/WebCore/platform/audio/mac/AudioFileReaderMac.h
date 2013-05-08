@@ -31,7 +31,7 @@
 
 #include <AudioToolbox/AudioFile.h>
 #include <AudioToolbox/ExtendedAudioFile.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ public:
     ~AudioFileReader();
 
     // Returns 0 if error
-    PassOwnPtr<AudioBus> createBus(float sampleRate, bool mixToMono);
+    PassRefPtr<AudioBus> createBus(float sampleRate, bool mixToMono);
 
     const void* data() const { return m_data; }
     size_t dataSize() const { return m_dataSize; }

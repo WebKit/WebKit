@@ -30,8 +30,8 @@
 
 #import "AudioFileReader.h"
 #import <wtf/AutodrainedPool.h>
-#import <wtf/OwnPtr.h>
-#import <wtf/PassOwnPtr.h>
+#import <wtf/RefPtr.h>
+#import <wtf/PassRefPtr.h>
 #import <Foundation/Foundation.h>
 
 @interface WebCoreAudioBundleClass : NSObject
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
+PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     // This method can be called from other than the main thread, so we need an auto-release pool.
     AutodrainedPool pool;
@@ -57,12 +57,12 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float samp
     NSData *audioData = [NSData dataWithContentsOfURL:audioFileURL options:options error:nil];
 
     if (audioData) {
-        OwnPtr<AudioBus> bus(createBusFromInMemoryAudioFile([audioData bytes], [audioData length], false, sampleRate));
-        return bus.release();
+        RefPtr<AudioBus> bus(createBusFromInMemoryAudioFile([audioData bytes], [audioData length], false, sampleRate));
+        return bus;
     }
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return 0;
 }
 
 } // namespace WebCore

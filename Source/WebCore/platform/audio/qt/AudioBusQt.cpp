@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
+PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     QString path = QStringLiteral(":/webkit/resources/audio/");
     path.append(QLatin1String(name));

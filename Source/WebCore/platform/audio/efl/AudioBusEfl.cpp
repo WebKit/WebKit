@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
+PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     String absoluteFilename(makeString(DATA_DIR, "/webaudio/resources/", name, ".wav"));
     if (!fileExists(absoluteFilename))

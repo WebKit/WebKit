@@ -30,8 +30,8 @@
 #define AudioFileReader_h
 
 #include <stdlib.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -42,9 +42,9 @@ class AudioBus;
 // sampleRate will be made (if it doesn't already match the file's sample-rate).
 // The created buffer will have its sample-rate set correctly to the result.
 
-PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
+PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
 
-PassOwnPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate);
+PassRefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate);
                                 
 // May pass in 0.0 for sampleRate in which case it will use the AudioBus's sampleRate                               
 void writeBusToAudioFile(AudioBus* bus, const char* filePath, double fileSampleRate);

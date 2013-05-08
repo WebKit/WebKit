@@ -32,6 +32,7 @@
 #include "AudioChannel.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ namespace WebCore {
 // An AudioBus represents a collection of one or more AudioChannels.
 // The data layout is "planar" as opposed to "interleaved".
 // An AudioBus with one channel is mono, an AudioBus with two channels is stereo, etc.
-class AudioBus {
+class AudioBus : public ThreadSafeRefCounted<AudioBus> {
     WTF_MAKE_NONCOPYABLE(AudioBus);
 public:
     enum {
@@ -103,17 +104,17 @@ public:
 
     // Creates a new buffer from a range in the source buffer.
     // 0 may be returned if the range does not fit in the sourceBuffer
-    static PassOwnPtr<AudioBus> createBufferFromRange(const AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame);
+    static PassRefPtr<AudioBus> createBufferFromRange(const AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame);
 
 
     // Creates a new AudioBus by sample-rate converting sourceBus to the newSampleRate.
     // setSampleRate() must have been previously called on sourceBus.
     // Note: sample-rate conversion is already handled in the file-reading code for the mac port, so we don't need this.
-    static PassOwnPtr<AudioBus> createBySampleRateConverting(const AudioBus* sourceBus, bool mixToMono, double newSampleRate);
+    static PassRefPtr<AudioBus> createBySampleRateConverting(const AudioBus* sourceBus, bool mixToMono, double newSampleRate);
 
     // Creates a new AudioBus by mixing all the channels down to mono.
     // If sourceBus is already mono, then the returned AudioBus will simply be a copy.
-    static PassOwnPtr<AudioBus> createByMixingToMono(const AudioBus* sourceBus);
+    static PassRefPtr<AudioBus> createByMixingToMono(const AudioBus* sourceBus);
 
     // Scales all samples by the same amount.
     void scale(float scale);
@@ -143,7 +144,7 @@ public:
     // Makes maximum absolute value == 1.0 (if possible).
     void normalize();
 
-    static PassOwnPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
+    static PassRefPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
 
 protected:
     AudioBus() { };

@@ -76,12 +76,12 @@ static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subject
     AudioBus* bus;
     AudioBusMap::iterator iterator = audioBusMap.find(subjectName);
     if (iterator == audioBusMap.end()) {
-        OwnPtr<AudioBus> concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
+        RefPtr<AudioBus> concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
         ASSERT(concatenatedImpulseResponses);
         if (!concatenatedImpulseResponses)
             return 0;
 
-        bus = concatenatedImpulseResponses.leakPtr();
+        bus = concatenatedImpulseResponses.release().leakRef();
         audioBusMap.set(subjectName, bus);
     } else
         bus = iterator->value;
@@ -173,14 +173,14 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     // (hardware) sample-rate.
     unsigned startFrame = index * ResponseFrameSize;
     unsigned stopFrame = startFrame + ResponseFrameSize;
-    OwnPtr<AudioBus> preSampleRateConvertedResponse = AudioBus::createBufferFromRange(bus, startFrame, stopFrame);
-    OwnPtr<AudioBus> response = AudioBus::createBySampleRateConverting(preSampleRateConvertedResponse.get(), false, sampleRate);
+    RefPtr<AudioBus> preSampleRateConvertedResponse = AudioBus::createBufferFromRange(bus, startFrame, stopFrame);
+    RefPtr<AudioBus> response = AudioBus::createBySampleRateConverting(preSampleRateConvertedResponse.get(), false, sampleRate);
     AudioChannel* leftEarImpulseResponse = response->channel(AudioBus::ChannelLeft);
     AudioChannel* rightEarImpulseResponse = response->channel(AudioBus::ChannelRight);
 #else
     String resourceName = String::format("IRC_%s_C_R0195_T%03d_P%03d", subjectName.utf8().data(), azimuth, positiveElevation);
 
-    OwnPtr<AudioBus> impulseResponse(AudioBus::loadPlatformResource(resourceName.utf8().data(), sampleRate));
+    RefPtr<AudioBus> impulseResponse(AudioBus::loadPlatformResource(resourceName.utf8().data(), sampleRate));
 
     ASSERT(impulseResponse.get());
     if (!impulseResponse.get())

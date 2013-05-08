@@ -40,15 +40,14 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     : m_node(node)
     , m_numberOfChannels(numberOfChannels)
     , m_desiredNumberOfChannels(numberOfChannels)
-    , m_actualDestinationBus(0)
+    , m_isInPlace(false)
     , m_isEnabled(true)
     , m_renderingFanOutCount(0)
     , m_renderingParamFanOutCount(0)
 {
     ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
 
-    m_internalBus = adoptPtr(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
-    m_actualDestinationBus = m_internalBus.get();
+    m_internalBus = adoptRef(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
 }
 
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
@@ -72,10 +71,7 @@ void AudioNodeOutput::updateInternalBus()
     if (numberOfChannels() == m_internalBus->numberOfChannels())
         return;
 
-    m_internalBus = adoptPtr(new AudioBus(numberOfChannels(), AudioNode::ProcessingSizeInFrames));
-
-    // This may later be changed in pull() to point to an in-place bus with the same number of channels.
-    m_actualDestinationBus = m_internalBus.get();
+    m_internalBus = adoptRef(new AudioBus(numberOfChannels(), AudioNode::ProcessingSizeInFrames));
 }
 
 void AudioNodeOutput::updateRenderingState()
@@ -121,22 +117,18 @@ AudioBus* AudioNodeOutput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     // In this case pull() is called multiple times per rendering quantum, and the processIfNecessary() call below will
     // cause our node to process() only the first time, caching the output in m_internalOutputBus for subsequent calls.    
     
-    bool isInPlace = inPlaceBus && inPlaceBus->numberOfChannels() == numberOfChannels() && (m_renderingFanOutCount + m_renderingParamFanOutCount) == 1;
+    m_isInPlace = inPlaceBus && inPlaceBus->numberOfChannels() == numberOfChannels() && (m_renderingFanOutCount + m_renderingParamFanOutCount) == 1;
 
-    // Setup the actual destination bus for processing when our node's process() method gets called in processIfNecessary() below.
-    m_actualDestinationBus = isInPlace ? inPlaceBus : m_internalBus.get();
+    m_inPlaceBus = m_isInPlace ? inPlaceBus : 0;
 
     node()->processIfNecessary(framesToProcess);
-    return m_actualDestinationBus;
+    return bus();
 }
 
 AudioBus* AudioNodeOutput::bus() const
 {
-    // FIXME: Add ASSERTs/checkings to restrict the calling of bus(), because the calling is 
-    // only safe after setting the in-place bus in pull() and before updating the referred bus.
     ASSERT(const_cast<AudioNodeOutput*>(this)->context()->isAudioThread());
-    ASSERT(m_actualDestinationBus);
-    return m_actualDestinationBus;
+    return m_isInPlace ? m_inPlaceBus.get() : m_internalBus.get();
 }
 
 unsigned AudioNodeOutput::fanOutCount()

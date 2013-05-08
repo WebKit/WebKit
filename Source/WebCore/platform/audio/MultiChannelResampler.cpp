@@ -64,7 +64,7 @@ public:
         // For subsequent channels, we can just dish out the channel data from that (stored in m_multiChannelBus).
         if (!m_currentChannel) {
             m_framesToProcess = framesToProcess;
-            m_multiChannelBus = adoptPtr(new AudioBus(m_numberOfChannels, framesToProcess));
+            m_multiChannelBus = adoptRef(new AudioBus(m_numberOfChannels, framesToProcess));
             m_multiChannelProvider->provideInput(m_multiChannelBus.get(), framesToProcess);
         }
 
@@ -84,7 +84,7 @@ public:
 
 private:
     AudioSourceProvider* m_multiChannelProvider;
-    OwnPtr<AudioBus> m_multiChannelBus;
+    RefPtr<AudioBus> m_multiChannelBus;
     unsigned m_numberOfChannels;
     unsigned m_currentChannel;
     size_t m_framesToProcess; // Used to verify that all channels ask for the same amount.
