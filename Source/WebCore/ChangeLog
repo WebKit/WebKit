@@ -1,3 +1,15 @@
+2013-05-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Crash when loading link to audio file
+        https://bugs.webkit.org/show_bug.cgi?id=115794
+
+        Reviewed by Jocelyn Turcotte.
+
+        Do not access a null pointer frame.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+
 2013-05-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove unused [TransferList] extended attribute
