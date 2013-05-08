@@ -1,3 +1,11 @@
+2013-05-08  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Skip remaining Shadow DOM tests on the EFL port.
+
+        * platform/efl/TestExpectations:
+
 2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
