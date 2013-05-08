@@ -303,8 +303,6 @@ PluginView::~PluginView()
 
     stop();
 
-    deleteAllValues(m_requests);
-
     freeStringArray(m_paramNames, m_paramCount);
     freeStringArray(m_paramValues, m_paramCount);
 
@@ -486,22 +484,21 @@ void PluginView::performRequest(PluginRequest* request)
 void PluginView::requestTimerFired(Timer<PluginView>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_requestTimer);
-    ASSERT(m_requests.size() > 0);
+    ASSERT(!m_requests.isEmpty());
     ASSERT(!m_isJavaScriptPaused);
 
-    PluginRequest* request = m_requests[0];
+    OwnPtr<PluginRequest> request = m_requests[0].release();
     m_requests.remove(0);
     
     // Schedule a new request before calling performRequest since the call to
     // performRequest can cause the plugin view to be deleted.
-    if (m_requests.size() > 0)
+    if (!m_requests.isEmpty())
         m_requestTimer.startOneShot(0);
 
-    performRequest(request);
-    delete request;
+    performRequest(request.get());
 }
 
-void PluginView::scheduleRequest(PluginRequest* request)
+void PluginView::scheduleRequest(PassOwnPtr<PluginRequest> request)
 {
     m_requests.append(request);
 
@@ -537,8 +534,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     } else if (!m_parentFrame->document()->securityOrigin()->canDisplay(url))
         return NPERR_GENERIC_ERROR;
 
-    PluginRequest* request = new PluginRequest(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed());
-    scheduleRequest(request);
+    scheduleRequest(adoptPtr(new PluginRequest(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed())));
 
     return NPERR_NO_ERROR;
 }

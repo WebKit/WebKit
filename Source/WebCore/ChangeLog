@@ -1,3 +1,21 @@
+2013-05-07  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr instead of deleteAllValues for requests in PluginView
+        https://bugs.webkit.org/show_bug.cgi?id=115731
+
+        Reviewed by Sam Weinig.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::~PluginView): Removed the call to deleteAllValues.
+        (WebCore::PluginView::requestTimerFired): Use release to remove an OwnPtr
+        from m_requests rather than an explicit delete. Also use !isEmpty instead
+        of size > 0.
+        (WebCore::PluginView::scheduleRequest): Changed argument type to PassOwnPtr.
+        (WebCore::PluginView::load): Use adoptPtr to call scheduleRequest.
+
+        * plugins/PluginView.h: Changed argument type of scheduleRequest to
+        PassOwnPtr, and m_requests to a Vector<OwnPtr>.
+
 2013-05-07  Antti Koivisto  <antti@apple.com>
 
         Remove SelectRuleFeatureSet
