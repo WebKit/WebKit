@@ -1,5 +1,34 @@
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
+        Apply remote changes to storage maps locally
+        https://bugs.webkit.org/show_bug.cgi?id=115825
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::resetValues):
+        Clear the pending values map.
+
+        (WebKit::StorageAreaMap::didSetItem):
+        If we failed to set the item, forget everything we know about this storage map.
+        Otherwise, remove the pending item.
+
+        (WebKit::StorageAreaMap::didRemoveItem):
+        Remove the pending item.
+
+        (WebKit::StorageAreaMap::shouldApplyChangeForKey):
+        Helper function that returns whether a change for a given key should be applied.
+
+        (WebKit::StorageAreaMap::applyChange):
+        Apply the change. Currently only adds and removes are handled.
+
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        Apply the change locally as well if needed.
+
+        * WebProcess/Storage/StorageAreaMap.h:
+
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
         Assert at compile time that we don't pass Objective-C object pointers to adoptCF
         https://bugs.webkit.org/show_bug.cgi?id=115823
 

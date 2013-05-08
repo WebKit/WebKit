@@ -152,6 +152,7 @@ bool StorageAreaMap::contains(const String& key)
 void StorageAreaMap::resetValues()
 {
     m_storageMap = nullptr;
+    m_pendingValueChanges.clear();
 }
 
 void StorageAreaMap::loadValuesIfNeeded()
@@ -171,12 +172,21 @@ void StorageAreaMap::loadValuesIfNeeded()
 
 void StorageAreaMap::didSetItem(const String& key, bool quotaError)
 {
-    // FIXME: Implement.
+    ASSERT(m_pendingValueChanges.contains(key));
+
+    if (quotaError) {
+        resetValues();
+        return;
+    }
+
+    m_pendingValueChanges.remove(key);
 }
 
 void StorageAreaMap::didRemoveItem(const String& key)
 {
-    // FIXME: Implement.
+    ASSERT(m_pendingValueChanges.contains(key));
+
+    m_pendingValueChanges.remove(key);
 }
 
 void StorageAreaMap::didClear()
@@ -184,8 +194,48 @@ void StorageAreaMap::didClear()
     // FIXME: Implement.
 }
 
+bool StorageAreaMap::shouldApplyChangeForKey(const String& key) const
+{
+    // We have not yet loaded anything from this storage map.
+    if (!m_storageMap)
+        return false;
+
+    // Check if this storage area is currently waiting for the storage manager to update the given key.
+    // If that is the case, we don't want to apply any changes made by other storage areas, since
+    // our change was made last.
+    if (m_pendingValueChanges.contains(key))
+        return false;
+
+    return true;
+}
+
+void StorageAreaMap::applyChange(const String& key, const String& newValue)
+{
+    ASSERT(m_storageMap->hasOneRef());
+
+    // FIXME: Handle clear.
+    ASSERT(!key.isNull());
+
+    if (!shouldApplyChangeForKey(key))
+        return;
+
+    if (!newValue) {
+        // A null new value means that the item should be removed.
+        String oldValue;
+        m_storageMap->removeItem(key, oldValue);
+        return;
+    }
+
+    m_storageMap->setItemIgnoringQuota(key, newValue);
+}
+
 void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
+    if (!sourceStorageAreaID) {
+        // This storage event originates from another process so we need to apply the change to our storage area map.
+        applyChange(key, newValue);
+    }
+
     if (storageType() == SessionStorage)
         dispatchSessionStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
     else
