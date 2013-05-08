@@ -1,3 +1,10 @@
+2013-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r149579): Use Vector::appendVector() instead of Vector::append()
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (concatenateAttributeAndValue): Switch to appendVector().
+
 2013-05-08  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WTR] Fix the build on Mac after r149692

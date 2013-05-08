@@ -92,7 +92,7 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
     
     Vector<UniChar> valueBuffer([value length]);
     [value getCharacters:valueBuffer.data()];
-    buffer.append(valueBuffer);
+    buffer.appendVector(valueBuffer);
     
     return JSStringCreateWithCharacters(buffer.data(), buffer.size());
 }
