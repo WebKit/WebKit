@@ -52,7 +52,7 @@ void CFURLResponseSetMIMEType(CFURLResponseRef response, CFStringRef mimeType);
 CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     // Decode NSURLResponse
-    RetainPtr<NSKeyedUnarchiver> unarchiver(AdoptNS, [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
     NSURLResponse *response = [unarchiver.get() decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
     [unarchiver.get() finishDecoding];
 
@@ -62,7 +62,7 @@ CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
     // NSURLResponse is not toll-free bridged to CFURLResponse.
-    RetainPtr<CFHTTPMessageRef> httpMessage(AdoptCF, CFHTTPMessageCreateResponse(kCFAllocatorDefault, [httpResponse statusCode], 0, kCFHTTPVersion1_1));
+    RetainPtr<CFHTTPMessageRef> httpMessage = adoptCF(CFHTTPMessageCreateResponse(kCFAllocatorDefault, [httpResponse statusCode], 0, kCFHTTPVersion1_1));
 
     NSDictionary *headerFields = [httpResponse allHeaderFields];
     for (NSString *headerField in [headerFields keyEnumerator])
