@@ -105,7 +105,7 @@
                       "triggers": ["mountainlion-release-tests-wk1", "mountainlion-release-tests-wk2", "mountainlion-release-perf"],
                       "slavenames": ["apple-mini-204"]
                     },
-                    { "name": "Apple MountainLion Release (32-bit Build)", "type": "Build", "builddir": "mountainlion-release",
+                    { "name": "Apple MountainLion Release (32-bit Build)", "type": "Build", "builddir": "mountainlion-32bit-release",
                       "platform": "mac-mountainlion", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["apple-mini-218"]
                     },
