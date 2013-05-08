@@ -1,3 +1,12 @@
+2013-05-08  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WTR] Fix the build on Mac after r149692
+
+        Unreviewed build fix.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+
 2013-05-08  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed. Added Anton Obzhirov to the list of contributors and myself
