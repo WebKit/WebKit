@@ -1,3 +1,16 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Assert at compile time that we don't pass Objective-C object pointers to adoptCF
+        https://bugs.webkit.org/show_bug.cgi?id=115823
+
+        Reviewed by Geoffrey Garen.
+
+        Fix adoptNS/adoptCF mismatches. For the adopt(leakRef()) case we'd ideally want a static_pointer_cast overload for RetainPtr,
+        but this will do for now.
+        
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::decode):
+
 2013-05-08  Sam Weinig  <sam@webkit.org>
 
         Add SPI to determine if a plugin is sandboxed

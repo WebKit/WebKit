@@ -96,7 +96,7 @@ PassOwnPtr<TileController> TileController::create(WebTiledBackingLayer* tileCach
 
 TileController::TileController(WebTiledBackingLayer* tileCacheLayer)
     : m_tileCacheLayer(tileCacheLayer)
-    , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
+    , m_tileContainerLayer(adoptNS([[CALayer alloc] init]))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
     , m_cohortRemovalTimer(this, &TileController::cohortRemovalTimerFired)

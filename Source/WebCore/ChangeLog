@@ -1,3 +1,14 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Assert at compile time that we don't pass Objective-C object pointers to adoptCF
+        https://bugs.webkit.org/show_bug.cgi?id=115823
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        Use adoptNS for CALayer.
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         TextTrackCue should support empty content

@@ -277,7 +277,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
         [resultString.get() addAttributes:attributes.get() range:NSMakeRange(rangeLocation, rangeLength)];
     }
 
-    result = adoptCF(resultString.leakRef());
+    result = adoptNS(resultString.leakRef());
     return true;
 }
 
@@ -344,7 +344,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSDictionary>& result)
         [dictionary.get() setObject:value.get() forKey:key.get()];
     }
 
-    result = adoptCF(dictionary.leakRef());
+    result = adoptNS(dictionary.leakRef());
     return true;
 }
 
@@ -379,7 +379,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSNumber>& result)
     if (!decode(decoder, number))
         return false;
 
-    result = adoptCF((NSNumber *)number.leakRef());
+    result = adoptNS((NSNumber *)number.leakRef());
     return true;
 }
 
@@ -394,7 +394,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSString>& result)
     if (!decode(decoder, string))
         return false;
 
-    result = adoptCF((NSString *)string.leakRef());
+    result = adoptNS((NSString *)string.leakRef());
     return true;
 }
 
@@ -444,7 +444,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSDate>& result)
     if (!decode(decoder, date))
         return false;
 
-    result = adoptCF((NSDate *)date.leakRef());
+    result = adoptNS((NSDate *)date.leakRef());
     return true;
 }
 
@@ -459,7 +459,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
     if (!decode(decoder, data))
         return false;
 
-    result = adoptCF((NSData *)data.leakRef());
+    result = adoptNS((NSData *)data.leakRef());
     return true;
 }
 

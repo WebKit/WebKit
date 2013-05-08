@@ -74,8 +74,19 @@ namespace WTF {
         RetainPtr() : m_ptr(0) {}
         RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
 
-        RetainPtr(AdoptCFTag, PtrType ptr) : m_ptr(ptr) { }
-        RetainPtr(AdoptNSTag, PtrType ptr) : m_ptr(ptr) { adoptNSReference(ptr); }
+        RetainPtr(AdoptCFTag, PtrType ptr)
+            : m_ptr(ptr)
+        {
+#ifdef __OBJC__
+            static_assert(!std::is_convertible<T, id>::value, "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
+#endif
+        }
+
+        RetainPtr(AdoptNSTag, PtrType ptr)
+            : m_ptr(ptr)
+        {
+            adoptNSReference(ptr);
+        }
         
         RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
 
