@@ -29,6 +29,7 @@
 #import "ImmutableArray.h"
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
+#import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
 #import "WKAPICast.h"
 #import "WKSharedAPICast.h"
@@ -87,6 +88,12 @@ WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
     return toAPI(key);
 }
 
+WKStringRef WKPlugInInfoIsSandboxedKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoIsSandboxed").leakRef();
+    return toAPI(key);
+}
+
 static PassRefPtr<ImmutableDictionary> createInfoDictionary(const PluginModuleInfo& info)
 {
     ImmutableDictionary::MapType map;
@@ -95,6 +102,7 @@ static PassRefPtr<ImmutableDictionary> createInfoDictionary(const PluginModuleIn
     map.set(toWTFString(WKPlugInInfoVersionKey()), WebString::create(info.versionString));
     map.set(toWTFString(WKPlugInInfoLoadPolicyKey()), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(info))));
     map.set(toWTFString(WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(info.bundleIdentifier))));
+    map.set(toWTFString(WKPlugInInfoIsSandboxedKey()), WebBoolean::create(pluginHasSandboxProfile(info.bundleIdentifier)));
 
     return ImmutableDictionary::adopt(map);
 }

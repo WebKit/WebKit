@@ -1,3 +1,34 @@
+2013-05-08  Sam Weinig  <sam@webkit.org>
+
+        Add SPI to determine if a plugin is sandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=115810
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/Plugins/mac/PluginSandboxProfile.h: Added.
+        * Shared/Plugins/mac/PluginSandboxProfile.mm: Added.
+        (WebKit::pluginSandboxProfileDefaultDirectory):
+        (WebKit::pluginSandboxProfileDirectories):
+        (WebKit::pluginSandboxProfileName):
+        (WebKit::pluginSandboxCommonProfile):
+        (WebKit::pluginSandboxProfileForDirectory):
+        (WebKit::pluginSandboxProfile):
+        (WebKit::pluginHasSandboxProfileForDirectory):
+        (WebKit::pluginHasSandboxProfile):
+        Move sandbox code to its own file and refactor to use cocoa. Also adds pluginHasSandboxProfile function
+        which uses the newly refactored code.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKPlugInInfoIsSandboxedKey):
+        (createInfoDictionary):
+        Add WKPlugInInfoIsSandboxedKey.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
         Safari unexpectedly quits with invalid message from the web process with message ID 0x323002f (WebPageProxy.DecidePolicyForNavigationAction)

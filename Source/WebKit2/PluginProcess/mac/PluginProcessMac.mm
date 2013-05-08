@@ -30,9 +30,10 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "NetscapePlugin.h"
-#import "PluginProcessShim.h"
-#import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
+#import "PluginProcessProxyMessages.h"
+#import "PluginProcessShim.h"
+#import "PluginSandboxProfile.h"
 #import "SandboxInitializationParameters.h"
 #import <CoreAudio/AudioHardware.h>
 #import <WebCore/LocalizedStrings.h>
@@ -282,48 +283,6 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
-static String loadSandboxProfileForDirectory(const String& bundleIdentifier, NSString *sandboxProfileDirectoryPath)
-{
-    if (bundleIdentifier.isEmpty())
-        return String();
-
-    // Fold all / characters to : to prevent the plugin bundle-id from trying to escape the profile directory
-    String sanitizedBundleIdentifier = bundleIdentifier;
-    sanitizedBundleIdentifier.replace('/', ':');
-
-    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, (CFStringRef)sandboxProfileDirectoryPath, kCFURLPOSIXPathStyle, TRUE));
-
-    RetainPtr<CFStringRef> sandboxFileName = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), sanitizedBundleIdentifier.createCFString().get()));
-    RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
-
-    RetainPtr<NSString> profileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
-    if (!profileString)
-        return String();
-
-    sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, CFSTR("com.apple.WebKit.plugin-common.sb"), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
-
-    RetainPtr<NSString> commonProfileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
-    if (!commonProfileString)
-        return String();
-
-    return [commonProfileString.get() stringByAppendingString:profileString.get()];
-}
-
-static String loadSandboxProfile(const String& bundleIdentifier)
-{
-    // First look in the WebKit2 bundle.
-    String sandboxProfile = loadSandboxProfileForDirectory(bundleIdentifier, [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"]);
-    if (!sandboxProfile.isEmpty())
-        return sandboxProfile;
-
-    // Then try /System/Library/Sandbox/Profiles/.
-    sandboxProfile = loadSandboxProfileForDirectory(bundleIdentifier, @"/System/Library/Sandbox/Profiles/");
-    if (!sandboxProfile.isEmpty())
-        return sandboxProfile;
-
-    return String();
-}
-
 static void muteAudio(void)
 {
     AudioObjectPropertyAddress propertyAddress = { kAudioHardwarePropertyProcessIsAudible, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
@@ -382,7 +341,7 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    String sandboxProfile = loadSandboxProfile(m_pluginBundleIdentifier);
+    String sandboxProfile = pluginSandboxProfile(m_pluginBundleIdentifier);
     if (sandboxProfile.isEmpty())
         return;
 

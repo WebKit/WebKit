@@ -23,46 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKContextPrivateMac_h
-#define WKContextPrivateMac_h
+#ifndef PluginSandboxProfile_h
+#define PluginSandboxProfile_h
 
-#include <WebKit2/WKBase.h>
+#include <wtf/Forward.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-WK_EXPORT bool WKContextGetProcessSuppressionEnabled(WKContextRef context);
-WK_EXPORT void WKContextSetProcessSuppressionEnabled(WKContextRef context, bool enabled);
+String pluginSandboxProfile(const String& bundleIdentifier);
+bool pluginHasSandboxProfile(const String& bundleIdentifier);
 
-WK_EXPORT bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier);
+} // namespace WebKit
 
-
-/* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoPathKey();
-
-/* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoBundleIdentifierKey();
-
-/* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoVersionKey();
-
-/* Value type: WKUInt64Ref */
-WK_EXPORT WKStringRef WKPlugInInfoLoadPolicyKey();
-
-/* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey();
-
-/* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInfoIsSandboxedKey();
-
-WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
-
-typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
-WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKContextGetInfoForInstalledPlugInsBlock block);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKContextPrivateMac_h */
+#endif // PluginSandboxProfile_h
