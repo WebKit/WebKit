@@ -1,3 +1,14 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove HashMap::deleteAllKeys
+        https://bugs.webkit.org/show_bug.cgi?id=115806
+
+        Reviewed by Brent Fulgham.
+
+        This function was not used anywhere so let's get rid of it.
+
+        * wtf/HashMap.h:
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Inband text tracks are not in track menu on Lion
