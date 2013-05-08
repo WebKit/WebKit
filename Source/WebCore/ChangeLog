@@ -1,3 +1,22 @@
+2013-05-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GStreamer] Does memory buffering even with preload set to none
+        https://bugs.webkit.org/show_bug.cgi?id=115754
+
+        Reviewed by Philippe Normand.
+
+        Covered by existing tests.
+
+        Revision 148840 fixed on-disk buffering being done when preload is set to none,
+        but memory buffering is still being done. That is because setting the state to
+        paused causes GStreamer to start loading the media, to gather information. Only
+        doing that when committing the load avoids that while maintaining the tested
+        behaviour unchanged.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load): move setting pause state to commitLoad.
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad): see above.
+
 2013-05-08  Andreas Kling  <akling@apple.com>
 
         SVGStyledElement::getPresentationAttribute() does not need to be virtual.

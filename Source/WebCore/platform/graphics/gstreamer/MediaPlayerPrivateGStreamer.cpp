@@ -299,10 +299,6 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
     m_player->readyStateChanged();
     m_volumeAndMuteInitialized = false;
 
-    // GStreamer needs to have the pipeline set to a paused state to
-    // start providing anything useful.
-    gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
-
     if (!m_delayingLoad)
         commitLoad();
 }
@@ -318,6 +314,11 @@ void MediaPlayerPrivateGStreamer::commitLoad()
 {
     ASSERT(!m_delayingLoad);
     LOG_MEDIA_MESSAGE("Committing load.");
+
+    // GStreamer needs to have the pipeline set to a paused state to
+    // start providing anything useful.
+    gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+
     updateStates();
 }
 
