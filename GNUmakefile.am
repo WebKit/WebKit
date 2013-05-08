@@ -178,6 +178,11 @@ global_cppflags += \
 	-DGCC_INSTRUMENT_PROGRAM_FLOW_ARCS
 endif
 
+# Default to outputting demangled symbols in case of reporting unresolved references or similar.
+# Using AM_LDFLAGS would be more appropriate here, but these are not used at all when linking installable libraries
+# like libwebkitgtk and libwebkit2gtk, so appending the linker flag to the LDFLAGS variable is done instead.
+LDFLAGS += -Wl,--no-demangle
+
 EXTRA_DIST += \
 	$(srcdir)/Source/autotools/symbols.filter \
 	$(srcdir)/Source/WebKit/LICENSE

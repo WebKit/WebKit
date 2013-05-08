@@ -1,3 +1,15 @@
+2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Pass --no-demangle to the linker by default to get the mangled symbols
+        https://bugs.webkit.org/show_bug.cgi?id=115732
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Pass the --no-demangle option to the linker by default. This is done by appending
+        the flag to the LDFLAGS variable. While the AM_LDFLAGS variable would be more appropriate, it's not
+        at all used when linking installable libraries like libwebkitgtk and libwebkit2gtk, so the LDFLAGS
+        variable is used instead.
+
 2013-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Remove SHADOW_DOM from cmakeconfig.h.cmake
