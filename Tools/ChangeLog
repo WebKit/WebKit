@@ -1,3 +1,21 @@
+2013-05-08  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Build fails with clang
+        https://bugs.webkit.org/show_bug.cgi?id=115741
+
+        Reviewed by Benjamin Poulain.
+
+        Since r149112 std::move is used in AtomicString for compilers that
+        support rvalue references and this requires a standard library
+        implementing c++11 move semantics.
+        We only explicitely require c++11 for WebKit2, but since clang supports
+        rvalue references the build of subtargets using AtomicString fails because
+        of missing std::move.
+        It is safe to add CONFIG += c++11 for the whole project when using clang
+        since we explicitely disable c++11 for ANGLE that had probems with libc++.
+
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2013-05-08  Darin Adler  <darin@apple.com>
 
         Fix one more place that needed to use adoptCF/NS
