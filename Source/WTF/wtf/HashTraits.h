@@ -78,12 +78,14 @@ namespace WTF {
         // Type for return value of functions that transfer ownership, such as take. 
         typedef T PassOutType;
         static PassOutType passOut(const T& value) { return value; }
+        static T& passOut(T& value) { return value; } // Overloaded to avoid copying of non-temporary values.
 
         // Type for return value of functions that do not transfer ownership, such as get.
         // FIXME: We could change this type to const T& for better performance if we figured out
         // a way to handle the return value from emptyValue, which is a temporary.
         typedef T PeekType;
         static PeekType peek(const T& value) { return value; }
+        static T& peek(T& value) { return value; } // Overloaded to avoid copying of non-temporary values.
     };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };

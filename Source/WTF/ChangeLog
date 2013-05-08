@@ -1,3 +1,26 @@
+2013-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Avoid unnecessary arguments copying inside GenericHashTraits methods
+        https://bugs.webkit.org/show_bug.cgi?id=115733
+
+        Reviewed by Darin Adler.
+
+        Before the change both WTF::GenericHashTraits::passOut and WTF::GenericHashTraits::passOut
+        used to return the given argument always by value and that caused implicit extra
+        copying of the argument. It was OK as long as argument type T was POD, as compiler
+        could optimize it, but in case T was a class having non-trivial copy constructor the
+        extra copying of the argument could not have been obviated.
+
+        The proposed solution is to provide overloaded functions that accept non-temporary
+        values and return them by reference thus avoiding extra copying.
+
+        The proposed solution made an impact on the size of libjavascriptcore_efl.so (EFL
+        release build): the size decreased from 6554992 bytes to 6554560 bytes.
+
+        * wtf/HashTraits.h:
+        (WTF::GenericHashTraits::passOut): 
+        (WTF::GenericHashTraits::peek):
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Remove AlwaysInline.h from WTF
