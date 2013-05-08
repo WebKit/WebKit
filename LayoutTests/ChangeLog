@@ -1,3 +1,12 @@
+2013-05-08  Darin Adler  <darin@apple.com>
+
+        REGRESSION(r149700): fast/css-generated-content/close-quote-negative-depth.html
+        https://bugs.webkit.org/show_bug.cgi?id=115776
+
+        Reviewed by Anders Carlsson.
+
+        * TestExpectations: Expect success again on this test.
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Prevent crash when track is deleted during video element deletion.

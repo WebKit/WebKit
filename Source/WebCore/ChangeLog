@@ -1,3 +1,34 @@
+2013-05-08  Darin Adler  <darin@apple.com>
+
+        REGRESSION(r149700): fast/css-generated-content/close-quote-negative-depth.html
+        https://bugs.webkit.org/show_bug.cgi?id=115776
+
+        Reviewed by Anders Carlsson.
+
+        I changed depth to more closely match what is in the CSS3 specification.
+        There may be a more optimal way to make it work, but this seems the most straightforward.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::RenderQuote): Initialize m_depth to -1 because that depth
+        is consistent with the empty string that is the initial value of the text. The
+        real depth will be calculated when the node is attached.
+        (WebCore::RenderQuote::originalText): Removed the "depth - 1" logic that
+        used to be done for close quotes. Instead, the updateDepth function now correctly
+        subtracts one for the close quote itself, not just afterward. Also added an early
+        exit when the depth is negative; these changes together fix the bug.
+        (WebCore::RenderQuote::attachQuote): Added a call to updateDepth even for the render
+        quote head, we now need that to set the depth either to 0 or to -1.
+        (WebCore::RenderQuote::detachQuote): Removed code to set m_depth to 0;  if we are not
+        resetting the text then m_depth should be left matching the text, otherwise updateDepth
+        might not do its job correctly if the quote is later re-attached. What matters is that
+        m_depth and the text are in sync.
+        (WebCore::RenderQuote::updateDepth): Changed updating logic in two ways. First,
+        compute the depth in a local variable rather than computing it in a data member
+        after first saving off the old value of the data member. That's clearer style.
+        Second, add the code to change negative depths to zero when propagating to the
+        next quote in the chain, which matches how the standard is written, and decrement
+        the depth of the close quote itself, not the quote after the close quote.
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Prevent crash when track is deleted during video element deletion.

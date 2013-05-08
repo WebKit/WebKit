@@ -1,6 +1,7 @@
-/**
+/*
  * Copyright (C) 2011 Nokia Inc.  All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +33,7 @@ namespace WebCore {
 RenderQuote::RenderQuote(Document* node, QuoteType quote)
     : RenderText(node, StringImpl::empty())
     , m_type(quote)
-    , m_depth(0)
+    , m_depth(-1)
     , m_next(0)
     , m_previous(0)
     , m_attached(false)
@@ -235,12 +236,14 @@ static const QuotesData* basicQuotesData()
 
 PassRefPtr<StringImpl> RenderQuote::originalText() const
 {
+    if (m_depth < 0)
+        return StringImpl::empty();
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
         return StringImpl::empty();
     case CLOSE_QUOTE:
-        return quotesData()->closeQuote(m_depth - 1).impl();
+        return quotesData()->closeQuote(m_depth).impl();
     case OPEN_QUOTE:
         return quotesData()->openQuote(m_depth).impl();
     }
@@ -272,6 +275,7 @@ void RenderQuote::attachQuote()
     if (!view()->renderQuoteHead()) {
         view()->setRenderQuoteHead(this);
         m_attached = true;
+        updateDepth();
         return;
     }
 
@@ -324,30 +328,39 @@ void RenderQuote::detachQuote()
     m_attached = false;
     m_next = 0;
     m_previous = 0;
-    m_depth = 0;
 }
 
 void RenderQuote::updateDepth()
 {
     ASSERT(m_attached);
-    int oldDepth = m_depth;
-    m_depth = 0;
+    int depth = 0;
     if (m_previous) {
-        m_depth = m_previous->m_depth;
+        depth = m_previous->m_depth;
+        if (depth < 0)
+            depth = 0;
         switch (m_previous->m_type) {
         case OPEN_QUOTE:
         case NO_OPEN_QUOTE:
-            m_depth++;
+            depth++;
             break;
         case CLOSE_QUOTE:
         case NO_CLOSE_QUOTE:
-            if (m_depth)
-                m_depth--;
             break;
         }
     }
-    if (oldDepth != m_depth)
-        setText(originalText());
+    switch (m_type) {
+    case OPEN_QUOTE:
+    case NO_OPEN_QUOTE:
+        break;
+    case CLOSE_QUOTE:
+    case NO_CLOSE_QUOTE:
+        depth--;
+        break;
+    }
+    if (m_depth == depth)
+        return;
+    m_depth = depth;
+    setText(originalText());
 }
 
 } // namespace WebCore

@@ -10,5 +10,3 @@ webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 
 # pending CSS grammar refactoring
 webkit.org/b/113401 inspector/console/console-css-warnings.html [ Skip ]
-
-webkit.org/b/115776 fast/css-generated-content/close-quote-negative-depth.html [ ImageOnlyFailure ]
