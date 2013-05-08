@@ -1,3 +1,13 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove BinarySemaphoreWin.cpp.
+
+        Rubber-stamped by Beth Dakin.
+
+        BinarySemaphoreWin has been moved to WTF, but the original was never removed.
+
+        * Platform/CoreIPC/win/BinarySemaphoreWin.cpp: Removed.
+
 2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Make the WebNetworkInfoManager a supplement to the WebProcess
