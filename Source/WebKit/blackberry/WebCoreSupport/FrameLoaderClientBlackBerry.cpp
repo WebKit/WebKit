@@ -1187,7 +1187,13 @@ PassRefPtr<FrameNetworkingContext> FrameLoaderClientBlackBerry::createNetworking
 
 void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, const String& suggestedName)
 {
-    m_webPagePrivate->load(request.url().string(), BlackBerry::Platform::String::emptyString(), "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", suggestedName);
+    if (suggestedName.empty())
+        m_webPagePrivate->m_mainFrame->loader()->load(FrameLoadRequest(m_webPagePrivate->m_mainFrame, request));
+    else {
+        ResourceRequest requestCopy = request;
+        requestCopy.setSuggestedSaveName(suggestedName);
+        m_webPagePrivate->m_mainFrame->loader()->load(FrameLoadRequest(m_webPagePrivate->m_mainFrame, requestCopy));
+    }
 }
 
 void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)

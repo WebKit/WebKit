@@ -671,12 +671,12 @@ private:
     }
 };
 
-void WebPagePrivate::load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, const BlackBerry::Platform::String& method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool needReferer, bool forceDownload, const BlackBerry::Platform::String& overrideContentType, const BlackBerry::Platform::String& suggestedSaveName)
+void WebPagePrivate::load(const Platform::NetworkRequest& netReq, bool needReferer)
 {
     stopCurrentLoad();
     DeferredTaskLoadManualScript::finishOrCancel(this);
 
-    String urlString(url);
+    String urlString(netReq.getUrlRef());
     if (urlString.startsWith("vs:", false)) {
         urlString = urlString.substring(3);
         m_mainFrame->setInViewSourceMode(true);
@@ -693,30 +693,25 @@ void WebPagePrivate::load(const BlackBerry::Platform::String& url, const BlackBe
         return;
     }
 
-    if (isInitial)
-        NetworkManager::instance()->setInitialURL(kurl);
-
     ResourceRequest request(kurl);
-    request.setToken(networkToken);
-    if (isInitial || mustHandleInternally)
-        request.setMustHandleInternally(true);
-    request.setHTTPMethod(method);
-    request.setCachePolicy(toWebCoreCachePolicy(cachePolicy));
-    if (!overrideContentType.empty())
-        request.setOverrideContentType(overrideContentType);
+    request.setHTTPMethod(netReq.getMethodRef());
+    request.setCachePolicy(toWebCoreCachePolicy(netReq.getCachePolicy()));
+    if (!netReq.getOverrideContentType().empty())
+        request.setOverrideContentType(netReq.getOverrideContentType());
 
-    if (data)
-        request.setHTTPBody(FormData::create(data, dataLength));
+    Platform::NetworkRequest::HeaderList& list = netReq.getHeaderListRef();
+    if (!list.empty()) {
+        for (unsigned i = 0; i < list.size(); i++)
+            request.addHTTPHeaderField(list[i].first.c_str(), list[i].second.c_str());
+    }
 
-    for (unsigned i = 0; i + 1 < headersLength; i += 2)
-        request.addHTTPHeaderField(headers[i], headers[i + 1]);
     if (needReferer && focusedOrMainFrame() && focusedOrMainFrame()->document())
         request.addHTTPHeaderField("Referer", focusedOrMainFrame()->document()->url().string().utf8().data());
 
-    if (forceDownload)
+    if (Platform::NetworkRequest::TargetIsDownload == netReq.getTargetType())
         request.setForceDownload(true);
-
-    request.setSuggestedSaveName(suggestedSaveName);
+    if (!netReq.getSuggestedSaveName().empty())
+        request.setSuggestedSaveName(netReq.getSuggestedSaveName());
 
     m_mainFrame->loader()->load(FrameLoadRequest(m_mainFrame, request));
 }
@@ -729,18 +724,15 @@ void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerr
     else if (!fileUrl.startsWith("file:///"))
         return;
 
-    d->load(fileUrl, BlackBerry::Platform::String::emptyString(), BlackBerry::Platform::String("GET", 3), Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, false, false, overrideContentType.c_str());
+    Platform::NetworkRequest netRequest;
+    netRequest.setRequestUrl(path);
+    netRequest.setOverrideContentType(overrideContentType);
+    d->load(netRequest, false);
 }
 
-void WebPage::load(const Platform::NetworkRequest& request, bool needReferer, bool forceDownload)
+void WebPage::load(const Platform::NetworkRequest& request, bool needReferer)
 {
-    vector<const char*> headers;
-    Platform::NetworkRequest::HeaderList& list = request.getHeaderListRef();
-    for (unsigned i = 0; i < list.size(); i++) {
-        headers.push_back(list[i].first.c_str());
-        headers.push_back(list[i].second.c_str());
-    }
-    d->load(request.getUrlRef(), BlackBerry::Platform::String::emptyString(), "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, headers.empty() ? 0 : &headers[0], headers.size(), false, false, needReferer, forceDownload, BlackBerry::Platform::String::emptyString(), request.getSuggestedSaveName());
+    d->load(request, needReferer);
 }
 
 void WebPagePrivate::loadString(const BlackBerry::Platform::String& string, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& contentType, const BlackBerry::Platform::String& failingURL)
