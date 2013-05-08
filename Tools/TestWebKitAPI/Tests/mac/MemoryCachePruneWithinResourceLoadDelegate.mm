@@ -79,13 +79,13 @@ TEST(WebKit1, DISABLED_MemoryCachePruneWithinResourceLoadDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    RetainPtr<WebView> webView1(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<WebView> webView2(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView1 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView2 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
     NSWindow* window = [[NSWindow alloc] initWithContentRect:webView2.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
     [window.contentView addSubview:webView2.get()];
 
-    RetainPtr<MemoryCachePruneTestResourceLoadDelegate> resourceLoadDelegate(AdoptNS, [[MemoryCachePruneTestResourceLoadDelegate alloc] init]);
+    RetainPtr<MemoryCachePruneTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCachePruneTestResourceLoadDelegate alloc] init]);
     resourceLoadDelegate.get()->_window = window;
     webView1.get().resourceLoadDelegate = resourceLoadDelegate.get();
 

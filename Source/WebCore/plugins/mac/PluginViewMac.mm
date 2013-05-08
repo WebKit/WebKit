@@ -853,7 +853,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
             return;
         }
         
-        WTF::RetainPtr<CFStringRef> cfText(WTF::AdoptCF, text.createCFString());
+        WTF::RetainPtr<CFStringRef> cfText = adoptCF(text.createCFString());
         
         LOG(Plugins, "PV::hKE(): PKE.text: %s, PKE.unmodifiedText: %s, PKE.keyIdentifier: %s",
             text.ascii().data(), platformEvent->unmodifiedText().ascii().data(),

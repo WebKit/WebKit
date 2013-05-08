@@ -97,10 +97,10 @@ static bool areEqualOrClose(double d1, double d2)
 
 static COMPtr<CFDictionaryPropertyBag> createUserInfoFromArray(BSTR notificationStr, CFArrayRef arrayItem)
 {
-    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, 
+    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
         CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFStringRef> key(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(notificationStr));
+    RetainPtr<CFStringRef> key = adoptCF(MarshallingHelpers::BSTRToCFStringRef(notificationStr));
     CFDictionaryAddValue(dictionary.get(), key.get(), arrayItem);
 
     COMPtr<CFDictionaryPropertyBag> result = CFDictionaryPropertyBag::createInstance();
@@ -111,7 +111,7 @@ static COMPtr<CFDictionaryPropertyBag> createUserInfoFromArray(BSTR notification
 static COMPtr<CFDictionaryPropertyBag> createUserInfoFromHistoryItem(BSTR notificationStr, IWebHistoryItem* item)
 {
     // reference counting of item added to the array is managed by the CFArray value callbacks
-    RetainPtr<CFArrayRef> itemList(AdoptCF, CFArrayCreate(0, (const void**) &item, 1, &MarshallingHelpers::kIUnknownArrayCallBacks));
+    RetainPtr<CFArrayRef> itemList = adoptCF(CFArrayCreate(0, (const void**) &item, 1, &MarshallingHelpers::kIUnknownArrayCallBacks));
     COMPtr<CFDictionaryPropertyBag> info = createUserInfoFromArray(notificationStr, itemList.get());
     return info;
 }
@@ -125,7 +125,7 @@ WebHistory::WebHistory()
     gClassCount++;
     gClassNameCount.add("WebHistory");
 
-    m_entriesByURL.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &MarshallingHelpers::kIUnknownDictionaryValueCallBacks));
+    m_entriesByURL = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &MarshallingHelpers::kIUnknownDictionaryValueCallBacks));
 
     m_preferences = WebPreferences::sharedStandardPreferences();
 }
@@ -240,10 +240,10 @@ HRESULT STDMETHODCALLTYPE WebHistory::loadFromURL(
     /* [retval][out] */ BOOL* succeeded)
 {
     HRESULT hr = S_OK;
-    RetainPtr<CFMutableArrayRef> discardedItems(AdoptCF, 
+    RetainPtr<CFMutableArrayRef> discardedItems = adoptCF(
         CFArrayCreateMutable(0, 0, &MarshallingHelpers::kIUnknownArrayCallBacks));
 
-    RetainPtr<CFURLRef> urlRef(AdoptCF, MarshallingHelpers::BSTRToCFURLRef(url));
+    RetainPtr<CFURLRef> urlRef = adoptCF(MarshallingHelpers::BSTRToCFURLRef(url));
 
     hr = loadHistoryGutsFromURL(urlRef.get(), discardedItems.get(), error);
     if (FAILED(hr))
@@ -277,14 +277,14 @@ HRESULT WebHistory::loadHistoryGutsFromURL(CFURLRef url, CFMutableArrayRef disca
     HRESULT hr = S_OK;
     int numberOfItemsLoaded = 0;
 
-    RetainPtr<CFReadStreamRef> stream(AdoptCF, CFReadStreamCreateWithFile(0, url));
+    RetainPtr<CFReadStreamRef> stream = adoptCF(CFReadStreamCreateWithFile(0, url));
     if (!stream) 
         return E_FAIL;
 
     if (!CFReadStreamOpen(stream.get())) 
         return E_FAIL;
 
-    RetainPtr<CFDictionaryRef> historyList(AdoptCF, createHistoryListFromStream(stream.get(), format));
+    RetainPtr<CFDictionaryRef> historyList = adoptCF(createHistoryListFromStream(stream.get(), format));
     CFReadStreamClose(stream.get());
 
     if (!historyList) 
@@ -359,7 +359,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::saveToURL(
     /* [retval][out] */ BOOL* succeeded)
 {
     HRESULT hr = S_OK;
-    RetainPtr<CFURLRef> urlRef(AdoptCF, MarshallingHelpers::BSTRToCFURLRef(url));
+    RetainPtr<CFURLRef> urlRef = adoptCF(MarshallingHelpers::BSTRToCFURLRef(url));
 
     hr = saveHistoryGuts(urlRef.get(), error);
 
@@ -384,7 +384,7 @@ HRESULT WebHistory::saveHistoryGuts(CFURLRef url, IWebError** error)
     if (!data.get())
         return E_FAIL;
 
-    RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
+    RetainPtr<CFWriteStreamRef> stream = adoptCF(CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
     if (!stream) 
         return E_FAIL;
 
@@ -451,7 +451,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     CFIndex itemCount = CFDictionaryGetCount(m_entriesByURL.get());
     Vector<IWebHistoryItem*> itemsVector(itemCount);
     CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, (const void**)itemsVector.data());
-    RetainPtr<CFArrayRef> allItems(AdoptCF, CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemCount, &MarshallingHelpers::kIUnknownArrayCallBacks));
+    RetainPtr<CFArrayRef> allItems = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemCount, &MarshallingHelpers::kIUnknownArrayCallBacks));
 
     CFDictionaryRemoveAllValues(m_entriesByURL.get());
 
@@ -622,7 +622,7 @@ HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
     if (FAILED(hr))
         return hr;
 
-    RetainPtr<CFStringRef> urlString(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(urlBStr));
+    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(urlBStr));
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
@@ -654,7 +654,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     if (FAILED(hr))
         return hr;
 
-    RetainPtr<CFStringRef> urlString(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(urlBStr));
+    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(urlBStr));
 
     COMPtr<IWebHistoryItem> oldEntry((IWebHistoryItem*) CFDictionaryGetValue(
         m_entriesByURL.get(), urlString.get()));
@@ -768,7 +768,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::itemForURL(
     /* [in] */ BSTR url,
     /* [retval][out] */ IWebHistoryItem** item)
 {
-    RetainPtr<CFStringRef> urlString(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(url));
+    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(url));
     return itemForURLString(urlString.get(), item);
 }
 
@@ -811,7 +811,7 @@ HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
     } else {
         ASSERT(!m_entriesByDate.contains(dateKey));
         // no other entries exist for this date
-        RetainPtr<CFMutableArrayRef> entryArray(AdoptCF, 
+        RetainPtr<CFMutableArrayRef> entryArray = adoptCF(
             CFArrayCreateMutable(0, 0, &MarshallingHelpers::kIUnknownArrayCallBacks));
         CFArrayAppendValue(entryArray.get(), entry);
         m_entriesByDate.set(dateKey, entryArray);
@@ -855,7 +855,7 @@ HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
 
 static void getDayBoundaries(CFAbsoluteTime day, CFAbsoluteTime& beginningOfDay, CFAbsoluteTime& beginningOfNextDay)
 {
-    RetainPtr<CFTimeZoneRef> timeZone(AdoptCF, CFTimeZoneCopyDefault());
+    RetainPtr<CFTimeZoneRef> timeZone = adoptCF(CFTimeZoneCopyDefault());
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(day, timeZone.get());
     date.hour = 0;
     date.minute = 0;

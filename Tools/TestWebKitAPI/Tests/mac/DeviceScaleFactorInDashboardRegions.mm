@@ -53,12 +53,12 @@ namespace TestWebKitAPI {
 TEST(WebKit1, DeviceScaleFactorInDashboardRegions)
 {
     NSRect viewFrame = NSMakeRect(0, 0, 800, 600);
-    RetainPtr<SyntheticBackingScaleFactorWindow> window(AdoptNS, [[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:viewFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<SyntheticBackingScaleFactorWindow> window = adoptNS([[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:viewFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     [window.get() setReleasedWhenClosed:NO];
     [window.get() setBackingScaleFactor:2];
 
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:viewFrame frameName:nil groupName:nil]);
-    RetainPtr<DeviceScaleFactorInDashboardRegionsUIDelegate> uiDelegate(AdoptNS, [DeviceScaleFactorInDashboardRegionsUIDelegate new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:viewFrame frameName:nil groupName:nil]);
+    RetainPtr<DeviceScaleFactorInDashboardRegionsUIDelegate> uiDelegate = adoptNS([DeviceScaleFactorInDashboardRegionsUIDelegate new]);
     webView.get().UIDelegate = uiDelegate.get();
     [window.get().contentView addSubview:webView.get()];
 

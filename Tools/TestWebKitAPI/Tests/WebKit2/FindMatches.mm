@@ -127,8 +127,8 @@ TEST(WebKit2, FindMatches)
     WKPageFindStringMatches(webView.page(), findString.get(), true, 100);
     Util::run(&didCallFindStringMatches);
 
-    webkit1View.adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<FindMatchesWK1FrameLoadDelegate> frameLoadDelegate(AdoptNS, [FindMatchesWK1FrameLoadDelegate new]);
+    webkit1View = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<FindMatchesWK1FrameLoadDelegate> frameLoadDelegate = adoptNS([FindMatchesWK1FrameLoadDelegate new]);
 
     webkit1View.get().frameLoadDelegate = frameLoadDelegate.get();
     [webkit1View.get().mainFrame loadHTMLString:@"Test search. Hello <span id=\"target\">Hello</span> Hello!" baseURL:[NSURL URLWithString:@"about:blank"]];

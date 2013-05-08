@@ -73,7 +73,7 @@ static cairo_status_t readFromData(void* closure, unsigned char* data, unsigned 
 static cairo_surface_t* createImageFromStdin(int bytesRemaining)
 {
     unsigned char buffer[s_bufferSize];
-    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(0, bytesRemaining));
+    RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, bytesRemaining));
 
     while (bytesRemaining > 0) {
         size_t bytesToRead = min(bytesRemaining, s_bufferSize);
@@ -235,7 +235,7 @@ int main(int argc, const char* argv[])
                 
             if (difference > 0.0) {
                 if (diffImage) {
-                    RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
+                    RetainPtr<CFMutableDataRef> imageData = adoptCF(CFDataCreateMutable(0, 0));
                     cairo_surface_write_to_png_stream(diffImage, (cairo_write_func_t)writeToData, imageData.get());
                     printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
                     fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);

@@ -48,8 +48,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, RenderedImageFromDOMRange)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<RenderedImageFromDOMRangeFrameLoadDelegate> frameLoadDelegate(AdoptNS, [RenderedImageFromDOMRangeFrameLoadDelegate new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<RenderedImageFromDOMRangeFrameLoadDelegate> frameLoadDelegate = adoptNS([RenderedImageFromDOMRangeFrameLoadDelegate new]);
 
     webView.get().frameLoadDelegate = frameLoadDelegate.get();
     [webView.get().mainFrame loadHTMLString:@"<div style=\"width: 100px;\">Lorem <span id=\"target\">ipsum dolor</span> sit amet</div>" baseURL:[NSURL URLWithString:@"about:blank"]];

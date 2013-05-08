@@ -49,8 +49,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, SetDocumentURITestFile)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<SetDocumentURITest> testController(AdoptNS, [SetDocumentURITest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<SetDocumentURITest> testController = adoptNS([SetDocumentURITest new]);
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetDocumentURI" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&didFinishLoad);
@@ -66,8 +66,8 @@ TEST(WebKit1, SetDocumentURITestFile)
 
 TEST(WebKit1, SetDocumentURITestURL)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<SetDocumentURITest> testController(AdoptNS, [SetDocumentURITest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<SetDocumentURITest> testController = adoptNS([SetDocumentURITest new]);
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetDocumentURI" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&didFinishLoad);
@@ -86,8 +86,8 @@ TEST(WebKit1, SetDocumentURITestURL)
 
 TEST(WebKit1, SetDocumentURITestString)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<SetDocumentURITest> testController(AdoptNS, [SetDocumentURITest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<SetDocumentURITest> testController = adoptNS([SetDocumentURITest new]);
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetDocumentURI" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&didFinishLoad);
@@ -103,8 +103,8 @@ TEST(WebKit1, SetDocumentURITestString)
 
 TEST(WebKit1, SetDocumentURITestNull)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<SetDocumentURITest> testController(AdoptNS, [SetDocumentURITest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<SetDocumentURITest> testController = adoptNS([SetDocumentURITest new]);
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetDocumentURI" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&didFinishLoad);

@@ -398,7 +398,7 @@ void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const
 
     COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
 
-    RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFMutableDictionaryRef> userInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     static CFStringRef databaseNameKey = MarshallingHelpers::LPCOLESTRToCFStringRef(WebDatabaseNameKey);
     CFDictionarySetValue(userInfo.get(), databaseNameKey, databaseName.createCFString().get());

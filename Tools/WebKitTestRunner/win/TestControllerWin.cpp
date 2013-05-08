@@ -135,11 +135,11 @@ void TestController::initializeInjectedBundlePath()
 
 void TestController::initializeTestPluginDirectory()
 {
-    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
-    RetainPtr<CFURLRef> bundleDirectoryURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(0, bundleURL.get()));
-    RetainPtr<CFStringRef> testPluginDirectoryNameString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(testPluginDirectoryName), wcslen(testPluginDirectoryName)));
-    RetainPtr<CFURLRef> testPluginDirectoryURL(AdoptCF, CFURLCreateCopyAppendingPathComponent(0, bundleDirectoryURL.get(), testPluginDirectoryNameString.get(), true));
-    RetainPtr<CFStringRef> testPluginDirectoryPath(AdoptCF, CFURLCopyFileSystemPath(testPluginDirectoryURL.get(), kCFURLWindowsPathStyle));
+    RetainPtr<CFURLRef> bundleURL = adoptCF(CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
+    RetainPtr<CFURLRef> bundleDirectoryURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(0, bundleURL.get()));
+    RetainPtr<CFStringRef> testPluginDirectoryNameString = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(testPluginDirectoryName), wcslen(testPluginDirectoryName)));
+    RetainPtr<CFURLRef> testPluginDirectoryURL = adoptCF(CFURLCreateCopyAppendingPathComponent(0, bundleDirectoryURL.get(), testPluginDirectoryNameString.get(), true));
+    RetainPtr<CFStringRef> testPluginDirectoryPath = adoptCF(CFURLCopyFileSystemPath(testPluginDirectoryURL.get(), kCFURLWindowsPathStyle));
     m_testPluginDirectory.adopt(WKStringCreateWithCFString(testPluginDirectoryPath.get()));
 }
 

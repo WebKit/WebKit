@@ -376,7 +376,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mutableCopy(
         return E_POINTER;
 
 #if USE(CFNETWORK)
-    RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest(UpdateHTTPBody)));
+    RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest(UpdateHTTPBody)));
     *result = createInstance(ResourceRequest(mutableRequest.get()));
     return S_OK;
 #else

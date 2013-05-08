@@ -116,7 +116,7 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         m_layer = layer;
     } else {
         m_layerType = layerType;
-        m_layer.adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
+        m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
 
         // Create the PlatformCALayerWinInternal object and point to it in the userdata.
         PlatformCALayerWinInternal* intern = new PlatformCALayerWinInternal(this);
@@ -540,8 +540,8 @@ void PlatformCALayer::setBackgroundColor(const Color& value)
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
 
     CACFLayerSetBackgroundColor(m_layer.get(), color.get());
     setNeedsCommit();
@@ -568,8 +568,8 @@ void PlatformCALayer::setBorderColor(const Color& value)
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
 
     CACFLayerSetBorderColor(m_layer.get(), color.get());
     setNeedsCommit();

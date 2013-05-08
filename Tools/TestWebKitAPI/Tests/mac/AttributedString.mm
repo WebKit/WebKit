@@ -52,8 +52,8 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 
 TEST(WebKit1, AttributedStringTest)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<AttributedStringTest> testController(AdoptNS, [AttributedStringTest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<AttributedStringTest> testController = adoptNS([AttributedStringTest new]);
     
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"attributedStringCustomFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];

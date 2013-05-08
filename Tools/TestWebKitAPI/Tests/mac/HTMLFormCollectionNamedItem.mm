@@ -50,8 +50,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, HTMLFormCollectionNamedItemTest)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<HTMLFormCollectionNamedItemTest> testController(AdoptNS, [HTMLFormCollectionNamedItemTest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<HTMLFormCollectionNamedItemTest> testController = adoptNS([HTMLFormCollectionNamedItemTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]

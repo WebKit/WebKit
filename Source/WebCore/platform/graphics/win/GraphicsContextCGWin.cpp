@@ -122,9 +122,9 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& po
 {
     // FIXME: Creating CFData is non-optimal, but needed to avoid crashing when printing.  Ideally we should 
     // make a custom CGDataProvider that controls the WindowsBitmap lifetime.  see <rdar://6394455>
-    RetainPtr<CFDataRef> imageData(AdoptCF, CFDataCreate(kCFAllocatorDefault, image->buffer(), image->bufferLength()));
-    RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(imageData.get()));
-    RetainPtr<CGImageRef> cgImage(AdoptCF, CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), deviceRGBColorSpaceRef(),
+    RetainPtr<CFDataRef> imageData = adoptCF(CFDataCreate(kCFAllocatorDefault, image->buffer(), image->bufferLength()));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(imageData.get()));
+    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), deviceRGBColorSpaceRef(),
                                                          kCGBitmapByteOrder32Little | kCGImageAlphaFirst, dataProvider.get(), 0, true, kCGRenderingIntentDefault));
     CGContextDrawImage(m_data->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }

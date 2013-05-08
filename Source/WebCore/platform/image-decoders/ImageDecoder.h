@@ -308,7 +308,7 @@ namespace WebCore {
                 qcmsInitialized = true;
                 // FIXME: Add optional ICCv4 support.
 #if OS(DARWIN)
-                RetainPtr<CGColorSpaceRef> monitorColorSpace(AdoptCF, CGDisplayCopyColorSpace(CGMainDisplayID()));
+                RetainPtr<CGColorSpaceRef> monitorColorSpace = adoptCF(CGDisplayCopyColorSpace(CGMainDisplayID()));
                 CFDataRef iccProfile(CGColorSpaceCopyICCProfile(monitorColorSpace.get()));
                 if (iccProfile) {
                     size_t length = CFDataGetLength(iccProfile);

@@ -67,7 +67,7 @@ WKURLRef URLForNonExistentResource()
 
 WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
 {
-    RetainPtr<NSURLResponse> response(AdoptNS, WKURLResponseCopyNSURLResponse(wkResponse));
+    RetainPtr<NSURLResponse> response = adoptNS(WKURLResponseCopyNSURLResponse(wkResponse));
     return adoptWK(WKStringCreateWithCFString((CFStringRef)[response.get() MIMEType]));
 }
 

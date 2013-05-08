@@ -55,7 +55,7 @@ static void setInjectedBundleClient(WKContextRef context)
 
 static RetainPtr<SyntheticBackingScaleFactorWindow> createWindow()
 {
-    RetainPtr<SyntheticBackingScaleFactorWindow> window(AdoptNS, [[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<SyntheticBackingScaleFactorWindow> window = adoptNS([[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     [window.get() setReleasedWhenClosed:NO];
     return window;
 }
@@ -64,7 +64,7 @@ TEST(WebKit2, GetBackingScaleFactor)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("GetBackingScaleFactorTest"));
     setInjectedBundleClient(context.get());
-    RetainPtr<WKView> view(AdoptNS, [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:0]);
+    RetainPtr<WKView> view = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:0]);
 
     RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
     [window1.get() setBackingScaleFactor:1];

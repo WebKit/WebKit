@@ -83,8 +83,8 @@ WebKitAgnosticTest::WebKitAgnosticTest()
 
 void WebKitAgnosticTest::runWebKit1Test()
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:viewFrame]);
-    RetainPtr<FrameLoadDelegate> delegate(AdoptNS, [[FrameLoadDelegate alloc] initWithDidFinishLoadBoolean:&didFinishLoad]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:viewFrame]);
+    RetainPtr<FrameLoadDelegate> delegate = adoptNS([[FrameLoadDelegate alloc] initWithDidFinishLoadBoolean:&didFinishLoad]);
     [webView.get() setFrameLoadDelegate:delegate.get()];
     initializeView(webView.get());
 
@@ -98,7 +98,7 @@ void WebKitAgnosticTest::runWebKit2Test()
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("WebKitAgnosticTest").get()));
-    RetainPtr<WKView> view(AdoptNS, [[WKView alloc] initWithFrame:viewFrame contextRef:context.get() pageGroupRef:pageGroup.get()]);
+    RetainPtr<WKView> view = adoptNS([[WKView alloc] initWithFrame:viewFrame contextRef:context.get() pageGroupRef:pageGroup.get()]);
     setPageLoaderClient([view.get() pageRef], &didFinishLoad);
     initializeView(view.get());
 

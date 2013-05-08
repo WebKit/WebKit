@@ -74,9 +74,9 @@ TEST(WebKit1, MemoryCacheDisableWithinResourceLoadDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
-    RetainPtr<MemoryCacheDisableTestResourceLoadDelegate> resourceLoadDelegate(AdoptNS, [[MemoryCacheDisableTestResourceLoadDelegate alloc] init]);
+    RetainPtr<MemoryCacheDisableTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCacheDisableTestResourceLoadDelegate alloc] init]);
     webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
 
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCacheDisableWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];

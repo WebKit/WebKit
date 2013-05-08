@@ -170,7 +170,7 @@ AtomicString InbandTextTrackPrivateLegacyAVFObjC::language() const
         return emptyAtom;
 
     NSString *languageCode = [[m_playerItemTrack assetTrack] languageCode];
-    RetainPtr<NSLocale> locale(AdoptNS, [[NSLocale alloc] initWithLocaleIdentifier:languageCode]);
+    RetainPtr<NSLocale> locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:languageCode]);
     return [locale localeIdentifier];
 }
 

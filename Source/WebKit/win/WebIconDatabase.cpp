@@ -384,7 +384,7 @@ static void postDidRemoveAllIconsNotification(WebIconDatabase* iconDB)
 
 static void postDidAddIconNotification(const String& pageURL, WebIconDatabase* iconDB)
 {
-    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, 
+    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
     CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CFDictionaryAddValue(dictionary.get(), WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), pageURL.createCFString().get());

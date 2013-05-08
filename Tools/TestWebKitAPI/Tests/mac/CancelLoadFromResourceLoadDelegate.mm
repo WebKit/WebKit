@@ -64,11 +64,11 @@ TEST(WebKit1, CancelLoadFromResourceLoadDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
-    RetainPtr<CancelLoadFromResourceLoadDelegate> resourceLoadDelegate(AdoptNS, [[CancelLoadFromResourceLoadDelegate alloc] init]);
+    RetainPtr<CancelLoadFromResourceLoadDelegate> resourceLoadDelegate = adoptNS([[CancelLoadFromResourceLoadDelegate alloc] init]);
     webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
-    RetainPtr<CancelLoadFromResourceLoadDelegateFrameLoadDelegate> frameLoadDelegate(AdoptNS, [[CancelLoadFromResourceLoadDelegateFrameLoadDelegate alloc] init]);
+    RetainPtr<CancelLoadFromResourceLoadDelegateFrameLoadDelegate> frameLoadDelegate = adoptNS([[CancelLoadFromResourceLoadDelegateFrameLoadDelegate alloc] init]);
     webView.get().frameLoadDelegate = frameLoadDelegate.get();
 
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"CancelLoadFromResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];

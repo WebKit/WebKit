@@ -54,10 +54,10 @@ static CFBundleRef createWebKitBundle()
     ASSERT(length);
     ASSERT(length < WTF_ARRAY_LENGTH(dllPathBuffer));
 
-    RetainPtr<CFStringRef> dllPath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
-    RetainPtr<CFURLRef> dllURL(AdoptCF, CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
-    RetainPtr<CFURLRef> dllDirectoryURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
-    RetainPtr<CFURLRef> resourcesDirectoryURL(AdoptCF, CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
+    RetainPtr<CFStringRef> dllPath = adoptCF(CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
+    RetainPtr<CFURLRef> dllURL = adoptCF(CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> dllDirectoryURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
+    RetainPtr<CFURLRef> resourcesDirectoryURL = adoptCF(CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
 
     return CFBundleCreate(0, resourcesDirectoryURL.get());
 }
@@ -78,8 +78,8 @@ String localizedString(const char* key)
 #if USE(CF)
     static CFStringRef notFound = CFSTR("localized string not found");
 
-    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    RetainPtr<CFStringRef> result(AdoptCF, CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, webKitBundle(), notFound, 0));
+    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    RetainPtr<CFStringRef> result = adoptCF(CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, webKitBundle(), notFound, 0));
     ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
 
     return result.get();

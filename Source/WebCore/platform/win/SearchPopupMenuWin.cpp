@@ -65,7 +65,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
 
     size_t size = searchItems.size();
     if (size) {
-        items.adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
+        items = adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
         for (size_t i = 0; i < size; ++i)
             CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
     }
@@ -82,7 +82,7 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Str
 
 #if USE(CF)
     searchItems.clear();
-    RetainPtr<CFArrayRef> items(AdoptCF, reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
+    RetainPtr<CFArrayRef> items = adoptCF(reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
 
     if (!items || CFGetTypeID(items.get()) != CFArrayGetTypeID())
         return;

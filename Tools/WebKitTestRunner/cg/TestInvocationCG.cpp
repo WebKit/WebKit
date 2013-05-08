@@ -52,14 +52,14 @@ enum FlipGraphicsContextOrNot {
 
 static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsContextOrNot flip = DontFlipGraphicsContext)
 {
-    RetainPtr<CGImageRef> image(AdoptCF, WKImageCreateCGImage(wkImage));
+    RetainPtr<CGImageRef> image = adoptCF(WKImageCreateCGImage(wkImage));
 
     size_t pixelsWide = CGImageGetWidth(image.get());
     size_t pixelsHigh = CGImageGetHeight(image.get());
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     
     if (flip == FlipGraphicsContext) {
@@ -113,9 +113,9 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
 
 static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
 {
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
-    RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
+    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
+    RetainPtr<CFMutableDataRef> imageData = adoptCF(CFDataCreateMutable(0, 0));
+    RetainPtr<CGImageDestinationRef> imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
     CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
     CGImageDestinationFinalize(imageDest.get());
 
@@ -165,9 +165,9 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayR
 
     RetainPtr<CGContextRef> context;
     if (windowSnapshot)
-        context.adoptCF(createCGContextFromImage(windowSnapshot.get(), DontFlipGraphicsContext));
+        context = adoptCF(createCGContextFromImage(windowSnapshot.get(), DontFlipGraphicsContext));
     else
-        context.adoptCF(createCGContextFromImage(image));
+        context = adoptCF(createCGContextFromImage(image));
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)

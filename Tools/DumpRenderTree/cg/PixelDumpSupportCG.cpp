@@ -57,8 +57,8 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 static void printPNG(CGImageRef image, const char* checksum)
 {
-    RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
+    RetainPtr<CFMutableDataRef> imageData = adoptCF(CFDataCreateMutable(0, 0));
+    RetainPtr<CGImageDestinationRef> imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
     CGImageDestinationAddImage(imageDest.get(), image, 0);
     CGImageDestinationFinalize(imageDest.get());
 
@@ -108,6 +108,6 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
 
 void dumpBitmap(BitmapContext* context, const char* checksum)
 {
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context->cgContext()));
+    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(context->cgContext()));
     printPNG(image.get(), checksum);
 }

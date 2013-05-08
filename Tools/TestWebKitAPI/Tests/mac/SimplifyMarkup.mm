@@ -49,9 +49,9 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, SimplifyMarkupTest)
 {
-    RetainPtr<WebView> webView1(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<WebView> webView2(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<SimplifyMarkupTest> testController(AdoptNS, [SimplifyMarkupTest new]);
+    RetainPtr<WebView> webView1 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView2 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<SimplifyMarkupTest> testController = adoptNS([SimplifyMarkupTest new]);
     
     webView1.get().frameLoadDelegate = testController.get();
     [[webView1.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];

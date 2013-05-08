@@ -46,16 +46,16 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
     [NSURLProtocol registerClass:[TestProtocol class]];
     [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
 
-    RetainPtr<WKProcessGroup> processGroup(AdoptNS, [[WKProcessGroup alloc] init]);
-    RetainPtr<WKBrowsingContextGroup> browsingContextGroup(AdoptNS, [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
+    RetainPtr<WKProcessGroup> processGroup = adoptNS([[WKProcessGroup alloc] init]);
+    RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
 
     // Allow file URLs to load non-file resources
     WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
     WKPageGroupSetPreferences(browsingContextGroup.get()._pageGroupRef, preferences.get());
 
-    RetainPtr<WKView> wkView(AdoptNS, [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
-     RetainPtr<TestBrowsingContextLoadDelegate> delegate(AdoptNS, [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    RetainPtr<WKView> wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+     RetainPtr<TestBrowsingContextLoadDelegate> delegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
          EXPECT_JS_EQ(wkView.get().pageRef, "window._testResult", "PASS");
          testFinished = true;
     }]);

@@ -216,7 +216,7 @@ Credential core(CFURLCredentialRef cfCredential)
         return Credential(identity, CFURLCredentialGetCertificateArray(cfCredential), persistence);
 #endif
 
-    RetainPtr<CFStringRef> password(AdoptCF, CFURLCredentialCopyPassword(cfCredential));
+    RetainPtr<CFStringRef> password = adoptCF(CFURLCredentialCopyPassword(cfCredential));
     return Credential(CFURLCredentialGetUsername(cfCredential), password.get(), persistence);
 }
 

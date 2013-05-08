@@ -1,3 +1,109 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use adoptCF and adoptNS in more places
+        https://bugs.webkit.org/show_bug.cgi?id=115657
+
+        Reviewed by Sam Weinig.
+
+        This is similar to my last set of changes, but covers code that I missed with
+        global replace using the Safari Xcode workspace.
+
+        * platform/cf/win/CertificateCFWin.cpp:
+        (WebCore::copyCertificateToData):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::totalBytes):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::sizeChanged):
+        (WebCore::AVFWrapper::createAssetForURL):
+        (WebCore::AVFWrapper::createPlayer):
+        (WebCore::AVFWrapper::createPlayerItem):
+        (WebCore::AVFWrapper::setAsset):
+        (WebCore::AVFWrapper::platformLayer):
+        (WebCore::AVFWrapper::createAVCFVideoLayer):
+        (WebCore::AVFWrapper::createImageGenerator):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::language):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (toCACFTimingFunction):
+        (PlatformCAAnimation::PlatformCAAnimation):
+        (PlatformCAAnimation::setFromValue):
+        (PlatformCAAnimation::setToValue):
+        (PlatformCAAnimation::setValues):
+        (PlatformCAAnimation::setKeyTimes):
+        (PlatformCAAnimation::setTimingFunctions):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::PlatformCALayer):
+        (PlatformCALayer::setBackgroundColor):
+        (PlatformCALayer::setBorderColor):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::PlatformCALayerWinInternal):
+        (PlatformCALayerWinInternal::addTile):
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        (WebCore::WKCACFViewLayerTreeHost::WKCACFViewLayerTreeHost):
+        * platform/graphics/gstreamer/PlatformVideoWindowMac.mm:
+        (PlatformVideoWindow::PlatformVideoWindow):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::getPostScriptName):
+        (WebCore::FontPlatformData::platformDataInit):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawWindowsBitmap):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::create):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::rfc2616DateStringFromTime):
+        (WebCore::QTCFDictionaryCreateWithDataCallback):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        * platform/graphics/win/WKCAImageQueue.cpp:
+        (WebCore::WKCAImageQueue::WKCAImageQueue):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile):
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::core):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::cookieDomain):
+        (WebCore::cookieName):
+        (WebCore::cookiePath):
+        (WebCore::cookieValue):
+        (WebCore::filterCookies):
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::certificatePath):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::urlFromPath):
+        (WebCore::getURL):
+        * platform/win/LocalizedStringsWin.cpp:
+        (WebCore::createWebKitBundle):
+        (WebCore::localizedString):
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::saveRecentSearches):
+        (WebCore::SearchPopupMenuWin::loadRecentSearches):
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::stringListFromResourceId):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::PluginView::platformStart):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::platformFocusRingColor):
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        Use adoptCF and adoptNS throughout.
+
 2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Make CanvasStyle's CMYKAValues allocated on the heap and move the pointer in the union.

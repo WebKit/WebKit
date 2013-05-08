@@ -41,12 +41,12 @@ using namespace WTF;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static String testPathFromURL(WKURLRef url)
 {
-    RetainPtr<CFURLRef> cfURL(AdoptCF, WKURLCopyCFURL(kCFAllocatorDefault, url));
+    RetainPtr<CFURLRef> cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
     if (!cfURL)
         return String();
 
-    RetainPtr<CFStringRef> schemeCFString(AdoptCF, CFURLCopyScheme(cfURL.get()));
-    RetainPtr<CFStringRef> pathCFString(AdoptCF, CFURLCopyPath(cfURL.get()));
+    RetainPtr<CFStringRef> schemeCFString = adoptCF(CFURLCopyScheme(cfURL.get()));
+    RetainPtr<CFStringRef> pathCFString = adoptCF(CFURLCopyPath(cfURL.get()));
 
     String schemeString(schemeCFString.get());
     String pathString(pathCFString.get());
@@ -63,7 +63,7 @@ static String testPathFromURL(WKURLRef url)
     if (!equalIgnoringCase(schemeString, "http") && !equalIgnoringCase(schemeString, "https"))
         return String();
 
-    RetainPtr<CFStringRef> hostCFString(AdoptCF, CFURLCopyHostName(cfURL.get()));
+    RetainPtr<CFStringRef> hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
     String hostString(hostCFString.get());
     if (hostString == "127.0.0.1"  && (CFURLGetPortNumber(cfURL.get()) == 8000 || CFURLGetPortNumber(cfURL.get()) == 8443))
         return pathString;

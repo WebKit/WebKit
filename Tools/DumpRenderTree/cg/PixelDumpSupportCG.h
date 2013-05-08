@@ -70,7 +70,7 @@ private:
 
     BitmapContext(PlatformBitmapBuffer buffer, CGContextRef context)
         : m_buffer(buffer)
-        , m_context(AdoptCF, context)
+        , m_context(adoptCF(context))
     {
     }
 

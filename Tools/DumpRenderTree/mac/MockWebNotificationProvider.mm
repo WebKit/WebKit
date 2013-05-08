@@ -43,7 +43,7 @@
 {
     if (!(self = [super init]))
         return nil;
-    _permissions.adoptNS([[NSMutableDictionary alloc] init]);
+    _permissions = adoptNS([[NSMutableDictionary alloc] init]);
     return self;
 }
 

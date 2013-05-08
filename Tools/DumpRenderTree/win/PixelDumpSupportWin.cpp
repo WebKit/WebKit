@@ -85,7 +85,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     makeAlphaChannelOpaque(info.bmBits, info.bmWidth, info.bmHeight);
 
 #if USE(CG)
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
                                                 info.bmWidthBytes, colorSpace.get(), kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst);
 #elif USE(CAIRO) 

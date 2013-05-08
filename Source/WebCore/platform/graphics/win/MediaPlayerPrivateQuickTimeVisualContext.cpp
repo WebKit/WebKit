@@ -235,7 +235,7 @@ String MediaPlayerPrivateQuickTimeVisualContext::rfc2616DateStringFromTime(CFAbs
     time = CFGregorianDateGetAbsoluteTime(dateValue, gmtTimeZone);
     SInt32 day = CFAbsoluteTimeGetDayOfWeek(time, 0);
 
-    RetainPtr<CFStringRef> dateCFString(AdoptCF, CFStringCreateWithFormat(0, 0, dateFormatString, dayStrings[day - 1], dateValue.day, 
+    RetainPtr<CFStringRef> dateCFString = adoptCF(CFStringCreateWithFormat(0, 0, dateFormatString, dayStrings[day - 1], dateValue.day, 
         monthStrings[dateValue.month - 1], dateValue.year, dateValue.hour, dateValue.minute, (int)dateValue.second));
     return dateCFString.get();
 }
@@ -799,7 +799,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::visualContextTimerFired(Timer<Med
 
 static CFDictionaryRef QTCFDictionaryCreateWithDataCallback(CFAllocatorRef allocator, const UInt8* bytes, CFIndex length)
 {
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(allocator, bytes, length, kCFAllocatorNull));
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreateWithBytesNoCopy(allocator, bytes, length, kCFAllocatorNull));
     if (!data)
         return 0;
 
@@ -890,7 +890,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
                 // CAImageQueue without being converted to a non-Debug CFDictionary.  Additionally,
                 // old versions of QuickTime used a non-AAS CoreFoundation, so the types are not 
                 // interchangable even in the release case.
-                RetainPtr<CFDictionaryRef> attachments(AdoptCF, QTCFDictionaryCreateCopyWithDataCallback(kCFAllocatorDefault, buffer.attachments(), &QTCFDictionaryCreateWithDataCallback));
+                RetainPtr<CFDictionaryRef> attachments = adoptCF(QTCFDictionaryCreateCopyWithDataCallback(kCFAllocatorDefault, buffer.attachments(), &QTCFDictionaryCreateWithDataCallback));
                 CFTimeInterval imageTime = QTMovieVisualContext::currentHostTime();
 
                 m_imageQueue->collect();

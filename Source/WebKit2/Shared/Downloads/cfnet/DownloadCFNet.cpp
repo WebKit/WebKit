@@ -61,7 +61,7 @@ void Download::useCredential(const WebCore::AuthenticationChallenge& challenge, 
 {
     if (!m_download)
         return;
-    RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
+    RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
     CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
 }
 
@@ -96,7 +96,7 @@ void Download::start()
     CFURLDownloadClient client = {0, this, 0, 0, 0, didStartCallback, willSendRequestCallback, didReceiveAuthenticationChallengeCallback, 
                                   didReceiveResponseCallback, willResumeWithResponseCallback, didReceiveDataCallback, shouldDecodeDataOfMIMETypeCallback, 
                                   decideDestinationWithSuggestedObjectNameCallback, didCreateDestinationCallback, didFinishCallback, didFailCallback};
-    m_download.adoptCF(CFURLDownloadCreate(0, cfRequest, &client));
+    m_download = adoptCF(CFURLDownloadCreate(0, cfRequest, &client));
 
     // FIXME: Allow this to be changed by the client.
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
@@ -121,7 +121,7 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
                                   didReceiveResponseCallback, willResumeWithResponseCallback, didReceiveDataCallback, shouldDecodeDataOfMIMETypeCallback,
                                   decideDestinationWithSuggestedObjectNameCallback, didCreateDestinationCallback, didFinishCallback, didFailCallback};
 
-    m_download.adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(0, connection, handle->firstRequest().cfURLRequest(), response.cfURLResponse(), &client));
+    m_download = adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(0, connection, handle->firstRequest().cfURLRequest(), response.cfURLResponse(), &client));
 
     // It is possible for CFURLDownloadCreateAndStartWithLoadingConnection() to fail if the passed in CFURLConnection is not in a "downloadable state"
     // However, we should never hit that case
@@ -144,7 +144,7 @@ void Download::cancel()
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
     CFURLDownloadCancel(m_download.get());
 
-    RetainPtr<CFDataRef> resumeData(AdoptCF, CFURLDownloadCopyResumeData(m_download.get()));
+    RetainPtr<CFDataRef> resumeData = adoptCF(CFURLDownloadCopyResumeData(m_download.get()));
     if (resumeData)
         DownloadBundle::appendResumeData(resumeData.get(), m_bundlePath);
 
@@ -168,8 +168,8 @@ void Download::didDecideDestination(const String& destination, bool allowOverwri
     m_destination = destination;
     m_bundlePath = destination + DownloadBundle::fileExtension();
 
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(m_bundlePath.characters()), m_bundlePath.length(), kCFAllocatorNull));
-    RetainPtr<CFURLRef> bundlePathURL(AdoptCF, CFURLCreateWithFileSystemPath(0, bundlePath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFStringRef> bundlePath = adoptCF(CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(m_bundlePath.characters()), m_bundlePath.length(), kCFAllocatorNull));
+    RetainPtr<CFURLRef> bundlePathURL = adoptCF(CFURLCreateWithFileSystemPath(0, bundlePath.get(), kCFURLWindowsPathStyle, false));
     CFURLDownloadSetDestination(m_download.get(), bundlePathURL.get(), allowOverwrite);
 }
 

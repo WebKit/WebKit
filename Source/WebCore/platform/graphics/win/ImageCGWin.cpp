@@ -50,7 +50,7 @@ PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
     if (!dibSection.dsBm.bmBits)
         return 0;
 
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(dibSection.dsBm.bmBits, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight, 8,
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(dibSection.dsBm.bmBits, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight, 8,
         dibSection.dsBm.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 
     // The BitmapImage takes ownership of this.

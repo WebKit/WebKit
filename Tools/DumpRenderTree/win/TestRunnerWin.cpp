@@ -633,13 +633,13 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef jsURL)
     if (FAILED(webView->preferences(&preferences)))
         return;
 
-    RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
-    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(0, urlString.get(), 0));
+    RetainPtr<CFStringRef> urlString = adoptCF(JSStringCopyCFString(0, jsURL));
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(0, urlString.get(), 0));
     if (!url)
         return;
 
     // Now copy the file system path, POSIX style.
-    RetainPtr<CFStringRef> pathCF(AdoptCF, CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle));
+    RetainPtr<CFStringRef> pathCF = adoptCF(CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle));
     if (!pathCF)
         return;
 
@@ -697,7 +697,7 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 
 void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
-    RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
+    RetainPtr<CFStringRef> urlString = adoptCF(JSStringCopyCFString(0, jsURL));
     ::setPersistentUserStyleSheetLocation(urlString.get());
 }
 

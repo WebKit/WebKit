@@ -52,7 +52,7 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
     if (m_waitToDumpWatchdogTimer)
         return;
 
-    m_waitToDumpWatchdogTimer.adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogTimerInterval, 0, 0, 0, WTR::waitUntilDoneWatchdogTimerFired, NULL));
+    m_waitToDumpWatchdogTimer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogTimerInterval, 0, 0, 0, WTR::waitUntilDoneWatchdogTimerFired, NULL));
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdogTimer.get(), kCFRunLoopCommonModes);
 }
 

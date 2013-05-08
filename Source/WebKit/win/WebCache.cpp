@@ -107,89 +107,88 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     const int zero = 0;
 #endif
 
-    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF,
-        CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFNumberRef> value(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &stat.images.count));
+    RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.count));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
     
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.count));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.count));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
 #if ENABLE(XSLT)
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.count));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.count));
 #else
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
 #endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.count));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.count));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
     COMPtr<CFDictionaryPropertyBag> propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
     s[0] = propBag.leakRef();
 
-    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.size));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.size));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
     
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.size));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.size));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
 #if ENABLE(XSLT)
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.size));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.size));
 #else
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
 #endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.size));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.size));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
     s[1] = propBag.leakRef();
 
-    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.liveSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.liveSize));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
     
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.liveSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.liveSize));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
 #if ENABLE(XSLT)
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.liveSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.liveSize));
 #else
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
 #endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.liveSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.liveSize));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
     s[2] = propBag.leakRef();
 
-    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.decodedSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.decodedSize));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
     
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.decodedSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.decodedSize));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
 #if ENABLE(XSLT)
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.decodedSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.decodedSize));
 #else
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
 #endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
-    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.decodedSize));
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.decodedSize));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
     propBag = CFDictionaryPropertyBag::createInstance();

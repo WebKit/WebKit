@@ -50,8 +50,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, HTMLCollectionNamedItemTest)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<HTMLCollectionNamedItemTest> testController(AdoptNS, [HTMLCollectionNamedItemTest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<HTMLCollectionNamedItemTest> testController = adoptNS([HTMLCollectionNamedItemTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]

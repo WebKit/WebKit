@@ -1,3 +1,18 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use adoptCF and adoptNS in more places
+        https://bugs.webkit.org/show_bug.cgi?id=115657
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Downloads/cfnet/DownloadCFNet.cpp:
+        (WebKit::Download::useCredential):
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::didDecideDestination):
+        Use adoptCF and adoptNS.
+
 2013-05-06  Sam Weinig  <sam@webkit.org>
 
         Add SPI to get an array of all the installed plug-ins

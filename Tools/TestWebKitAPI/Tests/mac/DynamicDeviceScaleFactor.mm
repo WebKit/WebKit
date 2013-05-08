@@ -47,7 +47,7 @@ public:
 
 RetainPtr<SyntheticBackingScaleFactorWindow> DynamicDeviceScaleFactor::createWindow()
 {
-    RetainPtr<SyntheticBackingScaleFactorWindow> window(AdoptNS, [[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:viewFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<SyntheticBackingScaleFactorWindow> window = adoptNS([[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:viewFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     [window.get() setReleasedWhenClosed:NO];
     return window;
 }

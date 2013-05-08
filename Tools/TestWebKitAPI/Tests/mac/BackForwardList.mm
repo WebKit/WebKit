@@ -54,8 +54,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, ReloadBackForward)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<BackForwardListTest> testController(AdoptNS, [BackForwardListTest new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<BackForwardListTest> testController = adoptNS([BackForwardListTest new]);
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://does-not-exist.example"]]];
     Util::run(&didFinishLoad);

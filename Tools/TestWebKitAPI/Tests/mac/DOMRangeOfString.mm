@@ -48,8 +48,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, DOMRangeOfString)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
-    RetainPtr<DOMRangeOfStringFrameLoadDelegate> frameLoadDelegate(AdoptNS, [DOMRangeOfStringFrameLoadDelegate new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
+    RetainPtr<DOMRangeOfStringFrameLoadDelegate> frameLoadDelegate = adoptNS([DOMRangeOfStringFrameLoadDelegate new]);
 
     webView.get().frameLoadDelegate = frameLoadDelegate.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"DOMRangeOfString" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
@@ -74,7 +74,7 @@ TEST(WebKit1, DOMRangeOfString)
     resultRange = [webView.get() DOMRangeOfString:@"n" relativeTo:needleRange options:WebFindOptionsStartInSelection];
     EXPECT_EQ(28, resultRange.startOffset);
 
-    RetainPtr<WebView> otherWebView(AdoptNS, [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
+    RetainPtr<WebView> otherWebView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     DOMRange *foreignRange = [[[otherWebView.get() mainFrame] DOMDocument] createRange];
     resultRange = [webView.get() DOMRangeOfString:@"needle" relativeTo:foreignRange options:0];
     EXPECT_EQ(nil, resultRange);

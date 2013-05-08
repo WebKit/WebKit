@@ -60,7 +60,7 @@ static bool urlFromPath(CFStringRef path, String& url)
     if (!path)
         return false;
 
-    RetainPtr<CFURLRef> cfURL(AdoptCF, CFURLCreateWithFileSystemPath(0, path, kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path, kCFURLWindowsPathStyle, false));
     if (!cfURL)
         return false;
 
@@ -481,7 +481,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             // file using unicode
             wchar_t* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
-                RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
+                RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
                 if (urlFromPath(pathAsCFString.get(), url) && title)
                     *title = url;
             }
@@ -491,7 +491,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             // filename using ascii
             char* data = static_cast<char*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-                RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
+                RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
                 if (urlFromPath(pathAsCFString.get(), url) && title)
                     *title = url;
             }
@@ -523,7 +523,7 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
 
     if (stringData.isEmpty() || (!PathFileExists(stringData.charactersWithNullTermination()) && !PathIsUNC(stringData.charactersWithNullTermination())))
         return url;
-    RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination(), wcslen(stringData.charactersWithNullTermination())));
+    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination(), wcslen(stringData.charactersWithNullTermination())));
     if (urlFromPath(pathAsCFString.get(), url) && title)
         *title = url;
 #endif

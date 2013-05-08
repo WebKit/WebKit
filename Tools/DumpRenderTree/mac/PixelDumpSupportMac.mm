@@ -53,7 +53,7 @@ static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t p
         return 0;
     
     // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host); // Use ARGB8 on PPC or BGRA8 on X86 to improve CG performance
     if (!context) {
         free(buffer);

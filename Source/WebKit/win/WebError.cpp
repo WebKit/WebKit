@@ -219,7 +219,7 @@ HRESULT STDMETHODCALLTYPE WebError::sslPeerCertificate(
     if (!m_cfErrorUserInfoDict) {
         // copy userinfo from CFErrorRef
         CFErrorRef cfError = m_error;
-        m_cfErrorUserInfoDict.adoptCF(CFErrorCopyUserInfo(cfError));
+        m_cfErrorUserInfoDict = adoptCF(CFErrorCopyUserInfo(cfError));
     }
 
     if (!m_cfErrorUserInfoDict)

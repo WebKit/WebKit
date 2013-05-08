@@ -154,7 +154,7 @@ static CFBundleRef cfBundleForStringsBundle(WebLocalizableStringsBundle* strings
     createWebKitBundle();
 
     if (!stringsBundle->bundle)
-        stringsBundle->bundle = CFBundleGetBundleWithIdentifier(RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithCString(0, stringsBundle->identifier, kCFStringEncodingASCII)).get());
+        stringsBundle->bundle = CFBundleGetBundleWithIdentifier(adoptCF(CFStringCreateWithCString(0, stringsBundle->identifier, kCFStringEncodingASCII)).get());
     return stringsBundle->bundle;
 }
 

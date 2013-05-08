@@ -1,3 +1,160 @@
+2013-05-06  Darin Adler  <darin@apple.com>
+
+        Use adoptCF and adoptNS in more places, test code and code not compiled on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=115657
+
+        Reviewed by Sam Weinig.
+
+        This is similar to my last set of changes, but covers code that I missed with
+        global replace using the Safari Xcode workspace.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (convertWebResourceDataToString):
+        (convertWebResourceResponseToDictionary):
+        (createXMLStringFromWebArchiveData):
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (createImageFromStdin):
+        (createDifferenceImage):
+        (main):
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG):
+        (dumpBitmap):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        (BitmapContext::BitmapContext):
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm:
+        (-[MockWebNotificationProvider init]):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContext):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::addDisallowedURL):
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::localStorageDiskUsageForOrigin):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::deleteLocalStorageForOrigin):
+        (TestRunner::copyDecodedHostName):
+        (TestRunner::copyEncodedHostName):
+        (TestRunner::queueLoad):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        (TestRunner::setUserStyleSheetLocation):
+        (TestRunner::setValueForUser):
+        (TestRunner::overridePreference):
+        (TestRunner::setPersistentUserStyleSheetLocation):
+        (TestRunner::execCommand):
+        (TestRunner::findString):
+        (TestRunner::isCommandEnabled):
+        (TestRunner::addOriginAccessWhitelistEntry):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::addUserScript):
+        (TestRunner::addUserStyleSheet):
+        (TestRunner::evaluateInWebInspector):
+        (TestRunner::evaluateScriptInIsolatedWorld):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        (-[SynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+        (TestRunner::authenticateSession):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        * DumpRenderTree/mac/WebArchiveDumpSupportMac.mm:
+        (createCFURLResponseFromResponseData):
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+        (LoadItem::invoke):
+        (LoadHTMLStringItem::invoke):
+        (ScriptItem::invoke):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (substringFromIndex):
+        (urlSuitableForTestResult):
+        (lastPathComponent):
+        (sharedCFURLCache):
+        * DumpRenderTree/win/ImageDiffCairo.cpp:
+        (createImageFromStdin):
+        (main):
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setUserStyleSheetLocation):
+        (TestRunner::setPersistentUserStyleSheetLocation):
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/InstanceMethodSwizzler.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtrHashing.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/FindMatches.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WebArchive.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        * TestWebKitAPI/Tests/WebKit2/mac/GetBackingScaleFactor.mm:
+        (TestWebKitAPI::createWindow):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/win/DoNotCopyANullCFURLResponse.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm:
+        (TestWebKitAPI::AcceptsFirstMouse::runTest):
+        * TestWebKitAPI/Tests/mac/AttributedString.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/BackForwardList.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CancelLoadFromResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DOMHTMLTableCellCellAbove.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorInDashboardRegions.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorOnBack.mm:
+        (TestWebKitAPI::DeviceScaleFactorOnBack::createWindow):
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm:
+        (TestWebKitAPI::DynamicDeviceScaleFactor::createWindow):
+        * TestWebKitAPI/Tests/mac/HTMLCollectionNamedItem.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/InspectorBar.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+        * TestWebKitAPI/Tests/mac/RenderedImageFromDOMRange.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SetDocumentURI.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SimplifyMarkup.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/StringByEvaluatingJavaScriptFromString.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WillSendSubmitEvent.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WindowlessWebViewWithMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::MIMETypeForWKURLResponse):
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit1Test):
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundlePageMac.mm:
+        (WTR::testPathFromURL):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromImage):
+        (WTR::dumpBitmap):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollBy):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeTestPluginDirectory):
+        Use adoptCF and adoptNS.
+
 2013-05-07  Alex Christensen  <achristensen@apple.com>
 
         Fix a memory leak introduced in r149692

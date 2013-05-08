@@ -111,7 +111,7 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_JS_EQ(view, "document.webkitVisibilityState", "hidden");
 
     // Add it to a non-visible window. PageVisibility should still be "hidden".
-    RetainPtr<NSWindow> window(AdoptNS, [[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
     EXPECT_NOT_NULL([view window]);
     EXPECT_NOT_NULL([view superview]);

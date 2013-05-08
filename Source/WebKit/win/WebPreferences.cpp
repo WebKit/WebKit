@@ -89,7 +89,7 @@ static NumberType numberValueForPreferencesValue(CFPropertyListRef value)
 template<typename NumberType>
 static RetainPtr<CFNumberRef> cfNumber(NumberType value)
 {
-    return RetainPtr<CFNumberRef>(AdoptCF, CFNumberCreate(0, CFNumberTraits<NumberType>::Type, &value));
+    return adoptCF(CFNumberCreate(0, CFNumberTraits<NumberType>::Type, &value));
 }
 
 static bool booleanValueForPreferencesValue(CFPropertyListRef value)
@@ -233,7 +233,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
 
-    RetainPtr<CFStringRef> linkBehaviorStringRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
+    RetainPtr<CFStringRef> linkBehaviorStringRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
     CFDictionaryAddValue(defaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitHistoryItemLimitKey), CFSTR("1000"));
@@ -249,7 +249,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitUsesPageCachePreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitLocalStorageDatabasePathPreferenceKey), CFSTR(""));
 
-    RetainPtr<CFStringRef> cacheModelRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
+    RetainPtr<CFStringRef> cacheModelRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
     CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
@@ -284,7 +284,7 @@ RetainPtr<CFPropertyListRef> WebPreferences::valueForKey(CFStringRef key)
     if (value)
         return value;
 
-    value.adoptCF(CFPreferencesCopyAppValue(key, kCFPreferencesCurrentApplication));
+    value = adoptCF(CFPreferencesCopyAppValue(key, kCFPreferencesCurrentApplication));
     if (value)
         return value;
 
@@ -354,8 +354,7 @@ void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
     if (val && !wcscmp(val, value))
         return;
     
-    RetainPtr<CFStringRef> valueRef(AdoptCF,
-        CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)wcslen(value), kCFAllocatorMalloc));
+    RetainPtr<CFStringRef> valueRef = adoptCF(CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)wcslen(value), kCFAllocatorMalloc));
     setValueForKey(key, valueRef.get());
 
     postPreferencesChangesNotification();
@@ -422,7 +421,7 @@ void WebPreferences::load()
 {
     initializeDefaultSettings();
 
-    m_privatePrefs.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    m_privatePrefs = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     migrateWebKitPreferencesToCFPreferences();
 }
@@ -439,11 +438,11 @@ void WebPreferences::migrateWebKitPreferencesToCFPreferences()
 
     WTF::CString path = oldPreferencesPath().utf8();
 
-    RetainPtr<CFURLRef> urlRef(AdoptCF, CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8*>(path.data()), path.length(), false));
+    RetainPtr<CFURLRef> urlRef = adoptCF(CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8*>(path.data()), path.length(), false));
     if (!urlRef)
         return;
 
-    RetainPtr<CFReadStreamRef> stream(AdoptCF, CFReadStreamCreateWithFile(0, urlRef.get()));
+    RetainPtr<CFReadStreamRef> stream = adoptCF(CFReadStreamCreateWithFile(0, urlRef.get()));
     if (!stream)
         return;
 
@@ -451,7 +450,7 @@ void WebPreferences::migrateWebKitPreferencesToCFPreferences()
         return;
 
     CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0;
-    RetainPtr<CFPropertyListRef> plist(AdoptCF, CFPropertyListCreateFromStream(0, stream.get(), 0, kCFPropertyListMutableContainersAndLeaves, &format, 0));
+    RetainPtr<CFPropertyListRef> plist = adoptCF(CFPropertyListCreateFromStream(0, stream.get(), 0, kCFPropertyListMutableContainersAndLeaves, &format, 0));
     CFReadStreamClose(stream.get());
 
     if (!plist || CFGetTypeID(plist.get()) != CFDictionaryGetTypeID())
@@ -1520,8 +1519,8 @@ HRESULT WebPreferences::setPreferenceForTest(BSTR key, BSTR value)
 {
     if (!SysStringLen(key) || !SysStringLen(value))
         return E_FAIL;
-    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(key), SysStringLen(key)));
-    RetainPtr<CFStringRef> valueString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(value), SysStringLen(value)));
+    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(key), SysStringLen(key)));
+    RetainPtr<CFStringRef> valueString = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(value), SysStringLen(value)));
     setValueForKey(keyString.get(), valueString.get());
     postPreferencesChangesNotification();
     return S_OK;

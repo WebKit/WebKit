@@ -53,7 +53,7 @@ static void setValue3(id self, SEL _cmd, int* value)
 
 TEST(TestWebKitAPI, InstanceMethodSwizzler)
 {
-    RetainPtr<SimpleObject> object(AdoptNS, [[SimpleObject alloc] init]);
+    RetainPtr<SimpleObject> object = adoptNS([[SimpleObject alloc] init]);
 
     int value = 0;
 

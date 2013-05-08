@@ -28,7 +28,7 @@ using namespace WebCore;
 
 PlatformVideoWindow::PlatformVideoWindow()
 {
-    m_window.adoptNS([[NSView alloc] init]);
+    m_window = adoptNS([[NSView alloc] init]);
     m_videoWindowId = reinterpret_cast<unsigned long>(m_window.get());
 }
 

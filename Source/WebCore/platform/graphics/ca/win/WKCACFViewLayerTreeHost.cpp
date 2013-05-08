@@ -72,7 +72,7 @@ PassRefPtr<WKCACFViewLayerTreeHost> WKCACFViewLayerTreeHost::create()
 }
 
 WKCACFViewLayerTreeHost::WKCACFViewLayerTreeHost()
-    : m_view(AdoptCF, WKCACFViewCreate(kWKCACFViewDrawingDestinationWindow))
+    : m_view(adoptCF(WKCACFViewCreate(kWKCACFViewDrawingDestinationWindow)))
     , m_viewNeedsUpdate(true)
 {
 }

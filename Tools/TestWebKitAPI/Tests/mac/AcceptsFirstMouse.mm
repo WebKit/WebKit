@@ -47,7 +47,7 @@ public:
 template <typename View>
 void AcceptsFirstMouse::runTest(View view)
 {
-    RetainPtr<NSWindow> window(AdoptNS, [[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     [[window.get() contentView] addSubview:view];
 
     CGFloat viewHeight = view.bounds.size.height;

@@ -52,8 +52,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit1, InspectorBarTest)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<InspectorBarController> inspectorBarController(AdoptNS, [InspectorBarController new]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<InspectorBarController> inspectorBarController = adoptNS([InspectorBarController new]);
 
     webView.get().frameLoadDelegate = inspectorBarController.get();
     [webView.get().mainFrame loadHTMLString:@"<body contenteditable style=\"color: green\"><u>Lorem ipsum sit amet</u></body>" baseURL:[NSURL URLWithString:@"about:blank"]];

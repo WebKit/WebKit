@@ -88,9 +88,9 @@ static void contextMenuCopyLink(WebView* webView, int itemIndex)
 
 TEST(WebKit1, ContextMenuCanCopyURL)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0,0,800,600) frameName:nil groupName:nil]);
-    RetainPtr<NSWindow> window(AdoptNS, [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
-    RetainPtr<ContextMenuCanCopyURLDelegate> delegate(AdoptNS, [[ContextMenuCanCopyURLDelegate alloc] init]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0,0,800,600) frameName:nil groupName:nil]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<ContextMenuCanCopyURLDelegate> delegate = adoptNS([[ContextMenuCanCopyURLDelegate alloc] init]);
 
     [window.get().contentView addSubview:webView.get()];
     webView.get().frameLoadDelegate = delegate.get();

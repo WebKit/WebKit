@@ -48,8 +48,8 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     // Do basic sanity checks on the returned webarchive. We have more thorough checks in LayoutTests.
     size_t size = WKDataGetSize(receivedData);
     const unsigned char* bytes = WKDataGetBytes(receivedData);
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, bytes, size));
-    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(0, data.get(), kCFPropertyListImmutable, 0, 0));
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(0, bytes, size));
+    RetainPtr<CFPropertyListRef> propertyList = adoptCF(CFPropertyListCreateWithData(0, data.get(), kCFPropertyListImmutable, 0, 0));
     EXPECT_TRUE(propertyList);
     
     // It should be a dictionary.
@@ -78,7 +78,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     EXPECT_TRUE(resourceData);
     EXPECT_EQ(CFDataGetTypeID(), CFGetTypeID(resourceData));
     
-    RetainPtr<CFStringRef> stringData(AdoptCF, CFStringCreateFromExternalRepresentation(0, (CFDataRef)resourceData, kCFStringEncodingUTF8));
+    RetainPtr<CFStringRef> stringData = adoptCF(CFStringCreateFromExternalRepresentation(0, (CFDataRef)resourceData, kCFStringEncodingUTF8));
     EXPECT_TRUE(stringData);
     
     // It should contain the string "Simple HTML file." in it.

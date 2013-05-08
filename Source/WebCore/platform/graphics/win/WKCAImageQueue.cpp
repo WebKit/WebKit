@@ -56,7 +56,7 @@ static void WKCAImageQueueRelease(CAImageQueueRef iq)
 WKCAImageQueue::WKCAImageQueue(uint32_t width, uint32_t height, uint32_t capacity)
     : m_private(adoptPtr(new WKCAImageQueuePrivate()))
 {
-    m_private->m_imageQueue.adoptCF(wkCAImageQueueCreate(width, height, capacity));
+    m_private->m_imageQueue = adoptCF(wkCAImageQueueCreate(width, height, capacity));
 }
 
 WKCAImageQueue::WKCAImageQueue(const WKCAImageQueue& o)

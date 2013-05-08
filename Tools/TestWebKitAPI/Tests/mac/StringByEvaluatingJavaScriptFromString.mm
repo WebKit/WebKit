@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 TEST(WebKit1, StringByEvaluatingJavaScriptFromString)
 {
     // maps expected result <= JavaScript expression
-    RetainPtr<NSDictionary> expressions(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:
+    RetainPtr<NSDictionary> expressions = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
         @"0", @"0",
         @"0", @"'0'",
         @"", @"",
@@ -53,7 +53,7 @@ TEST(WebKit1, StringByEvaluatingJavaScriptFromString)
         nil
     ]);
 
-    RetainPtr<WebView> webView (AdoptNS, [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""]);
+    RetainPtr<WebView> webView  = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""]);
 
     // Test a nil string
     NSString *result = [webView.get() stringByEvaluatingJavaScriptFromString:nil];

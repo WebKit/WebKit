@@ -40,9 +40,9 @@
 
 bool LoadItem::invoke() const
 {
-    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_url.get()));
+    RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_url.get()));
     NSString *urlNS = (NSString *)urlCF.get();
-    RetainPtr<CFStringRef> targetCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_target.get()));
+    RetainPtr<CFStringRef> targetCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_target.get()));
     NSString *targetNS = (NSString *)targetCF.get();
 
     WebFrame *targetFrame;
@@ -56,11 +56,11 @@ bool LoadItem::invoke() const
 
 bool LoadHTMLStringItem::invoke() const
 {
-    RetainPtr<CFStringRef> contentCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_content.get()));
-    RetainPtr<CFStringRef> baseURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_baseURL.get()));
+    RetainPtr<CFStringRef> contentCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_content.get()));
+    RetainPtr<CFStringRef> baseURLCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_baseURL.get()));
 
     if (m_unreachableURL) {
-        RetainPtr<CFStringRef> unreachableURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_unreachableURL.get()));
+        RetainPtr<CFStringRef> unreachableURLCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_unreachableURL.get()));
         [mainFrame loadAlternateHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()] forUnreachableURL:[NSURL URLWithString:(NSString *)unreachableURLCF.get()]];
         return true;
     }
@@ -77,7 +77,7 @@ bool ReloadItem::invoke() const
 
 bool ScriptItem::invoke() const
 {
-    RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_script.get()));
+    RetainPtr<CFStringRef> scriptCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_script.get()));
     NSString *scriptNS = (NSString *)scriptCF.get();
     [[mainFrame webView] stringByEvaluatingJavaScriptFromString:scriptNS];
     return true;

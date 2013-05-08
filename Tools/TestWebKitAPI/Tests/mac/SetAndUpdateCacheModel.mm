@@ -39,7 +39,7 @@ TEST(WebKit1, SetAndUpdateCacheModelInitialModel)
 {
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
     EXPECT_EQ((int)WebCacheModelDocumentBrowser, (int)[WebView _cacheModel]);
 }
@@ -64,7 +64,7 @@ TEST(WebKit1, SetAndUpdateCacheModelPreferencesChangeMix)
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
-    RetainPtr<WebPreferences> customPreferences(AdoptNS, [[WebPreferences alloc] initWithIdentifier:@"SetAndUpdateCacheModelPreferencesChangeMix"]);
+    RetainPtr<WebPreferences> customPreferences = adoptNS([[WebPreferences alloc] initWithIdentifier:@"SetAndUpdateCacheModelPreferencesChangeMix"]);
 
     // 1) The customPreferences is not set on a view.
     EXPECT_EQ((int)WebCacheModelDocumentBrowser, (int)[WebView _cacheModel]);
@@ -79,7 +79,7 @@ TEST(WebKit1, SetAndUpdateCacheModelPreferencesChangeMix)
 
 
     // 2) The cache model should follow the highest value of cache model between the two preferences.
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     [webView.get() setPreferences:customPreferences.get()];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
 
