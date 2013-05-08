@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKContextPrivateMac.h"
 
+#import "ImmutableArray.h"
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
 #import "StringUtilities.h"
@@ -86,12 +87,8 @@ WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
     return toAPI(key);
 }
 
-WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
+static PassRefPtr<ImmutableDictionary> createInfoDictionary(const PluginModuleInfo& info)
 {
-    PluginModuleInfo info = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
-    if (info.path.isNull())
-        return 0;
-
     ImmutableDictionary::MapType map;
     map.set(toWTFString(WKPlugInInfoPathKey()), WebString::create(info.path));
     map.set(toWTFString(WKPlugInInfoBundleIdentifierKey()), WebString::create(info.bundleIdentifier));
@@ -99,5 +96,33 @@ WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextR
     map.set(toWTFString(WKPlugInInfoLoadPolicyKey()), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(info))));
     map.set(toWTFString(WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(info.bundleIdentifier))));
 
-    return toAPI(ImmutableDictionary::adopt(map).leakRef());
+    return ImmutableDictionary::adopt(map);
+}
+
+WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
+{
+    PluginModuleInfo plugin = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
+    if (plugin.path.isNull())
+        return 0;
+
+    RefPtr<ImmutableDictionary> dictionary = createInfoDictionary(plugin);
+    return toAPI(dictionary.release().leakRef());
+}
+
+void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetInfoForInstalledPlugInsBlock block)
+{
+    Vector<PluginModuleInfo> plugins = toImpl(contextRef)->pluginInfoStore().plugins();
+
+    Vector<RefPtr<APIObject>> pluginInfoDictionaries;
+    for (const auto& plugin: plugins)
+        pluginInfoDictionaries.append(createInfoDictionary(plugin));
+
+    RefPtr<ImmutableArray> array = ImmutableArray::adopt(pluginInfoDictionaries);
+
+    toImpl(contextRef)->ref();
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        block(toAPI(array.get()), 0);
+    
+        toImpl(contextRef)->deref();
+    });
 }

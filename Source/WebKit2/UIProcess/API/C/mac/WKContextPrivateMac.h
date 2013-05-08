@@ -55,6 +55,9 @@ WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKe
 
 WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
 
+typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
+WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKContextGetInfoForInstalledPlugInsBlock block);
+
 #ifdef __cplusplus
 }
 #endif
