@@ -1,5 +1,18 @@
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
+        Prevent crash when track is deleted during video element deletion.
+        https://bugs.webkit.org/show_bug.cgi?id=106183
+
+        Reviewed by Dean Jackson.
+
+        Test: media/track/track-remove-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFrom): Set m_inActiveDocument to false so we
+            do not process text track cues or dispatch related events.
+
+2013-05-08  Eric Carlson  <eric.carlson@apple.com>
+
         [Mac] Unreviewed buildfix after r149741.
 
         * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
