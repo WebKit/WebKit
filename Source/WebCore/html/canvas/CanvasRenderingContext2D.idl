@@ -30,38 +30,18 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void save();
     void restore();
 
-    void scale([Default=Undefined] optional float sx,
-               [Default=Undefined] optional float sy);
-    void rotate([Default=Undefined] optional float angle);
-    void translate([Default=Undefined] optional float tx,
-                   [Default=Undefined] optional float ty);
-    void transform([Default=Undefined] optional float m11,
-                   [Default=Undefined] optional float m12,
-                   [Default=Undefined] optional float m21,
-                   [Default=Undefined] optional float m22,
-                   [Default=Undefined] optional float dx,
-                   [Default=Undefined] optional float dy);
-    void setTransform([Default=Undefined] optional float m11,
-                      [Default=Undefined] optional float m12,
-                      [Default=Undefined] optional float m21,
-                      [Default=Undefined] optional float m22,
-                      [Default=Undefined] optional float dx,
-                      [Default=Undefined] optional float dy);
+    void scale(float sx, float sy);
+    void rotate(float angle);
+    void translate(float tx, float ty);
+    void transform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
 
     attribute float globalAlpha;
     [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
 
-    CanvasGradient createLinearGradient([Default=Undefined] optional float x0,
-                                        [Default=Undefined] optional float y0,
-                                        [Default=Undefined] optional float x1,
-                                        [Default=Undefined] optional float y1)
+    CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1)
         raises (DOMException);
-    CanvasGradient createRadialGradient([Default=Undefined] optional float x0,
-                                        [Default=Undefined] optional float y0,
-                                        [Default=Undefined] optional float r0,
-                                        [Default=Undefined] optional float x1,
-                                        [Default=Undefined] optional float y1,
-                                        [Default=Undefined] optional float r1)
+    CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
         raises (DOMException);
 
     attribute float lineWidth;
@@ -81,14 +61,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [Custom] attribute Array webkitLineDash;
     attribute float webkitLineDashOffset;
 
-    void clearRect([Default=Undefined] optional float x,
-                   [Default=Undefined] optional float y,
-                   [Default=Undefined] optional float width,
-                   [Default=Undefined] optional float height);
-    void fillRect([Default=Undefined] optional float x,
-                  [Default=Undefined] optional float y,
-                  [Default=Undefined] optional float width,
-                  [Default=Undefined] optional float height);
+    void clearRect(float x, float y, float width, float height);
+    void fillRect(float x, float y, float width, float height);
 
     void beginPath();
 
@@ -98,53 +72,28 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
-    void moveTo([Default=Undefined] optional float x,
-                [Default=Undefined] optional float y);
-    void lineTo([Default=Undefined] optional float x,
-                [Default=Undefined] optional float y);
-    void quadraticCurveTo([Default=Undefined] optional float cpx,
-                          [Default=Undefined] optional float cpy,
-                          [Default=Undefined] optional float x,
-                          [Default=Undefined] optional float y);
-    void bezierCurveTo([Default=Undefined] optional float cp1x,
-                       [Default=Undefined] optional float cp1y,
-                       [Default=Undefined] optional float cp2x,
-                       [Default=Undefined] optional float cp2y,
-                       [Default=Undefined] optional float x,
-                       [Default=Undefined] optional float y);
-    void arcTo([Default=Undefined] optional float x1,
-               [Default=Undefined] optional float y1,
-               [Default=Undefined] optional float x2,
-               [Default=Undefined] optional float y2,
-               [Default=Undefined] optional float radius)
+    void moveTo(float x, float y);
+    void lineTo(float x, float y);
+    void quadraticCurveTo(float cpx, float cpy, float x, float y);
+    void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
+    void arcTo(float x1, float y1, float x2, float y2, float radius)
         raises (DOMException);
-    void rect([Default=Undefined] optional float x,
-              [Default=Undefined] optional float y,
-              [Default=Undefined] optional float width,
-              [Default=Undefined] optional float height);
-    void arc([Default=Undefined] optional float x,
-             [Default=Undefined] optional float y,
-             [Default=Undefined] optional float radius,
-             [Default=Undefined] optional float startAngle,
-             [Default=Undefined] optional float endAngle,
-             [Default=Undefined] optional boolean anticlockwise)
+    void rect(float x, float y, float width, float height);
+    void arc(float x, float y, float radius, float startAngle, float endAngle, [Default=Undefined] optional boolean anticlockwise)
         raises (DOMException);
 
     void fill(optional CanvasWindingRule winding);
     void stroke();
     void clip(optional CanvasWindingRule winding);
-    boolean isPointInPath([Default=Undefined] optional float x,
-                          [Default=Undefined] optional float y,
-                          optional CanvasWindingRule winding);
-    boolean isPointInStroke([Default=Undefined] optional float x,
-                            [Default=Undefined] optional float y);
+    boolean isPointInPath(float x, float y, optional CanvasWindingRule winding);
+    boolean isPointInStroke(float x, float y);
 
     // text
     attribute DOMString font;
     attribute DOMString textAlign;
     attribute DOMString textBaseline;
 
-    TextMetrics measureText([Default=Undefined] optional DOMString text);
+    TextMetrics measureText(DOMString text);
 
     // other
 
@@ -173,11 +122,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void setFillColor(float r, float g, float b, float a);
     void setFillColor(float c, float m, float y, float k, float a);
 
-    void strokeRect([Default=Undefined] optional float x,
-                    [Default=Undefined] optional float y,
-                    [Default=Undefined] optional float width,
-                    [Default=Undefined] optional float height,
-                    optional float lineWidth);
+    void strokeRect(float x, float y, float width, float height, optional float lineWidth);
 
     void drawImage(HTMLImageElement? image, float x, float y)
         raises (DOMException);
@@ -233,12 +178,10 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [Custom] attribute custom fillStyle;
 
     // pixel manipulation
-    ImageData getImageData([Default=Undefined] optional float sx, [Default=Undefined] optional float sy,
-                           [Default=Undefined] optional float sw, [Default=Undefined] optional float sh)
+    ImageData getImageData(float sx, float sy, float sw, float sh)
         raises(DOMException);
 
-    ImageData webkitGetImageDataHD([Default=Undefined] optional float sx, [Default=Undefined] optional float sy,
-                                   [Default=Undefined] optional float sw, [Default=Undefined] optional float sh)
+    ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh)
         raises(DOMException);
 
     readonly attribute float webkitBackingStorePixelRatio;

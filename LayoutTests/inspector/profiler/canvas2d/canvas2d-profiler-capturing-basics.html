@@ -230,9 +230,9 @@ function testDeepNestedSaveRestoreCalls()
     assertNumberOfCallsInLog(23);
     for (var i = 0; i < 10; ++i) {
         ctx.rotate(1);
-        ctx.scale(2);
+        ctx.scale(2, 2);
         ctx.clip();
-        ctx.transform(3);
+        ctx.transform(3, 3, 3, 3, 3, 3);
         ctx.restore();
         assertNumberOfCallsInLog(24 + i);
     }

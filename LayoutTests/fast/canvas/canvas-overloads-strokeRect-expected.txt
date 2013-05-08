@@ -3,10 +3,10 @@ Test the behavior of CanvasRenderingContext2D.strokeRect() when called with diff
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ctx.strokeRect() is undefined
-PASS ctx.strokeRect(0) is undefined
-PASS ctx.strokeRect(0, 0) is undefined
-PASS ctx.strokeRect(0, 0, 0) is undefined
+PASS ctx.strokeRect() threw exception TypeError: Not enough arguments.
+PASS ctx.strokeRect(0) threw exception TypeError: Not enough arguments.
+PASS ctx.strokeRect(0, 0) threw exception TypeError: Not enough arguments.
+PASS ctx.strokeRect(0, 0, 0) threw exception TypeError: Not enough arguments.
 PASS ctx.strokeRect(0, 0, 0, 0) is undefined
 PASS ctx.strokeRect(0, 0, 0, 0, 0) is undefined
 PASS successfullyParsed is true

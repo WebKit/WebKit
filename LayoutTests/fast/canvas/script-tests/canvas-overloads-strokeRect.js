@@ -2,12 +2,11 @@ description("Test the behavior of CanvasRenderingContext2D.strokeRect() when cal
 
 var ctx = document.createElement('canvas').getContext('2d');
 
-var SyntaxError = "SyntaxError: Syntax error";
-var TypeError = "TypeError: Type error";
+var TypeErrorNotEnoughArguments = "TypeError: Not enough arguments";
 
-shouldBe("ctx.strokeRect()", "undefined");
-shouldBe("ctx.strokeRect(0)", "undefined");
-shouldBe("ctx.strokeRect(0, 0)", "undefined");
-shouldBe("ctx.strokeRect(0, 0, 0)", "undefined");
+shouldThrow("ctx.strokeRect()", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.strokeRect(0)", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.strokeRect(0, 0)", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.strokeRect(0, 0, 0)", "TypeErrorNotEnoughArguments");
 shouldBe("ctx.strokeRect(0, 0, 0, 0)", "undefined");
 shouldBe("ctx.strokeRect(0, 0, 0, 0, 0)", "undefined");

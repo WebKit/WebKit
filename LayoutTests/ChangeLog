@@ -1,3 +1,18 @@
+2013-05-08  Dongseong Hwang  <dongseong.hwang@intel.com>
+
+        Make optional arguments in CanvasRenderingContext2D match the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=115723
+
+        Reviewed by Dean Jackson.
+
+        When tests use <canvas> API with not enough arguments, TypeError
+        exception is fired now. So three tests are changed to match the canvas
+        spec.
+
+        * fast/canvas/canvas-overloads-strokeRect-expected.txt:
+        * fast/canvas/script-tests/canvas-overloads-strokeRect.js:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+
 2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an image only failure expectation to fast/css-generated-content/close-quote-negative-depth.html per
