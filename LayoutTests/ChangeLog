@@ -1,5 +1,12 @@
 2013-05-08  David Kilzer  <ddkilzer@apple.com>
 
+        Remove chromium test results added in r149743
+
+        * platform/chromium/fast/js/parse-error-external-script-in-eval-expected.txt: Removed.
+        * platform/chromium/fast/js/parse-error-external-script-in-new-Function-expected.txt: Removed.
+
+2013-05-08  David Kilzer  <ddkilzer@apple.com>
+
         Add layout tests for test cases in Bug 5206
         <http://webkit.org/b/5206>
 
