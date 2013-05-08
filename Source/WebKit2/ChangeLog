@@ -1,3 +1,13 @@
+2013-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13776220> 13A451: PluginProcess(2225) deny file-read-data ~/Library/InputManagers
+        <rdar://problem/13642510> PluginProcess logs sandbox violations initializing TextServices
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb: Allow more
+        TextServices and NSInputManager directories.
+
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
         Remove BinarySemaphoreWin.cpp.
