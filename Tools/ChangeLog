@@ -1,3 +1,15 @@
+2013-05-08  Alberto Garcia  <agarcia@igalia.com>
+
+        Tools: add new BlackBerry include dirs.
+        https://bugs.webkit.org/show_bug.cgi?id=115514
+
+        Reviewed by Rob Buis.
+
+        iType include dirs are missing, and HarfBuzz needs to be fixed.
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments):
+
 2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Plumb the Automake build system for the Battery Status API feature
