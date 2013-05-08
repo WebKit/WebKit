@@ -28,7 +28,6 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
-@class DOMInt32Array;
 @class DOMSVGPoint;
 @class NSString;
 
@@ -40,7 +39,6 @@
 @property(copy) NSString *stringAttrWithGetterException;
 @property(copy) NSString *stringAttrWithSetterException;
 
-- (void)multiTransferList:(NSString *)first tx:(DOMInt32Array *)tx second:(NSString *)second txx:(DOMInt32Array *)txx;
 - (void)setShadow:(float)width height:(float)height blur:(float)blur color:(NSString *)color alpha:(float)alpha;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)methodWithException;

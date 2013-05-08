@@ -25,7 +25,6 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMStringList.h"
-#include "JSInt32Array.h"
 #include "JSSVGPoint.h"
 #include "JSSerializedScriptValue.h"
 #include "JSTestCallback.h"
@@ -117,7 +116,6 @@ ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
     { "func", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t)0, NoIntrinsic },
-    { "multiTransferList", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMultiTransferList), (intptr_t)1, NoIntrinsic },
     { "setShadow", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t)3, NoIntrinsic },
     { "methodWithSequenceArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithSequenceArg), (intptr_t)1, NoIntrinsic },
     { "nullableArrayArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionNullableArrayArg), (intptr_t)1, NoIntrinsic },
@@ -129,7 +127,7 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestTypedefsPrototypeTable = { 34, 31, JSTestTypedefsPrototypeTableValues, 0 };
+static const HashTable JSTestTypedefsPrototypeTable = { 33, 31, JSTestTypedefsPrototypeTableValues, 0 };
 const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, &JSTestTypedefsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 JSObject* JSTestTypedefsPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -377,49 +375,6 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->func(x);
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestTypedefs::s_info))
-        return throwVMTypeError(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestTypedefs::s_info);
-    TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    if (exec->argumentCount() < 1)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    RefPtr<SerializedScriptValue> first(SerializedScriptValue::create(exec, exec->argument(0), 0, 0));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    size_t argsCount = exec->argumentCount();
-    if (argsCount <= 1) {
-        impl->multiTransferList(first);
-        return JSValue::encode(jsUndefined());
-    }
-
-    Int32Array* tx(toInt32Array(exec->argument(1)));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    if (argsCount <= 2) {
-        impl->multiTransferList(first, tx);
-        return JSValue::encode(jsUndefined());
-    }
-
-    RefPtr<SerializedScriptValue> second(SerializedScriptValue::create(exec, exec->argument(2), 0, 0));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    if (argsCount <= 3) {
-        impl->multiTransferList(first, tx, second);
-        return JSValue::encode(jsUndefined());
-    }
-
-    Int32Array* txx(toInt32Array(exec->argument(3)));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    impl->multiTransferList(first, tx, second, txx);
     return JSValue::encode(jsUndefined());
 }
 

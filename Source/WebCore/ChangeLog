@@ -1,3 +1,43 @@
+2013-05-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove unused [TransferList] extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=115788
+
+        Reviewed by Kentaro Hara.
+
+        Remove [TransferList] extended attribute and corresponding tests as it has no
+        effect on the generated JSC bindings.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.h:
+        (WebDOMTestSerializedScriptValueInterface):
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.h:
+        (WebDOMTestTypedefs):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (JSTestSerializedScriptValueInterfacePrototype):
+        (JSTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.mm:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.mm:
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+
 2013-05-08  Dongseong Hwang  <dongseong.hwang@intel.com>
 
         Make optional arguments in CanvasRenderingContext2D match the spec.

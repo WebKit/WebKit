@@ -50,32 +50,6 @@ WEBKIT_API GType
 webkit_dom_test_serialized_script_value_interface_get_type (void);
 
 /**
- * webkit_dom_test_serialized_script_value_interface_accept_transfer_list:
- * @self: A #WebKitDOMTestSerializedScriptValueInterface
- * @data: A #WebKitDOMSerializedScriptValue
- * @transferList: A #WebKitDOMInt32Array
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMInt32Array* transferList);
-
-/**
- * webkit_dom_test_serialized_script_value_interface_multi_transfer_list:
- * @self: A #WebKitDOMTestSerializedScriptValueInterface
- * @first: A #WebKitDOMSerializedScriptValue
- * @tx: A #WebKitDOMInt32Array
- * @second: A #WebKitDOMSerializedScriptValue
- * @txx: A #WebKitDOMInt32Array
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMInt32Array* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMInt32Array* txx);
-
-/**
  * webkit_dom_test_serialized_script_value_interface_get_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *

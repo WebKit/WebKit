@@ -32,7 +32,6 @@ namespace WebCore {
 class TestSerializedScriptValueInterface;
 };
 
-class WebDOMInt32Array;
 class WebDOMMessagePortArray;
 class WebDOMString;
 
@@ -51,9 +50,6 @@ public:
     void setCachedValue(const WebDOMString&);
     WebDOMMessagePortArray ports() const;
     WebDOMString cachedReadonlyValue() const;
-
-    void acceptTransferList(const WebDOMString& data, const WebDOMInt32Array& transferList);
-    void multiTransferList(const WebDOMString& first, const WebDOMInt32Array& tx, const WebDOMString& second, const WebDOMInt32Array& txx);
 
     WebCore::TestSerializedScriptValueInterface* impl() const;
 

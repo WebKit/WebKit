@@ -21,11 +21,9 @@
 #include "config.h"
 #include "WebDOMTestTypedefs.h"
 
-#include "Int32Array.h"
 #include "KURL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
-#include "WebDOMInt32Array.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
@@ -190,14 +188,6 @@ void WebDOMTestTypedefs::func(const WebDOMlong[]& x)
         return;
 
     impl()->func(toWebCore(x));
-}
-
-void WebDOMTestTypedefs::multiTransferList(const WebDOMString& first, const WebDOMInt32Array& tx, const WebDOMString& second, const WebDOMInt32Array& txx)
-{
-    if (!impl())
-        return;
-
-    impl()->multiTransferList(WebCore::SerializedScriptValue::create(WTF::String(first)), toWebCore(tx), WebCore::SerializedScriptValue::create(WTF::String(second)), toWebCore(txx));
 }
 
 void WebDOMTestTypedefs::setShadow(float width, float height, float blur, const WebDOMString& color, float alpha)

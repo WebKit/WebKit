@@ -99,7 +99,6 @@ ReturnNewObject
 SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject
-TransferList=*
 TreatNullAs=NullString
 TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString

@@ -28,7 +28,6 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
-@class DOMInt32Array;
 @class DOMMessagePortArray;
 @class NSString;
 
@@ -38,9 +37,6 @@
 @property(retain) NSString *cachedValue;
 @property(readonly, retain) DOMMessagePortArray *ports;
 @property(readonly, retain) NSString *cachedReadonlyValue;
-
-- (void)acceptTransferList:(NSString *)data transferList:(DOMInt32Array *)transferList;
-- (void)multiTransferList:(NSString *)first tx:(DOMInt32Array *)tx second:(NSString *)second txx:(DOMInt32Array *)txx;
 @end
 
 #endif

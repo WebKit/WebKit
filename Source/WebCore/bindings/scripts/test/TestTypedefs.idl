@@ -42,8 +42,6 @@
 
     [StrictTypeChecking] void func(optional ARRAY_OF_LONGS x);
 
-    void multiTransferList([TransferList=tx] SCRIPT_VALUE first, optional ARRAY tx, optional TRANSFER_TXX_SCRIPT_VALUE second, optional ARRAY txx);
-
     void setShadow(DOUBLE width, DOUBLE height, float blur, [StrictTypeChecking] optional STRING color, optional DOUBLE alpha);
 
     ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
@@ -77,4 +75,3 @@ typedef TestCallback               TEST_CALLBACK;
 typedef TestSubObjConstructor      T;
 typedef Int32Array                 ARRAY;
 typedef DOMException               E;
-typedef [TransferList=txx] SerializedScriptValue TRANSFER_TXX_SCRIPT_VALUE;
