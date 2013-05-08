@@ -1,3 +1,13 @@
+2013-05-08  Lucas Forschler  <lforschler@apple.com>
+
+        Teach buildbot how to compile 32-bit on Mac.
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+        (ExtractTestResultsAndLeaks):
+
 2013-05-08  Eli Fidler  <efidler@blackberry.com>
 
         [BlackBerry] Fix usage of BlackBerry::Platform::String
