@@ -20,6 +20,7 @@
                     { "name": "apple-mini-208", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-209", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-210", "platform": "mac-mountainlion"},
+                    { "name": "apple-mini-218", "platform": "mac-mountainlion"},
 
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -103,6 +104,10 @@
                       "platform": "mac-mountainlion", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["mountainlion-release-tests-wk1", "mountainlion-release-tests-wk2", "mountainlion-release-perf"],
                       "slavenames": ["apple-mini-204"]
+                    },
+                    { "name": "Apple MountainLion Release (32-bit Build)", "type": "Build", "builddir": "mountainlion-release",
+                      "platform": "mac-mountainlion", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["apple-mini-218"]
                     },
                     { "name": "Apple MountainLion Debug WK1 (Tests)", "type": "Test", "builddir": "mountainlion-debug-tests-wk1",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
