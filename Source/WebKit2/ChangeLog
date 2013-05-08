@@ -1,3 +1,31 @@
+2013-05-08  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] REGRESSION (Custom Protocols): Reproducible crash when navigating to URL with an invalid scheme
+        https://bugs.webkit.org/show_bug.cgi?id=115790
+
+        Reviewed by Alexey Proskuryakov.
+
+        NSMutableSet does not support adding or removing nil objects, and
+        WTF::HashSet does not support adding, removing, or checking for null
+        WTF::Strings.
+
+        For the NSMutableSet case, make sure that we don't try to add or remove
+        nil NSStrings.
+
+        For the WTF::HashSet case, NSURL will return a nil NSString if we ask
+        it for its scheme when it is invalid, which we will convert to a null
+        WTF::String. Don't try to check if our HashSet of registered schemes
+        contains a null String.
+
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::registerScheme): Assert that the scheme
+        isn't null. We reject null schemes at the WKBrowsingContextController level.
+        (WebKit::CustomProtocolManager::unregisterScheme): Ditto.
+        (WebKit::CustomProtocolManager::supportsScheme): If scheme is null, return false.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]): Do not register a nil scheme.
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]): Ditto.
+
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
         Apply remote changes to storage maps locally

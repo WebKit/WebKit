@@ -99,6 +99,9 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 + (void)registerSchemeForCustomProtocol:(NSString *)scheme
 {
+    if (!scheme)
+        return;
+
     NSString *lowercaseScheme = [scheme lowercaseString];
     [[WKBrowsingContextController customSchemes] addObject:lowercaseScheme];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:lowercaseScheme];
@@ -106,6 +109,9 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
 {
+    if (!scheme)
+        return;
+
     NSString *lowercaseScheme = [scheme lowercaseString];
     [[WKBrowsingContextController customSchemes] removeObject:lowercaseScheme];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:lowercaseScheme];

@@ -180,18 +180,23 @@ void CustomProtocolManager::removeCustomProtocol(WKCustomProtocol *customProtoco
     
 void CustomProtocolManager::registerScheme(const String& scheme)
 {
+    ASSERT(!scheme.isNull());
     MutexLocker locker(m_registeredSchemesMutex);
     m_registeredSchemes.add(scheme);
 }
     
 void CustomProtocolManager::unregisterScheme(const String& scheme)
 {
+    ASSERT(!scheme.isNull());
     MutexLocker locker(m_registeredSchemesMutex);
     m_registeredSchemes.remove(scheme);
 }
 
 bool CustomProtocolManager::supportsScheme(const String& scheme)
 {
+    if (scheme.isNull())
+        return false;
+
     MutexLocker locker(m_registeredSchemesMutex);
     return m_registeredSchemes.contains(scheme);
 }
