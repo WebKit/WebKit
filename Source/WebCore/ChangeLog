@@ -1,3 +1,18 @@
+2013-05-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix, AppleWin port.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::seek):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        (WebCore):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (MediaPlayerPrivateAVFoundation):
+
 2013-05-08  Xingnan Wang  <xingnan.wang@intel.com>
 
         Heap-use-after-free in WebCore::AudioNodeOutput::pull

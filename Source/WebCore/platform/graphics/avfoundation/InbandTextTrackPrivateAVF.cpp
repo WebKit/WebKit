@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
+#if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivateAVF.h"
 
@@ -447,4 +447,4 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
+#endif // ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
