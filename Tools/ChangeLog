@@ -1,3 +1,14 @@
+2013-05-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r149271.
+        http://trac.webkit.org/changeset/149271
+        https://bugs.webkit.org/show_bug.cgi?id=115780
+
+        The mangled symbols are now enforced through LDFLAGS
+        (Requested by zdobersek on #webkit).
+
+        * BuildSlaveSupport/gtk/daemontools-buildbot.conf:
+
 2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Flakiness Dashboard] Remove the Chromium fallback platforms listing from the legend popup
