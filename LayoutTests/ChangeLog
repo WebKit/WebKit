@@ -1,3 +1,13 @@
+2013-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        TextTrackCue should support empty content
+        https://bugs.webkit.org/show_bug.cgi?id=115821
+
+        Reviewed by Jer Noble.
+
+        * media/track/track-cue-empty-text-crash-expected.txt: Added.
+        * media/track/track-cue-empty-text-crash.html: Added.
+
 2013-05-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add layout test that lists all global constructors

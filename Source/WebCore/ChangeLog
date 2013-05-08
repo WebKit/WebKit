@@ -1,3 +1,22 @@
+2013-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        TextTrackCue should support empty content
+        https://bugs.webkit.org/show_bug.cgi?id=115821
+
+        Reviewed by Jer Noble.
+
+        Test: media/track/track-cue-empty-text-crash.html
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Don't bother trying to render
+            cues with no content.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::getCueAsHTML): Return early if there isn't a node tree.
+        (WebCore::TextTrackCue::createCueRenderingTree): Ditto.
+        (WebCore::TextTrackCue::determineTextDirection): Ditto.
+        (WebCore::TextTrackCue::updateDisplayTree): Return early if there isn't a cue rendering tree.
+
 2013-05-08  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed AppleWin build fix.

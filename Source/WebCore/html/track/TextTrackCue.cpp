@@ -517,6 +517,9 @@ void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerN
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
     createWebVTTNodeTree();
+    if (!m_webVTTNodeTree)
+        return 0;
+
     RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(ownerDocument());
     copyWebVTTNodeToDOMTree(m_webVTTNodeTree.get(), clonedFragment.get());
     return clonedFragment.release();
@@ -526,6 +529,9 @@ PassRefPtr<DocumentFragment> TextTrackCue::createCueRenderingTree()
 {
     RefPtr<DocumentFragment> clonedFragment;
     createWebVTTNodeTree();
+    if (!m_webVTTNodeTree)
+        return 0;
+
     clonedFragment = DocumentFragment::create(ownerDocument());
     m_webVTTNodeTree->cloneChildNodes(clonedFragment.get());
     return clonedFragment.release();
@@ -613,6 +619,8 @@ void TextTrackCue::determineTextDirection()
 {
     DEFINE_STATIC_LOCAL(const String, rtTag, (ASCIILiteral("rt")));
     createWebVTTNodeTree();
+    if (!m_webVTTNodeTree)
+        return;
 
     // Apply the Unicode Bidirectional Algorithm's Paragraph Level steps to the
     // concatenation of the values of each WebVTT Text Object in nodes, in a
@@ -782,6 +790,9 @@ void TextTrackCue::updateDisplayTree(double movieTime)
 
     // Update the two sets containing past and future WebVTT objects.
     RefPtr<DocumentFragment> referenceTree = createCueRenderingTree();
+    if (!referenceTree)
+        return;
+
     markFutureAndPastNodes(referenceTree.get(), startTime(), movieTime);
     m_cueBackgroundBox->appendChild(referenceTree);
 }
