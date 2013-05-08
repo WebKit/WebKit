@@ -1,3 +1,18 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Safari unexpectedly quits with invalid message from the web process with message ID 0x323002f (WebPageProxy.DecidePolicyForNavigationAction)
+        https://bugs.webkit.org/show_bug.cgi?id=115814
+        <rdar://problem/12331258>
+
+        Reviewed by Andreas Kling.
+
+        To ensure that any asynchronous messages are delivered to the UI process before
+        synchronous messages (except when doing so would lead to a deadlock), Call
+        setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage on the UI process connections.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
 2013-05-08  Tim Horton  <timothy_horton@apple.com>
 
         Coalesce WKView visibleRect changes

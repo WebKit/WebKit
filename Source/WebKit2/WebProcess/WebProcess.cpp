@@ -241,6 +241,12 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
         it->value->initializeConnection(connection);
 
     m_webConnection = WebConnectionToUIProcess::create(this);
+
+    // In order to ensure that the asynchronous messages that are used for notifying the UI process
+    // about when WebFrame objects come and go are always delivered before the synchronous policy messages,
+    // use this flag to force synchronous messages to be treaded as asynchronous messages in the UI process
+    // unless when doing so would lead to a deadlock.
+    connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
 }
 
 void WebProcess::didCreateDownload()
