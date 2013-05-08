@@ -151,6 +151,7 @@ namespace WTF {
 
         typedef P* PeekType;
         static PeekType peek(const RefPtr<P>& value) { return value.get(); }
+        static PeekType peek(P* value) { return value; }
     };
 
     template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
