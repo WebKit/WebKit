@@ -1615,11 +1615,11 @@ decl_list:
     ;
 
 declaration:
-    VAR_DEFINITION ':' maybe_space expr prio {
+    VAR_DEFINITION maybe_space ':' maybe_space expr prio {
 #if ENABLE_CSS_VARIABLES
-        parser->storeVariableDeclaration($1, parser->sinkFloatingValueList($4), $5);
+        parser->storeVariableDeclaration($1, parser->sinkFloatingValueList($5), $6);
         $$ = true;
-        parser->markPropertyEnd($5, true);
+        parser->markPropertyEnd($6, true);
 #else
         $$ = false;
 #endif

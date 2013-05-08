@@ -1,3 +1,17 @@
+2013-05-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        Allow blank spaces before colon (:) on CSS variable definition
+        https://bugs.webkit.org/show_bug.cgi?id=115802
+
+        Reviewed by Darin Adler.
+
+        Test: css3/css-variable-definition.html
+
+        Modified the grammar to allow blank spaces before the colon on CSS
+        variable definitions.
+
+        * css/CSSGrammar.y.in:
+
 2013-05-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GStreamer] Does memory buffering even with preload set to none
