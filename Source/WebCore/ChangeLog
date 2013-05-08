@@ -1,3 +1,13 @@
+2013-05-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        We should not ref() the RefPtr twice in CanvasStyle
+
+        Reviewed by Darin Adler.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        We leak the ref of PassRefPtr, we should not ref() it a second time.
+
 2013-05-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Devirtualize Document class type checking

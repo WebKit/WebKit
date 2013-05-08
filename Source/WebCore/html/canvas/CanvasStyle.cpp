@@ -127,14 +127,12 @@ CanvasStyle::CanvasStyle(PassRefPtr<CanvasGradient> gradient)
     : m_type(Gradient)
     , m_gradient(gradient.leakRef())
 {
-    m_gradient->ref();
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
     : m_type(ImagePattern)
     , m_pattern(pattern.leakRef())
 {
-    m_pattern->ref();
 }
 
 CanvasStyle::~CanvasStyle()
