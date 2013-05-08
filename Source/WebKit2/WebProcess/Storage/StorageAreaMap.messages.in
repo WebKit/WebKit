@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageAreaMap {
+    DidGetValues()
     DidSetItem(WTF::String key, bool quotaException)
     DidRemoveItem(WTF::String key)
     DidClear()

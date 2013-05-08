@@ -65,6 +65,7 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
+    void didGetValues();
     void didSetItem(const String& key, bool quotaError);
     void didRemoveItem(const String& key);
     void didClear();
@@ -88,6 +89,7 @@ private:
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 
     RefPtr<WebCore::StorageMap> m_storageMap;
+    bool m_hasPendingClear;
     HashCountedSet<String> m_pendingValueChanges;
 };
 

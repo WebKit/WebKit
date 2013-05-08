@@ -78,7 +78,8 @@ void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
         return;
     }
 
-    m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin.get());
+    if (m_database.isOpen())
+        m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin.get());
 }
 
 bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStrategy)
@@ -274,6 +275,11 @@ void LocalStorageDatabase::updateDatabase()
 
 void LocalStorageDatabase::updateDatabaseWithChangedItems(const HashMap<String, String>& changedItems)
 {
+    if (!m_database.isOpen())
+        openDatabase(CreateIfNonExistent);
+    if (!m_database.isOpen())
+        return;
+
     if (m_shouldClearItems) {
         m_shouldClearItems = false;
 

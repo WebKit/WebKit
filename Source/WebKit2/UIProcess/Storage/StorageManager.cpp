@@ -451,6 +451,8 @@ void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storage
     ASSERT(storageArea);
 
     values = storageArea->items();
+
+    connection->send(Messages::StorageAreaMap::DidGetValues(), storageMapID);
 }
 
 void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString)

@@ -63,6 +63,7 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPt
     , m_storageNamespaceID(storageNamespace->storageNamespaceID())
     , m_quotaInBytes(storageNamespace->quotaInBytes())
     , m_securityOrigin(securityOrigin)
+    , m_hasPendingClear(false)
 {
     if (m_storageType == LocalStorage)
         WebProcess::shared().connection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
@@ -138,6 +139,7 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
 {
     resetValues();
 
+    m_hasPendingClear = true;
     m_storageMap = StorageMap::create(m_quotaInBytes);
     WebProcess::shared().connection()->send(Messages::StorageManager::Clear(m_storageMapID, sourceArea->storageAreaID(), sourceFrame->document()->url()), 0);
 }
@@ -153,6 +155,7 @@ void StorageAreaMap::resetValues()
 {
     m_storageMap = nullptr;
     m_pendingValueChanges.clear();
+    m_hasPendingClear = false;
 }
 
 void StorageAreaMap::loadValuesIfNeeded()
@@ -168,6 +171,15 @@ void StorageAreaMap::loadValuesIfNeeded()
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(values);
+
+    // We want to ignore all changes until we get the DidGetValues message, so treat this as a pending clear.
+    m_hasPendingClear = true;
+}
+
+void StorageAreaMap::didGetValues()
+{
+    ASSERT(m_hasPendingClear);
+    m_hasPendingClear = false;
 }
 
 void StorageAreaMap::didSetItem(const String& key, bool quotaError)
@@ -191,7 +203,8 @@ void StorageAreaMap::didRemoveItem(const String& key)
 
 void StorageAreaMap::didClear()
 {
-    // FIXME: Implement.
+    ASSERT(m_hasPendingClear);
+    m_hasPendingClear = false;
 }
 
 bool StorageAreaMap::shouldApplyChangeForKey(const String& key) const
@@ -212,6 +225,10 @@ bool StorageAreaMap::shouldApplyChangeForKey(const String& key) const
 void StorageAreaMap::applyChange(const String& key, const String& newValue)
 {
     ASSERT(m_storageMap->hasOneRef());
+
+    // There's a clear pending, we don't want any changes until we've gotten the DidClear message.
+    if (m_hasPendingClear)
+        return;
 
     // FIXME: Handle clear.
     ASSERT(!key.isNull());

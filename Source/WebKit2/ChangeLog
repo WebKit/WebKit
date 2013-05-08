@@ -1,3 +1,46 @@
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Don't apply changes while we're clearing the database
+        https://bugs.webkit.org/show_bug.cgi?id=115826
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::openDatabase):
+        Only call didOpenDatabaseWithOrigin if we actually did open the database.
+
+        (WebKit::LocalStorageDatabase::updateDatabaseWithChangedItems):
+        Create the database if needed.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getValues):
+        Send back a DidGetValues message.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        Initialize m_hasPendingClear.
+
+        (WebKit::StorageAreaMap::clear):
+        Set m_hasPendingClear to true.
+
+        (WebKit::StorageAreaMap::resetValues):
+        Set m_hasPendingClear back to false.
+
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        Set m_hasPendingClear to true so we'll ignore any changes that are already part of the returned items.
+
+        (WebKit::StorageAreaMap::didGetValues):
+        Set m_hasPendingClear back to false.
+
+        (WebKit::StorageAreaMap::didClear):
+        Set m_hasPendingClear back to false.
+
+        (WebKit::StorageAreaMap::applyChange):
+        Don't apply the change if m_hasPendingClear is true.
+
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        Add DidGetValues message.
+
 2013-05-08  Andy Estes  <aestes@apple.com>
 
         [WebKit2] REGRESSION (Custom Protocols): Reproducible crash when navigating to URL with an invalid scheme
