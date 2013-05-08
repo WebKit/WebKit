@@ -1,3 +1,10 @@
+2013-05-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding failure expectations for CSS Regions tests
+        that regressed when converted into reftests in r149668.
+
 2013-05-08  Dongseong Hwang  <dongseong.hwang@intel.com>
 
         Make optional arguments in CanvasRenderingContext2D match the spec.
