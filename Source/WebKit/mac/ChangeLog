@@ -1,3 +1,11 @@
+2013-05-07  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13633007> WebKit and others fail to build headers due to build root dependency
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKit.xcconfig: Look for WebCore's headers within the SDK if we're building against one.
+
 2013-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashTraits<RefPtr<P> >::PeekType should be raw pointer for better performance
