@@ -151,8 +151,7 @@ bool ScopeContentDistribution::hasInsertionPoint(const ShadowRoot* holder)
 }
 
 ContentDistributor::ContentDistributor()
-    : m_needsSelectFeatureSet(false)
-    , m_validity(Undetermined)
+    : m_validity(Undetermined)
 {
 }
 
@@ -323,57 +322,6 @@ void ContentDistributor::invalidateDistribution(Element* host)
         ASSERT(m_validity == Invalidating);
         m_validity = Invalidated;
     }
-}
-
-const SelectRuleFeatureSet& ContentDistributor::ensureSelectFeatureSet(ElementShadow* shadow)
-{
-    if (!m_needsSelectFeatureSet)
-        return m_selectFeatures;
-
-    m_selectFeatures.clear();
-    if (ShadowRoot* root = shadow->shadowRoot())
-        collectSelectFeatureSetFrom(root);
-    m_needsSelectFeatureSet = false;
-    return m_selectFeatures;
-}
-
-void ContentDistributor::collectSelectFeatureSetFrom(ShadowRoot* root)
-{
-    if (ScopeContentDistribution::hasElementShadow(root)) {
-        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
-            if (ElementShadow* elementShadow = element->shadow())
-                m_selectFeatures.add(elementShadow->distributor().ensureSelectFeatureSet(elementShadow));
-        }
-    }
-
-    if (ScopeContentDistribution::hasContentElement(root)) {
-        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
-            if (!isHTMLContentElement(element))
-                continue;
-            const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();
-            for (const CSSSelector* selector = list.first(); selector; selector = CSSSelectorList::next(selector)) {
-                for (const CSSSelector* component = selector; component; component = component->tagHistory())
-                    m_selectFeatures.collectFeaturesFromSelector(component);
-            }
-        }
-    }
-}
-
-void ContentDistributor::didAffectSelector(Element* host, AffectedSelectorMask mask)
-{
-    if (ensureSelectFeatureSet(host->shadow()).hasSelectorFor(mask))
-        invalidateDistribution(host);
-}
-
-void ContentDistributor::willAffectSelector(Element* host)
-{
-    for (ElementShadow* shadow = host->shadow(); shadow; shadow = shadow->containingShadow()) {
-        if (shadow->distributor().needsSelectFeatureSet())
-            break;
-        shadow->distributor().setNeedsSelectFeatureSet();
-    }
-
-    invalidateDistribution(host);
 }
 
 void ContentDistributor::didShadowBoundaryChange(Element* host)

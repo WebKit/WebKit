@@ -55,10 +55,6 @@
     boolean isValidContentSelect(Element contentElement) raises(DOMException);
     Node treeScopeRootNode(Node node) raises (DOMException);
     Node parentTreeScope(Node node) raises (DOMException);
-    boolean hasSelectorForIdInShadow(Element host, DOMString id) raises (DOMException);
-    boolean hasSelectorForClassInShadow(Element host, DOMString className) raises (DOMException);
-    boolean hasSelectorForAttributeInShadow(Element host, DOMString attributeName) raises (DOMException);
-    boolean hasSelectorForPseudoClassInShadow(Element host, DOMString pseudoClass) raises (DOMException);
 
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();

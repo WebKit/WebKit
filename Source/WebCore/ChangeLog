@@ -1,3 +1,42 @@
+2013-05-07  Antti Koivisto  <antti@apple.com>
+
+        Remove SelectRuleFeatureSet
+        https://bugs.webkit.org/show_bug.cgi?id=115757
+
+        Reviewed by Benjamin Poulain.
+
+        This is dead code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore):
+        (WebCore::Element::didAffectSelector):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementShadow.h:
+        (WebCore::ElementShadow::invalidateDistribution):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ContentDistributor):
+        (WebCore):
+        * html/shadow/ContentDistributor.h:
+        (ContentDistributor):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        * html/shadow/SelectRuleFeatureSet.cpp: Removed.
+        * html/shadow/SelectRuleFeatureSet.h: Removed.
+        * testing/Internals.cpp:
+        (WebCore):
+        * testing/Internals.idl:
+
 2013-05-07  Anders Carlsson  <andersca@apple.com>
 
         Store the quotes in the same allocation as the QuotesData object

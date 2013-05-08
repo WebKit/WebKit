@@ -66,7 +66,6 @@ public:
     virtual MatchType matchTypeFor(Node*) { return AlwaysMatches; }
     virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
     virtual Type insertionPointType() const = 0;
-    virtual bool canAffectSelector() const { return false; }
 
     bool resetStyleInheritance() const;
     void setResetStyleInheritance(bool);

@@ -85,7 +85,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "ScrollingCoordinator.h"
-#include "SelectRuleFeatureSet.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -400,63 +399,6 @@ Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
     }
     const TreeScope* parentTreeScope = node->treeScope()->parentTreeScope();
     return parentTreeScope ? parentTreeScope->rootNode() : 0;
-}
-
-bool Internals::hasSelectorForIdInShadow(Element* host, const String& idValue, ExceptionCode& ec)
-{
-    if (!host || !host->shadow()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForId(idValue);
-}
-
-bool Internals::hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode& ec)
-{
-    if (!host || !host->shadow()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForClass(className);
-}
-
-bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode& ec)
-{
-    if (!host || !host->shadow()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForAttribute(attributeName);
-}
-
-bool Internals::hasSelectorForPseudoClassInShadow(Element* host, const String& pseudoClass, ExceptionCode& ec)
-{
-    if (!host || !host->shadow()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    const SelectRuleFeatureSet& featureSet = host->shadow()->distributor().ensureSelectFeatureSet(host->shadow());
-    if (pseudoClass == "checked")
-        return featureSet.hasSelectorForChecked();
-    if (pseudoClass == "enabled")
-        return featureSet.hasSelectorForEnabled();
-    if (pseudoClass == "disabled")
-        return featureSet.hasSelectorForDisabled();
-    if (pseudoClass == "indeterminate")
-        return featureSet.hasSelectorForIndeterminate();
-    if (pseudoClass == "link")
-        return featureSet.hasSelectorForLink();
-    if (pseudoClass == "target")
-        return featureSet.hasSelectorForTarget();
-    if (pseudoClass == "visited")
-        return featureSet.hasSelectorForVisited();
-
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 unsigned Internals::numberOfActiveAnimations() const

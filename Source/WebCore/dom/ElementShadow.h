@@ -65,8 +65,6 @@ public:
     void removeAllEventListeners();
 
     void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }
-    void didAffectSelector(AffectedSelectorMask mask) { m_distributor.didAffectSelector(host(), mask); }
-    void willAffectSelector() { m_distributor.willAffectSelector(host()); }
 
     ContentDistributor& distributor() { return m_distributor; }
     const ContentDistributor& distributor() const { return m_distributor; }

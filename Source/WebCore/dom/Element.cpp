@@ -851,11 +851,6 @@ static bool checkNeedsStyleInvalidationForIdChange(const AtomicString& oldId, co
 
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason)
 {
-    if (ElementShadow* parentElementShadow = shadowOfParentForDistribution(this)) {
-        if (shouldInvalidateDistributionWhenAttributeChanged(parentElementShadow, name, newValue))
-            parentElementShadow->invalidateDistribution();
-    }
-
     parseAttribute(name, newValue);
 
     document()->incDOMTreeVersion();
@@ -993,40 +988,6 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
 
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
-}
-
-bool Element::shouldInvalidateDistributionWhenAttributeChanged(ElementShadow* elementShadow, const QualifiedName& name, const AtomicString& newValue)
-{
-    ASSERT(elementShadow);
-    const SelectRuleFeatureSet& featureSet = elementShadow->distributor().ensureSelectFeatureSet(elementShadow);
-
-    if (isIdAttributeName(name)) {
-        AtomicString oldId = elementData()->idForStyleResolution();
-        AtomicString newId = makeIdForStyleResolution(newValue, document()->inQuirksMode());
-        if (newId != oldId) {
-            if (!oldId.isEmpty() && featureSet.hasSelectorForId(oldId))
-                return true;
-            if (!newId.isEmpty() && featureSet.hasSelectorForId(newId))
-                return true;
-        }
-    }
-
-    if (name == HTMLNames::classAttr) {
-        const AtomicString& newClassString = newValue;
-        if (classStringHasClassName(newClassString)) {
-            const bool shouldFoldCase = document()->inQuirksMode();
-            const SpaceSplitString& oldClasses = elementData()->classNames();
-            const SpaceSplitString newClasses(newClassString, shouldFoldCase);
-            if (checkSelectorForClassChange(oldClasses, newClasses, featureSet))
-                return true;
-        } else {
-            const SpaceSplitString& oldClasses = elementData()->classNames();
-            if (checkSelectorForClassChange(oldClasses, featureSet))
-                return true;
-        }
-    }
-
-    return featureSet.hasSelectorForAttribute(name.localName());
 }
 
 // Returns true is the given attribute is an event handler.
@@ -1510,11 +1471,9 @@ ElementShadow* Element::ensureShadow()
     return ensureElementRareData()->ensureShadow();
 }
 
-void Element::didAffectSelector(AffectedSelectorMask mask)
+void Element::didAffectSelector(AffectedSelectorMask)
 {
     setNeedsStyleRecalc();
-    if (ElementShadow* elementShadow = shadowOfParentForDistribution(this))
-        elementShadow->didAffectSelector(mask);
 }
 
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)

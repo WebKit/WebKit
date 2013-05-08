@@ -727,8 +727,6 @@ private:
 
     void createUniqueElementData();
 
-    bool shouldInvalidateDistributionWhenAttributeChanged(ElementShadow*, const QualifiedName&, const AtomicString&);
-
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();
 
