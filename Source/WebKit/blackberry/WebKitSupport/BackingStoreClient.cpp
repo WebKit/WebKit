@@ -53,7 +53,7 @@ static inline IntSize pointToSize(const IntPoint& point)
 
 BackingStoreClient* BackingStoreClient::create(Frame* frame, Frame* parentFrame, WebPage* parentPage)
 {
-    ASSERT(!parentFrame);
+    ASSERT_UNUSED(parentFrame, !parentFrame);
     BackingStoreClient* it = new BackingStoreClient(frame, parentPage);
     return it;
 }
