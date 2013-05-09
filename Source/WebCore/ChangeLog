@@ -1,3 +1,14 @@
+2013-05-09  Darin Adler  <darin@apple.com>
+
+        [Mac] CFError leak under Objective-C garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=115862
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::nsError): Use adoptCF instead of adoptNS since
+        the CFError needs a CFRelease, not an -[NSObject release].
+
 2013-05-09  Alberto Garcia  <agarcia@igalia.com>
 
         BlackBerry: fix call to PluginLayerWebKitThread::setHolePunchRect()
