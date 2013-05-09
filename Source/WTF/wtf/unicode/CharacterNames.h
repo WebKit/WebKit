@@ -38,6 +38,7 @@ namespace Unicode {
 
 const UChar32 aegeanWordSeparatorLine = 0x10100;
 const UChar32 aegeanWordSeparatorDot = 0x10101;
+const UChar apostrophe = 0x0027;
 const UChar blackCircle = 0x25CF;
 const UChar blackSquare = 0x25A0;
 const UChar blackUpPointingTriangle = 0x25B2;
@@ -47,6 +48,7 @@ const UChar carriageReturn = 0x000D;
 const UChar ethiopicPrefaceColon = 0x1366;
 const UChar ethiopicWordspace = 0x1361;
 const UChar fisheye = 0x25C9;
+const UChar quotationMark = 0x0022;
 const UChar hebrewPunctuationGeresh = 0x05F3;
 const UChar hebrewPunctuationGershayim = 0x05F4;
 const UChar HiraganaLetterSmallA = 0x3041;

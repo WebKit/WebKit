@@ -36,7 +36,6 @@ namespace WebCore {
 
 class QuotesData : public RefCounted<QuotesData> {
 public:
-    static PassRefPtr<QuotesData> create(const String& open1, const String& close1, const String& open2, const String& close2);
     static PassRefPtr<QuotesData> create(const Vector<std::pair<String, String> >& quotes);
     ~QuotesData();
 

@@ -1,3 +1,12 @@
+2013-05-09  Darin Adler  <darin@apple.com>
+
+        RenderQuote has giant function for language to quotes map
+        https://bugs.webkit.org/show_bug.cgi?id=115807
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/unicode/CharacterNames.h: Added a couple of character names.
+
 2013-05-08  Michael Saboff  <msaboff@apple.com>
 
         JSC: There should be a disassembler for ARM Thumb 2
