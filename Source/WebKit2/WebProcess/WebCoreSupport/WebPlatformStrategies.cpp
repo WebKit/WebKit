@@ -60,8 +60,8 @@
 #include "WebResourceLoadScheduler.h"
 #endif
 
-// FIXME: Remove this once it works well enough to be the default.
-#define ENABLE_UI_PROCESS_STORAGE 0
+// FIXME: Remove this #ifdef once we don't need the ability to turn the feature off.
+#define ENABLE_UI_PROCESS_STORAGE 1
 
 using namespace WebCore;
 

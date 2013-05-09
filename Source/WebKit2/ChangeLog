@@ -1,5 +1,16 @@
 2013-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Enable UI process storage
+        https://bugs.webkit.org/show_bug.cgi?id=115879
+        <rdar://problem/12239765>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        Flip the switch.
+
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
         Remove extra spaces between right angle brackets in template declarations
         https://bugs.webkit.org/show_bug.cgi?id=115877
 
