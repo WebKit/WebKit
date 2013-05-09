@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\CyclicRedundancyCheck.cpp" />
     <ClCompile Include="..\..\DumpRenderTreeCommon.cpp" />
     <ClCompile Include="..\..\GCController.cpp" />
+    <ClCompile Include="..\..\JavaScriptThreading.cpp" />
     <ClCompile Include="..\..\PixelDumpSupport.cpp" />
     <ClCompile Include="..\..\TestRunner.cpp" />
     <ClCompile Include="..\..\win\AccessibilityControllerWin.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="..\..\DumpRenderTree.h" />
     <ClInclude Include="..\..\DumpRenderTreePrefix.h" />
     <ClInclude Include="..\..\GCController.h" />
+    <ClInclude Include="..\..\JavaScriptThreading.h" />
     <ClInclude Include="..\..\PixelDumpSupport.h" />
     <ClInclude Include="..\..\TestRunner.h" />
     <ClInclude Include="..\..\win\DraggingInfo.h" />

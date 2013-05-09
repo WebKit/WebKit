@@ -1,5 +1,22 @@
 2013-05-09  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN][DRT] Remove duplicated (start|stop)JavaScriptThreads()
+        https://bugs.webkit.org/show_bug.cgi?id=92371
+
+        Reviewed by Brent Fulgham.
+
+        Use JavaScriptThreading.cpp where the same functionality is
+        implemented too. This reduces the dependency on the pthread
+        library. Also replace assert() with WebKit ASSERT().
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpHistoryItem):
+        (dumpBackForwardList):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
+2013-05-09  Patrick Gansterer  <paroga@webkit.org>
+
         [DRT] Replace JavaScriptThreadingPthreads.cpp with JavaScriptThreading.cpp
         https://bugs.webkit.org/show_bug.cgi?id=92505
 

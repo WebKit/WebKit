@@ -615,6 +615,14 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\JavaScriptThreading.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\JavaScriptThreading.h"
+			>
+		</File>
+		<File
 			RelativePath="..\PixelDumpSupport.cpp"
 			>
 		</File>
