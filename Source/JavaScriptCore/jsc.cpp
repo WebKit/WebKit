@@ -86,6 +86,10 @@
 #include <arm/arch.h>
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformLog.h>
+#endif
+
 using namespace JSC;
 using namespace WTF;
 
@@ -522,6 +526,11 @@ int main(int argc, char** argv)
 #endif
 
     timeBeginPeriod(1);
+#endif
+
+#if PLATFORM(BLACKBERRY)
+    // Write all WTF logs to the system log
+    BlackBerry::Platform::setupApplicationLogging("jsc");
 #endif
 
 #if PLATFORM(QT)

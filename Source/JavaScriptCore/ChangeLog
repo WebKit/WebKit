@@ -1,3 +1,16 @@
+2013-05-09  Joe Mason  <jmason@blackberry.com>
+
+        [BlackBerry] Set up logging buffer on start of jsc executable
+        https://bugs.webkit.org/show_bug.cgi?id=114688
+
+        Reviewed by Rob Buis.
+
+        Internal PR: 322715
+        Internally Reviewed By: Jeff Rogers
+
+        * jsc.cpp:
+        (main): call BB::Platform::setupApplicationLogging
+
 2013-05-08  Michael Saboff  <msaboff@apple.com>
 
         JSC: There should be a disassembler for ARM Thumb 2
