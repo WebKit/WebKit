@@ -1,5 +1,13 @@
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed build fix for Qt minimal build.
+
+        r149796 broke builds that have WEB_SOCKETS flag disabled.
+
+        * page/DOMWindow.idl:
+
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Add support for [NoInterfaceObject] Web IDL extended attribute
         https://bugs.webkit.org/show_bug.cgi?id=115714
 

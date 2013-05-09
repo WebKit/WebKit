@@ -326,7 +326,7 @@
     attribute HTMLOptionElementConstructor HTMLOptionElement;
     [CustomGetter, Conditional=VIDEO] attribute HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
     [Conditional=VIDEO] attribute HTMLAudioElementConstructor HTMLAudioElement;
-    [CustomGetter] attribute WebSocketConstructor WebSocket;
+    [Conditional=WEB_SOCKETS, CustomGetter] attribute WebSocketConstructor WebSocket;
     [Conditional=SHARED_WORKERS, CustomGetter] attribute SharedWorkerConstructor SharedWorker; // Usable with the new operator
     // Mozilla has a separate XMLDocument object for XML documents.
     // We just use Document for this.
