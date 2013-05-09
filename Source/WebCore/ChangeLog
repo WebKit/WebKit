@@ -1,3 +1,19 @@
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove m_securityOrigin from XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=115881
+
+        Reviewed by Alexey Proskuryakov.
+
+        The security origin passed to XMLHttpRequest::create was always null, so just get rid of the member variable completely.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::create):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::securityOrigin):
+        * xml/XMLHttpRequest.h:
+        (XMLHttpRequest):
+
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [NoInterfaceObject] extended attribute should be removed for several interfaces

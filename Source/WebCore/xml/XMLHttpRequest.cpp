@@ -49,7 +49,6 @@
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptProfile.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
@@ -167,15 +166,15 @@ static void logConsoleError(ScriptExecutionContext* context, const String& messa
     context->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message);
 }
 
-PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
+PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context)
 {
-    RefPtr<XMLHttpRequest> xmlHttpRequest(adoptRef(new XMLHttpRequest(context, securityOrigin)));
+    RefPtr<XMLHttpRequest> xmlHttpRequest(adoptRef(new XMLHttpRequest(context)));
     xmlHttpRequest->suspendIfNeeded();
 
     return xmlHttpRequest.release();
 }
 
-XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
+XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_async(true)
     , m_includeCredentials(false)
@@ -193,7 +192,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context, PassRefPtr<Secur
     , m_exceptionCode(0)
     , m_progressEventThrottle(this)
     , m_responseTypeCode(ResponseTypeDefault)
-    , m_securityOrigin(securityOrigin)
 {
     initializeXMLHttpRequestStaticData();
 #ifndef NDEBUG
@@ -216,7 +214,7 @@ Document* XMLHttpRequest::document() const
 
 SecurityOrigin* XMLHttpRequest::securityOrigin() const
 {
-    return m_securityOrigin ? m_securityOrigin.get() : scriptExecutionContext()->securityOrigin();
+    return scriptExecutionContext()->securityOrigin();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
