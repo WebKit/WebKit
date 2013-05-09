@@ -291,8 +291,8 @@ void TouchEventHandler::drawTapHighlight()
     Color highlightColor = element->renderStyle()->tapHighlightColor();
 
     m_webPage->m_tapHighlight->draw(region,
-                                    highlightColor.red(), highlightColor.green(), highlightColor.blue(), highlightColor.alpha(),
-                                    shouldHideTapHighlightRightAfterScrolling);
+        highlightColor.red(), highlightColor.green(), highlightColor.blue(), highlightColor.alpha(),
+        shouldHideTapHighlightRightAfterScrolling);
 }
 
 void TouchEventHandler::playSoundIfAnchorIsTarget() const

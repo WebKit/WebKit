@@ -42,13 +42,11 @@ template<> struct HashTraits<TileIndex> : GenericHashTraits<TileIndex> {
     static TileIndex emptyValue() { return TileIndex(); }
     static void constructDeletedValue(TileIndex& slot)
     {
-        new (&slot) TileIndex(std::numeric_limits<unsigned int>::max() - 1,
-                              std::numeric_limits<unsigned int>::max() - 1);
+        new (&slot) TileIndex(std::numeric_limits<unsigned>::max() - 1, std::numeric_limits<unsigned>::max() - 1);
     }
     static bool isDeletedValue(const TileIndex& value)
     {
-        return value.i() == (std::numeric_limits<unsigned int>::max() - 1)
-               && value.j() == (std::numeric_limits<unsigned int>::max() - 1);
+        return value.i() == (std::numeric_limits<unsigned>::max() - 1) && value.j() == (std::numeric_limits<unsigned>::max() - 1);
     }
 };
 } // namespace WTF
