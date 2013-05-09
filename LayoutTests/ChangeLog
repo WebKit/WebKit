@@ -1,5 +1,19 @@
 2013-05-09  Radu Stavila  <stavila@adobe.com>
 
+        [CSSRegions] Change fast/regions/webkit-flow-inlines-inside-regions-bounds[-vertical] tests to make them platform independent
+        https://bugs.webkit.org/show_bug.cgi?id=115851
+
+        Reviewed by Antti Koivisto.
+
+        Modified tests to make them platform independent by using Ahem and no font smoothing.
+
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds.html:
+
+2013-05-09  Radu Stavila  <stavila@adobe.com>
+
         [Qt][EFL][GTK] Failing CSS region tests
         https://bugs.webkit.org/show_bug.cgi?id=115785
 
