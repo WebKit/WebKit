@@ -319,6 +319,26 @@ void closeFile(PlatformFileHandle& handle)
     }
 }
 
+long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+{
+    DWORD moveMethod = FILE_BEGIN;
+
+    if (origin == SeekFromCurrent)
+        moveMethod = FILE_CURRENT;
+    else if (origin == SeekFromEnd)
+        moveMethod = FILE_END;
+
+    LARGE_INTEGER largeOffset;
+    largeOffset.QuadPart = offset;
+
+    LARGE_INTEGER newOffset;
+    newOffset.QuadPart = 0;
+
+    SetFilePointerEx(handle, largeOffset, &newOffset, moveMethod);
+
+    return newOffset.QuadPart;
+}
+
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     if (!isHandleValid(handle))
