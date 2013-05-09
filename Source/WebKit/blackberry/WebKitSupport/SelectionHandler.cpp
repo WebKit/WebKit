@@ -386,8 +386,8 @@ unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, co
 
     // Prevent incorrect movement, handles can only extend the selection this way
     // to prevent inversion of the handles.
-    if (isStartHandle && (character == KEYCODE_RIGHT || character == KEYCODE_DOWN)
-        || !isStartHandle && (character == KEYCODE_LEFT || character == KEYCODE_UP))
+    if ((isStartHandle && (character == KEYCODE_RIGHT || character == KEYCODE_DOWN))
+        || (!isStartHandle && (character == KEYCODE_LEFT || character == KEYCODE_UP)))
         character = 0;
 
     VisiblePosition newVisiblePosition = isStartHandle ? controller->selection().extent() : controller->selection().base();

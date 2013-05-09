@@ -1,3 +1,36 @@
+2013-05-09  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Fix some compiler warnings (miscellaneous)
+        https://bugs.webkit.org/show_bug.cgi?id=80790
+
+        Reviewed by Rob Buis.
+
+        Fix the following warnings for BlackBerry:
+        InRegionScroller.cpp:286:39: warning: suggest parentheses around
+        assignment used as truth value [-Wparentheses].
+        InRegionScroller.cpp:349:39: warning: suggest parentheses around
+        assignment used as truth value [-Wparentheses].
+        InRegionScroller.cpp:456:82: warning: suggest parentheses around '&&'
+        within '||' [-Wparentheses].
+        InRegionScrollableArea.cpp:134:16: warning: suggest explicit braces to
+        avoid ambiguous 'else' [-Wparentheses].
+        SelectionHandler.cpp:390:109: warning: suggest parentheses around '&&'
+        within '||' [-Wparentheses].
+        SelectionOverlay.cpp:56:47: warning: comparison between signed and
+        unsigned integer expressions [-Wsign-compare].
+
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::firstScrollableInRegionForNode):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::canScrollRenderBox):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::extendSelectionToFieldBoundary):
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::draw):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style
