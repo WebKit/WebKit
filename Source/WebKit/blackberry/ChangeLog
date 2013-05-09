@@ -1,3 +1,19 @@
+2013-05-09  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Style updates required based on new check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=115857
+
+        Reviewed by Rob Buis.
+
+        Update ColorPickerClient and PagePopupBlackBerry
+        to match check-webkit-style updates.
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::generateHTML):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::setValueAndClosePopupCallback):
+        (WebCore::PagePopupBlackBerry::installDOMFunction):
+
 2013-05-09  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Upstream the input popups

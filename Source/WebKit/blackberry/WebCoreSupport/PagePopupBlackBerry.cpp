@@ -98,9 +98,7 @@ void PagePopupBlackBerry::generateHTML(WebPage* webpage)
     writer->end();
 }
 
-static JSValueRef setValueAndClosePopupCallback(JSContextRef context,
-        JSObjectRef, JSObjectRef, size_t argumentCount,
-        const JSValueRef arguments[], JSValueRef*)
+static JSValueRef setValueAndClosePopupCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
 {
     JSValueRef jsRetVal = JSValueMakeUndefined(context);
     if (argumentCount <= 0)
@@ -112,8 +110,7 @@ static JSValueRef setValueAndClosePopupCallback(JSContextRef context,
     strArgs[sizeUTF8] = 0;
     JSStringGetUTF8CString(string, strArgs.data(), sizeUTF8);
     JSStringRelease(string);
-    JSObjectRef popUpObject = JSValueToObject(context,
-            arguments[argumentCount - 1], 0);
+    JSObjectRef popUpObject = JSValueToObject(context, arguments[argumentCount - 1], 0);
     PagePopupBlackBerry::SharedClientPointer* client = reinterpret_cast<PagePopupBlackBerry::SharedClientPointer*>(JSObjectGetPrivate(popUpObject));
 
     // Check the weak pointer as the owner page may have destroyed the popup.
@@ -158,12 +155,9 @@ void PagePopupBlackBerry::installDOMFunction(Frame* frame)
 
     JSContextRef context = ::toRef(exec);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
-    JSStringRef functionName = JSStringCreateWithUTF8CString(
-            "setValueAndClosePopup");
-    JSObjectRef function = JSObjectMakeFunctionWithCallback(context,
-            functionName, setValueAndClosePopupCallback);
-    JSObjectSetProperty(context, globalObject, functionName, function,
-            kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly, 0);
+    JSStringRef functionName = JSStringCreateWithUTF8CString("setValueAndClosePopup");
+    JSObjectRef function = JSObjectMakeFunctionWithCallback(context, functionName, setValueAndClosePopupCallback);
+    JSObjectSetProperty(context, globalObject, functionName, function, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly, 0);
 
     // Register client into DOM
     JSClassDefinition definition = kJSClassDefinitionEmpty;
@@ -182,8 +176,7 @@ void PagePopupBlackBerry::installDOMFunction(Frame* frame)
     String name("popUp");
 
     JSC::PutPropertySlot slot;
-    window->put(window, exec, JSC::Identifier(exec, name),
-            toJS(clientClassObject), slot);
+    window->put(window, exec, JSC::Identifier(exec, name), toJS(clientClassObject), slot);
 
     JSClassRelease(clientClass);
 }

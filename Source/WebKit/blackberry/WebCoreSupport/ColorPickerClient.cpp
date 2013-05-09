@@ -52,11 +52,9 @@ void ColorPickerClient::generateHTML(const BlackBerry::Platform::String& value)
     StringBuilder source;
     source.appendLiteral("<style>\n");
     // Include CSS file.
-    source.append(popupControlBlackBerryCss,
-            sizeof(popupControlBlackBerryCss));
+    source.append(popupControlBlackBerryCss, sizeof(popupControlBlackBerryCss));
     source.appendLiteral("</style>\n<style>");
-    source.append(colorControlBlackBerryCss,
-            sizeof(colorControlBlackBerryCss));
+    source.append(colorControlBlackBerryCss, sizeof(colorControlBlackBerryCss));
     source.appendLiteral("</style></head><body>\n");
     source.appendLiteral("<script>\n");
     source.appendLiteral("window.addEventListener('load', function showIt() {");
