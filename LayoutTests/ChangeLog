@@ -1,3 +1,14 @@
+2013-05-09  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        Update srcipt paths in editing/shadow/rightclick-on-meter-in-shadow-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=96223
+
+        Reviewed by Rob Buis.
+
+        The original paths don't exist at all.
+
+        * editing/shadow/rightclick-on-meter-in-shadow-crash.html:
+
 2013-05-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed mac port gardening.
