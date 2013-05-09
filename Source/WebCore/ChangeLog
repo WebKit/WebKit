@@ -1,3 +1,10 @@
+2013-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r149796.
+
+        * GNUmakefile.am: Add a phony target for the window constructors file and include it among
+        the dependencies for the non-generated code.
+
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix for Qt minimal build.
