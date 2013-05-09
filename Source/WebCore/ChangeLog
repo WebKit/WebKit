@@ -1,3 +1,17 @@
+2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SecurityOrigin doesn’t need to forward declare or include Document
+        https://bugs.webkit.org/show_bug.cgi?id=115847
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/fc7a88caa9c41f3471d8994a530643e5225f82fc.
+
+        Removed unused Document forward declaration+include from SecurityOrigin.
+
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+
 2013-05-08  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Don't use adoptCF() with NSDictionary * object

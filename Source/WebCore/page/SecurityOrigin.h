@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class Document;
 class KURL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
