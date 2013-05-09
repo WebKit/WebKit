@@ -1,5 +1,17 @@
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
+        Handle incoming clear operations
+        https://bugs.webkit.org/show_bug.cgi?id=115829
+
+        Reviewed by Sam Weinig.
+
+        Handle clear by building up a new storage map with our pending changes.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::applyChange):
+
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
         Don't apply changes while we're clearing the database
         https://bugs.webkit.org/show_bug.cgi?id=115826
 

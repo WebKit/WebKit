@@ -230,8 +230,26 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
     if (m_hasPendingClear)
         return;
 
-    // FIXME: Handle clear.
-    ASSERT(!key.isNull());
+    if (!key) {
+        // A null key means clear.
+        RefPtr<StorageMap> newStorageMap = StorageMap::create(m_quotaInBytes);
+
+        // Any changes that were made locally after the clear must still be kept around in the new map.
+        for (auto it = m_pendingValueChanges.begin().keys(), end = m_pendingValueChanges.end().keys(); it != end; ++it) {
+            const String& key = *it;
+
+            String value = m_storageMap->getItem(key);
+            if (!value) {
+                // This change must have been a pending remove, ignore it.
+                continue;
+            }
+
+            String oldValue;
+            newStorageMap->setItemIgnoringQuota(key, oldValue);
+        }
+
+        m_storageMap = newStorageMap.release();
+    }
 
     if (!shouldApplyChangeForKey(key))
         return;
