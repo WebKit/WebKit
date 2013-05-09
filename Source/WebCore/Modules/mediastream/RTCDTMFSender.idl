@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
     EventTarget

@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     EventTarget
 ] interface RTCDataChannel {

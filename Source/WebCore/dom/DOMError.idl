@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 [
+    NoInterfaceObject,
     ImplementationLacksVTable
 ] interface  DOMError {
     readonly attribute DOMString name;

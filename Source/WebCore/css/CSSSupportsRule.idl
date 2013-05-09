@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=CSS3_CONDITIONAL_RULES
 ] interface CSSSupportsRule : CSSRule {
     readonly attribute CSSRuleList cssRules;

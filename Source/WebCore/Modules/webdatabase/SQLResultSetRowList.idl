@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=SQL_DATABASE,
     OmitConstructor,
     JSNoStaticTables,

@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WORKERS,
     ExtendsDOMGlobalObject,
     IsWorkerContext,

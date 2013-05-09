@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM
 ] interface NavigatorUserMediaError {
     const unsigned short PERMISSION_DENIED = 1;

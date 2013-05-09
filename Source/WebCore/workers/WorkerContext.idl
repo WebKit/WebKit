@@ -25,6 +25,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WORKERS,
     JSCustomMarkFunction,
     JSCustomGetOwnPropertySlotAndDescriptor,

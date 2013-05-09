@@ -36,10 +36,14 @@ endmacro()
 #   _supplemental_dependency_file is a value of --supplementalDependencyFile. (optional)
 macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _features _destination _prefix _generator _idl_attributes_file)
     set(BINDING_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
-
-    set(_supplemental_dependency_file ${ARGN})
-    if (_supplemental_dependency_file)
-        set(_supplemental_dependency --supplementalDependencyFile ${_supplemental_dependency_file})
+    set(_args ${ARGN})
+    list(LENGTH _args _argCount)
+    if (_argCount EQUAL 2)
+        list(GET _args 0 _supplemental_dependency_file)
+        if (_supplemental_dependency_file)
+            set(_supplemental_dependency --supplementalDependencyFile ${_supplemental_dependency_file})
+        endif ()
+        list(GET _args 1 _window_constructors_file)
     endif ()
 
     foreach (_file ${_input_files})
@@ -48,7 +52,7 @@ macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fea
         add_custom_command(
             OUTPUT ${_destination}/${_prefix}${_name}.cpp ${_destination}/${_prefix}${_name}.h
             MAIN_DEPENDENCY ${_file}
-            DEPENDS ${BINDING_GENERATOR} ${SCRIPTS_BINDINGS} ${_supplemental_dependency_file} ${_idl_attributes_file}
+            DEPENDS ${BINDING_GENERATOR} ${SCRIPTS_BINDINGS} ${_supplemental_dependency_file} ${_idl_attributes_file} ${_window_constructors_file}
             COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
             WORKING_DIRECTORY ${_base_dir}
             VERBATIM)

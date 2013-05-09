@@ -28,6 +28,7 @@
 
 
 [
+    NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
     OmitConstructor
 ] interface Screen {

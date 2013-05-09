@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     OmitConstructor,
     ImplementationLacksVTable
 ] interface TypeConversions {

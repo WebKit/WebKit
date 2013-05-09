@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=FONT_LOAD_EVENTS,
     JSNoStaticTables,
     ConstructorTemplate=Event

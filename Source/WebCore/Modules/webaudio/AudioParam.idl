@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WEB_AUDIO
 ] interface AudioParam {
     attribute float value;

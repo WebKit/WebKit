@@ -25,6 +25,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor
 ] interface ScriptProfile {

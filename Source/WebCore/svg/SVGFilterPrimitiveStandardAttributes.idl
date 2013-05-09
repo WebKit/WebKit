@@ -25,6 +25,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=SVG,
     ObjCProtocol
 ] interface SVGFilterPrimitiveStandardAttributes {

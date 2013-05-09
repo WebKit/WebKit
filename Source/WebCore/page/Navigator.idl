@@ -18,6 +18,7 @@
 */
 
 [
+    NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
     OmitConstructor
 ] interface Navigator {

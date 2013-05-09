@@ -352,6 +352,7 @@ sub generateInternalSettingsIdlFile($)
     print $file $InCompiler->license();
 
     print $file "[\n";
+    print $file "    NoInterfaceObject,\n";
     print $file "    OmitConstructor\n";
     print $file "] interface InternalSettingsGenerated {\n";
 

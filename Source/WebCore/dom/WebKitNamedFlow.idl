@@ -28,6 +28,7 @@
  */
 
 [
+    NoInterfaceObject,
     EventTarget,
     JSGenerateToJSObject,
     GenerateIsReachable=ImplOwnerNodeRoot

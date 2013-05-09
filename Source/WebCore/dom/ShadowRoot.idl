@@ -25,6 +25,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=SHADOW_DOM,
     JSGenerateToJSObject
 ] interface ShadowRoot : DocumentFragment {

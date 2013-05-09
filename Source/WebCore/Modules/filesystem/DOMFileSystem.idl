@@ -30,6 +30,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=FILE_SYSTEM,
     ActiveDOMObject,
     JSNoStaticTables

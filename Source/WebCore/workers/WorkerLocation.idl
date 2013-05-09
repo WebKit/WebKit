@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,

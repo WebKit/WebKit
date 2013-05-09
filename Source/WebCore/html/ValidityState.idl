@@ -21,6 +21,7 @@
  */
 
 [
+    NoInterfaceObject,
     OmitConstructor,
     ImplementationLacksVTable
 ] interface ValidityState {

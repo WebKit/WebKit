@@ -26,6 +26,7 @@
 typedef unsigned long GLenum;
 
 [
+    NoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable=ImplContext,
     OmitConstructor,

@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
 ] interface RTCDataChannelEvent : Event {
     readonly attribute RTCDataChannel channel;

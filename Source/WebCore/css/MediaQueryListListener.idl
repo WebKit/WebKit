@@ -18,6 +18,7 @@
  */
 
 [
+    NoInterfaceObject,
     JSNoStaticTables,
     ObjCProtocol,
     CPPPureInterface,

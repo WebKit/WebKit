@@ -28,6 +28,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=CSS_REGIONS,
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,

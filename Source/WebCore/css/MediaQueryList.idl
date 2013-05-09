@@ -17,6 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 [
+    NoInterfaceObject,
     ImplementationLacksVTable
 ] interface MediaQueryList {
     readonly attribute DOMString media;

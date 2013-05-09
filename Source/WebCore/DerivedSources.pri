@@ -161,7 +161,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/BiquadFilterNode.idl \
     $$PWD/Modules/webaudio/ConvolverNode.idl \
     $$PWD/Modules/webaudio/DelayNode.idl \
-    $$PWD/Modules/webaudio/DOMWindowWebAudio.idl \
     $$PWD/Modules/webaudio/DynamicsCompressorNode.idl \
     $$PWD/Modules/webaudio/ScriptProcessorNode.idl \
     $$PWD/Modules/webaudio/MediaElementAudioSourceNode.idl \
@@ -189,7 +188,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/webdatabase/SQLTransactionSyncCallback.idl \
     $$PWD/Modules/webdatabase/WorkerContextWebDatabase.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
-    $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
     $$PWD/Modules/websockets/WebSocket.idl \
     $$PWD/Modules/websockets/WorkerContextWebSocket.idl \
     $$PWD/css/Counter.idl \
@@ -733,6 +731,7 @@ IDL_BINDINGS += generated/$$INTERNAL_SETTINGS_GENERATED_IDL
 
 # GENERATOR 0: Resolve [Supplemental] dependency in IDLs
 SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
+WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
 IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
 PREPROCESS_IDLS_SCRIPT = $$PWD/bindings/scripts/preprocess-idls.pl
 IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
@@ -750,8 +749,9 @@ for(binding, IDL_BINDINGS) {
 preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
                                --defines \"$$javascriptFeatureDefines()\" \
                                --idlFilesList $$IDL_FILES_TMP \
-                               --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE
-preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE
+                               --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                               --windowConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WINDOW_CONSTRUCTORS_FILE
+preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE $$WINDOW_CONSTRUCTORS_FILE
 preprocessIdls.add_output_to_sources = false
 preprocessIdls.depends = $$IDL_BINDINGS
 GENERATORS += preprocessIdls

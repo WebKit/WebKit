@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=FILE_SYSTEM,
     JSNoStaticTables
 ] interface DOMFileSystemSync {

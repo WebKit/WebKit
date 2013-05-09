@@ -24,6 +24,7 @@
  */
  
 [
+    NoInterfaceObject,
     Conditional=SPEECH_SYNTHESIS
 ] interface SpeechSynthesis  {
     readonly attribute boolean pending;

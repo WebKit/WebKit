@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     JSGenerateToJSObject,
     IndexedGetter,
 ] interface RadioNodeList : NodeList {

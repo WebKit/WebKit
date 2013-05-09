@@ -28,6 +28,7 @@
  */
 
 [
+    NoInterfaceObject,
     InterfaceName=CSS,
     Conditional=CSS3_CONDITIONAL_RULES
 ] interface DOMWindowCSS {

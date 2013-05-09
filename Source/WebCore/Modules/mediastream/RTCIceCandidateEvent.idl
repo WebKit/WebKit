@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
 ] interface RTCIceCandidateEvent : Event {
     readonly attribute RTCIceCandidate candidate;

@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=CSP_NEXT,
     OmitConstructor,
     InterfaceName=SecurityPolicy

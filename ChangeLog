@@ -1,3 +1,15 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for [NoInterfaceObject] Web IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=115714
+
+        Reviewed by Kentaro Hara.
+
+        Update GENERATE_BINDINGS macro to take an additional _window_constructors_file
+        optional argument.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2013-05-08  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Plumb the Automake build system for the Battery Status API feature

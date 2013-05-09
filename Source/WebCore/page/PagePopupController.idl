@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=PAGE_POPUP,
     ImplementationLacksVTable
 ] interface PagePopupController {

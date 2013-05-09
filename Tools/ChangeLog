@@ -1,3 +1,17 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for [NoInterfaceObject] Web IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=115714
+
+        Reviewed by Kentaro Hara.
+
+        Update BindingsTests.generate_supplemental_dependency() to pass an
+        additional windowConstructorsFile argument to preprocess-idls.pl.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.main):
+
 2013-05-09  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK][AC] Buildfix after r149694

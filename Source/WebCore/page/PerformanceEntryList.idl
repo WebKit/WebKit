@@ -30,6 +30,7 @@
 
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PerformanceTimeline/Overview.html
 [
+    NoInterfaceObject,
     Conditional=WEB_TIMING,
     Conditional=PERFORMANCE_TIMELINE,
     OmitConstructor,

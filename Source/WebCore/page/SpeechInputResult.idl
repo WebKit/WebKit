@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=INPUT_SPEECH,
     ImplementationLacksVTable
 ] interface SpeechInputResult {

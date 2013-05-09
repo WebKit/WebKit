@@ -26,6 +26,7 @@
 
 // Introduced in DOM Level 2:
 [
+    NoInterfaceObject,
     ObjCCustomImplementation,
     OmitConstructor
 ] interface AbstractView {

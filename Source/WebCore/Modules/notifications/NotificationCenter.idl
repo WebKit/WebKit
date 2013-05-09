@@ -30,6 +30,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
     OmitConstructor

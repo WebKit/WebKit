@@ -19,6 +19,7 @@
 
 // http://dev.w3.org/2009/dap/system-info/battery-status.html
 [
+    NoInterfaceObject,
     Conditional=BATTERY_STATUS,
     ActiveDOMObject,
     EventTarget

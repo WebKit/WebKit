@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WEB_AUDIO,
     ActiveDOMObject,
     CustomConstructor,

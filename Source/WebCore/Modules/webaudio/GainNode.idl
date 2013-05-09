@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
 ] interface GainNode : AudioNode {

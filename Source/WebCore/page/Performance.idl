@@ -31,6 +31,7 @@
 
 // See: http://dev.w3.org/2006/webapi/WebTiming/
 [
+    NoInterfaceObject,
     Conditional=WEB_TIMING|WEB_TIMING_MINIMAL,
     EventTarget,
     OmitConstructor

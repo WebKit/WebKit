@@ -21,6 +21,7 @@
 
 // http://dvcs.w3.org/hg/dap/raw-file/tip/network-api/index.html
 [
+    NoInterfaceObject,
     Conditional=NETWORK_INFO,
     ActiveDOMObject,
     EventTarget

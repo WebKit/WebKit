@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     GenerateIsReachable=ImplFrame,

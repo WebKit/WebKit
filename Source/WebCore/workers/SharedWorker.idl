@@ -30,6 +30,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=SHARED_WORKERS,
     CustomConstructor,
     Constructor(DOMString scriptURL, [Default=NullString] optional DOMString name),

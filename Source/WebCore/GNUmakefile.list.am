@@ -1269,7 +1269,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
-	$(WebCore)/Modules/mediastream/DOMWindowMediaStream.idl \
 	$(WebCore)/Modules/mediastream/LocalMediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
@@ -1324,7 +1323,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
 	$(WebCore)/Modules/webaudio/ConvolverNode.idl \
 	$(WebCore)/Modules/webaudio/DelayNode.idl \
-	$(WebCore)/Modules/webaudio/DOMWindowWebAudio.idl \
 	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
 	$(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
 	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
@@ -1352,7 +1350,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
 	$(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl \
 	$(WebCore)/Modules/websockets/CloseEvent.idl \
-	$(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
 	$(WebCore)/Modules/websockets/WebSocket.idl \
 	$(WebCore)/Modules/websockets/WorkerContextWebSocket.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \

@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=QUOTA,
     OmitConstructor,
     ImplementationLacksVTable

@@ -9627,7 +9627,6 @@
 		97AA3CA4145237CC003E1DA6 /* EventTargetInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetInterfaces.h; sourceTree = "<group>"; };
 		97AABCF814FA09D5007457AE /* CloseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CloseEvent.h; path = Modules/websockets/CloseEvent.h; sourceTree = "<group>"; };
 		97AABCF914FA09D5007457AE /* CloseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CloseEvent.idl; path = Modules/websockets/CloseEvent.idl; sourceTree = "<group>"; };
-		97AABCFA14FA09D5007457AE /* DOMWindowWebSocket.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowWebSocket.idl; path = Modules/websockets/DOMWindowWebSocket.idl; sourceTree = "<group>"; };
 		97AABCFB14FA09D5007457AE /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadableWebSocketChannel.cpp; path = Modules/websockets/ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABCFC14FA09D5007457AE /* ThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadableWebSocketChannel.h; path = Modules/websockets/ThreadableWebSocketChannel.h; sourceTree = "<group>"; };
 		97AABCFD14FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadableWebSocketChannelClientWrapper.cpp; path = Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp; sourceTree = "<group>"; };
@@ -16358,7 +16357,6 @@
 			children = (
 				97AABCF814FA09D5007457AE /* CloseEvent.h */,
 				97AABCF914FA09D5007457AE /* CloseEvent.idl */,
-				97AABCFA14FA09D5007457AE /* DOMWindowWebSocket.idl */,
 				97AABCFB14FA09D5007457AE /* ThreadableWebSocketChannel.cpp */,
 				97AABCFC14FA09D5007457AE /* ThreadableWebSocketChannel.h */,
 				97AABCFD14FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.cpp */,

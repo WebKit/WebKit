@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
 ] interface MediaStreamTrackEvent : Event {
    readonly attribute MediaStreamTrack track;

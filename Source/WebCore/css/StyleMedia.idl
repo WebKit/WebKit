@@ -25,6 +25,7 @@
  */
 
 [
+    NoInterfaceObject,
     GenerateIsReachable=ImplFrame
 ] interface StyleMedia {
     readonly attribute DOMString type;

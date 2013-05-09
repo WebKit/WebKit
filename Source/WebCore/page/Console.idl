@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
     OmitConstructor
 ] interface Console {

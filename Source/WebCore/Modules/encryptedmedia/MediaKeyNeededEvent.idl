@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=ENCRYPTED_MEDIA_V2,
     ConstructorTemplate=Event 
-] MediaKeyNeededEvent : Event {
+] interface MediaKeyNeededEvent : Event {
     readonly attribute Uint8Array initData;
 };
 

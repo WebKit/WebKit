@@ -30,6 +30,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=WORKERS,
     ActiveDOMObject,
     CustomToJSObject,

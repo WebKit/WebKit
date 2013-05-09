@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=DATA_TRANSFER_ITEMS,
     IndexedGetter,
     JSGenerateToNativeObject,

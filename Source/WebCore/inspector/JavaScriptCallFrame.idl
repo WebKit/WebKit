@@ -24,6 +24,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
     DoNotCheckConstants,

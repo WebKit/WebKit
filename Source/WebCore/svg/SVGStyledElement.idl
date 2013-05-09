@@ -26,6 +26,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=SVG
 ] interface SVGStyledElement : SVGElement {
     readonly attribute SVGAnimatedString className;

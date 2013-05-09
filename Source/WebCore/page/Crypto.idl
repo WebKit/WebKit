@@ -27,6 +27,7 @@
  */
 
 [
+    NoInterfaceObject,
     OmitConstructor,
     ImplementationLacksVTable
 ] interface Crypto {

@@ -29,6 +29,7 @@
  */
 
 [
+    NoInterfaceObject,
     OmitConstructor,
     ImplementationLacksVTable
 ] interface MemoryInfo {

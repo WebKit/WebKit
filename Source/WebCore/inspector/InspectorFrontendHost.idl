@@ -31,6 +31,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=INSPECTOR,
     ImplementationLacksVTable
 ] interface InspectorFrontendHost {

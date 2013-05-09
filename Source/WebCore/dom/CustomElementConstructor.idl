@@ -23,6 +23,7 @@
  */
 
 [
+    NoInterfaceObject,
     Conditional=CUSTOM_ELEMENTS,
     CustomCall
 ] interface CustomElementConstructor {

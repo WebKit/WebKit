@@ -1,3 +1,247 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for [NoInterfaceObject] Web IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=115714
+
+        Reviewed by Kentaro Hara.
+
+        *Constructor attributes on the global DOMWindow object are now automatically
+        generated for each non-callback interface that is not declared with the
+        [NoInterfaceObject] extended attribute. It is thus no longer needed for
+        developers to manually add *Constructor attributes for their new interfaces
+        unless they wish to register an "extra" constructor for their interface.
+
+        This patch does not modify at all the behavior on JS side. To achieve this,
+        [NoInterfaceObject] extended attribute is added to interfaces that should
+        not have it according to specification (e.g. History, Location, ...).
+        This can be improved later as the behavior should not change with this
+        patch.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/battery/BatteryManager.idl:
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/MediaKeyNeededEvent.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/filesystem/DOMFileSystem.idl:
+        * Modules/filesystem/DOMFileSystemSync.idl:
+        * Modules/filesystem/DirectoryEntry.idl:
+        * Modules/filesystem/DirectoryEntrySync.idl:
+        * Modules/filesystem/DirectoryReader.idl:
+        * Modules/filesystem/DirectoryReaderSync.idl:
+        * Modules/filesystem/Entry.idl:
+        * Modules/filesystem/EntryArray.idl:
+        * Modules/filesystem/EntryArraySync.idl:
+        * Modules/filesystem/EntrySync.idl:
+        * Modules/filesystem/FileEntry.idl:
+        * Modules/filesystem/FileEntrySync.idl:
+        * Modules/filesystem/FileWriter.idl:
+        * Modules/filesystem/FileWriterSync.idl:
+        * Modules/filesystem/Metadata.idl:
+        * Modules/gamepad/Gamepad.idl:
+        * Modules/gamepad/GamepadList.idl:
+        * Modules/geolocation/Coordinates.idl:
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/geolocation/Geoposition.idl:
+        * Modules/geolocation/PositionError.idl:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl:
+        * Modules/indexeddb/IDBAny.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/DOMWindowMediaStream.idl: Removed.
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/MediaStreamTrackEvent.idl:
+        * Modules/mediastream/NavigatorUserMediaError.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCDataChannelEvent.idl:
+        * Modules/mediastream/RTCIceCandidateEvent.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCStatsResponse.idl:
+        * Modules/networkinfo/NetworkInfoConnection.idl:
+        * Modules/notifications/DOMWindowNotifications.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/speech/DOMWindowSpeech.idl: Removed.
+        * Modules/speech/DOMWindowSpeechSynthesis.idl:
+        * Modules/speech/SpeechGrammar.idl:
+        * Modules/speech/SpeechGrammarList.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/speech/SpeechRecognitionAlternative.idl:
+        * Modules/speech/SpeechRecognitionError.idl:
+        * Modules/speech/SpeechRecognitionEvent.idl:
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * Modules/speech/SpeechRecognitionResultList.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/speech/SpeechSynthesisVoice.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioDestinationNode.idl:
+        * Modules/webaudio/AudioListener.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/AudioSourceNode.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/ChannelMergerNode.idl:
+        * Modules/webaudio/ChannelSplitterNode.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/DOMWindowWebAudio.idl: Removed.
+        * Modules/webaudio/DelayNode.idl:
+        * Modules/webaudio/DynamicsCompressorNode.idl:
+        * Modules/webaudio/GainNode.idl:
+        * Modules/webaudio/MediaElementAudioSourceNode.idl:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.idl:
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webaudio/ScriptProcessorNode.idl:
+        * Modules/webaudio/WaveShaperNode.idl:
+        * Modules/webaudio/WaveTable.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionSync.idl:
+        * Modules/websockets/DOMWindowWebSocket.idl: Removed.
+        * Modules/websockets/WebSocket.idl:
+        * PlatformBlackBerry.cmake:
+        * UseJSC.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parseTypedef):
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttribute):
+        (getFileContents):
+        (getPartialInterfaceNameFromIDL):
+        (isCallbackInterfaceFromIDL):
+        (trim):
+        (getInterfaceExtendedAttributesFromIDL):
+        * css/CSSFontFaceLoadEvent.idl:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSSupportsRule.idl:
+        * css/CSSUnknownRule.idl:
+        * css/DOMWindowCSS.idl:
+        * css/FontLoader.idl:
+        * css/MediaQueryList.idl:
+        * css/MediaQueryListListener.idl:
+        * css/StyleMedia.idl:
+        * dom/CustomElementConstructor.idl:
+        * dom/DOMError.idl:
+        * dom/DOMNamedFlowCollection.idl:
+        * dom/DataTransferItem.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * dom/NodeIterator.idl:
+        * dom/ShadowRoot.idl:
+        * dom/TreeWalker.idl:
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/FileException.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/HTMLAudioElement.idl:
+        * html/HTMLDetailsElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/MediaError.idl:
+        * html/MediaKeyError.idl:
+        * html/MicroDataItemValue.idl:
+        * html/RadioNodeList.idl:
+        * html/ValidityState.idl:
+        * html/canvas/CanvasRenderingContext.idl:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/EXTDrawBuffers.idl:
+        * html/canvas/EXTTextureFilterAnisotropic.idl:
+        * html/canvas/OESElementIndexUint.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESTextureHalfFloat.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLCompressedTextureATC.idl:
+        * html/canvas/WebGLCompressedTexturePVRTC.idl:
+        * html/canvas/WebGLCompressedTextureS3TC.idl:
+        * html/canvas/WebGLContextAttributes.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLDepthTexture.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * html/canvas/WebGLVertexArrayObjectOES.idl:
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrackRegionList.idl:
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.idl:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/JavaScriptCallFrame.idl:
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/AbstractView.idl:
+        * page/BarInfo.idl:
+        * page/Console.idl:
+        * page/Crypto.idl:
+        * page/DOMSecurityPolicy.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/MemoryInfo.idl:
+        * page/Navigator.idl:
+        * page/PagePopupController.idl:
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceEntryList.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceNavigation.idl:
+        * page/PerformanceResourceTiming.idl:
+        * page/PerformanceTiming.idl:
+        * page/Screen.idl:
+        * page/SpeechInputResult.idl:
+        * page/SpeechInputResultList.idl:
+        * page/WorkerNavigator.idl:
+        * page/make_settings.pl:
+        (generateInternalSettingsIdlFile):
+        * svg/ElementTimeControl.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGExternalResourcesRequired.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGLangSpace.idl:
+        * svg/SVGLocatable.idl:
+        * svg/SVGStyledElement.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGTransformable.idl:
+        * svg/SVGURIReference.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * testing/MallocStatistics.idl:
+        * testing/TypeConversions.idl:
+        * workers/AbstractWorker.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/SharedWorker.idl:
+        * workers/SharedWorkerContext.idl:
+        * workers/WorkerContext.idl:
+        * workers/WorkerLocation.idl:
+        * xml/XPathExpression.idl:
+        * xml/XPathNSResolver.idl:
+
 2013-05-09  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK][AC] Buildfix after r149694

@@ -206,7 +206,6 @@ set(WebCore_IDL_FILES
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
 
-    Modules/mediastream/DOMWindowMediaStream.idl
     Modules/mediastream/LocalMediaStream.idl
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamEvent.idl
@@ -261,7 +260,6 @@ set(WebCore_IDL_FILES
     Modules/webaudio/AudioSourceNode.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/ConvolverNode.idl
-    Modules/webaudio/DOMWindowWebAudio.idl
     Modules/webaudio/DelayNode.idl
     Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/ScriptProcessorNode.idl
@@ -291,7 +289,6 @@ set(WebCore_IDL_FILES
     Modules/webdatabase/SQLTransactionSyncCallback.idl
 
     Modules/websockets/CloseEvent.idl
-    Modules/websockets/DOMWindowWebSocket.idl
     Modules/websockets/WebSocket.idl
     Modules/websockets/WorkerContextWebSocket.idl
 
@@ -2948,6 +2945,7 @@ set(SCRIPTS_BINDINGS
 )
 set(IDL_FILES_TMP ${DERIVED_SOURCES_WEBCORE_DIR}/idl_files.tmp)
 set(SUPPLEMENTAL_DEPENDENCY_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/supplemental_dependency.tmp)
+set(WINDOW_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowConstructors.idl)
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 include(${WEBCORE_DIR}/UseJSC.cmake)
