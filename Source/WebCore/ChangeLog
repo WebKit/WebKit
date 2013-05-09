@@ -1,3 +1,25 @@
+2013-05-09  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][AC] Buildfix after r149694
+        https://bugs.webkit.org/show_bug.cgi?id=115797
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Some interfaces, such as a return value and parameters of functions are changed.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp:
+        (WebCore::animationHasStepsTimingFunction):
+        (WebCore::GraphicsLayerClutter::timingFunctionForAnimationValue):
+        (WebCore::GraphicsLayerClutter::setTransformAnimationKeyframes):
+        (WebCore::GraphicsLayerClutter::setTransformAnimationEndpoints):
+        (WebCore::GraphicsLayerClutter::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerClutter::setAnimationEndpoints):
+        (WebCore::GraphicsLayerClutter::setAnimationKeyframes):
+        * platform/graphics/clutter/GraphicsLayerClutter.h:
+        (GraphicsLayerClutter):
+
 2013-05-08  Rob Buis  <rbuis@rim.com>
 
         Fix some compiler warnings (miscellaneous)

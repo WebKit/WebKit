@@ -130,7 +130,7 @@ private:
     PassRefPtr<PlatformClutterAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive);
     void setupAnimation(PlatformClutterAnimation*, const Animation*, bool additive);
 
-    const TimingFunction* timingFunctionForAnimationValue(const AnimationValue*, const Animation*);
+    const TimingFunction* timingFunctionForAnimationValue(const AnimationValue&, const Animation&);
 
     bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*);
     bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*);

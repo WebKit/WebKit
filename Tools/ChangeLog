@@ -1,3 +1,14 @@
+2013-05-09  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][AC] Buildfix after r149694
+        https://bugs.webkit.org/show_bug.cgi?id=115797
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add CLUTTER_LIBS for linking TestWebCore.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-05-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove unnecessary pkgs in EFL jhbuild

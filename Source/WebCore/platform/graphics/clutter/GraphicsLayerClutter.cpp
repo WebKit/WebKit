@@ -227,7 +227,7 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
         return true;
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
-        const TimingFunction* timingFunction = valueList.at(i)->timingFunction();
+        const TimingFunction* timingFunction = valueList.at(i).timingFunction();
         if (timingFunction && timingFunction->isStepsTimingFunction())
             return true;
     }
@@ -1012,12 +1012,12 @@ void GraphicsLayerClutter::setupAnimation(PlatformClutterAnimation* propertyAnim
     propertyAnim->setFillMode(fillMode);
 }
 
-const TimingFunction* GraphicsLayerClutter::timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
+const TimingFunction* GraphicsLayerClutter::timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation& anim)
 {
-    if (animValue->timingFunction())
-        return animValue->timingFunction();
-    if (anim->isTimingFunctionSet())
-        return anim->timingFunction().get();
+    if (animValue.timingFunction())
+        return animValue.timingFunction();
+    if (anim.isTimingFunctionSet())
+        return anim.timingFunction().get();
 
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
@@ -1048,12 +1048,12 @@ bool GraphicsLayerClutter::setTransformAnimationKeyframes(const KeyframeValueLis
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const TransformAnimationValue* curValue = static_cast<const TransformAnimationValue*>(valueList.at(index));
-        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+        const TransformAnimationValue& curValue = static_cast<const TransformAnimationValue&>(valueList.at(index));
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue->value()->apply(boxSize, transform);
+            curValue.value().apply(boxSize, transform);
 
             // FIXME: In CoreAnimation case, if any matrix is singular, CA won't animate it correctly.
             // But I'm not sure clutter also does. Check it later, and then decide
@@ -1063,7 +1063,7 @@ bool GraphicsLayerClutter::setTransformAnimationKeyframes(const KeyframeValueLis
 
             transformationMatrixValues.append(transform);
         } else {
-            const TransformOperation* transformOp = curValue->value()->at(functionIndex);
+            const TransformOperation* transformOp = curValue.value().at(functionIndex);
             if (isTransformTypeNumber(transformOpType)) {
                 float value;
                 getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
@@ -1080,7 +1080,7 @@ bool GraphicsLayerClutter::setTransformAnimationKeyframes(const KeyframeValueLis
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
     }
 
     keyframeAnim->setKeyTimes(keyTimes);
@@ -1110,13 +1110,13 @@ bool GraphicsLayerClutter::setTransformAnimationEndpoints(const KeyframeValueLis
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
 
-    const TransformAnimationValue* startValue = static_cast<const TransformAnimationValue*>(valueList.at(fromIndex));
-    const TransformAnimationValue* endValue = static_cast<const TransformAnimationValue*>(valueList.at(toIndex));
+    const TransformAnimationValue& startValue = static_cast<const TransformAnimationValue&>(valueList.at(fromIndex));
+    const TransformAnimationValue& endValue = static_cast<const TransformAnimationValue&>(valueList.at(toIndex));
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue->value()->apply(boxSize, fromTransform);
-        endValue->value()->apply(boxSize, toTransform);
+        startValue.value().apply(boxSize, fromTransform);
+        endValue.value().apply(boxSize, toTransform);
 
         // FIXME: If any matrix is singular, CA won't animate it correctly.
         // So fall back to software animation, But it's not sure in clutter case.
@@ -1129,34 +1129,34 @@ bool GraphicsLayerClutter::setTransformAnimationEndpoints(const KeyframeValueLis
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             float toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
             FloatPoint3D fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             FloatPoint3D toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else {
             TransformationMatrix fromValue;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             TransformationMatrix toValue;
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         }
     }
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
-    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), *animation);
     basicAnim->setTimingFunction(timingFunction, !forwards);
 
     PlatformClutterAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
@@ -1195,7 +1195,7 @@ bool GraphicsLayerClutter::createTransformAnimationsFromKeyframes(const Keyframe
 
     bool hasBigRotation;
     int listIndex = validateTransformOperations(valueList, hasBigRotation);
-    const TransformOperations* operations = (listIndex >= 0) ? static_cast<const TransformAnimationValue*>(valueList.at(listIndex))->value() : 0;
+    const TransformOperations* operations = (listIndex >= 0) ? &static_cast<const TransformAnimationValue&>(valueList.at(listIndex)).value() : 0;
 
     // We need to fall back to software animation if we don't have setValueFunction:, and
     // we would need to animate each incoming transform function separately. This is the
@@ -1326,8 +1326,8 @@ bool GraphicsLayerClutter::setAnimationEndpoints(const KeyframeValueList& valueL
 
     switch (valueList.property()) {
     case AnimatedPropertyOpacity: {
-        basicAnim->setFromValue(static_cast<const FloatAnimationValue*>(valueList.at(fromIndex))->value());
-        basicAnim->setToValue(static_cast<const FloatAnimationValue*>(valueList.at(toIndex))->value());
+        basicAnim->setFromValue(static_cast<const FloatAnimationValue&>(valueList.at(fromIndex)).value());
+        basicAnim->setToValue(static_cast<const FloatAnimationValue&>(valueList.at(toIndex)).value());
         break;
     }
     default:
@@ -1337,7 +1337,7 @@ bool GraphicsLayerClutter::setAnimationEndpoints(const KeyframeValueList& valueL
 
     // This codepath is used for 2-keyframe animations, so we still need to look in the start
     // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
-    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), *animation);
     if (timingFunction)
         basicAnim->setTimingFunction(timingFunction, !forwards);
 
@@ -1354,13 +1354,13 @@ bool GraphicsLayerClutter::setAnimationKeyframes(const KeyframeValueList& valueL
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const AnimationValue* curValue = valueList.at(index);
-        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+        const AnimationValue& curValue = valueList.at(index);
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         switch (valueList.property()) {
         case AnimatedPropertyOpacity: {
-            const FloatAnimationValue* floatValue = static_cast<const FloatAnimationValue*>(curValue);
-            values.append(floatValue->value());
+            const FloatAnimationValue& floatValue = static_cast<const FloatAnimationValue&>(curValue);
+            values.append(floatValue.value());
             break;
         }
         default:
@@ -1369,7 +1369,7 @@ bool GraphicsLayerClutter::setAnimationKeyframes(const KeyframeValueList& valueL
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation));
     }
 
     keyframeAnim->setKeyTimes(keyTimes);
