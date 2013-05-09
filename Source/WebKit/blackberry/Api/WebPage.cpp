@@ -727,7 +727,7 @@ void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerr
         return;
 
     Platform::NetworkRequest netRequest;
-    netRequest.setRequestUrl(path);
+    netRequest.setRequestUrl(fileUrl);
     netRequest.setOverrideContentType(overrideContentType);
     d->load(netRequest, false);
 }

@@ -1,3 +1,18 @@
+2013-05-09  Xuefei Ren  <xren@blackberry.com>
+
+        [BLACKBERRY]fix regression in Webpage
+        and FrameLoaderClientBlackberry
+        https://bugs.webkit.org/show_bug.cgi?id=115843
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mary Wu.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::loadFile):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::startDownload):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style
