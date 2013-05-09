@@ -1,3 +1,15 @@
+2013-05-08  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Fix a typo in Settings.js
+        https://bugs.webkit.org/show_bug.cgi?id=115849
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, no behavior change.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+
 2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         SecurityOrigin doesn’t need to forward declare or include Document
