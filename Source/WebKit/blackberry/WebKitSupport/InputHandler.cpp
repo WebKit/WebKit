@@ -701,7 +701,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
     textCheckingResult.length = 0;
 
     span_t* span = spannableString->spans;
-    for (unsigned int i = 0; i < spannableString->spans_count; i++) {
+    for (unsigned i = 0; i < spannableString->spans_count; i++) {
         if (!span)
             break;
         if (span->end < span->start) {
@@ -1353,8 +1353,9 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     // The scroll location we should go to given the zoom required, could be adjusted later.
     WebCore::FloatPoint offset(selectionFocusRect.location().x() - m_webPage->scrollPosition().x(), selectionFocusRect.location().y() - m_webPage->scrollPosition().y());
     double inverseScale = zoomScaleRequired / m_webPage->currentScale();
-    WebCore::IntPoint destinationScrollLocation = WebCore::IntPoint(max(0, static_cast<int>(roundf(selectionFocusRect.location().x() - offset.x() / inverseScale))),
-                                                                    max(0, static_cast<int>(roundf(selectionFocusRect.location().y() - offset.y() / inverseScale))));
+    WebCore::IntPoint destinationScrollLocation = WebCore::IntPoint(
+        max(0, static_cast<int>(roundf(selectionFocusRect.location().x() - offset.x() / inverseScale))),
+        max(0, static_cast<int>(roundf(selectionFocusRect.location().y() - offset.y() / inverseScale))));
 
     if (elementFrame != mainFrame) { // Element is in a subframe.
         // Remove any scroll offset within the subframe to get the point relative to the main frame.
@@ -1420,9 +1421,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             static const int s_focusRectPaddingSize = Graphics::Screen::primaryScreen()->heightInMMToPixels(12);
             selectionFocusRect.inflate(std::ceilf(viewportAccessor->documentFromPixelContents(Platform::FloatSize(0, s_focusRectPaddingSize)).height()));
 
-            WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, selectionFocusRect,
-                                                                 horizontalScrollAlignment,
-                                                                 verticalScrollAlignment));
+            WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, selectionFocusRect, horizontalScrollAlignment, verticalScrollAlignment));
 
             // Don't constrain scroll position when animation finishes.
             shouldConstrainScrollingToContentEdge = false;
@@ -1496,8 +1495,8 @@ void InputHandler::ensureFocusPluginElementVisible()
     // is at the center of the screen. FIXME: If the element was partially on screen
     // we might want to just bring the offscreen portion into view, someone needs
     // to decide if that's the behavior we want or not.
-    WebCore::IntPoint pos(selectionFocusRect.center().x() - actualScreenRect.width() / 2,
-                 selectionFocusRect.center().y() - actualScreenRect.height() / 2);
+    WebCore::IntPoint pos(selectionFocusRect.center());
+    pos.move(-actualScreenRect.width() / 2, -actualScreenRect.height() / 2);
 
     mainFrameView->setScrollPosition(pos);
 }
@@ -2045,7 +2044,7 @@ void InputHandler::setPopupListIndexes(int size, const bool* selecteds)
 
     HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(m_currentFocusElement.get());
     const WTF::Vector<HTMLElement*>& items = selectElement->listItems();
-    if (items.size() != static_cast<unsigned int>(size))
+    if (items.size() != static_cast<unsigned>(size))
         return;
 
     HTMLOptionElement* option;
@@ -2354,7 +2353,7 @@ int32_t InputHandler::finishComposition()
 span_t* InputHandler::firstSpanInString(spannable_string_t* spannableString, SpannableStringAttribute attrib)
 {
     span_t* span = spannableString->spans;
-    for (unsigned int i = 0; i < spannableString->spans_count; i++) {
+    for (unsigned i = 0; i < spannableString->spans_count; i++) {
         if (span->attributes_mask & attrib)
             return span;
         span++;
@@ -2491,12 +2490,12 @@ bool InputHandler::setTextAttributes(int insertionPoint, spannable_string_t* spa
 {
     // Apply the attributes to the field.
     span_t* span = spannableString->spans;
-    for (unsigned int i = 0; i < spannableString->spans_count; i++) {
-        unsigned int startPosition = insertionPoint + span->start;
+    for (unsigned i = 0; i < spannableString->spans_count; i++) {
+        unsigned startPosition = insertionPoint + span->start;
         // The end point includes the character that it is before. Ie, 0, 0
         // applies to the first character as the end point includes the character
         // at the position. This means the endPosition is always +1.
-        unsigned int endPosition = insertionPoint + span->end + 1;
+        unsigned endPosition = insertionPoint + span->end + 1;
         if (endPosition < startPosition || endPosition > elementText().length())
             return false;
 

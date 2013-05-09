@@ -71,9 +71,11 @@ public:
     ~InputHandler();
 
     enum FocusElementType { TextEdit, TextPopup /* Date/Time & Color */, SelectPopup, Plugin };
-    enum CaretScrollType { CenterAlways = BlackBerry::Platform::Settings::ScrollAdjustmentCenterAlways,
-                           CenterIfNeeded = BlackBerry::Platform::Settings::ScrollAdjustmentCenterIfNeeded,
-                           EdgeIfNeeded = BlackBerry::Platform::Settings::ScrollAdjustmentEdgeIfNeeded };
+    enum CaretScrollType {
+        CenterAlways = BlackBerry::Platform::Settings::ScrollAdjustmentCenterAlways,
+        CenterIfNeeded = BlackBerry::Platform::Settings::ScrollAdjustmentCenterIfNeeded,
+        EdgeIfNeeded = BlackBerry::Platform::Settings::ScrollAdjustmentEdgeIfNeeded
+    };
 
     bool isInputModeEnabled() const;
     void setInputModeEnabled(bool active = true);
