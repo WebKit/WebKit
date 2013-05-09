@@ -30,9 +30,7 @@
 
 // See: http://www.w3.org/TR/navigation-timing/
 [
-    NoInterfaceObject,
     Conditional=WEB_TIMING,
-    OmitConstructor
 ] interface PerformanceNavigation {
     const unsigned short TYPE_NAVIGATE = 0;
     const unsigned short TYPE_RELOAD = 1;

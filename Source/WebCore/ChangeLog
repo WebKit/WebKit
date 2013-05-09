@@ -1,3 +1,47 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [NoInterfaceObject] extended attribute should be removed for several interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=115852
+
+        Reviewed by Benjamin Poulain.
+
+        Remove [NoInterfaceObject] extended attribute from the following Web IDL
+        interfaces: SecurityPolicy, History, Location, Navigator, Performance,
+        PerformanceEntry, PerformanceMark, PerformanceMeasure, PerformanceNavigation,
+        PerformanceResourceTiming, PerformanceTiming and Screen.
+
+        These interfaces should not have the [NoInterfaceObject] extended attribute
+        according to their respective specifications:
+        - http://www.w3.org/html/wg/drafts/html/master/browsers.html#the-history-interface
+        - http://www.w3.org/html/wg/drafts/html/master/browsers.html#the-location-interface
+        - https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#securitypolicy
+        - http://www.w3.org/html/wg/drafts/html/master/webappapis.html#the-navigator-object
+        - http://www.w3.org/TR/navigation-timing/#performance
+        - https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PerformanceTimeline/Overview.html#sec-PerformanceEntry-interface
+        - http://www.w3.org/TR/navigation-timing/#performancenavigation
+        - http://www.w3.org/TR/navigation-timing/#performancetiming
+        - http://www.w3.org/TR/user-timing/#performancemark
+        - http://www.w3.org/TR/user-timing/#performancemeasure
+        - http://www.w3c-test.org/webperf/specs/ResourceTiming/#performanceresourcetiming
+        - http://dev.w3.org/csswg/cssom-view/#the-screen-interface
+
+        The new behavior is consistent with the specifications, Firefox and soon Blink.
+
+        No new tests, already covered by existing tests.
+
+        * page/DOMSecurityPolicy.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceNavigation.idl:
+        * page/PerformanceResourceTiming.idl:
+        * page/PerformanceTiming.idl:
+        * page/Screen.idl:
+
 2013-05-09  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (Safari 3-Safari 4): Replaced element with percent height in table has incorrect height

@@ -28,9 +28,7 @@
 
 
 [
-    NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
-    OmitConstructor
 ] interface Screen {
     readonly attribute unsigned long height;
     readonly attribute unsigned long width;

@@ -24,8 +24,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=USER_TIMING,
-    OmitConstructor
 ] interface PerformanceMeasure : PerformanceEntry {
 };

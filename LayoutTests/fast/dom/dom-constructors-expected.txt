@@ -113,13 +113,13 @@ PASS TryAllocate('CanvasPattern') is 'exception'
 FAIL TryAllocate('Console') should be exception. Was no constructor.
 PASS TryAllocate('Selection') is 'exception'
 PASS TryAllocate('Window') is 'exception'
-FAIL TryAllocate('History') should be exception. Was no constructor.
+PASS TryAllocate('History') is 'exception'
 PASS TryAllocate('HTMLOptionsCollection') is 'exception'
-FAIL TryAllocate('Location') should be exception. Was no constructor.
-FAIL TryAllocate('Navigator') should be exception. Was no constructor.
+PASS TryAllocate('Location') is 'exception'
+PASS TryAllocate('Navigator') is 'exception'
 FAIL TryAllocate('NodeIterator') should be exception. Was no constructor.
 PASS TryAllocate('RGBColor') is 'exception'
-FAIL TryAllocate('Screen') should be exception. Was no constructor.
+PASS TryAllocate('Screen') is 'exception'
 FAIL TryAllocate('TreeWalker') should be exception. Was no constructor.
 FAIL TryAllocate('XPathExpression') should be exception. Was no constructor.
 PASS TryAllocate('Worker') is 'exception'

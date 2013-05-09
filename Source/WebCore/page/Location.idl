@@ -27,7 +27,6 @@
  */
 
 [
-    NoInterfaceObject,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     GenerateIsReachable=ImplFrame,
@@ -36,7 +35,6 @@
     JSCustomDefineOwnProperty,
     JSCustomNamedGetterOnPrototype,
     JSCustomDefineOwnPropertyOnPrototype,
-    OmitConstructor
 ] interface Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
              [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;

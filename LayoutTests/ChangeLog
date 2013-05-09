@@ -1,3 +1,17 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [NoInterfaceObject] extended attribute should be removed for several interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=115852
+
+        Reviewed by Benjamin Poulain.
+
+        Rebaseline several layout tests whose output has changed now that a few more
+        global constructors are exposed.
+
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-09  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (Safari 3-Safari 4): Replaced element with percent height in table has incorrect height

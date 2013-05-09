@@ -30,9 +30,7 @@
 
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/ResourceTiming/Overview.html
 [
-    NoInterfaceObject,
     Conditional=RESOURCE_TIMING,
-    OmitConstructor
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
 

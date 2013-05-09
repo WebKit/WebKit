@@ -24,13 +24,11 @@
  */
 
 [
-    NoInterfaceObject,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     GenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
     CustomEnumerateProperty,
-    OmitConstructor
 ] interface History {
     readonly attribute unsigned long length;
     [CachedAttribute, Custom] readonly attribute SerializedScriptValue state;
