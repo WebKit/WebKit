@@ -1,3 +1,11 @@
+2013-05-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed mac gardening.
+
+        * platform/mac/inspector/command-line-api-expected.txt: Removed.
+        * platform/mac/inspector/console: Added.
+        * platform/mac/inspector/console/command-line-api-expected.txt: Added.
+
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [NoInterfaceObject] extended attribute should be removed for several interfaces
