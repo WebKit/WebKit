@@ -111,7 +111,7 @@ class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     friend class Settings;
 public:
-    static void scheduleForcedStyleRecalcForAllPages();
+    static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 
     // It is up to the platform to ensure that non-null clients are provided where required.
     struct PageClients {

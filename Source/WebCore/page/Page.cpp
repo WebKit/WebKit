@@ -76,6 +76,7 @@
 #include "SharedBuffer.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
+#include "StyleResolver.h"
 #include "TextResourceDecoder.h"
 #include "VisitedLinkState.h"
 #include "VoidCallback.h"
@@ -458,14 +459,20 @@ void Page::initGroup()
     m_group = m_singlePageGroup.get();
 }
 
-void Page::scheduleForcedStyleRecalcForAllPages()
+void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
     if (!allPages)
         return;
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            // If a change in the global environment has occurred, we need to
+            // make sure all the properties a recomputed, therefore we invalidate
+            // the properties cache.
+            if (StyleResolver* styleResolver = frame->document()->styleResolverIfExists())
+                styleResolver->invalidateMatchedPropertiesCache();
             frame->document()->scheduleForcedStyleRecalc();
+        }
 }
 
 void Page::setNeedsRecalcStyleInAllFrames()

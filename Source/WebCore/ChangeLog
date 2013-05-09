@@ -1,3 +1,22 @@
+2013-05-09  Enrica Casucci  <enrica@apple.com>
+
+        A change in system environment should force all CSS properties to be recomputed.
+        https://bugs.webkit.org/show_bug.cgi?id=115872
+        <rdar://problem/13781171>
+
+        Reviewed by Antti Koivisto.
+
+        When a change in the global environment occurs, for example system colors,
+        we need to make sure all the CSS properties are recomputed and not fetched
+        from the cache. For this reason we invalidate the properties cache.
+        I've also renamed the function to give it a more meaningful name.
+        
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment):
+        * page/Page.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformColorsDidChange):
+
 2013-05-09  Antti Koivisto  <antti@apple.com>
 
         Reoptimize free-standing :focus/link/visited/-webkit-any-link selectors.
