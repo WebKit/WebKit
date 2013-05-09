@@ -1,3 +1,19 @@
+2013-05-08  Rob Buis  <rbuis@rim.com>
+
+        Fix some compiler warnings (miscellaneous)
+        https://bugs.webkit.org/show_bug.cgi?id=80790
+
+        Reviewed by Brent Fulgham.
+
+        Get rid of the following warning for BlackBerry:
+
+        NavigatorContentUtils.cpp:60:78: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+
+        by not compiling any of the code to add protocols to the protocol whitelist.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::initProtocolHandlerWhitelist):
+
 2013-05-08  peavo@outlook.com  <peavo@outlook.com>
 
         [Windows] The function seekFile() is not implemented.

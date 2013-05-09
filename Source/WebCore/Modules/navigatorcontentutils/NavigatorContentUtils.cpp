@@ -43,8 +43,8 @@ static HashSet<String>* protocolWhitelist;
 static void initProtocolHandlerWhitelist()
 {
     protocolWhitelist = new HashSet<String>;
-    static const char* protocols[] = {
 #if !PLATFORM(BLACKBERRY)
+    static const char* protocols[] = {
         "irc",
         "mailto",
         "mms",
@@ -55,10 +55,10 @@ static void initProtocolHandlerWhitelist()
         "tel",
         "urn",
         "webcal",
-#endif
     };
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
         protocolWhitelist->add(protocols[i]);
+#endif
 }
 
 static bool verifyCustomHandlerURL(const String& baseURL, const String& url, ExceptionCode& ec)
