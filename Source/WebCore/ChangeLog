@@ -1,3 +1,16 @@
+2013-05-09  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an exception when hovering native functions while paused in the debugger.
+
+        https://webkit.org/b/115866
+        rdar://problem/13681982
+
+        Reviewed by Darin Adler and Joseph Pecoraro.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.getFunctionDetails): Return an error if the details
+        is null or undefined.
+
 2013-05-09  Darin Adler  <darin@apple.com>
 
         [Mac] CFError leak under Objective-C garbage collection
