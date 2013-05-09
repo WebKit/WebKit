@@ -313,7 +313,6 @@ public:
     bool cancelCompositionIfSelectionIsInvalid();
     PassRefPtr<Range> compositionRange() const;
     bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
-    bool setSelectionOffsets(int selectionStart, int selectionEnd);
 
     // getting international text input composition state (for use by InlineTextBox)
     Text* compositionNode() const { return m_compositionNode.get(); }
