@@ -81,7 +81,7 @@ public:
 
     bool isTileCorrespondingToBuffer(TileIndex, TileBuffer*) const;
 
-  private:
+private:
     int m_numberOfTilesWide;
     int m_numberOfTilesHigh;
     double m_scale;

@@ -1,5 +1,36 @@
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
+
+        [BlackBerry] Style updates required based on new check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=115857
+
+        Reviewed by Rob Buis.
+
+        Update BackingStore to match check-webkit-style updates.
+
+        Internally reviewed by Jakob Petsovits.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::bestDivisor):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::shouldMoveLeft):
+        (BlackBerry::WebKit::BackingStorePrivate::shouldMoveRight):
+        (BlackBerry::WebKit::BackingStorePrivate::shouldMoveUp):
+        (BlackBerry::WebKit::BackingStorePrivate::shouldMoveDown):
+        (BlackBerry::WebKit::BackingStorePrivate::canMoveLeft):
+        (BlackBerry::WebKit::BackingStorePrivate::canMoveRight):
+        (BlackBerry::WebKit::BackingStorePrivate::canMoveUp):
+        (BlackBerry::WebKit::BackingStorePrivate::canMoveDown):
+        (BlackBerry::WebKit::BackingStorePrivate::indexOfTile):
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::scrollBackingStore):
+        (BlackBerry::WebKit::BackingStoreGeometry::originOfTile):
+        (BlackBerry::WebKit::BackingStore::repaint):
+        * Api/BackingStore_p.h:
+        (BackingStoreGeometry):
+
+2013-05-09  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Style updates required based on new check-webkit-style
         https://bugs.webkit.org/show_bug.cgi?id=115857
 

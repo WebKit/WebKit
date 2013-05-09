@@ -107,8 +107,8 @@ static bool divisorIsPreferredDirection(Divisor divisor, BackingStorePrivate::Ti
 
 // Compute best divisor given the ratio determined by size.
 static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight,
-                           int minimumNumberOfTilesWide, int minimumNumberOfTilesHigh,
-                           BackingStorePrivate::TileMatrixDirection direction)
+    int minimumNumberOfTilesWide, int minimumNumberOfTilesHigh,
+    BackingStorePrivate::TileMatrixDirection direction)
 {
     // The point of this function is to determine the number of tiles in each
     // dimension. We do this by looking to match the tile matrix width/height
@@ -428,13 +428,12 @@ void BackingStorePrivate::updateSuspendScreenUpdateState(bool* hasSyncedToUserIn
         *hasSyncedToUserInterfaceThread = true;
 }
 
-void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
-                                  bool contentChanged, bool immediate)
+void BackingStorePrivate::repaint(const Platform::IntRect& windowRect, bool contentChanged, bool immediate)
 {
-     // If immediate is true, then we're being asked to perform synchronously.
-     // NOTE: WebCore::ScrollView will call this method with immediate:true and contentChanged:false.
-     // This is a special case introduced specifically for the Apple's windows port and can be safely ignored I believe.
-     // Now this method will be called from WebPagePrivate::repaint().
+    // If immediate is true, then we're being asked to perform synchronously.
+    // NOTE: WebCore::ScrollView will call this method with immediate:true and contentChanged:false.
+    // This is a special case introduced specifically for the Apple's windows port and can be safely ignored I believe.
+    // Now this method will be called from WebPagePrivate::repaint().
 
     if (contentChanged && !windowRect.isEmpty()) {
         // This windowRect is in document coordinates relative to the viewport,
@@ -605,29 +604,29 @@ Platform::IntRect BackingStorePrivate::unclippedVisibleContentsRect() const
 bool BackingStorePrivate::shouldMoveLeft(const Platform::IntRect& backingStoreRect) const
 {
     return canMoveX(backingStoreRect)
-            && backingStoreRect.x() > visibleContentsRect().x()
-            && backingStoreRect.x() > expandedContentsRect().x();
+        && backingStoreRect.x() > visibleContentsRect().x()
+        && backingStoreRect.x() > expandedContentsRect().x();
 }
 
 bool BackingStorePrivate::shouldMoveRight(const Platform::IntRect& backingStoreRect) const
 {
     return canMoveX(backingStoreRect)
-            && backingStoreRect.right() < visibleContentsRect().right()
-            && backingStoreRect.right() < expandedContentsRect().right();
+        && backingStoreRect.right() < visibleContentsRect().right()
+        && backingStoreRect.right() < expandedContentsRect().right();
 }
 
 bool BackingStorePrivate::shouldMoveUp(const Platform::IntRect& backingStoreRect) const
 {
     return canMoveY(backingStoreRect)
-            && backingStoreRect.y() > visibleContentsRect().y()
-            && backingStoreRect.y() > expandedContentsRect().y();
+        && backingStoreRect.y() > visibleContentsRect().y()
+        && backingStoreRect.y() > expandedContentsRect().y();
 }
 
 bool BackingStorePrivate::shouldMoveDown(const Platform::IntRect& backingStoreRect) const
 {
     return canMoveY(backingStoreRect)
-            && backingStoreRect.bottom() < visibleContentsRect().bottom()
-            && backingStoreRect.bottom() < expandedContentsRect().bottom();
+        && backingStoreRect.bottom() < visibleContentsRect().bottom()
+        && backingStoreRect.bottom() < expandedContentsRect().bottom();
 }
 
 bool BackingStorePrivate::canMoveX(const Platform::IntRect& backingStoreRect) const
@@ -647,7 +646,7 @@ bool BackingStorePrivate::canMoveLeft(const Platform::IntRect& rect) const
     Platform::IntRect contentsRect = this->expandedContentsRect();
     backingStoreRect.move(-tileWidth(), 0);
     return backingStoreRect.right() >= visibleContentsRect.right()
-            && backingStoreRect.x() >= contentsRect.x();
+        && backingStoreRect.x() >= contentsRect.x();
 }
 
 bool BackingStorePrivate::canMoveRight(const Platform::IntRect& rect) const
@@ -657,8 +656,8 @@ bool BackingStorePrivate::canMoveRight(const Platform::IntRect& rect) const
     Platform::IntRect contentsRect = this->expandedContentsRect();
     backingStoreRect.move(tileWidth(), 0);
     return backingStoreRect.x() <= visibleContentsRect.x()
-            && (backingStoreRect.right() <= contentsRect.right()
-            || (backingStoreRect.right() - contentsRect.right()) < tileWidth());
+        && (backingStoreRect.right() <= contentsRect.right()
+        || (backingStoreRect.right() - contentsRect.right()) < tileWidth());
 }
 
 bool BackingStorePrivate::canMoveUp(const Platform::IntRect& rect) const
@@ -668,7 +667,7 @@ bool BackingStorePrivate::canMoveUp(const Platform::IntRect& rect) const
     Platform::IntRect contentsRect = this->expandedContentsRect();
     backingStoreRect.move(0, -tileHeight());
     return backingStoreRect.bottom() >= visibleContentsRect.bottom()
-            && backingStoreRect.y() >= contentsRect.y();
+        && backingStoreRect.y() >= contentsRect.y();
 }
 
 bool BackingStorePrivate::canMoveDown(const Platform::IntRect& rect) const
@@ -678,8 +677,8 @@ bool BackingStorePrivate::canMoveDown(const Platform::IntRect& rect) const
     Platform::IntRect contentsRect = this->expandedContentsRect();
     backingStoreRect.move(0, tileHeight());
     return backingStoreRect.y() <= visibleContentsRect.y()
-            && (backingStoreRect.bottom() <= contentsRect.bottom()
-            || (backingStoreRect.bottom() - contentsRect.bottom()) < tileHeight());
+        && (backingStoreRect.bottom() <= contentsRect.bottom()
+        || (backingStoreRect.bottom() - contentsRect.bottom()) < tileHeight());
 }
 
 Platform::IntRect BackingStorePrivate::backingStoreRectForScroll(int deltaX, int deltaY, const Platform::IntRect& rect) const
@@ -872,8 +871,7 @@ TileIndexList BackingStorePrivate::indexesForBackingStoreRect(const Platform::In
     return indexes;
 }
 
-TileIndex BackingStorePrivate::indexOfTile(const Platform::IntPoint& origin,
-                                           const Platform::IntRect& backingStoreRect) const
+TileIndex BackingStorePrivate::indexOfTile(const Platform::IntPoint& origin, const Platform::IntRect& backingStoreRect) const
 {
     int offsetX = origin.x() - backingStoreRect.x();
     int offsetY = origin.y() - backingStoreRect.y();
@@ -885,9 +883,9 @@ TileIndex BackingStorePrivate::indexOfTile(const Platform::IntPoint& origin,
 }
 
 void BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion(const TileIndex&, TileBuffer* tileBuffer,
-                                                                const Platform::IntRectRegion& tileNotRenderedRegion,
-                                                                BackingStoreGeometry*,
-                                                                bool update)
+    const Platform::IntRectRegion& tileNotRenderedRegion,
+    BackingStoreGeometry*,
+    bool update)
 {
     if (tileNotRenderedRegion.isEmpty())
         return;
@@ -962,9 +960,9 @@ void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
 
     // Calculate our preferred matrix geometry.
     Divisor divisor = bestDivisor(expandedContentsSize(),
-                                  tileWidth(), tileHeight(),
-                                  minimumNumberOfTilesWide(), minimumNumberOfTilesHigh(),
-                                  m_preferredTileMatrixDimension);
+        tileWidth(), tileHeight(),
+        minimumNumberOfTilesWide(), minimumNumberOfTilesHigh(),
+        m_preferredTileMatrixDimension);
 
 #if DEBUG_TILEMATRIX
     Platform::logAlways(Platform::LogLevelCritical,
@@ -1730,7 +1728,7 @@ void BackingStorePrivate::createSurfaces()
 Platform::IntPoint BackingStoreGeometry::originOfTile(const TileIndex& index) const
 {
     return Platform::IntPoint(backingStoreRect().x() + (index.i() * BackingStorePrivate::tileWidth()),
-                              backingStoreRect().y() + (index.j() * BackingStorePrivate::tileHeight()));
+        backingStoreRect().y() + (index.j() * BackingStorePrivate::tileHeight()));
 }
 
 int BackingStorePrivate::minimumNumberOfTilesWide() const
@@ -2130,8 +2128,7 @@ void BackingStore::blitVisibleContents()
     d->blitVisibleContents(false /*force*/);
 }
 
-void BackingStore::repaint(int x, int y, int width, int height,
-                           bool contentChanged, bool immediate)
+void BackingStore::repaint(int x, int y, int width, int height, bool contentChanged, bool immediate)
 {
     d->repaint(Platform::IntRect(x, y, width, height), contentChanged, immediate);
 }
