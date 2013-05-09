@@ -393,7 +393,7 @@ void LayerWebKitThread::setBounds(const IntSize& size)
 void LayerWebKitThread::setFrame(const FloatRect& rect)
 {
     if (rect == m_frame)
-      return;
+        return;
 
     m_frame = rect;
     setNeedsDisplay();

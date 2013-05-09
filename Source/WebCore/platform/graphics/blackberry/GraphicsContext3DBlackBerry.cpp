@@ -279,9 +279,9 @@ void GraphicsContext3D::readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3
     // If this ever changes, this code will need to be updated.
 
     // Calculate the strides of our data and canvas
-    unsigned int formatSize = 4; // RGBA UNSIGNED_BYTE
-    unsigned int dataStride = width * formatSize;
-    unsigned int canvasStride = m_currentWidth * formatSize;
+    unsigned formatSize = 4; // RGBA UNSIGNED_BYTE
+    unsigned dataStride = width * formatSize;
+    unsigned canvasStride = m_currentWidth * formatSize;
 
     // If we are using a pack alignment of 8, then we need to align our strides to 8 byte boundaries
     // See: http://en.wikipedia.org/wiki/Data_structure_alignment (computing padding)
@@ -311,10 +311,10 @@ void GraphicsContext3D::readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3
     IntRect canvasRect(0, 0, m_currentWidth, m_currentHeight);
     IntRect nonZeroDataRect = intersection(dataRect, canvasRect);
 
-    unsigned int xDataOffset = x < 0 ? -x * formatSize : 0;
-    unsigned int yDataOffset = y < 0 ? -y * dataStride : 0;
-    unsigned int xCanvasOffset = nonZeroDataRect.x() * formatSize;
-    unsigned int yCanvasOffset = nonZeroDataRect.y() * canvasStride;
+    unsigned xDataOffset = x < 0 ? -x * formatSize : 0;
+    unsigned yDataOffset = y < 0 ? -y * dataStride : 0;
+    unsigned xCanvasOffset = nonZeroDataRect.x() * formatSize;
+    unsigned yCanvasOffset = nonZeroDataRect.y() * canvasStride;
     unsigned char* dst = static_cast<unsigned char*>(data) + xDataOffset + yDataOffset;
     unsigned char* src = canvasData + xCanvasOffset + yCanvasOffset;
     for (int row = 0; row < nonZeroDataRect.height(); row++) {
@@ -360,7 +360,7 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 #endif
 
 void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight,
-       GraphicsContext* context)
+    GraphicsContext* context)
 {
     FloatRect src(0, 0, canvasWidth, canvasHeight);
     FloatRect dst(0, 0, imageWidth, imageHeight);

@@ -661,8 +661,9 @@ void GraphicsLayerBlackBerry::updateSublayerList()
 void GraphicsLayerBlackBerry::updateLayerPosition()
 {
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(),
-                             m_position.y() + m_anchorPoint.y() * m_size.height());
+    FloatPoint layerPosition(
+        m_position.x() + m_anchorPoint.x() * m_size.width(),
+        m_position.y() + m_anchorPoint.y() * m_size.height());
 
     primaryLayer()->setPosition(layerPosition);
 }

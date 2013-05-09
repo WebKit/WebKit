@@ -290,8 +290,8 @@ inline void ThreadSafeRefCounted<WebCore::LayerCompositingThread>::deref()
     if (derefBase()) {
         // Delete on the compositing thread.
         BlackBerry::Platform::GuardedPointerDeleter::deleteOnThread(
-                BlackBerry::Platform::userInterfaceThreadMessageClient(),
-                static_cast<WebCore::LayerCompositingThread*>(this));
+            BlackBerry::Platform::userInterfaceThreadMessageClient(),
+            static_cast<WebCore::LayerCompositingThread*>(this));
     }
 }
 

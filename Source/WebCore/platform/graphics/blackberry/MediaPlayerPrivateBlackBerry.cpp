@@ -219,9 +219,8 @@ void MediaPlayerPrivate::prepareToPlay()
 
 void MediaPlayerPrivate::play()
 {
-    if (m_platformPlayer) {
+    if (m_platformPlayer)
         m_platformPlayer->play();
-    }
 }
 
 void MediaPlayerPrivate::pause()
@@ -713,9 +712,9 @@ void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
     if (wait == PlatformPlayer::DialogResponse0)
         onPauseNotified();
     else {
-        if (m_platformPlayer->isMetadataReady()) {
+        if (m_platformPlayer->isMetadataReady())
             m_platformPlayer->playWithMetadataReady();
-        } else
+        else
             m_waitMetadataTimer.startOneShot(checkMetadataReadyInterval);
     }
 }

@@ -24,7 +24,7 @@
 namespace WebCore {
 
 IntRect::IntRect(const BlackBerry::Platform::IntRect& rect)
-        : m_location(rect.x(), rect.y()), m_size(rect.width(), rect.height())
+    : m_location(rect.x(), rect.y()), m_size(rect.width(), rect.height())
 {
 }
 

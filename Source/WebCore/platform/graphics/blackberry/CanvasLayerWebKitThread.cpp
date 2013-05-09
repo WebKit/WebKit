@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include "CanvasLayerWebKitThread.h"
+
 #include "LayerCompositingThread.h"
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)

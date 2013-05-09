@@ -162,7 +162,7 @@ int ImageReader::decode(size_t width, size_t height, ImageFrame* aFrame)
 }
 
 JPEGImageDecoder::JPEGImageDecoder(ImageSource::AlphaOption alphaOption,
-                                   ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+    ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
 {
 }
