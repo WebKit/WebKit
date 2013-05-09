@@ -1,3 +1,17 @@
+2013-05-09  Timothy Hatcher  <timothy@apple.com>
+
+        Make dragging off a tab in Safari with a docked Inspector reattach the Inspector.
+
+        https://webkit.org/b/115832
+        rdar://problem/13605661
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        If the Web Inspector is no longer in the same window as the inspected view,
+        then we need to reopen the Inspector to get it attached to the right window.
+
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
         Fix a typo in a comment.

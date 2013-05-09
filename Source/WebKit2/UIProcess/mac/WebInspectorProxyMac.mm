@@ -473,6 +473,14 @@ void WebInspectorProxy::platformHide()
 
 void WebInspectorProxy::platformBringToFront()
 {
+    // If the Web Inspector is no longer in the same window as the inspected view,
+    // then we need to reopen the Inspector to get it attached to the right window.
+    // This can happen when dragging tabs to another window in Safari.
+    if (m_isAttached && m_inspectorView.get().window != m_page->wkView().window) {
+        platformOpen();
+        return;
+    }
+
     // FIXME <rdar://problem/10937688>: this will not bring a background tab in Safari to the front, only its window.
     [m_inspectorView.get().window makeKeyAndOrderFront:nil];
     [m_inspectorView.get().window makeFirstResponder:m_inspectorView.get()];
