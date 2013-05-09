@@ -1,3 +1,37 @@
+2013-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFGArrayMode::fromObserved is too liberal when it sees different Array and NonArray shapes
+        https://bugs.webkit.org/show_bug.cgi?id=115805
+
+        Added regression test for array access over polymorphic array vs. non-array indexing types.
+        With the fix, we get 3.666x faster on this microbenchmark.
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/regress/array-nonarray-polymorphic-access-expected.txt: Added.
+        * fast/js/regress/array-nonarray-polymorphic-access.html: Added.
+        * fast/js/regress/script-tests/array-nonarray-polymorphic-access.js: Added.
+        (f):
+        (run):
+
+<<<<<<< .mine
+2013-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFGArrayMode::fromObserved is too liberal when it sees different Array and NonArray shapes
+        https://bugs.webkit.org/show_bug.cgi?id=115805
+
+        Reviewed by Geoffrey Garen.
+
+        Added regression test for array access over polymorphic array vs. non-array indexing types.
+        With the fix, we get 3.666x faster on this microbenchmark.
+
+        * fast/js/regress/array-nonarray-polymorphic-access-expected.txt: Added.
+        * fast/js/regress/array-nonarray-polymorphic-access.html: Added.
+        * fast/js/regress/script-tests/array-nonarray-polymorhpic-access.js: Added.
+        (f):
+        (run):
+
+=======
 2013-05-09  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Change fast/regions/webkit-flow-inlines-inside-regions-bounds[-vertical] tests to make them platform independent
@@ -96,6 +130,7 @@
 
         * platform/qt/fast/js/global-constructors-attributes-expected.txt: Added after r149758.
 
+>>>>>>> .r149833
 2013-05-08  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Get rid of duplicate entry line in TestExpectations

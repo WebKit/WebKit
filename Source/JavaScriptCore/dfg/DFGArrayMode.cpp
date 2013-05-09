@@ -112,9 +112,11 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, b
         else
             type = Array::Undecided;
         
-        if (observed & (asArrayModes(ArrayWithUndecided) | asArrayModes(ArrayWithInt32) | asArrayModes(ArrayWithDouble) | asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
+        if (hasSeenArray(observed) && hasSeenNonArray(observed))
+            arrayClass = Array::PossiblyArray;
+        else if (hasSeenArray(observed))
             arrayClass = Array::Array;
-        else if (observed & (asArrayModes(NonArray) | asArrayModes(NonArrayWithInt32) | asArrayModes(NonArrayWithDouble) | asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage)))
+        else if (hasSeenNonArray(observed))
             arrayClass = Array::NonArray;
         else
             arrayClass = Array::PossiblyArray;

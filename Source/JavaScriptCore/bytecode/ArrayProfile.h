@@ -115,6 +115,16 @@ inline bool shouldUseInt32(ArrayModes arrayModes)
     return arrayModesInclude(arrayModes, Int32Shape);
 }
 
+inline bool hasSeenArray(ArrayModes arrayModes)
+{
+    return arrayModes & ALL_ARRAY_ARRAY_MODES;
+}
+
+inline bool hasSeenNonArray(ArrayModes arrayModes)
+{
+    return arrayModes & ALL_NON_ARRAY_ARRAY_MODES;
+}
+
 class ArrayProfile {
 public:
     ArrayProfile()
