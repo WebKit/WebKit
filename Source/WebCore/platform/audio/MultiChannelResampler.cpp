@@ -64,7 +64,7 @@ public:
         // For subsequent channels, we can just dish out the channel data from that (stored in m_multiChannelBus).
         if (!m_currentChannel) {
             m_framesToProcess = framesToProcess;
-            m_multiChannelBus = adoptRef(new AudioBus(m_numberOfChannels, framesToProcess));
+            m_multiChannelBus = AudioBus::create(m_numberOfChannels, framesToProcess);
             m_multiChannelProvider->provideInput(m_multiChannelBus.get(), framesToProcess);
         }
 

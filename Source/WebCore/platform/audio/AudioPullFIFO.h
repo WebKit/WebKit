@@ -66,7 +66,7 @@ private:
     unsigned int m_providerSize;
 
     // Temporary workspace to hold the data from the provider.
-    AudioBus m_tempBus;
+    RefPtr<AudioBus> m_tempBus;
 };
 
 } // namespace WebCore

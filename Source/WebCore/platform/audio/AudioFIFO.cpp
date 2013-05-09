@@ -35,7 +35,7 @@
 namespace WebCore {
 
 AudioFIFO::AudioFIFO(unsigned numberOfChannels, size_t fifoLength)
-    : m_fifoAudioBus(numberOfChannels, fifoLength)
+    : m_fifoAudioBus(AudioBus::create(numberOfChannels, fifoLength))
     , m_fifoLength(fifoLength)
     , m_framesInFifo(0)
     , m_readIndex(0)
@@ -56,11 +56,11 @@ void AudioFIFO::consume(AudioBus* destination, size_t framesToConsume)
     size_t part2Length;
     findWrapLengths(m_readIndex, framesToConsume, part1Length, part2Length);
 
-    size_t numberOfChannels = m_fifoAudioBus.numberOfChannels();
+    size_t numberOfChannels = m_fifoAudioBus->numberOfChannels();
 
     for (size_t channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
         float* destinationData = destination->channel(channelIndex)->mutableData();
-        const float* sourceData = m_fifoAudioBus.channel(channelIndex)->data();
+        const float* sourceData = m_fifoAudioBus->channel(channelIndex)->data();
 
         bool isCopyGood = ((m_readIndex < m_fifoLength)
                            && (m_readIndex + part1Length) <= m_fifoLength
@@ -93,10 +93,10 @@ void AudioFIFO::push(const AudioBus* sourceBus)
     size_t part2Length;
     findWrapLengths(m_writeIndex, sourceLength, part1Length, part2Length);
 
-    size_t numberOfChannels = m_fifoAudioBus.numberOfChannels();
+    size_t numberOfChannels = m_fifoAudioBus->numberOfChannels();
 
     for (size_t channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-        float* destination = m_fifoAudioBus.channel(channelIndex)->mutableData();
+        float* destination = m_fifoAudioBus->channel(channelIndex)->mutableData();
         const float* source = sourceBus->channel(channelIndex)->data();
 
         bool isCopyGood = ((m_writeIndex < m_fifoLength)

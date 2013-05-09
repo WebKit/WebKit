@@ -42,7 +42,7 @@ AudioResampler::AudioResampler()
     : m_rate(1.0)
 {
     m_kernels.append(adoptPtr(new AudioResamplerKernel(this)));
-    m_sourceBus = adoptRef(new AudioBus(1, 0, false));
+    m_sourceBus = AudioBus::create(1, 0, false);
 }
 
 AudioResampler::AudioResampler(unsigned numberOfChannels)
@@ -51,7 +51,7 @@ AudioResampler::AudioResampler(unsigned numberOfChannels)
     for (unsigned i = 0; i < numberOfChannels; ++i)
         m_kernels.append(adoptPtr(new AudioResamplerKernel(this)));
 
-    m_sourceBus = adoptRef(new AudioBus(numberOfChannels, 0, false));
+    m_sourceBus = AudioBus::create(numberOfChannels, 0, false);
 }
 
 void AudioResampler::configureChannels(unsigned numberOfChannels)
@@ -68,7 +68,7 @@ void AudioResampler::configureChannels(unsigned numberOfChannels)
         m_kernels.resize(numberOfChannels);
 
     // Reconfigure our source bus to the new channel size.
-    m_sourceBus = adoptRef(new AudioBus(numberOfChannels, 0, false));
+    m_sourceBus = AudioBus::create(numberOfChannels, 0, false);
 }
 
 void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinationBus, size_t framesToProcess)

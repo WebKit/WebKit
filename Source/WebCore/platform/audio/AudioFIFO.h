@@ -55,7 +55,7 @@ private:
     void findWrapLengths(size_t index, size_t providerSize, size_t& part1Length, size_t& part2Length);
     
     // The FIFO itself. In reality, the FIFO is a circular buffer.
-    AudioBus m_fifoAudioBus;
+    RefPtr<AudioBus> m_fifoAudioBus;
 
     // The total available space in the FIFO.
     size_t m_fifoLength;

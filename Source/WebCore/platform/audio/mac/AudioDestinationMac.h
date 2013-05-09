@@ -32,6 +32,7 @@
 #include "AudioBus.h"
 #include "AudioDestination.h"
 #include <AudioUnit/AudioUnit.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ private:
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;
-    AudioBus m_renderBus;
+    RefPtr<AudioBus> m_renderBus;
 
     float m_sampleRate;
     bool m_isPlaying;

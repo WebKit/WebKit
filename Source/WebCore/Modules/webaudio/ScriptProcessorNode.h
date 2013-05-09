@@ -106,7 +106,7 @@ private:
     unsigned m_numberOfInputChannels;
     unsigned m_numberOfOutputChannels;
 
-    AudioBus m_internalInputBus;
+    RefPtr<AudioBus> m_internalInputBus;
 };
 
 } // namespace WebCore

@@ -66,7 +66,7 @@ public:
     // allocate indicates whether or not to initially have the AudioChannels created with managed storage.
     // Normal usage is to pass true here, in which case the AudioChannels will memory-manage their own storage.
     // If allocate is false then setChannelMemory() has to be called later on for each channel before the AudioBus is useable...
-    AudioBus(unsigned numberOfChannels, size_t length, bool allocate = true);
+    static PassRefPtr<AudioBus> create(unsigned numberOfChannels, size_t length, bool allocate = true);
 
     // Tells the given channel to use an externally allocated buffer.
     void setChannelMemory(unsigned channelIndex, float* storage, size_t length);
@@ -148,6 +148,8 @@ public:
 
 protected:
     AudioBus() { };
+
+    AudioBus(unsigned numberOfChannels, size_t length, bool allocate);
 
     void speakersCopyFrom(const AudioBus&);
     void discreteCopyFrom(const AudioBus&);

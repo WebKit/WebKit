@@ -21,6 +21,7 @@
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
+#include <wtf/RefPtr.h>
 
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;
@@ -45,7 +46,7 @@ public:
 
 private:
     AudioIOCallback& m_callback;
-    AudioBus m_renderBus;
+    RefPtr<AudioBus> m_renderBus;
 
     float m_sampleRate;
     bool m_isPlaying;

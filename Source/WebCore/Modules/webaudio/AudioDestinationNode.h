@@ -67,27 +67,27 @@ protected:
     class LocalAudioInputProvider : public AudioSourceProvider {
     public:
         LocalAudioInputProvider()
-            : m_sourceBus(2, AudioNode::ProcessingSizeInFrames) // FIXME: handle non-stereo local input.
+            : m_sourceBus(AudioBus::create(2, AudioNode::ProcessingSizeInFrames)) // FIXME: handle non-stereo local input.
         {
         }
 
         void set(AudioBus* bus)
         {
             if (bus)
-                m_sourceBus.copyFrom(*bus);
+                m_sourceBus->copyFrom(*bus);
         }
 
         // AudioSourceProvider.
         virtual void provideInput(AudioBus* destinationBus, size_t numberOfFrames)
         {
-            bool isGood = destinationBus && destinationBus->length() == numberOfFrames && m_sourceBus.length() == numberOfFrames;
+            bool isGood = destinationBus && destinationBus->length() == numberOfFrames && m_sourceBus->length() == numberOfFrames;
             ASSERT(isGood);
             if (isGood)
-                destinationBus->copyFrom(m_sourceBus);
+                destinationBus->copyFrom(*m_sourceBus);
         }
 
     private:
-        AudioBus m_sourceBus;
+        RefPtr<AudioBus> m_sourceBus;
     };
 
     virtual double tailTime() const OVERRIDE { return 0; }

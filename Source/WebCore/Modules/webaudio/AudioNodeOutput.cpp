@@ -47,7 +47,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
 {
     ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
 
-    m_internalBus = adoptRef(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
+    m_internalBus = AudioBus::create(numberOfChannels, AudioNode::ProcessingSizeInFrames);
 }
 
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
@@ -71,7 +71,7 @@ void AudioNodeOutput::updateInternalBus()
     if (numberOfChannels() == m_internalBus->numberOfChannels())
         return;
 
-    m_internalBus = adoptRef(new AudioBus(numberOfChannels(), AudioNode::ProcessingSizeInFrames));
+    m_internalBus = AudioBus::create(numberOfChannels(), AudioNode::ProcessingSizeInFrames);
 }
 
 void AudioNodeOutput::updateRenderingState()

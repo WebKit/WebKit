@@ -94,7 +94,7 @@ unsigned long AudioDestination::maxChannelCount()
 AudioDestinationMac::AudioDestinationMac(AudioIOCallback& callback, float sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)
-    , m_renderBus(2, kBufferSize, false)
+    , m_renderBus(AudioBus::create(2, kBufferSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -175,15 +175,15 @@ void AudioDestinationMac::stop()
 OSStatus AudioDestinationMac::render(UInt32 numberOfFrames, AudioBufferList* ioData)
 {
     AudioBuffer* buffers = ioData->mBuffers;
-    m_renderBus.setChannelMemory(0, (float*)buffers[0].mData, numberOfFrames);
-    m_renderBus.setChannelMemory(1, (float*)buffers[1].mData, numberOfFrames);
+    m_renderBus->setChannelMemory(0, (float*)buffers[0].mData, numberOfFrames);
+    m_renderBus->setChannelMemory(1, (float*)buffers[1].mData, numberOfFrames);
 
     // FIXME: Add support for local/live audio input.
-    m_callback.render(0, &m_renderBus, numberOfFrames);
+    m_callback.render(0, m_renderBus.get(), numberOfFrames);
 
     // Clamp values at 0db (i.e., [-1.0, 1.0])
-    for (unsigned i = 0; i < m_renderBus.numberOfChannels(); ++i) {
-        AudioChannel* channel = m_renderBus.channel(i);
+    for (unsigned i = 0; i < m_renderBus->numberOfChannels(); ++i) {
+        AudioChannel* channel = m_renderBus->channel(i);
         VectorMath::vclip(channel->data(), 1, &kLowThreshold, &kHighThreshold, channel->mutableData(), 1, numberOfFrames);
     }
 

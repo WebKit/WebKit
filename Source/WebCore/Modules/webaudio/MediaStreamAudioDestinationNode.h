@@ -62,7 +62,7 @@ private:
 
     RefPtr<MediaStream> m_stream;
     RefPtr<MediaStreamSource> m_source;
-    AudioBus m_mixBus;
+    RefPtr<AudioBus> m_mixBus;
 };
 
 } // namespace WebCore

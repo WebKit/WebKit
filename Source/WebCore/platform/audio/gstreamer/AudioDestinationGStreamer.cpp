@@ -79,7 +79,7 @@ static void onGStreamerWavparsePadAddedCallback(GstElement*, GstPad* pad, AudioD
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, float sampleRate)
     : m_callback(callback)
-    , m_renderBus(2, framesToPull, false)
+    , m_renderBus(AudioBus::create(2, framesToPull, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -91,7 +91,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
                                                                             "rate", sampleRate,
-                                                                            "bus", &m_renderBus,
+                                                                            "bus", m_renderBus.get(),
                                                                             "provider", &m_callback,
                                                                             "frames", framesToPull, NULL));
 

@@ -1,3 +1,92 @@
+2013-05-09  Chris Rogers  <crogers@google.com>
+
+        Require use of AudioBus::create() to avoid ref-counting issues
+        https://bugs.webkit.org/show_bug.cgi?id=115836
+
+        Reviewed by Andreas Kling.
+
+        There were a couple of places still embedding raw AudioBus objects as
+        member variables or local variables causing ref-counting problems
+        now that AudioBus is ref-counted.  Make AudioBus constructor private
+        to enforce use of AudioBus::create().
+
+        Adapted from Blink patch:
+        https://chromiumcodereview.appspot.com/14628008/
+
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::LocalAudioInputProvider):
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::set):
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::provideInput):
+        (LocalAudioInputProvider):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::AudioNodeInput):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        (WebCore::AudioNodeOutput::updateInternalBus):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        (WebCore::MediaStreamAudioDestinationNode::process):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::process):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        (ScriptProcessorNode):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::create):
+        (WebCore):
+        (WebCore::AudioBus::AudioBus):
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::createBySampleRateConverting):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/AudioBus.h:
+        (AudioBus):
+        * platform/audio/AudioFIFO.cpp:
+        (WebCore::AudioFIFO::AudioFIFO):
+        (WebCore::AudioFIFO::consume):
+        (WebCore::AudioFIFO::push):
+        * platform/audio/AudioFIFO.h:
+        (AudioFIFO):
+        * platform/audio/AudioPullFIFO.cpp:
+        (WebCore::AudioPullFIFO::AudioPullFIFO):
+        (WebCore::AudioPullFIFO::fillBuffer):
+        * platform/audio/AudioPullFIFO.h:
+        (AudioPullFIFO):
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::AudioResampler):
+        (WebCore::AudioResampler::configureChannels):
+        * platform/audio/MultiChannelResampler.cpp:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::initialize):
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::consumeSource):
+        (WebCore):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        (AudioDestinationGStreamer):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::createBus):
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::AudioDestinationIOS):
+        (WebCore::AudioDestinationIOS::render):
+        * platform/audio/ios/AudioDestinationIOS.h:
+        (AudioDestinationIOS):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::AudioDestinationMac):
+        (WebCore::AudioDestinationMac::render):
+        * platform/audio/mac/AudioDestinationMac.h:
+        (AudioDestinationMac):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+
 2013-05-09  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Upstream the input popups

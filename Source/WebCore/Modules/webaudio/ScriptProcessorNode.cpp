@@ -79,7 +79,7 @@ ScriptProcessorNode::ScriptProcessorNode(AudioContext* context, float sampleRate
     , m_isRequestOutstanding(false)
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_numberOfOutputChannels(numberOfOutputChannels)
-    , m_internalInputBus(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false)
+    , m_internalInputBus(AudioBus::create(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false))
 {
     // Regardless of the allowed buffer sizes, we still need to process at the granularity of the AudioNode.
     if (m_bufferSize < AudioNode::ProcessingSizeInFrames)
@@ -154,11 +154,11 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     AudioBuffer* outputBuffer = m_outputBuffers[doubleBufferIndex].get();
 
     // Check the consistency of input and output buffers.
-    unsigned numberOfInputChannels = m_internalInputBus.numberOfChannels();
+    unsigned numberOfInputChannels = m_internalInputBus->numberOfChannels();
     bool buffersAreGood = outputBuffer && bufferSize() == outputBuffer->length() && m_bufferReadWriteIndex + framesToProcess <= bufferSize();
 
     // If the number of input channels is zero, it's ok to have inputBuffer = 0.
-    if (m_internalInputBus.numberOfChannels())
+    if (m_internalInputBus->numberOfChannels())
         buffersAreGood = buffersAreGood && inputBuffer && bufferSize() == inputBuffer->length();
 
     ASSERT(buffersAreGood);
@@ -179,10 +179,10 @@ void ScriptProcessorNode::process(size_t framesToProcess)
         return;
 
     for (unsigned i = 0; i < numberOfInputChannels; i++)
-        m_internalInputBus.setChannelMemory(i, inputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, framesToProcess);
+        m_internalInputBus->setChannelMemory(i, inputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, framesToProcess);
 
     if (numberOfInputChannels)
-        m_internalInputBus.copyFrom(*inputBus);
+        m_internalInputBus->copyFrom(*inputBus);
 
     // Copy from the output buffer to the output. 
     for (unsigned i = 0; i < numberOfOutputChannels; ++i)

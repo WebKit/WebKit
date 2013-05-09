@@ -467,7 +467,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
         return 0;
 
     unsigned channels = mixToMono ? 1 : 2;
-    RefPtr<AudioBus> audioBus = adoptRef(new AudioBus(channels, m_channelSize, true));
+    RefPtr<AudioBus> audioBus = AudioBus::create(channels, m_channelSize, true);
     audioBus->setSampleRate(m_sampleRate);
 
     copyGstreamerBuffersToAudioChannel(m_frontLeftBuffers, audioBus->channel(0));

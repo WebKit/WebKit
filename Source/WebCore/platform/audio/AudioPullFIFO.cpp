@@ -38,7 +38,7 @@ AudioPullFIFO::AudioPullFIFO(AudioSourceProvider& audioProvider, unsigned number
     : m_provider(audioProvider)
     , m_fifo(numberOfChannels, fifoLength)
     , m_providerSize(providerSize)
-    , m_tempBus(numberOfChannels, providerSize)
+    , m_tempBus(AudioBus::create(numberOfChannels, providerSize))
 {
 }
 
@@ -62,9 +62,9 @@ void AudioPullFIFO::fillBuffer(size_t numberOfFrames)
     size_t framesProvided = 0;
 
     while (framesProvided < numberOfFrames) {
-        m_provider.provideInput(&m_tempBus, m_providerSize);
+        m_provider.provideInput(m_tempBus.get(), m_providerSize);
 
-        m_fifo.push(&m_tempBus);
+        m_fifo.push(m_tempBus.get());
 
         framesProvided += m_providerSize;
     }

@@ -132,15 +132,15 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
 
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
-    AudioBus bufferBus(numberOfChannels, bufferLength, false);
+    RefPtr<AudioBus> bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);
     for (unsigned i = 0; i < numberOfChannels; ++i)
-        bufferBus.setChannelMemory(i, buffer->getChannelData(i)->data(), bufferLength);
+        bufferBus->setChannelMemory(i, buffer->getChannelData(i)->data(), bufferLength);
 
-    bufferBus.setSampleRate(buffer->sampleRate());
+    bufferBus->setSampleRate(buffer->sampleRate());
 
     // Create the reverb with the given impulse response.
     bool useBackgroundThreads = !context()->isOfflineContext();
-    OwnPtr<Reverb> reverb = adoptPtr(new Reverb(&bufferBus, AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize));
+    OwnPtr<Reverb> reverb = adoptPtr(new Reverb(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize));
 
     {
         // Synchronize with process().

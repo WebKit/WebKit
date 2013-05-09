@@ -101,7 +101,7 @@ unsigned long AudioDestination::maxChannelCount()
 AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)
-    , m_renderBus(2, kRenderBufferSize, false)
+    , m_renderBus(AudioBus::create(2, kRenderBufferSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
     , m_interruptedOnPlayback(false)
@@ -235,9 +235,9 @@ OSStatus AudioDestinationIOS::render(UInt32 numberOfFrames, AudioBufferList* ioD
             UInt32 bytesPerFrame = buffers[i].mDataByteSize / numberOfFrames;
             UInt32 byteOffset = frameOffset * bytesPerFrame;
             float* memory = (float*)((char*)buffers[i].mData + byteOffset);
-            m_renderBus.setChannelMemory(i, memory, remainingFrames);
+            m_renderBus->setChannelMemory(i, memory, remainingFrames);
         }
-        m_callback.render(0, &m_renderBus, remainingFrames);
+        m_callback.render(0, m_renderBus.get(), remainingFrames);
     }
 
     return noErr;
