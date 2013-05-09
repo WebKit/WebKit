@@ -414,7 +414,7 @@ bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
 
 bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)
 {
-    if (m_frame->loader()->client()->shouldUsePluginDocument(mimeType)) {
+    if (m_frame->loader()->client()->shouldAlwaysUsePluginDocument(mimeType)) {
         useFallback = false;
         return true;
     }

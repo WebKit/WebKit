@@ -118,7 +118,7 @@ public:
     virtual void recreatePlugin(WebCore::Widget*) { }
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
 
-    virtual bool shouldUsePluginDocument(const WTF::String& mimeType) const;
+    virtual bool shouldAlwaysUsePluginDocument(const WTF::String& mimeType) const;
 
     virtual void dispatchDidFailToStartPlugin(const WebCore::PluginView*) const;
 

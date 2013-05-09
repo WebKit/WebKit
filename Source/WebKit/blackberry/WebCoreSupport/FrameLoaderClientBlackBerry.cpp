@@ -308,6 +308,11 @@ void FrameLoaderClientBlackBerry::committedLoad(DocumentLoader* loader, const ch
     }
 }
 
+bool FrameLoaderClientBlackBerry::shouldAlwaysUsePluginDocument(const String& mimeType) const
+{
+    return mimeType == "application/x-shockwave-flash";
+}
+
 PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& pluginSize,
     HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
     const Vector<String>& paramValues, const String& mimeTypeIn, bool loadManually)
@@ -316,7 +321,7 @@ PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& plug
     if (mimeType.isEmpty()) {
         mimeType = MIMETypeRegistry::getMIMETypeForPath(url.path());
         mimeType = MIMETypeRegistry::getNormalizedMIMEType(mimeType);
-        if (mimeType != "application/x-shockwave-flash")
+        if (!shouldAlwaysUsePluginDocument(mimeType))
             mimeType = mimeTypeIn;
     }
 
@@ -330,7 +335,7 @@ PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& plug
     // will generally be a valid media mime type, or it may be null. We
     // explicitly check for Flash content so it does not get rendered as
     // text at this point, producing garbled characters.
-    if (mimeType != "application/x-shockwave-flash" && m_frame->loader() && m_frame->loader()->subframeLoader() && !url.isNull())
+    if (!shouldAlwaysUsePluginDocument(mimeType) && m_frame->loader() && m_frame->loader()->subframeLoader() && !url.isNull())
         m_frame->loader()->subframeLoader()->requestFrame(element, url, String());
 
     return 0;

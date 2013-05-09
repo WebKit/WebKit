@@ -214,7 +214,7 @@ private:
     virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const OVERRIDE;
 #endif
 
-    virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const OVERRIDE;
+    virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const OVERRIDE;
 
     virtual void didChangeScrollOffset() OVERRIDE;
 

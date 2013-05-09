@@ -1,3 +1,23 @@
+2013-05-09  Max Feil  <mfeil@rim.com>
+
+        shouldUsePluginDocument() needs to be respected when a document is created
+        https://bugs.webkit.org/show_bug.cgi?id=110308
+
+        Reviewed by Rob Buis.
+
+        In DOMImplementation::createDocument() we should create
+        a PluginDocument for mime types that return "true" for
+        shouldAlwaysUsePluginDocument(), even if there is no pluginData
+        for them. This lets a client choose plugins for which the "missing
+        plugin" text or icon should appear more consistently. Otherwise
+        plugins referenced by iFrames will be treated as an HTMLDocument,
+        possibly resulting in binary files rendered as gibberish text.
+
+        Layout test platform/blackberry/plugins/swf-as-src-of-iframe.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+
 2013-05-09  Timothy Hatcher  <timothy@apple.com>
 
         Fix an exception when hovering native functions while paused in the debugger.

@@ -896,7 +896,7 @@ WebHistory* WebFrameLoaderClient::webHistory() const
     return WebHistory::sharedHistory();
 }
 
-bool WebFrameLoaderClient::shouldUsePluginDocument(const String& mimeType) const
+bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& mimeType) const
 {
     WebView* webView = m_webFrame->webView();
     if (!webView)

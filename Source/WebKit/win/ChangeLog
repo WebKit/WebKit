@@ -1,3 +1,18 @@
+2013-05-09  Max Feil  <mfeil@rim.com>
+
+        shouldUsePluginDocument() needs to be respected when a document is created
+        https://bugs.webkit.org/show_bug.cgi?id=110308
+
+        Reviewed by Rob Buis.
+
+        Renaming shouldUsePluginDocument() to shouldAlwaysUsePluginDocument()
+        for clarity.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldAlwaysUsePluginDocument):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+
 2013-05-06  Darin Adler  <darin@apple.com>
 
         Use adoptCF and adoptNS in more places

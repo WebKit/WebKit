@@ -1,3 +1,22 @@
+2013-05-09  Max Feil  <mfeil@rim.com>
+
+        shouldUsePluginDocument() needs to be respected when a document is created
+        https://bugs.webkit.org/show_bug.cgi?id=110308
+
+        Reviewed by Rob Buis.
+
+        This patch implements shouldAlwaysUsePluginDocument() in the
+        BlackBerry frame loader client. It is called in several places
+        within WebCore to determine whether a PluginDocument should
+        be created.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::shouldAlwaysUsePluginDocument):
+        (WebCore):
+        (WebCore::FrameLoaderClientBlackBerry::createPlugin):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2013-05-09  Mike Fenton <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style

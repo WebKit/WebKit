@@ -1536,7 +1536,7 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
 
 #endif // PLATFORM(MAC)
 
-bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) const
+bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const
 {
     notImplemented();
     return false;
