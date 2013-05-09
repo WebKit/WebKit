@@ -52,7 +52,6 @@
 #import <WebCore/ScrollbarTheme.h>
 
 using namespace WebCore;
-using namespace std;
 
 static const char* postScriptMIMEType = "application/postscript";
 

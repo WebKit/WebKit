@@ -40,7 +40,6 @@
 #include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
-using namespace std;
 
 namespace WebKit {
 
@@ -248,7 +247,7 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
                 String contentLength = headerFields.get("Content-Length");
                 
                 if (!contentLength.isNull())
-                    dataLength = min(contentLength.toInt(), (int)dataLength);
+                    dataLength = std::min(contentLength.toInt(), (int)dataLength);
                 headerFields.remove("Content-Length");
                 
                 postBuffer += location;

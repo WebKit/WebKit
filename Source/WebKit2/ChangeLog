@@ -1,3 +1,34 @@
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Use explicit qualifiers for names in the std:: namespace
+        https://bugs.webkit.org/show_bug.cgi?id=115868
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::encode):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::countStringMatches):
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage):
+        * WebProcess/mac/WebProcessMac.mm:
+
 2013-05-09  Max Feil  <mfeil@rim.com>
 
         shouldUsePluginDocument() needs to be respected when a document is created

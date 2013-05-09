@@ -195,7 +195,6 @@
 
 using namespace JSC;
 using namespace WebCore;
-using namespace std;
 
 namespace WebKit {
 

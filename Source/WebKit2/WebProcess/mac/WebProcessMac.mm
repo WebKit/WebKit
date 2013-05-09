@@ -55,7 +55,6 @@
 #endif
 
 using namespace WebCore;
-using namespace std;
 
 const CFStringRef kLSActivePageUserVisibleOriginsKey = CFSTR("LSActivePageUserVisibleOriginsKey");
 

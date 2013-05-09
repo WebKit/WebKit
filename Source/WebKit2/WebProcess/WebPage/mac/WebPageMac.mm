@@ -70,7 +70,6 @@
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
-using namespace std;
 
 namespace WebKit {
 
@@ -933,7 +932,7 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
 
     bool shouldRotate = (paperSize.width < paperSize.height) != (cropBox.size.width < cropBox.size.height);
     if (shouldRotate)
-        swap(cropBox.size.width, cropBox.size.height);
+        std::swap(cropBox.size.width, cropBox.size.height);
 
     // Center.
     CGFloat widthDifference = paperSize.width / pageSetupScaleFactor - cropBox.size.width;

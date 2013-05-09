@@ -35,7 +35,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -151,7 +150,7 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
             
             const Vector<String>& extensions = mimeClassInfo.extensions;
             
-            if (find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
+            if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
                 // We found a supported extension, set the correct MIME type.
                 mimeType = mimeClassInfo.type;
                 return plugin;

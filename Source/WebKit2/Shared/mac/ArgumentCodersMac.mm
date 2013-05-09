@@ -33,7 +33,6 @@
 #import <WebCore/ColorMac.h>
 
 using namespace WebCore;
-using namespace std;
 
 namespace CoreIPC {
 
@@ -230,7 +229,7 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
         ASSERT(effectiveRange.length);
         ASSERT(NSMaxRange(effectiveRange) <= length);
 
-        ranges.append(make_pair(effectiveRange, attributesAtIndex));
+        ranges.append(std::make_pair(effectiveRange, attributesAtIndex));
 
         position = NSMaxRange(effectiveRange);
     }

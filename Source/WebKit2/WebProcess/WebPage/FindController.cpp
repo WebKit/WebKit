@@ -41,7 +41,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 
-using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -77,7 +76,7 @@ static PluginView* pluginViewForFrame(Frame* frame)
 
 void FindController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    if (maxMatchCount == numeric_limits<unsigned>::max())
+    if (maxMatchCount == std::numeric_limits<unsigned>::max())
         --maxMatchCount;
     
     PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
@@ -131,8 +130,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         unsigned matchCount = 1;
 
         if (shouldShowOverlay || shouldShowHighlight) {
-
-            if (maxMatchCount == numeric_limits<unsigned>::max())
+            if (maxMatchCount == std::numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
             if (pluginView) {

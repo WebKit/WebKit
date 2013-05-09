@@ -34,7 +34,6 @@
 #include <wtf/Vector.h>
 
 using namespace WebCore;
-using namespace std;
 
 namespace WebKit {
 
@@ -221,7 +220,7 @@ void NetscapePluginStream::deliverDataToPlugin()
         }
 
         // Figure out how much data to send to the plug-in.
-        int32_t dataLength = min(numBytesPluginCanHandle, numBytesToDeliver - numBytesDelivered);
+        int32_t dataLength = std::min(numBytesPluginCanHandle, numBytesToDeliver - numBytesDelivered);
         uint8_t* data = m_deliveryData->data() + numBytesDelivered;
 
         int32_t numBytesWritten = m_plugin->NPP_Write(&m_npStream, m_offset, dataLength, data);
@@ -235,7 +234,7 @@ void NetscapePluginStream::deliverDataToPlugin()
         if (!m_isStarted)
             return;
 
-        numBytesWritten = min(numBytesWritten, dataLength);
+        numBytesWritten = std::min(numBytesWritten, dataLength);
         m_offset += numBytesWritten;
         numBytesDelivered += numBytesWritten;
     }

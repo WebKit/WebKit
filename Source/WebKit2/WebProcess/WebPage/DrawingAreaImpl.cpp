@@ -38,7 +38,6 @@
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
-using namespace std;
 
 namespace WebKit {
 
