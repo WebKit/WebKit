@@ -1,3 +1,12 @@
+2013-05-08  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Get rid of duplicate entry line in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=115828
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+
 2013-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         TextTrackCue should support empty content
