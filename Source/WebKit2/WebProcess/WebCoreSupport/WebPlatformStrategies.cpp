@@ -46,6 +46,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/ResourceError.h>
@@ -313,6 +314,16 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGr
     return StorageNamespaceImpl::createLocalStorageNamespace(pageGroup);
 #else
     return StorageStrategy::localStorageNamespace(pageGroup);
+#endif
+}
+
+PassRefPtr<StorageNamespace> WebPlatformStrategies::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*securityOrigin)
+{
+#if ENABLE(UI_PROCESS_STORAGE)
+    // FIXME: This could be more clever and made to work across processes.
+    return StorageStrategy::sessionStorageNamespace(*pageGroup->pages().begin());
+#else
+    return StorageStrategy::transientLocalStorageNamespace(pageGroup, securityOrigin);
 #endif
 }
 

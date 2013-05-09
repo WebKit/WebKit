@@ -1,5 +1,18 @@
 2013-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Implement WebPlatformStrategies::transientLocalStorageNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=115876
+        <rdar://problem/13852871>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::transientLocalStorageNamespace):
+        Return a session storage namespace for a random page when UI process storage is enabled,
+        otherwise call the base class implementation.
+
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
         Use explicit qualifiers for names in the std:: namespace
         https://bugs.webkit.org/show_bug.cgi?id=115868
 
