@@ -5,6 +5,29 @@
 
         Reviewed by Rob Buis.
 
+        Update WebCore/platform/network/blackberry
+        to match check-webkit-style updates.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::initialize):
+        (WebCore::NetworkJob::handleSetCookieHeader):
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+        (WebCore::NetworkJob::shouldSendClientData):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+        * platform/network/blackberry/rss/RSSFilterStream.cpp:
+        (WebCore::isRSSContent):
+        (WebCore::transcode):
+
+2013-05-09  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Style updates required based on new check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=115857
+
+        Reviewed by Rob Buis.
+
         Update WebCore/platform/blackberry to match check-webkit-style updates.
 
         No functional changes.

@@ -116,14 +116,14 @@ NetworkJob::~NetworkJob()
 }
 
 bool NetworkJob::initialize(int playerId,
-                            const String& pageGroupName,
-                            const KURL& url,
-                            const BlackBerry::Platform::NetworkRequest& request,
-                            PassRefPtr<ResourceHandle> handle,
-                            BlackBerry::Platform::NetworkStreamFactory* streamFactory,
-                            Frame* frame,
-                            int deferLoadingCount,
-                            int redirectCount)
+    const String& pageGroupName,
+    const KURL& url,
+    const BlackBerry::Platform::NetworkRequest& request,
+    PassRefPtr<ResourceHandle> handle,
+    BlackBerry::Platform::NetworkStreamFactory* streamFactory,
+    Frame* frame,
+    int deferLoadingCount,
+    int redirectCount)
 {
     BLACKBERRY_ASSERT(handle);
     BLACKBERRY_ASSERT(frame);
@@ -169,8 +169,8 @@ bool NetworkJob::initialize(int playerId,
 
     BlackBerry::Platform::NetworkRequest::TargetType targetType = request.getTargetType();
     if ((targetType == BlackBerry::Platform::NetworkRequest::TargetIsMainFrame
-         || targetType == BlackBerry::Platform::NetworkRequest::TargetIsSubframe)
-            && !m_isOverrideContentType) {
+        || targetType == BlackBerry::Platform::NetworkRequest::TargetIsSubframe)
+        && !m_isOverrideContentType) {
         RSSFilterStream* filter = new RSSFilterStream();
         filter->setWrappedStream(wrappedStream);
         wrappedStream = filter;
@@ -456,8 +456,8 @@ void NetworkJob::handleSetCookieHeader(const String& value)
     KURL url = m_response.url();
     CookieManager& manager = cookieManager();
     if ((manager.cookiePolicy() == CookieStorageAcceptPolicyOnlyFromMainDocumentDomain)
-      && (m_handle->firstRequest().firstPartyForCookies() != url)
-      && manager.getCookie(url, WithHttpOnlyCookies).isEmpty())
+        && (m_handle->firstRequest().firstPartyForCookies() != url)
+        && manager.getCookie(url, WithHttpOnlyCookies).isEmpty())
         return;
     manager.setCookies(url, value);
 }
@@ -749,9 +749,9 @@ void NetworkJob::sendResponseIfNeeded()
                 suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED)) + "." + mimeExtension;
         } else {
             if (urlFilename.reverseFind('.') == notFound && !mimeExtension.isEmpty())
-               suggestedFilename = urlFilename + '.' + mimeExtension;
+                suggestedFilename = urlFilename + '.' + mimeExtension;
             else
-               suggestedFilename = urlFilename;
+                suggestedFilename = urlFilename;
         }
     }
     m_response.setSuggestedFilename(suggestedFilename);
@@ -1004,7 +1004,7 @@ void NetworkJob::purgeCredentials(AuthenticationChallenge& challenge)
 bool NetworkJob::shouldSendClientData() const
 {
     return (!isRedirect(m_extendedStatusCode) || !m_response.httpHeaderFields().contains("Location"))
-           && !m_needsRetryAsFTPDirectory;
+        && !m_needsRetryAsFTPDirectory;
 }
 
 void NetworkJob::fireDeleteJobTimer(Timer<NetworkJob>*)

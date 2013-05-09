@@ -158,9 +158,8 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
     request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, rereadCookies);
 
     const String& documentUrl = frame->document()->url().string();
-    if (!documentUrl.isEmpty()) {
+    if (!documentUrl.isEmpty())
         platformRequest.setReferrer(documentUrl);
-    }
 
     platformRequest.setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
 

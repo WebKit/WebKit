@@ -53,14 +53,14 @@ public:
     ~NetworkJob();
 
     bool initialize(int playerId,
-                    const String& pageGroupName,
-                    const KURL&,
-                    const BlackBerry::Platform::NetworkRequest&,
-                    PassRefPtr<ResourceHandle>,
-                    BlackBerry::Platform::NetworkStreamFactory*,
-                    Frame*,
-                    int deferLoadingCount,
-                    int redirectCount);
+        const String& pageGroupName,
+        const KURL&,
+        const BlackBerry::Platform::NetworkRequest&,
+        PassRefPtr<ResourceHandle>,
+        BlackBerry::Platform::NetworkStreamFactory*,
+        Frame*,
+        int deferLoadingCount,
+        int redirectCount);
     PassRefPtr<ResourceHandle> handle() const { return m_handle; }
 #ifndef NDEBUG
     bool isRunning() const { return m_isRunning; }

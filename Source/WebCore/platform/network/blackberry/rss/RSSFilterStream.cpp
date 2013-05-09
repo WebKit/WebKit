@@ -85,8 +85,8 @@ static inline bool isPotentialRSSMIMEType(const std::string& mimeType)
 static inline bool isRSSContent(RSSFilterStream::ResourceType type)
 {
     return type == RSSFilterStream::TypeRSS10
-            || type == RSSFilterStream::TypeRSS20
-            || type == RSSFilterStream::TypeRSSAtom;
+        || type == RSSFilterStream::TypeRSS20
+        || type == RSSFilterStream::TypeRSSAtom;
 }
 
 static RSSFilterStream::ResourceType RSSTypeFromContentType(const std::string& contentType)
@@ -335,11 +335,11 @@ enum TranscodeResult {
 };
 
 static TranscodeResult transcode(const char* sourceEncoding,
-                                 const char* targetEncoding,
-                                 const char*& sourceStart,
-                                 int sourceLength,
-                                 char*& targetStart,
-                                 unsigned int targetLength)
+    const char* targetEncoding,
+    const char*& sourceStart,
+    int sourceLength,
+    char*& targetStart,
+    unsigned targetLength)
 {
     TextEncoding textEncodingSource(sourceEncoding);
     if (!textEncodingSource.isValid())
