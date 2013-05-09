@@ -1,3 +1,28 @@
+2013-05-09  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Remove Memory Distribution and Memory Snapshots Panels
+        https://bugs.webkit.org/show_bug.cgi?id=115850
+
+        Reviewed by Andreas Kling.
+
+        Removed the Memory Instrumentation Code after r148921.
+
+        No new tests, no behavior change.
+
+        * inspector/compile-front-end.py:
+        * inspector/front-end/NativeMemorySnapshotView.js: Removed.
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SettingsScreen.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector._panelDescriptors):
+        * inspector/front-end/nativeMemoryProfiler.css: Removed.
+
 2013-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r149796.

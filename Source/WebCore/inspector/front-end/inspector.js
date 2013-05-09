@@ -56,10 +56,6 @@ var WebInspector = {
                 allProfilers.push(new WebInspector.PanelDescriptor("heap-profiler", WebInspector.UIString("Heap Profiler"), "HeapProfilerPanel", "ProfilesPanel.js"));
             if (!WebInspector.WorkerManager.isWorkerFrontend() && WebInspector.experimentsSettings.canvasInspection.isEnabled())
                 allProfilers.push(new WebInspector.PanelDescriptor("canvas-profiler", WebInspector.UIString("Canvas Profiler"), "CanvasProfilerPanel", "ProfilesPanel.js"));
-            if (!WebInspector.WorkerManager.isWorkerFrontend() && WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled()) {
-                allProfilers.push(new WebInspector.PanelDescriptor("memory-chart-profiler", WebInspector.UIString("Memory Distribution"), "MemoryChartProfilerPanel", "ProfilesPanel.js"));
-                allProfilers.push(new WebInspector.PanelDescriptor("memory-snapshot-profiler", WebInspector.UIString("Memory Snapshots"), "NativeMemoryProfilerPanel", "ProfilesPanel.js"));
-            }
             Array.prototype.splice.bind(allDescriptors, allDescriptors.indexOf(profiles), 1).apply(null, allProfilers);
         }
 

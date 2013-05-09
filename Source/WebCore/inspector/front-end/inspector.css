@@ -546,22 +546,6 @@ body.dock-to-bottom .toolbar-item.canvas-profiler .toolbar-icon {
     background-position-x: -120px;
 }
 
-.toolbar-item.memory-chart-profiler .toolbar-icon {
-    background-position-x: -160px;
-}
-
-body.dock-to-bottom .toolbar-item.memory-chart-profiler .toolbar-icon {
-    background-position-x: -120px;
-}
-
-.toolbar-item.memory-snapshot-profiler .toolbar-icon {
-    background-position-x: -160px;
-}
-
-body.dock-to-bottom .toolbar-item.memory-snapshot-profiler .toolbar-icon {
-    background-position-x: -120px;
-}
-
 .toolbar-item.audits .toolbar-icon {
     background-position-x: -192px;
 }

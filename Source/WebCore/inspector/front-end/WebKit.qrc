@@ -122,7 +122,6 @@
     <file>NativeBreakpointsSidebarPane.js</file>
     <file>NativeHeapSnapshot.js</file>
     <file>NativeMemoryGraph.js</file>
-    <file>NativeMemorySnapshotView.js</file>
     <file>NavigatorOverlayController.js</file>
     <file>NavigatorView.js</file>
     <file>NetworkItemView.js</file>
@@ -258,7 +257,6 @@
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
-    <file>nativeMemoryProfiler.css</file>
     <file>navigatorView.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
