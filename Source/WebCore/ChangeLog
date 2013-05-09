@@ -1,3 +1,87 @@
+2013-05-09  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Upstream the input popups
+        https://bugs.webkit.org/show_bug.cgi?id=114608
+
+        Reviewed by Rob Buis.
+
+        This patch contains contributions from many members of the
+        BlackBerry WebKit team, including:
+
+        Chris Hutten-Czapski
+        David Hoon
+        Jessica Cao
+        Rob Buis
+        Tiancheng Jiang
+
+        * Resources/blackberry/colorControlBlackBerry.css: Added.
+        (.color-picker-popup-area):
+        (.color-picker-content):
+        (.color-picker-block):
+        (#color-picker-swatch-block):
+        (.color-picker-switcher):
+        (.color-picker-check-mark):
+        (.color-picker-option):
+        (.color-picker-button):
+        (.color-picker-highlight):
+        (input):
+        (.color-picker-sharp):
+        (.color-picker-off):
+        (.color-picker-inactive-font):
+        (.color-picker-row):
+        (.color-picker-hex-style):
+        (.color-picker-input):
+        (.color-picker-well):
+        (.color-picker-input .color-picker-well):
+        (.color-picker-slider):
+        (.color-picker-slider-output):
+        (.color-picker-range):
+        (.color-picker-range::-webkit-slider-thumb):
+        (.color-picker-range::-webkit-slider-thumb:active):
+        (.red-ranger-bg):
+        (.green-ranger-bg):
+        (.blue-ranger-bg):
+        (@media only screen and (height: 768px)):
+        (@media only screen and (height: 720px)):
+        * Resources/blackberry/colorControlBlackBerry.js: Added.
+        (.):
+        * Resources/blackberry/popupControlBlackBerry.css:
+        (body):
+        (.popup-area):
+        (.popup-header):
+        (.popup-content):
+        (.popup-buttons):
+        (.popup-button):
+        (@media only screen and (width: 720px) and (height: 720px)):
+        * Resources/blackberry/selectControlBlackBerry.css:
+        (.popup-content):
+        (@media (min-height: 918px)):
+        (.option):
+        (@media only screen and (width: 720px) and (height: 720px)):
+        (.contents):
+        (.option:active):
+        (.selected):
+        (.selected .contents::after):
+        (.text):
+        (.disabled):
+        (.optgroup):
+        (.optgroup-option):
+        * Resources/blackberry/selectControlBlackBerry.js:
+        (.):
+        * Resources/blackberry/timeControlBlackBerry.css: Added.
+        (#popup-content-time):
+        (.column):
+        (.column:not(:last-child)):
+        (.cell):
+        (.yearmonthdate .cell div:last-child):
+        (.row-highlight-container):
+        (.row-highlight-filler):
+        (.row-highlight):
+        (.tall-bit):
+        (@media only screen and (width: 720px) and (height: 720px)):
+        * Resources/blackberry/timeControlBlackBerry.js: Added.
+        (.):
+
 2013-05-09  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] texmap code generates warnings

@@ -34,11 +34,15 @@
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformString.h>
+#include <LocaleHandler.h>
+#include <LocalizeResource.h>
 #include <wtf/text/StringBuilder.h>
 
 #define CELL_HEIGHT 30
 
 namespace WebCore {
+
+DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
 SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLSelectElement* element)
@@ -75,15 +79,18 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     source.appendLiteral("</style>\n<style>");
     source.append(selectControlBlackBerryCss,
             sizeof(selectControlBlackBerryCss));
-    source.appendLiteral("</style></head><body>\n"
-                         "<script>\n"
-                         "window.addEventListener('load', function () {");
+    source.appendLiteral("</style></head><body>\n");
+    source.appendLiteral("<script>\n");
+    source.appendLiteral("window.addEventListener('load', function showIt() {");
+    source.appendLiteral("window.select.show({");
+    // Indicate if it is a multiselect.
+    source.appendLiteral("isMultiSelect:");
     if (m_multiple)
-        source.appendLiteral("window.select.show(true, ");
+        source.appendLiteral("true,");
     else
-        source.appendLiteral("window.select.show(false, ");
+        source.appendLiteral("false,");
     // Add labels.
-    source.append('[');
+    source.appendLiteral("labels: [");
     for (int i = 0; i < size; i++) {
         source.append("'" + String(labels[i]).replaceWithLiteral('\\', "\\\\").replaceWithLiteral('\'', "\\'") + "'");
         // Don't append ',' to last element.
@@ -92,7 +99,7 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     }
     source.appendLiteral("], ");
     // Add enables.
-    source.append('[');
+    source.append("enableds: [");
     for (int i = 0; i < size; i++) {
         if (enableds[i])
             source.appendLiteral("true");
@@ -104,7 +111,7 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     }
     source.appendLiteral("], ");
     // Add itemType.
-    source.append('[');
+    source.appendLiteral("itemTypes: [");
     for (int i = 0; i < size; i++) {
         source.appendNumber(itemType[i]);
         // Don't append ',' to last element.
@@ -113,7 +120,7 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     }
     source.appendLiteral("], ");
     // Add selecteds
-    source.append('[');
+    source.appendLiteral("selecteds: [");
     for (int i = 0; i < size; i++) {
         if (selecteds[i])
             source.appendLiteral("true");
@@ -123,12 +130,18 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
         if (i != size - 1)
             source.appendLiteral(", ");
     }
-    source.appendLiteral("] "
-                         ", 'Cancel'");
-    // If multi-select, add OK button for confirm.
-    if (m_multiple)
-        source.appendLiteral(", 'OK'");
-    source.appendLiteral("); \n }); \n");
+    source.appendLiteral("], ");
+    // Add UI text
+    source.appendLiteral("uiText: {");
+    source.append("title:'" + String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_SELECT_TITLE)) + "',");
+    source.append("doneButtonLabel:'" + String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_DONE_BUTTON_LABEL)) + "',");
+    source.append("cancelButtonLabel:'" + String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_CANCEL_BUTTON_LABEL)) + "',");
+    source.appendLiteral("},");
+    // Add directionality
+    bool isRtl = BlackBerry::Platform::LocaleHandler::instance()->isRtlLocale();
+    source.append("direction:'" + String(isRtl ? "rtl" : "ltr") + "',");
+    source.appendLiteral("});\n");
+    source.appendLiteral(" window.removeEventListener('load', showIt); }); \n");
     source.append(selectControlBlackBerryJs, sizeof(selectControlBlackBerryJs));
     source.appendLiteral("</script>\n"
                          "</body> </html>\n");

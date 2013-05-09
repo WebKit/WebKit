@@ -1,3 +1,32 @@
+2013-05-09  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Upstream the input popups
+        https://bugs.webkit.org/show_bug.cgi?id=114608
+
+        Reviewed by Rob Buis.
+
+        This patch contains contributions from many members of the
+        BlackBerry WebKit team, including:
+
+        Chris Hutten-Czapski
+        David Hoon
+        Jessica Cao
+        Rob Buis
+        Tiancheng Jiang
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore):
+        (WebCore::ColorPickerClient::generateHTML):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore):
+        (WebCore::DatePickerClient::generateHTML):
+        (WebCore::DatePickerClient::generateDateLabels):
+        * WebCoreSupport/DatePickerClient.h:
+        (DatePickerClient):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore):
+        (WebCore::SelectPopupClient::generateHTML):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style

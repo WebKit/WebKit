@@ -33,9 +33,16 @@
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformString.h>
+#include <LocaleHandler.h>
+#include <LocalizeResource.h>
+#include <unicode/dtfmtsym.h>
 #include <wtf/text/StringBuilder.h>
 
+using namespace icu;
+
 namespace WebCore {
+
+DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
 DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
     : m_type(type)
@@ -52,6 +59,7 @@ DatePickerClient::~DatePickerClient()
 void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step)
 {
     StringBuilder source;
+    String title = "";
     source.appendLiteral("<style>\n");
     // Include CSS file.
     source.append(popupControlBlackBerryCss,
@@ -59,44 +67,71 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     source.appendLiteral("</style>\n<style>");
     source.append(timeControlBlackBerryCss,
             sizeof(timeControlBlackBerryCss));
-    source.appendLiteral("</style></head><body>\n"
-                         "<script>\n"
-                         "window.addEventListener('load', function () {");
+    source.appendLiteral("</style></head><body>\n");
+    source.appendLiteral("<script>\n");
+    source.appendLiteral("window.addEventListener('load', function showIt() {");
+    source.appendLiteral("window.popupcontrol.show({");
+    // Add DatePicker type
+    source.appendLiteral("type:");
     switch (type) {
     case BlackBerry::Platform::InputTypeDate:
-        source.appendLiteral("window.popupcontrol.show(\"Date\", ");
+        source.appendLiteral("'Date', ");
+        title = String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_DATE_TITLE));
         break;
     case BlackBerry::Platform::InputTypeTime:
-        source.appendLiteral("window.popupcontrol.show(\"Time\", ");
+        source.appendLiteral("'Time', ");
+        title = String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_TIME_TITLE));
         break;
     case BlackBerry::Platform::InputTypeDateTime:
-        source.appendLiteral("window.popupcontrol.show(\"DateTime\", ");
+        source.appendLiteral("'DateTime', ");
+        title = String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_DATE_TIME_TITLE));
         break;
     case BlackBerry::Platform::InputTypeDateTimeLocal:
-        source.appendLiteral("window.popupcontrol.show(\"DateTimeLocal\", ");
+        source.appendLiteral("'DateTimeLocal', ");
+        title = String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_DATE_TIME_LOCAL_TITLE));
         break;
     case BlackBerry::Platform::InputTypeMonth:
-        source.appendLiteral("window.popupcontrol.show(\"Month\", ");
+        source.appendLiteral("'Month', ");
+        title = String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_MONTH_TITLE));
         break;
     case BlackBerry::Platform::InputTypeWeek:
     default:
         break;
     }
+    // Add datetime value
+    source.appendLiteral("initialValue:");
     if (!value.empty())
-        source.append("\"" + String(value) + "\", ");
+        source.append("'" + String(value) + "', ");
     else
-        source.appendLiteral("0, ");
-
+        source.appendLiteral("null, ");
+    // Add lower and upper bounds
+    source.appendLiteral("min:");
     if (!min.empty())
-        source.append(String(min) + ", ");
+        source.append("'" + String(min) + "', ");
     else
-        source.appendLiteral("0, ");
+        source.appendLiteral("null, ");
+    source.appendLiteral("max:");
     if (!max.empty())
-        source.append(String(max) + ", ");
+        source.append("'" + String(max) + "', ");
     else
-        source.appendLiteral("0, ");
-    source.append(String::number(step));
-    source.appendLiteral("); \n }); \n");
+        source.appendLiteral("null, ");
+    // Add step size
+    source.append("step:" + String::number(step) + ", ");
+    // Add UI text
+    source.appendLiteral("uiText: {");
+    source.append("title:'" + title + "',");
+    source.append("doneButtonLabel:'" + String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_DONE_BUTTON_LABEL)) + "',");
+    source.append("cancelButtonLabel:'" + String::fromUTF8(s_resource.getString(BlackBerry::Platform::PICKER_CANCEL_BUTTON_LABEL)) + "',");
+    source.append("monthLabels:" + DatePickerClient::generateDateLabels(UDAT_STANDALONE_MONTHS) + ",");
+    source.append("shortMonthLabels:" + DatePickerClient::generateDateLabels(UDAT_SHORT_MONTHS) + ",");
+    source.append("daysOfWeekLabels:" + DatePickerClient::generateDateLabels(UDAT_STANDALONE_WEEKDAYS) + ",");
+    source.append("amPmLabels:" + DatePickerClient::generateDateLabels(UDAT_AM_PMS) + ",");
+    source.appendLiteral("},");
+    // Add directionality
+    bool isRtl = BlackBerry::Platform::LocaleHandler::instance()->isRtlLocale();
+    source.append("direction:'" + String(isRtl ? "rtl" : "ltr") + "',");
+    source.appendLiteral("});\n");
+    source.appendLiteral(" window.removeEventListener('load', showIt); }); \n");
     source.append(timeControlBlackBerryJs, sizeof(timeControlBlackBerryJs));
     source.appendLiteral("</script>\n"
                          "</body> </html>\n");
@@ -152,5 +187,56 @@ void DatePickerClient::didClosePopup()
 void DatePickerClient::writeDocument(DocumentWriter& writer)
 {
     writer.addData(m_source.utf8().data(), m_source.utf8().length());
+}
+
+// UDAT_foo are for labels that are meant to be formatted as part of a date.
+// UDAT_STANDALONE_foo are for labels that are displayed separately from other date components.
+// For example, UDAT_SHORT_MONTHS in Catalan puts a preposition in front of the month but UDAT_STANDALONE_SHORT_MONTHS does not.
+const String DatePickerClient::generateDateLabels(UDateFormatSymbolType symbolType)
+{
+    UErrorCode uerrStatus = U_ZERO_ERROR;
+    DateFormatSymbols dateSymbols = DateFormatSymbols(uerrStatus); // constructor will never fail
+    const UnicodeString* labels = 0;
+    int32_t labelCount = 0;
+
+    switch (symbolType) {
+    // dateSymbols retain ownership of return values from getFoo calls
+    case UDAT_STANDALONE_MONTHS:
+        labelCount = 12;
+        labels = dateSymbols.getMonths(labelCount, DateFormatSymbols::STANDALONE, DateFormatSymbols::WIDE);
+        break;
+    case UDAT_STANDALONE_SHORT_MONTHS:
+        labelCount = 12;
+        labels = dateSymbols.getMonths(labelCount, DateFormatSymbols::STANDALONE, DateFormatSymbols::ABBREVIATED);
+        break;
+    case UDAT_SHORT_MONTHS:
+        labelCount = 12;
+        labels = dateSymbols.getMonths(labelCount, DateFormatSymbols::FORMAT, DateFormatSymbols::ABBREVIATED);
+        break;
+    case UDAT_STANDALONE_WEEKDAYS:
+        labelCount = 8;
+        // getWeekdays returns an array where the zeroeth element is empty; the first label is placed in index 1
+        labels = &(dateSymbols.getWeekdays(labelCount, DateFormatSymbols::STANDALONE, DateFormatSymbols::WIDE))[1]; // skip zeroeth element
+        --labelCount;
+        break;
+    case UDAT_AM_PMS:
+        labelCount = 2;
+        labels = dateSymbols.getAmPmStrings(labelCount);
+        break;
+    default:
+        ASSERT(0);
+        break;
+    }
+
+    StringBuilder printedLabels;
+    printedLabels.appendLiteral("[");
+    for (int32_t i = 0; i < labelCount; ++i) {
+        String escapedLabel = String(labels[i].getBuffer(), labels[i].length()).replace('\\', "\\\\").replace('\'', "\\'"); // TODO PR 243547: refactor escaping of strings for DatePickerClient and SelectPopupClient
+        printedLabels.append("'" + escapedLabel + "'");
+        if (i < labelCount - 1)
+            printedLabels.appendLiteral(",");
+    }
+    printedLabels.appendLiteral("]");
+    return printedLabels.toString();
 }
 }

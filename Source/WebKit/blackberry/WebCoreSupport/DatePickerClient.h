@@ -21,6 +21,7 @@
 
 #include "PagePopupClient.h"
 #include <BlackBerryPlatformInputEvents.h>
+#include <unicode/udat.h>
 
 namespace BlackBerry {
 namespace Platform {
@@ -53,6 +54,8 @@ public:
     void closePopup();
 
 private:
+    static const String generateDateLabels(UDateFormatSymbolType);
+
     BlackBerry::Platform::BlackBerryInputType m_type;
     String m_source;
     BlackBerry::WebKit::WebPagePrivate* m_webPage;
