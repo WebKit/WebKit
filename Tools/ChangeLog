@@ -1,3 +1,20 @@
+2013-05-09  Patrick Gansterer  <paroga@webkit.org>
+
+        [DRT] Replace JavaScriptThreadingPthreads.cpp with JavaScriptThreading.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92505
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/JavaScriptThreading.cpp: Copied from DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp.
+        (javaScriptThreadsMutex):
+        (javaScriptThreads):
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        * DumpRenderTree/pthreads: Removed.
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp: Removed.
+
 2013-05-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed. Update Simon Pena email on his behalf.
