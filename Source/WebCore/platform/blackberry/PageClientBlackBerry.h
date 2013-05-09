@@ -23,22 +23,22 @@
 #include "WebPageClient.h"
 
 namespace BlackBerry {
-    namespace Platform {
-        class NetworkStreamFactory;
-        namespace Graphics {
-            class Window;
-        }
-    }
+namespace Platform {
+class NetworkStreamFactory;
+namespace Graphics {
+class Window;
+}
+}
 }
 
 namespace WebCore {
-    class AuthenticationChallengeClient;
-    class Credential;
-    class IntRect;
-    class IntSize;
-    class KURL;
-    class PluginView;
-    class ProtectionSpace;
+class AuthenticationChallengeClient;
+class Credential;
+class IntRect;
+class IntSize;
+class KURL;
+class PluginView;
+class ProtectionSpace;
 }
 
 class PageClientBlackBerry {

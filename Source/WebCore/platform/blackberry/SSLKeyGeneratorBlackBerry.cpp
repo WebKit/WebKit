@@ -31,7 +31,7 @@ void getSupportedKeySizes(Vector<String>&)
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned int, String const&, KURL const&)
+String signedPublicKeyAndChallengeString(unsigned, String const&, KURL const&)
 {
     notImplemented();
     return String();

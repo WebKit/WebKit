@@ -142,8 +142,7 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
 
     unsigned tokenStart = start;
 
-    bool hasName = false; // This is a hack to avoid changing too much in this
-                          // brutally brittle code.
+    bool hasName = false; // This is a hack to avoid changing too much in this brutally brittle code.
     if (tokenEnd != start) {
         // There is a '=' so parse the NAME
         unsigned nameEnd = tokenEnd;
@@ -232,8 +231,8 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
             length = pairEnd - tokenStart;
         }
 
-       // Detect which "cookie-av" is parsed
-       // Look at the first char then parse the whole for performance issue
+        // Detect which "cookie-av" is parsed
+        // Look at the first char then parse the whole for performance issue
         switch (cookie[tokenStartSvg]) {
         case 'P':
         case 'p' : {
@@ -425,7 +424,7 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
         // so we must remove the escape sequences.
         res->setPath(decodeURLEscapeSequences(path));
     }
- 
+
     return res;
 }
 

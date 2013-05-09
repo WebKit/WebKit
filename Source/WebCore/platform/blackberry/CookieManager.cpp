@@ -264,7 +264,7 @@ void CookieManager::getRawCookies(Vector<RefPtr<ParsedCookie> > &stackOfCookies,
         if (m_shouldDumpAllCookies) {
             protocolsToSearch.append(m_managerMap.get("file"));
             protocolsToSearch.append(m_managerMap.get("local"));
-       }
+        }
     }
 
     Vector<String> delimitedHost;

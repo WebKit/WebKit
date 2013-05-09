@@ -56,7 +56,7 @@ public:
     CookieMap(const String& name = "");
     ~CookieMap();
 
-    unsigned int count() const { return m_cookieVector.size(); }
+    unsigned count() const { return m_cookieVector.size(); }
     const String& getName() const { return m_name; }
 
     // Return false if the candidateCookie is rejected.

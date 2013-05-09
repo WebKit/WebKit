@@ -392,14 +392,13 @@ bool RenderThemeBlackBerry::paintSearchFieldCancelButton(RenderObject* cancelBut
     // Center the button vertically. Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field. This tends to look better with the text.
     LayoutRect cancelButtonRect(cancelButtonObject->offsetFromAncestorContainer(inputRenderBox).width(),
-                                inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
-                                cancelButtonSize, cancelButtonSize);
+        inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2, cancelButtonSize, cancelButtonSize);
     IntRect paintingRect = convertToPaintingRect(inputRenderBox, cancelButtonObject, cancelButtonRect, r);
 
     static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
     static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
     paintInfo.context->drawImage(isPressed(cancelButtonObject) ? cancelPressedImage : cancelImage,
-                                 cancelButtonObject->style()->colorSpace(), paintingRect);
+        cancelButtonObject->style()->colorSpace(), paintingRect);
     return false;
 }
 
@@ -566,9 +565,9 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
     if (!isEnabled(object)) {
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
         drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
-    } else if (isPressed(object)) {
+    } else if (isPressed(object))
         drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
-    } else
+    else
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
 
     context->restore();
@@ -731,9 +730,8 @@ bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintIn
         if (isPressed(object) || isHovered(object) || isFocused(object)) {
             drawControl(context, tmpRect, pressed.get());
             drawControl(context, auraRect, aura.get());
-        } else {
+        } else
             drawControl(context, tmpRect, inactive.get());
-        }
     }
 
     context->restore();

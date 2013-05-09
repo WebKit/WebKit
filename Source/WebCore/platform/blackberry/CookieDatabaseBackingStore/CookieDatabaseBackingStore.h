@@ -43,8 +43,7 @@ namespace WebCore {
 
 class ParsedCookie;
 
-class CookieDatabaseBackingStore : public BlackBerry::Platform::MessageClient
-                                 , public BlackBerry::Platform::ThreadTimerClient {
+class CookieDatabaseBackingStore : public BlackBerry::Platform::MessageClient , public BlackBerry::Platform::ThreadTimerClient {
 public:
     static CookieDatabaseBackingStore* create() { return new CookieDatabaseBackingStore; }
 
