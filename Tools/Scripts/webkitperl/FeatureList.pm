@@ -410,7 +410,7 @@ my @features = (
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "shadow-dom", desc => "Toggle Shadow DOM support",
-      define => "ENABLE_SHADOW_DOM", default => isEfl(), value => \$shadowDOMSupport },
+      define => "ENABLE_SHADOW_DOM", default => 0, value => \$shadowDOMSupport },
 
     { option => "shared-workers", desc => "Toggle Shared Workers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$sharedWorkersSupport },
