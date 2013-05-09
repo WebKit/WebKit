@@ -302,7 +302,7 @@
         "Shinya Kawanaka": {"emails": ["shinyak@chromium.org"], "nicks": ["shinyak"]},
         "Siddharth Mathur": {"emails": ["siddharth.mathur@nokia.com"], "nicks": ["simathur"]},
         "Silvia Pfeiffer": {"emails": ["silviapf@chromium.org"], "nicks": ["silvia"]},
-        "Simon Pena": {"emails": ["spena@igalia.com"], "nicks": ["spenap"]},
+        "Simon Pena": {"emails": ["simon.pena@samsung.com", "spenap@gmail.com", "spena@igalia.com"], "nicks": ["spenap"]},
         "Steve Lacey": {"emails": ["sjl@chromium.org"], "nicks": ["stevela"]},
         "Sudarsana Nagineni": {"emails": ["naginenis@gmail.com", "sudarsana.nagineni@linux.intel.com", "sudarsana.nagineni@intel.com"], "nicks": ["babu"]},
         "Szilard Ledan-Muntean": {"emails": ["szledan@inf.u-szeged.hu"], "nicks": ["szledan"]},

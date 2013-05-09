@@ -1,3 +1,9 @@
+2013-05-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed. Update Simon Pena email on his behalf.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for [NoInterfaceObject] Web IDL extended attribute
