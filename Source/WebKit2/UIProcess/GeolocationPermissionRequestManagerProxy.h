@@ -46,7 +46,7 @@ public:
     void didReceiveGeolocationPermissionDecision(uint64_t, bool allow);
 
 private:
-    typedef HashMap<uint64_t, RefPtr<GeolocationPermissionRequestProxy> > PendingRequestMap;
+    typedef HashMap<uint64_t, RefPtr<GeolocationPermissionRequestProxy>> PendingRequestMap;
     PendingRequestMap m_pendingRequests;
     WebPageProxy* m_page;
 };

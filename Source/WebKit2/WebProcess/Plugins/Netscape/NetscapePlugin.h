@@ -269,10 +269,10 @@ private:
 
     uint64_t m_nextRequestID;
 
-    typedef HashMap<uint64_t, std::pair<String, void*> > PendingURLNotifyMap;
+    typedef HashMap<uint64_t, std::pair<String, void*>> PendingURLNotifyMap;
     PendingURLNotifyMap m_pendingURLNotifications;
 
-    typedef HashMap<uint64_t, RefPtr<NetscapePluginStream> > StreamsMap;
+    typedef HashMap<uint64_t, RefPtr<NetscapePluginStream>> StreamsMap;
     StreamsMap m_streams;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
@@ -329,7 +329,7 @@ private:
 
         WebCore::RunLoop::Timer<Timer> m_timer;
     };
-    typedef HashMap<unsigned, OwnPtr<Timer> > TimerMap;
+    typedef HashMap<unsigned, OwnPtr<Timer>> TimerMap;
     TimerMap m_timers;
     unsigned m_nextTimerID;
 

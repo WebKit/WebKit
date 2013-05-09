@@ -498,8 +498,8 @@ void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHa
 {
     // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
     for (size_t i = 0; i < linkHashes.size(); ++i) {
-        HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin();
-        HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator end = m_pageGroupMap.end();
+        HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin();
+        HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator end = m_pageGroupMap.end();
         for (; it != end; ++it)
             Page::visitedStateChanged(PageGroup::pageGroup(it->value->identifier()), linkHashes[i]);
     }
@@ -510,8 +510,8 @@ void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHa
 void WebProcess::allVisitedLinkStateChanged()
 {
     // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin();
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator end = m_pageGroupMap.end();
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin();
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator end = m_pageGroupMap.end();
     for (; it != end; ++it)
         Page::allVisitedStateChanged(PageGroup::pageGroup(it->value->identifier()));
 
@@ -543,8 +543,8 @@ void WebProcess::setCacheModel(uint32_t cm)
 
 WebPage* WebProcess::focusedWebPage() const
 {    
-    HashMap<uint64_t, RefPtr<WebPage> >::const_iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage> >::const_iterator it = m_pageMap.begin(); it != end; ++it) {
+    HashMap<uint64_t, RefPtr<WebPage>>::const_iterator end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage>>::const_iterator it = m_pageMap.begin(); it != end; ++it) {
         WebPage* page = (*it).value.get();
         if (page->windowAndWebPageAreFocused())
             return page;
@@ -561,7 +561,7 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
 {
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
-    HashMap<uint64_t, RefPtr<WebPage> >::AddResult result = m_pageMap.add(pageID, 0);
+    HashMap<uint64_t, RefPtr<WebPage>>::AddResult result = m_pageMap.add(pageID, 0);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         result.iterator->value = WebPage::create(pageID, parameters);
@@ -650,7 +650,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
     m_inDidClose = true;
 
     // Close all the live pages.
-    Vector<RefPtr<WebPage> > pages;
+    Vector<RefPtr<WebPage>> pages;
     copyValuesToVector(m_pageMap, pages);
     for (size_t i = 0; i < pages.size(); ++i)
         pages[i]->close();
@@ -695,7 +695,7 @@ void WebProcess::removeWebFrame(uint64_t frameID)
 
 WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
 {
-    for (HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin(), end = m_pageGroupMap.end(); it != end; ++it) {
+    for (HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin(), end = m_pageGroupMap.end(); it != end; ++it) {
         if (it->value->corePageGroup() == pageGroup)
             return it->value.get();
     }
@@ -710,7 +710,7 @@ WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
 
 WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)
 {
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::AddResult result = m_pageGroupMap.add(pageGroupData.pageGroupID, 0);
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::AddResult result = m_pageGroupMap.add(pageGroupData.pageGroupID, 0);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         result.iterator->value = WebPageGroupProxy::create(pageGroupData);
@@ -799,8 +799,8 @@ static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& s
     if (string.isEmpty())
         return;
     if (string.is8Bit())
-        return hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar> >(string.characters8(), string.length());
-    return hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar> >(string.characters16(), string.length());
+        return hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar>>(string.characters8(), string.length());
+    return hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar>>(string.characters16(), string.length());
 }
 
 static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
@@ -901,7 +901,7 @@ static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, ui
         map.set(it->key, it->value);
 }
 
-static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t> >& result)
+static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t>>& result)
 {
     String imagesString(ASCIILiteral("Images"));
     String cssString(ASCIILiteral("CSS"));
@@ -1114,8 +1114,8 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
     if (!continuousSpellCheckingTurnedOff && !grammarCheckingTurnedOff)
         return;
 
-    HashMap<uint64_t, RefPtr<WebPage> >::iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage> >::iterator it = m_pageMap.begin(); it != end; ++it) {
+    HashMap<uint64_t, RefPtr<WebPage>>::iterator end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage>>::iterator it = m_pageMap.begin(); it != end; ++it) {
         WebPage* page = (*it).value.get();
         if (continuousSpellCheckingTurnedOff)
             page->unmarkAllMisspellings();

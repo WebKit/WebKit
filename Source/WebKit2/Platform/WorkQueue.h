@@ -142,10 +142,10 @@ private:
     volatile LONG m_isWorkThreadRegistered;
 
     Mutex m_workItemQueueLock;
-    Vector<RefPtr<WorkItemWin> > m_workItemQueue;
+    Vector<RefPtr<WorkItemWin>> m_workItemQueue;
 
     Mutex m_handlesLock;
-    HashMap<HANDLE, RefPtr<HandleWorkItem> > m_handles;
+    HashMap<HANDLE, RefPtr<HandleWorkItem>> m_handles;
 
     HANDLE m_timerQueue;
 #elif PLATFORM(QT)
@@ -164,8 +164,8 @@ private:
     Mutex m_eventSourcesLock;
     class EventSource;
     class SocketEventSource;
-    HashMap<int, Vector<SocketEventSource*> > m_eventSources;
-    typedef HashMap<int, Vector<SocketEventSource*> >::iterator SocketEventSourceIterator;
+    HashMap<int, Vector<SocketEventSource*>> m_eventSources;
+    typedef HashMap<int, Vector<SocketEventSource*>>::iterator SocketEventSourceIterator;
 #elif PLATFORM(EFL)
     class TimerWorkItem {
     public:
@@ -190,13 +190,13 @@ private:
 
     bool m_threadLoop;
 
-    Vector<Function<void()> > m_workItemQueue;
+    Vector<Function<void()>> m_workItemQueue;
     Mutex m_workItemQueueLock;
 
     int m_socketDescriptor;
     Function<void()> m_socketEventHandler;
 
-    Vector<OwnPtr<TimerWorkItem> > m_timerWorkItems;
+    Vector<OwnPtr<TimerWorkItem>> m_timerWorkItems;
     Mutex m_timerWorkItemsLock;
 
     void sendMessageToThread(const char*);

@@ -126,7 +126,7 @@ using namespace WebCore;
 namespace WebKit {
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
-typedef Vector<RetainPtr<ValidationItem> > ValidationVector;
+typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
 }

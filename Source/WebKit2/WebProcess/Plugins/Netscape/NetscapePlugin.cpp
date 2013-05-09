@@ -533,7 +533,7 @@ NetscapePluginStream* NetscapePlugin::streamFromID(uint64_t streamID)
 
 void NetscapePlugin::stopAllStreams()
 {
-    Vector<RefPtr<NetscapePluginStream> > streams;
+    Vector<RefPtr<NetscapePluginStream>> streams;
     copyValuesToVector(m_streams, streams);
 
     for (size_t i = 0; i < streams.size(); ++i)

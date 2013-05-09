@@ -29,7 +29,7 @@
 namespace CoreIPC {
 
 // This assumes that when we encode a RefPtr we want to encode the object it points to and it is never null.
-template<typename T> struct ArgumentCoder<RefPtr<T> > {
+template<typename T> struct ArgumentCoder<RefPtr<T>> {
     static void encode(ArgumentEncoder& encoder, const RefPtr<T>& item)
     {
         item->encode(encoder);

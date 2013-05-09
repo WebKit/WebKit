@@ -52,7 +52,7 @@ public:
 
 private:
     ChildProcessProxy* m_process;
-    HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
+    HashMap<uint64_t, RefPtr<DownloadProxy>> m_downloads;
 };
 
 } // namespace WebKit

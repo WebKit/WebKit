@@ -51,7 +51,7 @@ public:
     {
         return adoptRef(new ImmutableArray(Adopt, entries, size));
     }
-    static PassRefPtr<ImmutableArray> adopt(Vector<RefPtr<APIObject> >& entries)
+    static PassRefPtr<ImmutableArray> adopt(Vector<RefPtr<APIObject>>& entries)
     {
         return adoptRef(new ImmutableArray(entries));
     }
@@ -70,9 +70,9 @@ protected:
     ImmutableArray();
     ImmutableArray(AdoptTag, APIObject** entries, size_t);
     ImmutableArray(APIObject** entries, size_t);
-    ImmutableArray(Vector<RefPtr<APIObject> >& entries);
+    ImmutableArray(Vector<RefPtr<APIObject>>& entries);
 
-    Vector<RefPtr<APIObject> > m_entries;
+    Vector<RefPtr<APIObject>> m_entries;
 };
 
 } // namespace WebKit

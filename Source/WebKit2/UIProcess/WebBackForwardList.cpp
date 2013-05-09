@@ -74,7 +74,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (!m_capacity || !newItem || !m_page)
         return;
 
-    Vector<RefPtr<APIObject> > removedItems;
+    Vector<RefPtr<APIObject>> removedItems;
     
     if (m_hasCurrentIndex) {
         // Toss everything in the forward list.
@@ -212,7 +212,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
     if (!size)
         return ImmutableArray::create();
 
-    Vector<RefPtr<APIObject> > vector;
+    Vector<RefPtr<APIObject>> vector;
     vector.reserveInitialCapacity(size);
 
     ASSERT(backListSize >= size);
@@ -235,7 +235,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
     if (!size)
         return ImmutableArray::create();
 
-    Vector<RefPtr<APIObject> > vector;
+    Vector<RefPtr<APIObject>> vector;
     vector.reserveInitialCapacity(size);
 
     unsigned last = m_currentIndex + size;
@@ -257,7 +257,7 @@ void WebBackForwardList::clear()
         return;
 
     RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
-    Vector<RefPtr<APIObject> > removedItems;
+    Vector<RefPtr<APIObject>> removedItems;
 
     if (!currentItem) {
         // We should only ever have no current item if we also have no current item index.

@@ -141,7 +141,7 @@ void WebResourceLoadScheduler::scheduleInternallyFailedLoad(WebCore::ResourceLoa
 
 void WebResourceLoadScheduler::internallyFailedLoadTimerFired()
 {
-    Vector<RefPtr<ResourceLoader> > internallyFailedResourceLoaders;
+    Vector<RefPtr<ResourceLoader>> internallyFailedResourceLoaders;
     copyToVector(m_internallyFailedResourceLoaders, internallyFailedResourceLoaders);
     
     for (size_t i = 0; i < internallyFailedResourceLoaders.size(); ++i)
@@ -212,8 +212,8 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 
 void WebResourceLoadScheduler::networkProcessCrashed()
 {
-    HashMap<unsigned long, RefPtr<WebResourceLoader> >::iterator end = m_webResourceLoaders.end();
-    for (HashMap<unsigned long, RefPtr<WebResourceLoader> >::iterator i = m_webResourceLoaders.begin(); i != end; ++i)
+    HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator end = m_webResourceLoaders.end();
+    for (HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator i = m_webResourceLoaders.begin(); i != end; ++i)
         scheduleInternallyFailedLoad(i->value.get()->resourceLoader());
 
     m_webResourceLoaders.clear();

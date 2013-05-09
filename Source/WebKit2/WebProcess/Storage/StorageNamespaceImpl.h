@@ -61,7 +61,7 @@ private:
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
 
-    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaMap> > m_storageAreaMaps;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaMap>> m_storageAreaMaps;
 };
 
 } // namespace WebKit

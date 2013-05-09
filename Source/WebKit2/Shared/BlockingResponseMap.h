@@ -77,7 +77,7 @@ private:
     Mutex m_mutex;
     ThreadCondition m_condition;
 
-    HashMap<uint64_t, OwnPtr<T> > m_responses;
+    HashMap<uint64_t, OwnPtr<T>> m_responses;
     bool m_canceled;
 };
 

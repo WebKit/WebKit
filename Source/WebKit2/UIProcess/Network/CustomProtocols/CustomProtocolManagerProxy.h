@@ -58,7 +58,7 @@ private:
     ChildProcessProxy* m_childProcessProxy;
 
 #if PLATFORM(MAC)
-    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader> > LoaderMap;
+    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> LoaderMap;
     LoaderMap m_loaderMap;
 #endif
 };

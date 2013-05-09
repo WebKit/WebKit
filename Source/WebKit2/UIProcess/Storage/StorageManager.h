@@ -86,12 +86,12 @@ private:
     RefPtr<WorkQueue> m_queue;
 
     RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
-    HashMap<uint64_t, RefPtr<LocalStorageNamespace> > m_localStorageNamespaces;
+    HashMap<uint64_t, RefPtr<LocalStorageNamespace>> m_localStorageNamespaces;
 
     class SessionStorageNamespace;
-    HashMap<uint64_t, RefPtr<SessionStorageNamespace> > m_sessionStorageNamespaces;
+    HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> > m_storageAreasByConnection;
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>> m_storageAreasByConnection;
 };
 
 } // namespace WebKit

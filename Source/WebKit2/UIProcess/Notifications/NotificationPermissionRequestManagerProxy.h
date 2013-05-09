@@ -47,7 +47,7 @@ public:
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow);
     
 private:
-    typedef HashMap<uint64_t, RefPtr<NotificationPermissionRequest> > PendingRequestMap;
+    typedef HashMap<uint64_t, RefPtr<NotificationPermissionRequest>> PendingRequestMap;
     PendingRequestMap m_pendingRequests;
     WebPageProxy* m_page;
 };

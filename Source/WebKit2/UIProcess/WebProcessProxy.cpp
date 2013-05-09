@@ -147,7 +147,7 @@ void WebProcessProxy::disconnect()
 
     m_responsivenessTimer.stop();
 
-    Vector<RefPtr<WebFrameProxy> > frames;
+    Vector<RefPtr<WebFrameProxy>> frames;
     copyValuesToVector(m_frameMap, frames);
 
     for (size_t i = 0, size = frames.size(); i < size; ++i)
@@ -396,7 +396,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
     webConnection()->didClose();
 
-    Vector<RefPtr<WebPageProxy> > pages;
+    Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
 
     disconnect();
@@ -422,7 +422,7 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection* connection, 
 
 void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)
 {
-    Vector<RefPtr<WebPageProxy> > pages;
+    Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidBecomeUnresponsive();
@@ -430,7 +430,7 @@ void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)
 
 void WebProcessProxy::interactionOccurredWhileUnresponsive(ResponsivenessTimer*)
 {
-    Vector<RefPtr<WebPageProxy> > pages;
+    Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->interactionOccurredWhileProcessUnresponsive();
@@ -438,7 +438,7 @@ void WebProcessProxy::interactionOccurredWhileUnresponsive(ResponsivenessTimer*)
 
 void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
 {
-    Vector<RefPtr<WebPageProxy> > pages;
+    Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidBecomeResponsive();
@@ -487,7 +487,7 @@ void WebProcessProxy::didDestroyFrame(uint64_t frameID)
 
 void WebProcessProxy::disconnectFramesFromPage(WebPageProxy* page)
 {
-    Vector<RefPtr<WebFrameProxy> > frames;
+    Vector<RefPtr<WebFrameProxy>> frames;
     copyValuesToVector(m_frameMap, frames);
     for (size_t i = 0, size = frames.size(); i < size; ++i) {
         if (frames[i]->page() == page)
@@ -498,7 +498,7 @@ void WebProcessProxy::disconnectFramesFromPage(WebPageProxy* page)
 size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
 {
     size_t result = 0;
-    for (HashMap<uint64_t, RefPtr<WebFrameProxy> >::const_iterator iter = m_frameMap.begin(); iter != m_frameMap.end(); ++iter) {
+    for (HashMap<uint64_t, RefPtr<WebFrameProxy>>::const_iterator iter = m_frameMap.begin(); iter != m_frameMap.end(); ++iter) {
         if (iter->value->page() == page)
             ++result;
     }

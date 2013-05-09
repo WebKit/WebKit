@@ -64,10 +64,10 @@ private:
 
     RefPtr<WorkQueue> m_queue;
 
-    Vector<RefPtr<PluginProcessConnection> > m_pluginProcessConnections;
+    Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
     Mutex m_pathsAndConnectionsMutex;
-    HashMap<std::pair<String, PluginProcess::Type>, RefPtr<CoreIPC::Connection> > m_pathsAndConnections;
+    HashMap<std::pair<String, PluginProcess::Type>, RefPtr<CoreIPC::Connection>> m_pathsAndConnections;
 };
 
 }

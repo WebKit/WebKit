@@ -84,7 +84,7 @@ private:
 
 #if ENABLE(THREADED_SCROLLING)
     Mutex m_scrollingTreesMutex;
-    HashMap<uint64_t, RefPtr<WebCore::ScrollingTree> > m_scrollingTrees;
+    HashMap<uint64_t, RefPtr<WebCore::ScrollingTree>> m_scrollingTrees;
 #endif
 };
 

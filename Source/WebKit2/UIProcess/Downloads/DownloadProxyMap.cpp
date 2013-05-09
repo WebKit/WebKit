@@ -67,7 +67,7 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
 void DownloadProxyMap::processDidClose()
 {
     // Invalidate all outstanding downloads.
-    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
+    for (HashMap<uint64_t, RefPtr<DownloadProxy>>::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
         (*it)->processDidClose();
         (*it)->invalidate();
     }

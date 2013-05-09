@@ -245,7 +245,7 @@ void WebLoaderClient::processDidCrash(WebPageProxy* page)
     m_client.processDidCrash(toAPI(page), m_client.clientInfo);
 }
 
-void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems)
+void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject>>* removedItems)
 {
     if (!m_client.didChangeBackForwardList)
         return;

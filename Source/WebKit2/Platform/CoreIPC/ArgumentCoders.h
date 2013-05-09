@@ -49,7 +49,7 @@ template<typename T> struct SimpleArgumentCoder {
     }
 };
 
-template<typename T, typename U> struct ArgumentCoder<std::pair<T, U> > {
+template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
     static void encode(ArgumentEncoder& encoder, const std::pair<T, U>& pair)
     {
         encoder << pair.first << pair.second;
@@ -71,7 +71,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U> > {
     }
 };
 
-template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType> > {
+template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
     static void encode(ArgumentEncoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         encoder << pair.key << pair.value;
@@ -155,9 +155,9 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     }
 };
 
-template<typename T> struct ArgumentCoder<Vector<T> > : VectorArgumentCoder<WTF::IsArithmetic<T>::value, T> { };
+template<typename T> struct ArgumentCoder<Vector<T>> : VectorArgumentCoder<WTF::IsArithmetic<T>::value, T> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> > {
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 
     static void encode(ArgumentEncoder& encoder, const HashMapType& hashMap)

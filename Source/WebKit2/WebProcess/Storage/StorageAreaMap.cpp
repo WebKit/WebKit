@@ -285,7 +285,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, c
     if (!webPage)
         return;
 
-    Vector<RefPtr<Frame> > frames;
+    Vector<RefPtr<Frame>> frames;
 
     Page* page = webPage->corePage();
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
@@ -313,7 +313,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, con
 {
     ASSERT(storageType() == LocalStorage);
 
-    Vector<RefPtr<Frame> > frames;
+    Vector<RefPtr<Frame>> frames;
 
     PageGroup& pageGroup = *WebProcess::shared().webPageGroup(m_storageNamespaceID)->corePageGroup();
     const HashSet<Page*>& pages = pageGroup.pages();

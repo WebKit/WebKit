@@ -85,7 +85,7 @@ private:
     // the find indicator isn't showing, but it will never be false when it is showing.
     bool m_isShowingFindIndicator;
     WebCore::IntRect m_findIndicatorRect;
-    Vector<RefPtr<WebCore::Range> > m_findMatches;
+    Vector<RefPtr<WebCore::Range>> m_findMatches;
 };
 
 } // namespace WebKit

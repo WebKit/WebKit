@@ -53,7 +53,7 @@ PassRefPtr<ImmutableArray> WebOpenPanelParameters::acceptMIMETypes() const
 {
     size_t size = m_settings.acceptMIMETypes.size();
 
-    Vector<RefPtr<APIObject> > vector;
+    Vector<RefPtr<APIObject>> vector;
     vector.reserveInitialCapacity(size);
     
     for (size_t i = 0; i < size; ++i)
@@ -72,7 +72,7 @@ PassRefPtr<ImmutableArray> WebOpenPanelParameters::selectedFileNames() const
 {    
     size_t size = m_settings.selectedFiles.size();
 
-    Vector<RefPtr<APIObject> > vector;
+    Vector<RefPtr<APIObject>> vector;
     vector.reserveInitialCapacity(size);
 
     for (size_t i = 0; i < size; ++i)

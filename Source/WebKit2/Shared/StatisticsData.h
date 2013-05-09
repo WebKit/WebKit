@@ -42,7 +42,7 @@ struct StatisticsData {
     HashMap<String, uint64_t> statisticsNumbers;
     HashMap<String, uint64_t> javaScriptProtectedObjectTypeCounts;
     HashMap<String, uint64_t> javaScriptObjectTypeCounts;    
-    Vector<HashMap<String, uint64_t> > webCoreCacheStatistics;
+    Vector<HashMap<String, uint64_t>> webCoreCacheStatistics;
     
     StatisticsData();
 };

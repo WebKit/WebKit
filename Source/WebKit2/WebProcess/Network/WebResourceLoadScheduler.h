@@ -67,10 +67,10 @@ private:
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader*);
     void internallyFailedLoadTimerFired();
     
-    HashSet<RefPtr<WebCore::ResourceLoader> > m_internallyFailedResourceLoaders;
+    HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     WebCore::RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
     
-    HashMap<unsigned long, RefPtr<WebResourceLoader> > m_webResourceLoaders;
+    HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
     
     unsigned m_suspendPendingRequestsCount;
 

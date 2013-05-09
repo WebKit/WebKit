@@ -86,8 +86,8 @@ private:
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;
 
-    Vector<RefPtr<SandboxExtension> > m_requestBodySandboxExtensions;
-    Vector<RefPtr<SandboxExtension> > m_resourceSandboxExtensions;
+    Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
+    Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     

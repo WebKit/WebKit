@@ -78,7 +78,7 @@ void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data
 #if ENABLE(GEOLOCATION)
     RefPtr<GeolocationPosition> position = GeolocationPosition::create(data.timestamp, data.latitude, data.longitude, data.accuracy, data.canProvideAltitude, data.altitude, data.canProvideAltitudeAccuracy, data.altitudeAccuracy, data.canProvideHeading, data.heading, data.canProvideSpeed, data.speed);
 
-    Vector<RefPtr<WebPage> > webPageCopy;
+    Vector<RefPtr<WebPage>> webPageCopy;
     copyToVector(m_pageSet, webPageCopy);
     for (size_t i = 0; i < webPageCopy.size(); ++i) {
         WebPage* page = webPageCopy[i].get();
@@ -96,7 +96,7 @@ void WebGeolocationManager::didFailToDeterminePosition(const String& errorMessag
     // FIXME: Add localized error string.
     RefPtr<GeolocationError> error = GeolocationError::create(GeolocationError::PositionUnavailable, errorMessage);
 
-    Vector<RefPtr<WebPage> > webPageCopy;
+    Vector<RefPtr<WebPage>> webPageCopy;
     copyToVector(m_pageSet, webPageCopy);
     for (size_t i = 0; i < webPageCopy.size(); ++i) {
         WebPage* page = webPageCopy[i].get();

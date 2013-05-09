@@ -47,21 +47,21 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& shared();
 
-    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&, PassOwnPtr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension> >&);
+    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&, PassOwnPtr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension>>&);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&, const WebCore::KURL& srcURL);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&);
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 
-    const Vector<RefPtr<SandboxExtension> > sandboxExtensions(const WebCore::KURL&);
+    const Vector<RefPtr<SandboxExtension>> sandboxExtensions(const WebCore::KURL&);
 
 private:
     ~NetworkBlobRegistry();
 
-    typedef HashMap<String, Vector<RefPtr<SandboxExtension> > > SandboxExtensionMap;
+    typedef HashMap<String, Vector<RefPtr<SandboxExtension>>> SandboxExtensionMap;
     SandboxExtensionMap m_sandboxExtensions;
 
-    typedef HashMap<NetworkConnectionToWebProcess*, HashSet<WebCore::KURL> > BlobForConnectionMap;
+    typedef HashMap<NetworkConnectionToWebProcess*, HashSet<WebCore::KURL>> BlobForConnectionMap;
     BlobForConnectionMap m_blobsForConnection;
 };
 

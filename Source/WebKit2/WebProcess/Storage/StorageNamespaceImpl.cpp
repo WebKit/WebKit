@@ -85,7 +85,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaMap> >::AddResult result = m_storageAreaMaps.add(securityOrigin.get(), 0);
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaMap>>::AddResult result = m_storageAreaMaps.add(securityOrigin.get(), 0);
     if (result.isNewEntry)
         result.iterator->value = StorageAreaMap::create(this, securityOrigin);
 

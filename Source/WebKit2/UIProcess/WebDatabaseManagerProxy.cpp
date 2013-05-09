@@ -157,7 +157,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
     }
 
     size_t originAndDatabasesCount = originAndDatabasesVector.size();
-    Vector<RefPtr<APIObject> > result(originAndDatabasesCount);
+    Vector<RefPtr<APIObject>> result(originAndDatabasesCount);
 
     for (size_t i = 0; i < originAndDatabasesCount; ++i) {
         const OriginAndDatabases& originAndDatabases = originAndDatabasesVector[i];
@@ -165,11 +165,11 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         RefPtr<APIObject> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
     
         size_t databasesCount = originAndDatabases.databases.size();
-        Vector<RefPtr<APIObject> > databases(databasesCount);
+        Vector<RefPtr<APIObject>> databases(databasesCount);
     
         for (size_t j = 0; j < databasesCount; ++j) {
             const DatabaseDetails& details = originAndDatabases.databases[i];
-            HashMap<String, RefPtr<APIObject> > detailsMap;
+            HashMap<String, RefPtr<APIObject>> detailsMap;
 
             detailsMap.set(databaseDetailsNameKey(), WebString::create(details.name()));
             detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(details.displayName()));
@@ -178,7 +178,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             databases.append(ImmutableDictionary::adopt(detailsMap));
         }
 
-        HashMap<String, RefPtr<APIObject> > originAndDatabasesMap;
+        HashMap<String, RefPtr<APIObject>> originAndDatabasesMap;
         originAndDatabasesMap.set(originKey(), origin);
         originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
         originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
@@ -209,7 +209,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     }
 
     size_t originIdentifiersCount = originIdentifiers.size();
-    Vector<RefPtr<APIObject> > securityOrigins(originIdentifiersCount);
+    Vector<RefPtr<APIObject>> securityOrigins(originIdentifiersCount);
 
     for (size_t i = 0; i < originIdentifiersCount; ++i)
         securityOrigins[i] = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifiers[i]);

@@ -123,7 +123,7 @@ void NetworkResourceLoadScheduler::servePendingRequests(ResourceLoadPriority min
     m_nonHTTPProtocolHost->servePendingRequests(minimumPriority);
 
     m_hosts.checkConsistency();
-    Vector<RefPtr<HostRecord> > hostsToServe;
+    Vector<RefPtr<HostRecord>> hostsToServe;
     copyValuesToVector(m_hosts, hostsToServe);
 
     size_t size = hostsToServe.size();
@@ -149,7 +149,7 @@ void NetworkResourceLoadScheduler::removeScheduledLoaders(void* context)
 
 void NetworkResourceLoadScheduler::removeScheduledLoaders()
 {
-    Vector<RefPtr<SchedulableLoader> > loadersToRemove;
+    Vector<RefPtr<SchedulableLoader>> loadersToRemove;
     {
         MutexLocker locker(m_loadersToRemoveMutex);
         loadersToRemove = m_loadersToRemove;

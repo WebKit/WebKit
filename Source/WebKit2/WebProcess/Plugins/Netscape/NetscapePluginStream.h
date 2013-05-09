@@ -106,7 +106,7 @@ private:
     CString m_headers;
 
     WebCore::RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
-    OwnPtr< Vector<uint8_t> > m_deliveryData;
+    OwnPtr< Vector<uint8_t>> m_deliveryData;
     bool m_stopStreamWhenDoneDelivering;
 };
 

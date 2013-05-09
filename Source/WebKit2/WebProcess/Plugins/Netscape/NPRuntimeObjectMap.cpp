@@ -211,7 +211,7 @@ void NPRuntimeObjectMap::invalidate()
 
     Vector<NPObject*> objects;
 
-    for (HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator ptr = m_jsNPObjects.begin(), end = m_jsNPObjects.end(); ptr != end; ++ptr) {
+    for (HashMap<NPObject*, JSC::Weak<JSNPObject>>::iterator ptr = m_jsNPObjects.begin(), end = m_jsNPObjects.end(); ptr != end; ++ptr) {
         JSNPObject* jsNPObject = ptr->value.get();
         if (!jsNPObject) // Skip zombies.
             continue;

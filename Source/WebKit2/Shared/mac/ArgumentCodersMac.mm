@@ -218,7 +218,7 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
     NSUInteger length = [plainString length];
     CoreIPC::encode(encoder, plainString);
 
-    Vector<pair<NSRange, RetainPtr<NSDictionary> > > ranges;
+    Vector<pair<NSRange, RetainPtr<NSDictionary>>> ranges;
 
     NSUInteger position = 0;
     while (position < length) {

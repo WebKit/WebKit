@@ -100,7 +100,7 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
 
     unsigned size = menuItemsVector.size();
 
-    Vector<RefPtr<APIObject> > menuItems;
+    Vector<RefPtr<APIObject>> menuItems;
     menuItems.reserveCapacity(size);
 
     for (unsigned i = 0; i < size; ++i)

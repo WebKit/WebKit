@@ -54,7 +54,7 @@ private:
     RetainPtr<NSString> m_executablePath;
     cpu_type_t m_architecture;
 
-    Vector<std::pair<CString, CString> > m_extractedVariables;
+    Vector<std::pair<CString, CString>> m_extractedVariables;
 };
 
 } // namespace WebKit

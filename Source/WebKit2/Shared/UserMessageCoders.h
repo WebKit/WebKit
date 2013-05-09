@@ -274,7 +274,7 @@ public:
             if (!decoder.decode(size))
                 return false;
 
-            Vector<RefPtr<APIObject> > vector;
+            Vector<RefPtr<APIObject>> vector;
             for (size_t i = 0; i < size; ++i) {
                 RefPtr<APIObject> element;
                 Owner messageCoder(coder, element);

@@ -64,7 +64,7 @@ public:
 private:
     HostRecord(const String& name, int maxRequestsInFlight);
 
-    typedef Deque<RefPtr<SchedulableLoader> > LoaderQueue;
+    typedef Deque<RefPtr<SchedulableLoader>> LoaderQueue;
 
     void servePendingRequestsForQueue(LoaderQueue&, WebCore::ResourceLoadPriority);
     bool limitsRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
@@ -72,7 +72,7 @@ private:
     LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
     LoaderQueue m_syncLoadersPending;
 
-    typedef HashSet<RefPtr<SchedulableLoader> > SchedulableLoaderSet;
+    typedef HashSet<RefPtr<SchedulableLoader>> SchedulableLoaderSet;
     SchedulableLoaderSet m_loadersInProgress;
 
     const String m_name;

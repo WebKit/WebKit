@@ -146,10 +146,10 @@ private:
     // The connection to the plug-in host process.
     RefPtr<CoreIPC::Connection> m_connection;
 
-    Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> > m_pendingConnectionReplies;
+    Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     Vector<uint64_t> m_pendingGetSitesRequests;
-    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager> > m_pendingGetSitesReplies;
+    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager>> m_pendingGetSitesReplies;
 
     struct ClearSiteDataRequest {
         Vector<String> sites;
@@ -158,7 +158,7 @@ private:
         uint64_t callbackID;
     };
     Vector<ClearSiteDataRequest> m_pendingClearSiteDataRequests;
-    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager> > m_pendingClearSiteDataReplies;
+    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager>> m_pendingClearSiteDataReplies;
 
     // If createPluginConnection is called while the process is still launching we'll keep count of it and send a bunch of requests
     // when the process finishes launching.

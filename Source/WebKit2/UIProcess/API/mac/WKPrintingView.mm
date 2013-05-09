@@ -476,7 +476,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     scaledPrintingRect.scale(1 / _totalScaleFactorForPrinting);
     IntSize imageSize(nsRect.size);
     imageSize.scale(_webFrame->page()->deviceScaleFactor());
-    HashMap<WebCore::IntRect, RefPtr<ShareableBitmap> >::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
+    HashMap<WebCore::IntRect, RefPtr<ShareableBitmap>>::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
         if ([self _hasPageRects]) {

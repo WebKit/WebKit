@@ -122,7 +122,7 @@ void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemDat
     m_page->contextMenuItemSelected(item);
 }
 
-static void populateNSMenu(NSMenu* menu, const Vector<RetainPtr<NSMenuItem> >& menuItemVector)
+static void populateNSMenu(NSMenu* menu, const Vector<RetainPtr<NSMenuItem>>& menuItemVector)
 {
     for (unsigned i = 0; i < menuItemVector.size(); ++i) {
         NSInteger oldState = [menuItemVector[i].get() state];
@@ -131,9 +131,9 @@ static void populateNSMenu(NSMenu* menu, const Vector<RetainPtr<NSMenuItem> >& m
     }
 }
 
-static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMenuItemData>& items)
+static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMenuItemData>& items)
 {
-    Vector<RetainPtr<NSMenuItem> > result;
+    Vector<RetainPtr<NSMenuItem>> result;
 
     unsigned size = items.size();
     result.reserveCapacity(size);

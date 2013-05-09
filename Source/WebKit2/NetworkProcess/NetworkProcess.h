@@ -116,7 +116,7 @@ private:
     void platformSetCacheModel(CacheModel);
 
     // Connections to WebProcesses.
-    Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;
+    Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
     NetworkResourceLoadScheduler m_networkResourceLoadScheduler;
 
@@ -124,7 +124,7 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-    typedef HashMap<const char*, OwnPtr<NetworkProcessSupplement>, PtrHash<const char*> > NetworkProcessSupplementMap;
+    typedef HashMap<const char*, OwnPtr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
 #if PLATFORM(MAC)

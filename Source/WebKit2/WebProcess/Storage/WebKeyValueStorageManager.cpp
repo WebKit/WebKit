@@ -64,7 +64,7 @@ static void keyValueStorageOriginIdentifiers(Vector<SecurityOriginData>& identif
 {
     ASSERT(identifiers.isEmpty());
 
-    Vector<RefPtr<SecurityOrigin> > coreOrigins;
+    Vector<RefPtr<SecurityOrigin>> coreOrigins;
 
     StorageTracker::tracker().origins(coreOrigins);
 

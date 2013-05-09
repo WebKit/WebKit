@@ -65,7 +65,7 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
     // to get both the origins and the Vector of DatabaseDetails for each origin in one
     // shot.  That would avoid taking the numerous locks this requires.
 
-    Vector<RefPtr<SecurityOrigin> > origins;
+    Vector<RefPtr<SecurityOrigin>> origins;
     DatabaseManager::manager().origins(origins);
 
     Vector<OriginAndDatabases> originAndDatabasesVector;
@@ -103,7 +103,7 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
 
 void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
 {
-    Vector<RefPtr<SecurityOrigin> > origins;
+    Vector<RefPtr<SecurityOrigin>> origins;
     DatabaseManager::manager().origins(origins);
 
     size_t numOrigins = origins.size();

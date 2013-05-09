@@ -47,12 +47,12 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const KURL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension> >& newSandboxExtensions)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const KURL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
     // Combine new extensions for File items and existing extensions for inner Blob items.
-    Vector<RefPtr<SandboxExtension> > sandboxExtensions = newSandboxExtensions;
+    Vector<RefPtr<SandboxExtension>> sandboxExtensions = newSandboxExtensions;
     const BlobDataItemList& items = data->items();
     for (size_t i = 0, count = items.size(); i < count; ++i) {
         if (items[i].type == BlobDataItem::Blob)
@@ -107,7 +107,7 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
     m_blobsForConnection.remove(connection);
 }
 
-const Vector<RefPtr<SandboxExtension> > NetworkBlobRegistry::sandboxExtensions(const WebCore::KURL& url)
+const Vector<RefPtr<SandboxExtension>> NetworkBlobRegistry::sandboxExtensions(const WebCore::KURL& url)
 {
     return m_sandboxExtensions.get(url.string());
 }

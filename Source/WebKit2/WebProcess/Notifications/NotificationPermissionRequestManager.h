@@ -69,13 +69,13 @@ private:
     NotificationPermissionRequestManager(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<uint64_t, RefPtr<WebCore::NotificationPermissionCallback> > m_idToCallbackMap;
+    HashMap<uint64_t, RefPtr<WebCore::NotificationPermissionCallback>> m_idToCallbackMap;
 #endif
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    HashMap<uint64_t, RefPtr<WebCore::VoidCallback> > m_idToVoidCallbackMap;
+    HashMap<uint64_t, RefPtr<WebCore::VoidCallback>> m_idToVoidCallbackMap;
 #endif
     HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
-    HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin> > m_idToOriginMap;
+    HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin>> m_idToOriginMap;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebPage* m_page;

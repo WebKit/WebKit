@@ -89,7 +89,7 @@ private:
     WebContext* m_webContext;
     
     unsigned m_numPendingConnectionRequests;
-    Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> > m_pendingConnectionReplies;
+    Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     OwnPtr<DownloadProxyMap> m_downloadProxyMap;
 

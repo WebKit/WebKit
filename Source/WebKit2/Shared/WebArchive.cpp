@@ -65,14 +65,14 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, ImmutableArray* subreso
 {
     RefPtr<ArchiveResource> coreMainResource = m_cachedMainResource->coreArchiveResource();
 
-    Vector<PassRefPtr<ArchiveResource> > coreArchiveResources;
+    Vector<PassRefPtr<ArchiveResource>> coreArchiveResources;
     for (size_t i = 0; i < m_cachedSubresources->size(); ++i) {
         RefPtr<WebArchiveResource> resource = m_cachedSubresources->at<WebArchiveResource>(i);
         ASSERT(resource);
         coreArchiveResources.append(resource->coreArchiveResource());
     }
 
-    Vector<PassRefPtr<LegacyWebArchive> > coreSubframeLegacyWebArchives;
+    Vector<PassRefPtr<LegacyWebArchive>> coreSubframeLegacyWebArchives;
     for (size_t i = 0; i < m_cachedSubframeArchives->size(); ++i) {
         RefPtr<WebArchive> subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
         ASSERT(subframeWebArchive);
@@ -107,7 +107,7 @@ WebArchiveResource* WebArchive::mainResource()
 ImmutableArray* WebArchive::subresources()
 {
     if (!m_cachedSubresources) {
-        Vector<RefPtr<APIObject> > subresources;
+        Vector<RefPtr<APIObject>> subresources;
         subresources.reserveCapacity(m_legacyWebArchive->subresources().size());
         for (unsigned i = 0; i < m_legacyWebArchive->subresources().size(); ++i)
             subresources.append(WebArchiveResource::create(m_legacyWebArchive->subresources()[i].get()));
@@ -121,7 +121,7 @@ ImmutableArray* WebArchive::subresources()
 ImmutableArray* WebArchive::subframeArchives()
 {
     if (!m_cachedSubframeArchives) {
-        Vector<RefPtr<APIObject> > subframeWebArchives;
+        Vector<RefPtr<APIObject>> subframeWebArchives;
         subframeWebArchives.reserveCapacity(m_legacyWebArchive->subframeArchives().size());
         for (unsigned i = 0; i < m_legacyWebArchive->subframeArchives().size(); ++i)
             subframeWebArchives.append(WebArchive::create(static_cast<LegacyWebArchive*>(m_legacyWebArchive->subframeArchives()[i].get())));

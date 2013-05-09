@@ -92,7 +92,7 @@ private:
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
     // Our web process connections.
-    Vector<RefPtr<WebProcessConnection> > m_webProcessConnections;
+    Vector<RefPtr<WebProcessConnection>> m_webProcessConnections;
 
     // The plug-in path.
     String m_pluginPath;

@@ -69,7 +69,7 @@ PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() co
     const Vector<WebContextMenuItemData>& submenuVector(m_webContextMenuItemData.submenu());
     unsigned size = submenuVector.size();
     
-    Vector<RefPtr<APIObject> > result;
+    Vector<RefPtr<APIObject>> result;
     result.reserveCapacity(size);
     
     for (unsigned i = 0; i < size; ++i)

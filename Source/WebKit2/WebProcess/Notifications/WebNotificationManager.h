@@ -90,10 +90,10 @@ private:
     typedef HashMap<RefPtr<WebCore::Notification>, uint64_t> NotificationMap;
     NotificationMap m_notificationMap;
     
-    typedef HashMap<uint64_t, RefPtr<WebCore::Notification> > NotificationIDMap;
+    typedef HashMap<uint64_t, RefPtr<WebCore::Notification>> NotificationIDMap;
     NotificationIDMap m_notificationIDMap;
     
-    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<uint64_t> > NotificationContextMap;
+    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<uint64_t>> NotificationContextMap;
     NotificationContextMap m_notificationContextMap;
     
     HashMap<String, bool> m_permissionsMap;

@@ -181,7 +181,7 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
         return;
     }
 
-    Vector<RefPtr<APIObject> > sitesWK(sites.size());
+    Vector<RefPtr<APIObject>> sitesWK(sites.size());
 
     for (size_t i = 0; i < sites.size(); ++i)
         sitesWK[i] = WebString::create(sites[i]);

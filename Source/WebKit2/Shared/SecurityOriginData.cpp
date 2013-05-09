@@ -78,7 +78,7 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
     }
     
     size_t originDataCount = originDatas.size();
-    Vector<RefPtr<APIObject> > securityOrigins;
+    Vector<RefPtr<APIObject>> securityOrigins;
     securityOrigins.reserveCapacity(originDataCount);
 
     for (size_t i = 0; i < originDataCount; ++i) {

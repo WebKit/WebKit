@@ -101,7 +101,7 @@ private:
     RefPtr<WorkQueue> m_messageQueue;
 
 #if PLATFORM(MAC)
-    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol> > CustomProtocolMap;
+    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol>> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
     Mutex m_customProtocolMapMutex;
     

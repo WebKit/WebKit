@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-typedef Vector<RefPtr<WebBackForwardListItem> > BackForwardListItemVector;
+typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;
 
 /*
  *          Current

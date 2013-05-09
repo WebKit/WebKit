@@ -59,7 +59,7 @@ public:
     void didChange(WebPage*, StringImpl* notificationName);
     void didChangeSelection(WebPage*, StringImpl* notificationName);
     void willWriteToPasteboard(WebPage*, WebCore::Range*);
-    void getPasteboardDataForRange(WebPage*, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData);
+    void getPasteboardDataForRange(WebPage*, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData);
     void didWriteToPasteboard(WebPage*);
 };
 

@@ -73,7 +73,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* conne
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
-        HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
+        HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
         if (loaderIterator != m_networkResourceLoaders.end())
             loaderIterator->value->didReceiveNetworkResourceLoaderMessage(connection, decoder);
         return;
@@ -96,12 +96,12 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     // Protect ourself as we might be otherwise be deleted during this function.
     RefPtr<NetworkConnectionToWebProcess> protector(this);
 
-    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator end = m_networkResourceLoaders.end();
-    for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
+    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator end = m_networkResourceLoaders.end();
+    for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
         i->value->abort();
 
-    HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> >::iterator syncEnd = m_syncNetworkResourceLoaders.end();
-    for (HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> >::iterator i = m_syncNetworkResourceLoaders.begin(); i != syncEnd; ++i)
+    HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader>>::iterator syncEnd = m_syncNetworkResourceLoaders.end();
+    for (HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader>>::iterator i = m_syncNetworkResourceLoaders.begin(); i != syncEnd; ++i)
         i->value->abort();
 
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
@@ -210,7 +210,7 @@ void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobR
 {
     // FIXME: unregister all URLs when process connection closes.
 
-    Vector<RefPtr<SandboxExtension> > extensions;
+    Vector<RefPtr<SandboxExtension>> extensions;
     for (size_t i = 0, count = data.sandboxExtensions().size(); i < count; ++i) {
         if (RefPtr<SandboxExtension> extension = SandboxExtension::create(data.sandboxExtensions()[i]))
             extensions.append(extension);

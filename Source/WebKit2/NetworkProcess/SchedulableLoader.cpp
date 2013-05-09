@@ -61,7 +61,7 @@ SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parame
         const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
         for (size_t i = 0, count = elements.size(); i < count; ++i) {
             if (elements[i].m_type == FormDataElement::encodedBlob) {
-                Vector<RefPtr<SandboxExtension> > blobElementExtensions = NetworkBlobRegistry::shared().sandboxExtensions(elements[i].m_url);
+                Vector<RefPtr<SandboxExtension>> blobElementExtensions = NetworkBlobRegistry::shared().sandboxExtensions(elements[i].m_url);
                 m_requestBodySandboxExtensions.appendVector(blobElementExtensions);
             }
         }

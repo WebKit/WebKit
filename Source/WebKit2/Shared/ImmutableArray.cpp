@@ -46,7 +46,7 @@ ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
         m_entries[i] = entries[i];
 }
 
-ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject> >& entries)
+ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject>>& entries)
 {
     m_entries.swap(entries);
 }

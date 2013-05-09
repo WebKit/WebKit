@@ -136,7 +136,7 @@ void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage* page, Range*
     }
 }
 
-void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer> >& pasteboardData)
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
     if (m_client.getPasteboardDataForRange) {
         RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);

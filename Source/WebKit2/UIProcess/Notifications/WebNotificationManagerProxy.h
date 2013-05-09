@@ -81,7 +81,7 @@ private:
     void didDestroyNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
 
-    typedef HashMap<uint64_t, RefPtr<WebNotification> > WebNotificationMap;
+    typedef HashMap<uint64_t, RefPtr<WebNotification>> WebNotificationMap;
     
     WebNotificationProvider m_provider;
     WebNotificationMap m_notifications;

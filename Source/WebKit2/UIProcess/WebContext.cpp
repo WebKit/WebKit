@@ -553,7 +553,7 @@ WebProcessProxy* WebContext::createNewWebProcess()
 
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
-            pair<String, RefPtr<APIObject> >& message = m_messagesToInjectedBundlePostedToEmptyContext[i];
+            pair<String, RefPtr<APIObject>>& message = m_messagesToInjectedBundlePostedToEmptyContext[i];
 
             OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create();
 
@@ -585,7 +585,7 @@ void WebContext::warmInitialProcess()
 void WebContext::enableProcessTermination()
 {
     m_processTerminationEnabled = true;
-    Vector<RefPtr<WebProcessProxy> > processes = m_processes;
+    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
     for (size_t i = 0; i < processes.size(); ++i) {
         if (shouldTerminate(processes[i].get()))
             processes[i]->terminate();
@@ -1210,7 +1210,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 #endif
     ASSERT(store == &m_pluginInfoStore);
 
-    Vector<RefPtr<APIObject> > pluginArray;
+    Vector<RefPtr<APIObject>> pluginArray;
 
     Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
     for (size_t i = 0; i < plugins.size(); ++i) {
@@ -1220,7 +1220,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         map.set(ASCIILiteral("name"), WebString::create(plugin.info.name));
         map.set(ASCIILiteral("file"), WebString::create(plugin.info.file));
         map.set(ASCIILiteral("desc"), WebString::create(plugin.info.desc));
-        Vector<RefPtr<APIObject> > mimeArray;
+        Vector<RefPtr<APIObject>> mimeArray;
         for (size_t j = 0; j <  plugin.info.mimes.size(); ++j)
             mimeArray.append(WebString::create(plugin.info.mimes[j].type));
         map.set(ASCIILiteral("mimes"), ImmutableArray::adopt(mimeArray));

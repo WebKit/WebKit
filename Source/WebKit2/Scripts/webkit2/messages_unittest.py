@@ -62,7 +62,7 @@ messages -> WebPage LegacyReceiver {
 
     PreferencesDidChange(WebKit::WebPreferencesStore store)
     SendDoubleAndFloat(double d, float f)
-    SendInts(Vector<uint64_t> ints, Vector<Vector<uint64_t> > intVectors)
+    SendInts(Vector<uint64_t> ints, Vector<Vector<uint64_t>> intVectors)
 
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
@@ -73,7 +73,7 @@ messages -> WebPage LegacyReceiver {
 
     TestParameterAttributes([AttributeOne AttributeTwo] uint64_t foo, double bar, [AttributeThree] double baz)
 
-    TemplateTest(WTF::HashMap<String, std::pair<String, uint64_t> > a)
+    TemplateTest(WTF::HashMap<String, std::pair<String, uint64_t>> a)
 
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
@@ -147,7 +147,7 @@ _expected_results = {
             'name': 'SendInts',
             'parameters': (
                 ('Vector<uint64_t>', 'ints'),
-                ('Vector<Vector<uint64_t> >', 'intVectors')
+                ('Vector<Vector<uint64_t>>', 'intVectors')
             ),
             'conditions': (None),
         },
@@ -211,7 +211,7 @@ _expected_results = {
         {
             'name': 'TemplateTest',
             'parameters': (
-                ('WTF::HashMap<String, std::pair<String, uint64_t> >', 'a'),
+                ('WTF::HashMap<String, std::pair<String, uint64_t>>', 'a'),
             ),
             'conditions': (None),
         },
@@ -419,14 +419,14 @@ struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
     }
 };
 
-struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> {
+struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> {
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("SendInts"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> DecodeType;
-    SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t> >& intVectors)
-        : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&>(ints, intVectors)
+    typedef CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> DecodeType;
+    SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
+        : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&>(ints, intVectors)
     {
     }
 };
@@ -526,14 +526,14 @@ struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
     }
 };
 
-struct TemplateTest : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&> {
+struct TemplateTest : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&> {
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TemplateTest"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&> DecodeType;
-    explicit TemplateTest(const WTF::HashMap<String, std::pair<String, uint64_t> >& a)
-        : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&>(a)
+    typedef CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&> DecodeType;
+    explicit TemplateTest(const WTF::HashMap<String, std::pair<String, uint64_t>>& a)
+        : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&>(a)
     {
     }
 };

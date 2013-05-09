@@ -99,7 +99,7 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
     }
 
     size_t hostnameCount = hostnameList.size();
-    Vector<RefPtr<APIObject> > hostnames(hostnameCount);
+    Vector<RefPtr<APIObject>> hostnames(hostnameCount);
 
     for (size_t i = 0; i < hostnameCount; ++i)
         hostnames[i] = WebString::create(hostnameList[i]);

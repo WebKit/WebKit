@@ -67,7 +67,7 @@ private:
     PluginProcessProxy* getOrCreatePluginProcess(const PluginModuleInfo&, PluginProcess::Type);
     PluginProcessProxy* pluginProcessWithPath(const String& pluginPath, PluginProcess::Type);
 
-    Vector<RefPtr<PluginProcessProxy> > m_pluginProcesses;
+    Vector<RefPtr<PluginProcessProxy>> m_pluginProcesses;
 };
 
 } // namespace WebKit

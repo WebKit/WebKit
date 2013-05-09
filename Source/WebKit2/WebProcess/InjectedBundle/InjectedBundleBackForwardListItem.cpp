@@ -36,7 +36,7 @@ PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
 {
     const HistoryItemVector& children = m_item->children();
     size_t size = children.size();
-    Vector<RefPtr<APIObject> > vector(size);
+    Vector<RefPtr<APIObject>> vector(size);
     for (size_t i = 0; i < size; ++i)
         vector[i] = InjectedBundleBackForwardListItem::create(children[i]);
     return ImmutableArray::adopt(vector);

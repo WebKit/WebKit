@@ -381,7 +381,7 @@ private:
     ProcessModel m_processModel;
     unsigned m_webProcessCountLimit; // The limit has no effect when process model is ProcessModelSharedSecondaryProcess.
     
-    Vector<RefPtr<WebProcessProxy> > m_processes;
+    Vector<RefPtr<WebProcessProxy>> m_processes;
     bool m_haveInitialEmptyProcess;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
@@ -418,7 +418,7 @@ private:
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.
-    Vector<pair<String, RefPtr<APIObject> > > m_messagesToInjectedBundlePostedToEmptyContext;
+    Vector<pair<String, RefPtr<APIObject>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
     CacheModel m_cacheModel;
 
@@ -432,7 +432,7 @@ private:
 
     RefPtr<StorageManager> m_storageManager;
 
-    typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*> > WebContextSupplementMap;
+    typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)
@@ -465,8 +465,8 @@ private:
     RefPtr<NetworkProcessProxy> m_networkProcess;
 #endif
     
-    HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
-    HashMap<uint64_t, RefPtr<StatisticsRequest> > m_statisticsRequests;
+    HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
+    HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
 
 #if PLATFORM(MAC)
     bool m_processSuppressionEnabled;

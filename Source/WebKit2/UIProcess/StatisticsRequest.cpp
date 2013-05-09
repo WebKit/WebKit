@@ -86,7 +86,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
     
     size_t cacheStatisticsCount = data.webCoreCacheStatistics.size();
     if (cacheStatisticsCount) {
-        Vector<RefPtr<APIObject> > cacheStatisticsVector(cacheStatisticsCount);
+        Vector<RefPtr<APIObject>> cacheStatisticsVector(cacheStatisticsCount);
         for (size_t i = 0; i < cacheStatisticsCount; ++i)
             cacheStatisticsVector[i] = createDictionaryFromHashMap(data.webCoreCacheStatistics[i]);
         m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatisticsVector).get());

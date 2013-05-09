@@ -93,7 +93,7 @@ private:
     void didModifyOrigin(const String& originIdentifier);
     void didModifyDatabase(const String& originIdentifier, const String& databaseIdentifier);
 
-    HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+    HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
     WebDatabaseManagerProxyClient m_client;
 };
 

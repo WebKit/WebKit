@@ -86,7 +86,7 @@ private:
     typedef HashMap<String, RefPtr<HostRecord>, StringHash> HostMap;
     HostMap m_hosts;
 
-    typedef HashSet<RefPtr<SchedulableLoader> > SchedulableLoaderSet;
+    typedef HashSet<RefPtr<SchedulableLoader>> SchedulableLoaderSet;
     SchedulableLoaderSet m_loaders;
 
     RefPtr<HostRecord> m_nonHTTPProtocolHost;
@@ -96,7 +96,7 @@ private:
     WebCore::Timer<NetworkResourceLoadScheduler> m_requestTimer;
     
     Mutex m_loadersToRemoveMutex;
-    Vector<RefPtr<SchedulableLoader> > m_loadersToRemove;
+    Vector<RefPtr<SchedulableLoader>> m_loadersToRemove;
 };
 
 } // namespace WebKit

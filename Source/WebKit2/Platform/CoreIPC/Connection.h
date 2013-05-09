@@ -233,7 +233,7 @@ private:
     RefPtr<WorkQueue> m_connectionQueue;
     WebCore::RunLoop* m_clientRunLoop;
 
-    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > > m_workQueueMessageReceivers;
+    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
 
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
@@ -241,15 +241,15 @@ private:
 
     // Incoming messages.
     Mutex m_incomingMessagesLock;
-    Deque<OwnPtr<MessageDecoder> > m_incomingMessages;
+    Deque<OwnPtr<MessageDecoder>> m_incomingMessages;
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
-    Deque<OwnPtr<MessageEncoder> > m_outgoingMessages;
+    Deque<OwnPtr<MessageEncoder>> m_outgoingMessages;
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;
-    HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder> > m_waitForMessageMap;
+    HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder>> m_waitForMessageMap;
 
     // Represents a sync request for which we're waiting on a reply.
     struct PendingSyncReply {

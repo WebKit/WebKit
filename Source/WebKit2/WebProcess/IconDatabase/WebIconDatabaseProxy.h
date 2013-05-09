@@ -72,7 +72,7 @@ private:
     bool m_isEnabled;
     WebProcess* m_process;
     
-    HashMap<uint64_t, RefPtr<WebCore::IconLoadDecisionCallback> > m_iconLoadDecisionCallbacks;
+    HashMap<uint64_t, RefPtr<WebCore::IconLoadDecisionCallback>> m_iconLoadDecisionCallbacks;
 };
 
 } // namespace WebKit

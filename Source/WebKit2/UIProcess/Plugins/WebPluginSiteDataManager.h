@@ -66,18 +66,18 @@ private:
     explicit WebPluginSiteDataManager(WebContext*);
 
     WebContext* m_webContext;
-    HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
-    HashMap<uint64_t, RefPtr<VoidCallback> > m_voidCallbacks;
+    HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
+    HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
 
 #if ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithDataForAllPlugins(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteDataForAllPlugins(uint64_t callbackID);
 
     class GetSitesWithDataState;
-    HashMap<uint64_t, OwnPtr<GetSitesWithDataState> > m_pendingGetSitesWithData;
+    HashMap<uint64_t, OwnPtr<GetSitesWithDataState>> m_pendingGetSitesWithData;
 
     class ClearSiteDataState;
-    HashMap<uint64_t, OwnPtr<ClearSiteDataState> > m_pendingClearSiteData;
+    HashMap<uint64_t, OwnPtr<ClearSiteDataState>> m_pendingClearSiteData;
 #endif
 };
 

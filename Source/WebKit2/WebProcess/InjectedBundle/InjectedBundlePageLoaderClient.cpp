@@ -320,7 +320,7 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     if (!m_client.featuresUsedInPage)
         return;
 
-    Vector<RefPtr<APIObject> > featureStringObjectsVector;
+    Vector<RefPtr<APIObject>> featureStringObjectsVector;
 
     Vector<String>::const_iterator end = features.end();
     for (Vector<String>::const_iterator it = features.begin(); it != end; ++it)

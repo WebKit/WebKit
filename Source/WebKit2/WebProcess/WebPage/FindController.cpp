@@ -189,7 +189,7 @@ void FindController::findStringMatches(const String& string, FindOptions options
 
     m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, &m_findMatches, indexForSelection);
 
-    Vector<Vector<IntRect> > matchRects;
+    Vector<Vector<IntRect>> matchRects;
     for (size_t i = 0; i < m_findMatches.size(); ++i) {
         Vector<IntRect> rects;
         m_findMatches[i]->textRects(rects);
