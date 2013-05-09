@@ -25,26 +25,26 @@
 #include <wtf/text/StringHash.h>
 
 #define synthesizeAccessorsForPrimitiveValuePrefixAndType(prefix, type) \
-     void set##prefix(const String& key, type newValue) { \
-         ASSERT(impl); \
-         if (get##prefix(key) == newValue) \
+    void set##prefix(const String& key, type newValue) { \
+        ASSERT(impl); \
+        if (get##prefix(key) == newValue) \
             return; \
-         if (copyOnWrite) { \
+        if (copyOnWrite) { \
             copyOnWrite = false; \
             impl = new WebSettingsPrivateImpl(*impl); \
-         } \
-         PrimitiveValue primitiveValue; \
-         primitiveValue.prefix##Value = newValue; \
-         impl->primitiveValues.set(key, primitiveValue); \
-         if (delegate) \
+        } \
+        PrimitiveValue primitiveValue; \
+        primitiveValue.prefix##Value = newValue; \
+        impl->primitiveValues.set(key, primitiveValue); \
+        if (delegate) \
             delegate->didChangeSettings(sender); \
-     } \
-     type get##prefix(const String& key) const { \
-          ASSERT(impl); \
-          if (!impl->primitiveValues.contains(key)) \
-              return static_cast<type>(false); \
-          return impl->primitiveValues.get(key).prefix##Value; \
-      }
+        } \
+        type get##prefix(const String& key) const { \
+        ASSERT(impl); \
+        if (!impl->primitiveValues.contains(key)) \
+            return static_cast<type>(false); \
+        return impl->primitiveValues.get(key).prefix##Value; \
+    }
 
 namespace BlackBerry {
 namespace WebKit {

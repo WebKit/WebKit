@@ -51,11 +51,11 @@ public:
     void prepareFrame(Platform::Graphics::GLES2Context*, double animationTime);
 
     void render(Platform::Graphics::GLES2Context*,
-                const Platform::IntRect& targetRect,
-                const Platform::IntRect& clipRect,
-                const Platform::TransformationMatrix&,
-                const Platform::FloatRect& documentContents,
-                const Platform::FloatRect& viewport);
+        const Platform::IntRect& targetRect,
+        const Platform::IntRect& clipRect,
+        const Platform::TransformationMatrix&,
+        const Platform::FloatRect& documentContents,
+        const Platform::FloatRect& viewport);
 
     void cleanup(Platform::Graphics::GLES2Context*);
 

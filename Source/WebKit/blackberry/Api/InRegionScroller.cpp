@@ -134,8 +134,7 @@ bool InRegionScrollerPrivate::setScrollPositionCompositingThread(unsigned camouf
         bounds = scrollLayer->bounds();
 
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint layerPosition(-scrollPosition.x() + anchor.x() * bounds.width(),
-                             -scrollPosition.y() + anchor.y() * bounds.height());
+    FloatPoint layerPosition(-scrollPosition.x() + anchor.x() * bounds.width(), -scrollPosition.y() + anchor.y() * bounds.height());
 
     scrollLayer->override()->setPosition(FloatPoint(layerPosition.x(), layerPosition.y()));
 

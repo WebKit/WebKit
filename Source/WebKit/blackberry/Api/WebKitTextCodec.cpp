@@ -70,7 +70,7 @@ bool isASCIICompatibleEncoding(const char* encoding)
     return false;
 }
 
-TranscodeResult transcode(const char* sourceEncoding, const char* targetEncoding, const char*& sourceStart, int sourceLength, char*& targetStart, unsigned int targetLength)
+TranscodeResult transcode(const char* sourceEncoding, const char* targetEncoding, const char*& sourceStart, int sourceLength, char*& targetStart, unsigned targetLength)
 {
     TextEncoding textEncodingSource(sourceEncoding);
     if (!textEncodingSource.isValid())

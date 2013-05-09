@@ -19,8 +19,8 @@
 #ifndef InRegionScroller_p_h
 #define InRegionScroller_p_h
 
-#include "IntSize.h"
 #include "IntPoint.h"
+#include "IntSize.h"
 
 #include <interaction/ScrollViewBase.h>
 #include <vector>

@@ -59,10 +59,10 @@ public:
     void setChildWindowPlacement(WebPageCompositor::ChildWindowPlacement placement) { m_childWindowPlacement = placement; }
     void prepareFrame(double animationTime);
     void render(const WebCore::IntRect& targetRect,
-                const WebCore::IntRect& clipRect,
-                const WebCore::TransformationMatrix&,
-                const WebCore::FloatRect& documentContents,
-                const WebCore::FloatRect& viewport);
+        const WebCore::IntRect& clipRect,
+        const WebCore::TransformationMatrix&,
+        const WebCore::FloatRect& documentContents,
+        const WebCore::FloatRect& viewport);
 
     Platform::Graphics::GLES2Context* context() const { return m_context; }
     void setContext(Platform::Graphics::GLES2Context*);
@@ -96,7 +96,7 @@ public:
     void releaseLayerResources();
 
     WebPagePrivate* page() const { return m_webPage; }
-    void setPage(WebPagePrivate* page);
+    void setPage(WebPagePrivate*);
     void detach();
     WebPageCompositorClient* client() const { return m_client; }
     void compositorDestroyed();

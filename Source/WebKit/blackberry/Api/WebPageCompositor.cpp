@@ -21,12 +21,11 @@
 #include "WebPageCompositor.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "WebPageCompositorClient.h"
-#include "WebPageCompositor_p.h"
-
 #include "BackingStore_p.h"
 #include "LayerWebKitThread.h"
 #include "WebOverlay_p.h"
+#include "WebPageCompositorClient.h"
+#include "WebPageCompositor_p.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformDebugMacros.h>
@@ -395,11 +394,11 @@ void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context*, double)
 }
 
 void WebPageCompositor::render(Platform::Graphics::GLES2Context*,
-                               const Platform::IntRect&,
-                               const Platform::IntRect&,
-                               const Platform::TransformationMatrix&,
-                               const Platform::FloatRect&,
-                               const Platform::FloatRect&)
+    const Platform::IntRect&,
+    const Platform::IntRect&,
+    const Platform::TransformationMatrix&,
+    const Platform::FloatRect&,
+    const Platform::FloatRect&)
 {
 }
 
