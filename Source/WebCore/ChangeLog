@@ -1,5 +1,11 @@
 2013-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebCore.exp.in:
+
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
         Add a StorageStrategy hook for creating transient local storage namespaces
         https://bugs.webkit.org/show_bug.cgi?id=115870
 
