@@ -1,3 +1,61 @@
+2013-05-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardeing. Updating some png expected results.
+
+        * platform/qt-5.0-wk2/compositing/checkerboard-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-image-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/typing-around-image-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-selection-bidi-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/unrendered-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-04-expecrted.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-shadow/shadow-repaint-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/dom/34176-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label06-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label07-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/transparent-scrollbar-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-long-image-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-repeat-x-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-repeat-y-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/absolute-position-moved-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/add-table-overpaint-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/change-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/inline-outline-repaint-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/overflow-into-content-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/table-cell-overflow-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/table-row-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/transform-rotate-and-remove-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/repaint-on-image-bounds-change-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png.
+        * platform/qt-5.0-wk2/svg/custom/use-disappears-after-style-update-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png.
+        * platform/qt-5.0-wk2/svg/dom/rect-modify-rx-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-y2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/repaint/svgsvgelement-repaint-children-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/svg/text/tspan-dynamic-positioning-expected.png: Added.
+
 2013-05-09  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added platform specific expected file after r149758.
