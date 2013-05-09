@@ -1,3 +1,15 @@
+2013-05-08  Michael Saboff  <msaboff@apple.com>
+
+        JSC: There should be a disassembler for ARM Thumb 2
+        https://bugs.webkit.org/show_bug.cgi?id=115827
+
+        Reviewed by Filip Pizlo.
+
+        Added a new disassembler for ARMv7 Thumb2 instructions for use by the JSC debugging
+        and profiling code.  Enabled the disassembler for IOS bulds.
+
+        * wtf/Platform.h:
+
 2013-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Simplify RetainPtrObjectHashTraits
