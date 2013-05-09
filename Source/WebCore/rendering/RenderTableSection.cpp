@@ -563,7 +563,7 @@ void RenderTableSection::layoutRows()
                 || (!table()->style()->logicalHeight().isAuto() && rHeight != cell->logicalHeight());
 
             for (RenderObject* o = cell->firstChild(); o; o = o->nextSibling()) {
-                if (!o->isText() && o->style()->logicalHeight().isPercent() && (flexAllChildren || o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow()))) {
+                if (!o->isText() && o->style()->logicalHeight().isPercent() && (flexAllChildren || ((o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow())) && !o->isTextControl()))) {
                     // Tables with no sections do not flex.
                     if (!o->isTable() || toRenderTable(o)->hasSections()) {
                         o->setNeedsLayout(true, MarkOnlyThis);

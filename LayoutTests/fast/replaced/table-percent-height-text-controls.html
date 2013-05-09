@@ -47,7 +47,7 @@ function parsePixelValue(str)
     return parseFloat(str);
 }
 
-function is75PercentOf(expression75, expression100)
+function isEqual(expression75, expression100)
 {
     var str75 = eval(expression75);
     var str100 = eval(expression100);
@@ -55,10 +55,10 @@ function is75PercentOf(expression75, expression100)
     var num100 = parsePixelValue(str100);
     if (num75 < 0 || num100 < 0)
         return;
-    if (num75 == Math.floor(num100 * 75 / 100))
-        testPassed(expression75 + " is 75% of " + expression100 + ".");
+    if (num75 == num100)
+        testPassed(expression75 + " is equal to " + expression100 + ".");
     else
-        testFailed(expression75 + " [" + str75 + "] is not 75% of " + expression100 + " [" + str100 + "].");
+        testFailed(expression75 + " [" + str75 + "] is not equal to " + expression100 + " [" + str100 + "].");
 }
 
 function test()
@@ -68,13 +68,11 @@ function test()
 
     shouldBe("getWidth('input-password-75')", "getWidth('input-password-100')");
     shouldBeTrue("getFullHeight('input-password-75') != '0px'");
-    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
-    is75PercentOf("getFullHeight('input-password-75')", "getFullHeight('input-password-100')");
+    isEqual("getFullHeight('input-password-75')", "getFullHeight('input-password-100')");
 
     shouldBe("getWidth('input-text-75')", "getWidth('input-text-100')");
     shouldBeTrue("getFullHeight('input-text-75') != '0px'");
-    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
-    is75PercentOf("getFullHeight('input-text-75')", "getFullHeight('input-text-100')");
+    isEqual("getFullHeight('input-text-75')", "getFullHeight('input-text-100')");
 
     shouldBe("getWidth('isindex-75')", "getWidth('isindex-100')");
     shouldBeTrue("getFullHeight('isindex-75') != '0px'");
@@ -82,8 +80,7 @@ function test()
 
     shouldBe("getWidth('textarea-75')", "getWidth('textarea-100')");
     shouldBeTrue("getFullHeight('textarea-75') != '0px'");
-    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
-    is75PercentOf("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
+    isEqual("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
 
     isSuccessfullyParsed();
 

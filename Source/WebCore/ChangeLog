@@ -1,3 +1,16 @@
+2013-05-09  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (Safari 3-Safari 4): Replaced element with percent height in table has incorrect height
+        https://bugs.webkit.org/show_bug.cgi?id=26394
+
+        Reviewed by David Hyatt.
+
+        Text controls or any object that has scrollable content should not flex inside a table cell. 
+        This makes our behaviour the same as IE, FF and Opera (Presto).
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2013-05-09  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

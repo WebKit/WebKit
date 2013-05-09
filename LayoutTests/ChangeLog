@@ -1,3 +1,16 @@
+2013-05-09  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (Safari 3-Safari 4): Replaced element with percent height in table has incorrect height
+        https://bugs.webkit.org/show_bug.cgi?id=26394
+
+        Reviewed by David Hyatt.
+
+        * fast/replaced/table-percent-height-text-controls-expected.txt: Renamed from LayoutTests/platform/mac/fast/replaced/table-percent-height-text-controls-expected.txt.
+        * fast/replaced/table-percent-height-text-controls.html:
+        * platform/gtk/fast/replaced/table-percent-height-text-controls-expected.txt: Removed.
+        * platform/qt/fast/replaced/table-percent-height-text-controls-expected.txt: Removed.
+        * platform/win/fast/replaced/table-percent-height-text-controls-expected.txt: Removed.
+
 2013-05-09  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         Update srcipt paths in editing/shadow/rightclick-on-meter-in-shadow-crash.html
