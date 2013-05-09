@@ -2,12 +2,17 @@
 
  <style>
     .test_paragraph {
-        margin-top: 16px;
+        margin-top: 1em;
+        margin-bottom: 1em;
         text-align: justify;
+        font-size: 10px;
+        font-family: Ahem;
+        -webkit-font-smoothing: none;
     }
 
     #top_paragraph {
-        margin-bottom: 16px;
+        margin-top: 1em;
+        margin-bottom: 1em;
     }
 
     #region1 {
@@ -76,7 +81,6 @@
         border: 1px solid green;
         border-top: none;
         width: 366px;
-        height: 300px;
     }
 
     #imgFloat1 {
@@ -94,7 +98,7 @@
     }
 </style>
 
-<div id="top_paragraph" class="test_paragraph">In the example below, the first float pushes content into region #2, and the second float pushes both floats into region #3.</div>
+<div id="top_paragraph">In the example below, the first float pushes content into region #2, and the second float pushes both floats into region #3.</div>
 
 <div id="content">
     <div id="region1">

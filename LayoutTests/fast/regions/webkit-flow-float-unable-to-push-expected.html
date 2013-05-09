@@ -2,8 +2,12 @@
 
  <style>
     .test_paragraph {
-        margin-top: 16px;
+        margin-top: 1em;
+        margin-bottom: 1em;
         text-align: justify;
+        font-size: 10px;
+        font-family: Ahem;
+        -webkit-font-smoothing: none;
     }
 
     /* Created to justify the last line of text in the div */
@@ -90,7 +94,6 @@
         border: 1px solid green;
         border-top: none;
         width: 366px;
-        height: 104px;
     }
 
     .imgFloat {
@@ -100,19 +103,19 @@
 
     #float1 {
         width: 130px;
-        height: 57px;
+        height: 63px;
     }
 
     #float2 {
         width: 30px;
-        height: 43px;
+        height: 37px;
     }
 
     #imgAbsolute {
         position: absolute;
         background-color: green;
         width: 100px;
-        height: 43px;
+        height: 37px;
         left: 292px;
         top: 101px;
     }
@@ -122,7 +125,7 @@
     <div id="region1">
         <div id="first-box1">
             <div id="second-box1">
-                <div class="test_paragraph" id="paragraph1">This line of text should not get<img class="imgFloat" id="float1" src="resources/transparent.png"> out of the region. This line of text should not get out of the region. This line of</div>
+                <div class="test_paragraph" id="paragraph1">This <img class="imgFloat" id="float1" src="resources/transparent.png">line of text should not get out of the region. This line of text should not get out of the region. This line of text should not</div>
             </div>
         </div>
     </div>
@@ -130,8 +133,8 @@
     <div id="region2">
         <div id="first-box2">
             <div id="second-box2">
-                <div class="test_paragraph" id="first-paragraph2">text should not get<img class="imgFloat" id="float2" src="resources/transparent.png"> out of the region. This line of text should not get out of the region.</div>
-                <div class="test_paragraph" id="second-paragraph2">This line of text should not get out of the</div>
+                <div class="test_paragraph" id="first-paragraph2">get<img class="imgFloat" id="float2" src="resources/transparent.png"> out of the region. This line of text should not get out of the region.</div>
+                <div class="test_paragraph" id="second-paragraph2">This line of text should not get out of the region. This line of text should not get out of the region.</div>
             </div>
         </div>
     </div>
@@ -141,7 +144,7 @@
     <div id="region3">
         <div id="first-box3">
             <div id="second-box3">
-                <div class="test_paragraph" id="first-paragraph3">region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</div>
+                <div class="test_paragraph" id="first-paragraph3">This line of text should not get out of the region. This line of text should not get out of the region.</div>
                 <div class="test_paragraph" id="second-paragraph3">This line of text should not get out of the region.</div>
             </div>
         </div>

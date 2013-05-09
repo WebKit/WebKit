@@ -1,3 +1,23 @@
+2013-05-09  Radu Stavila  <stavila@adobe.com>
+
+        [Qt][EFL][GTK] Failing CSS region tests
+        https://bugs.webkit.org/show_bug.cgi?id=115785
+
+        Reviewed by Antti Koivisto.
+
+        Updated tests to overcome platform differences
+        Unskip fixed CSS regions tests
+
+        * fast/regions/webkit-flow-double-pagination-float-push-expected.html:
+        * fast/regions/webkit-flow-double-pagination-float-push.html:
+        * fast/regions/webkit-flow-float-pushed-to-last-region-expected.html:
+        * fast/regions/webkit-flow-float-pushed-to-last-region.html:
+        * fast/regions/webkit-flow-float-unable-to-push-expected.html:
+        * fast/regions/webkit-flow-float-unable-to-push.html:
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.html:
+        * fast/regions/webkit-flow-floats-inside-regions-bounds.html:
+        * platform/qt/TestExpectations:
+
 2013-05-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardeing. Updating some png expected results.
