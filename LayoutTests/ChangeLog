@@ -1,3 +1,17 @@
+2013-05-09  Yael Aharon  <yael.aharon@intel.com>
+
+        REGRESSION: Disabled multiline select element now responds to (certain) clicks
+        https://bugs.webkit.org/show_bug.cgi?id=115710
+
+        Reviewed by Kent Tamura.
+
+        Test that a disabled element does not change selection while scrolling.
+
+        * fast/forms/select/listbox-disabled-scroll-no-onchange-expected.txt: Added.
+        * fast/forms/select/listbox-disabled-scroll-no-onchange.html: Added.
+        * fast/forms/select/listbox-disabled-no-autoscroll.html: Added.
+        * fast/forms/select/listbox-disabled-no-autoscroll-expected.html: Added.
+
 2013-05-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed mac gardening.
