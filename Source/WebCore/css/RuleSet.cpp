@@ -214,13 +214,15 @@ bool RuleSet::findBestRuleSetAndAdd(const CSSSelector* component, RuleData& rule
     }
 
     if (component->m_match == CSSSelector::Tag) {
+        // If this is part of a subselector chain, recurse ahead to find a narrower set (ID/class/:pseudo)
+        if (component->relation() == CSSSelector::SubSelector) {
+            const CSSSelector* nextComponent = component->tagHistory();
+            if (nextComponent->m_match == CSSSelector::Class || nextComponent->m_match == CSSSelector::Id || SelectorChecker::isCommonPseudoClassSelector(nextComponent)) {
+                if (findBestRuleSetAndAdd(nextComponent, ruleData))
+                    return true;
+            }
+        }
         if (component->tagQName().localName() != starAtom) {
-            // If this is part of a subselector chain, recurse ahead to find a narrower set (ID/class.)
-            if (component->relation() == CSSSelector::SubSelector
-                && (component->tagHistory()->m_match == CSSSelector::Class || component->tagHistory()->m_match == CSSSelector::Id || SelectorChecker::isCommonPseudoClassSelector(component->tagHistory()))
-                && findBestRuleSetAndAdd(component->tagHistory(), ruleData))
-                return true;
-
             addToRuleSet(component->tagQName().localName().impl(), m_tagRules, ruleData);
             return true;
         }

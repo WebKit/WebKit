@@ -1,3 +1,17 @@
+2013-05-09  Antti Koivisto  <antti@apple.com>
+
+        Reoptimize free-standing :focus/link/visited/-webkit-any-link selectors.
+        <http://webkit.org/b/115590>
+
+        Reviewed by Darin Adler.
+
+        Common pseudo selectors should go into their respective rule buckets instead of ending up in the universal one.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::findBestRuleSetAndAdd):
+        
+            Check tag selectors with * local name (usually created for namespace) for a suitable narrower bucket too.
+
 2013-05-09  Darin Adler  <darin@apple.com>
 
         RenderQuote has giant function for language to quotes map
