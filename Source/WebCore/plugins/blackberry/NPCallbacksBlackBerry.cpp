@@ -65,7 +65,7 @@ void npSetHolePunchHandler(void* holePunchData)
 {
     OwnPtr<HolePunchData> data = adoptPtr(static_cast<HolePunchData*>(holePunchData));
     if (data->layer)
-        data->layer->setHolePunchRect(IntRect(data->x, data->y, data->w, data->h));
+        static_cast<PluginLayerWebKitThread*>(data->layer.get())->setHolePunchRect(IntRect(data->x, data->y, data->w, data->h));
 }
 #endif
 

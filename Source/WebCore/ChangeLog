@@ -1,3 +1,15 @@
+2013-05-09  Alberto Garcia  <agarcia@igalia.com>
+
+        BlackBerry: fix call to PluginLayerWebKitThread::setHolePunchRect()
+        https://bugs.webkit.org/show_bug.cgi?id=114953
+
+        Reviewed by Rob Buis.
+
+        data->layer needs a cast in order to call setHolePunchRect().
+
+        * plugins/blackberry/NPCallbacksBlackBerry.cpp:
+        (WebCore::npSetHolePunchHandler):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style
