@@ -1,3 +1,27 @@
+2013-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Don't use adoptCF() with NSDictionary * object
+
+        Fixes the following build failure:
+
+            In file included from Source/WebCore/platform/network/mac/ResourceErrorMac.mm:27:
+            In file included from Source/WebCore/platform/network/cf/ResourceError.h:31:
+            /usr/local/include/wtf/RetainPtr.h:81:13: error: static_assert failed "Don't use adoptCF with Objective-C pointer types, use adoptNS."
+                        static_assert(!std::is_convertible<T, id>::value, "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
+                        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            /usr/local/include/wtf/RetainPtr.h:274:16: note: in instantiation of member function 'WTF::RetainPtr<NSDictionary *>::RetainPtr' requested here
+                    return RetainPtr<T>(AdoptCF, o);
+                           ^
+            Source/WebCore/platform/network/mac/ResourceErrorMac.mm:214:44: note: in instantiation of function template specialization 'WTF::adoptCF<NSDictionary *>' requested here
+                    RetainPtr<NSDictionary> userInfo = adoptCF((NSDictionary *) CFErrorCopyUserInfo(error));
+                                                       ^
+            1 error generated.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::nsError): Switch from adoptCF() to
+        adoptNS().  This is in USE(CFNETWORK) code, so it's not
+        exercised on the Mac.
+
 2013-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove Editor::setSelectionOffsets

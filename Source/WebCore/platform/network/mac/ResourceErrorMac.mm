@@ -76,7 +76,7 @@ NSError *ResourceError::nsError() const
 
     if (m_platformError) {
         CFErrorRef error = m_platformError.get();
-        RetainPtr<NSDictionary> userInfo = adoptCF((NSDictionary *) CFErrorCopyUserInfo(error));
+        RetainPtr<NSDictionary> userInfo = adoptNS((NSDictionary *) CFErrorCopyUserInfo(error));
         m_platformNSError = adoptNS([[NSError alloc] initWithDomain:(NSString *)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:userInfo.get()]);
         return m_platformNSError.get();
     }
