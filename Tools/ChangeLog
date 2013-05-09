@@ -1,3 +1,15 @@
+2013-05-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove unnecessary pkgs in EFL jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=114908
+
+        Reviewed by Laszlo Gombos.
+
+        p11-kit, libgpg-error and libgcrypt don't influence on layout test. So, we don't need to
+        handle them using jhbuild. We can reduce build time when using --update-efl.
+
+        * efl/jhbuild.modules:
+
 2013-05-08  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Disable SHADOW DOM feature in FeatureList.pm
