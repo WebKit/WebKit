@@ -96,11 +96,11 @@ class WebPageCompositorPrivate;
 // the viewport position is called the transformedScrollPosition,
 // and the viewport size is called the transformedActualVisibleSize.
 class WebPagePrivate : public PageClientBlackBerry
-                     , public WebSettingsDelegate
+    , public WebSettingsDelegate
 #if USE(ACCELERATED_COMPOSITING)
-                     , public WebCore::GraphicsLayerClient
+    , public WebCore::GraphicsLayerClient
 #endif
-                     , public Platform::GuardedPointerBase {
+    , public Platform::GuardedPointerBase {
 public:
     enum ViewMode { Desktop, FixedDesktop };
     enum LoadState { None /* on instantiation of page */, Provisional, Committed, Finished, Failed };

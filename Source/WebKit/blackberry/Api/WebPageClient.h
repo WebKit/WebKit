@@ -90,14 +90,14 @@ public:
     virtual int getInstanceId() const = 0;
 
     virtual void notifyLoadStarted() = 0;
-    virtual void notifyLoadCommitted(const unsigned short* originalUrl, unsigned int originalUrlLength, const unsigned short* finalUrl, unsigned int finalUrlLength, const unsigned short* networkToken, unsigned int networkTokenLength) = 0;
-    virtual void notifyLoadFailedBeforeCommit(const unsigned short* originalUrl, unsigned int originalUrlLength, const unsigned short* finalUrl, unsigned int finalUrlLength, const unsigned short* networkToken, unsigned int networkTokenLength) = 0;
-    virtual void notifyLoadToAnchor(const unsigned short* url, unsigned int urlLength, const unsigned short* networkToken, unsigned int networkTokenLength) = 0;
+    virtual void notifyLoadCommitted(const unsigned short* originalUrl, unsigned originalUrlLength, const unsigned short* finalUrl, unsigned finalUrlLength, const unsigned short* networkToken, unsigned networkTokenLength) = 0;
+    virtual void notifyLoadFailedBeforeCommit(const unsigned short* originalUrl, unsigned originalUrlLength, const unsigned short* finalUrl, unsigned finalUrlLength, const unsigned short* networkToken, unsigned networkTokenLength) = 0;
+    virtual void notifyLoadToAnchor(const unsigned short* url, unsigned urlLength, const unsigned short* networkToken, unsigned networkTokenLength) = 0;
     virtual void notifyLoadProgress(int percentage) = 0;
     virtual void notifyLoadReadyToRender(bool pageIsVisuallyNonEmpty) = 0;
     virtual void notifyFirstVisuallyNonEmptyLayout() = 0;
     virtual void notifyLoadFinished(int status) = 0;
-    virtual void notifyClientRedirect(const unsigned short* originalUrl, unsigned int originalUrlLength, const unsigned short* finalUrl, unsigned int finalUrlLength) = 0;
+    virtual void notifyClientRedirect(const unsigned short* originalUrl, unsigned originalUrlLength, const unsigned short* finalUrl, unsigned finalUrlLength) = 0;
 
     virtual void notifyFrameDetached(const WebFrame) = 0;
 
