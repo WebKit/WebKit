@@ -874,7 +874,7 @@
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
-		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); };};
+		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */; };
 /* End PBXBuildFile section */
 

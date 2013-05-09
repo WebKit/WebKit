@@ -116,8 +116,9 @@ void ScriptExecutable::destroy(JSCell* cell)
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 
-EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
+EvalExecutable::EvalExecutable(ExecState* exec, PassRefPtr<CodeCache> codeCache, const SourceCode& source, bool inStrictContext)
     : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec, source, inStrictContext)
+    , m_codeCache(codeCache)
 {
 }
 
@@ -211,7 +212,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
             return throwError(exec, createEvalError(exec, lexicalGlobalObject->evalDisabledErrorMessage()));
 
         JSObject* exception = 0;
-        UnlinkedEvalCodeBlock* unlinkedEvalCode = lexicalGlobalObject->createEvalCodeBlock(exec, scope, this, &exception);
+        UnlinkedEvalCodeBlock* unlinkedEvalCode = lexicalGlobalObject->createEvalCodeBlock(m_codeCache.get(), exec, scope, this, &exception);
         if (!unlinkedEvalCode)
             return exception;
 

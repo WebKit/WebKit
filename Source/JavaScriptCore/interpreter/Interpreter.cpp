@@ -185,7 +185,7 @@ JSValue eval(CallFrame* callFrame)
         ASSERT(!callFrame->vm().exception);
 
         JSValue exceptionValue;
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain, exceptionValue);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->unlinkedCodeBlock()->codeCacheForEval().get(), callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain, exceptionValue);
         
         ASSERT(!eval == exceptionValue);
         if (UNLIKELY(!eval))

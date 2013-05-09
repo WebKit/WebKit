@@ -1,3 +1,60 @@
+2013-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Code cache stores bogus var references for functions in eval code
+        https://bugs.webkit.org/show_bug.cgi?id=115747
+
+        Reviewed by Mark Hahnenberg.
+
+        Non-global eval now uses a per-CodeBlock cache, and only use it
+        when we're at the top of a function's scope.  This means that we
+        will no longer cache the parsing of a single string across
+        multiple functions, and we won't cache when we're nested inside
+        constructs like |with| and |catch| where previously we would, which
+        is good because caching in those cases is unsound.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC):
+        (JSC::EvalCodeCache::getSlow):
+        (JSC::EvalCodeCache::get):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::codeCacheForEval):
+        (UnlinkedCodeBlock):
+        (RareData):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::CodeCache):
+        (JSC::CodeCache::generateBytecode):
+        (JSC):
+        (JSC::CodeCache::getCodeBlock):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::CodeCacheMap):
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::canPruneQuickly):
+        (JSC::CodeCacheMap::prune):
+        (JSC::CodeCache::create):
+        (CodeCache):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::EvalExecutable::compileInternal):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::create):
+        (EvalExecutable):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (VM):
+
 2013-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFGArrayMode::fromObserved is too liberal when it sees different Array and NonArray shapes

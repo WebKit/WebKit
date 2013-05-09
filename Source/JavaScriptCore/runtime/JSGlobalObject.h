@@ -412,7 +412,7 @@ public:
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, JSScope*, EvalExecutable*, JSObject** exception);
+    UnlinkedEvalCodeBlock* createEvalCodeBlock(CodeCache*, CallFrame*, JSScope*, EvalExecutable*, JSObject** exception);
 
 protected:
 

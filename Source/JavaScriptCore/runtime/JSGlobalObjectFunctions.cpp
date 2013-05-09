@@ -515,7 +515,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     }
 
     JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
-    EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false);
+    EvalExecutable* eval = EvalExecutable::create(exec, exec->vm().codeCache(), makeSource(s), false);
     JSObject* error = eval->compile(exec, calleeGlobalObject);
     if (error)
         return throwVMError(exec, error);

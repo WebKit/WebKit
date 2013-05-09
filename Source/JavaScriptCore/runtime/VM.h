@@ -490,7 +490,7 @@ namespace JSC {
         const ClassInfo* m_initializingObjectClass;
 #endif
         bool m_inDefineOwnProperty;
-        OwnPtr<CodeCache> m_codeCache;
+        RefPtr<CodeCache> m_codeCache;
 
         TypedArrayDescriptor m_int8ArrayDescriptor;
         TypedArrayDescriptor m_int16ArrayDescriptor;

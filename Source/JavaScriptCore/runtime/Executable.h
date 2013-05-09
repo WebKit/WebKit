@@ -451,9 +451,9 @@ namespace JSC {
             return *m_evalCodeBlock;
         }
 
-        static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
+        static EvalExecutable* create(ExecState* exec, PassRefPtr<CodeCache> cache, const SourceCode& source, bool isInStrictContext)
         {
-            EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
+            EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, cache, source, isInStrictContext);
             executable->finishCreation(exec->vm());
             return executable;
         }
@@ -479,13 +479,14 @@ namespace JSC {
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        EvalExecutable(ExecState*, const SourceCode&, bool);
+        EvalExecutable(ExecState*, PassRefPtr<CodeCache>, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
         WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
+        RefPtr<CodeCache> m_codeCache;
     };
 
     class ProgramExecutable : public ScriptExecutable {

@@ -27,6 +27,7 @@
 #define UnlinkedCodeBlock_h
 
 #include "BytecodeConventions.h"
+#include "CodeCache.h"
 #include "CodeSpecializationKind.h"
 #include "CodeType.h"
 #include "ExpressionRangeInfo.h"
@@ -470,6 +471,16 @@ public:
     unsigned firstLine() const { return m_firstLine; }
     unsigned lineCount() const { return m_lineCount; }
 
+    PassRefPtr<CodeCache> codeCacheForEval()
+    {
+        if (m_codeType == GlobalCode)
+            return m_vm->codeCache();
+        createRareDataIfNecessary();
+        if (!m_rareData->m_evalCodeCache)
+            m_rareData->m_evalCodeCache = CodeCache::create(CodeCache::NonGlobalCodeCache);
+        return m_rareData->m_evalCodeCache.get();
+    }
+
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&);
     ~UnlinkedCodeBlock();
@@ -556,8 +567,7 @@ public:
         Vector<UnlinkedSimpleJumpTable> m_immediateSwitchJumpTables;
         Vector<UnlinkedSimpleJumpTable> m_characterSwitchJumpTables;
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
-
-        // Expression info - present if debugging.
+        RefPtr<CodeCache> m_evalCodeCache;
     };
 
 private:

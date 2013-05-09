@@ -54,7 +54,9 @@ void CodeCacheMap::pruneSlowCase()
     }
 }
 
-CodeCache::CodeCache()
+CodeCache::CodeCache(CodeCacheKind kind)
+: m_sourceCode(kind == GlobalCodeCache ? CodeCacheMap::globalWorkingSetMaxBytes : CodeCacheMap::nonGlobalWorkingSetMaxBytes,
+    kind == GlobalCodeCache ? CodeCacheMap::globalWorkingSetMaxEntries : CodeCacheMap::nonGlobalWorkingSetMaxEntries)
 {
 }
 
@@ -75,24 +77,12 @@ template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
-UnlinkedCodeBlockType* CodeCache::getCodeBlock(VM& vm, JSScope* scope, ExecutableType* executable, const SourceCode& source, JSParserStrictness strictness, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedCodeBlockType* CodeCache::generateBytecode(VM& vm, JSScope* scope, ExecutableType* executable, const SourceCode& source, JSParserStrictness strictness, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
-    CodeCacheMap::AddResult addResult = m_sourceCode.add(key, SourceCodeValue());
-    bool canCache = debuggerMode == DebuggerOff && profilerMode == ProfilerOff;
-    if (!addResult.isNewEntry && canCache) {
-        UnlinkedCodeBlockType* unlinkedCode = jsCast<UnlinkedCodeBlockType*>(addResult.iterator->value.cell.get());
-        unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
-        executable->recordParse(unlinkedCode->codeFeatures(), unlinkedCode->hasCapturedVariables(), firstLine, firstLine + unlinkedCode->lineCount());
-        return unlinkedCode;
-    }
-
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     RefPtr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, error);
-    if (!rootNode) {
-        m_sourceCode.remove(addResult.iterator);
+    if (!rootNode)
         return 0;
-    }
     executable->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo(), rootNode->lastLine());
 
     UnlinkedCodeBlockType* unlinkedCode = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
@@ -100,12 +90,33 @@ UnlinkedCodeBlockType* CodeCache::getCodeBlock(VM& vm, JSScope* scope, Executabl
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, scope, rootNode.get(), unlinkedCode, debuggerMode, profilerMode)));
     error = generator->generate();
     rootNode->destroyData();
-    if (error.m_type != ParserError::ErrorNone) {
-        m_sourceCode.remove(addResult.iterator);
+    if (error.m_type != ParserError::ErrorNone)
         return 0;
+    return unlinkedCode;
+}
+
+template <class UnlinkedCodeBlockType, class ExecutableType>
+UnlinkedCodeBlockType* CodeCache::getCodeBlock(VM& vm, JSScope* scope, ExecutableType* executable, const SourceCode& source, JSParserStrictness strictness, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+{
+    // We completely skip the cache if we're an eval that isn't at the top of the scope chain.
+    if (CacheTypes<UnlinkedCodeBlockType>::codeType == SourceCodeKey::EvalType) {
+        if (scope->next() && !scope->isActivationObject())
+            return generateBytecode<UnlinkedCodeBlockType, ExecutableType>(vm, scope, executable, source, strictness, debuggerMode, profilerMode, error);
     }
 
-    if (!canCache) {
+    SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
+    CodeCacheMap::AddResult addResult = m_sourceCode.add(key, SourceCodeValue());
+    bool canCache = debuggerMode == DebuggerOff && profilerMode == ProfilerOff;
+
+    if (!addResult.isNewEntry && canCache) {
+        UnlinkedCodeBlockType* unlinkedCode = jsCast<UnlinkedCodeBlockType*>(addResult.iterator->value.cell.get());
+        unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
+        executable->recordParse(unlinkedCode->codeFeatures(), unlinkedCode->hasCapturedVariables(), firstLine, firstLine + unlinkedCode->lineCount());
+        return unlinkedCode;
+    }
+    UnlinkedCodeBlockType* unlinkedCode = generateBytecode<UnlinkedCodeBlockType, ExecutableType>(vm, scope, executable, source, strictness, debuggerMode, profilerMode, error);
+
+    if (!canCache || !unlinkedCode) {
         m_sourceCode.remove(addResult.iterator);
         return unlinkedCode;
     }

@@ -1,3 +1,26 @@
+2013-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Code cache stores bogus var references for functions in eval code
+        https://bugs.webkit.org/show_bug.cgi?id=115747
+
+        Reviewed by Mark Hahnenberg.
+
+        Many tests
+
+        * fast/js/eval-cache-scoped-lookup-expected.txt: Added.
+        * fast/js/eval-cache-scoped-lookup.html: Added.
+        * fast/js/script-tests/eval-cache-scoped-lookup.js: Added.
+        (first):
+        (a.string_appeared_here.second):
+        (third):
+        (fifth):
+        (sixth):
+        (seventh):
+        (eighth):
+        (nineth):
+        (tenth):
+        (eleventh):
+
 2013-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFGArrayMode::fromObserved is too liberal when it sees different Array and NonArray shapes
