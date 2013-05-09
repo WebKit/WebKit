@@ -1,5 +1,24 @@
 2013-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Clean up SecurityOrigin::databaseIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=115882
+
+        Reviewed by Beth Dakin.
+
+        Remove m_encodedHost and just call encodeHost from databaseIdentifier().
+        Also, use a StringBuilder when constructing the database identifier to avoid allocating
+        temporary String objects over and over.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore):
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * page/SecurityOrigin.h:
+        (SecurityOrigin):
+
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
         Remove m_securityOrigin from XMLHttpRequest
         https://bugs.webkit.org/show_bug.cgi?id=115881
 

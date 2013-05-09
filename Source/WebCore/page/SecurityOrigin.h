@@ -223,7 +223,6 @@ private:
 
     String m_protocol;
     String m_host;
-    mutable String m_encodedHost;
     String m_domain;
     String m_filePath;
     unsigned short m_port;

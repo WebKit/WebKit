@@ -159,7 +159,6 @@ SecurityOrigin::SecurityOrigin()
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_protocol(other->m_protocol.isolatedCopy())
     , m_host(other->m_host.isolatedCopy())
-    , m_encodedHost(other->m_encodedHost.isolatedCopy())
     , m_domain(other->m_domain.isolatedCopy())
     , m_filePath(other->m_filePath.isolatedCopy())
     , m_port(other->m_port)
@@ -497,17 +496,17 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& origin
     return SecurityOrigin::create(KURL(KURL(), originString));
 }
 
-static const char SeparatorCharacter = '_';
+static const char separatorCharacter = '_';
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
 { 
     // Make sure there's a first separator
-    size_t separator1 = databaseIdentifier.find(SeparatorCharacter);
+    size_t separator1 = databaseIdentifier.find(separatorCharacter);
     if (separator1 == notFound)
         return create(KURL());
         
     // Make sure there's a second separator
-    size_t separator2 = databaseIdentifier.reverseFind(SeparatorCharacter);
+    size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
     if (separator2 == notFound)
         return create(KURL());
         
@@ -552,12 +551,14 @@ String SecurityOrigin::databaseIdentifier() const
     if (m_needsDatabaseIdentifierQuirkForFiles)
         return "file__0";
 
-    String separatorString(&SeparatorCharacter, 1);
+    StringBuilder stringBuilder;
+    stringBuilder.append(m_protocol);
+    stringBuilder.append(separatorCharacter);
+    stringBuilder.append(encodeForFileName(m_host));
+    stringBuilder.append(separatorCharacter);
+    stringBuilder.appendNumber(m_port);
 
-    if (m_encodedHost.isEmpty())
-        m_encodedHost = encodeForFileName(m_host);
-
-    return m_protocol + separatorString + m_encodedHost + separatorString + String::number(m_port); 
+    return stringBuilder.toString();
 }
 
 bool SecurityOrigin::equal(const SecurityOrigin* other) const 
