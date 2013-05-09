@@ -65,6 +65,8 @@
 #define GL_UNPACK_SKIP_ROWS 0x0CF3
 #endif
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+
 namespace WebCore {
 struct TextureMapperGLData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -1272,3 +1274,4 @@ PassOwnPtr<TextureMapper> TextureMapper::platformCreateAccelerated()
 }
 
 };
+#endif

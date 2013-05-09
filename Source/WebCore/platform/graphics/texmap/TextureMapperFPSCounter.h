@@ -22,7 +22,7 @@
 #ifndef TextureMapperFPSCounter_h
 #define TextureMapperFPSCounter_h
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 #include "FloatPoint.h"
 #include "TransformationMatrix.h"
 #include <wtf/Noncopyable.h>

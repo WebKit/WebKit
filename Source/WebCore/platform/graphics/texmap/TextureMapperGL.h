@@ -20,7 +20,7 @@
 #ifndef TextureMapperGL_h
 #define TextureMapperGL_h
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 #include "CustomFilterProgramInfo.h"
 #include "FilterOperation.h"

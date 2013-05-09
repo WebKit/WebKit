@@ -20,7 +20,7 @@
 #ifndef TextureMapper_h
 #define TextureMapper_h
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 #if PLATFORM(QT)
 #include <qglobal.h>

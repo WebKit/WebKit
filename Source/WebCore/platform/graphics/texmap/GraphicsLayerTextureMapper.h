@@ -20,6 +20,8 @@
 #ifndef GraphicsLayerTextureMapper_h
 #define GraphicsLayerTextureMapper_h
 
+#if USE(TEXTURE_MAPPER)
+
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "Image.h"
@@ -187,4 +189,6 @@ inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsL
 TextureMapperLayer* toTextureMapperLayer(GraphicsLayer*);
 
 }
+#endif
+
 #endif // GraphicsLayerTextureMapper_h

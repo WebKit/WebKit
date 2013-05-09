@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 #include "TextureMapperFPSCounter.h"
 

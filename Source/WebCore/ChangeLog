@@ -1,3 +1,29 @@
+2013-05-09  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] texmap code generates warnings
+        https://bugs.webkit.org/show_bug.cgi?id=115815
+
+        Reviewed by Benjamin Poulain.
+
+        Add USE(TEXTURE_MAPPER) guards since Source/WebCore/CMakeLists.txt includes
+        these files unconditionally.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperTile.cpp:
+        * platform/graphics/texmap/TextureMapperTile.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+
 2013-05-09  Alberto Garcia  <agarcia@igalia.com>
 
         PluginDatabase: add plugin directory for the BlackBerry port.

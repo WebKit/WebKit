@@ -26,6 +26,8 @@
 #include "ImageBuffer.h"
 #include <wtf/CurrentTime.h>
 
+#if USE(TEXTURE_MAPPER)
+
 namespace WebCore {
 
 TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
@@ -686,3 +688,4 @@ void GraphicsLayerTextureMapper::setRepaintCount(int repaintCount)
 }
 
 }
+#endif
