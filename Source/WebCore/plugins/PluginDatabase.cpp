@@ -393,7 +393,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     Vector<String> paths;
 
     // Add paths specific to each platform
-#if defined(XP_UNIX)
+#if defined(XP_UNIX) && !PLATFORM(BLACKBERRY)
     String userPluginPath = homeDirectoryPath();
     userPluginPath.append(String("/.mozilla/plugins"));
     paths.append(userPluginPath);
@@ -429,6 +429,8 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     String mozPath(getenv("MOZ_PLUGIN_PATH"));
     mozPath.split(UChar(':'), /* allowEmptyEntries */ false, mozPaths);
     paths.appendVector(mozPaths);
+#elif PLATFORM(BLACKBERRY)
+    paths.append(BlackBerry::Platform::Settings::instance()->applicationPluginDirectory().c_str());
 #elif defined(XP_MACOSX)
     String userPluginPath = homeDirectoryPath();
     userPluginPath.append(String("/Library/Internet Plug-Ins"));
@@ -455,10 +457,10 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
     String preferredPath = homeDirectoryPath();
 
-#if PLATFORM(BLACKBERRY)
-    preferredPath = BlackBerry::Platform::Settings::instance()->applicationPluginDirectory().c_str();
-#elif defined(XP_UNIX)
+#if defined(XP_UNIX) && !PLATFORM(BLACKBERRY)
     preferredPath.append(String("/.mozilla/plugins"));
+#elif PLATFORM(BLACKBERRY)
+    preferredPath = BlackBerry::Platform::Settings::instance()->applicationPluginDirectory().c_str();
 #elif defined(XP_MACOSX)
     preferredPath.append(String("/Library/Internet Plug-Ins"));
 #elif defined(XP_WIN)

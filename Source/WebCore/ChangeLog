@@ -1,3 +1,17 @@
+2013-05-09  Alberto Garcia  <agarcia@igalia.com>
+
+        PluginDatabase: add plugin directory for the BlackBerry port.
+        https://bugs.webkit.org/show_bug.cgi?id=114943
+
+        Reviewed by Rob Buis.
+
+        XP_UNIX is defined for the BlackBerry port, but we don't want to
+        share the same code here.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+
 2013-05-09  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Remove Memory Distribution and Memory Snapshots Panels
