@@ -242,8 +242,7 @@ const FatFingersResult FatFingers::findBestPoint()
 // 'remainingFingerRegion' and 'intersectingRegions' will always be in main frame contents
 // coordinates.
 // Thus, before comparing, we need to map the former to main frame contents coordinates.
-bool FatFingers::checkFingerIntersection(const IntRectRegion& region, const IntRectRegion& remainingFingerRegion,
-                                         Node* node, Vector<IntersectingRegion>& intersectingRegions)
+bool FatFingers::checkFingerIntersection(const IntRectRegion& region, const IntRectRegion& remainingFingerRegion, Node* node, Vector<IntersectingRegion>& intersectingRegions)
 {
     ASSERT(node);
 
@@ -347,10 +346,7 @@ bool FatFingers::findIntersectingRegions(Document* document, Vector<Intersecting
     return foundOne;
 }
 
-bool FatFingers::checkForClickableElement(Element* curElement,
-                                          Vector<IntersectingRegion>& intersectingRegions,
-                                          IntRectRegion& remainingFingerRegion,
-                                          RenderLayer*& lowestPositionedEnclosingLayerSoFar)
+bool FatFingers::checkForClickableElement(Element* curElement, Vector<IntersectingRegion>& intersectingRegions, IntRectRegion& remainingFingerRegion, RenderLayer*& lowestPositionedEnclosingLayerSoFar)
 {
     ASSERT(curElement);
 

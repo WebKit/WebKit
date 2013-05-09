@@ -76,22 +76,22 @@ private:
     typedef HashMap<RefPtr<WebCore::Document>, ListHashSet<RefPtr<WebCore::Node> > > CachedRectHitTestResults;
 
     bool checkFingerIntersection(const Platform::IntRectRegion&,
-                                 const Platform::IntRectRegion& remainingFingerRegion,
-                                 WebCore::Node*,
-                                 Vector<IntersectingRegion>& intersectingRegions);
+        const Platform::IntRectRegion& remainingFingerRegion,
+        WebCore::Node*,
+        Vector<IntersectingRegion>& intersectingRegions);
 
     bool findIntersectingRegions(WebCore::Document*,
-                                 Vector<IntersectingRegion>& intersectingRegions,
-                                 Platform::IntRectRegion& remainingFingerRegion);
+        Vector<IntersectingRegion>& intersectingRegions,
+        Platform::IntRectRegion& remainingFingerRegion);
 
     bool checkForClickableElement(WebCore::Element*,
-                                  Vector<IntersectingRegion>& intersectingRegions,
-                                  Platform::IntRectRegion& remainingFingerRegion,
-                                  WebCore::RenderLayer*& lowestPositionedEnclosingLayerSoFar);
+        Vector<IntersectingRegion>& intersectingRegions,
+        Platform::IntRectRegion& remainingFingerRegion,
+        WebCore::RenderLayer*& lowestPositionedEnclosingLayerSoFar);
 
     bool checkForText(WebCore::Node*,
-                      Vector<IntersectingRegion>& intersectingRegions,
-                      Platform::IntRectRegion& fingerRegion);
+        Vector<IntersectingRegion>& intersectingRegions,
+        Platform::IntRectRegion& fingerRegion);
 
     void setSuccessfulFatFingersResult(FatFingersResult&, WebCore::Node*, const WebCore::IntPoint&);
 
@@ -189,8 +189,7 @@ private:
     WebCore::IntPoint m_adjustedPosition; // Main frame contents coordinates.
     FatFingers::TargetType m_targetType;
     bool m_positionWasAdjusted;
-    bool m_isTextInput; // Check if the element under the touch point will require a VKB be displayed so that
-                        // the touch down can be suppressed.
+    bool m_isTextInput; // Check if the element under the touch point will require a VKB be displayed so that the touch down can be suppressed.
     bool m_isValid;
     RefPtr<WebCore::Node> m_nodeUnderFatFinger;
 };

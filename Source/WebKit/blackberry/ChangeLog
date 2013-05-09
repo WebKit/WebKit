@@ -5,6 +5,21 @@
 
         Reviewed by Rob Buis.
 
+        Update FatFingers to match check-webkit-style updates.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::checkFingerIntersection):
+        (BlackBerry::WebKit::FatFingers::checkForClickableElement):
+        * WebKitSupport/FatFingers.h:
+        (FatFingersResult):
+
+2013-05-09  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Style updates required based on new check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=115857
+
+        Reviewed by Rob Buis.
+
         Update InRegionScrollableArea, TileIndexHash
         and TouchEventHandler to match check-webkit-style updates.
 
