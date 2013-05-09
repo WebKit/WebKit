@@ -263,13 +263,14 @@ StorageNamespace* PageGroup::localStorage()
     return m_localStorage.get();
 }
 
-StorageNamespace* PageGroup::transientLocalStorage(const SecurityOrigin* topOrigin)
+StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
 {
-    String topOriginString = topOrigin->toString();
-    if (!m_transientLocalStorage.get(topOriginString))
-        m_transientLocalStorage.set(topOriginString, StorageNamespace::sessionStorageNamespace(*this->pages().begin()));
+    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace> >::AddResult result = m_transientLocalStorageMap.add(topOrigin, 0);
 
-    return m_transientLocalStorage.get(topOriginString);
+    if (result.isNewEntry)
+        result.iterator->value = StorageNamespace::transientLocalStorageNamespace(this, topOrigin);
+
+    return result.iterator->value.get();
 }
 
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,

@@ -42,6 +42,11 @@ PassRefPtr<StorageNamespace> StorageStrategy::sessionStorageNamespace(Page* page
     return StorageNamespaceImpl::sessionStorageNamespace(page);
 }
 
+PassRefPtr<StorageNamespace> StorageStrategy::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin* securityOrigin)
+{
+    return StorageNamespaceImpl::transientLocalStorageNamespace(pageGroup, securityOrigin);
+}
+
 } // namespace WebCore
 
 #endif // USE(STORAGE_STRATEGIES)

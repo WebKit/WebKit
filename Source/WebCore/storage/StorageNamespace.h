@@ -40,6 +40,7 @@ class StorageArea;
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     static PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
+    static PassRefPtr<StorageNamespace> transientLocalStorageNamespace(PageGroup*, SecurityOrigin*);
     static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
 
     virtual ~StorageNamespace() { }

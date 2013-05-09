@@ -44,6 +44,15 @@ PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(PageGroup* 
 #endif
 }
 
+PassRefPtr<StorageNamespace> StorageNamespace::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin* securityOrigin)
+{
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->storageStrategy()->transientLocalStorageNamespace(pageGroup, securityOrigin);
+#else
+    return StorageNamespaceImpl::transientLocalStorageNamespace(pageGroup, securityOrigin);
+#endif
+}
+
 PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* page)
 {
 #if USE(PLATFORM_STRATEGIES)

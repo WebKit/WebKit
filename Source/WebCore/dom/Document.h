@@ -1209,7 +1209,7 @@ public:
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
 
-    virtual const SecurityOrigin* topOrigin() const OVERRIDE;
+    virtual SecurityOrigin* topOrigin() const OVERRIDE;
 
 #if ENABLE(FONT_LOAD_EVENTS)
     PassRefPtr<FontLoader> fontloader();

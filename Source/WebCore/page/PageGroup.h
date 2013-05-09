@@ -26,13 +26,13 @@
 #ifndef PageGroup_h
 #define PageGroup_h
 
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 #include "LinkHash.h"
+#include "SecurityOriginHash.h"
 #include "Supplementable.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
-#include <wtf/text/StringHash.h>
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -87,7 +87,7 @@ namespace WebCore {
         StorageNamespace* localStorage();
         bool hasLocalStorage() { return m_localStorage; }
 
-        StorageNamespace* transientLocalStorage(const SecurityOrigin* topOrigin);
+        StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
 
         void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                   const Vector<String>& whitelist, const Vector<String>& blacklist,
@@ -118,7 +118,7 @@ namespace WebCore {
     private:
         PageGroup(Page*);
 
-        void addVisitedLink(LinkHash stringHash);
+        void addVisitedLink(LinkHash);
         void invalidatedInjectedStyleSheetCacheInAllFrames();
 
         String m_name;
@@ -130,7 +130,7 @@ namespace WebCore {
 
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;
-        HashMap<String, RefPtr<StorageNamespace> > m_transientLocalStorage;
+        HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace> > m_transientLocalStorageMap;
 
         OwnPtr<UserScriptMap> m_userScripts;
         OwnPtr<UserStyleSheetMap> m_userStyleSheets;

@@ -75,6 +75,13 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(Page*
     return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), page->settings()->sessionStorageQuota()));
 }
 
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*)
+{
+    // FIXME: A smarter implementation would create a special namespace type instead of just piggy-backing off
+    // SessionStorageNamespace here.
+    return StorageNamespaceImpl::sessionStorageNamespace(*pageGroup->pages().begin());
+}
+
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)
     : m_storageType(storageType)
     , m_path(path.isolatedCopy())

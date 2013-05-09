@@ -1,3 +1,39 @@
+2013-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Add a StorageStrategy hook for creating transient local storage namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=115870
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCore.exp.in:
+        Export symbol needed by WebKit2.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::topOrigin):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * workers/WorkerContext.h:
+        Remove const qualifier from topOrigin() to avoid ugly const_casts when assigning into a RefPtr<SecurityOrigin> variable.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::transientLocalStorage):
+        Do a single hash lookup instead of three and use the SecurityOrigin itself as the hash key instead of a string representation of it.
+
+        * page/PageGroup.h:
+        Update HashMap declaration.
+
+        * storage/StorageNamespace.cpp:
+        (WebCore::StorageNamespace::transientLocalStorageNamespace):
+        Add new implementation that will optionally call out to the storage strategy.
+
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::transientLocalStorageNamespace):
+        Move the default implementation here from PageGroup.
+        
+        * storage/StorageStrategy.cpp:
+        (WebCore::StorageStrategy::transientLocalStorageNamespace):
+        Call the default implementation.
+
 2013-05-09  Enrica Casucci  <enrica@apple.com>
 
         A change in system environment should force all CSS properties to be recomputed.

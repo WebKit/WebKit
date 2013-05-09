@@ -40,6 +40,7 @@ class StorageAreaImpl;
 class StorageNamespaceImpl : public StorageNamespace {
 public:
     static PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
+    static PassRefPtr<StorageNamespace> transientLocalStorageNamespace(PageGroup*, SecurityOrigin*);
     static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
     virtual ~StorageNamespaceImpl();
 
