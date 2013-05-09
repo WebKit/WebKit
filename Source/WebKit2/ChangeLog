@@ -1,5 +1,18 @@
 2013-05-08  Anders Carlsson  <andersca@apple.com>
 
+        Remove bogus StorageAreaMap assertions
+        https://bugs.webkit.org/show_bug.cgi?id=115838
+
+        Reviewed by Sam Weinig.
+
+        It is possible for didGetValues, and didClear to be called even if m_hasPendingClear is false so remove the assertions.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::didGetValues):
+        (WebKit::StorageAreaMap::didClear):
+
+2013-05-08  Anders Carlsson  <andersca@apple.com>
+
         Handle incoming clear operations
         https://bugs.webkit.org/show_bug.cgi?id=115829
 

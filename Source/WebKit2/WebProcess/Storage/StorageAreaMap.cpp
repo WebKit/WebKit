@@ -178,7 +178,6 @@ void StorageAreaMap::loadValuesIfNeeded()
 
 void StorageAreaMap::didGetValues()
 {
-    ASSERT(m_hasPendingClear);
     m_hasPendingClear = false;
 }
 
@@ -203,7 +202,6 @@ void StorageAreaMap::didRemoveItem(const String& key)
 
 void StorageAreaMap::didClear()
 {
-    ASSERT(m_hasPendingClear);
     m_hasPendingClear = false;
 }
 
