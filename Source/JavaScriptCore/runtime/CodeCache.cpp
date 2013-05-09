@@ -37,6 +37,11 @@
 namespace JSC {
 
 const double CodeCacheMap::workingSetTime = 10.0;
+const int64_t CodeCacheMap::globalWorkingSetMaxBytes = 16000000;
+const size_t CodeCacheMap::globalWorkingSetMaxEntries = 2000;
+const unsigned CodeCacheMap::nonGlobalWorkingSetScale = 20;
+const int64_t CodeCacheMap::nonGlobalWorkingSetMaxBytes = CodeCacheMap::globalWorkingSetMaxBytes / CodeCacheMap::nonGlobalWorkingSetScale;
+const size_t CodeCacheMap::nonGlobalWorkingSetMaxEntries = CodeCacheMap::globalWorkingSetMaxEntries / CodeCacheMap::nonGlobalWorkingSetScale;
 
 void CodeCacheMap::pruneSlowCase()
 {

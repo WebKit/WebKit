@@ -194,15 +194,15 @@ public:
 
     int64_t age() { return m_age; }
 
-    static const int64_t globalWorkingSetMaxBytes = 16000000;
-    static const size_t globalWorkingSetMaxEntries = 2000;
+    static const int64_t globalWorkingSetMaxBytes;
+    static const size_t globalWorkingSetMaxEntries;
 
     // We have a smaller cap for the per-codeblock CodeCache that approximates the
     // linked EvalCodeCache limits, but still allows us to keep large string based
     // evals at least partially cached.
-    static const unsigned nonGlobalWorkingSetScale = 20;
-    static const int64_t nonGlobalWorkingSetMaxBytes = globalWorkingSetMaxBytes / nonGlobalWorkingSetScale;
-    static const size_t nonGlobalWorkingSetMaxEntries = globalWorkingSetMaxEntries / nonGlobalWorkingSetScale;
+    static const unsigned nonGlobalWorkingSetScale;
+    static const int64_t nonGlobalWorkingSetMaxBytes;
+    static const size_t nonGlobalWorkingSetMaxEntries;
 
 private:
     // This constant factor biases cache capacity toward allowing a minimum

@@ -1,3 +1,16 @@
+2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix after r149836.
+
+        It broke at least EFL and GTK builds. Move new static members initialization
+        outside the class. Those need to have a definition outside the class because
+        their address is used (e.g. CodeCacheMap::nonGlobalWorkingSetMaxEntries).
+
+        * runtime/CodeCache.cpp:
+        (JSC):
+        * runtime/CodeCache.h:
+        (CodeCacheMap):
+
 2013-05-08  Oliver Hunt  <oliver@apple.com>
 
         Code cache stores bogus var references for functions in eval code
