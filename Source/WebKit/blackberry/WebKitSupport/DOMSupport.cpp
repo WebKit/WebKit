@@ -103,14 +103,14 @@ bool isShadowHostTextInputElement(Node* node)
 bool isTextInputElement(Element* element)
 {
     return element->isTextFormControl()
-           || element->hasTagName(HTMLNames::textareaTag)
-           || element->isContentEditable();
+        || element->hasTagName(HTMLNames::textareaTag)
+        || element->isContentEditable();
 }
 
 bool isPasswordElement(const Element* element)
 {
     return element && element->hasTagName(HTMLNames::inputTag)
-           && static_cast<const HTMLInputElement*>(element)->isPasswordField();
+        && static_cast<const HTMLInputElement*>(element)->isPasswordField();
 }
 
 WTF::String inputElementText(Element* element)
@@ -473,8 +473,9 @@ IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame,
 
     // Requested point is outside of target frame, return InvalidPoint.
     if (clampToTargetFrame && !targetFrameRect.contains(targetPoint))
-        targetPoint = IntPoint(targetPoint.x() < targetFrameRect.x() ? targetFrameRect.x() : std::min(targetPoint.x(), targetFrameRect.maxX()),
-                targetPoint.y() < targetFrameRect.y() ? targetFrameRect.y() : std::min(targetPoint.y(), targetFrameRect.maxY()));
+        targetPoint = IntPoint(
+            targetPoint.x() < targetFrameRect.x() ? targetFrameRect.x() : std::min(targetPoint.x(), targetFrameRect.maxX()),
+            targetPoint.y() < targetFrameRect.y() ? targetFrameRect.y() : std::min(targetPoint.y(), targetFrameRect.maxY()));
     else if (!targetFrameRect.contains(targetPoint))
         return InvalidPoint;
 
