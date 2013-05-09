@@ -156,10 +156,10 @@ void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
 }
 
 void GeolocationClientBlackBerry::onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid,
-                                                             double altitudeAccuracy, bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid)
+    double altitudeAccuracy, bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid)
 {
     m_lastPosition = GeolocationPosition::create(timestamp, latitude, longitude, accuracy, altitudeValid, altitude, altitudeAccuracyValid,
-                                                 altitudeAccuracy, headingValid, heading, speedValid, speed);
+        altitudeAccuracy, headingValid, heading, speedValid, speed);
     GeolocationController::from(m_webPagePrivate->m_page)->positionChanged(m_lastPosition.get());
 }
 

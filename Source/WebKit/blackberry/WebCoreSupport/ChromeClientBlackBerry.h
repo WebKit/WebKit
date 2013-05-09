@@ -81,7 +81,7 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const;
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const;
-    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned int);
+    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned);
     virtual void setToolTip(const String&, TextDirection);
 #if ENABLE(EVENT_MODE_METATAGS)
     virtual void didReceiveCursorEventMode(Frame*, CursorEventMode) const;

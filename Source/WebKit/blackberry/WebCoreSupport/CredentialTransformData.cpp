@@ -93,8 +93,7 @@ bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords, HTMLInputElem
         } else if (passwords[1]->value() == passwords[2]->value()) {
             *oldPassword = passwords[0];
             *password = passwords[1];
-        }
-        else {
+        } else {
             // Three different passwords, or first and last match with middle
             // different. No idea which is which, so no luck.
             return false;

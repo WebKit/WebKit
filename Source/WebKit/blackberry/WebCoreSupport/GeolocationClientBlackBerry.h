@@ -48,7 +48,7 @@ public:
 
     virtual bool requiresHighAccuracy() { return m_accuracy; }
     virtual void onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid, double altitudeAccuracy,
-                                  bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid);
+        bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid);
     virtual void onLocationError(const char* error);
     virtual void onPermission(const BlackBerry::Platform::String& origin, bool isAllowed);
 

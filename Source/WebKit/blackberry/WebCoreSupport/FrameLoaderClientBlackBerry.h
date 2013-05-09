@@ -55,15 +55,15 @@ public:
     virtual void setCopiesOnScroll() { notImplemented(); }
     virtual void detachedFromParent2();
     virtual void detachedFromParent3() { notImplemented(); }
-    virtual void assignIdentifierToInitialRequest(long unsigned int, DocumentLoader*, const ResourceRequest&) { notImplemented(); }
-    virtual void dispatchWillSendRequest(DocumentLoader*, long unsigned int, ResourceRequest&, const ResourceResponse&);
+    virtual void assignIdentifierToInitialRequest(long unsigned, DocumentLoader*, const ResourceRequest&) { notImplemented(); }
+    virtual void dispatchWillSendRequest(DocumentLoader*, long unsigned, ResourceRequest&, const ResourceResponse&);
     virtual bool shouldUseCredentialStorage(DocumentLoader*, long unsigned);
-    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, long unsigned int, const AuthenticationChallenge&) { notImplemented(); }
-    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, long unsigned int, const AuthenticationChallenge&) { notImplemented(); }
-    virtual void dispatchDidReceiveResponse(DocumentLoader*, long unsigned int, const ResourceResponse&);
-    virtual void dispatchDidReceiveContentLength(DocumentLoader*, long unsigned int, int) { notImplemented(); }
-    virtual void dispatchDidFinishLoading(DocumentLoader*, long unsigned int) { notImplemented(); }
-    virtual void dispatchDidFailLoading(DocumentLoader*, long unsigned int, const ResourceError&) { notImplemented(); }
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, long unsigned, const AuthenticationChallenge&) { notImplemented(); }
+    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, long unsigned, const AuthenticationChallenge&) { notImplemented(); }
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, long unsigned, const ResourceResponse&);
+    virtual void dispatchDidReceiveContentLength(DocumentLoader*, long unsigned, int) { notImplemented(); }
+    virtual void dispatchDidFinishLoading(DocumentLoader*, long unsigned) { notImplemented(); }
+    virtual void dispatchDidFailLoading(DocumentLoader*, long unsigned, const ResourceError&) { notImplemented(); }
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) { notImplemented(); return false; }
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplemented(); }

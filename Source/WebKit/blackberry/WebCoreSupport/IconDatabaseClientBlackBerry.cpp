@@ -45,7 +45,7 @@ bool IconDatabaseClientBlackBerry::initIconDatabase(const BlackBerry::WebKit::We
     iconDatabase().setClient(this);
 
     m_initState = iconDatabase().open(BlackBerry::Platform::Settings::instance()->applicationDataDirectory().c_str(),
-                                      IconDatabase::defaultDatabaseFilename()) ? InitializeSucceeded : InitializeFailed;
+        IconDatabase::defaultDatabaseFilename()) ? InitializeSucceeded : InitializeFailed;
 
     return m_initState == InitializeSucceeded;
 }

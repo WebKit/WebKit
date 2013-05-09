@@ -45,7 +45,7 @@ public:
     void clearCredentials();
     void clearNeverRememberSites();
 
- private:
+private:
     friend CredentialManager& credentialManager();
     CredentialManager() { }
 };
