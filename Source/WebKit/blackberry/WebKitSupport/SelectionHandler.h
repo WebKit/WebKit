@@ -89,8 +89,7 @@ private:
     void caretPositionChanged(bool userTouchTriggered);
     void regionForTextQuads(WTF::Vector<WebCore::FloatQuad>&, BlackBerry::Platform::IntRectRegion&, bool shouldClipToVisibleContent = true) const;
     WebCore::IntRect clippingRectForVisibleContent() const;
-    bool updateOrHandleInputSelection(WebCore::VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart
-                                      , const WebCore::IntPoint& relativeEnd);
+    bool updateOrHandleInputSelection(WebCore::VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart, const WebCore::IntPoint& relativeEnd);
     WebCore::Node* DOMContainerNodeForVisiblePosition(const WebCore::VisiblePosition&) const;
     bool shouldUpdateSelectionOrCaretForPoint(const WebCore::IntPoint&, const WebCore::IntRect&, bool startCaret = true) const;
     unsigned extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);

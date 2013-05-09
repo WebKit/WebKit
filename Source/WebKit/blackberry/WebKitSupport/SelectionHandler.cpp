@@ -317,7 +317,7 @@ static bool shouldExtendSelectionInDirection(const VisibleSelection& selection, 
 
     if ((character == KEYCODE_LEFT || character == KEYCODE_RIGHT)
         && (!inSameLine(selection.visibleStart(), tempSelection.selection().visibleStart())
-           || !inSameLine(selection.visibleEnd(), tempSelection.selection().visibleEnd())))
+            || !inSameLine(selection.visibleEnd(), tempSelection.selection().visibleEnd())))
         return false;
 
     return tempSelection.selection().selectionType() == VisibleSelection::RangeSelection;
@@ -372,10 +372,9 @@ unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, co
     if (!focusedFrame->document()->focusedNode() || !focusedFrame->document()->focusedNode()->renderer())
         return 0;
 
-    FrameSelection* controller = focusedFrame->selection();
+    VisibleSelection activeSelection = focusedFrame->selection()->selection();
 
-    WebCore::IntRect caretRect = isStartHandle ? controller->selection().visibleStart().absoluteCaretBounds()
-                                      : controller->selection().visibleEnd().absoluteCaretBounds();
+    WebCore::IntRect caretRect = isStartHandle ? activeSelection.visibleStart().absoluteCaretBounds() : activeSelection.visibleEnd().absoluteCaretBounds();
 
     WebCore::IntRect nodeBoundingBox = focusedFrame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect();
     nodeBoundingBox.inflate(-1);
@@ -390,7 +389,7 @@ unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, co
         || (!isStartHandle && (character == KEYCODE_LEFT || character == KEYCODE_UP)))
         character = 0;
 
-    VisiblePosition newVisiblePosition = isStartHandle ? controller->selection().extent() : controller->selection().base();
+    VisiblePosition newVisiblePosition = isStartHandle ? activeSelection.extent() : activeSelection.base();
     // Extend the selection to the bounds of the box before doing incremental scroll if the point is outside the node.
     // Don't extend selection and handle the character at the same time.
     if (pointIsOutsideOfBoundingBoxInDirection(character, selectionPoint, nodeBoundingBox))
@@ -402,7 +401,7 @@ unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, co
         newSelection = VisibleSelection(newSelection.base(), newVisiblePosition, true /* isDirectional */);
 
     // If no selection will be changed, return the character to extend using navigation.
-    if (controller->selection() == newSelection)
+    if (activeSelection == newSelection)
         return character;
 
     // Selection has been updated.
@@ -410,8 +409,7 @@ unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, co
 }
 
 // Returns true if handled.
-bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart
-                                                    , const WebCore::IntPoint& relativeEnd)
+bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart, const WebCore::IntPoint& relativeEnd)
 {
     ASSERT(m_webPage->m_inputHandler->isInputMode());
 
@@ -1008,12 +1006,8 @@ static inline WebCore::IntPoint caretComparisonPointForRect(const WebCore::IntRe
     return caretIsOnLeft(isStartCaret, isRTL) ? minXMaxYCorner(rect) : maxXMaxYCorner(rect);
 }
 
-static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClippedOut,
-                             WebCore::IntRect& endCaret, bool isEndCaretClippedOut,
-                             const std::vector<Platform::IntRect> rectList,
-                             const WebCore::IntPoint& startReferencePoint,
-                             const WebCore::IntPoint& endReferencePoint,
-                             bool isRTL)
+static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClippedOut, WebCore::IntRect& endCaret, bool isEndCaretClippedOut,
+    const std::vector<Platform::IntRect> rectList, const WebCore::IntPoint& startReferencePoint, const WebCore::IntPoint& endReferencePoint, bool isRTL)
 {
     // startReferencePoint is the best guess at the top left of the selection; endReferencePoint is the best guess at the bottom right.
     if (isStartCaretClippedOut)
@@ -1042,19 +1036,19 @@ static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClip
 
         // Compare and update the start and end carets with their respective reference points.
         if (!isStartCaretClippedOut && comparePointsToReferencePoint(
-                    caretComparisonPointForRect(currentRect, true, isRTL),
-                    caretComparisonPointForRect(startCaret, true, isRTL),
-                    startReferencePoint, isRTL) > 0) {
-            startCaret.setLocation(caretLocationForRect(currentRect, true, isRTL));
-            startCaret.setHeight(currentRect.height());
+            caretComparisonPointForRect(currentRect, true, isRTL),
+            caretComparisonPointForRect(startCaret, true, isRTL),
+            startReferencePoint, isRTL) > 0) {
+                startCaret.setLocation(caretLocationForRect(currentRect, true, isRTL));
+                startCaret.setHeight(currentRect.height());
         }
 
         if (!isEndCaretClippedOut && comparePointsToReferencePoint(
-                    caretComparisonPointForRect(currentRect, false, isRTL),
-                    caretComparisonPointForRect(endCaret, false, isRTL),
-                    endReferencePoint, !isRTL) > 0) {
-            endCaret.setLocation(caretLocationForRect(currentRect, false, isRTL));
-            endCaret.setHeight(currentRect.height());
+            caretComparisonPointForRect(currentRect, false, isRTL),
+            caretComparisonPointForRect(endCaret, false, isRTL),
+            endReferencePoint, !isRTL) > 0) {
+                endCaret.setLocation(caretLocationForRect(currentRect, false, isRTL));
+                endCaret.setHeight(currentRect.height());
         }
     }
 }
@@ -1067,11 +1061,11 @@ WebCore::IntPoint SelectionHandler::clipPointToVisibleContainer(const WebCore::I
     WebCore::IntPoint clippedPoint = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), frame, point, true /* clampToTargetFrame */);
 
     if (m_webPage->m_inputHandler->isInputMode()
-            && frame->document()->focusedNode()
-            && frame->document()->focusedNode()->renderer()) {
-        WebCore::IntRect boundingBox(frame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect());
-        boundingBox.inflate(-1);
-        clippedPoint = WebCore::IntPoint(clamp(boundingBox.x(), clippedPoint.x(), boundingBox.maxX()), clamp(boundingBox.y(), clippedPoint.y(), boundingBox.maxY()));
+        && frame->document()->focusedNode()
+        && frame->document()->focusedNode()->renderer()) {
+            WebCore::IntRect boundingBox(frame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect());
+            boundingBox.inflate(-1);
+            clippedPoint = WebCore::IntPoint(clamp(boundingBox.x(), clippedPoint.x(), boundingBox.maxX()), clamp(boundingBox.y(), clippedPoint.y(), boundingBox.maxY()));
     }
 
     return clippedPoint;
@@ -1099,7 +1093,7 @@ static bool regionRectListContainsPoint(const IntRectRegion& region, const WebCo
         return false;
 
     std::vector<Platform::IntRect> rectList = region.rects();
-    for (unsigned int i = 0; i < rectList.size(); i++) {
+    for (unsigned i = 0; i < rectList.size(); i++) {
         if (rectList[i].contains(point))
             return true;
     }

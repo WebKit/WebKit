@@ -1,3 +1,22 @@
+2013-05-09  Mike Fenton <mifenton@rim.com>
+
+        [BlackBerry] Style updates required based on new check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=115857
+
+        Reviewed by Rob Buis.
+
+        Update SelectionHandler to match check-webkit-style updates.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::shouldExtendSelectionInDirection):
+        (BlackBerry::WebKit::SelectionHandler::extendSelectionToFieldBoundary):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        (BlackBerry::WebKit::adjustCaretRects):
+        (BlackBerry::WebKit::SelectionHandler::clipPointToVisibleContainer):
+        (BlackBerry::WebKit::regionRectListContainsPoint):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style
