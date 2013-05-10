@@ -848,8 +848,8 @@ void BackingStorePrivate::updateTilesAfterBackingStoreRectChange()
                     tileNotRenderedRegion.extents().toString().c_str());
 #endif
             } else {
-                if (!tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale())
-                    && !isCurrentVisibleJob(index, geometry))
+                if (!tileBuffer || (!tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale())
+                    && !isCurrentVisibleJob(index, geometry)))
                     updateTile(tileOrigin, false /*immediate*/);
             }
         } else if (rect.intersects(expandedContentsRect()))

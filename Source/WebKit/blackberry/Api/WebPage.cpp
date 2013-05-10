@@ -2815,7 +2815,7 @@ IntRect WebPagePrivate::adjustRectOffsetForFrameOffset(const IntRect& rect, cons
             } while (iFrameRect.isEmpty() && ownerNode);
         } else
             break;
-    } while (tnode = tnode->parentNode());
+    } while ((tnode = tnode->parentNode()));
 
     return adjustedRect;
 }
@@ -2837,7 +2837,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
     double blockExpansionRatio = 5.0 * blockToPageRatio * blockToPageRatio;
 
     if (!tnode->hasTagName(HTMLNames::imgTag) && !tnode->hasTagName(HTMLNames::inputTag) && !tnode->hasTagName(HTMLNames::textareaTag)) {
-        while (tnode = tnode->parentNode()) {
+        while ((tnode = tnode->parentNode())) {
             ASSERT(tnode);
             IntRect tRect = rectForNode(tnode);
             int tempBlockArea = tRect.width() * tRect.height();

@@ -1,3 +1,24 @@
+2013-05-10  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Fix some compiler warnings (miscellaneous)
+        https://bugs.webkit.org/show_bug.cgi?id=80790
+
+        Reviewed by Rob Buis.
+
+        Fix the following warnings for BlackBerry:
+        BackingStore.cpp:852:60: warning: suggest parentheses around '&&' within
+        '||' [-Wparentheses].
+        WebPage.cpp:2858:40: warning: suggest parentheses around assignment used
+        as truth value [-Wparentheses].
+        WebPage.cpp:2880:42: warning: suggest parentheses around assignment used
+        as truth value [-Wparentheses]
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesAfterBackingStoreRectChange):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::adjustRectOffsetForFrameOffset):
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+
 2013-05-09  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Style updates required based on new check-webkit-style

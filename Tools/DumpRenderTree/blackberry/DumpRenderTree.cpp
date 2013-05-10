@@ -354,7 +354,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
         page->settings()->setUsePreHTML5ParserQuirks(false);
         // FIXME: Other ports also clear history/backForwardList allong with visited links.
         page->group().removeVisitedLinks();
-        if (mainFrame = page->mainFrame()) {
+        if ((mainFrame = page->mainFrame())) {
             mainFrame->tree()->clearName();
             mainFrame->loader()->setOpener(0);
             // [WebKit bug #86899] Reset JS state settings.
