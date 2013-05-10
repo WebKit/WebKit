@@ -31,6 +31,11 @@
 #import "WKAPICast.h"
 #import "WebContext.h"
 #import "WKInspectorPrivateMac.h"
+#import "WKMutableArray.h"
+#import "WKOpenPanelParameters.h"
+#import "WKOpenPanelResultListener.h"
+#import "WKRetainPtr.h"
+#import "WKURLCF.h"
 #import "WKViewPrivate.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
@@ -221,6 +226,37 @@ static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurit
     return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
 }
 
+static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+{
+    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(webInspectorProxy);
+
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    [openPanel setAllowsMultipleSelection:WKOpenPanelParametersGetAllowsMultipleFiles(parameters)];
+
+    WKRetain(listener);
+
+    // If the inspector is detached, then openPanel will be window-modal; otherwise, openPanel is opened in a new window.
+    [openPanel beginSheetModalForWindow:webInspectorProxy->inspectorWindow() completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            WKMutableArrayRef fileURLs = WKMutableArrayCreate();
+
+            for (NSURL* nsURL in [openPanel URLs]) {
+                WKURLRef wkURL = WKURLCreateWithCFURL(reinterpret_cast<CFURLRef>(nsURL));
+                WKArrayAppendItem(fileURLs, wkURL);
+                WKRelease(wkURL);
+            }
+
+            WKOpenPanelResultListenerChooseFiles(listener, fileURLs);
+
+            WKRelease(fileURLs);
+        } else
+            WKOpenPanelResultListenerCancel(listener);
+        
+        WKRelease(listener);
+    }];
+}
+
 void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
 {
     if (m_isAttached)
@@ -408,7 +444,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         0, // didDraw
         0, // pageDidScroll
         exceededDatabaseQuota,
-        0, // runOpenPanel
+        runOpenPanel,
         0, // decidePolicyForGeolocationPermissionRequest
         0, // headerHeight
         0, // footerHeight

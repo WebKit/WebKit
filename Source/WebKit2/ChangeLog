@@ -1,3 +1,21 @@
+2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: implement runOpenPanel callback for WebKit2 inspector
+        https://bugs.webkit.org/show_bug.cgi?id=115865
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::inspectorWindow):
+        Add an accessor for m_inspectorWindow.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::runOpenPanel):
+        Show the open panel dialog when requested.
+
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Register the callback when the inspector page is created.
+
 2013-05-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2][CoordinatedGraphics] WKViewSetThemePath is EFL specific
