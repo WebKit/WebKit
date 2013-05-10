@@ -1,3 +1,19 @@
+2013-05-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] REGRESSION (r148975) shape-inside-percentage.html and shape-inside-overflow-fixed-dimensions.html are failing after r148975
+        https://bugs.webkit.org/show_bug.cgi?id=115053
+
+        Reviewed by Alexandru Chiculita.
+
+        I changed the tests to use Ahem font (overflow will be the same on every port) and modify the markup in order to be the similar
+        for the two tests. The change fixes both tests and make them passing on Qt as well. I removed the tests from the TestExpectations.
+
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/exclusions/shape-inside/shape-inside-percentage-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-percentage.html:
+        * platform/qt/TestExpectations:
+
 2013-05-09  Yael Aharon  <yael.aharon@intel.com>
 
         REGRESSION: Disabled multiline select element now responds to (certain) clicks

@@ -1508,10 +1508,6 @@ fast/css/line-after-floating-div.html
 # https://bugs.webkit.org/show_bug.cgi?id=67128
 fast/css/square-button-appearance.html
 
-# [Qt] REGRESSION (r148975) shape-inside-percentage.html and shape-inside-overflow-fixed-dimensions.html are failing after r148975
-# https://bugs.webkit.org/show_bug.cgi?id=115053
-fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html
-fast/exclusions/shape-inside/shape-inside-percentage.html
 fast/exclusions/shape-inside/shape-inside-polygon-layout.html
 
 # REGRESSION(r149457): some fast/exclusions tests are failing

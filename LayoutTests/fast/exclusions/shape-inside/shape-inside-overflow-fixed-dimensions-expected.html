@@ -2,16 +2,18 @@
 <html>
 <head>
 <style>
-#shape-inside {
+#container {
+    font: 20px Ahem, sans-serif;
+    line-height: 20px;
     border: 2px solid blue;
     position: relative;
     width: 200px;
     height: 200px;
-    line-height: 20px;
+    margin-bottom: 60px;
 }
 #border {
     position: absolute;
-    left: 58px;
+    left: 48px;
     width: 100px;
     height: 40px;
     border: 2px solid green;
@@ -23,14 +25,18 @@
 </style>
 </head>
 <body>
-<div id="border"></div>
-<div id="shape-inside">
-    <div class="spacer" style="float:left"></div>
-    <div class="spacer" style="float:right"></div>
-    This text should wrap
-    <div style="padding-top: 162px;">
-        inside the green rectangle, and overflow should wrap outside the blue rectangle.
+    <div id="container">
+        <div id="border"></div>
+        <div id="shape-inside">
+            <div class="spacer" style="float:left"></div>
+            <div class="spacer" style="float:right"></div>
+            X X X X X X
+        </div>
+        <div style="padding-top: 160px;">
+            X X X X X X X X X X
+        </div>
     </div>
-</div>
+<p>Requires Ahem font. The content should start inside the green rectangle (shape-inside) and the overflow should be pushed below the content box (content-box's margin is blue). <br/>
+<p>Bug <a href="http://webkit.org/b/114526">114526</a>: [CSS Exclusions] shape-inside overflow should be pushed to the outside of the content box</p>
 </body>
 </html>
