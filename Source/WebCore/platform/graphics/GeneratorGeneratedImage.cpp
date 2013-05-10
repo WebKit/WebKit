@@ -76,13 +76,6 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
 
     // Tile the image buffer into the context.
     m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
-    m_cacheTimer.restart();
-}
-
-void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*)
-{
-    m_cachedImageBuffer.clear();
-    m_cachedAdjustedSize = IntSize();
 }
 
 }

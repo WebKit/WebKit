@@ -50,15 +50,15 @@ String CSSCanvasValue::customCssText() const
 void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)
 {
     IntRect imageChangeRect = enclosingIntRect(changedRect);
-    RenderObjectSizeCountMap::const_iterator end = clients().end();
-    for (RenderObjectSizeCountMap::const_iterator curr = clients().begin(); curr != end; ++curr)
+    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
+    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr)
         const_cast<RenderObject*>(curr->key)->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }
 
 void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
 {
-    RenderObjectSizeCountMap::const_iterator end = clients().end();
-    for (RenderObjectSizeCountMap::const_iterator curr = clients().begin(); curr != end; ++curr)
+    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
+    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr)
         const_cast<RenderObject*>(curr->key)->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 

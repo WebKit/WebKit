@@ -1,3 +1,65 @@
+2013-05-10  Andreas Kling  <akling@apple.com>
+
+        Caching of generated images in CSS should be smarter.
+        <http://webkit.org/b/115902>
+        <rdar://problem/13542727>
+
+        Reviewed by Antti Koivisto.
+
+        Add an IntSize => GeneratorGeneratedImage cache at the CSSImageGeneratorValue level.
+
+        CSSGradientValue is currently the only CSSImageGeneratorValue subclass that makes use of the cache.
+        Generated images are kept for 3 seconds after last use.
+
+        The main problem with the previous approach was that background renderers (e.g <body>, <tr>, etc)
+        would be passed to multiple CSSImageGeneratorValue::getImage() calls with different sizes requested
+        for each of the descendent renderers that inherit their background from the same parent.
+        The cache wasn't smart enough for this, it just thought the background renderer was changing size
+        a lot, and would regenerate the image over and over.
+
+        We already had caching of intermediate image buffers for GeneratorGeneratedImage::drawPattern().
+        This removes the eviction timer from that cache so that the intermediate images can live a bit longer.
+
+        (WebCore::CSSImageGeneratorValue::cachedImageForSize):
+        (WebCore::CSSImageGeneratorValue::saveCachedImageForSize):
+
+            Renamed from getImage() and putImage().
+
+        (WebCore::CSSImageGeneratorValue::evictCachedGeneratedImage):
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage):
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired):
+
+            Let the CachedGeneratedImage throw itself out from cache when the timer fires.
+
+        * css/CSSImageGeneratorValue.h:
+        (CachedGeneratedImage):
+
+            Exactly what it sounds like. These go into CSSImageGeneratorValue::m_images with the size
+            as the hash key.
+
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        * platform/graphics/GeneratorGeneratedImage.h:
+        (WebCore::GeneratorGeneratedImage::~GeneratorGeneratedImage):
+        (WebCore::GeneratorGeneratedImage::GeneratorGeneratedImage):
+
+            Keep the intermediate image for drawPattern() until destruction instead of dropping it on
+            a timer. These objects are now evicted by the CSSImageGeneratorValue's image cache
+            after 3 seconds of disuse rather than kept for the lifetime of the renderer.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasChanged):
+        (WebCore::CSSCanvasValue::canvasResized):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::crossfadeChanged):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::addClient):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::removeClient):
+
+            CSSImageGeneratorValue::m_clients is now a HashCountedSet<RenderObject*>, tweak accordingly.
+
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
         Remove MemoryUsageSupport class

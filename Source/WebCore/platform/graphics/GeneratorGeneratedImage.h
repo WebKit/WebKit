@@ -31,12 +31,9 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
-#include "Timer.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-static const int generatedImageCacheClearDelay = 1;
 
 class GeneratorGeneratedImage : public GeneratedImage {
 public:
@@ -45,29 +42,21 @@ public:
         return adoptRef(new GeneratorGeneratedImage(generator, size));
     }
 
-    virtual ~GeneratorGeneratedImage()
-    {
-        m_cacheTimer.stop();
-    }
+    virtual ~GeneratorGeneratedImage() { }
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode);
 
-    void invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*);
-
     GeneratorGeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)
         : m_generator(generator)
-        , m_cacheTimer(this, &GeneratorGeneratedImage::invalidateCacheTimerFired, generatedImageCacheClearDelay)
     {
         m_size = size;
     }
 
     RefPtr<Generator> m_generator;
-
     OwnPtr<ImageBuffer> m_cachedImageBuffer;
-    DeferrableOneShotTimer<GeneratorGeneratedImage> m_cacheTimer;
     IntSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;
 };

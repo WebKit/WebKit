@@ -76,7 +76,7 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderObject* rendere
 
 void StyleGeneratedImage::addClient(RenderObject* renderer)
 {
-    m_imageGeneratorValue->addClient(renderer, IntSize());
+    m_imageGeneratorValue->addClient(renderer);
 }
 
 void StyleGeneratedImage::removeClient(RenderObject* renderer)

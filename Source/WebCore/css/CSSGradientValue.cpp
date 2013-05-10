@@ -53,13 +53,11 @@ PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize&
         if (!clients().contains(renderer))
             return 0;
 
-        // Need to look up our size.  Create a string of width*height to use as a hash key.
-        Image* result = getImage(renderer, size);
+        Image* result = cachedImageForSize(size);
         if (result)
             return result;
     }
 
-    // We need to create an image.
     RefPtr<Gradient> gradient;
 
     if (isLinearGradient())
@@ -69,9 +67,9 @@ PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize&
         gradient = static_cast<CSSRadialGradientValue*>(this)->createGradient(renderer, size);
     }
 
-    RefPtr<Image> newImage = GeneratorGeneratedImage::create(gradient, size);
+    RefPtr<GeneratorGeneratedImage> newImage = GeneratorGeneratedImage::create(gradient, size);
     if (cacheable)
-        putImage(size, newImage);
+        saveCachedImageForSize(size, newImage);
 
     return newImage.release();
 }
