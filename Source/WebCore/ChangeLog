@@ -1,3 +1,10 @@
+2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r149839.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::gtkStyleChangedCallback):
+
 2013-05-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver is no longer seeing items in poorly formed tables

@@ -58,7 +58,7 @@ static void gtkStyleChangedCallback(GObject*, GParamSpec*)
     for (StyleContextMap::const_iterator iter = styleContextMap().begin(); iter != end; ++iter)
         gtk_style_context_invalidate(iter->value.get());
 
-    Page::scheduleForcedStyleRecalcForAllPages();
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
 static StyleContextMap& styleContextMap()
