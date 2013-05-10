@@ -6144,8 +6144,6 @@ platform_sources += \
 	Source/WebCore/platform/Logging.h \
 	Source/WebCore/platform/MemoryPressureHandler.cpp \
 	Source/WebCore/platform/MemoryPressureHandler.h \
-	Source/WebCore/platform/MemoryUsageSupport.cpp \
-	Source/WebCore/platform/MemoryUsageSupport.h \
 	Source/WebCore/platform/NotImplemented.cpp \
 	Source/WebCore/platform/NotImplemented.h \
 	Source/WebCore/platform/RunLoop.cpp \

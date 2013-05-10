@@ -1828,7 +1828,6 @@ set(WebCore_SOURCES
     platform/LengthBox.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
-    platform/MemoryUsageSupport.cpp
     platform/MIMETypeRegistry.cpp
     platform/MemoryPressureHandler.cpp
     platform/NotImplemented.cpp

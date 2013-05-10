@@ -1161,9 +1161,6 @@
     <ClCompile Include="..\platform\MemoryPressureHandler.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\MemoryUsageSupport.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\MIMETypeRegistry.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -7957,9 +7954,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\MemoryPressureHandler.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\MemoryUsageSupport.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\MainThreadTask.h">

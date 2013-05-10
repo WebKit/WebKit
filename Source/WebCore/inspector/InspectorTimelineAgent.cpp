@@ -47,7 +47,6 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
-#include "MemoryUsageSupport.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ResourceRequest.h"
@@ -597,6 +596,7 @@ void InspectorTimelineAgent::setDOMCounters(TypeBuilder::Timeline::TimelineEvent
     }
 }
 
+// FIXME: This entire function can probably be removed, since it's a no-op.
 void InspectorTimelineAgent::setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record)
 {
     if (!m_memoryAgent)
@@ -604,10 +604,7 @@ void InspectorTimelineAgent::setNativeHeapStatistics(TypeBuilder::Timeline::Time
     if (!m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics))
         return;
     RefPtr<InspectorObject> stats = InspectorObject::create();
-    size_t privateBytes = 0;
-    size_t sharedBytes = 0;
-    MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
-    stats->setNumber("PrivateBytes", privateBytes);
+    stats->setNumber("PrivateBytes", 0);
     record->setNativeHeapStatistics(stats.release());
 }
 

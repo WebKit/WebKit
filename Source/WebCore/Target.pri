@@ -1075,7 +1075,6 @@ SOURCES += \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
     platform/MemoryPressureHandler.cpp \
-    platform/qt/MemoryUsageSupportQt.cpp \
     platform/MIMETypeRegistry.cpp \
     platform/mock/DeviceMotionClientMock.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
@@ -2314,7 +2313,6 @@ HEADERS += \
     platform/Logging.h \
     platform/Language.h \
     platform/MemoryPressureHandler.h \
-    platform/MemoryUsageSupport.h \
     platform/MainThreadTask.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \

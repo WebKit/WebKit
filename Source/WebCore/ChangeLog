@@ -1,3 +1,28 @@
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove MemoryUsageSupport class
+        https://bugs.webkit.org/show_bug.cgi?id=115913
+
+        Reviewed by Andreas Kling.
+
+        MemoryUsageSupport was just used by a single call site in InspectorTimelineAgent,
+        and the function called always returns zero on all platforms! Remove it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorMemoryAgent.cpp:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::setNativeHeapStatistics):
+        * platform/MemoryUsageSupport.cpp: Removed.
+        * platform/MemoryUsageSupport.h: Removed.
+        * platform/qt/MemoryUsageSupportQt.cpp: Removed.
+
 2013-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r149652): Videos do not play on cnn.com, just black box

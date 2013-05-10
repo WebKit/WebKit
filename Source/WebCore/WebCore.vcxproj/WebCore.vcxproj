@@ -4109,7 +4109,6 @@
     <ClCompile Include="..\platform\LocalizedStrings.cpp" />
     <ClCompile Include="..\platform\Logging.cpp" />
     <ClCompile Include="..\platform\MemoryPressureHandler.cpp" />
-    <ClCompile Include="..\platform\MemoryUsageSupport.cpp" />
     <ClCompile Include="..\platform\MIMETypeRegistry.cpp" />
     <ClCompile Include="..\platform\NotImplemented.cpp" />
     <ClCompile Include="..\platform\PlatformEvent.cpp" />
@@ -11565,7 +11564,6 @@
     <ClInclude Include="..\platform\LocalizedStrings.h" />
     <ClInclude Include="..\platform\Logging.h" />
     <ClInclude Include="..\platform\MemoryPressureHandler.h" />
-    <ClInclude Include="..\platform\MemoryUsageSupport.h" />
     <ClInclude Include="..\platform\MainThreadTask.h" />
     <ClInclude Include="..\platform\MIMETypeRegistry.h" />
     <ClInclude Include="..\platform\NotImplemented.h" />
