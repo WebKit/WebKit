@@ -1,3 +1,16 @@
+2013-05-10  Simon Cooper  <scooper@apple.com>
+
+        Fix AppleConnect issues for WiFi interfaces
+        <rdar://problem/13776227&13776240&13776281>
+        https://bugs.webkit.org/show_bug.cgi?id=115932
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for WiFi interfaces for the AppleConnect plugin.
+        Remove the FIXME.
+
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+
 2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Mac] Unreviewed speculative build fix after r149904.

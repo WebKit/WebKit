@@ -3,10 +3,8 @@
     (global-name "com.apple.ist.ds.appleconnect2.service.agent")
     (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
     (global-name "com.apple.ist.ds.appleconnect2.service.menuextra")
+    (global-name "com.apple.wifi.anqp")
     (global-name "org.h5l.kcm"))
-;; FIXME: This is explicitly being called out <rdar://problem/13481170>
-(deny mach-lookup
-    (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\..*\[[0-9]+\]$"))
 (allow mach-lookup
     (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$"))
 
@@ -22,6 +20,7 @@
 (allow file-read*
     (subpath "/Library/KerberosPlugins/GSSAPI")
     (literal "/Library/Preferences/edu.mit.Kerberos")
+    (literal "/Library/Preferences/SystemConfiguration/preferences.plist")
     (home-library-preferences-literal "/edu.mit.Kerberos"))
 
 (allow file-read*
@@ -31,6 +30,7 @@
     (allow mach-register
         (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$")))
 
+(allow system-socket)
 (allow network-outbound
    (remote udp "*:4160" "*:88"))
 (allow network-inbound
