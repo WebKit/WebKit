@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
+#include "BridgeJSC.h"
 #include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "EventNames.h"

@@ -1,5 +1,11 @@
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * bindings/js/ScriptController.cpp:
+
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
         Remove ScriptInstance.h
         https://bugs.webkit.org/show_bug.cgi?id=115900
 
