@@ -1,5 +1,36 @@
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Begin making SecurityOrigin immutable
+        https://bugs.webkit.org/show_bug.cgi?id=115898
+
+        Reviewed by Andreas Kling.
+
+        Replace SecurityOrigin::setDomainFromDOM and SecurityOrigin::grantUniversalAccess with
+        member functions that return new SecurityOrigin objects.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain):
+        Update the security origin to one returned by copyWithDomainSetFromDOM.
+    
+        (WebCore::Document::initSecurityContext):
+        Set the security origin to one returned by copyWithUniversalAccessGranted().
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        Add a new constructor that takes all the member variables as parameters. This is a little unwieldy at the moment,
+        but all the boolean parameters could be replaced by a bitmask of flags.
+
+        (WebCore::SecurityOrigin::isolatedCopy):
+        Call the new constructor.
+
+        (WebCore::SecurityOrigin::copyWithDomainSetFromDOM):
+        Return a new security origin with m_domainWasSetInDOM set to true and the domain updated.
+
+        (WebCore::SecurityOrigin::copyWithUniversalAccessGranted):
+        Return a new security origin with m_universalAccess set to true.
+
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
         Remove ScriptController::updateSecurityOrigin
         https://bugs.webkit.org/show_bug.cgi?id=115895
 

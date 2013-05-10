@@ -3804,13 +3804,13 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
     // FIXME: We should add logging indicating why a domain was not allowed.
 
     // If the new domain is the same as the old domain, still call
-    // securityOrigin()->setDomainForDOM. This will change the
+    // securityOrigin()->copyWithDomainSetFromDOM. This will change the
     // security check behavior. For example, if a page loaded on port 8000
     // assigns its current domain using document.domain, the page will
     // allow other pages loaded on different ports in the same domain that
     // have also assigned to access this page.
     if (equalIgnoringCase(domain(), newDomain)) {
-        securityOrigin()->setDomainFromDOM(newDomain);
+        setSecurityOrigin(securityOrigin()->copyWithDomainSetFromDOM(newDomain));
         return;
     }
 
@@ -3837,7 +3837,7 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
         return;
     }
 
-    securityOrigin()->setDomainFromDOM(newDomain);
+    setSecurityOrigin(securityOrigin()->copyWithDomainSetFromDOM(newDomain));
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
@@ -4597,11 +4597,11 @@ void Document::initSecurityContext()
         if (!settings->webSecurityEnabled()) {
             // Web security is turned off. We should let this document access every other document. This is used primary by testing
             // harnesses for web sites.
-            securityOrigin()->grantUniversalAccess();
+            setSecurityOrigin(securityOrigin()->copyWithUniversalAccessGranted());
         } else if (securityOrigin()->isLocal()) {
             if (settings->allowUniversalAccessFromFileURLs() || m_frame->loader()->client()->shouldForceUniversalAccessFromLocalURL(m_url)) {
                 // Some clients want local URLs to have universal access, but that setting is dangerous for other clients.
-                securityOrigin()->grantUniversalAccess();
+                setSecurityOrigin(securityOrigin()->copyWithUniversalAccessGranted());
             } else if (!settings->allowFileAccessFromFileURLs()) {
                 // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
                 // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
