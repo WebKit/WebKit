@@ -68,6 +68,7 @@
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>
+      <dep package="glib"/>
     </dependencies>
     <branch module="releases/cairo-1.12.8.tar.xz" version="1.12.8"
             repo="cairographics.org"
