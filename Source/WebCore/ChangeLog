@@ -1,3 +1,12 @@
+2013-05-10  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Fix build after r149864.
+
+        Unreviewed build fix.
+
+        * loader/ThreadableLoader.h: include <wtf/text/AtomicString.h>
+        when building with RESOURCE_TIMING enabled.
+
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

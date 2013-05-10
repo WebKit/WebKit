@@ -37,6 +37,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(RESOURCE_TIMING)
+#include <wtf/text/AtomicString.h>
+#endif
+
 namespace WebCore {
 
     class ResourceError;
