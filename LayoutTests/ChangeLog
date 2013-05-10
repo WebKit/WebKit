@@ -1,3 +1,14 @@
+2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Rebaseline fast/dom/Range/getClientRects.html for EFL port.
+        Skip accessibility/poorly-formed-aria-table.html introduced in
+        r149858 but failing on EFL port.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/Range/getClientRects-expected.txt:
+
 2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

@@ -217,6 +217,40 @@ PASS rects[3].top is 2088
 FAIL rects[3].width should be 18. Was 17.
 PASS rects[3].height is 360
 Test 11
+PASS rects.length is 2
+PASS rects[0].left is 8
+PASS rects[0].top is 2524
+PASS rects[0].width is 400
+PASS rects[0].height is 40
+PASS rects[1].left is 8
+PASS rects[1].top is 2535
+PASS rects[1].width is 177
+FAIL rects[1].height should be 18. Was 17.
+Test 12
+PASS rects.length is 1
+PASS rects[0].left is 8
+PASS rects[0].top is 2760
+PASS rects[0].width is 400
+PASS rects[0].height is 160
+Test 13
+PASS rects.length is 4
+PASS rects[0].left is 8
+PASS rects[0].top is 2967
+PASS rects[0].width is 396
+FAIL rects[0].height should be 18. Was 17.
+PASS rects[1].left is 8
+PASS rects[1].top is 3007
+PASS rects[1].width is 398
+FAIL rects[1].height should be 18. Was 17.
+PASS rects[2].left is 8
+PASS rects[2].top is 3047
+PASS rects[2].width is 360
+FAIL rects[2].height should be 18. Was 17.
+PASS rects[3].left is 8
+PASS rects[3].top is 3087
+PASS rects[3].width is 306
+FAIL rects[3].height should be 18. Was 17.
+Test 14
 PASS rects.length is 0
 PASS successfullyParsed is true
 
