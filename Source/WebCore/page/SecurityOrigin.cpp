@@ -156,19 +156,19 @@ SecurityOrigin::SecurityOrigin()
 {
 }
 
-SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, const String& domain, const String& filePath, unsigned short port, bool isUnique, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, StorageBlockingPolicy storageBlockingPolicy, bool enforceFilePathSeparation, bool needsDatabaseIdentifierQuirkForFiles)
-    : m_protocol(protocol)
-    , m_host(host)
-    , m_domain(domain)
-    , m_filePath(filePath)
-    , m_port(port)
-    , m_isUnique(isUnique)
-    , m_universalAccess(universalAccess)
-    , m_domainWasSetInDOM(domainWasSetInDOM)
-    , m_canLoadLocalResources(canLoadLocalResources)
-    , m_storageBlockingPolicy(storageBlockingPolicy)
-    , m_enforceFilePathSeparation(enforceFilePathSeparation)
-    , m_needsDatabaseIdentifierQuirkForFiles(needsDatabaseIdentifierQuirkForFiles)
+SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
+    : m_protocol(other->m_protocol.isolatedCopy())
+    , m_host(other->m_host.isolatedCopy())
+    , m_domain(other->m_domain.isolatedCopy())
+    , m_filePath(other->m_filePath.isolatedCopy())
+    , m_port(other->m_port)
+    , m_isUnique(other->m_isUnique)
+    , m_universalAccess(other->m_universalAccess)
+    , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
+    , m_canLoadLocalResources(other->m_canLoadLocalResources)
+    , m_storageBlockingPolicy(other->m_storageBlockingPolicy)
+    , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
+    , m_needsDatabaseIdentifierQuirkForFiles(other->m_needsDatabaseIdentifierQuirkForFiles)
 {
 }
 
@@ -207,16 +207,13 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createUnique()
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 {
-    return adoptRef(new SecurityOrigin(m_protocol.isolatedCopy(), m_host.isolatedCopy(), m_domain.isolatedCopy(), m_filePath.isolatedCopy(), m_port, m_isUnique, m_universalAccess, m_domainWasSetInDOM, m_canLoadLocalResources, m_storageBlockingPolicy, m_enforceFilePathSeparation, m_needsDatabaseIdentifierQuirkForFiles));
+    return adoptRef(new SecurityOrigin(this));
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::copyWithDomainSetFromDOM(const String& newDomain) const
+void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 {
-    String domain = newDomain.lower();
-    if (m_domainWasSetInDOM && m_domain == domain)
-        return const_cast<SecurityOrigin*>(this);
-
-    return adoptRef(new SecurityOrigin(m_protocol, m_host, domain, m_filePath, m_port, m_isUnique, m_universalAccess, true, m_canLoadLocalResources, m_storageBlockingPolicy, m_enforceFilePathSeparation, m_needsDatabaseIdentifierQuirkForFiles));
+    m_domainWasSetInDOM = true;
+    m_domain = newDomain.lower();
 }
 
 bool SecurityOrigin::isSecure(const KURL& url)
@@ -437,12 +434,9 @@ void SecurityOrigin::grantLoadLocalResources()
     m_canLoadLocalResources = true;
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::copyWithUniversalAccessGranted() const
+void SecurityOrigin::grantUniversalAccess()
 {
-    if (m_universalAccess)
-        return const_cast<SecurityOrigin*>(this);
-
-    return adoptRef(new SecurityOrigin(m_protocol, m_host, m_domain, m_filePath, m_port, m_isUnique, true, m_domainWasSetInDOM, m_canLoadLocalResources, m_storageBlockingPolicy, m_enforceFilePathSeparation, m_needsDatabaseIdentifierQuirkForFiles));
+    m_universalAccess = true;
 }
 
 #if ENABLE(CACHE_PARTITIONING)

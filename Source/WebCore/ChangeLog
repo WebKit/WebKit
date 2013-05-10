@@ -1,3 +1,22 @@
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Unreviewed, rolling out r149866.
+        http://trac.webkit.org/changeset/149866
+        https://bugs.webkit.org/show_bug.cgi?id=115898
+
+        Broke tests
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain):
+        (WebCore::Document::initSecurityContext):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isolatedCopy):
+        (WebCore::SecurityOrigin::setDomainFromDOM):
+        (WebCore::SecurityOrigin::grantUniversalAccess):
+        * page/SecurityOrigin.h:
+        (SecurityOrigin):
+
 2013-05-10  Andrei Bucur  <abucur@adobe.com>
 
         Remove overflow dead code

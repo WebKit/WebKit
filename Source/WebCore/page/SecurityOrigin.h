@@ -74,10 +74,10 @@ public:
     // when marshalling a SecurityOrigin to another thread.
     PassRefPtr<SecurityOrigin> isolatedCopy() const;
 
-    // Create a new security origin with the domain property set to newDomain. This
+    // Set the domain property of this security origin to newDomain. This
     // function does not check whether newDomain is a suffix of the current
     // domain. The caller is responsible for validating newDomain.
-    PassRefPtr<SecurityOrigin> copyWithDomainSetFromDOM(const String& newDomain) const;
+    void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
     String protocol() const { return m_protocol; }
@@ -137,7 +137,7 @@ public:
     // Explicitly grant the ability to access very other SecurityOrigin.
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
-    PassRefPtr<SecurityOrigin> copyWithUniversalAccessGranted() const;
+    void grantUniversalAccess();
 
     void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
 
@@ -215,7 +215,6 @@ private:
     SecurityOrigin();
     explicit SecurityOrigin(const KURL&);
     explicit SecurityOrigin(const SecurityOrigin*);
-    SecurityOrigin(const String& protocol, const String& host, const String& domain, const String& filePath, unsigned short port, bool isUnique, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, StorageBlockingPolicy, bool enforceFilePathSeparation, bool needsDatabaseIdentifierQuirkForFiles);
 
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin*) const;
