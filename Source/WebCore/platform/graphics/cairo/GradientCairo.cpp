@@ -27,7 +27,6 @@
 #include "config.h"
 #include "Gradient.h"
 
-#include "CSSParser.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
 #include <cairo.h>

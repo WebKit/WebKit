@@ -1,3 +1,15 @@
+2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Remove the unnecessary CSSParser.h include in GradientCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=115910
+
+        Reviewed by Laszlo Gombos.
+
+        No new tests - no new functionality.
+
+        * platform/graphics/cairo/GradientCairo.cpp: Remove the CSSParser.h include
+        as the included declarations are not used anywhere.
+
 2013-05-10  Dean Jackson  <dino@apple.com>
 
         Include tab character as a word end for kerning
