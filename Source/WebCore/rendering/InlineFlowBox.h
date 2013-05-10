@@ -219,16 +219,6 @@ public:
     { 
         return m_overflow ? m_overflow->layoutOverflowRect() : enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
     }
-    LayoutUnit logicalLeftLayoutOverflow() const
-    {
-        return m_overflow ? (isHorizontal() ? m_overflow->layoutOverflowRect().x() : m_overflow->layoutOverflowRect().y()) :
-                            static_cast<LayoutUnit>(logicalLeft());
-    }
-    LayoutUnit logicalRightLayoutOverflow() const
-    {
-        return m_overflow ? (isHorizontal() ? m_overflow->layoutOverflowRect().maxX() : m_overflow->layoutOverflowRect().maxY()) :
-                            static_cast<LayoutUnit>(ceilf(logicalRight()));
-    }
     LayoutUnit logicalTopLayoutOverflow(LayoutUnit lineTop) const
     {
         if (m_overflow)

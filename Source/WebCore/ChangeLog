@@ -1,3 +1,19 @@
+2013-05-10  Andrei Bucur  <abucur@adobe.com>
+
+        Remove overflow dead code
+        https://bugs.webkit.org/show_bug.cgi?id=115893
+
+        Reviewed by Antti Koivisto.
+
+        The patch removes unused public overflow accesor functions from RenderOverflow and InlineFlowBox.
+
+        Tests: no tests, code cleanup.
+
+        * rendering/InlineFlowBox.h: Removed logicalLeftLayoutOverflow and logicalRightLayoutOverflow.
+        * rendering/RenderOverflow.h: Removed setMinYLayoutOverflow, setMaxYLayoutOverflow,
+            setMinXLayoutOverflow, setMaxXLayoutOverflow, setMinYVisualOverflow, setMaxYVisualOverflow,
+            setMinXVisualOverflow and setMaxXVisualOverflow.
+
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
         Begin making SecurityOrigin immutable
