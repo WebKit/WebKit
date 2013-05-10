@@ -81,8 +81,6 @@ public:
     void setDrawsTransparentBackground(bool);
     bool drawsTransparentBackground() const;
 
-    void setThemePath(const String&);
-
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 

@@ -31,6 +31,7 @@
 #include "WebViewportAttributes.h"
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKView.h>
+#include <WebKit2/WKViewEfl.h>
 
 using namespace EwkViewCallbacks;
 using namespace WebCore;

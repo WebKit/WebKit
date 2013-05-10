@@ -38,6 +38,8 @@ WK_EXPORT void WKViewPaintToCairoSurface(WKViewRef, cairo_surface_t*);
 
 WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);
 
+WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -122,11 +122,6 @@ void WebView::paintToCurrentGLContext()
     scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
 }
 
-void WebView::setThemePath(const String& theme)
-{
-    m_page->setThemePath(theme);
-}
-
 void WebView::setDrawsBackground(bool drawsBackground)
 {
     m_page->setDrawsBackground(drawsBackground);

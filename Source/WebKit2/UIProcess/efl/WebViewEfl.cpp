@@ -107,5 +107,9 @@ void WebViewEfl::handleDownloadRequest(DownloadProxy* download)
     context->downloadManager()->registerDownloadJob(toAPI(download), m_ewkView);
 }
 
+void WebViewEfl::setThemePath(const String& theme)
+{
+    m_page->setThemePath(theme);
+}
 
 } // namespace WebKit

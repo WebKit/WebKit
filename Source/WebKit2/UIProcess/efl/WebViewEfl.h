@@ -38,6 +38,7 @@ public:
     EwkView* ewkView() { return m_ewkView; }
 
     void paintToCairoSurface(cairo_surface_t*);
+    void setThemePath(const String&);
 
 private:
     WebViewEfl(WebContext*, WebPageGroup*);

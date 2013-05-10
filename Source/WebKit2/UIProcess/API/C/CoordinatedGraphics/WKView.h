@@ -84,8 +84,6 @@ WK_EXPORT void WKViewPaintToCurrentGLContext(WKViewRef);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 
-WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
-
 WK_EXPORT void WKViewSetDrawsBackground(WKViewRef, bool);
 WK_EXPORT bool WKViewGetDrawsBackground(WKViewRef);
 

@@ -43,3 +43,8 @@ WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
     EwkView* ewkView = static_cast<WebViewEfl*>(toImpl(viewRef))->ewkView();
     return WKImageCreateFromCairoSurface(ewkView->takeSnapshot().get(), 0 /* options */);
 }
+
+void WKViewSetThemePath(WKViewRef viewRef, WKStringRef theme)
+{
+    static_cast<WebViewEfl*>(toImpl(viewRef))->setThemePath(toImpl(theme)->string());
+}
