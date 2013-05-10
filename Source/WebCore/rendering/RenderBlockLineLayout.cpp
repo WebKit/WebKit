@@ -878,7 +878,8 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
             if (kerningIsEnabled && lastEndOffset == run->m_stop) {
                 int wordLength = lastEndOffset - wordMeasurement.startOffset;
                 measuredWidth += renderer->width(wordMeasurement.startOffset, wordLength, xPos + measuredWidth, lineInfo.isFirstLine());
-                if (i > 0 && wordLength == 1 && renderer->characterAt(wordMeasurement.startOffset) == ' ')
+                UChar c = renderer->characterAt(wordMeasurement.startOffset);
+                if (i > 0 && wordLength == 1 && (c == ' ' || c == '\t'))
                     measuredWidth += renderer->style()->wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;
