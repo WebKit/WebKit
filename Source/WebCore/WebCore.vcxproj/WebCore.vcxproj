@@ -4089,7 +4089,6 @@
     <ClCompile Include="..\platform\Decimal.cpp" />
     <ClCompile Include="..\platform\DragData.cpp" />
     <ClCompile Include="..\platform\DragImage.cpp" />
-    <ClCompile Include="..\platform\EventTracer.cpp" />
     <ClCompile Include="..\platform\FileChooser.cpp" />
     <ClCompile Include="..\platform\FileIconLoader.cpp" />
     <ClCompile Include="..\platform\FileStream.cpp" />
@@ -11536,7 +11535,6 @@
     <ClInclude Include="..\platform\DragData.h" />
     <ClInclude Include="..\platform\DragImage.h" />
     <ClInclude Include="..\platform\EventLoop.h" />
-    <ClInclude Include="..\platform\EventTracer.h" />
     <ClInclude Include="..\platform\FileChooser.h" />
     <ClInclude Include="..\platform\FileIconLoader.h" />
     <ClInclude Include="..\platform\FileMetadata.h" />

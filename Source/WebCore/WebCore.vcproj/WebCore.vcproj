@@ -28879,14 +28879,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\EventTracer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\EventTracer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\FileChooser.cpp"
 				>
 			</File>

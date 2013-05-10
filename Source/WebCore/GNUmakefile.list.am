@@ -5502,8 +5502,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/DragImage.cpp \
 	Source/WebCore/platform/DragImage.h \
 	Source/WebCore/platform/EventLoop.h \
-	Source/WebCore/platform/EventTracer.cpp \
-	Source/WebCore/platform/EventTracer.h \
 	Source/WebCore/platform/PlatformInstrumentation.cpp \
 	Source/WebCore/platform/PlatformInstrumentation.h \
 	Source/WebCore/platform/FileChooser.cpp \

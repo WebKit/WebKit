@@ -1116,9 +1116,6 @@
     <ClCompile Include="..\platform\DragImage.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\EventTracer.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\FileChooser.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -7888,9 +7885,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\EventLoop.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\EventTracer.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\FileChooser.h">

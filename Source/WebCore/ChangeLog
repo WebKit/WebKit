@@ -1,3 +1,22 @@
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove EventTracer
+        https://bugs.webkit.org/show_bug.cgi?id=115916
+
+        Reviewed by Sam Weinig.
+
+        EventTracer is dead code, remove it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/EventTracer.cpp: Removed.
+        * platform/EventTracer.h: Removed.
+
 2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Generated files are regenerated always
