@@ -39,6 +39,7 @@
 #include "MessageEvent.h"
 #include "NotImplemented.h"
 #include "ScriptCallStack.h"
+#include "SecurityOrigin.h"
 #include "SharedWorkerThread.h"
 
 namespace WebCore {

@@ -35,6 +35,7 @@
 #include "DedicatedWorkerThread.h"
 
 #include "DedicatedWorkerContext.h"
+#include "SecurityOrigin.h"
 #include "WorkerObjectProxy.h"
 
 namespace WebCore {

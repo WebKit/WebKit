@@ -35,8 +35,8 @@
 #include "KURL.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
-
 #include <utility>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

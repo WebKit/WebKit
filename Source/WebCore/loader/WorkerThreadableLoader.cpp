@@ -40,6 +40,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "ThreadableLoader.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"

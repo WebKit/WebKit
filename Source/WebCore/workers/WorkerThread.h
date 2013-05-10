@@ -31,7 +31,6 @@
 
 #include "ContentSecurityPolicy.h"
 #include "GroupSettings.h"
-#include "SecurityOrigin.h"
 #include "WorkerRunLoop.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -42,6 +41,7 @@ namespace WebCore {
 
     class KURL;
     class NotificationClient;
+    class SecurityOrigin;
     class WorkerContext;
     class WorkerLoaderProxy;
     class WorkerReportingProxy;

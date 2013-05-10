@@ -21,7 +21,6 @@
 
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 

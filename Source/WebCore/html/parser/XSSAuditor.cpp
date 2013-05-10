@@ -46,7 +46,6 @@
 #include "InspectorValues.h"
 #include "KURL.h"
 #include "PingLoader.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"

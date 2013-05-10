@@ -201,6 +201,13 @@ const char* DatabaseBackendBase::databaseInfoTableName()
     return infoTableName;
 }
 
+#if !LOG_DISABLED || !ERROR_DISABLED
+String DatabaseBackendBase::databaseDebugName() const
+{
+    return m_contextThreadSecurityOrigin->toString() + "::" + m_name;
+}
+#endif
+
 DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name,
     const String& expectedVersion, const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
     : m_databaseContext(databaseContext)

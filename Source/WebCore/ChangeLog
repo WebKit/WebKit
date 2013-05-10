@@ -1,3 +1,33 @@
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Stop including SecurityOrigin.h where unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=115897
+
+        Reviewed by Antti Koivisto.
+
+        Move rarely called functions out of line so headers don't have to include SecurityOrigin.h
+
+        * Modules/indexeddb/IDBFactoryBackendImpl.h:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::databaseDebugName):
+        * Modules/webdatabase/DatabaseBackendBase.h:
+        (DatabaseBackendBase):
+        * Modules/webdatabase/DatabaseSync.h:
+        * bindings/js/JSDOMWindowCustom.h:
+        * html/parser/XSSAuditor.cpp:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+        (WebCore::ThreadableLoaderOptions::~ThreadableLoaderOptions):
+        (WebCore::ThreadableLoader::create):
+        * loader/ThreadableLoader.h:
+        (ThreadableLoaderOptions):
+        * loader/WorkerThreadableLoader.cpp:
+        * workers/DedicatedWorkerContext.cpp:
+        * workers/DedicatedWorkerThread.cpp:
+        * workers/SharedWorkerContext.cpp:
+        * workers/WorkerThread.cpp:
+        * workers/WorkerThread.h:
+
 2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r149839.

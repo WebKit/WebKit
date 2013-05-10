@@ -39,16 +39,11 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-#ifndef NDEBUG
-#include "SecurityOrigin.h"
-#endif
-
 namespace WebCore {
 
 class DatabaseCallback;
 class SQLTransactionSync;
 class SQLTransactionSyncCallback;
-class SecurityOrigin;
 
 // Instances of this class should be created and used only on the worker's context thread.
 class DatabaseSync : public DatabaseBase, public DatabaseBackendSync {

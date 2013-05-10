@@ -31,16 +31,27 @@
 #include "config.h"
 #include "ThreadableLoader.h"
 
-#include "ScriptExecutionContext.h"
 #include "Document.h"
 #include "DocumentThreadableLoader.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "WorkerContext.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"
 
 namespace WebCore {
 
-PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options) 
+ThreadableLoaderOptions::ThreadableLoaderOptions()
+    : preflightPolicy(ConsiderPreflight)
+    , crossOriginRequestPolicy(DenyCrossOriginRequests)
+{
+}
+
+ThreadableLoaderOptions::~ThreadableLoaderOptions()
+{
+}
+
+PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
 {
     ASSERT(client);
     ASSERT(context);

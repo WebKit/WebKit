@@ -28,6 +28,8 @@
 #ifndef IDBFactoryBackendImpl_h
 #define IDBFactoryBackendImpl_h
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBCallbacks.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBFactoryBackendInterface.h"
@@ -37,8 +39,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
-
-#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
