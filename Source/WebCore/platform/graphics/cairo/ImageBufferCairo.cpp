@@ -33,7 +33,6 @@
 #include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Pattern.h"
