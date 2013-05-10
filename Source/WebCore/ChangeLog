@@ -1,3 +1,17 @@
+2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Generated files are regenerated always
+        https://bugs.webkit.org/show_bug.cgi?id=115908
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests - no change in functionality.
+
+        * GNUmakefile.am: Don't treat the window constructors IDL file as a dependency of the JavaScriptCore bindings.
+        The file is generated during the IDL preprocessing, and the JSC bindings already depend on that step through
+        the idl_supplemental_dependencies file. Because of that the window constructors IDL file has a phony target
+        which seems to confuse the bindings generation rule into thinking that a complete regeration of the bindings is required.
+
 2013-05-10  Andreas Kling  <akling@apple.com>
 
         Caching of generated images in CSS should be smarter.
