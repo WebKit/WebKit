@@ -1,3 +1,12 @@
+2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove unnecessary GLIB_CHECK_VERSION #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=115904
+
+        Reviewed by Martin Robinson.
+
+        * wtf/gobject/GRefPtr.cpp:
+
 2013-05-09  Darin Adler  <darin@apple.com>
 
         RenderQuote has giant function for language to quotes map

@@ -289,14 +289,6 @@ void getGdkDrawableSize(GdkDrawable *drawable, int *width, int *height)
 
 #endif // GTK_API_VERSION_2
 
-#if !GLIB_CHECK_VERSION(2, 27, 1)
-gboolean g_signal_accumulator_first_wins(GSignalInvocationHint *invocationHint, GValue *returnAccumulator, const GValue *handlerReturn, gpointer data)
-{
-    g_value_copy(handlerReturn, returnAccumulator);
-    return FALSE;
-}
-#endif
-
 #if !GTK_CHECK_VERSION(2, 22, 0)
 cairo_surface_t *gdk_window_create_similar_surface(GdkWindow *window, cairo_content_t content, int width, int height)
 {

@@ -1,3 +1,13 @@
+2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove unnecessary GLIB_CHECK_VERSION #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=115904
+
+        Reviewed by Martin Robinson.
+
+        * ImageDiff/gtk/ImageDiff.cpp:
+        (main):
+
 2013-05-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         Add my new address to contributors.json. (Unreviewed)

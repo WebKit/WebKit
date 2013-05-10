@@ -81,12 +81,7 @@ static gpointer testServerMonitorThreadFunc(gpointer)
 static void startTestServerMonitor()
 {
     kChildIsReady = false;
-
-#if (!GLIB_CHECK_VERSION(2, 31, 0))
-    g_thread_create(testServerMonitorThreadFunc, 0, FALSE, 0);
-#else
     g_thread_new("TestServerMonitor", testServerMonitorThreadFunc, 0);
-#endif
 }
 
 static void startTestServer()

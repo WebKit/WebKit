@@ -63,7 +63,6 @@ template <> void derefGPtr(GMainLoop* ptr)
         g_main_loop_unref(ptr);
 }
 
-#if GLIB_CHECK_VERSION(2, 32, 0)
 template <> GBytes* refGPtr(GBytes* ptr)
 {
     if (ptr)
@@ -77,24 +76,6 @@ template <> void derefGPtr(GBytes* ptr)
         g_bytes_unref(ptr);
 }
 
-# else
-
-typedef struct _GBytes {
-    bool fake;
-} GBytes;
-
-template <> GBytes* refGPtr(GBytes* ptr)
-{
-    return ptr;
-}
-
-template <> void derefGPtr(GBytes* ptr)
-{
-}
-
-#endif
-
-#if GLIB_CHECK_VERSION(2, 24, 0)
 template <> GVariant* refGPtr(GVariant* ptr)
 {
     if (ptr)
@@ -106,24 +87,6 @@ template <> void derefGPtr(GVariant* ptr)
 {
     g_variant_unref(ptr);
 }
-
-#else
-
-// We do this so that we can avoid including the glib.h header in GRefPtr.h.
-typedef struct _GVariant {
-    bool fake;
-} GVariant; 
-
-template <> GVariant* refGPtr(GVariant* ptr)
-{
-    return ptr;
-}
-
-template <> void derefGPtr(GVariant* ptr)
-{
-}
-
-#endif
 
 template <> GSource* refGPtr(GSource* ptr)
 {

@@ -38,30 +38,8 @@
 #include "WebKitDOMPrivate.h"
 
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
-#if GLIB_CHECK_VERSION(2, 24, 0)
+
 G_DEFINE_INTERFACE(WebKitDOMEventTarget, webkit_dom_event_target, G_TYPE_OBJECT)
-#else
-static void webkit_dom_event_target_default_init(WebKitDOMEventTargetIface*);
-
-GType webkit_dom_event_target_get_type(void)
-{
-    static volatile gsize typeIdVolatile = 0;
-
-    if (g_once_init_enter(&typeIdVolatile)) {
-        GType typeId = g_type_register_static_simple(G_TYPE_INTERFACE,
-                                                     g_intern_static_string("WebKitDOMEventTarget"),
-                                                     sizeof(WebKitDOMEventTargetInterface),
-                                                     (GClassInitFunc)webkit_dom_event_target_default_init,
-                                                     0,
-                                                     static_cast<GInstanceInitFunc>(0),
-                                                     static_cast<GTypeFlags>(0));
-        g_type_interface_add_prerequisite(typeId, G_TYPE_OBJECT);
-        g_once_init_leave(&typeIdVolatile, typeId);
-    }
-
-    return typeIdVolatile;
-}
-#endif
 
 static void webkit_dom_event_target_default_init(WebKitDOMEventTargetIface*)
 {
