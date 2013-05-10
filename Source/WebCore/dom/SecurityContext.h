@@ -77,8 +77,6 @@ protected:
     SecurityContext();
     virtual ~SecurityContext();
 
-    virtual void didUpdateSecurityOrigin();
-
     void setContentSecurityPolicy(PassOwnPtr<ContentSecurityPolicy>);
 
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }

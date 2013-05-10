@@ -1220,8 +1220,6 @@ public:
 protected:
     Document(Frame*, const KURL&, unsigned = DefaultDocumentClass);
 
-    virtual void didUpdateSecurityOrigin() OVERRIDE;
-
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:

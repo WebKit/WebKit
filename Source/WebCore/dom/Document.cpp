@@ -2000,7 +2000,6 @@ void Document::setIsViewSource(bool isViewSource)
         return;
 
     setSecurityOrigin(SecurityOrigin::createUnique());
-    didUpdateSecurityOrigin();
 }
 
 void Document::createStyleResolver()
@@ -3812,8 +3811,6 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
     // have also assigned to access this page.
     if (equalIgnoringCase(domain(), newDomain)) {
         securityOrigin()->setDomainFromDOM(newDomain);
-        if (m_frame)
-            m_frame->script()->updateSecurityOrigin();
         return;
     }
 
@@ -3841,8 +3838,6 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
     }
 
     securityOrigin()->setDomainFromDOM(newDomain);
-    if (m_frame)
-        m_frame->script()->updateSecurityOrigin();
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
@@ -4664,13 +4659,6 @@ void Document::initContentSecurityPolicy()
         return;
 
     contentSecurityPolicy()->copyStateFrom(m_frame->tree()->parent()->document()->contentSecurityPolicy());
-}
-
-void Document::didUpdateSecurityOrigin()
-{
-    if (!m_frame)
-        return;
-    m_frame->script()->updateSecurityOrigin();
 }
 
 bool Document::isContextThread() const

@@ -1,5 +1,26 @@
 2013-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Remove ScriptController::updateSecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=115895
+
+        Reviewed by Antti Koivisto.
+
+        ScriptController::updateSecurityOrigin is just dead code now that the V8 bindings are gone.
+
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setIsViewSource):
+        (WebCore::Document::setDomain):
+        * dom/Document.h:
+        (Document):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::enforceSandboxFlags):
+        * dom/SecurityContext.h:
+        (SecurityContext):
+
+2013-05-10  Anders Carlsson  <andersca@apple.com>
+
         Stop including SecurityOrigin.h where unnecessary
         https://bugs.webkit.org/show_bug.cgi?id=115897
 

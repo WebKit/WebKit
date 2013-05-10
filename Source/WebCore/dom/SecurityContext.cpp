@@ -73,15 +73,8 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
     m_sandboxFlags |= mask;
 
     // The SandboxOrigin is stored redundantly in the security origin.
-    if (isSandboxed(SandboxOrigin) && securityOrigin() && !securityOrigin()->isUnique()) {
+    if (isSandboxed(SandboxOrigin) && securityOrigin() && !securityOrigin()->isUnique())
         setSecurityOrigin(SecurityOrigin::createUnique());
-        didUpdateSecurityOrigin();
-    }
-}
-
-void SecurityContext::didUpdateSecurityOrigin()
-{
-    // Subclasses can override this function if the need to do extra work when the security origin changes.
 }
 
 SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage)

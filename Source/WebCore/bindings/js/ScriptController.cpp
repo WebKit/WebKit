@@ -291,11 +291,6 @@ void ScriptController::updateDocument()
     }
 }
 
-void ScriptController::updateSecurityOrigin()
-{
-    // Our bindings do not do anything in this case.
-}
-
 Bindings::RootObject* ScriptController::cacheableBindingRootObject()
 {
     if (!canExecuteScripts(NotAboutToExecuteScript))
