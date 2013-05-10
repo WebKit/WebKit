@@ -1,3 +1,10 @@
+2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt: Rebaselining after r149845.
+        * platform/qt/inspector/console/command-line-api-expected.txt: Added after r149829.
+
 2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.
