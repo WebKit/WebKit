@@ -47,9 +47,6 @@ public:
 
     virtual void init();
 
-    virtual bool isAccessibilityTable() const;
-    virtual bool isDataTable() const;
-
     virtual AccessibilityRole roleValue() const;
     virtual bool isAriaTable() const { return false; }
     
@@ -84,13 +81,22 @@ protected:
     bool m_isAccessibilityTable;
 
     bool hasARIARole() const;
+
+    // isTable is whether it's an AccessibilityTable object.
+    virtual bool isTable() const OVERRIDE { return true; }
+    // isAccessibilityTable is whether it is exposed as an AccessibilityTable to the platform.
+    virtual bool isAccessibilityTable() const OVERRIDE;
+    // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
+    // think this "looks" like a data-based table (instead of a table used for layout).
+    virtual bool isDataTable() const OVERRIDE;
+
     virtual bool isTableExposableThroughAccessibility() const;
-    virtual bool computeAccessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
     
 inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityTable());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
     return static_cast<AccessibilityTable*>(object);
 }
     

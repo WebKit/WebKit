@@ -1,3 +1,38 @@
+2013-05-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver is no longer seeing items in poorly formed tables
+        https://bugs.webkit.org/show_bug.cgi?id=115837
+
+        Reviewed by Darin Adler.
+
+        In case the author didn't include the rows of a table as the 
+        direct children, a table needs to dive down its descendant chain
+        until the rows are found. 
+
+        I also took the opportunity to clean up a bit around what the different
+        meanings of table are in the accessibility classes.
+
+        Test: accessibility/poorly-formed-aria-table.html
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addRowDescendant):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        (WebCore):
+        * accessibility/AccessibilityARIAGridRow.h:
+        (AccessibilityARIAGridRow):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isTable):
+        * accessibility/AccessibilityTable.h:
+        (AccessibilityTable):
+        (WebCore::AccessibilityTable::isTable):
+        (WebCore::toAccessibilityTable):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::parentTable):
+
 2013-05-09  Yael Aharon  <yael.aharon@intel.com>
 
         REGRESSION: Disabled multiline select element now responds to (certain) clicks

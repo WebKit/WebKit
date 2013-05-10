@@ -102,11 +102,16 @@ bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
     
 AccessibilityObject* AccessibilityTableRow::parentTable() const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isAccessibilityTable())
-        return 0;
+    // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
+    // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
+    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
+        // If this is a table object, but not an accessibility table, we should stop because we don't want to
+        // choose another ancestor table as this row's table.
+        if (parent->isTable())
+            return parent->isAccessibilityTable() ? parent : 0;
+    }
     
-    return parent;
+    return 0;
 }
     
 AccessibilityObject* AccessibilityTableRow::headerObject()

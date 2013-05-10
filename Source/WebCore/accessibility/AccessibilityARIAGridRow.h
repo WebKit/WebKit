@@ -48,6 +48,7 @@ public:
     
 private:
     virtual bool isARIATreeGridRow() const;
+    virtual AccessibilityObject* parentTable() const;
 }; 
     
 } // namespace WebCore 

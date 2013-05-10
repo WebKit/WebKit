@@ -55,6 +55,7 @@ private:
     virtual bool isMultiSelectable() const { return true; }
     virtual bool isTableExposableThroughAccessibility() const { return true; }
     
+    void addRowDescendant(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
     bool addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 

@@ -1,3 +1,13 @@
+2013-05-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver is no longer seeing items in poorly formed tables
+        https://bugs.webkit.org/show_bug.cgi?id=115837
+
+        Reviewed by Darin Adler.
+
+        * accessibility/poorly-formed-aria-table-expected.txt: Added.
+        * accessibility/poorly-formed-aria-table.html: Added.
+
 2013-05-09  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] REGRESSION (r148975) shape-inside-percentage.html and shape-inside-overflow-fixed-dimensions.html are failing after r148975

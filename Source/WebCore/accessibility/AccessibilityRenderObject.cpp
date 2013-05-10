@@ -510,7 +510,7 @@ bool AccessibilityRenderObject::isAttachment() const
         return false;
     // Widgets are the replaced elements that we represent to AX as attachments
     bool isWidget = renderer->isWidget();
-    ASSERT(!isWidget || (renderer->isReplaced() && !isImage()));
+
     return isWidget && ariaRoleAttribute() == UnknownRole;
 }
 
