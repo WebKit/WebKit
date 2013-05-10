@@ -572,7 +572,12 @@
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7801C095142290C400FAF9AF /* WebHitTestResult.cpp */; };
 		7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
+		7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */; };
+		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; };
+		7C135AAC173B0CFF00586AE2 /* PluginInformationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */; };
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
+		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
+		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
 		7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */; };
 		7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */; };
@@ -2048,7 +2053,12 @@
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		7801C095142290C400FAF9AF /* WebHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResult.cpp; sourceTree = "<group>"; };
 		7801C096142290C400FAF9AF /* WebHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHitTestResult.h; sourceTree = "<group>"; };
+		7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPluginInformation.cpp; sourceTree = "<group>"; };
+		7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginInformation.h; sourceTree = "<group>"; };
+		7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInformationMac.mm; sourceTree = "<group>"; };
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
+		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
+		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
 		7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.ist.ds.appleconnect.webplugin.sb; sourceTree = "<group>"; };
 		7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.QuickTime Plugin.plugin.sb"; sourceTree = "<group>"; };
@@ -3045,6 +3055,8 @@
 				1A4A9C9812B821C0008FE984 /* mac */,
 				1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */,
 				1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */,
+				7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */,
+				7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */,
 			);
 			path = Netscape;
 			sourceTree = "<group>";
@@ -3053,6 +3065,7 @@
 			isa = PBXGroup;
 			children = (
 				1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */,
+				7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4956,6 +4969,8 @@
 				BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */,
 				93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */,
 				A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */,
+				7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */,
+				7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */,
 				37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */,
 				37948407150C4B9600E52CE9 /* WKRenderLayer.h */,
 				37608820150414F700FC82C7 /* WKRenderObject.cpp */,
@@ -5581,6 +5596,7 @@
 				7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */,
 				7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */,
 				33D3A3C2133960B000709BE4 /* WebMediaCacheManager.h in Headers */,
+				7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */,
 				33D3A3C91339617900709BE4 /* WebMediaCacheManagerMessages.h in Headers */,
 				33D3A3BB1339606200709BE4 /* WebMediaCacheManagerProxy.h in Headers */,
 				33D3A3CB1339617900709BE4 /* WebMediaCacheManagerProxyMessages.h in Headers */,
@@ -5745,6 +5761,7 @@
 				312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */,
 				1A1D8BA21731A36300141DA4 /* LocalStorageDatabase.h in Headers */,
 				BC407602124FF0270068F20A /* WKNumber.h in Headers */,
+				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
@@ -6603,6 +6620,7 @@
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,
 				5160BFE113381DF900918999 /* Logging.mac.mm in Sources */,
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,
+				7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */,
 				1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */,
 				1A2328FE162C866A00D82F7A /* MessageEncoder.cpp in Sources */,
 				1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */,
@@ -6660,6 +6678,7 @@
 				2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */,
 				2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */,
 				1AAF061512B01131008E49E2 /* PDFViewController.mm in Sources */,
+				7C135AAC173B0CFF00586AE2 /* PluginInformationMac.mm in Sources */,
 				BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */,
 				BCC43ABA127B95DC00317F16 /* PlatformPopupMenuData.cpp in Sources */,
 				1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */,
@@ -6873,6 +6892,7 @@
 				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,
+				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
 				BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */,
 				5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,

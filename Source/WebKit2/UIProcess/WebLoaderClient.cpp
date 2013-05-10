@@ -28,6 +28,7 @@
 
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
+#include "PluginInformation.h"
 #include "WKAPICast.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
@@ -274,38 +275,56 @@ void WebLoaderClient::willGoToBackForwardListItem(WebPageProxy* page, WebBackFor
         m_client.willGoToBackForwardListItem(toAPI(page), toAPI(item), toAPI(userData), m_client.clientInfo);
 }
 
-void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, const String& mimeType, const String& frameURLString, const String& pageURLString)
+void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, ImmutableDictionary* pluginInformation)
 {
     if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
-        m_client.didFailToInitializePlugin_deprecatedForUseWithV0(toAPI(page), toAPI(mimeType.impl()), m_client.clientInfo);
+        m_client.didFailToInitializePlugin_deprecatedForUseWithV0(
+            toAPI(page),
+            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
+            m_client.clientInfo);
 
     if (m_client.pluginDidFail_deprecatedForUseWithV1)
-        m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(mimeType.impl()), 0, 0, m_client.clientInfo);
+        m_client.pluginDidFail_deprecatedForUseWithV1(
+            toAPI(page),
+            kWKErrorCodeCannotLoadPlugIn,
+            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
+            0,
+            0,
+            m_client.clientInfo);
 
-    if (m_client.pluginDidFail) {
-        RefPtr<ImmutableDictionary> pluginInformation = WebPageProxy::pluginInformationDictionary(String(), String(), String(), frameURLString, mimeType, pageURLString, String(), String());
-        m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(pluginInformation.get()), m_client.clientInfo);
-    }
+    if (m_client.pluginDidFail)
+        m_client.pluginDidFail(
+            toAPI(page),
+            kWKErrorCodeCannotLoadPlugIn,
+            toAPI(pluginInformation),
+            m_client.clientInfo);
 }
 
-void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const String& mimeType, const String& pluginBundleIdentifier, const String& pluginBundleVersion, const String& frameURLString, const String& pageURLString)
+void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, ImmutableDictionary* pluginInformation)
 {
     if (m_client.pluginDidFail_deprecatedForUseWithV1)
-        m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(mimeType.impl()), toAPI(pluginBundleIdentifier.impl()), toAPI(pluginBundleVersion.impl()), m_client.clientInfo);
+        m_client.pluginDidFail_deprecatedForUseWithV1(
+            toAPI(page),
+            kWKErrorCodeInsecurePlugInVersion,
+            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
+            toAPI(pluginInformation->get<WebString>(pluginInformationBundleIdentifierKey())),
+            toAPI(pluginInformation->get<WebString>(pluginInformationBundleVersionKey())),
+            m_client.clientInfo);
 
-    if (m_client.pluginDidFail) {
-        RefPtr<ImmutableDictionary> pluginInformation = WebPageProxy::pluginInformationDictionary(pluginBundleIdentifier, pluginBundleVersion, String(), frameURLString, mimeType, pageURLString, String(), String());
-        m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation.get()), m_client.clientInfo);
-    }
+    if (m_client.pluginDidFail)
+        m_client.pluginDidFail(
+            toAPI(page),
+            kWKErrorCodeInsecurePlugInVersion,
+            toAPI(pluginInformation),
+            m_client.clientInfo);
 }
 
-PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, const String& pluginBundleIdentifier, const String& pluginBundleVersion, const String& displayName, const String& frameURLString, const String& pageURLString, PluginModuleLoadPolicy currentPluginLoadPolicy)
+PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary* pluginInformation)
 {
     if (!m_client.pluginLoadPolicy)
         return currentPluginLoadPolicy;
 
-    RefPtr<ImmutableDictionary> pluginInformation = WebPageProxy::pluginInformationDictionary(pluginBundleIdentifier, pluginBundleVersion, displayName, frameURLString, String(), pageURLString, String(), String());
-    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation.get()), m_client.clientInfo));
+    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), m_client.clientInfo));
 }
 
 } // namespace WebKit

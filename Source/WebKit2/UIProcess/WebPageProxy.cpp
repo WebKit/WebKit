@@ -43,6 +43,7 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
+#include "PluginInformation.h"
 #include "PrintInfo.h"
 #include "SessionState.h"
 #include "TextChecker.h"
@@ -1391,8 +1392,8 @@ void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, c
     MESSAGE_CHECK_URL(urlString);
 
     newMimeType = mimeType.lower();
-
     pluginLoadPolicy = PluginModuleLoadNormally;
+    
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
     if (!plugin.path)
         return;
@@ -1400,8 +1401,8 @@ void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, c
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
 
 #if PLATFORM(MAC)
-    PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.versionString, plugin.info.name, frameURLString, pageURLString, currentPluginLoadPolicy);
+    RefPtr<ImmutableDictionary> pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
+    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get());
 #else
     UNUSED_PARAM(frameURLString);
     UNUSED_PARAM(pageURLString);
@@ -2700,69 +2701,6 @@ void WebPageProxy::connectionWillClose(CoreIPC::Connection* connection)
     m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
-String WebPageProxy::pluginInformationBundleIdentifierKey()
-{
-    return ASCIILiteral("PluginInformationBundleIdentifier");
-}
-
-String WebPageProxy::pluginInformationBundleVersionKey()
-{
-    return ASCIILiteral("PluginInformationBundleVersion");
-}
-
-String WebPageProxy::pluginInformationDisplayNameKey()
-{
-    return ASCIILiteral("PluginInformationDisplayName");
-}
-
-String WebPageProxy::pluginInformationFrameURLKey()
-{
-    return ASCIILiteral("PluginInformationFrameURL");
-}
-
-String WebPageProxy::pluginInformationMIMETypeKey()
-{
-    return ASCIILiteral("PluginInformationMIMEType");
-}
-
-String WebPageProxy::pluginInformationPageURLKey()
-{
-    return ASCIILiteral("PluginInformationPageURL");
-}
-
-String WebPageProxy::pluginInformationPluginspageAttributeURLKey()
-{
-    return ASCIILiteral("PluginInformationPluginspageAttributeURL");
-}
-
-String WebPageProxy::pluginInformationPluginURLKey()
-{
-    return ASCIILiteral("PluginInformationPluginURL");
-}
-
-PassRefPtr<ImmutableDictionary> WebPageProxy::pluginInformationDictionary(const String& bundleIdentifier, const String& bundleVersion, const String& displayName, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString)
-{
-    HashMap<String, RefPtr<APIObject>> pluginInfoMap;
-    if (!bundleIdentifier.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationBundleIdentifierKey(), WebString::create(bundleIdentifier));
-    if (!bundleVersion.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationBundleVersionKey(), WebString::create(bundleVersion));
-    if (!displayName.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationDisplayNameKey(), WebString::create(displayName));
-    if (!frameURLString.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationFrameURLKey(), WebURL::create(frameURLString));
-    if (!mimeType.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationMIMETypeKey(), WebString::create(mimeType));
-    if (!pageURLString.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationPageURLKey(), WebURL::create(pageURLString));
-    if (!pluginspageAttributeURLString.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationPluginspageAttributeURLKey(), WebURL::create(pluginspageAttributeURLString));
-    if (!pluginURLString.isEmpty())
-        pluginInfoMap.set(WebPageProxy::pluginInformationPluginURLKey(), WebURL::create(pluginURLString));
-
-    return ImmutableDictionary::adopt(pluginInfoMap);
-}
-
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
     MESSAGE_CHECK_URL(pluginURLString);
@@ -2770,17 +2708,11 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     MESSAGE_CHECK_URL(frameURLString);
     MESSAGE_CHECK_URL(pageURLString);
 
-    String pluginBundleIdentifier;
-    String pluginBundleVersion;
-    String pluginName;
-    String newMimeType = mimeType;
+    RefPtr<ImmutableDictionary> pluginInformation;
 #if ENABLE(NETSCAPE_PLUGIN_API)
+    String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
-#if PLATFORM(MAC)
-    pluginBundleIdentifier = plugin.bundleIdentifier;
-    pluginBundleVersion = plugin.versionString;
-#endif
-    pluginName = plugin.info.name;
+    pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
 #endif
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
@@ -2809,7 +2741,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         ASSERT_NOT_REACHED();
     }
 
-    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, pluginBundleIdentifier, pluginBundleVersion, pluginName, pluginURLString, pluginspageAttributeURLString, frameURLString, pageURLString);
+    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, pluginInformation.get());
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
@@ -4202,26 +4134,22 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
 
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
-    m_loaderClient.didFailToInitializePlugin(this, mimeType, frameURLString, pageURLString);
+    m_loaderClient.didFailToInitializePlugin(this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
 }
 
-// FIXME: ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString)
 {
-    String pluginBundleIdentifier;
-    String pluginBundleVersion;
-    String newMimeType = mimeType;
+    RefPtr<ImmutableDictionary> pluginInformation;
 
 #if PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)
+    String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
-
-    pluginBundleIdentifier = plugin.bundleIdentifier;
-    pluginBundleVersion = plugin.versionString;
+    pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String());
 #else
     UNUSED_PARAM(pluginURLString);
 #endif
 
-    m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginBundleIdentifier, pluginBundleVersion, frameURLString, pageURLString);
+    m_loaderClient.didBlockInsecurePluginVersion(this, pluginInformation.get());
 }
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const

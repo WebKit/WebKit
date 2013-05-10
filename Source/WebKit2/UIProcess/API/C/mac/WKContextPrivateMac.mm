@@ -29,9 +29,11 @@
 #import "ImmutableArray.h"
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
+#import "PluginInformation.h"
 #import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
 #import "WKAPICast.h"
+#import "WKPluginInformation.h"
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WebContext.h"
@@ -57,63 +59,13 @@ bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugI
     return WKIsPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
 }
 
-
-WKStringRef WKPlugInInfoPathKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoPath").leakRef();
-    return toAPI(key);
-}
-
-WKStringRef WKPlugInInfoBundleIdentifierKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoBundleIdentifier").leakRef();
-    return toAPI(key);
-}
-
-WKStringRef WKPlugInInfoVersionKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoVersion").leakRef();
-    return toAPI(key);
-}
-
-WKStringRef WKPlugInInfoLoadPolicyKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoLoadPolicy").leakRef();
-    return toAPI(key);
-}
-
-WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailable").leakRef();
-    return toAPI(key);
-}
-
-WKStringRef WKPlugInInfoIsSandboxedKey()
-{
-    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoIsSandboxed").leakRef();
-    return toAPI(key);
-}
-
-static PassRefPtr<ImmutableDictionary> createInfoDictionary(const PluginModuleInfo& info)
-{
-    ImmutableDictionary::MapType map;
-    map.set(toWTFString(WKPlugInInfoPathKey()), WebString::create(info.path));
-    map.set(toWTFString(WKPlugInInfoBundleIdentifierKey()), WebString::create(info.bundleIdentifier));
-    map.set(toWTFString(WKPlugInInfoVersionKey()), WebString::create(info.versionString));
-    map.set(toWTFString(WKPlugInInfoLoadPolicyKey()), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(info))));
-    map.set(toWTFString(WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(info.bundleIdentifier))));
-    map.set(toWTFString(WKPlugInInfoIsSandboxedKey()), WebBoolean::create(pluginHasSandboxProfile(info.bundleIdentifier)));
-
-    return ImmutableDictionary::adopt(map);
-}
-
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
     PluginModuleInfo plugin = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
     if (plugin.path.isNull())
         return 0;
 
-    RefPtr<ImmutableDictionary> dictionary = createInfoDictionary(plugin);
+    RefPtr<ImmutableDictionary> dictionary = createPluginInformationDictionary(plugin);
     return toAPI(dictionary.release().leakRef());
 }
 
@@ -123,7 +75,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
 
     Vector<RefPtr<APIObject>> pluginInfoDictionaries;
     for (const auto& plugin: plugins)
-        pluginInfoDictionaries.append(createInfoDictionary(plugin));
+        pluginInfoDictionaries.append(createPluginInformationDictionary(plugin));
 
     RefPtr<ImmutableArray> array = ImmutableArray::adopt(pluginInfoDictionaries);
 
@@ -133,4 +85,37 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     
         toImpl(contextRef)->deref();
     });
+}
+
+
+/* DEPRECATED -  Please use constants from WKPluginInformation instead. */
+
+WKStringRef WKPlugInInfoPathKey()
+{
+    return WKPluginInformationPathKey();
+}
+
+WKStringRef WKPlugInInfoBundleIdentifierKey()
+{
+    return WKPluginInformationBundleIdentifierKey();
+}
+
+WKStringRef WKPlugInInfoVersionKey()
+{
+    return WKPluginInformationBundleVersionKey();
+}
+
+WKStringRef WKPlugInInfoLoadPolicyKey()
+{
+    return WKPluginInformationDefaultLoadPolicyKey();
+}
+
+WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
+{
+    return WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey();
+}
+
+WKStringRef WKPlugInInfoIsSandboxedKey()
+{
+    return WKPluginInformationHasSandboxProfileKey();
 }

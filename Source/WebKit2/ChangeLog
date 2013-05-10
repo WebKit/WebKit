@@ -1,3 +1,93 @@
+2013-05-09  Sam Weinig  <sam@webkit.org>
+
+        Unify plug-in information dictionaries
+        <rdar://problem/13852080>
+        https://bugs.webkit.org/show_bug.cgi?id=115891
+
+        Reviewed by Anders Carlsson.
+
+        This unifies the plug-in information dictionaries vended by WKContextCopyPlugInInfoForBundleIdentifier
+        and WKContextGetInfoForInstalledPlugIns with those from the WKPageLoaderClient and WKPageUIClient.
+
+        All the old keys will continue to work, but have been deprecated in favor of new keys defined in 
+        WKPluginInformation.h
+
+        * Shared/API/c/WKPluginInformation.cpp: Added.
+        * Shared/API/c/WKPluginInformation.h: Added.
+        Export new keys as SPI.
+
+        * Shared/Plugins/Netscape/PluginInformation.h: Added.
+        * Shared/Plugins/Netscape/PluginInformation.cpp: Added.
+        (WebKit::pluginInformationBundleIdentifierKey):
+        (WebKit::pluginInformationBundleVersionKey):
+        (WebKit::pluginInformationPathKey):
+        (WebKit::pluginInformationDisplayNameKey):
+        (WebKit::pluginInformationDefaultLoadPolicyKey):
+        (WebKit::pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey):
+        (WebKit::pluginInformationHasSandboxProfileKey):
+        (WebKit::pluginInformationFrameURLKey):
+        (WebKit::pluginInformationMIMETypeKey):
+        (WebKit::pluginInformationPageURLKey):
+        (WebKit::pluginInformationPluginspageAttributeURLKey):
+        (WebKit::pluginInformationPluginURLKey):
+        Add new keys.
+
+        (WebKit::pluginModuleInformation):
+        (WebKit::createPluginInformationDictionary):
+        Add creation functions to simplify multiple sites.
+
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm: Added.
+        (WebKit::platformPluginModuleInformation):
+        Add platform specific data to the dictionary.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPluginInformationBundleIdentifierKey):
+        (WKPageGetPluginInformationBundleVersionKey):
+        (WKPageGetPluginInformationDisplayNameKey):
+        (WKPageGetPluginInformationFrameURLKey):
+        (WKPageGetPluginInformationMIMETypeKey):
+        (WKPageGetPluginInformationPageURLKey):
+        (WKPageGetPluginInformationPluginspageAttributeURLKey):
+        (WKPageGetPluginInformationPluginURLKey):
+        * UIProcess/API/C/WKPage.h:
+        Deprecate the old keys.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextCopyPlugInInfoForBundleIdentifier):
+        (WKContextGetInfoForInstalledPlugIns):
+        Simplify by using the new createPluginInformationDictionary functions.
+
+        (WKPlugInInfoPathKey):
+        (WKPlugInInfoBundleIdentifierKey):
+        (WKPlugInInfoVersionKey):
+        (WKPlugInInfoLoadPolicyKey):
+        (WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey):
+        (WKPlugInInfoIsSandboxedKey):
+        Deprecate the old keys.
+
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::unavailablePluginButtonClicked):
+        * UIProcess/WebUIClient.h:
+        Optimize for the most recent callback type which takes a dictionary,
+        and pull out the necessary bits from it for deprecated callbacks as necessary.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        Use createPluginInformationDictionary() consistently, to get consistent results for callbacks.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: implement runOpenPanel callback for WebKit2 inspector

@@ -770,16 +770,6 @@ public:
     void connectionWillOpen(CoreIPC::Connection*);
     void connectionWillClose(CoreIPC::Connection*);
 
-    static String pluginInformationBundleIdentifierKey();
-    static String pluginInformationBundleVersionKey();
-    static String pluginInformationDisplayNameKey();
-    static String pluginInformationFrameURLKey();
-    static String pluginInformationMIMETypeKey();
-    static String pluginInformationPageURLKey();
-    static String pluginInformationPluginspageAttributeURLKey();
-    static String pluginInformationPluginURLKey();
-    static PassRefPtr<ImmutableDictionary> pluginInformationDictionary(const String& bundleIdentifier, const String& bundleVersion, const String& displayName, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString);
-
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

@@ -45,6 +45,7 @@ namespace WebKit {
 
 class APIObject;
 class GeolocationPermissionRequestProxy;
+class ImmutableDictionary;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
@@ -71,7 +72,7 @@ public:
 
     void setStatusText(WebPageProxy*, const String&);
     void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data&, WebEvent::Modifiers, APIObject*);
-    void unavailablePluginButtonClicked(WebPageProxy*, WKPluginUnavailabilityReason, const String& mimeType, const String& pluginBundleIdentifier, const String& pluginBundleVersion, const String& displayName, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString);
+    void unavailablePluginButtonClicked(WebPageProxy*, WKPluginUnavailabilityReason, ImmutableDictionary*);
     
     bool implementsDidNotHandleKeyEvent() const;
     void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);

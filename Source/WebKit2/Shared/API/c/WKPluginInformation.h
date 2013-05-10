@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKContextPrivateMac_h
-#define WKContextPrivateMac_h
+#ifndef WKPluginInformation_h
+#define WKPluginInformation_h
 
 #include <WebKit2/WKBase.h>
 
@@ -32,39 +32,49 @@
 extern "C" {
 #endif
 
-WK_EXPORT bool WKContextGetProcessSuppressionEnabled(WKContextRef context);
-WK_EXPORT void WKContextSetProcessSuppressionEnabled(WKContextRef context, bool enabled);
-
-WK_EXPORT bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier);
-
-WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
-
-typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
-WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKContextGetInfoForInstalledPlugInsBlock block);
-
-
-/* DEPRECATED -  Please use constants from WKPluginInformation instead. */
+/* Plug-in module information keys */
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoPathKey();
+WK_EXPORT WKStringRef WKPluginInformationBundleIdentifierKey();
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoBundleIdentifierKey();
+WK_EXPORT WKStringRef WKPluginInformationBundleVersionKey();
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPlugInInfoVersionKey();
+WK_EXPORT WKStringRef WKPluginInformationPathKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPluginInformationDisplayNameKey();
 
 /* Value type: WKUInt64Ref */
-WK_EXPORT WKStringRef WKPlugInInfoLoadPolicyKey();
+WK_EXPORT WKStringRef WKPluginInformationDefaultLoadPolicyKey();
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey();
+WK_EXPORT WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey();
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInfoIsSandboxedKey();
+WK_EXPORT WKStringRef WKPluginInformationHasSandboxProfileKey();
+
+
+/* Plug-in load specific information keys */
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPluginInformationFrameURLKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPluginInformationMIMETypeKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPluginInformationPageURLKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPluginInformationPluginspageAttributeURLKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPluginInformationPluginURLKey();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKContextPrivateMac_h */
+#endif /* WKPluginInformation_h */

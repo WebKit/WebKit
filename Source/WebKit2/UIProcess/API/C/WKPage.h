@@ -531,6 +531,12 @@ WK_EXPORT void WKPageExecuteCommand(WKPageRef page, WKStringRef command);
 
 WK_EXPORT void WKPagePostMessageToInjectedBundle(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody);
 
+WK_EXPORT void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item);
+
+
+
+/* DEPRECATED -  Please use constants from WKPluginInformation instead. */
+
 /* Value type: WKStringRef */
 WK_EXPORT WKStringRef WKPageGetPluginInformationBundleIdentifierKey();
 
@@ -554,9 +560,6 @@ WK_EXPORT WKStringRef WKPageGetPluginInformationPluginspageAttributeURLKey();
 
 /* Value type: WKURLRef */
 WK_EXPORT WKStringRef WKPageGetPluginInformationPluginURLKey();
-
-WK_EXPORT void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item);
-
 
 #ifdef __cplusplus
 }
