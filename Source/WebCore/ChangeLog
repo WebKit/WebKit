@@ -1,3 +1,9 @@
+2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Unreviewed. Fix the ENABLE(SHARED_WORKERS) build after r149864.
+
+        * workers/SharedWorkerThread.cpp: include "SecurityOrigin.h"
+
 2013-05-10  Claudio Saavedra  <csaavedra@igalia.com>
 
         Fix build after r149864.

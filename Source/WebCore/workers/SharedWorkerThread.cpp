@@ -32,8 +32,8 @@
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "SecurityOrigin.h"
 #include "SharedWorkerThread.h"
-
 #include "SharedWorkerContext.h"
 
 namespace WebCore {
