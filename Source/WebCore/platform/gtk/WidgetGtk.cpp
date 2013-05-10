@@ -28,16 +28,12 @@
 #include "config.h"
 #include "Widget.h"
 
-#include "Chrome.h"
 #include "Cursor.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "Page.h"
-#include "RenderObject.h"
+#include "ScrollView.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
