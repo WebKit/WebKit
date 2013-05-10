@@ -1,3 +1,22 @@
+2013-05-10  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: determine the resource type in InspectorResourceAgent::willSendRequest.
+
+        This allows the Network timeline and Resources sidebar to filter Resources earlier,
+        before the server sends a response. Useful for long polling (comet) XHRs.
+
+        https://webkit.org/b/74935
+        rdar://problem/13726105
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/Inspector.json:
+        (Network.requestWillBeSent): Added.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest): Send the type if it isn't Other along in requestWillBeSent.
+        (WebCore::InspectorResourceAgent::didReceiveResponse): Don't determine the type here anymore. Clear the CachedResource
+        if isNotModified like the old code path did by not setting cachedResource if !isNotModified.
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Consolidate list of files to build for WebCore plugin support
