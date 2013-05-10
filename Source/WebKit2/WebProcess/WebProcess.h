@@ -43,10 +43,6 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
-#if USE(SOUP)
-#include "WebSoupRequestManager.h"
-#endif
-
 #if PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QNetworkAccessManager;
@@ -143,9 +139,6 @@ public:
 
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
-#endif
-#if USE(SOUP)
-    WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
 #endif
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
@@ -316,10 +309,6 @@ private:
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
 #endif
 
-#if USE(SOUP)
-    WebSoupRequestManager m_soupRequestManager;
-#endif
-    
     int m_inWindowPageCount;
     WebCore::Timer<WebProcess> m_nonVisibleProcessCleanupTimer;
 };

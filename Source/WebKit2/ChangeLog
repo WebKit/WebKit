@@ -1,3 +1,29 @@
+2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Make the WebSoupRequestManager a supplement to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115717
+
+        Reviewed by Andreas Kling.
+
+        WebSoupRequestManager should inherit from WebProcessSupplement and should be used as such
+        by the WebProcess. This removes the need for the m_soupRequestManager member variable in
+        the WebProcess class and brings the WebSoupRequestManager in line with other manager classes
+        of which instances are controlled by the WebProcess class.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Add  the WebSoupRequestManager as a supplement.
+        * WebProcess/WebProcess.h:
+        (WebProcess): Remove the m_soupRequestManager member variable and its getter method.
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync): Access the WebSoupRequestManager as a supplement.
+        (webkitSoupRequestGenericSendFinish): Ditto.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Access the WebSoupRequestManager as a supplement.
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::supplementName): Specify the supplement's name.
+        * WebProcess/soup/WebSoupRequestManager.h:
+        (WebSoupRequestManager): Inherit from the WebProcessSupplement interface.
+
 2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove unnecessary GLIB_CHECK_VERSION #ifdefs

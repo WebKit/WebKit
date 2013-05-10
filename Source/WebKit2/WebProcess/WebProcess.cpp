@@ -131,6 +131,10 @@
 #include "SecItemShim.h"
 #endif
 
+#if USE(SOUP)
+#include "WebSoupRequestManager.h"
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -173,9 +177,6 @@ WebProcess::WebProcess()
 #if ENABLE(PLUGIN_PROCESS)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
-#if USE(SOUP)
-    , m_soupRequestManager(this)
-#endif
     , m_inWindowPageCount(0)
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 {
@@ -211,6 +212,9 @@ WebProcess::WebProcess()
 #endif
 #if ENABLE(NETWORK_INFO)
     addSupplement<WebNetworkInfoManager>();
+#endif
+#if USE(SOUP)
+    addSupplement<WebSoupRequestManager>();
 #endif
 }
 

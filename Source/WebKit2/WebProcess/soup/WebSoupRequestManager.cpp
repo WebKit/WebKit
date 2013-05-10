@@ -75,6 +75,11 @@ struct WebSoupRequestAsyncData {
     GRefPtr<GInputStream> stream;
 };
 
+const char* WebSoupRequestManager::supplementName()
+{
+    return "WebSoupRequestManager";
+}
+
 WebSoupRequestManager::WebSoupRequestManager(WebProcess* process)
     : m_process(process)
     , m_schemes(adoptGRef(g_ptr_array_new_with_free_func(g_free)))

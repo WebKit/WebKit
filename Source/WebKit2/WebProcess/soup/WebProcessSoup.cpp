@@ -33,6 +33,7 @@
 
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
+#include "WebSoupRequestManager.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Language.h>
 #include <WebCore/MemoryCache.h>
@@ -184,7 +185,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         setSoupSessionAcceptLanguage(parameters.languages);
 
     for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
-        m_soupRequestManager.registerURIScheme(parameters.urlSchemesRegistered[i]);
+        supplement<WebSoupRequestManager>()->registerURIScheme(parameters.urlSchemesRegistered[i]);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
