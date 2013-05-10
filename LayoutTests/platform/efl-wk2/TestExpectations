@@ -286,6 +286,12 @@ accessibility/table-sections.html [ Skip ]
 accessibility/table-with-aria-role.html [ Skip ]
 accessibility/table-with-rules.html [ Skip ]
 
+# EFL port doesn't support webarchives.
+webarchive [ Skip ]
+svg/webarchive [ Skip ]
+svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
+http/tests/webarchive [ Skip ]
+
 # WebKitTestRunner needs an implementation for testRunner.titleTextDirection
 webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]

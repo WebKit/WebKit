@@ -1,3 +1,22 @@
+2013-05-09  Alex Christensen  <achristensen@apple.com>
+
+        Unskipped the webarchive tests for Mac that are not skipped for a reason other than
+        dumpDOMAsWebArchive not being implemented, which was fixed in r149692.
+        https://bugs.webkit.org/show_bug.cgi?id=115819
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/efl-wk2/TestExpectations:
+        Skip webarchive tests.
+        * platform/gtk-wk2/TestExpectations:
+        Skip webarchive tests.
+        * platform/qt-5.0-mac-wk2/TestExpectations:
+        Skip webarchive tests.
+        * platform/qt-5.0-wk2/TestExpectations:
+        Skip webarchive tests.
+        * platform/wk2/TestExpectations:
+        Removed universal skipping of webarchive tests, noted which tests are still skipped with bug numbers.
+
 2013-05-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver is no longer seeing items in poorly formed tables

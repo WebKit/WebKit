@@ -83,3 +83,8 @@ Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.
 Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 
+# Qt Mac port doesn't support webarchives.
+webarchive [ Skip ]
+svg/webarchive [ Skip ]
+svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
+http/tests/webarchive [ Skip ]

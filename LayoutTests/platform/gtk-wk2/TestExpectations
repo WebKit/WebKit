@@ -196,6 +196,12 @@ Bug(GTK) editing/spelling/spellcheck-queue.html [ Skip ]
 Bug(GTK) editing/spelling/spellcheck-sequencenum.html [ Skip ]
 Bug(GTK) editing/spelling/spelling-marker-description.html [ Skip ]
 
+# GTK port doesn't support webarchives.
+webarchive [ Skip ]
+svg/webarchive [ Skip ]
+svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
+http/tests/webarchive [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
