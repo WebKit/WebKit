@@ -1,3 +1,9 @@
+2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed. Add my email to a few watchlists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-05-10  Simon Pena  <simon.pena@samsung.com>
 
         Unicode support missing from string representation of Contributors in committers.py
