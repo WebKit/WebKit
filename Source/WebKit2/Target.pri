@@ -56,6 +56,7 @@ HEADERS += \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
     Shared/API/c/WKPageVisibilityTypes.h \
+    Shared/API/c/WKPluginInformation.h \
     Shared/API/c/WKRenderLayer.h \
     Shared/API/c/WKRenderObject.h \
     Shared/API/c/WKSecurityOrigin.h \
@@ -136,6 +137,7 @@ HEADERS += \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h \
     Shared/CoordinatedGraphics/WebCoordinatedSurface.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
+    Shared/Plugins/Netscape/PluginInformation.h \
     Shared/Plugins/NPRemoteObjectMap.h \
     Shared/Plugins/NPIdentifierData.h \
     Shared/Plugins/NPObjectMessageReceiver.h \
@@ -415,6 +417,7 @@ SOURCES += \
     Shared/API/c/WKMutableArray.cpp \
     Shared/API/c/WKMutableDictionary.cpp \
     Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKPluginInformation.cpp \
     Shared/API/c/WKRenderLayer.cpp \
     Shared/API/c/WKRenderObject.cpp \
     Shared/API/c/WKSecurityOrigin.cpp \
@@ -429,6 +432,7 @@ SOURCES += \
     Shared/APIClientTraits.cpp \
     Shared/APIObject.cpp \
     Shared/Authentication/AuthenticationManager.cpp \
+    Shared/Plugins/Netscape/PluginInformation.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
