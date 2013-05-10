@@ -1,3 +1,59 @@
+2013-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r149652): Videos do not play on cnn.com, just black box
+        https://bugs.webkit.org/show_bug.cgi?id=115887
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by window and document named item maps counting the same element twice
+        when it has the same id and name attribute values. Fixed the bug by avoiding to add or remove
+        an element per id and name attribute updates when it had already been added or removed by
+        name and id attribute updates respectively.
+
+        We do this by checking whether the other attribute affects the element's precense in window
+        and document named item maps and avoiding to add or remove the attribute when they do and
+        the other attribute is present in updateId and updateName.
+
+        Consider a scenario when an object element has id "foo", and name attribute is about to be also
+        set to "foo". If the id attribute doesn't affect element's presense in window or document
+        named item maps, we're done. If it does, then the maps already have this element so we don't
+        want to add it again. Conversely, if the element already has id and name attributes set to
+        "foo", and we're moving the id attribute, then we want to remove the element from the maps only
+        if the id doesn't affect the presence of the element in the maps.
+
+        Unfortuntely, this logic doesn't work when we're inserting or removing an element on its entirely
+        because updateId and updateName are called when both id and name attributes are present so skip
+        this step (AlwaysUpdateHTMLDocumentNamedItemMaps) for the id attribute to break the symmetry.
+
+        Test: fast/dom/HTMLDocument/image-with-same-id-and-name.html
+              fast/dom/HTMLDocument/object-with-same-id-and-name.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto): Call updateId and updateName with
+        AlwaysUpdateHTMLDocumentNamedItemMaps.
+        (WebCore::Element::removedFrom): Ditto.
+        (WebCore::Element::updateName): Don't add or remove this element if the id attribute has already
+        done so except when we're inserting, removing, or cloning an element.
+        (WebCore::Element::updateId): Ditto for the name attribute.
+        (WebCore::Element::cloneAttributesFromElement): Added a comment and assert that we never call this
+        function when this element is in the document. We can't update window and documemt named item
+        maps here because image element's id attribute value, for example, is present in the document's
+        named item map if it has a name attribute. Since this function calls updateId and updateName
+        before updating attributes, this check is going to fail in DocumentNameCollection's
+        nodeMatchesIfIdAttributeMatch and bad things will happen.
+
+        * dom/Element.h:
+
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren): Clone children and attributes before
+        inserting the swapped span to avoid hitting the assertion in cloneAttributesFromElement we added.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+
 2013-05-09  Dean Jackson  <dino@apple.com>
 
         Don't trust character widths for internal OS X fonts in form controls

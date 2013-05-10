@@ -130,7 +130,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             if (hasName() != willHaveName && inDocument() && document()->isHTMLDocument()) {
                 HTMLDocument* document = toHTMLDocument(this->document());
                 const AtomicString& id = getIdAttribute();
-                if (!id.isEmpty()) {
+                if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)
                         document->documentNamedItemMap().add(id.impl(), this);
                     else

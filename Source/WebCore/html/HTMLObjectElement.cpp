@@ -451,7 +451,7 @@ void HTMLObjectElement::updateDocNamedItem()
         }
 
         const AtomicString& name = getNameAttribute();
-        if (!name.isEmpty()) {
+        if (!name.isEmpty() && id != name) {
             if (isNamedItem)
                 document->documentNamedItemMap().add(name.impl(), this);
             else

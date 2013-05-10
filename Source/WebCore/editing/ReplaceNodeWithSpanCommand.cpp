@@ -52,16 +52,15 @@ static void swapInNodePreservingAttributesAndChildren(HTMLElement* newNode, HTML
 {
     ASSERT(nodeToReplace->inDocument());
     RefPtr<ContainerNode> parentNode = nodeToReplace->parentNode();
-    parentNode->insertBefore(newNode, nodeToReplace, ASSERT_NO_EXCEPTION);
 
+    // FIXME: Fix this to send the proper MutationRecords when MutationObservers are present.
+    newNode->cloneDataFromElement(*nodeToReplace);
     NodeVector children;
     getChildNodes(nodeToReplace, children);
     for (size_t i = 0; i < children.size(); ++i)
         newNode->appendChild(children[i], ASSERT_NO_EXCEPTION);
 
-    // FIXME: Fix this to send the proper MutationRecords when MutationObservers are present.
-    newNode->cloneDataFromElement(*nodeToReplace);
-
+    parentNode->insertBefore(newNode, nodeToReplace, ASSERT_NO_EXCEPTION);
     parentNode->removeChild(nodeToReplace, ASSERT_NO_EXCEPTION);
 }
 

@@ -1,3 +1,17 @@
+2013-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r149652): Videos do not play on cnn.com, just black box
+        https://bugs.webkit.org/show_bug.cgi?id=115887
+
+        Reviewed by Antti Koivisto.
+
+        Add regression tests.
+
+        * fast/dom/HTMLDocument/image-with-same-id-and-name-expected.txt: Added.
+        * fast/dom/HTMLDocument/image-with-same-id-and-name.html: Added.
+        * fast/dom/HTMLDocument/object-with-same-id-and-name-expected.txt: Added.
+        * fast/dom/HTMLDocument/object-with-same-id-and-name.html: Added.
+
 2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.
