@@ -1,3 +1,9 @@
+2013-05-10  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed mac-lion rebaselines.
+
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-10  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r148121): Empty Span does not get a linebox when it's in an anonymous block
