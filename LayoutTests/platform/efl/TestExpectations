@@ -371,6 +371,7 @@ Bug(EFL) fast/dom/shadow [ WontFix ]
 Bug(EFL) editing/text-iterator/basic-iteration-shadowdom.html [ WontFix ]
 Bug(EFL) accessibility/corresponding-control-deleted-crash.html [ WontFix ]
 Bug(EFL) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ WontFix ]
+Bug(EFL) inspector/elements/update-shadowdom.html [ WontFix ]
 
 # Rounding issues when running on 32-bits machines.
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
@@ -1814,6 +1815,7 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ 
 webkit.org/b/115659 accessibility/meter-element.html [ Failure ]
 
 # Regression(r149292): Missing repaint rects.
+webkit.org/b/114611 fast/box-shadow/shadow-repaint.html [ Failure ]
 webkit.org/b/114611 fast/css-grid-layout/grid-element-change-columns-repaint.html [ Failure ]
 webkit.org/b/114611 fast/css-grid-layout/grid-element-change-rows-repaint.html [ Failure ]
 webkit.org/b/114611 fast/css-grid-layout/grid-item-change-column-repaint.html [ Failure ]

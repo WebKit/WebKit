@@ -1,3 +1,14 @@
+2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip several remaining shadow dom tests and rebaseline a few others.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/images/crossfade-client-not-removed-crash-expected.txt: Added.
+        * platform/efl/fast/js/dom-static-property-for-in-iteration-expected.txt:
+        * platform/efl/inspector/console/command-line-api-expected.txt: Added.
+
 2013-05-09  Alex Christensen  <achristensen@apple.com>
 
         Unskipped the webarchive tests for Mac that are not skipped for a reason other than
