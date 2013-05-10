@@ -2641,6 +2641,7 @@ webkit.org/b/103769 media/track/track-in-band-cues-added-once.html [ Skip ]
 webkit.org/b/103769 media/track/track-in-band-style.html [ Skip ]
 webkit.org/b/103769 media/track/track-in-band-legacy-api.html [ Skip ]
 webkit.org/b/103769 media/track/track-forced-subtitles-in-band.html [ Skip ]
+webkit.org/b/103769 media/track/track-in-band-mode.html [ Skip ]
 
 # [Qt] new http/tests/xmlhttprequest/post-blob-content-type-sync.html and ~async.html fail since introduced in r136893
 # https://bugs.webkit.org/show_bug.cgi?id=104352

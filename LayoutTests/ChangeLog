@@ -1,3 +1,19 @@
+2013-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        In-band captions not visible immediately after track mode change
+        https://bugs.webkit.org/show_bug.cgi?id=115922
+
+        Reviewed by Dean Jackson.
+
+        * media/track/track-in-band-mode-expected.txt: Added.
+        * media/track/track-in-band-mode.html: Added.
+
+        * platform/efl/TestExpectations: Skip new test.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/qt/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2013-05-10  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed mac-lion rebaselines.

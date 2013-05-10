@@ -1388,33 +1388,31 @@ void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack*)
 
 void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
 {
+    bool trackIsLoaded = true;
     if (track->trackType() == TextTrack::TrackElement) {
-        // 4.8.10.12.3 Sourcing out-of-band text tracks
-        // ... when a text track corresponding to a track element is created with text track
-        // mode set to disabled and subsequently changes its text track mode to hidden, showing,
-        // or showing by default for the first time, the user agent must immediately and synchronously
-        // run the following algorithm ...
-
+        trackIsLoaded = false;
         for (Node* node = firstChild(); node; node = node->nextSibling()) {
             if (!node->hasTagName(trackTag))
                 continue;
-            HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
-            if (trackElement->track() != track)
-                continue;
-            
-            // Mark this track as "configured" so configureTextTracks won't change the mode again.
-            track->setHasBeenConfigured(true);
-            if (track->mode() != TextTrack::disabledKeyword()) {
-                if (trackElement->readyState() == HTMLTrackElement::LOADED)
-                    textTrackAddCues(track, track->cues());
 
-                // If this is the first added track, create the list of text tracks.
-                if (!m_textTracks)
-                  m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+            HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
+            if (trackElement->track() == track) {
+                if (trackElement->readyState() == HTMLTrackElement::LOADING || trackElement->readyState() == HTMLTrackElement::LOADED)
+                    trackIsLoaded = true;
+                break;
             }
-            break;
         }
     }
+
+    // If this is the first added track, create the list of text tracks.
+    if (!m_textTracks)
+        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+    
+    // Mark this track as "configured" so configureTextTracks won't change the mode again.
+    track->setHasBeenConfigured(true);
+    
+    if (track->mode() != TextTrack::disabledKeyword() && trackIsLoaded)
+        textTrackAddCues(track, track->cues());
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     if (platformTextTrackMenu())

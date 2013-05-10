@@ -1,3 +1,16 @@
+2013-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        In-band captions not visible immediately after track mode change
+        https://bugs.webkit.org/show_bug.cgi?id=115922
+
+        Reviewed by Dean Jackson.
+
+        Test: media/track/track-in-band-mode.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Add cues for all loaded tracks, regardless
+            of track type.
+
 2013-05-10  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: determine the resource type in InspectorResourceAgent::willSendRequest.
