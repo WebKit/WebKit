@@ -203,9 +203,6 @@ endif ()
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
-        plugins/PluginDatabase.cpp
-        plugins/PluginPackage.cpp
-        plugins/PluginView.cpp
         plugins/blackberry/NPCallbacksBlackBerry.cpp
         plugins/blackberry/PluginDataBlackBerry.cpp
         plugins/blackberry/PluginPackageBlackBerry.cpp
@@ -215,11 +212,6 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
 else ()
     list(APPEND WebCore_SOURCES
         plugins/PluginDataNone.cpp
-        plugins/PluginDatabase.cpp
-        plugins/PluginPackage.cpp
-        plugins/PluginPackageNone.cpp
-        plugins/PluginView.cpp
-        plugins/PluginViewNone.cpp
     )
 endif ()
 

@@ -1,3 +1,20 @@
+2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [CMake] Consolidate list of files to build for WebCore plugin support
+        https://bugs.webkit.org/show_bug.cgi?id=104429
+
+        Reviewed by Rob Buis.
+
+        Move the common files to support plugins and the logic for disabling
+        plugins) to CMakeLists.txt from PlatformXXX.cmake.
+
+        No new tests as there is no new functionality.
+
+        * CMakeLists.txt:
+        * PlatformBlackBerry.cmake:
+        * PlatformEfl.cmake:
+        * PlatformWinCE.cmake:
+
 2013-05-10  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r148121): Empty Span does not get a linebox when it's in an anonymous block

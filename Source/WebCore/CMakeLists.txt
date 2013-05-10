@@ -2090,8 +2090,13 @@ set(WebCore_SOURCES
     plugins/DOMMimeType.cpp
     plugins/DOMPluginArray.cpp
     plugins/DOMPlugin.cpp
+    plugins/PluginDatabase.cpp
     plugins/PluginData.cpp
+    plugins/PluginDebug.cpp
     plugins/PluginMainThreadScheduler.cpp
+    plugins/PluginPackage.cpp
+    plugins/PluginStream.cpp
+    plugins/PluginView.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
@@ -2591,9 +2596,12 @@ endif ()
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
-        plugins/PluginDebug.cpp
-        plugins/PluginStream.cpp
         plugins/npapi.cpp
+    )
+else ()
+    list(APPEND WebCore_SOURCES
+        plugins/PluginPackageNone.cpp
+        plugins/PluginViewNone.cpp
     )
 endif ()
 
