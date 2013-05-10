@@ -1,3 +1,17 @@
+2013-05-10  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r149439): Video turns blank upon entering full screen for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=115617
+
+        Reviewed by Eric Carlson.
+
+        Partially revert the change introduced in r149439 for OS X 10.8 and previous. On these
+        platforms, create a window with a NSZeroSize initial frame, which fixes the "blank"
+        first-full screen behavior.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView createFullScreenWindow]):
+
 2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Make the WebSoupRequestManager a supplement to the WebProcess
