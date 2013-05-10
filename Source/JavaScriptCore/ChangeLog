@@ -1,3 +1,25 @@
+2013-05-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename StructureCheckHoistingPhase to TypeCheckHoistingPhase
+        https://bugs.webkit.org/show_bug.cgi?id=115938
+
+        We're going to add some more types of check hoisting soon, so let's have the right name here.
+
+        Rubber stamped by Filip Pizlo.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp: Removed.
+        * dfg/DFGStructureCheckHoistingPhase.h: Removed.
+        * dfg/DFGTypeCheckHoistingPhase.cpp: Copied from Source/JavaScriptCore/dfg/DFGStructureCheckHoistingPhase.cpp.
+        (JSC::DFG::TypeCheckHoistingPhase::TypeCheckHoistingPhase):
+        (JSC::DFG::performTypeCheckHoisting):
+        * dfg/DFGTypeCheckHoistingPhase.h: Copied from Source/JavaScriptCore/dfg/DFGStructureCheckHoistingPhase.h.
+
 2013-05-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix after r149836.

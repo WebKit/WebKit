@@ -112,7 +112,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT.cpp
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
-    dfg/DFGStructureCheckHoistingPhase.cpp
+    dfg/DFGTypeCheckHoistingPhase.cpp
     dfg/DFGThunks.cpp
     dfg/DFGUnificationPhase.cpp
     dfg/DFGUseKind.cpp

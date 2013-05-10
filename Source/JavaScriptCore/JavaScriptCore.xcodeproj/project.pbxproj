@@ -154,8 +154,8 @@
 		0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620178143FCD440068B77C /* DFGAbstractState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016E143FCD2F0068B77C /* DFGAbstractState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */; };
-		0F63943F15C75F19006A597C /* DFGStructureCheckHoistingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */; };
+		0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */; };
 		0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63945115D07051006A597C /* ArrayProfile.cpp */; };
 		0F63945515D07057006A597C /* ArrayProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63945215D07051006A597C /* ArrayProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1066,8 +1066,8 @@
 		0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractValue.h; path = dfg/DFGAbstractValue.h; sourceTree = "<group>"; };
 		0F620170143FCD2F0068B77C /* DFGBasicBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBasicBlock.h; path = dfg/DFGBasicBlock.h; sourceTree = "<group>"; };
 		0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessData.h; path = dfg/DFGVariableAccessData.h; sourceTree = "<group>"; };
-		0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStructureCheckHoistingPhase.cpp; path = dfg/DFGStructureCheckHoistingPhase.cpp; sourceTree = "<group>"; };
-		0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureCheckHoistingPhase.h; path = dfg/DFGStructureCheckHoistingPhase.h; sourceTree = "<group>"; };
+		0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGTypeCheckHoistingPhase.cpp; path = dfg/DFGTypeCheckHoistingPhase.cpp; sourceTree = "<group>"; };
+		0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGTypeCheckHoistingPhase.h; path = dfg/DFGTypeCheckHoistingPhase.h; sourceTree = "<group>"; };
 		0F63945115D07051006A597C /* ArrayProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayProfile.cpp; sourceTree = "<group>"; };
 		0F63945215D07051006A597C /* ArrayProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayProfile.h; sourceTree = "<group>"; };
 		0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureAbstractValue.h; path = dfg/DFGStructureAbstractValue.h; sourceTree = "<group>"; };
@@ -1983,7 +1983,7 @@
 		};
 		0FF4272E158EBCCE004CB9FF /* disassembler */ = {
 			isa = PBXGroup;
-			children = (			
+			children = (
 				65C028591717966800351E35 /* ARMv7 */,
 				0FF42733158EBD64004CB9FF /* udis86 */,
 				65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */,
@@ -2767,8 +2767,8 @@
 				86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */,
 				86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */,
 				0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */,
-				0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */,
-				0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */,
+				0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */,
+				0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */,
 				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
 				0FC097A0146B28C700CF2442 /* DFGThunks.h */,
 				0FBE0F6F16C1DB010082C5E8 /* DFGUnificationPhase.cpp */,
@@ -3114,7 +3114,7 @@
 				0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */,
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
-				0F63943F15C75F19006A597C /* DFGStructureCheckHoistingPhase.h in Headers */,
+				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0F2BDC471522802500CD8910 /* DFGValueRecoveryOverride.h in Headers */,
@@ -3878,7 +3878,7 @@
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
-				0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */,
+				0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */,
 				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
 				0F3B3A2B15475000003ED0FF /* DFGValidate.cpp in Sources */,
 				0F2BDC4F15228BF300CD8910 /* DFGValueSource.cpp in Sources */,

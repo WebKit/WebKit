@@ -45,7 +45,7 @@
 #include "DFGJITCompiler.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
-#include "DFGStructureCheckHoistingPhase.h"
+#include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
@@ -129,7 +129,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     performBackwardsPropagation(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
-    performStructureCheckHoisting(dfg);
+    performTypeCheckHoisting(dfg);
     
     dfg.m_fixpointState = FixpointNotConverged;
 
