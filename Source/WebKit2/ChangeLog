@@ -1,5 +1,11 @@
 2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt][Mac] Unreviewed speculative build fix after r149904.
+
+        * Target.pri:
+
+2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt] Unreviewed buildfix after r149904.
 
         * Target.pri:
