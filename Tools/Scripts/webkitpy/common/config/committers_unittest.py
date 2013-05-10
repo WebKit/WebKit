@@ -101,6 +101,11 @@ class CommittersTest(unittest.TestCase):
             expected_names = [name_of_expected_contributor] if name_of_expected_contributor else []
         self.assertEqual(([contributor.full_name for contributor in contributors], distance), (expected_names, expected_distance))
 
+    # Test that the string representation of a Contributor supports unicode
+    def test_contributor_encoding(self):
+        committer_encoding = Contributor(u'\u017dan M\u00fcller', 'zmuller@example.com', 'zmuller')
+        self.assertTrue(str(committer_encoding))
+
     # Basic testing of the edit distance matching ...
     def test_contributors_by_fuzzy_match(self):
         self._assert_fuzz_match('Geoff Garen', 'Geoffrey Garen', 3)

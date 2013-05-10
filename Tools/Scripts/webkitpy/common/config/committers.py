@@ -63,6 +63,9 @@ class Contributor(object):
         return self.emails[0]
 
     def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
     def contains_string(self, search_string):

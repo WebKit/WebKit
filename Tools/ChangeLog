@@ -1,3 +1,26 @@
+2013-05-10  Simon Pena  <simon.pena@samsung.com>
+
+        Unicode support missing from string representation of Contributors in committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=115859
+
+        Reviewed by Darin Adler.
+
+        Contributors, in committers.py, provided a string representation in __str__ which
+        didn't support unicode characters, so printing a contributor would fail in that case.
+        This patch implements __unicode__ and makes __str__ use it to represent a contributor.
+        The unit tests are updated accordingly, so they ensure that a unicode name can be shown.
+
+        * Scripts/webkitpy/common/config/committers.py: Move the existing string representation
+        to the newly implemented method __unicode__, and make __str__ display its utf-8 encoded
+        representation.
+        (Contributor.__str__):
+        (Contributor):
+        (Contributor.__unicode__):
+        * Scripts/webkitpy/common/config/committers_unittest.py: Add a new test that checks that
+        a contributor with unicode characters can be represented as a string.
+        (CommittersTest):
+        (CommittersTest.test_contributor_encoding):
+
 2013-05-09  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN][DRT] Remove duplicated (start|stop)JavaScriptThreads()
