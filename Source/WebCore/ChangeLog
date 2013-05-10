@@ -1,3 +1,20 @@
+2013-05-09  Dean Jackson  <dino@apple.com>
+
+        Don't trust character widths for internal OS X fonts in form controls
+        https://bugs.webkit.org/show_bug.cgi?id=115883
+        <rdar://problem/13817757>
+
+        Reviewed by Darin Adler.
+
+        We ignore the character width for a bunch of fonts when predicting
+        the width of a form control. Some of the internal fonts in OS X are
+        not in the ignored list. Rather than add them, simply test for
+        fonts whose family begins with a period character ".".
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hasValidAvgCharWidth): Return false for
+            any family that starts with "."
+
 2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove unnecessary GLIB_CHECK_VERSION #ifdefs
