@@ -55,6 +55,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextRun.h"
+#include <wtf/StackStats.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"

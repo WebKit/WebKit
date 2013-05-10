@@ -12943,7 +12943,6 @@
     <ClInclude Include="..\bindings\js\ScriptFunctionCall.h" />
     <ClInclude Include="..\bindings\js\ScriptGCEvent.h" />
     <ClInclude Include="..\bindings\js\ScriptHeapSnapshot.h" />
-    <ClInclude Include="..\bindings\js\ScriptInstance.h" />
     <ClInclude Include="..\bindings\js\ScriptObject.h" />
     <ClInclude Include="..\bindings\js\ScriptProfile.h" />
     <ClInclude Include="..\bindings\js\ScriptProfileNode.h" />

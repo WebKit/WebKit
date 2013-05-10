@@ -25,7 +25,6 @@
 #include "FrameLoaderTypes.h"
 #include "JSDOMWindowShell.h"
 #include "ScriptControllerBase.h"
-#include "ScriptInstance.h"
 #include <JavaScriptCore/JSBase.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
@@ -45,6 +44,7 @@ namespace JSC {
     class ExecState;
 
     namespace Bindings {
+        class Instance;
         class RootObject;
     }
 }
@@ -134,7 +134,7 @@ public:
 
     void updatePlatformScriptObjects();
 
-    PassScriptInstance createScriptInstanceForWidget(Widget*);
+    PassRefPtr<JSC::Bindings::Instance>  createScriptInstanceForWidget(Widget*);
     JSC::Bindings::RootObject* bindingRootObject();
     JSC::Bindings::RootObject* cacheableBindingRootObject();
 

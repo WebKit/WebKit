@@ -24,7 +24,6 @@
 #if ENABLE(VIDEO)
 
 #include <wtf/Forward.h>
-#include "ScriptInstance.h"
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ namespace WebCore {
         void load(const String& url);
         HTMLMediaElement* element();
         void invokeMethod(const String& methodName);
-        ScriptInstance pluginInstance();
+        RefPtr<JSC::Bindings::Instance> pluginInstance();
 
     private:
         MediaPlayer* m_mediaPlayer;

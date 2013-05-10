@@ -73070,10 +73070,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptInstance.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\ScriptObject.cpp"
 					>
 				</File>

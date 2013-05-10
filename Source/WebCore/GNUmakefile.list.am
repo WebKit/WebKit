@@ -2543,7 +2543,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptGCEvent.cpp \
 	Source/WebCore/bindings/js/ScriptGCEvent.h \
 	Source/WebCore/bindings/js/ScriptHeapSnapshot.h \
-	Source/WebCore/bindings/js/ScriptInstance.h \
 	Source/WebCore/bindings/js/ScriptObject.cpp \
 	Source/WebCore/bindings/js/ScriptObject.h \
 	Source/WebCore/bindings/js/ScriptProfile.cpp \

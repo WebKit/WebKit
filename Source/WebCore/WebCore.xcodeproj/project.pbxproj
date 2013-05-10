@@ -2824,7 +2824,6 @@
 		934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */; };
 		934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC0E00ED39D6F00A658F2 /* ScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC1090EDB223900A658F2 /* ScriptSourceCode.h */; };
-		934CC1170EDCAC7300A658F2 /* ScriptInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC1160EDCAC7300A658F2 /* ScriptInstance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */; };
 		934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */; };
@@ -9253,7 +9252,6 @@
 		934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
 		934CC0E00ED39D6F00A658F2 /* ScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptValue.h; sourceTree = "<group>"; };
 		934CC1090EDB223900A658F2 /* ScriptSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceCode.h; sourceTree = "<group>"; };
-		934CC1160EDCAC7300A658F2 /* ScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptInstance.h; sourceTree = "<group>"; };
 		934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSStringExtras.mm; sourceTree = "<group>"; };
 		934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreNSStringExtras.h; sourceTree = "<group>"; };
 		934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeBase.cpp; sourceTree = "<group>"; };
@@ -18769,7 +18767,6 @@
 				4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */,
 				4FD8D0F1119C718B002FA825 /* ScriptGCEvent.h */,
 				9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */,
-				934CC1160EDCAC7300A658F2 /* ScriptInstance.h */,
 				41F066E30F64BCF600A07EAC /* ScriptObject.cpp */,
 				41F066E20F64BCF600A07EAC /* ScriptObject.h */,
 				F33F0281120947F200E5743A /* ScriptProfile.cpp */,
@@ -23339,7 +23336,6 @@
 				41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */,
 				4FD8D0F3119C718B002FA825 /* ScriptGCEvent.h in Headers */,
 				9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */,
-				934CC1170EDCAC7300A658F2 /* ScriptInstance.h in Headers */,
 				41F066E40F64BCF600A07EAC /* ScriptObject.h in Headers */,
 				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,

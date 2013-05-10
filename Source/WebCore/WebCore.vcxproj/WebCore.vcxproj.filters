@@ -11493,9 +11493,6 @@
     <ClInclude Include="..\bindings\js\ScriptHeapSnapshot.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
-    <ClInclude Include="..\bindings\js\ScriptInstance.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
     <ClInclude Include="..\bindings\js\ScriptObject.h">
       <Filter>bindings\js</Filter>
     </ClInclude>

@@ -42,6 +42,7 @@
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "RenderView.h"
+#include <wtf/StackStats.h>
 
 namespace WebCore {
 
