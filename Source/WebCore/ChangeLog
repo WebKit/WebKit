@@ -1,3 +1,18 @@
+2013-05-10  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r148121): Empty Span does not get a linebox when it's in an anonymous block
+        https://bugs.webkit.org/show_bug.cgi?id=115818
+
+        Reviewed by David Hyatt.
+
+        r148121 only worried about split inlines inside anonymous blocks - it ought to have 
+        catered for empty inlines, with no continuations, inside a single solitary anonymous block too.
+
+        Test: fast/inline/anonymous-block-with-empty-inline.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::hasInlineDirectionBordersPaddingOrMargin):
+
 2013-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Remove unnecessary includes in WidgetGtk.cpp

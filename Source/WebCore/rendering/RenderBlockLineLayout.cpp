@@ -2397,11 +2397,11 @@ static bool hasInlineDirectionBordersPaddingOrMargin(RenderInline* flow)
 {
     // Where an empty inline is split across anonymous blocks we should only give lineboxes to the 'sides' of the
     // inline that have borders, padding or margin.
-    bool shouldApplyStartBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || flow->inlineElementContinuation();
+    bool shouldApplyStartBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || !flow->isInlineElementContinuation();
     if (shouldApplyStartBorderPaddingOrMargin && (flow->borderStart() || flow->marginStart() || flow->paddingStart()))
         return true;
 
-    bool shouldApplyEndBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || !flow->inlineElementContinuation();
+    bool shouldApplyEndBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || flow->isInlineElementContinuation() || !flow->inlineElementContinuation();
     return shouldApplyEndBorderPaddingOrMargin && (flow->borderEnd() || flow->marginEnd() || flow->paddingEnd());
 }
 

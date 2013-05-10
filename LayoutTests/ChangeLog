@@ -1,3 +1,13 @@
+2013-05-10  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r148121): Empty Span does not get a linebox when it's in an anonymous block
+        https://bugs.webkit.org/show_bug.cgi?id=115818
+
+        Reviewed by David Hyatt.
+
+        * fast/inline/anonymous-block-with-empty-inline-expected.txt: Added.
+        * fast/inline/anonymous-block-with-empty-inline.html: Added.
+
 2013-05-10  Dean Jackson  <dino@apple.com>
 
         Include tab character as a word end for kerning
