@@ -355,7 +355,8 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestEventTarget>(exec, impl)) return result;
+    if (JSValue result = getExistingWrapper<JSTestEventTarget>(exec, impl))
+        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl));

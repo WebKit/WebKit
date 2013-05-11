@@ -1,3 +1,118 @@
+2013-05-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Fix several style warnings in generated bindings
+        https://bugs.webkit.org/show_bug.cgi?id=115961
+
+        Reviewed by Kentaro Hara.
+
+        Fix several style errors in the bindings generated under
+        Source/WebCore/bindings/scripts/test/
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation):
+        (WriteData):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (WriteData):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestException.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestNode.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (WebCore::JSTestActiveDOMObject::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (WebCore::JSTestCustomNamedGetter::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTarget::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestException.h:
+        (WebCore::JSTestException::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructor::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (WebCore::JSTestOverloadedConstructors::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore::JSTestTypedefs::releaseImplIfNotNull):
+        * bindings/scripts/test/ObjC/DOMFloat64ArrayInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObjectInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestCallbackInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetterInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestEventConstructorInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestEventTargetInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestExceptionInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestInterfaceInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListenerInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructorInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestNodeInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObjInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructorsInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterfaceInternal.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestTypedefsInternal.h:
+        (WebCore):
+
 2013-05-11  Anders Carlsson  <andersca@apple.com>
 
         Make it a build error to put invalid C++ symbol names in WebCore.exp.in

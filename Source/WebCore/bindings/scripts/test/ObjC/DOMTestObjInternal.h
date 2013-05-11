@@ -29,7 +29,7 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 namespace WebCore {
-    class TestObj;
+class TestObj;
 }
 
 WebCore::TestObj* core(DOMTestObj *);

@@ -30,6 +30,7 @@
 #include "SerializedScriptValue.h"
 #include "TestEnumType.h"
 #include "TestNode.h"
+#include "TestObj.h"
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
 #include "WebDOMNode.h"
@@ -38,14 +39,13 @@
 #include "WebDOMString.h"
 #include "WebDOMTestEnumType.h"
 #include "WebDOMTestNode.h"
-#include "WebDOMTestObj.h"
 #include "WebDOMbool.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
 #include "bool.h"
-#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestObj::WebDOMTestObjPrivate {
     WebDOMTestObjPrivate(WebCore::TestObj* object = 0)

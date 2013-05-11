@@ -22,11 +22,12 @@
 #include "WebDOMTestEventConstructor.h"
 
 #include "KURL.h"
+#include "TestEventConstructor.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
-#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestEventConstructor::WebDOMTestEventConstructorPrivate {
     WebDOMTestEventConstructorPrivate(WebCore::TestEventConstructor* object = 0)

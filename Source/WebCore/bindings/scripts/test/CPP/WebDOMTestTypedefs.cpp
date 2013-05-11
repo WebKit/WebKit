@@ -24,12 +24,13 @@
 #include "KURL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
+#include "TestTypedefs.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
-#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestTypedefs::WebDOMTestTypedefsPrivate {
     WebDOMTestTypedefsPrivate(WebCore::TestTypedefs* object = 0)

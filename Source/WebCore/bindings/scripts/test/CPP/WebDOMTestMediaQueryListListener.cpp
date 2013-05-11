@@ -22,6 +22,7 @@
 #include "WebDOMTestMediaQueryListListener.h"
 
 #include "MediaQueryListListener.h"
+#include "TestMediaQueryListListener.h"
 #include "WebDOMMediaQueryListListener.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>

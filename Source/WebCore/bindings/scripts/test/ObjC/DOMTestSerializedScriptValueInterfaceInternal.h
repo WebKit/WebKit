@@ -29,7 +29,7 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 namespace WebCore {
-    class TestSerializedScriptValueInterface;
+class TestSerializedScriptValueInterface;
 }
 
 WebCore::TestSerializedScriptValueInterface* core(DOMTestSerializedScriptValueInterface *);

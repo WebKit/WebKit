@@ -253,7 +253,8 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestOve
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestOverloadedConstructors>(exec, impl)) return result;
+    if (JSValue result = getExistingWrapper<JSTestOverloadedConstructors>(exec, impl))
+        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl));

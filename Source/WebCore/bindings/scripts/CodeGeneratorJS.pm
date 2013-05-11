@@ -918,7 +918,13 @@ sub GenerateHeader
     if (!$hasParent) {
         push(@headerContent, "    $implType* impl() const { return m_impl; }\n");
         push(@headerContent, "    void releaseImpl() { m_impl->deref(); m_impl = 0; }\n\n");
-        push(@headerContent, "    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }\n\n");
+        push(@headerContent, "    void releaseImplIfNotNull()\n");
+        push(@headerContent, "    {\n");
+        push(@headerContent, "        if (m_impl) {\n");
+        push(@headerContent, "            m_impl->deref();\n");
+        push(@headerContent, "            m_impl = 0;\n");
+        push(@headerContent, "        }\n");
+        push(@headerContent, "    }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    $implType* m_impl;\n");
     } elsif ($interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
@@ -2712,9 +2718,11 @@ END
 END
 
         if ($svgPropertyType) {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(exec, impl)) return result;\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(exec, impl))\n");
+            push(@implContent, "        return result;\n");
         } else {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(exec, impl)) return result;\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(exec, impl))\n");
+            push(@implContent, "        return result;\n");
         }
         push(@implContent, <<END) if $vtableNameGnu;
 
@@ -3776,6 +3784,8 @@ sub WriteData
         push @includes, $include;
     }
     foreach my $include (sort @includes) {
+        # "JSClassName.h" is already included right after config.h.
+        next if $include eq "\"$prefix$name.h\"";
         $contents .= "#include $include\n";
     }
 

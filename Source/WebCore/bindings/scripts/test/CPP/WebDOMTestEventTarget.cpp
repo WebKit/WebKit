@@ -24,14 +24,15 @@
 #include "Event.h"
 #include "KURL.h"
 #include "Node.h"
+#include "TestEventTarget.h"
 #include "WebDOMEvent.h"
 #include "WebDOMNode.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
-#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 WebDOMTestEventTarget::WebDOMTestEventTarget()
     : WebDOMEventTarget()

@@ -1014,9 +1014,9 @@ sub GenerateHeader
             push(@internalHeaderContent, "namespace WebCore {\n");
             $startedNamespace = 1;
             if ($interfaceName eq "Node") {
-                push(@internalHeaderContent, "    class EventTarget;\n    class Node;\n");
+                push(@internalHeaderContent, "class EventTarget;\n    class Node;\n");
             } else {
-                push(@internalHeaderContent, "    class $implClassName;\n");
+                push(@internalHeaderContent, "class $implClassName;\n");
             }
             push(@internalHeaderContent, "}\n\n");
         }

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WebDOMTestNode.h"
 
+#include "TestNode.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>

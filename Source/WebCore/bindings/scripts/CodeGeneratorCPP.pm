@@ -617,10 +617,10 @@ sub GenerateImplementation
 
     $implIncludes{"WebExceptionHandler.h"} = 1;
     $implIncludes{"$implClassName.h"} = 1;
-    @implContent = ();
+    $implIncludes{"wtf/GetPtr.h"} = 1;
+    $implIncludes{"wtf/RefPtr.h"} = 1;
 
-    push(@implContent, "#include <wtf/GetPtr.h>\n");
-    push(@implContent, "#include <wtf/RefPtr.h>\n\n");
+    @implContent = ();
 
     # Private datastructure, encapsulating WebCore types
     if ($baseClass eq "WebDOMObject") {
@@ -980,11 +980,21 @@ sub WriteData
     # Update a .cpp file if the contents are changed.
     $contents = join "", @implContentHeader;
 
-    foreach my $include (sort keys(%implIncludes)) {
-        # "className.h" is already included right after config.h, silence check-webkit-style
-        next if $include eq "$name.h";
-        $contents .= "#include \"$include\"\n";
+    my @includes;
+    foreach my $include (keys(%implIncludes)) {
+        if ($include =~ /^wtf\//) {
+            push(@includes, "<$include>");
+        } else {
+            push(@includes, "\"$include\"");
+        }
     }
+
+    foreach my $include (sort @includes) {
+        # "className.h" is already included right after config.h, silence check-webkit-style
+        next if $include eq "\"$prefix$name.h\"";
+        $contents .= "#include $include\n";
+    }
+    $contents .= "\n";
 
     $contents .= join "", @implContent;
     $codeGenerator->UpdateFile($implFileName, $contents);

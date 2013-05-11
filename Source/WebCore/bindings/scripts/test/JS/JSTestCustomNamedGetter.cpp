@@ -232,7 +232,8 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCus
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestCustomNamedGetter>(exec, impl)) return result;
+    if (JSValue result = getExistingWrapper<JSTestCustomNamedGetter>(exec, impl))
+        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl));

@@ -29,7 +29,7 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 namespace WebCore {
-    class Float64Array;
+class Float64Array;
 }
 
 WebCore::Float64Array* core(DOMFloat64Array *);

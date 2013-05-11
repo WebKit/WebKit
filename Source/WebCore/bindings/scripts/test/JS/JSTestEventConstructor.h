@@ -57,7 +57,13 @@ public:
     TestEventConstructor* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
-    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }
+    void releaseImplIfNotNull()
+    {
+        if (m_impl) {
+            m_impl->deref();
+            m_impl = 0;
+        }
+    }
 
 private:
     TestEventConstructor* m_impl;

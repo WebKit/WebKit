@@ -23,12 +23,13 @@
 
 #include "KURL.h"
 #include "Node.h"
+#include "TestActiveDOMObject.h"
 #include "WebDOMNode.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
-#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestActiveDOMObject::WebDOMTestActiveDOMObjectPrivate {
     WebDOMTestActiveDOMObjectPrivate(WebCore::TestActiveDOMObject* object = 0)
