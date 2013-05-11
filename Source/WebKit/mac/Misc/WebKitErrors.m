@@ -116,11 +116,7 @@ static NSMutableDictionary *descriptions = nil;
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
     if (contentURL) {
         [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-        [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSErrorFailingURLStringKey];
-#else
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
-#endif
     }
     if (pluginPageURL) {
         [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];

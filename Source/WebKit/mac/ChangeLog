@@ -1,3 +1,23 @@
+2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove Mac OS X Leopard (10.5) support
+        https://bugs.webkit.org/show_bug.cgi?id=107964
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed the code for 10.5 and removed if-def for 10.6.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * Misc/WebKitErrors.m:
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebClipView.mm:
+        (-[WebClipView _immediateScrollToPoint:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]):
+        * WebView/WebView.mm:
+
 2013-05-07  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13633007> WebKit and others fail to build headers due to build root dependency

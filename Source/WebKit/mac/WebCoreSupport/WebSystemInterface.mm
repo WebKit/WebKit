@@ -126,7 +126,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphsForCharacters);
     INIT(GetVerticalGlyphsForCharacters);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     INIT(GetHyphenationLocationBeforeIndex);
     INIT(GetNSEventMomentumPhase);
 #endif

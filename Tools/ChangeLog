@@ -1,3 +1,22 @@
+2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove Mac OS X Leopard (10.5) support
+        https://bugs.webkit.org/show_bug.cgi?id=107964
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed the code for 10.5 and removed if-def for 10.6.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (convertMIMEType):
+        (createXMLStringFromWebArchiveData):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::authenticateSession):
+        (TestRunner::setTextDirection):
+        * WebKitTestRunner/cf/WebArchiveDumpSupport.cpp:
+        (convertMIMEType):
+        (createXMLStringFromWebArchiveData):
+
 2013-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Allow VS2010 Build to use VS2005 Support Libraries

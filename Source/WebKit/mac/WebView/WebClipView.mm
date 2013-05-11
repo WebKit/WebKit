@@ -52,12 +52,10 @@ using namespace WebCore;
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 @interface NSWindow (WebNSWindowDetails)
 - (void)_disableDelayedWindowDisplay;
 - (void)_enableDelayedWindowDisplay;
 @end
-#endif
 
 @implementation WebClipView
 
@@ -105,15 +103,11 @@ using namespace WebCore;
 {
     _isScrolling = YES;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[self window] _disableDelayedWindowDisplay];
-#endif
 
     [super _immediateScrollToPoint:newOrigin];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[self window] _enableDelayedWindowDisplay];
-#endif
 
     _isScrolling = NO;
 }

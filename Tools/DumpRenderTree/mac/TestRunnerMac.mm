@@ -920,7 +920,7 @@ void TestRunner::setWebViewEditable(bool editable)
 
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 @protocol NSURLConnectionDelegate <NSObject>
 @end
 #endif
@@ -996,7 +996,6 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
 void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
 {
     // See <rdar://problem/7880699>.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFStringRef> urlStringCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
     RetainPtr<CFStringRef> usernameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, username));
     RetainPtr<CFStringRef> passwordCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, password));
@@ -1004,7 +1003,6 @@ void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSSt
     RetainPtr<NSURLRequest> request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:(NSString *)urlStringCF.get()]]);
 
     [SynchronousLoader makeRequest:request.get() withUsername:(NSString *)usernameCF.get() password:(NSString *)passwordCF.get()];
-#endif
 }
 
 void TestRunner::abortModal()
@@ -1019,14 +1017,12 @@ void TestRunner::setSerializeHTTPLoads(bool serialize)
 
 void TestRunner::setTextDirection(JSStringRef directionName)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
         [[mainFrame webView] makeBaseWritingDirectionLeftToRight:0];
     else if (JSStringIsEqualToUTF8CString(directionName, "rtl"))
         [[mainFrame webView] makeBaseWritingDirectionRightToLeft:0];
     else
         ASSERT_NOT_REACHED();
-#endif
 }
 
 void TestRunner::addChromeInputField()

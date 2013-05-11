@@ -29,7 +29,7 @@
 @protocol NAME <NSObject> \
 @end
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED == 1060
 
 EMPTY_PROTOCOL(NSURLConnectionDelegate)
 EMPTY_PROTOCOL(NSURLDownloadDelegate)

@@ -291,7 +291,7 @@ extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;

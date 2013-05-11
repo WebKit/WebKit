@@ -44,11 +44,6 @@ CFTypeID CFURLResponseGetTypeID(void);
 
 static void convertMIMEType(CFMutableStringRef mimeType)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    // Workaround for <rdar://problem/5539824> on Leopard
-    if (CFStringCompare(mimeType, CFSTR("text/xml"), kCFCompareAnchored | kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        CFStringReplaceAll(mimeType, CFSTR("application/xml"));
-#endif
     // Workaround for <rdar://problem/6234318> with Dashcode 2.0
     if (CFStringCompare(mimeType, CFSTR("application/x-javascript"), kCFCompareAnchored | kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         CFStringReplaceAll(mimeType, CFSTR("text/javascript"));
@@ -157,16 +152,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 {
     CFErrorRef error = 0;
     CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    CFIndex bytesCount = CFDataGetLength(webArchiveData);
-    RetainPtr<CFReadStreamRef> readStream = adoptCF(CFReadStreamCreateWithBytesNoCopy(kCFAllocatorDefault, CFDataGetBytePtr(webArchiveData), bytesCount, kCFAllocatorNull));
-    CFReadStreamOpen(readStream.get());
-    RetainPtr<CFMutableDictionaryRef> propertyList = adoptCF((CFMutableDictionaryRef)CFPropertyListCreateFromStream(kCFAllocatorDefault, readStream.get(), bytesCount, kCFPropertyListMutableContainersAndLeaves, &format, 0));
-    CFReadStreamClose(readStream.get());
-#else
     RetainPtr<CFMutableDictionaryRef> propertyList = adoptCF((CFMutableDictionaryRef)CFPropertyListCreateWithData(kCFAllocatorDefault, webArchiveData, kCFPropertyListMutableContainersAndLeaves, &format, &error));
-#endif
 
     if (!propertyList) {
         if (error)
@@ -208,11 +194,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 
     error = 0;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    RetainPtr<CFDataRef> xmlData = adoptCF(CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList.get()));
-#else
     RetainPtr<CFDataRef> xmlData = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, propertyList.get(), kCFPropertyListXMLFormat_v1_0, 0, &error));
-#endif
 
     if (!xmlData) {
         if (error)
