@@ -1,3 +1,14 @@
+2013-05-10  Remy Demarest  <rdemarest@apple.com>
+
+        Copy WKPluginInformation.h header to the WebKit2 Framework private headers.
+        https://bugs.webkit.org/show_bug.cgi?id=115940
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Move WKPluginInformation.h file from the framework's Project Headers to
+        Private Headers.
+
 2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Mac] Unreviewed. Roll out the fix attempt in r149912.
