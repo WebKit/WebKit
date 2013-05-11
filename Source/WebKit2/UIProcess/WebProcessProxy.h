@@ -178,6 +178,8 @@ private:
     void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
+    bool canTerminateChildProcess();
+
     ResponsivenessTimer m_responsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
