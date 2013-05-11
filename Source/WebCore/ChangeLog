@@ -1,3 +1,25 @@
+2013-05-11  Antoine Quint  <graouts@apple.com>
+
+        [Mac] The captions menu should not use a canned max-width and max-height
+        https://bugs.webkit.org/show_bug.cgi?id=115968
+
+        Reviewed by Eric Carlson.
+
+        Use more real estate to display the captions menu should the caption names
+        be long.
+
+        * css/mediaControlsQuickTime.css:
+        (video::-webkit-media-controls-closed-captions-container):
+        (video::-webkit-media-controls-closed-captions-track-list):
+        Make the captions menu scale to a max-width and max-height to allow 4px
+        above and below the menu, except on the right where it always aligns with
+        the captions icon in the media controller.
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::createControls):
+        Move the captions menu element to be a child of the controls instead of
+        the panel such that it may scale relative to the controls when using %
+        CSS values.
+
 2013-05-11  Jochen Eisinger  <jochen@chromium.org>
 
         Disallow a window to focus itself via javascript URLs or using target _self

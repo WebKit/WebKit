@@ -163,7 +163,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
             return 0;
 
         controls->m_closedCaptionsContainer = closedCaptionsContainer.get();
-        panel->appendChild(closedCaptionsContainer.release(), ec, AttachLazily);
+        controls->appendChild(closedCaptionsContainer.release(), ec, AttachLazily);
         if (ec)
             return 0;
     }

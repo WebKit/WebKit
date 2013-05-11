@@ -252,6 +252,10 @@ video::-webkit-media-controls-closed-captions-container {
     display: block;
     right: 38px;
     bottom: 29px;
+    max-width: -webkit-calc(100% - 48px); /* right + 10px */
+    max-height: -webkit-calc(100% - 39px); /* bottom + 10px */
+    overflow-x: hidden;
+    overflow-y: scroll;
     background-color: rgba(0, 0, 0, 0.85);
     border: 3px solid rgba(128, 128, 128, 0.75);
     border-radius: 10px;
@@ -261,10 +265,6 @@ video::-webkit-media-controls-closed-captions-container {
 
 video::-webkit-media-controls-closed-captions-track-list {
     display: block;
-    max-width: 250px;
-    max-height: 250px;
-    overflow-x: hidden;
-    overflow-y: scroll;
     text-align: left;
     font-family: "Helvetica Bold", Helvetica;
     font-size: 10pt;
