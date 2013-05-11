@@ -941,7 +941,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     if (context) {
         ASSERT(isMainThread());
         Document* activeDocument = toDocument(context);
-        if (opener() && activeDocument->domWindow() == opener())
+        if (opener() && opener() != this && activeDocument->domWindow() == opener())
             allowFocus = true;
     }
 

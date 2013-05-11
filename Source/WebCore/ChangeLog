@@ -1,3 +1,17 @@
+2013-05-11  Jochen Eisinger  <jochen@chromium.org>
+
+        Disallow a window to focus itself via javascript URLs or using target _self
+        https://bugs.webkit.org/show_bug.cgi?id=115906
+
+        Reviewed by Geoffrey Garen.
+
+        Test: fast/dom/Window/window-focus-self.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+
 2013-05-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Fix several style warnings in generated bindings

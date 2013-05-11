@@ -1,3 +1,14 @@
+2013-05-11  Jochen Eisinger  <jochen@chromium.org>
+
+        Disallow a window to focus itself via javascript URLs or using target _self
+        https://bugs.webkit.org/show_bug.cgi?id=115906
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/Window/window-focus-self-expected.txt: Added.
+        * fast/dom/Window/window-focus-self.html: Added.
+        * platform/wk2/TestExpectations: test uses unimplemented setWindowIsKey.
+
 2013-03-17  Robert Hogan  <robert@webkit.org>
 
         Text flow broken in elements with vertical align top/bottom and inline elements taller than line-height

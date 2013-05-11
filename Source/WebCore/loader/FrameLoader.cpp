@@ -3335,8 +3335,10 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
 
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
         if (Frame* frame = lookupFrame->loader()->findFrameForNavigation(request.frameName(), openerFrame->document())) {
-            if (Page* page = frame->page())
-                page->chrome()->focus();
+            if (request.frameName() != "_self") {
+                if (Page* page = frame->page())
+                    page->chrome()->focus();
+            }
             created = false;
             return frame;
         }
