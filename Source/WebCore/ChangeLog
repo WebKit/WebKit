@@ -1,5 +1,38 @@
 2013-05-10  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/13666412> Clean up some edge cases of URL parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=104919
+
+        Reviewed by Darin Adler.
+
+        Test: fast/url/segments-userinfo-vs-host.html
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::schemeRequiresHost):
+        (WebCore::shouldTreatAsUniqueOrigin):
+        Updated function name and comments (host is not the same as authority). We still
+        need this check - KURL can still produce http URLs with an empty host (even as this
+        patch reduces the number of such cases). So can Gecko and current draft of URL
+        Standard.
+        It would be good to have a guarantee that such useless URLs can not come out of
+        URL parser, as relying on downstream code re-parsing the URL correctly would be fragile.
+
+        * platform/KURL.cpp:
+        (WebCore::hostPortIsEmptyButCredentialsArePresent): Updated an argument name for
+        correctness.
+        (WebCore::KURL::parse):
+        1. Reverted behavior changes from <http://trac.webkit.org/changeset/82181> - I could
+        find no reason to allow "@" in hostnames, and having a URL like this re-parsed by
+        a different parser would likely produce different results. It's better to just treat
+        these edge case URLs as invalid.
+        2. When hostname component is a lone colon, preserve it in parsed URL string,
+        as otherwise path would get pushed in its place when re-parsing.
+        3. When authority component is a lone colon, don't forget to "//" after scheme, too.
+        4. Added some assertions about contents of authority component, to catch potential
+        mis-parsing earlier.
+
+2013-05-10  Alexey Proskuryakov  <ap@apple.com>
+
         Make TextCodecICU not depend on TextEncoding
         https://bugs.webkit.org/show_bug.cgi?id=115848
 

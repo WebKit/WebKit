@@ -1,3 +1,32 @@
+2013-05-10  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13666412> Clean up some edge cases of URL parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=104919
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-pathname.js:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt:
+        Updated expectations of one sub-test. We previously tried to keep the test passing
+        as is (see bug 57291), but I couldn't find any reason to prefer the old behavior.
+
+        * fast/url/host-expected.txt:
+        * fast/url/host.html:
+        Updated one subtest to new results, which match at least Gecko (original of the
+        test actually claims that all browsers including Safari already do what we'll do now).
+
+        * fast/url/segments-userinfo-vs-host-expected.txt: Added.
+        * fast/url/segments-userinfo-vs-host.html: Added.
+        Added a number of tests, with detailed explanations of the differences with Firefox,
+        and with rationales.
+
+        * http/tests/uri/username-with-no-hostname-expected.txt: Removed.
+        * http/tests/uri/username-with-no-hostname.html-disabled: Removed.
+        * platform/win/http/tests/uri/username-with-no-hostname-expected.txt: Removed.
+        This test has been disabled for a long time, and being an end-to-end test for
+        invalid URL handling, it would be difficult to make work again. We have multiple
+        parsing tests for URLs like this.
+
 2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from several WebAudio IDL interfaces

@@ -44,7 +44,7 @@ namespace WebCore {
 const int InvalidPort = 0;
 const int MaxAllowedPort = 65535;
 
-static bool schemeRequiresAuthority(const KURL& url)
+static bool schemeRequiresHost(const KURL& url)
 {
     // We expect URLs with these schemes to have authority components. If the
     // URL lacks an authority component, we get concerned and mark the origin
@@ -101,9 +101,9 @@ static bool shouldTreatAsUniqueOrigin(const KURL& url)
     // FIXME: Check whether innerURL is valid.
 
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
-    // FIXME: Do we really need to do this? This looks to be a hack around a
-    // security bug in CFNetwork that might have been fixed.
-    if (schemeRequiresAuthority(innerURL) && innerURL.host().isEmpty())
+    // This is an additional safety net against bugs in KURL parsing, and for network back-ends that parse URLs differently,
+    // and could misinterpret another component for hostname.
+    if (schemeRequiresHost(innerURL) && innerURL.host().isEmpty())
         return true;
 
     // SchemeRegistry needs a lower case protocol because it uses HashMaps

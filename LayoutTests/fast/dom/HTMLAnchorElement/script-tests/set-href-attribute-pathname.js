@@ -50,12 +50,12 @@ a.href = "https://www.my|d[]()omain.com/path/testurl.html?key=value";
 a.pathname = "p$a|th";
 shouldBe("a.href", "'https://www.my|d[]()omain.com/path/testurl.html?key=value'");
 
-// IE8 throws a security exception.
+// IE8 throws a security exception. Gecko parses this as a URL with an empty hostname.
 try {
 debug("Set pathname to URL that contains '@' in host");
 a.href = "http://w@#ww";
 a.pathname = "path";
-shouldBe("a.href", "'http://w@/path#ww'");
+shouldBe("a.href", "'http://w@#ww'");
 } catch(e) {
 debug("Exception: " + e.description);
 }

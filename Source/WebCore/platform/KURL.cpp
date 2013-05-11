@@ -1028,9 +1028,9 @@ static inline bool isDefaultPortForScheme(const char* port, size_t portLength, c
     return false;
 }
 
-static inline bool hostPortIsEmptyButCredentialsArePresent(int hostStart, int portEnd, char userEndChar)
+static inline bool hostPortIsEmptyButCredentialsArePresent(int hostStart, int portEnd, char userinfoEndChar)
 {
-    return userEndChar == '@' && hostStart == portEnd;
+    return userinfoEndChar == '@' && hostStart == portEnd;
 }
 
 static bool isNonFileHierarchicalScheme(const char* scheme, size_t schemeLength)
@@ -1207,10 +1207,10 @@ void KURL::parse(const char* url, const String* originalString)
             return;
         }
 
-        if (hostPortIsEmptyButCredentialsArePresent(hostStart, portEnd, url[userEnd])) {
-            // in this circumstance, act as if there is an erroneous hostname containing an '@'
-            userEnd = userStart;
-            hostStart = userEnd;
+        if (hostPortIsEmptyButCredentialsArePresent(hostStart, portEnd, url[passwordEnd])) {
+            m_string = originalString ? *originalString : url;
+            invalidate();
+            return;
         }
 
         if (userStart == portEnd && !m_protocolIsInHTTPFamily && !isFile) {
@@ -1281,7 +1281,9 @@ void KURL::parse(const char* url, const String* originalString)
     // File URLs need a host part unless it is just file:// or file://localhost
     bool degenerateFilePath = pathStart == pathEnd && (hostStart == hostEnd || hostIsLocalHost);
 
-    bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
+    // We drop empty credentials, but keep a colon in an empty host/port pair.
+    // Removing hostname completely would change the structure of the URL on re-parsing.
+    bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || hostEnd != portEnd;
 
     // add ":" after scheme
     *p++ = ':';
@@ -1296,8 +1298,11 @@ void KURL::parse(const char* url, const String* originalString)
         // copy in the user
         strPtr = url + userStart;
         const char* userEndPtr = url + userEnd;
-        while (strPtr < userEndPtr)
-            *p++ = *strPtr++;
+        while (strPtr < userEndPtr) {
+            char c = *strPtr++;
+            ASSERT(isUserInfoChar(c));
+            *p++ = c;
+        }
         m_userEnd = p - buffer.data();
 
         // copy in the password
@@ -1305,8 +1310,11 @@ void KURL::parse(const char* url, const String* originalString)
             *p++ = ':';
             strPtr = url + passwordStart;
             const char* passwordEndPtr = url + passwordEnd;
-            while (strPtr < passwordEndPtr)
-                *p++ = *strPtr++;
+            while (strPtr < passwordEndPtr) {
+                char c = *strPtr++;
+                ASSERT(isUserInfoChar(c));
+                *p++ = c;
+            }
         }
         m_passwordEnd = p - buffer.data();
 
@@ -1319,20 +1327,27 @@ void KURL::parse(const char* url, const String* originalString)
             strPtr = url + hostStart;
             const char* hostEndPtr = url + hostEnd;
             if (isCanonicalHostnameLowercaseForScheme(buffer.data(), m_schemeEnd)) {
-                while (strPtr < hostEndPtr)
-                    *p++ = toASCIILower(*strPtr++);
+                while (strPtr < hostEndPtr) {
+                    char c = toASCIILower(*strPtr++);
+                    ASSERT(isHostnameChar(c) || c == '[' || c == ']' || c == ':');
+                    *p++ = c;
+                }
             } else {
-                while (strPtr < hostEndPtr)
-                    *p++ = *strPtr++;
+                while (strPtr < hostEndPtr) {
+                    char c = *strPtr++;
+                    ASSERT(isHostnameChar(c) || c == '[' || c == ']' || c == ':');
+                    *p++ = c;
+                }
             }
         }
         m_hostEnd = p - buffer.data();
 
-        // Copy in the port if the URL has one (and it's not default).
+        // Copy in the port if the URL has one (and it's not default). Also, copy it if there was no hostname, so that there is still something in authority component.
         if (hostEnd != portStart) {
             const char* portStr = url + portStart;
             size_t portLength = portEnd - portStart;
-            if (portLength && !isDefaultPortForScheme(portStr, portLength, buffer.data(), m_schemeEnd)) {
+            if ((portLength && !isDefaultPortForScheme(portStr, portLength, buffer.data(), m_schemeEnd))
+                || (hostStart == hostEnd && hostEnd != portStart)) {
                 *p++ = ':';
                 const char* portEndPtr = url + portEnd;
                 while (portStr < portEndPtr)
