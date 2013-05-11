@@ -236,6 +236,7 @@ set(WebKit2_SOURCES
 
     Shared/Plugins/Netscape/NetscapePluginModule.cpp
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+    Shared/Plugins/Netscape/PluginInformation.cpp
 
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp

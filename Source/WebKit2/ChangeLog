@@ -1,5 +1,13 @@
 2013-05-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed, Fix WK2 EFL build after r149904.
+
+        Add new PluginInformation.cpp file to CMake.
+
+        * CMakeLists.txt:
+
+2013-05-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Unreviewed, fix WK2 EFL build after r149904.
 
         Add new WKPluginInformation.cpp file to CMake.
