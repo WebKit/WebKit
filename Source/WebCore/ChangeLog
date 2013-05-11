@@ -1,3 +1,16 @@
+2013-05-11  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r149718): Move exported symbol into ENABLE(FULLSCREEN_API) section
+
+        Fixes the following build failure when ENABLE(FULLSCREEN_API) is
+        off:
+
+            Undefined symbols for architecture i386:
+              "__ZNK7WebCore7Element25containsFullScreenElementEv", referenced from:
+                 -exported_symbol[s_list] command line option
+
+        * WebCore.exp.in: Move the symbol.
+
 2013-05-11  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, remove some lint accidentally left in r149929.
