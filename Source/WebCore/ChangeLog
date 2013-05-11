@@ -1,5 +1,24 @@
 2013-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r145680): No box shadow rendered on element with positioned child that obscures it
+        https://bugs.webkit.org/show_bug.cgi?id=115840
+
+        Reviewed by Antti Koivisto.
+        
+        In r107836, we moved some box-shadow painting into the paintFillLayer code for performance.
+        However, in r145680 we started to skip background painting when we know the background is
+        obscured. This broke shadow painting in some cases.
+        
+        Fix by always painting the background fill layers if we know that they will also
+        paint the shadow.
+
+        Test: fast/box-shadow/box-shadow-obscured-backgrounds.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackground):
+
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r143626): Element shows as garbage in image gallery
         https://bugs.webkit.org/show_bug.cgi?id=115946
 
