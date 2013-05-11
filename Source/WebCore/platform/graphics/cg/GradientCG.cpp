@@ -48,10 +48,10 @@ CGGradientRef Gradient::platformGradient()
     
     const int cReservedStops = 3;
     Vector<CGFloat, 4 * cReservedStops> colorComponents;
-    colorComponents.reserveCapacity(m_stops.size() * 4); // RGBA components per stop
+    colorComponents.reserveInitialCapacity(m_stops.size() * 4); // RGBA components per stop
 
     Vector<CGFloat, cReservedStops> locations;
-    locations.reserveCapacity(m_stops.size());
+    locations.reserveInitialCapacity(m_stops.size());
 
     for (size_t i = 0; i < m_stops.size(); ++i) {
         colorComponents.uncheckedAppend(m_stops[i].red);
