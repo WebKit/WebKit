@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include <algorithm>
 #include <stdio.h>
+#include <sys/mman.h>
 
 namespace CoreIPC {
 
