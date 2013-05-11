@@ -30,4 +30,9 @@
     <None Include="WinLauncherPostBuild.cmd" />
     <None Include="WinLauncherPreBuild.cmd" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="WinLauncher.exe.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
+  </ItemGroup>
 </Project>

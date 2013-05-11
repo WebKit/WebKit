@@ -104,6 +104,9 @@
     <None Include="WinLauncherPostBuild.cmd" />
     <None Include="WinLauncherPreBuild.cmd" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="WinLauncher.exe.manifest" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
