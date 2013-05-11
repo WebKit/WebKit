@@ -84,7 +84,9 @@ private:
     void encode(double);
 
     uint8_t* grow(unsigned alignment, size_t size);
-    
+
+    uint8_t m_inlineBuffer[512];
+
     uint8_t* m_buffer;
     uint8_t* m_bufferPointer;
     

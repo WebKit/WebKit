@@ -1,3 +1,29 @@
+2013-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Don't pass malloced pointers as out-of-line data when sending Mach messages
+        https://bugs.webkit.org/show_bug.cgi?id=115970
+        <rdar://problem/13144680>
+
+        Reviewed by Sam Weinig.
+
+        Give ArgumentEncoder an inline buffer of 512 bytes. If we need more than that, use mmap to allocate data
+        since that gives us fresh zero-filled memory that we can safely share.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::ArgumentEncoder):
+        Set up the buffer pointers to point to the inline buffer.
+
+        (CoreIPC::ArgumentEncoder::~ArgumentEncoder):
+        Unmap the buffer if necessary.
+
+        (CoreIPC::ArgumentEncoder::grow):
+        Grow the allocation exponentially, rounded up to the nearest page. This is a simplification from the
+        current strategy, but most messages are either tiny in which case they will fit inside the inline buffer,
+        or big in which case we'll end up doing less allocations + memory copying.
+
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (ArgumentEncoder):
+
 2013-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r149904.
