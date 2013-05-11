@@ -1,3 +1,13 @@
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Garbage down left side of nytimes.com page (if subscriber)
+        https://bugs.webkit.org/show_bug.cgi?id=115839
+
+        Reviewed by Antti Koivisto.
+
+        * compositing/contents-opaque/overflow-hidden-child-layers-expected.txt: Added.
+        * compositing/contents-opaque/overflow-hidden-child-layers.html: Added.
+
 2013-05-10  Eric Carlson  <eric.carlson@apple.com>
 
         In-band captions not visible immediately after track mode change

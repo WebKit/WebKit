@@ -1,3 +1,24 @@
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Garbage down left side of nytimes.com page (if subscriber)
+        https://bugs.webkit.org/show_bug.cgi?id=115839
+
+        Reviewed by Antti Koivisto.
+        
+        RenderLayer::backgroundIsKnownToBeOpaqueInRect() would incorrectly return true
+        for layers where the given rect wasn't contained in the background rect, but
+        where some child layer obscured the rect, even though clipping hid part
+        of that child layer.
+        
+        So bail from RenderLayer::backgroundIsKnownToBeOpaqueInRect() if we have
+        any overflow clipping. This could be enhanced in future to test whether child
+        layers obscure the clipping rect, but that would be more expensive.
+
+        Test: compositing/contents-opaque/overflow-hidden-child-layers.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::backgroundIsKnownToBeOpaqueInRect):
+
 2013-05-10  Eric Carlson  <eric.carlson@apple.com>
 
         In-band captions not visible immediately after track mode change

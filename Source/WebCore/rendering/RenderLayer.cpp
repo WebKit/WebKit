@@ -5585,8 +5585,15 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
 
     // FIXME: We currently only check the immediate renderer,
     // which will miss many cases.
-    return renderer()->backgroundIsKnownToBeOpaqueInRect(localRect)
-        || listBackgroundIsKnownToBeOpaqueInRect(posZOrderList(), localRect)
+    if (renderer()->backgroundIsKnownToBeOpaqueInRect(localRect))
+        return true;
+    
+    // We can't consult child layers if we clip, since they might cover
+    // parts of the rect that are clipped out.
+    if (renderer()->hasOverflowClip())
+        return false;
+    
+    return listBackgroundIsKnownToBeOpaqueInRect(posZOrderList(), localRect)
         || listBackgroundIsKnownToBeOpaqueInRect(negZOrderList(), localRect)
         || listBackgroundIsKnownToBeOpaqueInRect(normalFlowList(), localRect);
 }
