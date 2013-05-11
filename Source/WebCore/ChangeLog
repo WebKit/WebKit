@@ -1,5 +1,31 @@
 2013-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r143626): Element shows as garbage in image gallery
+        https://bugs.webkit.org/show_bug.cgi?id=115946
+
+        Reviewed by Antti Koivisto.
+        
+        RenderLayer::backgroundIsKnownToBeOpaqueInRect() used hasVisibleContent()
+        to check whether the layer's content was hidden via the visibility property.
+        However, this assumed that a passing hasVisibleContent() check meant that the
+        entire area was covered by the renderers and layers checked layer.
+        
+        This is not always true. It's possible to have a visibility:hidden layer
+        with a non-covering visbility:visible child, or even a single RenderText
+        child that happens to have visibility:visible style. In these situations,
+        hasVisibleContent() returns true but the entire area is not painted.
+        
+        So we have to fall back to on a more conservative check using the
+        visibility style, which will give is a reliable answer for the current layer.
+
+        Tests: compositing/contents-opaque/hidden-with-visible-child.html
+               compositing/contents-opaque/hidden-with-visible-text.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::backgroundIsKnownToBeOpaqueInRect):
+
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Garbage down left side of nytimes.com page (if subscriber)
         https://bugs.webkit.org/show_bug.cgi?id=115839
 

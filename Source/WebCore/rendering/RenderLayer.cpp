@@ -5564,8 +5564,9 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (paintsWithTransparency(PaintBehaviorNormal))
         return false;
 
-    ASSERT(!m_visibleContentStatusDirty);
-    if (!hasVisibleContent())
+    // We can't use hasVisibleContent(), because that will be true if our renderer is hidden, but some child
+    // is visible and that child doesn't cover the entire rect.
+    if (renderer()->style()->visibility() != VISIBLE)
         return false;
 
 #if ENABLE(CSS_FILTERS)

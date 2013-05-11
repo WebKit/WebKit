@@ -1,5 +1,21 @@
 2013-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r143626): Element shows as garbage in image gallery
+        https://bugs.webkit.org/show_bug.cgi?id=115946
+
+        Reviewed by Antti Koivisto.
+        
+        Test that dumps layers for a visibility:hidden element with a child text node,
+        and with a visibility:visible child. The resulting compositing layer should
+        not be marked as opaque.
+
+        * compositing/contents-opaque/hidden-with-visible-child-expected.txt: Added.
+        * compositing/contents-opaque/hidden-with-visible-child.html: Added.
+        * compositing/contents-opaque/hidden-with-visible-text-expected.txt: Added.
+        * compositing/contents-opaque/hidden-with-visible-text.html: Added.
+
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Garbage down left side of nytimes.com page (if subscriber)
         https://bugs.webkit.org/show_bug.cgi?id=115839
 
