@@ -1,3 +1,16 @@
+2013-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Make it a build error to put invalid C++ symbol names in WebCore.exp.in
+        https://bugs.webkit.org/show_bug.cgi?id=115958
+
+        Reviewed by Andreas Kling.
+
+        While invalid C++ symbols will eventually show up as a link error since the symbol won't be found,
+        this makes it easier to catch invalid symbols inside of #ifdefs.
+
+        * make-export-file-generator:
+        Try to demangle C++ symbols before printing them.
+
 2013-05-11  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r149718): Move exported symbol into ENABLE(FULLSCREEN_API) section
