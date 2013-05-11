@@ -298,28 +298,41 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [[m_windowController.get() window] setTitle:title];
 }
 
-void WebInspectorFrontendClient::save(const String& refURL, const String& refContent, bool forceSaveAs)
+void WebInspectorFrontendClient::save(const String& suggestedURL, const String& content, bool forceSaveDialog)
 {
-    String url = refURL;
-    String content = refContent;
-    auto saveToURL = ^(NSURL *URL) {
-        m_saveURLs.set(url, URL);
+    ASSERT(!suggestedURL.isEmpty());
+    
+    NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).get();
+    if (!platformURL) {
+        platformURL = [NSURL URLWithString:suggestedURL];
+        // The user must confirm new filenames before we can save to them.
+        forceSaveDialog = true;
+    }
+    
+    ASSERT(platformURL);
+    if (!platformURL)
+        return;
 
-        [content writeToURL:URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-        core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", URL.absoluteString]);
+    // Necessary for the block below.
+    String suggestedURLCopy = suggestedURL;
+    String contentCopy = content;
+
+    auto saveToURL = ^(NSURL *actualURL) {
+        ASSERT(actualURL);
+        
+        m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
+        [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
     };
 
-    NSURL *URL = m_saveURLs.get(url).get();
-    if (!URL)
-        URL = [NSURL URLWithString:url];
-    else if (!forceSaveAs) {
-        saveToURL(URL);
+    if (!forceSaveDialog) {
+        saveToURL(platformURL);
         return;
     }
-
+    
     NSSavePanel *panel = [NSSavePanel savePanel];
-    panel.nameFieldStringValue = URL.lastPathComponent;
-    panel.directoryURL = [URL URLByDeletingLastPathComponent];
+    panel.nameFieldStringValue = platformURL.lastPathComponent;
+    panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     [panel beginSheetModalForWindow:[[m_windowController webView] window] completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelCancelButton)
@@ -329,18 +342,21 @@ void WebInspectorFrontendClient::save(const String& refURL, const String& refCon
     }];
 }
 
-void WebInspectorFrontendClient::append(const String& url, const String& content)
+void WebInspectorFrontendClient::append(const String& suggestedURL, const String& content)
 {
-    RetainPtr<NSURL> URL = m_saveURLs.get(url);
-    if (!URL)
-        URL = [NSURL URLWithString:url];
+    ASSERT(!suggestedURL.isEmpty());
+    
+    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
+    // do not append unless the user has already confirmed this filename in save().
+    if (!actualURL)
+        return;
 
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:URL.get() error:NULL];
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
     [handle seekToEndOfFile];
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [URL absoluteString]]);
+    core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [actualURL absoluteString]]);
 }
 
 // MARK: -

@@ -1,3 +1,65 @@
+2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Implement WK2 version of WebInspectorFrontendClient::save
+        https://bugs.webkit.org/show_bug.cgi?id=115564
+
+        Reviewed by Benjamin Poulain.
+
+        Implement InspectorFrontendHost's save() and append() methods for
+        Mac WebKit2. Add canSave() for all ports.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::save):
+        (WebKit):
+        (WebKit::WebInspectorProxy::append):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit):
+        (WebKit::WebInspectorProxy::platformAppend):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit):
+        (WebKit::WebInspectorProxy::platformAppend):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit):
+        (WebKit::WebInspectorProxy::platformAppend):
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit):
+        (WebKit::WebInspectorProxy::platformAppend):
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::canSave):
+        (WebKit):
+        (WebKit::WebInspectorFrontendClient::save):
+        (WebKit::WebInspectorFrontendClient::append):
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+        (WebInspectorFrontendClient):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::save):
+        (WebKit):
+        (WebKit::WebInspector::append):
+        (WebKit::WebInspector::didSave):
+        (WebKit::WebInspector::didAppend):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/efl/WebInspectorEfl.cpp:
+        (WebKit::WebInspector::canSave):
+        (WebKit):
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspector::canSave):
+        (WebKit):
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::WebInspector::canSave):
+        (WebKit):
+        * WebProcess/WebPage/qt/WebInspectorQt.cpp:
+        (WebKit::WebInspector::canSave):
+        (WebKit):
+
 2013-05-10  Remy Demarest  <rdemarest@apple.com>
 
         Copy WKPluginInformation.h header to the WebKit2 Framework private headers.

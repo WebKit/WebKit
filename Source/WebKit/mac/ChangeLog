@@ -1,3 +1,17 @@
+2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Implement WK2 version of WebInspectorFrontendClient::save
+        https://bugs.webkit.org/show_bug.cgi?id=115564
+
+        Reviewed by Benjamin Poulain.
+
+        Clean up save() and append() implementations.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        (WebInspectorFrontendClient::append):
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove Mac OS X Leopard (10.5) support

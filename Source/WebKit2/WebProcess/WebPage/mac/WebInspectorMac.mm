@@ -57,6 +57,11 @@ void WebInspector::setInspectorUsesWebKitUserInterface(bool flag)
     m_hasLocalizedStringsURL = false;
 }
 
+bool WebInspector::canSave() const
+{
+    return true;
+}
+
 String WebInspector::localizedStringsURL() const
 {
     if (!m_hasLocalizedStringsURL) {

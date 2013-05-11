@@ -33,10 +33,14 @@
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
+#include <WebCore/Frame.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendChannel.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScriptController.h>
+#include <WebCore/ScriptValue.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 
@@ -117,6 +121,16 @@ void WebInspector::inspectedURLChanged(const String& urlString)
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
 }
 
+void WebInspector::save(const String& filename, const String& content, bool forceSaveAs)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Save(filename, content, forceSaveAs), m_page->pageID());
+}
+
+void WebInspector::append(const String& filename, const String& content)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Append(filename, content), m_page->pageID());
+}
+
 void WebInspector::attachBottom()
 {
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachBottom(), m_page->pageID());
@@ -151,6 +165,18 @@ void WebInspector::show()
 void WebInspector::close()
 {
     m_page->corePage()->inspectorController()->close();
+}
+
+void WebInspector::didSave(const String& url)
+{
+    ASSERT(m_inspectorPage);
+    m_inspectorPage->corePage()->mainFrame()->script()->executeScript(makeString("InspectorFrontendAPI.savedURL(\"", url, "\")"));
+}
+
+void WebInspector::didAppend(const String& url)
+{
+    ASSERT(m_inspectorPage);
+    m_inspectorPage->corePage()->mainFrame()->script()->executeScript(makeString("InspectorFrontendAPI.appendedToURL(\"", url, "\")"));
 }
 
 void WebInspector::attachedBottom()

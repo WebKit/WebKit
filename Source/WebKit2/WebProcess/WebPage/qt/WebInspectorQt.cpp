@@ -33,6 +33,11 @@
 
 namespace WebKit {
 
+bool WebInspector::canSave() const
+{
+    return false;
+}
+
 String WebInspector::localizedStringsURL() const
 {
     notImplemented();

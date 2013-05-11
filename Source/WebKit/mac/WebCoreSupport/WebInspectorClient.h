@@ -123,5 +123,5 @@ private:
     WebView* m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_windowController;
     String m_inspectedURL;
-    HashMap<String, RetainPtr<NSURL>> m_saveURLs;
+    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
 };

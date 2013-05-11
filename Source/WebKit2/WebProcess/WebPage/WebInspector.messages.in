@@ -28,6 +28,8 @@ messages -> WebInspector LegacyReceiver {
     AttachedBottom()
     AttachedRight()
     Detached()
+    DidSave(WTF::String url)
+    DidAppend(WTF::String url)
     ShowConsole()
     ShowResources()
     ShowMainResourceForFrame(uint64_t frameID)

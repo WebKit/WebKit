@@ -474,6 +474,16 @@ void WebInspectorProxy::inspectedURLChanged(const String& urlString)
     platformInspectedURLChanged(urlString);
 }
 
+void WebInspectorProxy::save(const String& filename, const String& content, bool forceSaveAs)
+{
+    platformSave(filename, content, forceSaveAs);
+}
+
+void WebInspectorProxy::append(const String& filename, const String& content)
+{
+    platformAppend(filename, content);
+}
+
 bool WebInspectorProxy::canAttach()
 {
     // Keep this in sync with InspectorFrontendClientLocal::canAttachWindow. There are two implementations

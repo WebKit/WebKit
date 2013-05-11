@@ -37,6 +37,7 @@
 #import "WKRetainPtr.h"
 #import "WKURLCF.h"
 #import "WKViewPrivate.h"
+#import "WebInspectorMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -539,6 +540,67 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
     m_urlString = urlString;
 
     updateInspectorWindowTitle();
+}
+
+void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool forceSaveDialog)
+{
+    ASSERT(!suggestedURL.isEmpty());
+    
+    NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).get();
+    if (!platformURL) {
+        platformURL = [NSURL URLWithString:suggestedURL];
+        // The user must confirm new filenames before we can save to them.
+        forceSaveDialog = true;
+    }
+    
+    ASSERT(platformURL);
+    if (!platformURL)
+        return;
+
+    // Necessary for the block below.
+    String suggestedURLCopy = suggestedURL;
+    String contentCopy = content;
+
+    auto saveToURL = ^(NSURL *actualURL) {
+        ASSERT(actualURL);
+        
+        m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
+        [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        m_page->process()->send(Messages::WebInspector::DidSave([actualURL absoluteString]), m_page->pageID());
+    };
+
+    if (!forceSaveDialog) {
+        saveToURL(platformURL);
+        return;
+    }
+
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.nameFieldStringValue = platformURL.lastPathComponent;
+    panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
+
+    [panel beginSheetModalForWindow:m_inspectorWindow.get() completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelCancelButton)
+            return;
+        ASSERT(result == NSFileHandlingPanelOKButton);
+        saveToURL(panel.URL);
+    }];
+}
+
+void WebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
+{
+    ASSERT(!suggestedURL.isEmpty());
+    
+    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
+    // Do not append unless the user has already confirmed this filename in save().
+    if (!actualURL)
+        return;
+
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
+    [handle seekToEndOfFile];
+    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    [handle closeFile];
+
+    m_page->process()->send(Messages::WebInspector::DidAppend([actualURL absoluteString]), m_page->pageID());
 }
 
 void WebInspectorProxy::windowFrameDidChange()

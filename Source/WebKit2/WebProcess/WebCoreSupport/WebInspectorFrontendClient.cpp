@@ -61,6 +61,21 @@ void WebInspectorFrontendClient::closeWindow()
     m_page->inspector()->didClose();
 }
 
+bool WebInspectorFrontendClient::canSave()
+{
+    return m_page->inspector()->canSave();
+}
+
+void WebInspectorFrontendClient::save(const String& filename, const String& content, bool forceSaveAs)
+{
+    m_page->inspector()->save(filename, content, forceSaveAs);
+}
+
+void WebInspectorFrontendClient::append(const String& filename, const String& content)
+{
+    m_page->inspector()->append(filename, content);
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide dockSide)
 {
     switch (dockSide) {
