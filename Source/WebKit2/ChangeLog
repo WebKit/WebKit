@@ -1,3 +1,9 @@
+2013-05-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][Mac] Unreviewed. Roll out the fix attempt in r149912.
+
+        * Target.pri:
+
 2013-05-10  Simon Cooper  <scooper@apple.com>
 
         Fix AppleConnect issues for WiFi interfaces

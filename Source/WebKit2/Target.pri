@@ -874,8 +874,7 @@ mac: {
         Platform/CoreIPC/mac/ConnectionMac.cpp \
         Platform/mac/MachUtilities.cpp \
         Platform/mac/WorkQueueMac.cpp \
-        Platform/mac/SharedMemoryMac.cpp \
-        Shared/Plugins/Netscape/mac/PluginInformationMac.mm
+        Platform/mac/SharedMemoryMac.cpp
 
 } else:win32 {
     SOURCES += \
