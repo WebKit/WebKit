@@ -24,7 +24,6 @@
 
 // A linear convolution effect
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
 ] interface ConvolverNode : AudioNode {

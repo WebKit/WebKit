@@ -24,7 +24,6 @@
 
 // For real-time audio stream synthesis/processing in JavaScript 
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,

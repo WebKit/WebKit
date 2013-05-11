@@ -23,7 +23,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO
 ] interface AudioNode {
     readonly attribute AudioContext context;

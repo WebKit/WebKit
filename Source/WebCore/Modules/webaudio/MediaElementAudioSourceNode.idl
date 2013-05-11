@@ -23,7 +23,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO&VIDEO,
     JSGenerateToJSObject
 ] interface MediaElementAudioSourceNode : AudioSourceNode {

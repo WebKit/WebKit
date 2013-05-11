@@ -23,7 +23,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO&MEDIA_STREAM,
     JSGenerateToJSObject
 ] interface MediaStreamAudioDestinationNode : AudioSourceNode {

@@ -1,3 +1,16 @@
+2013-05-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from several WebAudio IDL interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=115894
+
+        Reviewed by Darin Adler.
+
+        Rebaseline fast/js/global-constructors-attributes.html now that more
+        global constructors are exposed.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r145680): No box shadow rendered on element with positioned child that obscures it
