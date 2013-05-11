@@ -1,3 +1,11 @@
+2013-05-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed, fix WK2 EFL build after r149904.
+
+        Add new WKPluginInformation.cpp file to CMake.
+
+        * CMakeLists.txt:
+
 2013-05-11  Andreas Kling  <akling@apple.com>
 
         When possible, terminate web processes immediately when closing their last page.
