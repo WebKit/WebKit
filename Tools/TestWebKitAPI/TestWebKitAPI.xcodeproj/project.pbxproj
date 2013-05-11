@@ -24,6 +24,7 @@
 		1AA9E55914980A9900001A8A /* Functional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9E55714980A9900001A8A /* Functional.cpp */; };
 		1ADBEFAE130C689C00D61D19 /* ForceRepaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */; };
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
+		1AE72F48173EB214006362F0 /* TerminateTwice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE72F47173EB214006362F0 /* TerminateTwice.cpp */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
 		26300B1816755CD90066886D /* ListHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26300B1716755CD90066886D /* ListHashSet.cpp */; };
@@ -301,6 +302,7 @@
 		1AA9E55714980A9900001A8A /* Functional.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Functional.cpp; path = WTF/Functional.cpp; sourceTree = "<group>"; };
 		1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceRepaint.cpp; sourceTree = "<group>"; };
 		1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-accelerated-compositing.html"; sourceTree = "<group>"; };
+		1AE72F47173EB214006362F0 /* TerminateTwice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TerminateTwice.cpp; sourceTree = "<group>"; };
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetAndUpdateCacheModel.mm; sourceTree = "<group>"; };
 		26300B1716755CD90066886D /* ListHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ListHashSet.cpp; path = WTF/ListHashSet.cpp; sourceTree = "<group>"; };
@@ -715,6 +717,7 @@
 				51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */,
 				51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
+				1AE72F47173EB214006362F0 /* TerminateTwice.cpp */,
 				BC22D31314DC689800FFB1DD /* UserMessage.cpp */,
 				BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */,
 				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
@@ -1025,6 +1028,7 @@
 				26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */,
 				B55F11A01516834F00915916 /* AttributedString.mm in Sources */,
 				00CD9F6315BE312C002DA2CE /* BackForwardList.mm in Sources */,
+				1AE72F48173EB214006362F0 /* TerminateTwice.cpp in Sources */,
 				26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */,
 				BC246D9A132F1FE100B56D7C /* CanHandleRequest.cpp in Sources */,
 				A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */,

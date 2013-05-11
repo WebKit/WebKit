@@ -628,7 +628,10 @@ void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 void WebProcessProxy::requestTermination()
 {
     ChildProcessProxy::terminate();
-    webConnection()->didClose();
+
+    if (webConnection())
+        webConnection()->didClose();
+
     disconnect();
 }
 

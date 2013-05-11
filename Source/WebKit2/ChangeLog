@@ -1,3 +1,26 @@
+2013-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Crash when terminating a process that has not been fully launched
+        https://bugs.webkit.org/show_bug.cgi?id=115962
+        <rdar://problem/13660916>
+
+        Reviewed by Andreas Kling.
+
+        Handle terminating a process that has not been fully launched.
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        If we have been invalidated, dispose the connection identifier.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::terminateProcess):
+        If we're still launching the process, invalidate so the client won't get an unexpected
+        didFinishLaunching callback.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+        Check if webConnection() is null before calling it. (It will be null if the process isn't fully launched).
+
 2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Implement WK2 version of WebInspectorFrontendClient::save
