@@ -28,14 +28,11 @@
 
 namespace WTF {
 
-#if USE(OS_RANDOMNESS)
 // This function attempts to fill buffer with randomness from the operating
 // system.  If insufficient randomness is available, the buffer will be
 // partially filled.  Rather than calling this function directly, consider
 // calling cryptographicallyRandomNumber or cryptographicallyRandomValues.
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length);
-#endif
-
 }
 
 #endif

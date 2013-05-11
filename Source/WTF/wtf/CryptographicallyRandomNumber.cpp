@@ -36,8 +36,6 @@
 
 namespace WTF {
 
-#if USE(OS_RANDOMNESS)
-
 namespace {
 
 class ARC4Stream {
@@ -175,7 +173,5 @@ void cryptographicallyRandomValues(void* buffer, size_t length)
 {
     sharedRandomNumberGenerator().randomValues(buffer, length);
 }
-
-#endif
 
 }

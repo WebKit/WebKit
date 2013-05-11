@@ -38,39 +38,9 @@
 
 namespace WTF {
 
-#if !USE(OS_RANDOMNESS)
-namespace Internal {
-
-static uint64_t state;
-
-void initializeRandomNumber(uint64_t seed)
-{
-    state = seed;
-}
-
-// This random number generator comes from: Klimov, A. and Shamir, A.,
-// "A New Class of Invertible Mappings", Cryptographic Hardware and Embedded
-// Systems 2002, http://dl.acm.org/citation.cfm?id=752741
-//
-// Very fast, very simple, and passes Diehard and other good statistical
-// tests as strongly as cryptographically-secure random number generators (but
-// is not itself cryptographically-secure).
-uint32_t randomNumber()
-{
-    state += (state * state) | 5;
-    return static_cast<uint32_t>(state >> 32);
-}
-
-}
-#endif
-
 double randomNumber()
 {
-#if USE(OS_RANDOMNESS)
     uint32_t bits = cryptographicallyRandomNumber();
-#else
-    uint32_t bits = Internal::randomNumber();
-#endif
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
 }
 

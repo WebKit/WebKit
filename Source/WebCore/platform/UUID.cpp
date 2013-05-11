@@ -31,7 +31,6 @@
 #include "config.h"
 #include "UUID.h"
 
-#include "NotImplemented.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -40,7 +39,6 @@ namespace WebCore {
 
 String createCanonicalUUIDString()
 {
-#if USE(OS_RANDOMNESS)
     unsigned randomData[4];
     cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
 
@@ -59,10 +57,6 @@ String createCanonicalUUIDString()
     appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
     appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
     return builder.toString();
-#else
-    notImplemented();
-    return String();
-#endif
 }
 
 }

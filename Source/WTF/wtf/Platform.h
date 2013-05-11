@@ -565,7 +565,6 @@
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1 
-#define WTF_USE_OS_RANDOMNESS 1
 #define WTF_USE_PTHREADS 1
 #endif /* OS(UNIX) */
 
@@ -619,7 +618,6 @@
 
 #if OS(WINDOWS)
 #define HAVE_VIRTUALALLOC 1
-#define WTF_USE_OS_RANDOMNESS 1
 #endif
 
 #if OS(QNX)

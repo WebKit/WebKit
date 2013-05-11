@@ -41,7 +41,6 @@
 
 namespace WTF {
 
-#if USE(OS_RANDOMNESS)
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
 #if OS(UNIX)
@@ -66,6 +65,5 @@ void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
     //          be of cryptographic quality!
 #endif
 }
-#endif
 
 }

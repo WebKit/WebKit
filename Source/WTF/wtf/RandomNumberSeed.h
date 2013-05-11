@@ -59,10 +59,6 @@ inline void initializeRandomNumberGenerator()
     srand(static_cast<unsigned>(time(0)));
 #endif
 
-#if !USE(OS_RANDOMNESS)
-    uint64_t seed = static_cast<uint64_t>(rand()) << 32 | static_cast<uint64_t>(rand());
-    Internal::initializeRandomNumber(seed);
-#endif
 }
 
 }

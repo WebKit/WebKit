@@ -30,16 +30,12 @@
 
 namespace WTF {
 
-#if USE(OS_RANDOMNESS)
 WTF_EXPORT_PRIVATE uint32_t cryptographicallyRandomNumber();
 WTF_EXPORT_PRIVATE void cryptographicallyRandomValues(void* buffer, size_t length);
-#endif
 
 }
 
-#if USE(OS_RANDOMNESS)
 using WTF::cryptographicallyRandomNumber;
 using WTF::cryptographicallyRandomValues;
-#endif
 
 #endif

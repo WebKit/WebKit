@@ -90,11 +90,7 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 #endif
-#if USE(OS_RANDOMNESS)
     , m_randomGenerator(cryptographicallyRandomNumber())
-#else
-    , m_randomGenerator(static_cast<unsigned>(randomNumber() * 0xFFFFFFF))
-#endif
 #if ENABLE(VALUE_PROFILER)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)

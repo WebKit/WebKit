@@ -1,3 +1,26 @@
+2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove USE(OS_RANDOMNESS)
+        https://bugs.webkit.org/show_bug.cgi?id=108095
+
+        Reviewed by Darin Adler.
+
+        Remove the USE(OS_RANDOMNESS) guard as it is turned on for all
+        ports.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::cryptographicallyRandomValues):
+        * wtf/CryptographicallyRandomNumber.h:
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * wtf/OSRandomSource.h:
+        * wtf/Platform.h:
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+        * wtf/RandomNumber.h:
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2013-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove unnecessary GLIB_CHECK_VERSION #ifdefs
