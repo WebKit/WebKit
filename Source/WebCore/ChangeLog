@@ -1,3 +1,10 @@
+2013-05-11  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, remove some lint accidentally left in r149929.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::verticalAlignApplies):
+
 2013-03-17  Robert Hogan  <robert@webkit.org>
 
         Text flow broken in elements with vertical align top/bottom and inline elements taller than line-height

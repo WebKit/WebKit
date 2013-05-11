@@ -482,9 +482,8 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
 static bool verticalAlignApplies(RenderObject* curr)
 {
-    // The vertical-align property only applies to inline elements and table cells.
-    if (curr->isRenderBlock() && !curr->isInline())
-        printf("block-flow block\n");
+    // http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align - vertical-align
+    // only applies to inline level and table-cell elements
     return !curr->isText() || curr->parent()->isInline() || curr->parent()->isTableCell();
 }
 
