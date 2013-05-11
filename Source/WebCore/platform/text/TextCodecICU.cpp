@@ -28,6 +28,8 @@
 #if USE(ICU_UNICODE)
 #include "TextCodecICU.h"
 
+#include "TextEncoding.h"
+#include "TextEncodingRegistry.h"
 #include "ThreadGlobalData.h"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_cb.h>
@@ -57,7 +59,8 @@ static UConverter*& cachedConverterICU()
 
 PassOwnPtr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, const void*)
 {
-    return adoptPtr(new TextCodecICU(encoding));
+    // TextEncoding name is always one from atomicCanonicalTextEncodingName, guaranteed to never be deleted.
+    return adoptPtr(new TextCodecICU(encoding.name()));
 }
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -197,8 +200,8 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
     }
 }
 
-TextCodecICU::TextCodecICU(const TextEncoding& encoding)
-    : m_encoding(encoding)
+TextCodecICU::TextCodecICU(const char* encoding)
+    : m_encodingName(encoding)
     , m_converterICU(0)
     , m_needsGBKFallbacks(false)
 {
@@ -224,8 +227,7 @@ void TextCodecICU::createICUConverter() const
 {
     ASSERT(!m_converterICU);
 
-    const char* name = m_encoding.name();
-    m_needsGBKFallbacks = name[0] == 'G' && name[1] == 'B' && name[2] == 'K' && !name[3];
+    m_needsGBKFallbacks = m_encodingName[0] == 'G' && m_encodingName[1] == 'B' && m_encodingName[2] == 'K' && !m_encodingName[3];
 
     UErrorCode err;
 
@@ -233,7 +235,7 @@ void TextCodecICU::createICUConverter() const
     if (cachedConverter) {
         err = U_ZERO_ERROR;
         const char* cachedName = ucnv_getName(cachedConverter, &err);
-        if (U_SUCCESS(err) && m_encoding == cachedName) {
+        if (U_SUCCESS(err) && m_encodingName == cachedName) {
             m_converterICU = cachedConverter;
             cachedConverter = 0;
             return;
@@ -241,10 +243,10 @@ void TextCodecICU::createICUConverter() const
     }
 
     err = U_ZERO_ERROR;
-    m_converterICU = ucnv_open(m_encoding.name(), &err);
+    m_converterICU = ucnv_open(m_encodingName, &err);
 #if !LOG_DISABLED
     if (err == U_AMBIGUOUS_ALIAS_WARNING)
-        LOG_ERROR("ICU ambiguous alias warning for encoding: %s", m_encoding.name());
+        LOG_ERROR("ICU ambiguous alias warning for encoding: %s", m_encodingName);
 #endif
     if (m_converterICU)
         ucnv_setFallback(m_converterICU, TRUE);
@@ -334,7 +336,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     // <http://bugs.webkit.org/show_bug.cgi?id=17014>
     // Simplified Chinese pages use the code A3A0 to mean "full-width space", but ICU decodes it as U+E5E5.
-    if (strcmp(m_encoding.name(), "GBK") == 0 || strcasecmp(m_encoding.name(), "gb18030") == 0)
+    if (strcmp(m_encodingName, "GBK") == 0 || strcasecmp(m_encodingName, "gb18030") == 0)
         resultString.replace(0xE5E5, ideographicSpace);
 
     return resultString;
@@ -429,11 +431,18 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
     // FIXME: We should see if there is "force ASCII range" mode in ICU;
     // until then, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    String copy(characters, length);
-    copy = m_encoding.displayString(copy.impl());
-
-    const UChar* source = copy.characters();
-    const UChar* sourceLimit = source + copy.length();
+    String copy;
+    const UChar* source;
+    const UChar* sourceLimit;
+    if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
+        copy.append(characters, length);
+        copy.replace('\\', 0xA5);
+        source = copy.characters();
+        sourceLimit = source + copy.length();
+    } else {
+        source = characters;
+        sourceLimit = source + length;
+    }
 
     UErrorCode err = U_ZERO_ERROR;
 

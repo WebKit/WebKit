@@ -28,7 +28,6 @@
 #define TextCodecICU_h
 
 #include "TextCodec.h"
-#include "TextEncoding.h"
 #include <unicode/utypes.h>
 
 typedef struct UConverter UConverter;
@@ -43,7 +42,7 @@ namespace WebCore {
         virtual ~TextCodecICU();
 
     private:
-        TextCodecICU(const TextEncoding&);
+        explicit TextCodecICU(const char* encoding);
         static PassOwnPtr<TextCodec> create(const TextEncoding&, const void*);
 
         virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
@@ -57,7 +56,7 @@ namespace WebCore {
         int decodeToBuffer(UChar* buffer, UChar* bufferLimit, const char*& source,
             const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& err);
 
-        TextEncoding m_encoding;
+        const char* const m_encodingName;
         mutable UConverter* m_converterICU;
         mutable bool m_needsGBKFallbacks;
     };

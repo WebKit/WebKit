@@ -1,3 +1,19 @@
+2013-05-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Make TextCodecICU not depend on TextEncoding
+        https://bugs.webkit.org/show_bug.cgi?id=115848
+
+        Reviewed by Darin Adler.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::create):
+        (WebCore::TextCodecICU::TextCodecICU):
+        (WebCore::TextCodecICU::createICUConverter):
+        (WebCore::TextCodecICU::decode):
+        (WebCore::TextCodecICU::encode):
+        * platform/text/TextCodecICU.h:
+        Use a plain encoding string in platform encoder wrapper, not a higher level concept.
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove Mac OS X Leopard (10.5) support
