@@ -29,6 +29,7 @@
 #include "AffineTransform.h"
 #include "CanvasPathMethods.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasStyle.h"
 #include "Color.h"
 #include "ColorSpace.h"
 #include "DashArray.h"
@@ -48,7 +49,6 @@ namespace WebCore {
 
 class CanvasGradient;
 class CanvasPattern;
-class CanvasStyle;
 #if ENABLE(CANVAS_PATH)
 class DOMPath;
 #endif
@@ -70,11 +70,11 @@ public:
     }
     virtual ~CanvasRenderingContext2D();
 
-    CanvasStyle* strokeStyle() const;
-    void setStrokeStyle(PassRefPtr<CanvasStyle>);
+    const CanvasStyle& strokeStyle() const { return state().m_strokeStyle; }
+    void setStrokeStyle(CanvasStyle);
 
-    CanvasStyle* fillStyle() const;
-    void setFillStyle(PassRefPtr<CanvasStyle>);
+    const CanvasStyle& fillStyle() const { return state().m_fillStyle; }
+    void setFillStyle(CanvasStyle);
 
     float lineWidth() const;
     void setLineWidth(float);
@@ -240,8 +240,8 @@ private:
 
         String m_unparsedStrokeColor;
         String m_unparsedFillColor;
-        RefPtr<CanvasStyle> m_strokeStyle;
-        RefPtr<CanvasStyle> m_fillStyle;
+        CanvasStyle m_strokeStyle;
+        CanvasStyle m_fillStyle;
         float m_lineWidth;
         LineCap m_lineCap;
         LineJoin m_lineJoin;

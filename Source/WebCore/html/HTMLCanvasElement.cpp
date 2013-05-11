@@ -33,7 +33,6 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
-#include "CanvasStyle.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "ExceptionCode.h"

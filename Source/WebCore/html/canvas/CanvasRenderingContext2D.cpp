@@ -40,7 +40,6 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
-#include "CanvasStyle.h"
 #include "Console.h"
 #include "DOMPath.h"
 #include "ExceptionCode.h"
@@ -180,8 +179,8 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
-    , m_fillStyle(CanvasStyle::createFromRGBA(Color::black))
+    : m_strokeStyle(Color::black)
+    , m_fillStyle(Color::black)
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
     , m_lineJoin(MiterJoin)
@@ -312,68 +311,56 @@ void CanvasRenderingContext2D::restore()
     c->restore();
 }
 
-CanvasStyle* CanvasRenderingContext2D::strokeStyle() const
+void CanvasRenderingContext2D::setStrokeStyle(CanvasStyle style)
 {
-    return state().m_strokeStyle.get();
-}
-
-void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> prpStyle)
-{
-    RefPtr<CanvasStyle> style = prpStyle;
-
-    if (!style)
+    if (!style.isValid())
         return;
 
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(*style))
+    if (state().m_strokeStyle.isValid() && state().m_strokeStyle.isEquivalentColor(style))
         return;
 
-    if (style->isCurrentColor()) {
-        if (style->hasOverrideAlpha())
-            style = CanvasStyle::createFromRGBA(colorWithOverrideAlpha(currentColor(canvas()), style->overrideAlpha()));
+    if (style.isCurrentColor()) {
+        if (style.hasOverrideAlpha())
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()), style.overrideAlpha()));
         else
-            style = CanvasStyle::createFromRGBA(currentColor(canvas()));
+            style = CanvasStyle(currentColor(canvas()));
     } else
-        checkOrigin(style->canvasPattern());
+        checkOrigin(style.canvasPattern());
 
     realizeSaves();
-    modifiableState().m_strokeStyle = style.release();
+    State& state = modifiableState();
+    state.m_strokeStyle = style;
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    state().m_strokeStyle->applyStrokeColor(c);
-    modifiableState().m_unparsedStrokeColor = String();
+    state.m_strokeStyle.applyStrokeColor(c);
+    state.m_unparsedStrokeColor = String();
 }
 
-CanvasStyle* CanvasRenderingContext2D::fillStyle() const
+void CanvasRenderingContext2D::setFillStyle(CanvasStyle style)
 {
-    return state().m_fillStyle.get();
-}
-
-void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> prpStyle)
-{
-    RefPtr<CanvasStyle> style = prpStyle;
-
-    if (!style)
+    if (!style.isValid())
         return;
 
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(*style))
+    if (state().m_fillStyle.isValid() && state().m_fillStyle.isEquivalentColor(style))
         return;
 
-    if (style->isCurrentColor()) {
-        if (style->hasOverrideAlpha())
-            style = CanvasStyle::createFromRGBA(colorWithOverrideAlpha(currentColor(canvas()), style->overrideAlpha()));
+    if (style.isCurrentColor()) {
+        if (style.hasOverrideAlpha())
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()), style.overrideAlpha()));
         else
-            style = CanvasStyle::createFromRGBA(currentColor(canvas()));
+            style = CanvasStyle(currentColor(canvas()));
     } else
-        checkOrigin(style->canvasPattern());
+        checkOrigin(style.canvasPattern());
 
     realizeSaves();
-    modifiableState().m_fillStyle = style.release();
+    State& state = modifiableState();
+    state.m_fillStyle = style;
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    state().m_fillStyle->applyFillColor(c);
-    modifiableState().m_unparsedFillColor = String();
+    state.m_fillStyle.applyFillColor(c);
+    state.m_unparsedFillColor = String();
 }
 
 float CanvasRenderingContext2D::lineWidth() const
@@ -782,9 +769,9 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color)
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
+    if (state().m_strokeStyle.isValid() && state().m_strokeStyle.isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
         return;
-    setStrokeStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, 1.0f));
+    setStrokeStyle(CanvasStyle(grayLevel, 1.0f));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color, float alpha)
@@ -794,23 +781,23 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color, float alpha)
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel, float alpha)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
+    if (state().m_strokeStyle.isValid() && state().m_strokeStyle.isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
         return;
-    setStrokeStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, alpha));
+    setStrokeStyle(CanvasStyle(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float r, float g, float b, float a)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(r, g, b, a))
+    if (state().m_strokeStyle.isValid() && state().m_strokeStyle.isEquivalentRGBA(r, g, b, a))
         return;
-    setStrokeStyle(CanvasStyle::createFromRGBAChannels(r, g, b, a));
+    setStrokeStyle(CanvasStyle(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float c, float m, float y, float k, float a)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentCMYKA(c, m, y, k, a))
+    if (state().m_strokeStyle.isValid() && state().m_strokeStyle.isEquivalentCMYKA(c, m, y, k, a))
         return;
-    setStrokeStyle(CanvasStyle::createFromCMYKAChannels(c, m, y, k, a));
+    setStrokeStyle(CanvasStyle(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color)
@@ -824,9 +811,9 @@ void CanvasRenderingContext2D::setFillColor(const String& color)
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
+    if (state().m_fillStyle.isValid() && state().m_fillStyle.isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
         return;
-    setFillStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, 1.0f));
+    setFillStyle(CanvasStyle(grayLevel, 1.0f));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
@@ -836,23 +823,23 @@ void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel, float alpha)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
+    if (state().m_fillStyle.isValid() && state().m_fillStyle.isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
         return;
-    setFillStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, alpha));
+    setFillStyle(CanvasStyle(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float r, float g, float b, float a)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(r, g, b, a))
+    if (state().m_fillStyle.isValid() && state().m_fillStyle.isEquivalentRGBA(r, g, b, a))
         return;
-    setFillStyle(CanvasStyle::createFromRGBAChannels(r, g, b, a));
+    setFillStyle(CanvasStyle(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(float c, float m, float y, float k, float a)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentCMYKA(c, m, y, k, a))
+    if (state().m_fillStyle.isValid() && state().m_fillStyle.isEquivalentCMYKA(c, m, y, k, a))
         return;
-    setFillStyle(CanvasStyle::createFromCMYKAChannels(c, m, y, k, a));
+    setFillStyle(CanvasStyle(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::beginPath()
@@ -1662,7 +1649,7 @@ template<class T> void CanvasRenderingContext2D::fullCanvasCompositedFill(const 
     path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
 
     buffer->context()->setCompositeOperation(CompositeSourceOver);
-    state().m_fillStyle->applyFillColor(buffer->context());
+    modifiableState().m_fillStyle.applyFillColor(buffer->context());
     buffer->context()->fillPath(path);
 
     compositeBuffer(buffer.get(), bufferRect, state().m_globalComposite);
@@ -2252,8 +2239,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         inflateStrokeRect(textRect);
 
 #if USE(CG)
-    CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
-    if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
+    const CanvasStyle& drawStyle = fill ? state().m_fillStyle : state().m_strokeStyle;
+    if (drawStyle.canvasGradient() || drawStyle.canvasPattern()) {
         IntRect maskRect = enclosingIntRect(textRect);
 
         OwnPtr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
@@ -2281,7 +2268,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
         GraphicsContextStateSaver stateSaver(*c);
         c->clipToImageBuffer(maskImage.get(), maskRect);
-        drawStyle->applyFillColor(c);
+        drawStyle.applyFillColor(c);
         c->fillRect(maskRect);
         return;
     }

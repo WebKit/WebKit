@@ -1,3 +1,46 @@
+2013-05-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make CanvasStyle a plain object instead of an RefCounted object
+        https://bugs.webkit.org/show_bug.cgi?id=115775
+
+        Reviewed by Andreas Kling.
+
+        CanvasStyle is just 2 words wide. We do not gain anything from allocating
+        it on the heap. Change the object to be just a type and some data.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::toHTMLCanvasStyle):
+        * html/HTMLCanvasElement.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedFill):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::strokeStyle):
+        (CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::fillStyle):
+        (State):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::createFromString):
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        (WebCore::CanvasStyle::isEquivalentColor):
+        (WebCore):
+        (WebCore::CanvasStyle::operator=):
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/canvas/CanvasStyle.h:
+        (CanvasStyle):
+        (WebCore::CanvasStyle::isValid):
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore):
+        (WebCore::CanvasStyle::operator=):
+
 2013-05-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Gradient::platformGradient: Vector reserveCapacity -> reserveInitialCapacity
