@@ -1,3 +1,22 @@
+2013-03-17  Robert Hogan  <robert@webkit.org>
+
+        Text flow broken in elements with vertical align top/bottom and inline elements taller than line-height
+        https://bugs.webkit.org/show_bug.cgi?id=111974
+
+        Reviewed by Ryosuke Niwa.
+        
+        Per http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align 'vertical-align' only applies to inline and table-cell
+        elements.
+
+        Test: fast/css/vertical-align-block-elements.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::isTextInBlockElement):
+        (WebCore):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+
 2013-05-11  Benjamin Poulain  <bpoulain@apple.com>
 
         Make CanvasStyle a plain object instead of an RefCounted object

@@ -1,3 +1,17 @@
+2013-03-17  Robert Hogan  <robert@webkit.org>
+
+        Text flow broken in elements with vertical align top/bottom and inline elements taller than line-height
+        https://bugs.webkit.org/show_bug.cgi?id=111974
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/query-command-state-expected.txt:
+        * editing/execCommand/script-tests/query-command-state.js: Remove invalid tests, vertical-align does not apply to 
+          div elements.
+        (runTests):
+        * fast/css/vertical-align-block-elements-expected.html: Added.
+        * fast/css/vertical-align-block-elements.html: Added.
+
 2013-05-10  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13666412> Clean up some edge cases of URL parsing.

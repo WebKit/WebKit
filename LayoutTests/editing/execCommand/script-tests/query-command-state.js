@@ -75,7 +75,6 @@ function runTests(editingBehavior) {
     testQueryCommandState("subscript", '<sub>hello</sub>', selectAll, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("subscript", '<sub>hello</sub> world', selectAll, {'mac': true, 'win': false}[editingBehavior]);
     testQueryCommandState("subscript", 'hello <sub>world</sub>', selectAll, {'mac': false, 'win': false}[editingBehavior]);
-    testQueryCommandState("subscript", '<div style="vertical-align: sub;">hello world</div>', selectAll, {'mac': true, 'win': true}[editingBehavior]);
     testQueryCommandState("subscript", 'hello <span style="vertical-align: sub;">world</span> WebKit', selectSecondWord, {'mac': true, 'win': false}[editingBehavior]);
 
     testQueryCommandState("superscript", 'hello', selectAll, {'mac': false, 'win': false}[editingBehavior]);
