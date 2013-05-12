@@ -1,3 +1,17 @@
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: Fixed background on ColterReed.com scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=115951
+
+        Reviewed by Beth Dakin.
+        
+        Tests with a fixed background and two different ways of making the <html> composited.
+
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-composited-html-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-composited-html.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-negative-z-index-fixed-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-negative-z-index-fixed.html: Added.
+
 2013-05-11  Xan Lopez  <xlopez@igalia.com>
 
         Bogus -webkit-columns value in fast/text/international/spaces-combined-in-vertical-text.html

@@ -1,3 +1,37 @@
+2013-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: Fixed background on ColterReed.com scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=115951
+
+        Reviewed by Beth Dakin.
+        
+        The logic for painting the fixed root background into its own layer was
+        broken when the document element's layer was composited. This could be caused
+        by a negative z-index child of the body, or by an explicit compositing-causing
+        style on the <html>.
+        
+        There were two issues. First, when painting the layer for the fixed root
+        background, we would simply short-circuit the fixed background paint in
+        RenderLayer::paintLayer(), when checking for a composited layer. We have
+        to continue to paint through the composited <html> layer to get the root
+        background in this case.
+        
+        Secondly, RenderLayerBacking::paintIntoLayer() would only set the PaintLayerPaintingSkipRootBackground
+        flag if this RenderLayerBacking had a m_backgroundLayer. However, when the <html> is
+        composited, we need to skip painting the root layer for both the RenderView's backing,
+        and for the <html>'s backing. Checking whether there is *any* layer that paints
+        the fixed root background (i.e. checking compositor()->fixedRootBackgroundLayer())
+        is a simple way to fix this test.
+
+        Tests: platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-composited-html.html
+               platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-negative-z-index-fixed.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::paintForFixedRootBackground):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2013-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Possible crash when going Back while loading PDF
