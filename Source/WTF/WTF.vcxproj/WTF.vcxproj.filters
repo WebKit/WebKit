@@ -486,9 +486,6 @@
     <ClInclude Include="..\wtf\MainThread.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\MallocZoneSupport.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\MathExtras.h">
       <Filter>wtf</Filter>
     </ClInclude>

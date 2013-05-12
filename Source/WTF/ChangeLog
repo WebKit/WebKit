@@ -1,3 +1,26 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Move RemoteMemoryReader into FastMalloc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=115985
+
+        Reviewed by Andreas Kling.
+
+        RemoteMemoryReader is only used in FastMalloc.cpp, and even had one of its member functions
+        implemented there, so move the entire class template there and remove MallocZoneSupport.h.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastMalloc.cpp:
+        (WTF):
+        (PageHeapAllocator):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/MallocZoneSupport.h: Removed.
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove USE(OS_RANDOMNESS)

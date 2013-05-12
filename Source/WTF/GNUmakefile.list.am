@@ -83,7 +83,6 @@ wtf_sources += \
     Source/WTF/wtf/MD5.h \
     Source/WTF/wtf/MainThread.cpp \
     Source/WTF/wtf/MainThread.h \
-    Source/WTF/wtf/MallocZoneSupport.h \
     Source/WTF/wtf/MathExtras.h \
     Source/WTF/wtf/MediaTime.h \
     Source/WTF/wtf/MediaTime.cpp \

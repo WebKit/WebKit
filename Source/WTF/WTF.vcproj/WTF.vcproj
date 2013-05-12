@@ -903,10 +903,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\MallocZoneSupport.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\MathExtras.h"
 			>
 		</File>

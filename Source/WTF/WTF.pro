@@ -85,7 +85,6 @@ HEADERS += \
     ListHashSet.h \
     Locker.h \
     MainThread.h \
-    MallocZoneSupport.h \
     MathExtras.h \
     MD5.h \
     MediaTime.h \

@@ -45,7 +45,6 @@ set(WTF_HEADERS
     Locker.h
     MD5.h
     MainThread.h
-    MallocZoneSupport.h
     MathExtras.h
     MediaTime.h
     MessageQueue.h
