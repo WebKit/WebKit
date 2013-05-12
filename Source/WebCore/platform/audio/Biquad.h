@@ -30,8 +30,8 @@
 #define Biquad_h
 
 #include "AudioArray.h"
+#include <complex>
 #include <sys/types.h>
-#include <wtf/Complex.h>
  
 #if USE(WEBAUDIO_IPP)
 #include <ipps.h>
@@ -64,11 +64,11 @@ public:
 
     // Set the biquad coefficients given a single zero (other zero will be conjugate)
     // and a single pole (other pole will be conjugate)
-    void setZeroPolePairs(const Complex& zero, const Complex& pole);
+    void setZeroPolePairs(std::complex<double> zero, std::complex<double> pole);
 
     // Set the biquad coefficients given a single pole (other pole will be conjugate)
     // (The zeroes will be the inverse of the poles)
-    void setAllpassPole(const Complex& pole);
+    void setAllpassPole(std::complex<double>);
 
     // Resets filter state
     void reset();

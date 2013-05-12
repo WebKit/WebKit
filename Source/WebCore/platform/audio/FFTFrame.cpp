@@ -32,14 +32,14 @@
 
 #include "FFTFrame.h"
 
+#include "Logging.h"
+#include <complex>
+#include <wtf/MathExtras.h>
+#include <wtf/OwnPtr.h>
+
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
-
-#include "Logging.h"
-#include <wtf/Complex.h>
-#include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -99,8 +99,8 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
     int n = m_FFTSize / 2;
 
     for (int i = 1; i < n; ++i) {
-        Complex c1(realP1[i], imagP1[i]);
-        Complex c2(realP2[i], imagP2[i]);
+        std::complex<double> c1(realP1[i], imagP1[i]);
+        std::complex<double> c2(realP2[i], imagP2[i]);
 
         double mag1 = abs(c1);
         double mag2 = abs(c2);
@@ -166,7 +166,7 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
         if (phaseAccum < -piDouble)
             phaseAccum += 2.0 * piDouble;
 
-        Complex c = complexFromMagnitudePhase(mag, phaseAccum);
+        std::complex<double> c = std::polar(mag, phaseAccum);
 
         realP[i] = static_cast<float>(c.real());
         imagP[i] = static_cast<float>(c.imag());
@@ -188,7 +188,7 @@ double FFTFrame::extractAverageGroupDelay()
 
     // Calculate weighted average group delay
     for (int i = 0; i < halfSize; i++) {
-        Complex c(realP[i], imagP[i]);
+        std::complex<double> c(realP[i], imagP[i]);
         double mag = abs(c);
         double phase = arg(c);
 
@@ -235,13 +235,13 @@ void FFTFrame::addConstantGroupDelay(double sampleFrameDelay)
 
     // Add constant group delay
     for (int i = 1; i < halfSize; i++) {
-        Complex c(realP[i], imagP[i]);
+        std::complex<double> c(realP[i], imagP[i]);
         double mag = abs(c);
         double phase = arg(c);
 
         phase += i * phaseAdj;
 
-        Complex c2 = complexFromMagnitudePhase(mag, phase);
+        std::complex<double> c2 = std::polar(mag, phase);
 
         realP[i] = static_cast<float>(c2.real());
         imagP[i] = static_cast<float>(c2.imag());

@@ -1,3 +1,21 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove Complex.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=115989
+
+        Reviewed by Beth Dakin.
+
+        Complex.h contains a typedef and a single function (that already has an equivalent in the STL).
+        The header is used by three files in WebCore, so just use std::complex<double> and std::polar directly.
+
+        * GNUmakefile.list.am:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Complex.h: Removed.
+
 2013-05-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add a basic cmake build for WTF and JavaScriptCore

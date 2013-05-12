@@ -372,9 +372,6 @@
     <ClInclude Include="..\wtf\Compiler.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\Complex.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\CryptographicallyRandomNumber.h">
       <Filter>wtf</Filter>
     </ClInclude>

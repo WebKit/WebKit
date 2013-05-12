@@ -32,16 +32,12 @@
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
 #include "VectorMath.h"
-
 #include <algorithm>
-#include <limits.h>
-#include <wtf/Complex.h>
+#include <complex>
 #include <wtf/Float32Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Uint8Array.h>
-
-using namespace std;
 
 namespace WebCore {
 
@@ -193,16 +189,16 @@ void RealtimeAnalyser::doFFTAnalysis()
 
     // A value of 0 does no averaging with the previous result.  Larger values produce slower, but smoother changes.
     double k = m_smoothingTimeConstant;
-    k = max(0.0, k);
-    k = min(1.0, k);    
+    k = std::max(0.0, k);
+    k = std::min(1.0, k);    
     
     // Convert the analysis data from complex to magnitude and average with the previous result.
     float* destination = magnitudeBuffer().data();
     size_t n = magnitudeBuffer().size();
     for (size_t i = 0; i < n; ++i) {
-        Complex c(realP[i], imagP[i]);
+        std::complex<double> c(realP[i], imagP[i]);
         double scalarMagnitude = abs(c) * magnitudeScale;        
-        destination[i] = float(k * destination[i] + (1 - k) * scalarMagnitude);
+        destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 }
 
@@ -218,7 +214,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array* destinationArray)
     // Convert from linear magnitude to floating-point decibels.
     const double minDecibels = m_minDecibels;
     unsigned sourceLength = magnitudeBuffer().size();
-    size_t len = min(sourceLength, destinationArray->length());
+    size_t len = std::min(sourceLength, destinationArray->length());
     if (len > 0) {
         const float* source = magnitudeBuffer().data();
         float* destination = destinationArray->data();
@@ -226,7 +222,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array* destinationArray)
         for (unsigned i = 0; i < len; ++i) {
             float linearValue = source[i];
             double dbMag = !linearValue ? minDecibels : AudioUtilities::linearToDecibels(linearValue);
-            destination[i] = float(dbMag);
+            destination[i] = static_cast<float>(dbMag);
         }
     }
 }
@@ -242,7 +238,7 @@ void RealtimeAnalyser::getByteFrequencyData(Uint8Array* destinationArray)
     
     // Convert from linear magnitude to unsigned-byte decibels.
     unsigned sourceLength = magnitudeBuffer().size();
-    size_t len = min(sourceLength, destinationArray->length());
+    size_t len = std::min(sourceLength, destinationArray->length());
     if (len > 0) {
         const double rangeScaleFactor = m_maxDecibels == m_minDecibels ? 1 : 1 / (m_maxDecibels - m_minDecibels);
         const double minDecibels = m_minDecibels;
@@ -276,7 +272,7 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array* destinationArray)
         return;
         
     unsigned fftSize = this->fftSize();
-    size_t len = min(fftSize, destinationArray->length());
+    size_t len = std::min(fftSize, destinationArray->length());
     if (len > 0) {
         bool isInputBufferGood = m_inputBuffer.size() == InputBufferSize && m_inputBuffer.size() > fftSize;
         ASSERT(isInputBufferGood);

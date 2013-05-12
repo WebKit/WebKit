@@ -11,7 +11,6 @@ set(WTF_HEADERS
     BumpPointerAllocator.h
     ByteOrder.h
     Compiler.h
-    Complex.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
     DateMath.h

@@ -1,3 +1,28 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove Complex.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=115989
+
+        Reviewed by Beth Dakin.
+
+        Replace Complex declarations with std::complex<double>. Pass by value since the struct
+        is small enough to go into two registers on X86-64.
+
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::doFFTAnalysis):
+        (WebCore::RealtimeAnalyser::getFloatFrequencyData):
+        (WebCore::RealtimeAnalyser::getByteFrequencyData):
+        (WebCore::RealtimeAnalyser::getByteTimeDomainData):
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::setZeroPolePairs):
+        (WebCore::Biquad::setAllpassPole):
+        (WebCore::Biquad::getFrequencyResponse):
+        * platform/audio/Biquad.h:
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::interpolateFrequencyComponents):
+        (WebCore::FFTFrame::extractAverageGroupDelay):
+        (WebCore::FFTFrame::addConstantGroupDelay):
+
 2013-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Dropdowns on http://www.exploratorium.edu don't show anything

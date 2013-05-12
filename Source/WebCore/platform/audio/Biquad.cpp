@@ -38,6 +38,8 @@
 #include <wtf/MathExtras.h>
 
 #if OS(DARWIN)
+// Work around a bug where VForce.h forward declares std::complex in a way that's incompatible with libc++ complex.
+#define __VFORCE_H
 #include <Accelerate/Accelerate.h>
 #endif
 
@@ -522,7 +524,7 @@ void Biquad::setBandpassParams(double frequency, double Q)
     }
 }
 
-void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
+void Biquad::setZeroPolePairs(std::complex<double> zero, std::complex<double> pole)
 {
     double b0 = 1;
     double b1 = -2 * zero.real();
@@ -537,9 +539,9 @@ void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
     setNormalizedCoefficients(b0, b1, b2, 1, a1, a2);
 }
 
-void Biquad::setAllpassPole(const Complex &pole)
+void Biquad::setAllpassPole(std::complex<double> pole)
 {
-    Complex zero = Complex(1, 0) / pole;
+    std::complex<double> zero = std::complex<double>(1, 0) / pole;
     setZeroPolePairs(zero, pole);
 }
 
@@ -573,10 +575,10 @@ void Biquad::getFrequencyResponse(int nFrequencies,
     
     for (int k = 0; k < nFrequencies; ++k) {
         double omega = -piDouble * frequency[k];
-        Complex z = Complex(cos(omega), sin(omega));
-        Complex numerator = b0 + (b1 + b2 * z) * z;
-        Complex denominator = Complex(1, 0) + (a1 + a2 * z) * z;
-        Complex response = numerator / denominator;
+        std::complex<double> z = std::complex<double>(cos(omega), sin(omega));
+        std::complex<double> numerator = b0 + (b1 + b2 * z) * z;
+        std::complex<double> denominator = std::complex<double>(1, 0) + (a1 + a2 * z) * z;
+        std::complex<double> response = numerator / denominator;
         magResponse[k] = static_cast<float>(abs(response));
         phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
     }

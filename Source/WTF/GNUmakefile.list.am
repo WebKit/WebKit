@@ -26,7 +26,6 @@ wtf_sources += \
     Source/WTF/wtf/CheckedBoolean.h \
     Source/WTF/wtf/CommaPrinter.h \
     Source/WTF/wtf/Compiler.h \
-    Source/WTF/wtf/Complex.h \
     Source/WTF/wtf/CryptographicallyRandomNumber.cpp \
     Source/WTF/wtf/CryptographicallyRandomNumber.h \
     Source/WTF/wtf/CurrentTime.cpp \

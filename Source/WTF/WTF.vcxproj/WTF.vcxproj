@@ -111,7 +111,6 @@
     <ClInclude Include="..\wtf\CheckedArithmetic.h" />
     <ClInclude Include="..\wtf\CheckedBoolean.h" />
     <ClInclude Include="..\wtf\Compiler.h" />
-    <ClInclude Include="..\wtf\Complex.h" />
     <ClInclude Include="..\wtf\CryptographicallyRandomNumber.h" />
     <ClInclude Include="..\wtf\CurrentTime.h" />
     <ClInclude Include="..\wtf\DataLog.h" />
