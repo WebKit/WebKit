@@ -1,11 +1,4 @@
 # Configuration flags that are used throughout WebKitGTK+.
-AC_DEFINE([WTF_USE_GLIB], [1], [ ])
-AC_DEFINE([WTF_USE_FREETYPE], [1], [ ])
-AC_DEFINE([WTF_USE_HARFBUZZ], [1], [ ])
-AC_DEFINE([WTF_USE_SOUP], [1], [ ])
-AC_DEFINE([WTF_USE_WEBP], [1], [ ])
-AC_DEFINE([WTF_USE_ICU_UNICODE], [1], [ ])
-AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
 if test "$enable_debug" = "yes"; then
