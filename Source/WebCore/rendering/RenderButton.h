@@ -32,7 +32,7 @@ class RenderTextFragment;
 // RenderButtons are just like normal flexboxes except that they will generate an anonymous block child.
 // For inputs, they will also generate an anonymous RenderText and keep its style and content up
 // to date as the button changes.
-class RenderButton : public RenderFlexibleBox {
+class RenderButton FINAL : public RenderFlexibleBox {
 public:
     explicit RenderButton(Element*);
     virtual ~RenderButton();

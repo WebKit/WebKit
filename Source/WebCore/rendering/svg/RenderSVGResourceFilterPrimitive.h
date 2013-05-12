@@ -36,7 +36,7 @@ namespace WebCore {
 
 class FilterEffect;
 
-class RenderSVGResourceFilterPrimitive : public RenderSVGHiddenContainer {
+class RenderSVGResourceFilterPrimitive FINAL : public RenderSVGHiddenContainer {
 public:
     explicit RenderSVGResourceFilterPrimitive(SVGStyledElement* filterPrimitiveElement)
         : RenderSVGHiddenContainer(filterPrimitiveElement)

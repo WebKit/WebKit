@@ -52,16 +52,16 @@ protected:
     virtual void layout();
 
 private:
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
-    virtual bool canHaveChildren() const { return true; }
+    virtual RenderObjectChildList* virtualChildren() OVERRIDE FINAL { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const OVERRIDE FINAL { return children(); }
+    virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
 
     virtual const char* renderName() const { return "RenderMedia"; }
-    virtual bool isMedia() const { return true; }
-    virtual bool isImage() const { return false; }
+    virtual bool isMedia() const OVERRIDE FINAL { return true; }
+    virtual bool isImage() const OVERRIDE FINAL { return false; }
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE FINAL { return true; }
 
     RenderObjectChildList m_children;
 };

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class RenderFullScreen : public RenderFlexibleBox {
+class RenderFullScreen FINAL : public RenderFlexibleBox {
 public:
     static RenderFullScreen* createAnonymous(Document*);
 

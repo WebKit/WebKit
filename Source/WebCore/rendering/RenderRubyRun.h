@@ -41,7 +41,7 @@ class RenderRubyText;
 // RenderRubyRun are 'inline-block/table' like objects,and wrap a single pairing of a ruby base with its ruby text(s).
 // See RenderRuby.h for further comments on the structure
 
-class RenderRubyRun : public RenderBlock {
+class RenderRubyRun FINAL : public RenderBlock {
 public:
     virtual ~RenderRubyRun();
 

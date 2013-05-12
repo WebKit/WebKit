@@ -32,7 +32,7 @@ namespace WebCore {
 static const unsigned unsetRowIndex = 0x7FFFFFFF;
 static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
-class RenderTableRow : public RenderBox {
+class RenderTableRow FINAL : public RenderBox {
 public:
     explicit RenderTableRow(Element*);
 

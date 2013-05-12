@@ -26,7 +26,7 @@ namespace WebCore {
 
 class RenderTable;
 
-class RenderTableCaption : public RenderBlock {
+class RenderTableCaption FINAL : public RenderBlock {
 public:
     explicit RenderTableCaption(Element*);
     virtual ~RenderTableCaption();
