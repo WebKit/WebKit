@@ -1,5 +1,21 @@
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Simplify AutodrainedPool
+        https://bugs.webkit.org/show_bug.cgi?id=115986
+
+        Reviewed by Andreas Kling.
+
+        Remove the ability to cycle an AutodrainedPool, as well as the iteration count.
+        Creating and draining pools is fast enough now that we don't need to try to be clever about it.
+
+        * wtf/AutodrainedPool.h:
+        (AutodrainedPool):
+        (WTF::AutodrainedPool::AutodrainedPool):
+        * wtf/AutodrainedPoolMac.mm:
+        (WTF::AutodrainedPool::AutodrainedPool):
+
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
         Move RemoteMemoryReader into FastMalloc.cpp
         https://bugs.webkit.org/show_bug.cgi?id=115985
 

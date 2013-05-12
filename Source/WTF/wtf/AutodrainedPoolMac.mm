@@ -33,25 +33,14 @@
 
 namespace WTF {
 
-AutodrainedPool::AutodrainedPool(int iterationLimit)
-    : m_iterationLimit(iterationLimit)
-    , m_iterationCount(0)
-    , m_pool([[NSAutoreleasePool alloc] init])
+AutodrainedPool::AutodrainedPool()
+    : m_pool([[NSAutoreleasePool alloc] init])
 { 
 }
 
 AutodrainedPool::~AutodrainedPool()
 {
     [m_pool drain];
-}
-
-void AutodrainedPool::cycle()
-{
-    if (++m_iterationCount == m_iterationLimit) {
-        [m_pool drain];
-        m_pool = [[NSAutoreleasePool alloc] init];
-        m_iterationCount = 0;
-    }
 }
 
 } // namespace WTF

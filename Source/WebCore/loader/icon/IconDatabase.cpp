@@ -586,15 +586,11 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         // Start the timer to commit this change - or further delay the timer if it was already started
         scheduleOrDeferSyncTimer();
 
-        // Informal testing shows that draining the autorelease pool every 25 iterations is about as low as we can go
-        // before performance starts to drop off, but we don't want to increase this number because then accumulated memory usage will go up        
-        AutodrainedPool pool(25);
-
         for (unsigned i = 0; i < pageURLs.size(); ++i) {
+            AutodrainedPool pool;
+
             LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURLs[i]).ascii().data());
             m_client->didChangeIconForPageURL(pageURLs[i]);
-
-            pool.cycle();
         }
     }
 }
@@ -1231,18 +1227,15 @@ void IconDatabase::performURLImport()
         return;
     }
     
-    // Informal testing shows that draining the autorelease pool every 25 iterations is about as low as we can go
-    // before performance starts to drop off, but we don't want to increase this number because then accumulated memory usage will go up
-    AutodrainedPool pool(25);
-        
     int result = query.step();
     while (result == SQLResultRow) {
+        AutodrainedPool pool;
         String pageURL = query.getColumnText(0);
         String iconURL = query.getColumnText(1);
 
         {
             MutexLocker locker(m_urlAndIconLock);
-            
+
             PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURL);
             
             // If the pageRecord doesn't exist in this map, then no one has retained this pageURL
@@ -1278,8 +1271,6 @@ void IconDatabase::performURLImport()
             if (m_pageURLsPendingImport.contains(pageURL)) {
                 dispatchDidImportIconURLForPageURLOnMainThread(pageURL);
                 m_pageURLsPendingImport.remove(pageURL);
-            
-                pool.cycle();
             }
         }
         
@@ -1350,12 +1341,12 @@ void IconDatabase::performURLImport()
     LOG(IconDatabase, "Notifying %lu interested page URLs that their icon URL is known due to the import", static_cast<unsigned long>(urlsToNotify.size()));
     // Now that we don't hold any locks, perform the actual notifications
     for (unsigned i = 0; i < urlsToNotify.size(); ++i) {
+        AutodrainedPool pool;
+
         LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].ascii().data());
         dispatchDidImportIconURLForPageURLOnMainThread(urlsToNotify[i]);
         if (shouldStopThreadActivity())
             return;
-
-        pool.cycle();
     }
     
     // Notify the client that the URL import is complete in case it's managing its own pending notifications.
@@ -1599,20 +1590,14 @@ bool IconDatabase::readFromDatabase()
         if (shouldStopThreadActivity())
             return didAnyWork;
         
-        // Informal testing shows that draining the autorelease pool every 25 iterations is about as low as we can go
-        // before performance starts to drop off, but we don't want to increase this number because then accumulated memory usage will go up
-        AutodrainedPool pool(25);
-
         // Now that we don't hold any locks, perform the actual notifications
-        HashSet<String>::iterator iter = urlsToNotify.begin();
-        HashSet<String>::iterator end = urlsToNotify.end();
-        for (unsigned iteration = 0; iter != end; ++iter, ++iteration) {
-            LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*iter).ascii().data());
-            dispatchDidImportIconDataForPageURLOnMainThread(*iter);
+        for (HashSet<String>::const_iterator it = urlsToNotify.begin(), end = urlsToNotify.end(); it != end; ++it) {
+            AutodrainedPool pool;
+
+            LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*it).ascii().data());
+            dispatchDidImportIconDataForPageURLOnMainThread(*it);
             if (shouldStopThreadActivity())
                 return didAnyWork;
-            
-            pool.cycle();
         }
 
         LOG(IconDatabase, "Done notifying %i pageURLs who just received their icons", urlsToNotify.size());

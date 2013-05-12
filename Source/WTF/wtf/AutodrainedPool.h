@@ -39,20 +39,15 @@ class AutodrainedPool {
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
 public:
 #if PLATFORM(MAC)
-    WTF_EXPORT_PRIVATE explicit AutodrainedPool(int iterationLimit = 1);
+    WTF_EXPORT_PRIVATE AutodrainedPool();
     WTF_EXPORT_PRIVATE ~AutodrainedPool();
-
-    WTF_EXPORT_PRIVATE void cycle();
 #else
-    explicit AutodrainedPool(int = 1) { }
+    explicit AutodrainedPool() { }
     ~AutodrainedPool() { }
-    void cycle() { }
 #endif
     
 private:
 #if PLATFORM(MAC)
-    int m_iterationLimit;
-    int m_iterationCount;
     NSAutoreleasePool* m_pool;
 #endif
 };

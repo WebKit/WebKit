@@ -1,3 +1,22 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Simplify AutodrainedPool
+        https://bugs.webkit.org/show_bug.cgi?id=115986
+
+        Reviewed by Andreas Kling.
+
+        Remove calls to AutodrainedPool::cycle as well as the iteration counter passed to the constructor.
+        Instead, just declare RAII pools where it seems necessary.
+
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        * fileapi/FileThread.cpp:
+        (WebCore::FileThread::runLoop):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::readFromDatabase):
+
 2013-05-12  Andreas Kling  <akling@apple.com>
 
         Apply FINAL to the Node hierarchy.

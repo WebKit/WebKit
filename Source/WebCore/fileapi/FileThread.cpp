@@ -98,10 +98,10 @@ void FileThread::runLoop()
         LOG(FileAPI, "Started FileThread %p", this);
     }
 
-    AutodrainedPool pool;
     while (OwnPtr<Task> task = m_queue.waitForMessage()) {
+        AutodrainedPool pool;
+
         task->performTask();
-        pool.cycle();
     }
 
     LOG(FileAPI, "About to detach thread %i and clear the ref to FileThread %p, which currently has %i ref(s)", m_threadID, this, refCount());
