@@ -1,5 +1,22 @@
 2013-05-12  Andreas Kling  <akling@apple.com>
 
+        Apply FINAL to the Node hierarchy.
+        <http://webkit.org/b/115984>
+
+        Mostly from Blink r149454 by <cevans@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=149454>
+
+        A couple of the stable DOM/ microbenchmarks are perf positive on Linux clang:
+
+            - CloneNodes time reduced from 162.4 to 156.5 ms.
+            - CreateNodes time reduced from 113.9 to 104.9 ms.
+
+        * dom/: Beat things with the FINAL stick.
+        * html/: Ditto.
+        * svg/: Ditto.
+
+2013-05-12  Andreas Kling  <akling@apple.com>
+
         Devirtualize some things on Document.
 
         From Blink r149967 by <esprehn@chromium.org>

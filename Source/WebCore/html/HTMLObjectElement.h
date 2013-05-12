@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFormElement;
 
-class HTMLObjectElement : public HTMLPlugInImageElement, public FormAssociatedElement {
+class HTMLObjectElement FINAL : public HTMLPlugInImageElement, public FormAssociatedElement {
 public:
     static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLObjectElement();

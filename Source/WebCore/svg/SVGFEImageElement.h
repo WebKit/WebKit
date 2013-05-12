@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-class SVGFEImageElement : public SVGFilterPrimitiveStandardAttributes,
-                          public SVGURIReference,
-                          public SVGLangSpace,
-                          public SVGExternalResourcesRequired,
-                          public CachedImageClient {
+class SVGFEImageElement FINAL : public SVGFilterPrimitiveStandardAttributes,
+                                public SVGURIReference,
+                                public SVGLangSpace,
+                                public SVGExternalResourcesRequired,
+                                public CachedImageClient {
 public:
     static PassRefPtr<SVGFEImageElement> create(const QualifiedName&, Document*);
 

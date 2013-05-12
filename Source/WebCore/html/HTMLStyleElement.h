@@ -34,7 +34,7 @@ class StyleSheet;
 template<typename T> class EventSender;
 typedef EventSender<HTMLStyleElement> StyleEventSender;
 
-class HTMLStyleElement : public HTMLElement, private StyleElement {
+class HTMLStyleElement FINAL : public HTMLElement, private StyleElement {
 public:
     static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~HTMLStyleElement();

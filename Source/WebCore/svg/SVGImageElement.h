@@ -34,11 +34,11 @@
 
 namespace WebCore {
 
-class SVGImageElement : public SVGStyledTransformableElement,
-                        public SVGTests,
-                        public SVGLangSpace,
-                        public SVGExternalResourcesRequired,
-                        public SVGURIReference {
+class SVGImageElement FINAL : public SVGStyledTransformableElement,
+                              public SVGTests,
+                              public SVGLangSpace,
+                              public SVGExternalResourcesRequired,
+                              public SVGURIReference {
 public:
     static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
 

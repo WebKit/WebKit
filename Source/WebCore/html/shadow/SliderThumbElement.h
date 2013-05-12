@@ -46,7 +46,7 @@ class HTMLInputElement;
 class Event;
 class FloatPoint;
 
-class SliderThumbElement : public HTMLDivElement {
+class SliderThumbElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SliderThumbElement> create(Document*);
 
@@ -104,7 +104,7 @@ HTMLElement* sliderTrackElementOf(Node*);
 
 // --------------------------------
 
-class RenderSliderThumb : public RenderBlock {
+class RenderSliderThumb FINAL : public RenderBlock {
 public:
     RenderSliderThumb(SliderThumbElement*);
     void updateAppearance(RenderStyle* parentStyle);
@@ -115,7 +115,7 @@ private:
 
 // --------------------------------
 
-class SliderContainerElement : public HTMLDivElement {
+class SliderContainerElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SliderContainerElement> create(Document*);
 

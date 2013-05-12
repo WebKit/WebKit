@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SpinButtonElement : public HTMLDivElement, public PopupOpeningObserver {
+class SpinButtonElement FINAL : public HTMLDivElement, public PopupOpeningObserver {
 public:
     enum UpDownState {
         Indeterminate, // Hovered, but the event is not handled.

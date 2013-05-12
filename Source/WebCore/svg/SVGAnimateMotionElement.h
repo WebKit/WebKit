@@ -27,7 +27,7 @@
 
 namespace WebCore {
             
-class SVGAnimateMotionElement : public SVGAnimationElement {
+class SVGAnimateMotionElement FINAL : public SVGAnimationElement {
 public:
     static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document*);
     void updateAnimationPath();

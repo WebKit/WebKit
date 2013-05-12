@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-class SVGCursorElement : public SVGElement,
-                         public SVGTests,
-                         public SVGExternalResourcesRequired,
-                         public SVGURIReference {
+class SVGCursorElement FINAL : public SVGElement,
+                               public SVGTests,
+                               public SVGExternalResourcesRequired,
+                               public SVGURIReference {
 public:
     static PassRefPtr<SVGCursorElement> create(const QualifiedName&, Document*);
 

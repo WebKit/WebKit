@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-class SVGTextElement : public SVGTextPositioningElement,
-                       public SVGTransformable {
+class SVGTextElement FINAL : public SVGTextPositioningElement,
+                             public SVGTransformable {
 public:
     static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document*);
 

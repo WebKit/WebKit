@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class HTMLLabelElement : public HTMLElement {
+class HTMLLabelElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLLabelElement> create(const QualifiedName&, Document*);
 

@@ -49,7 +49,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
-class MeterInnerElement : public MeterShadowElement {
+class MeterInnerElement FINAL : public MeterShadowElement {
 public:
     MeterInnerElement(Document*);
     static PassRefPtr<MeterInnerElement> create(Document*);
@@ -64,7 +64,7 @@ inline PassRefPtr<MeterInnerElement> MeterInnerElement::create(Document* documen
     return adoptRef(new MeterInnerElement(document));
 }
 
-class MeterBarElement : public MeterShadowElement {
+class MeterBarElement FINAL : public MeterShadowElement {
 public:
     MeterBarElement(Document* document) 
         : MeterShadowElement(document)
@@ -81,7 +81,7 @@ inline PassRefPtr<MeterBarElement> MeterBarElement::create(Document* document)
     return adoptRef(new MeterBarElement(document));
 }
 
-class MeterValueElement : public MeterShadowElement {
+class MeterValueElement FINAL : public MeterShadowElement {
 public:
     MeterValueElement(Document* document) 
         : MeterShadowElement(document)

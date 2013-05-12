@@ -48,7 +48,7 @@ public:
 
     PassRefPtr<HTMLCollection> children();
 
-    virtual String title() const;
+    virtual String title() const OVERRIDE FINAL;
 
     virtual short tabIndex() const;
     void setTabIndex(int);
@@ -126,7 +126,7 @@ protected:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 private:
-    virtual String nodeName() const;
+    virtual String nodeName() const OVERRIDE FINAL;
 
     void mapLanguageAttributeToLocale(const AtomicString&, MutableStylePropertySet*);
 

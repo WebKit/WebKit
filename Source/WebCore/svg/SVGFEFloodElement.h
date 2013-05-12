@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEFloodElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEFloodElement> create(const QualifiedName&, Document*);
 

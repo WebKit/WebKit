@@ -27,7 +27,7 @@ namespace WebCore {
 
 class HTMLDetailsElement;
 
-class HTMLSummaryElement : public HTMLElement {
+class HTMLSummaryElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document*);
     bool isMainSummary() const;

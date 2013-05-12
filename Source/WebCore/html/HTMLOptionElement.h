@@ -32,7 +32,7 @@ namespace WebCore {
 class HTMLDataListElement;
 class HTMLSelectElement;
 
-class HTMLOptionElement : public HTMLElement {
+class HTMLOptionElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLOptionElement> create(Document*);
     static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document*);

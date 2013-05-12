@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class MediaDocument : public HTMLDocument {
+class MediaDocument FINAL : public HTMLDocument {
 public:
     static PassRefPtr<MediaDocument> create(Frame* frame, const KURL& url)
     {

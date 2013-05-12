@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFormControlElement;
 
-class HTMLLegendElement : public HTMLElement {
+class HTMLLegendElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*);
 

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class TextDocument : public HTMLDocument {
+class TextDocument FINAL : public HTMLDocument {
 public:
     static PassRefPtr<TextDocument> create(Frame* frame, const KURL& url)
     {

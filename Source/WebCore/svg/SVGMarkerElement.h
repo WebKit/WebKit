@@ -95,10 +95,10 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
     }
 };
 
-class SVGMarkerElement : public SVGStyledElement,
-                         public SVGLangSpace,
-                         public SVGExternalResourcesRequired,
-                         public SVGFitToViewBox {
+class SVGMarkerElement FINAL : public SVGStyledElement,
+                               public SVGLangSpace,
+                               public SVGExternalResourcesRequired,
+                               public SVGFitToViewBox {
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {

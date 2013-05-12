@@ -29,7 +29,7 @@ namespace WebCore {
 
 struct RadialGradientAttributes;
 
-class SVGRadialGradientElement : public SVGGradientElement {
+class SVGRadialGradientElement FINAL : public SVGGradientElement {
 public:
     static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
 

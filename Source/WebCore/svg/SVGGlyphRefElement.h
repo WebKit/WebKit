@@ -26,8 +26,8 @@
 
 namespace WebCore {
 
-class SVGGlyphRefElement: public SVGStyledElement,
-                          public SVGURIReference {
+class SVGGlyphRefElement FINAL : public SVGStyledElement,
+                                 public SVGURIReference {
 public:
     static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document*);
 

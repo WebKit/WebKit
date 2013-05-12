@@ -31,8 +31,8 @@ namespace WebCore {
 
 class SVGGlyphElement;
 
-class SVGAltGlyphElement : public SVGTextPositioningElement,
-                           public SVGURIReference {
+class SVGAltGlyphElement FINAL : public SVGTextPositioningElement,
+                                 public SVGURIReference {
 public:
     static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
 

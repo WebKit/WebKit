@@ -57,7 +57,7 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
     }
 };
 
-class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEMorphologyElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
 

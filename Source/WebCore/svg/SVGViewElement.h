@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-class SVGViewElement : public SVGStyledElement,
-                       public SVGExternalResourcesRequired,
-                       public SVGFitToViewBox,
-                       public SVGZoomAndPan {
+class SVGViewElement FINAL : public SVGStyledElement,
+                             public SVGExternalResourcesRequired,
+                             public SVGFitToViewBox,
+                             public SVGZoomAndPan {
 public:
     static PassRefPtr<SVGViewElement> create(const QualifiedName&, Document*);
 

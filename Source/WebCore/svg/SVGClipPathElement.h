@@ -34,10 +34,10 @@ namespace WebCore {
 
 class RenderObject;
 
-class SVGClipPathElement : public SVGStyledTransformableElement,
-                           public SVGTests,
-                           public SVGLangSpace,
-                           public SVGExternalResourcesRequired {
+class SVGClipPathElement FINAL : public SVGStyledTransformableElement,
+                                 public SVGTests,
+                                 public SVGLangSpace,
+                                 public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document*);
 

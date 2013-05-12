@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class HTMLTemplateElement : public HTMLElement {
+class HTMLTemplateElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLTemplateElement> create(const QualifiedName&, Document*);
     virtual ~HTMLTemplateElement();

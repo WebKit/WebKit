@@ -30,7 +30,7 @@ namespace WebCore {
 class HitTestResult;
 class HTMLImageElement;
     
-class HTMLMapElement : public HTMLElement {
+class HTMLMapElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLMapElement> create(Document*);
     static PassRefPtr<HTMLMapElement> create(const QualifiedName&, Document*);

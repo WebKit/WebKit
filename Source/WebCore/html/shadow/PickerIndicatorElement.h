@@ -42,7 +42,7 @@ namespace WebCore {
 class HTMLInputElement;
 class PagePopup;
 
-class PickerIndicatorElement : public HTMLDivElement, public DateTimeChooserClient {
+class PickerIndicatorElement FINAL : public HTMLDivElement, public DateTimeChooserClient {
 public:
     // PickerIndicatorOwner implementer must call removePickerIndicatorOwner when
     // it doesn't handle event, e.g. at destruction.

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLTableRowElement : public HTMLTablePartElement {
+class HTMLTableRowElement FINAL : public HTMLTablePartElement {
 public:
     static PassRefPtr<HTMLTableRowElement> create(Document*);
     static PassRefPtr<HTMLTableRowElement> create(const QualifiedName&, Document*);

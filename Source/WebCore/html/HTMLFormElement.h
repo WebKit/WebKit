@@ -40,7 +40,7 @@ class HTMLImageElement;
 class HTMLInputElement;
 class TextEncoding;
 
-class HTMLFormElement : public HTMLElement {
+class HTMLFormElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLFormElement> create(Document*);
     static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document*);

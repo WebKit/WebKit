@@ -69,7 +69,7 @@ struct SVGPropertyTraits<BlendModeType> {
     }
 };
 
-class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEBlendElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEBlendElement> create(const QualifiedName&, Document*);
 

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGFEFuncAElement : public SVGComponentTransferFunctionElement {
+class SVGFEFuncAElement FINAL : public SVGComponentTransferFunctionElement {
 public:
     static PassRefPtr<SVGFEFuncAElement> create(const QualifiedName&, Document*);
 

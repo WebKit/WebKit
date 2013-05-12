@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class HTMLOutputElement : public HTMLFormControlElement {
+class HTMLOutputElement FINAL : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLOutputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 

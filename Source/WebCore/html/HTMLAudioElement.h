@@ -34,7 +34,7 @@ namespace WebCore {
 
 class Document;
 
-class HTMLAudioElement : public HTMLMediaElement {
+class HTMLAudioElement FINAL : public HTMLMediaElement {
 public:
     static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document*, bool);
     static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document*, const String& src);

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class DateTimeAMPMFieldElement : public DateTimeSymbolicFieldElement {
+class DateTimeAMPMFieldElement FINAL : public DateTimeSymbolicFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeAMPMFieldElement);
 
 public:
@@ -47,7 +47,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeDayFieldElement : public DateTimeNumericFieldElement {
+class DateTimeDayFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeDayFieldElement);
 
 public:
@@ -75,7 +75,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeHour11FieldElement : public DateTimeHourFieldElementBase {
+class DateTimeHour11FieldElement FINAL : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour11FieldElement);
 
 public:
@@ -89,7 +89,7 @@ private:
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
 };
 
-class DateTimeHour12FieldElement : public DateTimeHourFieldElementBase {
+class DateTimeHour12FieldElement FINAL : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour12FieldElement);
 
 public:
@@ -103,7 +103,7 @@ private:
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
 };
 
-class DateTimeHour23FieldElement : public DateTimeHourFieldElementBase {
+class DateTimeHour23FieldElement FINAL : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour23FieldElement);
 
 public:
@@ -117,7 +117,7 @@ private:
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
 };
 
-class DateTimeHour24FieldElement : public DateTimeHourFieldElementBase {
+class DateTimeHour24FieldElement FINAL : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour24FieldElement);
 
 public:
@@ -131,7 +131,7 @@ private:
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
 };
 
-class DateTimeMillisecondFieldElement : public DateTimeNumericFieldElement {
+class DateTimeMillisecondFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMillisecondFieldElement);
 
 public:
@@ -146,7 +146,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
+class DateTimeMinuteFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMinuteFieldElement);
 
 public:
@@ -161,7 +161,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeMonthFieldElement : public DateTimeNumericFieldElement {
+class DateTimeMonthFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMonthFieldElement);
 
 public:
@@ -176,7 +176,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
+class DateTimeSecondFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSecondFieldElement);
 
 public:
@@ -191,7 +191,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeSymbolicMonthFieldElement : public DateTimeSymbolicFieldElement {
+class DateTimeSymbolicMonthFieldElement FINAL : public DateTimeSymbolicFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSymbolicMonthFieldElement);
 
 public:
@@ -206,7 +206,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
+class DateTimeWeekFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeWeekFieldElement);
 
 public:
@@ -221,7 +221,7 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
-class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
+class DateTimeYearFieldElement FINAL : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeYearFieldElement);
 
 public:

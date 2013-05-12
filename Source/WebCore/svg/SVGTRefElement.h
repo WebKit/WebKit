@@ -29,8 +29,8 @@ namespace WebCore {
 
 class SVGTRefTargetEventListener;
 
-class SVGTRefElement : public SVGTextPositioningElement,
-                       public SVGURIReference {
+class SVGTRefElement FINAL : public SVGTextPositioningElement,
+                             public SVGURIReference {
 public:
     static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
 

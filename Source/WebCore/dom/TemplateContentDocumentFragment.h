@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class TemplateContentDocumentFragment : public DocumentFragment {
+class TemplateContentDocumentFragment FINAL : public DocumentFragment {
 public:
     static PassRefPtr<TemplateContentDocumentFragment> create(Document* document, const Element* host)
     {

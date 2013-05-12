@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-class SVGFilterElement : public SVGStyledElement,
-                         public SVGURIReference,
-                         public SVGLangSpace,
-                         public SVGExternalResourcesRequired {
+class SVGFilterElement FINAL : public SVGStyledElement,
+                               public SVGURIReference,
+                               public SVGLangSpace,
+                               public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
 

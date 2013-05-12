@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-class SVGScriptElement : public SVGElement
-                       , public SVGURIReference
-                       , public SVGExternalResourcesRequired
-                       , public ScriptElement {
+class SVGScriptElement FINAL : public SVGElement
+                             , public SVGURIReference
+                             , public SVGExternalResourcesRequired
+                             , public ScriptElement {
 public:
     static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
 

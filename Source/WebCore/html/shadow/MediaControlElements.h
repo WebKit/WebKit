@@ -38,7 +38,7 @@ namespace WebCore {
 
 // ----------------------------
 
-class MediaControlPanelElement : public MediaControlDivElement {
+class MediaControlPanelElement FINAL : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlPanelElement> create(Document*);
 
@@ -80,7 +80,7 @@ private:
 
 // ----------------------------
 
-class MediaControlPanelEnclosureElement : public MediaControlDivElement {
+class MediaControlPanelEnclosureElement FINAL : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlPanelEnclosureElement> create(Document*);
 
@@ -91,7 +91,7 @@ private:
 
 // ----------------------------
 
-class MediaControlOverlayEnclosureElement : public MediaControlDivElement {
+class MediaControlOverlayEnclosureElement FINAL : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlOverlayEnclosureElement> create(Document*);
 
@@ -150,7 +150,7 @@ private:
 
 // ----------------------------
 
-class MediaControlPanelMuteButtonElement : public MediaControlMuteButtonElement {
+class MediaControlPanelMuteButtonElement FINAL : public MediaControlMuteButtonElement {
 public:
     static PassRefPtr<MediaControlPanelMuteButtonElement> create(Document*, MediaControls*);
 
@@ -167,7 +167,7 @@ private:
 
 // ----------------------------
 
-class MediaControlVolumeSliderMuteButtonElement : public MediaControlMuteButtonElement {
+class MediaControlVolumeSliderMuteButtonElement FINAL : public MediaControlMuteButtonElement {
 public:
     static PassRefPtr<MediaControlVolumeSliderMuteButtonElement> create(Document*);
 
@@ -179,7 +179,7 @@ private:
 
 // ----------------------------
 
-class MediaControlPlayButtonElement : public MediaControlInputElement {
+class MediaControlPlayButtonElement FINAL : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlPlayButtonElement> create(Document*);
 
@@ -195,7 +195,7 @@ private:
 
 // ----------------------------
 
-class MediaControlOverlayPlayButtonElement : public MediaControlInputElement {
+class MediaControlOverlayPlayButtonElement FINAL : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlOverlayPlayButtonElement> create(Document*);
 
@@ -266,7 +266,7 @@ private:
 
 // ----------------------------
 
-class MediaControlToggleClosedCaptionsButtonElement : public MediaControlInputElement {
+class MediaControlToggleClosedCaptionsButtonElement FINAL : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> create(Document*, MediaControls*);
 
@@ -287,7 +287,7 @@ private:
 
 // ----------------------------
 
-class MediaControlClosedCaptionsContainerElement : public MediaControlDivElement {
+class MediaControlClosedCaptionsContainerElement FINAL : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlClosedCaptionsContainerElement> create(Document*);
 
@@ -300,7 +300,7 @@ private:
 
 // ----------------------------
 
-class MediaControlClosedCaptionsTrackListElement : public MediaControlDivElement {
+class MediaControlClosedCaptionsTrackListElement FINAL : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlClosedCaptionsTrackListElement> create(Document*, MediaControls*);
 
@@ -327,7 +327,7 @@ private:
 
 // ----------------------------
 
-class MediaControlTimelineElement : public MediaControlInputElement {
+class MediaControlTimelineElement FINAL : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlTimelineElement> create(Document*, MediaControls*);
 
@@ -347,7 +347,7 @@ private:
 
 // ----------------------------
 
-class MediaControlFullscreenButtonElement : public MediaControlInputElement {
+class MediaControlFullscreenButtonElement FINAL : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlFullscreenButtonElement> create(Document*);
 
@@ -364,7 +364,7 @@ private:
 
 // ----------------------------
 
-class MediaControlPanelVolumeSliderElement : public MediaControlVolumeSliderElement {
+class MediaControlPanelVolumeSliderElement FINAL : public MediaControlVolumeSliderElement {
 public:
     static PassRefPtr<MediaControlPanelVolumeSliderElement> create(Document*);
 
@@ -415,7 +415,7 @@ private:
 
 // ----------------------------
 
-class MediaControlTimeRemainingDisplayElement : public MediaControlTimeDisplayElement {
+class MediaControlTimeRemainingDisplayElement FINAL : public MediaControlTimeDisplayElement {
 public:
     static PassRefPtr<MediaControlTimeRemainingDisplayElement> create(Document*);
 
@@ -426,7 +426,7 @@ private:
 
 // ----------------------------
 
-class MediaControlCurrentTimeDisplayElement : public MediaControlTimeDisplayElement {
+class MediaControlCurrentTimeDisplayElement FINAL : public MediaControlTimeDisplayElement {
 public:
     static PassRefPtr<MediaControlCurrentTimeDisplayElement> create(Document*);
 
@@ -439,7 +439,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 
-class MediaControlTextTrackContainerElement : public MediaControlDivElement, public TextTrackRepresentationClient {
+class MediaControlTextTrackContainerElement FINAL : public MediaControlDivElement, public TextTrackRepresentationClient {
 public:
     static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
 

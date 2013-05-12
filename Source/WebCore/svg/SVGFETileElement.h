@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class SVGFETileElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFETileElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFETileElement> create(const QualifiedName&, Document*);
 

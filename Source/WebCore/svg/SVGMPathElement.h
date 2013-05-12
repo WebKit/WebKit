@@ -31,9 +31,9 @@ namespace WebCore {
     
 class SVGPathElement;
 
-class SVGMPathElement : public SVGElement,
-                        public SVGURIReference,
-                        public SVGExternalResourcesRequired {
+class SVGMPathElement FINAL : public SVGElement,
+                              public SVGURIReference,
+                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document*);
 

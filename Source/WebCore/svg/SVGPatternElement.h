@@ -40,12 +40,12 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement : public SVGStyledElement,
-                          public SVGURIReference,
-                          public SVGTests,
-                          public SVGLangSpace,
-                          public SVGExternalResourcesRequired,
-                          public SVGFitToViewBox {
+class SVGPatternElement FINAL : public SVGStyledElement,
+                                public SVGURIReference,
+                                public SVGTests,
+                                public SVGLangSpace,
+                                public SVGExternalResourcesRequired,
+                                public SVGFitToViewBox {
 public:
     static PassRefPtr<SVGPatternElement> create(const QualifiedName&, Document*);
 

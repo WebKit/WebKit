@@ -55,7 +55,7 @@ public:
 
     void synchronizeStyleAttributeInternal() const;
     
-    virtual CSSStyleDeclaration* style() OVERRIDE;
+    virtual CSSStyleDeclaration* style() OVERRIDE FINAL;
 
     const StylePropertySet* presentationAttributeStyle();
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) { }

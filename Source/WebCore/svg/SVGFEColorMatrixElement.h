@@ -66,7 +66,7 @@ struct SVGPropertyTraits<ColorMatrixType> {
     }
 };
 
-class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEColorMatrixElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEColorMatrixElement> create(const QualifiedName&, Document*);
 

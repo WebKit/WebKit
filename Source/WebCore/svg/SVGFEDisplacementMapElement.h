@@ -65,7 +65,7 @@ struct SVGPropertyTraits<ChannelSelectorType> {
     }
 };
 
-class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEDisplacementMapElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
 

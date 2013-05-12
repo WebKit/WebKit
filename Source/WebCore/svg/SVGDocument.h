@@ -31,7 +31,7 @@ class DOMImplementation;
 class SVGElement;
 class SVGSVGElement;
 
-class SVGDocument : public Document {
+class SVGDocument FINAL : public Document {
 public:
     static PassRefPtr<SVGDocument> create(Frame* frame, const KURL& url)
     {

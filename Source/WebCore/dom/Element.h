@@ -360,7 +360,7 @@ public:
     const AtomicString& prefix() const { return m_tagName.prefix(); }
     const AtomicString& namespaceURI() const { return m_tagName.namespaceURI(); }
 
-    virtual KURL baseURI() const;
+    virtual KURL baseURI() const OVERRIDE FINAL;
 
     virtual String nodeName() const;
 
@@ -503,7 +503,7 @@ public:
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
     virtual void finishParsingChildren();
-    virtual void beginParsingChildren();
+    virtual void beginParsingChildren() OVERRIDE FINAL;
 
     bool hasPseudoElements() const;
     PseudoElement* pseudoElement(PseudoId) const;
@@ -631,8 +631,8 @@ protected:
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    virtual void removeAllEventListeners() OVERRIDE;
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
+    virtual void removeAllEventListeners() OVERRIDE FINAL;
 
     virtual bool willRecalcStyle(StyleChange);
     virtual void didRecalcStyle(StyleChange);
@@ -682,9 +682,9 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    virtual void setPrefix(const AtomicString&, ExceptionCode&);
-    virtual NodeType nodeType() const;
-    virtual bool childTypeAllowed(NodeType) const;
+    virtual void setPrefix(const AtomicString&, ExceptionCode&) OVERRIDE FINAL;
+    virtual NodeType nodeType() const OVERRIDE FINAL;
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE FINAL;
 
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
@@ -699,9 +699,9 @@ private:
 
     void cancelFocusAppearanceUpdate();
 
-    virtual const AtomicString& virtualPrefix() const { return prefix(); }
-    virtual const AtomicString& virtualLocalName() const { return localName(); }
-    virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
+    virtual const AtomicString& virtualPrefix() const OVERRIDE FINAL { return prefix(); }
+    virtual const AtomicString& virtualLocalName() const OVERRIDE FINAL { return localName(); }
+    virtual const AtomicString& virtualNamespaceURI() const OVERRIDE FINAL { return namespaceURI(); }
     virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
     
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren

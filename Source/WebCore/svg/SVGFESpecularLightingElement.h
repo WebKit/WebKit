@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFESpecularLightingElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFESpecularLightingElement> create(const QualifiedName&, Document*);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);

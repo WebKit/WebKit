@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-class SVGSymbolElement : public SVGStyledElement,
-                         public SVGLangSpace,
-                         public SVGExternalResourcesRequired,
-                         public SVGFitToViewBox {
+class SVGSymbolElement FINAL : public SVGStyledElement,
+                               public SVGLangSpace,
+                               public SVGExternalResourcesRequired,
+                               public SVGFitToViewBox {
 public:
     static PassRefPtr<SVGSymbolElement> create(const QualifiedName&, Document*);
 

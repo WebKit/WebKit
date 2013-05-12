@@ -27,7 +27,7 @@ namespace WebCore {
 
 class CSSFontFaceSrcValue;
 
-class SVGFontFaceNameElement : public SVGElement {
+class SVGFontFaceNameElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGFontFaceNameElement> create(const QualifiedName&, Document*);
     

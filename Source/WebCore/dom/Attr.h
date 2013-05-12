@@ -39,7 +39,7 @@ class MutableStylePropertySet;
 // resulting nodevalue in the attribute upon
 // destruction. however, this is not yet implemented.
 
-class Attr : public ContainerNode {
+class Attr FINAL : public ContainerNode {
 public:
     static PassRefPtr<Attr> create(Element*, const QualifiedName&);
     static PassRefPtr<Attr> create(Document*, const QualifiedName&, const AtomicString& value);

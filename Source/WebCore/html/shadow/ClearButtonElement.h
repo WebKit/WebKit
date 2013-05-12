@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class ClearButtonElement : public HTMLDivElement {
+class ClearButtonElement FINAL : public HTMLDivElement {
 public:
     class ClearButtonOwner {
     public:

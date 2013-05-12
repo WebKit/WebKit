@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class HTMLAppletElement : public HTMLPlugInImageElement {
+class HTMLAppletElement FINAL : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLAppletElement> create(const QualifiedName&, Document*, bool createdByParser);
 

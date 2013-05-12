@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPolygonElement : public SVGPolyElement {
+class SVGPolygonElement FINAL : public SVGPolyElement {
 public:
     static PassRefPtr<SVGPolygonElement> create(const QualifiedName&, Document*);
 

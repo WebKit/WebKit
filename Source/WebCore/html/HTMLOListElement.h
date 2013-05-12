@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class HTMLOListElement : public HTMLElement {
+class HTMLOListElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLOListElement> create(Document*);
     static PassRefPtr<HTMLOListElement> create(const QualifiedName&, Document*);

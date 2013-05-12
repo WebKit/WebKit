@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-class SVGDefsElement : public SVGStyledTransformableElement,
-                       public SVGTests,
-                       public SVGLangSpace,
-                       public SVGExternalResourcesRequired {
+class SVGDefsElement FINAL : public SVGStyledTransformableElement,
+                             public SVGTests,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document*);
 

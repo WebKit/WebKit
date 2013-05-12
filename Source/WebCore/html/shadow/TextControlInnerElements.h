@@ -35,7 +35,7 @@ namespace WebCore {
 
 class SpeechInput;
 
-class TextControlInnerContainer : public HTMLDivElement {
+class TextControlInnerContainer FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerContainer> create(Document*);
 protected:
@@ -43,7 +43,7 @@ protected:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
 
-class TextControlInnerElement : public HTMLDivElement {
+class TextControlInnerElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerElement> create(Document*);
 
@@ -55,7 +55,7 @@ private:
     virtual bool isMouseFocusable() const { return false; }
 };
 
-class TextControlInnerTextElement : public HTMLDivElement {
+class TextControlInnerTextElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerTextElement> create(Document*);
 
@@ -68,7 +68,7 @@ private:
     virtual bool isMouseFocusable() const { return false; }
 };
 
-class SearchFieldResultsButtonElement : public HTMLDivElement {
+class SearchFieldResultsButtonElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldResultsButtonElement> create(Document*);
 
@@ -81,7 +81,7 @@ private:
     virtual bool isMouseFocusable() const { return false; }
 };
 
-class SearchFieldCancelButtonElement : public HTMLDivElement {
+class SearchFieldCancelButtonElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldCancelButtonElement> create(Document*);
 
@@ -99,7 +99,7 @@ private:
 
 #if ENABLE(INPUT_SPEECH)
 
-class InputFieldSpeechButtonElement
+class InputFieldSpeechButtonElement FINAL
     : public HTMLDivElement,
       public SpeechInputListener {
 public:

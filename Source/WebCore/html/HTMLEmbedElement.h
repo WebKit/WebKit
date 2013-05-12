@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class HTMLEmbedElement : public HTMLPlugInImageElement {
+class HTMLEmbedElement FINAL : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*, bool createdByParser);
 

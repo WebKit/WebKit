@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class SinkDocument : public HTMLDocument {
+class SinkDocument FINAL : public HTMLDocument {
 public:
     static PassRefPtr<SinkDocument> create(Frame* frame, const KURL& url)
     {

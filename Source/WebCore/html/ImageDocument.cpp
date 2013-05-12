@@ -97,7 +97,7 @@ private:
     virtual void finish();
 };
 
-class ImageDocumentElement : public HTMLImageElement {
+class ImageDocumentElement FINAL : public HTMLImageElement {
 public:
     static PassRefPtr<ImageDocumentElement> create(ImageDocument*);
 

@@ -32,7 +32,7 @@ namespace WebCore {
 class FormAssociatedElement;
 class HTMLCollection;
 
-class HTMLFieldSetElement : public HTMLFormControlElement {
+class HTMLFieldSetElement FINAL : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     HTMLLegendElement* legend() const;

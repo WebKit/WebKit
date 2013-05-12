@@ -43,7 +43,7 @@ class StepRange;
 // representing date and time, such as
 //  - Year, Month, Day Of Month
 //  - Hour, Minute, Second, Millisecond, AM/PM
-class DateTimeEditElement : public HTMLDivElement, public DateTimeFieldElement::FieldOwner {
+class DateTimeEditElement FINAL : public HTMLDivElement, public DateTimeFieldElement::FieldOwner {
     WTF_MAKE_NONCOPYABLE(DateTimeEditElement);
 
 public:

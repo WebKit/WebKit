@@ -35,7 +35,7 @@ namespace WebCore {
 
 class HTMLMediaElement;
 
-class HTMLTrackElement : public HTMLElement, public TextTrackClient {
+class HTMLTrackElement FINAL : public HTMLElement, public TextTrackClient {
 public:
     static PassRefPtr<HTMLTrackElement> create(const QualifiedName&, Document*);
 

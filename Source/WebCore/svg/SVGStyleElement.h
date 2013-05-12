@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-class SVGStyleElement : public SVGElement
-                      , public SVGLangSpace
-                      , public StyleElement {
+class SVGStyleElement FINAL : public SVGElement
+                            , public SVGLangSpace
+                            , public StyleElement {
 public:
     static PassRefPtr<SVGStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~SVGStyleElement();

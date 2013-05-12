@@ -39,7 +39,7 @@ namespace WebCore {
 
 #if ENABLE(SHADOW_DOM)
 
-class HTMLContentElement : public InsertionPoint {
+class HTMLContentElement FINAL : public InsertionPoint {
 public:
     static const QualifiedName& contentTagName(Document*);
     static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document*);

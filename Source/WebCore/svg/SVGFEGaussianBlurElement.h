@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class SVGFEGaussianBlurElement : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEGaussianBlurElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEGaussianBlurElement> create(const QualifiedName&, Document*);
 

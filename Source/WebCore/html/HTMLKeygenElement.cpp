@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class KeygenSelectElement : public HTMLSelectElement {
+class KeygenSelectElement FINAL : public HTMLSelectElement {
 public:
     static PassRefPtr<KeygenSelectElement> create(Document* document)
     {

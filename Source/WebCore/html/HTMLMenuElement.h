@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class HTMLMenuElement : public HTMLElement {
+class HTMLMenuElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLMenuElement> create(const QualifiedName&, Document*);
     

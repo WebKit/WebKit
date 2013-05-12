@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class PseudoElement : public Element {
+class PseudoElement FINAL : public Element {
 public:
     static PassRefPtr<PseudoElement> create(Element* parent, PseudoId pseudoId)
     {
