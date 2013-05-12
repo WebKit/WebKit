@@ -1,5 +1,19 @@
 2013-05-12  Andreas Kling  <akling@apple.com>
 
+        Remove redundant call to removeAllEventListeners() in Document::open().
+
+        From Blink r150175 by <dcheng@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=150175>
+
+        Document::open() already calls Document::removeAllEventListeners(), which
+        removes the event listeners from the DOMWindow it's attached to, so
+        there's no need to do it manually here as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
+2013-05-12  Andreas Kling  <akling@apple.com>
+
         Apply FINAL to the RenderObject hierarchy.
         <http://webkit.org/b/115977>
 

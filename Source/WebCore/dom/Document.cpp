@@ -2233,9 +2233,6 @@ void Document::open(Document* ownerDocument)
     if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->setWasCreatedByScript(true);
 
-    if (DOMWindow* domWindow = this->domWindow())
-        domWindow->removeAllEventListeners();
-
     if (m_frame)
         m_frame->loader()->didExplicitOpen();
 }
