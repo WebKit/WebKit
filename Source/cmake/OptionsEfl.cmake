@@ -178,7 +178,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         add_definitions(-DWTF_USE_WEBAUDIO_GSTREAMER=1)
     endif ()
 
-    find_package(GStreamer REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+    find_package(GStreamer 1.0.5 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 endif ()
 
 if (WTF_USE_TILED_BACKING_STORE)

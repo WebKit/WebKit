@@ -1,5 +1,22 @@
 2013-05-11  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Add a basic cmake build for WTF and JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=115967
+
+        Reviewed by Laszlo Gombos.
+
+        * CMakeLists.txt: Add GTK+ to the list of ports.
+        * Source/CMakeLists.txt: We do not try to build WebCoreTestSupport when WebCore is disabled.
+        * Source/cmake/FindGAIL3.cmake: Added.
+        * Source/cmake/FindGDK3.cmake: Added.
+        * Source/cmake/FindGStreamer.cmake: Use the passed in minimum version.
+        * Source/cmake/FindGTK3.cmake: Added.
+        * Source/cmake/FindXt.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake: Pass in the minimum version.
+        * Source/cmake/OptionsGTK.cmake: Added.
+
+2013-05-11  Martin Robinson  <mrobinson@igalia.com>
+
         Move defines to platform
 
         [GTK] Move defines that will never be configured to Platform.h

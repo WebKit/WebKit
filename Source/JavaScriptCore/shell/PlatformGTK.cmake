@@ -1,0 +1,5 @@
+list(APPEND JSC_LIBRARIES
+    ${GLIB_LIBRARIES}
+    ${CMAKE_DL_LIBS}
+)
+

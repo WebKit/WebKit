@@ -1,3 +1,13 @@
+2013-05-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add a basic cmake build for WTF and JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=115967
+
+        Reviewed by Laszlo Gombos.
+
+        * PlatformGTK.cmake: Added.
+        * shell/PlatformGTK.cmake: Added.
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove USE(OS_RANDOMNESS)

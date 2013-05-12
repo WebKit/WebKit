@@ -1,5 +1,14 @@
 2013-05-11  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Add a basic cmake build for WTF and JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=115967
+
+        Reviewed by Laszlo Gombos.
+
+        * wtf/PlatformGTK.cmake: Added.
+
+2013-05-11  Martin Robinson  <mrobinson@igalia.com>
+
         Move defines to platform
 
         [GTK] Move defines that will never be configured to Platform.h

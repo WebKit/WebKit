@@ -47,9 +47,6 @@
 
 find_package(PkgConfig)
 
-# The minimum GStreamer version we support.
-set(GSTREAMER_MINIMUM_VERSION 1.0.5)
-
 # Helper macro to find a GStreamer plugin (or GStreamer itself)
 #   _component_prefix is prepended to the _INCLUDE_DIRS and _LIBRARIES variables (eg. "GSTREAMER_AUDIO")
 #   _pkgconfig_name is the component's pkg-config name (eg. "gstreamer-1.0", or "gstreamer-video-1.0").
@@ -98,10 +95,16 @@ if (GSTREAMER_INCLUDE_DIRS)
 endif ()
 
 # FIXME: With CMake 2.8.3 we can just pass GSTREAMER_VERSION to FIND_PACKAGE_HANDLE_STANDARD_ARGS as VERSION_VAR
-#        and remove the version check here (GSTREAMER_MINIMUM_VERSION would be passed to FIND_PACKAGE).
+#        and remove the version check here (GSTREAMER_FIND_VERSION would be passed to FIND_PACKAGE).
 set(VERSION_OK TRUE)
-if ("${GSTREAMER_VERSION}" VERSION_LESS "${GSTREAMER_MINIMUM_VERSION}")
-    set(VERSION_OK FALSE)
+if (GSTREAMER_FIND_VERSION_EXACT)
+    if (NOT(("${GSTREAMER_FIND_VERSION}" VERSION_EQUAL "${GSTREAMER_VERSION}")))
+        set(VERSION_OK FALSE)
+    endif ()
+else ()
+    if ("${GSTREAMER_VERSION}" VERSION_LESS "${GSTREAMER_FIND_VERSION}")
+        set(VERSION_OK FALSE)
+    endif ()
 endif ()
 
 # -------------------------
