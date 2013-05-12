@@ -1,3 +1,13 @@
+2013-03-15  Tobias Mueller  <tobiasmue@gnome.org>
+
+        Build fix for Tools/GtkLauncher/Programs_GtkLauncher-main.o if gstreamer is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=112394
+
+        Reviewed by Philippe Normand.
+
+        * GtkLauncher/main.c:
+        (main): Guard using the gstreamer function with #ifdef WTF_USE_GSTREAMER
+
 2013-04-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Bump gnome-themes-standard to 3.6.0
