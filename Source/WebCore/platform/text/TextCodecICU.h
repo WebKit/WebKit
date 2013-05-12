@@ -42,8 +42,8 @@ namespace WebCore {
         virtual ~TextCodecICU();
 
     private:
-        explicit TextCodecICU(const char* encoding);
-        static PassOwnPtr<TextCodec> create(const TextEncoding&, const void*);
+        TextCodecICU(const char* encoding, const char* canonicalConverterName);
+        static PassOwnPtr<TextCodec> create(const TextEncoding&, const void* additionalData);
 
         virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
         virtual CString encode(const UChar*, size_t length, UnencodableHandling);
@@ -57,6 +57,7 @@ namespace WebCore {
             const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& err);
 
         const char* const m_encodingName;
+        const char* const m_canonicalConverterName;
         mutable UConverter* m_converterICU;
         mutable bool m_needsGBKFallbacks;
     };

@@ -57,10 +57,10 @@ static UConverter*& cachedConverterICU()
     return threadGlobalData().cachedConverterICU().converter;
 }
 
-PassOwnPtr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, const void*)
+PassOwnPtr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, const void* additionalData)
 {
-    // TextEncoding name is always one from atomicCanonicalTextEncodingName, guaranteed to never be deleted.
-    return adoptPtr(new TextCodecICU(encoding.name()));
+    // Name strings are persistently kept in TextEncodingRegistry maps, so they are never deleted.
+    return adoptPtr(new TextCodecICU(encoding.name(), static_cast<const char*>(additionalData)));
 }
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -71,61 +71,65 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     // apart; ICU treats these names as synonyms.
     registrar("ISO-8859-8-I", "ISO-8859-8-I");
 
-    int32_t numEncodings = ucnv_countAvailable();
-    for (int32_t i = 0; i < numEncodings; ++i) {
-        const char* name = ucnv_getAvailableName(i);
+    int32_t numConverters = ucnv_countAvailable();
+    for (int32_t i = 0; i < numConverters; ++i) {
+        const char* canonicalConverterName = ucnv_getAvailableName(i);
         UErrorCode error = U_ZERO_ERROR;
         // Try MIME before trying IANA to pick up commonly used names like
         // 'EUC-JP' instead of horrendously long names like 
         // 'Extended_UNIX_Code_Packed_Format_for_Japanese'. 
-        const char* standardName = ucnv_getStandardName(name, "MIME", &error);
-        if (!U_SUCCESS(error) || !standardName) {
+        const char* webStandardName = ucnv_getStandardName(canonicalConverterName, "MIME", &error);
+        if (!U_SUCCESS(error) || !webStandardName) {
             error = U_ZERO_ERROR;
             // Try IANA to pick up 'windows-12xx' and other names
             // which are not preferred MIME names but are widely used. 
-            standardName = ucnv_getStandardName(name, "IANA", &error);
-            if (!U_SUCCESS(error) || !standardName)
+            webStandardName = ucnv_getStandardName(canonicalConverterName, "IANA", &error);
+            if (!U_SUCCESS(error) || !webStandardName)
                 continue;
         }
+
+        // Any standard encoding overrides should match checks in registerCodecs() below.
 
         // 1. Treat GB2312 encoding as GBK (its more modern superset), to match other browsers.
         // 2. On the Web, GB2312 is encoded as EUC-CN or HZ, while ICU provides a native encoding
         //    for encoding GB_2312-80 and several others. So, we need to override this behavior, too.
-        if (strcmp(standardName, "GB2312") == 0 || strcmp(standardName, "GB_2312-80") == 0)
-            standardName = "GBK";
+        if (strcmp(webStandardName, "GB2312") == 0 || strcmp(webStandardName, "GB_2312-80") == 0)
+            webStandardName = "GBK";
         // Similarly, EUC-KR encodings all map to an extended version.
-        else if (strcmp(standardName, "KSC_5601") == 0 || strcmp(standardName, "EUC-KR") == 0 || strcmp(standardName, "cp1363") == 0)
-            standardName = "windows-949";
+        else if (strcmp(webStandardName, "KSC_5601") == 0 || strcmp(webStandardName, "EUC-KR") == 0 || strcmp(webStandardName, "cp1363") == 0)
+            webStandardName = "windows-949";
         // And so on.
-        else if (strcasecmp(standardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.
-            standardName = "windows-1254";
-        else if (strcmp(standardName, "TIS-620") == 0)
-            standardName = "windows-874";
+        // FIXME: strcasecmp is locale sensitive, we should not be using it.
+        else if (strcasecmp(webStandardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.
+            webStandardName = "windows-1254";
+        else if (strcmp(webStandardName, "TIS-620") == 0)
+            webStandardName = "windows-874";
 
-        registrar(standardName, standardName);
+        registrar(webStandardName, webStandardName);
 
-        uint16_t numAliases = ucnv_countAliases(name, &error);
+        uint16_t numAliases = ucnv_countAliases(canonicalConverterName, &error);
         ASSERT(U_SUCCESS(error));
         if (U_SUCCESS(error))
             for (uint16_t j = 0; j < numAliases; ++j) {
                 error = U_ZERO_ERROR;
-                const char* alias = ucnv_getAlias(name, j, &error);
+                const char* alias = ucnv_getAlias(canonicalConverterName, j, &error);
                 ASSERT(U_SUCCESS(error));
-                if (U_SUCCESS(error) && alias != standardName)
-                    registrar(alias, standardName);
+                if (U_SUCCESS(error) && alias != webStandardName)
+                    registrar(alias, webStandardName);
             }
     }
 
     // Additional aliases.
-    // These are present in modern versions of ICU, but not in ICU 3.2 (shipped with Mac OS X 10.4).
+    // macroman is present in modern versions of ICU, but not in ICU 3.2 (shipped with Mac OS X 10.4).
+    // FIXME: Do any ports still use such old versions?
     registrar("macroman", "macintosh");
-    registrar("maccyrillic", "x-mac-cyrillic");
 
     // Additional aliases that historically were present in the encoding
     // table in WebKit on Macintosh that don't seem to be present in ICU.
     // Perhaps we can prove these are not used on the web and remove them.
     // Or perhaps we can get them added to ICU.
     registrar("x-mac-roman", "macintosh");
+    registrar("maccyrillic", "x-mac-cyrillic");
     registrar("x-mac-ukrainian", "x-mac-cyrillic");
     registrar("cn-big5", "Big5");
     registrar("x-x-big5", "Big5");
@@ -152,7 +156,7 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("x-cp1251", "windows-1251");
     registrar("x-euc", "EUC-JP");
     registrar("x-windows-949", "windows-949");
-    registrar("KSC5601", "KSC_5601");
+    registrar("KSC5601", "windows-949");
     registrar("x-uhc", "windows-949");
     registrar("shift-jis", "Shift_JIS");
 
@@ -171,7 +175,7 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("ISO8859-7", "ISO-8859-7");
     registrar("ISO8859-8", "ISO-8859-8");
     registrar("ISO8859-8-I", "ISO-8859-8-I");
-    registrar("ISO8859-9", "ISO-8859-9");
+    registrar("ISO8859-9", "windows-1254");
     registrar("ISO8859-10", "ISO-8859-10");
     registrar("ISO8859-13", "ISO-8859-13");
     registrar("ISO8859-14", "ISO-8859-14");
@@ -183,25 +187,43 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
 {
     // See comment above in registerEncodingNames.
-    registrar("ISO-8859-8-I", create, 0);
+    UErrorCode error = U_ZERO_ERROR;
+    const char* canonicalConverterName = ucnv_getCanonicalName("ISO-8859-8-I", "IANA", &error);
+    ASSERT(U_SUCCESS(error));
+    registrar("ISO-8859-8-I", create, canonicalConverterName);
 
-    int32_t numEncodings = ucnv_countAvailable();
-    for (int32_t i = 0; i < numEncodings; ++i) {
-        const char* name = ucnv_getAvailableName(i);
-        UErrorCode error = U_ZERO_ERROR;
-        const char* standardName = ucnv_getStandardName(name, "MIME", &error);
-        if (!U_SUCCESS(error) || !standardName) {
+    int32_t numConverters = ucnv_countAvailable();
+    for (int32_t i = 0; i < numConverters; ++i) {
+        canonicalConverterName = ucnv_getAvailableName(i);
+        error = U_ZERO_ERROR;
+        const char* webStandardName = ucnv_getStandardName(canonicalConverterName, "MIME", &error);
+        if (!U_SUCCESS(error) || !webStandardName) {
             error = U_ZERO_ERROR;
-            standardName = ucnv_getStandardName(name, "IANA", &error);
-            if (!U_SUCCESS(error) || !standardName)
+            webStandardName = ucnv_getStandardName(canonicalConverterName, "IANA", &error);
+            if (!U_SUCCESS(error) || !webStandardName)
                 continue;
         }
-        registrar(standardName, create, 0);
+
+        // Don't register codecs for overridden encodings.
+        if (strcmp(webStandardName, "GB2312") == 0 || strcmp(webStandardName, "GB_2312-80") == 0
+            || strcmp(webStandardName, "KSC_5601") == 0 || strcmp(webStandardName, "EUC-KR") == 0
+            || strcmp(webStandardName, "cp1363") == 0
+            || strcasecmp(webStandardName, "iso-8859-9") == 0
+            || strcmp(webStandardName, "TIS-620") == 0)
+            continue;
+
+        registrar(webStandardName, create, fastStrDup(canonicalConverterName));
     }
+
+    // These encodings currently don't have standard names, so we need to register encoders manually.
+    // FIXME: Is there a good way to determine the most up to date variant programmatically?
+    registrar("windows-874", create, "windows-874-2000");
+    registrar("windows-949", create, "windows-949-2000");
 }
 
-TextCodecICU::TextCodecICU(const char* encoding)
+TextCodecICU::TextCodecICU(const char* encoding, const char* canonicalConverterName)
     : m_encodingName(encoding)
+    , m_canonicalConverterName(canonicalConverterName)
     , m_converterICU(0)
     , m_needsGBKFallbacks(false)
 {
@@ -218,6 +240,7 @@ void TextCodecICU::releaseICUConverter() const
         UConverter*& cachedConverter = cachedConverterICU();
         if (cachedConverter)
             ucnv_close(cachedConverter);
+        ucnv_reset(m_converterICU);
         cachedConverter = m_converterICU;
         m_converterICU = 0;
     }
@@ -227,15 +250,15 @@ void TextCodecICU::createICUConverter() const
 {
     ASSERT(!m_converterICU);
 
-    m_needsGBKFallbacks = m_encodingName[0] == 'G' && m_encodingName[1] == 'B' && m_encodingName[2] == 'K' && !m_encodingName[3];
-
     UErrorCode err;
+
+    m_needsGBKFallbacks = !strcmp(m_encodingName, "GBK");
 
     UConverter*& cachedConverter = cachedConverterICU();
     if (cachedConverter) {
         err = U_ZERO_ERROR;
-        const char* cachedName = ucnv_getName(cachedConverter, &err);
-        if (U_SUCCESS(err) && m_encodingName == cachedName) {
+        const char* cachedConverterName = ucnv_getName(cachedConverter, &err);
+        if (U_SUCCESS(err) && !strcmp(m_canonicalConverterName, cachedConverterName)) {
             m_converterICU = cachedConverter;
             cachedConverter = 0;
             return;
@@ -243,11 +266,8 @@ void TextCodecICU::createICUConverter() const
     }
 
     err = U_ZERO_ERROR;
-    m_converterICU = ucnv_open(m_encodingName, &err);
-#if !LOG_DISABLED
-    if (err == U_AMBIGUOUS_ALIAS_WARNING)
-        LOG_ERROR("ICU ambiguous alias warning for encoding: %s", m_encodingName);
-#endif
+    m_converterICU = ucnv_open(m_canonicalConverterName, &err);
+    ASSERT(U_SUCCESS(err));
     if (m_converterICU)
         ucnv_setFallback(m_converterICU, TRUE);
 }
@@ -336,6 +356,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     // <http://bugs.webkit.org/show_bug.cgi?id=17014>
     // Simplified Chinese pages use the code A3A0 to mean "full-width space", but ICU decodes it as U+E5E5.
+    // FIXME: strcasecmp is locale sensitive, we should not be using it.
     if (strcmp(m_encodingName, "GBK") == 0 || strcasecmp(m_encodingName, "gb18030") == 0)
         resultString.replace(0xE5E5, ideographicSpace);
 

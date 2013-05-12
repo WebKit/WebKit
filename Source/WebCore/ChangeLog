@@ -1,3 +1,38 @@
+2013-05-11  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13823864> TextCodecICU complains about ambiguous codec names with current ICU release
+        https://bugs.webkit.org/show_bug.cgi?id=115953
+
+        Reviewed by Darin Adler.
+
+        Store and use canonical converter name to create converters.
+
+        As a side effect, we now actually reuse cached converters - previously we would compare
+        a standard encoding name to internal canonical one, which rarely match.
+
+        * platform/text/TextCodecICU.h:
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::create): Pass canonical ICU converter name to constructor.
+        (WebCore::TextCodecICU::registerEncodingNames): 
+            - Updated terminology.
+            - Added a comment that special cases should be kept in sync between registerEncodingNames
+            and registerCodecs.
+            - Moved maccyrillic alias to a correct section. It's not present in ICU even today.
+            - Changed a few aliases to actually map to standard name, not to an overridden one
+            (this doesn't change behavior since addToTextEncodingNameMap looks up canonical
+            name, but is clearer).
+        (WebCore::TextCodecICU::registerCodecs): Store a converter name to use with each
+        canonical encoding name.
+        (WebCore::TextCodecICU::TextCodecICU): Ditto.
+        (WebCore::TextCodecICU::releaseICUConverter): Reset the converter to remove any
+        leftover data.
+        (WebCore::TextCodecICU::createICUConverter): 
+            - Compare converter name to converter name, not to another alias name.
+            - Use proper string comparison instead of pointer comparison.
+            - When creating a converter, assert that the name is not ambigous - canonical
+            converter names should never be, otherwise there would be no way to create
+            the converter without ambiguity.
+
 2013-05-11  Antoine Quint  <graouts@apple.com>
 
         [Mac] The captions menu should not use a canned max-width and max-height
