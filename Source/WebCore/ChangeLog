@@ -1,3 +1,16 @@
+2013-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Possible crash when going Back while loading PDF
+        https://bugs.webkit.org/show_bug.cgi?id=115972
+
+        Reviewed by Dan Bernstein.
+
+        It's possible for m_frame to be null when Document::findUnsafeParentScrollPropagationBoundary()
+        is called, so null-check currentFrame.
+
+        * dom/Document.cpp:
+        (WebCore::Document::findUnsafeParentScrollPropagationBoundary):
+
 2013-05-11  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13823864> TextCodecICU complains about ambiguous codec names with current ICU release

@@ -2781,7 +2781,10 @@ bool Document::canNavigate(Frame* targetFrame)
 Frame* Document::findUnsafeParentScrollPropagationBoundary()
 {
     Frame* currentFrame = m_frame;
-    Frame* ancestorFrame = currentFrame->tree()->parent(); 
+    if (!currentFrame)
+        return 0;
+
+    Frame* ancestorFrame = currentFrame->tree()->parent();
 
     while (ancestorFrame) {
         if (!ancestorFrame->document()->securityOrigin()->canAccess(securityOrigin()))
