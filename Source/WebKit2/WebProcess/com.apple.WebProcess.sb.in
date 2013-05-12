@@ -276,6 +276,10 @@
        (home-subpath "/Library/Caches/com.apple.WebProcess") ;; <rdar://problem/12656814>
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+       (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.nvidia.OpenGL")) ;; <rdar://problem/13402976>
+#endif
+
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))

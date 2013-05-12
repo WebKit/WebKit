@@ -1,3 +1,11 @@
+2013-05-12  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13402976> Sandbox violations in com.nvidia.OpenGL on Lion.
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Silence the violations (on Lion only).
+
 2013-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove unnecessary GTK_CHECK_VERSION #ifdefs
