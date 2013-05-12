@@ -123,6 +123,9 @@
 
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
+#if GCC_VERSION_AT_LEAST(4, 8, 0)
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 /* C11 support */
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT 1
