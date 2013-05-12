@@ -23,8 +23,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 static void test_application_cache_maximum_size()
 {
     unsigned long long maxSize = 8192;
@@ -49,11 +47,3 @@ int main(int argc, char** argv)
     return g_test_run();
 }
 
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

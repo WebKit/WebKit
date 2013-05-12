@@ -26,8 +26,6 @@
 #include <unistd.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 static const char* centeredContents = "<html><body><p style='text-align: center;'>Short line</p><p style='text-align: center;'>Long-size line with some foo bar baz content</p><p style='text-align: center;'>Short line</p><p style='text-align: center;'>This is a multi-line paragraph<br />where the first line<br />is the biggest one</p></body></html>";
 
 static const char* contents = "<html><body><p>This is a test. This is the second sentence. And this the third.</p></body></html>";
@@ -2030,11 +2028,3 @@ int main(int argc, char** argv)
     return g_test_run ();
 }
 
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

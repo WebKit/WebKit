@@ -963,11 +963,7 @@ static void webkit_web_view_realize(GtkWidget* widget)
     gtk_widget_set_realized(widget, TRUE);
 
     GtkAllocation allocation;
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_get_allocation(widget, &allocation);
-#else
-    allocation = widget->allocation;
-#endif
 
     GdkWindowAttr attributes;
     attributes.window_type = GDK_WINDOW_CHILD;
@@ -1006,11 +1002,7 @@ static void webkit_web_view_realize(GtkWidget* widget)
     gdk_window_set_user_data(window, widget);
 
 #ifdef GTK_API_VERSION_2
-#if GTK_CHECK_VERSION(2, 20, 0)
     gtk_widget_style_attach(widget);
-#else
-    widget->style = gtk_style_attach(gtk_widget_get_style(widget), window);
-#endif
     gtk_style_set_background(gtk_widget_get_style(widget), window, GTK_STATE_NORMAL);
 #else
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
@@ -1587,7 +1579,6 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if GTK_CHECK_VERSION(2, 12, 0)
 static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip)
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
@@ -1644,7 +1635,6 @@ static gboolean webkit_web_view_show_help(GtkWidget* widget, GtkWidgetHelpType h
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->show_help(widget, help_type);
 }
-#endif
 
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
@@ -3117,10 +3107,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->drag_drop = NULL;
     widgetClass->drag_data_received = NULL;
 #endif
-#if GTK_CHECK_VERSION(2, 12, 0)
     widgetClass->query_tooltip = webkit_web_view_query_tooltip;
     widgetClass->show_help = webkit_web_view_show_help;
-#endif
     widgetClass->map = webkitWebViewMap;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
@@ -5291,7 +5279,6 @@ static IntPoint documentPointForWindowPoint(Frame* frame, const IntPoint& window
 
 void webkit_web_view_set_tooltip_text(WebKitWebView* webView, const char* tooltip)
 {
-#if GTK_CHECK_VERSION(2, 12, 0)
     WebKitWebViewPrivate* priv = webView->priv;
     if (tooltip && *tooltip != '\0') {
         priv->tooltipText = tooltip;
@@ -5302,11 +5289,6 @@ void webkit_web_view_set_tooltip_text(WebKitWebView* webView, const char* toolti
     }
 
     gtk_widget_trigger_tooltip_query(GTK_WIDGET(webView));
-#else
-    // TODO: Support older GTK+ versions
-    // See http://bugs.webkit.org/show_bug.cgi?id=15793
-    notImplemented();
-#endif
 }
 
 /**

@@ -20,8 +20,6 @@
 #include "autotoolsconfig.h"
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 typedef struct {
     char *data;
     guint flag;
@@ -314,12 +312,3 @@ int main(int argc, char **argv)
     return g_test_run();
 }
 
-#else
-
-int main(int argc, char **argv)
-{
-    g_critical("You will need at least GTK+ 2.14.0 to run the unit tests.");
-    return 0;
-}
-
-#endif

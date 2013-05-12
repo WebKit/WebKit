@@ -21,8 +21,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 static void notify_load_status_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
     if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED) {
@@ -119,12 +117,3 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/window/scrollbar_policy", test_webkit_window_scrollbar_policy);
     return g_test_run ();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

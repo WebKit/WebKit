@@ -24,8 +24,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 /* Non form roles */
 #define HTML_DOCUMENT_FRAME "<html><body>This is a test.</body></html>"
 #define HTML_HEADING "<html><body><h1>1</h1><h2>2</h2><h3>3</h3><h4>4</h4><h5>5</h5><h6>6</h6></body></html>"
@@ -426,12 +424,3 @@ int main(int argc, char** argv)
 
     return g_test_run();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

@@ -24,8 +24,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 /* This function is not public, so we need an extern declaration */
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 
@@ -78,12 +76,3 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webplugindatabase/getplugins", test_webkit_web_plugin_database_get_plugins);
     return g_test_run ();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need at least gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

@@ -1250,11 +1250,7 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebKitWebView* containingWindow = getViewFromFrame(m_frame);
     GtkAllocation allocation;
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_get_allocation(GTK_WIDGET(containingWindow), &allocation);
-#else
-    allocation = GTK_WIDGET(containingWindow)->allocation;
-#endif
     IntSize size = IntSize(allocation.width, allocation.height);
     bool transparent = webkit_web_view_get_transparent(containingWindow);
     Color backgroundColor = transparent ? WebCore::Color::transparent : WebCore::Color::white;

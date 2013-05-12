@@ -22,8 +22,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 /* Private API */
 char* webkitWebSettingsUserAgentForURI(WebKitWebSettings *settings, const char *uri);
 
@@ -153,12 +151,3 @@ int main(int argc, char **argv)
     g_test_add_func("/webkit/websettings/copy", test_webkit_web_settings_copy);
     return g_test_run ();
 }
-
-#else
-int main(int argc, char **argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

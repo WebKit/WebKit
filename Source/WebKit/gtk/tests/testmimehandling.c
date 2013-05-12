@@ -28,8 +28,6 @@
 #include <webkit/webkit.h>
 #include <unistd.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 GMainLoop* loop;
 SoupSession *session;
 char* base_uri;
@@ -203,12 +201,3 @@ int main(int argc, char** argv)
 
     return g_test_run();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

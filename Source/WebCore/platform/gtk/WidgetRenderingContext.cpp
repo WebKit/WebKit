@@ -85,9 +85,15 @@ WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext,
     // We never want to create a scratch buffer larger than the size of our target GdkDrawable.
     // This prevents giant pixmap allocations for very large widgets in smaller views.
     // FIXME: We need to implement this check for WebKit2 as well.
-    if (graphicsContext->gdkWindow()) {
+    if (GdkDrawable* drawable = graphicsContext->gdkWindow()) {
         int maxWidth = 0, maxHeight = 0;
-        getGdkDrawableSize(graphicsContext->gdkWindow(), &maxWidth, &maxHeight);
+
+        if (GDK_IS_PIXMAP(drawable))
+            gdk_pixmap_get_size(GDK_PIXMAP(drawable), &maxWidth, &maxHeight);
+        else if (GDK_IS_WINDOW(drawable)) {
+            maxWidth = gdk_window_get_width(GDK_WINDOW(drawable));
+            maxHeight = gdk_window_get_height(GDK_WINDOW(drawable));
+        }
         m_targetRect.setSize(m_targetRect.size().shrunkTo(IntSize(maxWidth, maxHeight)));
     }
 

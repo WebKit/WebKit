@@ -23,8 +23,6 @@
 #include <glib/gstdio.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 GMainLoop* loop;
 char* temporaryFilename = NULL;
 WebKitDownload* theDownload = NULL;
@@ -322,13 +320,3 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/download/not-found", test_webkit_download_not_found);
     return g_test_run ();
 }
-
-#else
-
-int main(int argc, char** argv)
-{
-    g_critical("You will need at least GTK+ 2.14.0 to run the unit tests.");
-    return 0;
-}
-
-#endif

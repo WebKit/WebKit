@@ -26,8 +26,6 @@
 #include <stdlib.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 static void test_network_request_create_destroy()
 {
     WebKitNetworkRequest* request;
@@ -96,12 +94,3 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/networkrequest/properties", test_network_request_properties);
     return g_test_run ();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

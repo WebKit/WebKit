@@ -22,8 +22,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 typedef struct {
     WebKitWebHistoryItem* item;
 } WebHistoryItemFixture;
@@ -70,12 +68,3 @@ int main(int argc, char** argv)
                test_webkit_web_history_item_alternate_title, web_history_item_fixture_teardown);
     return g_test_run ();
 }
-
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

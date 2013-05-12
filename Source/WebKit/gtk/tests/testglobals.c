@@ -22,8 +22,6 @@
 #include <libsoup/soup.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 // Make sure the session is initialized properly when webkit_get_default_session() is called.
 static void test_globals_default_session()
 {
@@ -110,11 +108,3 @@ int main(int argc, char** argv)
     return g_test_run();
 }
 
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

@@ -25,8 +25,6 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-
 #define HTML_DOCUMENT_TITLE "<html><head><title>This is the title</title></head><body></body></html>"
 #define HTML_DOCUMENT_ELEMENTS "<html><body><ul><li>1</li><li>2</li><li>3</li></ul></body></html>"
 #define HTML_DOCUMENT_ELEMENTS_CLASS "<html><body><div class=\"test\"></div><div class=\"strange\"></div><div class=\"test\"></div></body></html>"
@@ -391,11 +389,3 @@ int main(int argc, char** argv)
     return g_test_run();
 }
 
-#else
-int main(int argc, char** argv)
-{
-    g_critical("You will gtk-2.14.0 to run the unit tests. Doing nothing now.");
-    return 0;
-}
-
-#endif

@@ -1,3 +1,20 @@
+2013-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove unnecessary GTK_CHECK_VERSION #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=115914
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:
+        (WebCore::FullscreenVideoControllerGtk::hideHud):
+        (WebCore::FullscreenVideoControllerGtk::initializeWindow):
+        * platform/gtk/GtkVersioning.c:
+        * platform/gtk/GtkVersioning.h:
+        * platform/gtk/WidgetRenderingContext.cpp:
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext):
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_realize):
+
 2013-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r149932

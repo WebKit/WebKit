@@ -387,7 +387,6 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
     gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->scroll.window))));
 
     // For more than one tick in a scroll, we need smooth scroll event
-#if GTK_CHECK_VERSION(3, 3, 18)
     if ((horizontal && vertical) || horizontal > 1 || horizontal < -1 || vertical > 1 || vertical < -1) {
         event->scroll.direction = GDK_SCROLL_SMOOTH;
         event->scroll.delta_x = -horizontal;
@@ -396,7 +395,6 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         sendOrQueueEvent(event);
         return;
     }
-#endif
 
     if (horizontal < 0)
         event->scroll.direction = GDK_SCROLL_RIGHT;
@@ -417,7 +415,6 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
     // Gtk+ does not support paged scroll events.
     g_return_if_fail(!paged);
 
-#if GTK_CHECK_VERSION(3, 3, 18)
     GdkEvent* event = gdk_event_new(GDK_SCROLL);
     event->scroll.x = m_position.x;
     event->scroll.y = m_position.y;
@@ -431,7 +428,6 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
     event->scroll.delta_y = -vertical / pixelsPerScrollTick;
 
     sendOrQueueEvent(event);
-#endif
 }
 
 void EventSenderProxy::leapForward(int milliseconds)

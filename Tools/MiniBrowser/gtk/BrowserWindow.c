@@ -52,10 +52,8 @@ struct _BrowserWindow {
     WebKitWebView *webView;
     GtkWidget *downloadsBar;
     GdkPixbuf *favicon;
-#if GTK_CHECK_VERSION(3, 2, 0)
     GtkWidget *fullScreenMessageLabel;
     guint fullScreenMessageLabelId;
-#endif
 };
 
 struct _BrowserWindowClass {
@@ -91,10 +89,8 @@ static char *getExternalURI(const char *uri)
 
 static void browserWindowSetStatusText(BrowserWindow *window, const char *text)
 {
-#if GTK_CHECK_VERSION(3, 2, 0)
     gtk_label_set_text(GTK_LABEL(window->statusLabel), text);
     gtk_widget_set_visible(window->statusLabel, !!text);
-#endif
 }
 
 static void resetStatusText(GtkWidget *widget, BrowserWindow *window)
@@ -286,18 +282,15 @@ static void webViewReadyToShow(WebKitWebView *webView, BrowserWindow *window)
     gtk_widget_show(GTK_WIDGET(window));
 }
 
-#if GTK_CHECK_VERSION(3, 2, 0)
 static gboolean fullScreenMessageTimeoutCallback(BrowserWindow *window)
 {
     gtk_widget_hide(window->fullScreenMessageLabel);
     window->fullScreenMessageLabelId = 0;
     return FALSE;
 }
-#endif
 
 static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *window)
 {
-#if GTK_CHECK_VERSION(3, 2, 0)
     gchar *titleOrURI = g_strdup(webkit_web_view_get_title(window->webView));
     if (!titleOrURI)
         titleOrURI = getExternalURI(webkit_web_view_get_uri(window->webView));
@@ -309,8 +302,6 @@ static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *wi
     gtk_widget_show(window->fullScreenMessageLabel);
 
     window->fullScreenMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)fullScreenMessageTimeoutCallback, window);
-#endif
-
     gtk_widget_hide(window->toolbar);
 
     return FALSE;
@@ -318,14 +309,11 @@ static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *wi
 
 static gboolean webViewLeaveFullScreen(WebKitWebView *webView, BrowserWindow *window)
 {
-#if GTK_CHECK_VERSION(3, 2, 0)
     if (window->fullScreenMessageLabelId) {
         g_source_remove(window->fullScreenMessageLabelId);
         window->fullScreenMessageLabelId = 0;
     }
     gtk_widget_hide(window->fullScreenMessageLabel);
-#endif
-
     gtk_widget_show(window->toolbar);
 
     return FALSE;
@@ -466,10 +454,8 @@ static void browserWindowFinalize(GObject *gObject)
         window->favicon = NULL;
     }
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     if (window->fullScreenMessageLabelId)
         g_source_remove(window->fullScreenMessageLabelId);
-#endif
 
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
 
@@ -596,7 +582,6 @@ static void browserWindowConstructed(GObject *gObject)
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     GtkWidget *overlay = gtk_overlay_new();
     gtk_box_pack_start(GTK_BOX(window->mainBox), overlay, TRUE, TRUE, 0);
     gtk_widget_show(overlay);
@@ -617,9 +602,6 @@ static void browserWindowConstructed(GObject *gObject)
     gtk_widget_set_valign(window->fullScreenMessageLabel, GTK_ALIGN_CENTER);
     gtk_widget_set_no_show_all(window->fullScreenMessageLabel, TRUE);
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), window->fullScreenMessageLabel);
-#else
-    gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->webView), TRUE, TRUE, 0);
-#endif
     gtk_widget_show(GTK_WIDGET(window->webView));
 }
 
