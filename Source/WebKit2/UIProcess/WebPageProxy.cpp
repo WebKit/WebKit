@@ -1241,11 +1241,11 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
+void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, String& newMimeType, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK_URL(urlString);
 
-    String newMimeType = mimeType.lower();
+    newMimeType = mimeType.lower();
 
     pluginLoadPolicy = PluginModuleLoadNormally;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));

@@ -313,7 +313,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-GetPluginPath(WTF::String mimeType, WTF::String urlString, WTF::String documentURLString) -> (WTF::String pluginPath, uint32_t pluginLoadPolicy)
+    FindPlugin(WTF::String mimeType, WTF::String urlString, WTF::String documentURLString) -> (WTF::String pluginPath, WTF::String newMIMEType, uint32_t pluginLoadPolicy)
 #endif
 
 }
