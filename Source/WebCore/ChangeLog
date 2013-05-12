@@ -1,5 +1,26 @@
 2013-05-12  Andreas Kling  <akling@apple.com>
 
+        Devirtualize some things on Document.
+
+        From Blink r149967 by <esprehn@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=149967>
+
+        Several methods on Document are virtual but don't override a super class method
+        and don't need to be virtual. This patch devirtualizes:
+
+            - createElementNS()
+            - finishedParsing()
+            - suspendScriptedAnimationControllerCallbacks()
+            - resumeScriptedAnimationControllerCallbacks()
+
+        It also removes the suspend and resume callbacks from ScriptExecutionContext
+        since they didn't need to be there.
+
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+
+2013-05-12  Andreas Kling  <akling@apple.com>
+
         Remove redundant call to removeAllEventListeners() in Document::open().
 
         From Blink r150175 by <dcheng@chromium.org>
