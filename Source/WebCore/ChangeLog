@@ -1,3 +1,16 @@
+2013-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Add more info to compositing log channel output
+        https://bugs.webkit.org/show_bug.cgi?id=115978
+
+        Reviewed by Dean Jackson.
+
+        Add to compositing log channel output whether a layer paints
+        into its compositing ancestor.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+
 2013-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION: Fixed background on ColterReed.com scrolls
