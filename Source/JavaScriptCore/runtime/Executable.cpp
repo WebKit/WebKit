@@ -523,7 +523,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
     UNUSED_PARAM(bytecodeIndex);
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
-    JSObject* exception;
+    JSObject* exception = 0;
     OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForCall, exception);
     if (!newCodeBlock)
         return exception;
@@ -559,7 +559,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
 #endif
     
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
-    JSObject* exception;
+    JSObject* exception = 0;
     OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForConstruct, exception);
     if (!newCodeBlock)
         return exception;

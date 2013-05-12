@@ -1,3 +1,17 @@
+2013-04-04  Andras Becsi  <andras.becsi@digia.com>
+
+        Fix the build with GCC 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=113147
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Initialize JSObject* exception to suppress warnings that make
+        the build fail because of -Werror=maybe-uninitialized.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
 2013-02-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT::compileInt32ToDouble() has an unnecessary case for constant operands
