@@ -41,7 +41,7 @@ public:
     OwnPtr<ImageBuffer> clipMaskImage;
 };
 
-class RenderSVGResourceClipper FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourceClipper : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceClipper(SVGClipPathElement*);
     virtual ~RenderSVGResourceClipper();

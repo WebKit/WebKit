@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class RenderTextControlMultiLine FINAL : public RenderTextControl {
+class RenderTextControlMultiLine : public RenderTextControl {
 public:
     RenderTextControlMultiLine(Element*);
     virtual ~RenderTextControlMultiLine();

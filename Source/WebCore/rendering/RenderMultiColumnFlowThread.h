@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class RenderMultiColumnFlowThread FINAL : public RenderFlowThread {
+class RenderMultiColumnFlowThread : public RenderFlowThread {
 public:
     ~RenderMultiColumnFlowThread();
 

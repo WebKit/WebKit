@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLCanvasElement;
 
-class RenderHTMLCanvas FINAL : public RenderReplaced {
+class RenderHTMLCanvas : public RenderReplaced {
 public:
     explicit RenderHTMLCanvas(HTMLCanvasElement*);
 

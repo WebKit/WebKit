@@ -38,7 +38,7 @@ struct MaskerData {
     OwnPtr<ImageBuffer> maskImage;
 };
 
-class RenderSVGResourceMasker FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourceMasker : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceMasker(SVGMaskElement*);
     virtual ~RenderSVGResourceMasker();

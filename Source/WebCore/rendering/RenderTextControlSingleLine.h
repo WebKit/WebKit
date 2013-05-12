@@ -49,35 +49,35 @@ protected:
     virtual void updateFromElement() OVERRIDE;
 
 private:
-    virtual bool hasControlClip() const OVERRIDE;
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const OVERRIDE;
-    virtual bool isTextField() const OVERRIDE FINAL { return true; }
+    virtual bool hasControlClip() const;
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+    virtual bool isTextField() const { return true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void layout() OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
-    virtual void autoscroll(const IntPoint&) OVERRIDE;
+    virtual void autoscroll(const IntPoint&);
 
     // Subclassed to forward to our inner div.
-    virtual int scrollLeft() const OVERRIDE;
-    virtual int scrollTop() const OVERRIDE;
-    virtual int scrollWidth() const OVERRIDE;
-    virtual int scrollHeight() const OVERRIDE;
-    virtual void setScrollLeft(int) OVERRIDE;
-    virtual void setScrollTop(int) OVERRIDE;
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0) OVERRIDE;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0) OVERRIDE;
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
 
     int textBlockWidth() const;
-    virtual float getAvgCharWidth(AtomicString family) OVERRIDE;
-    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const OVERRIDE;
+    virtual float getAvgCharWidth(AtomicString family);
+    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const;
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
     
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual RenderStyle* textBaseStyle() const OVERRIDE;
+    virtual RenderStyle* textBaseStyle() const;
 
     bool textShouldBeTruncated() const;
 

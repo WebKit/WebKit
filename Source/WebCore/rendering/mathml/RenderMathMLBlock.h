@@ -117,7 +117,7 @@ inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderMathMLBlock(const RenderMathMLBlock*);
 
-class RenderMathMLTable FINAL : public RenderTable {
+class RenderMathMLTable : public RenderTable {
 public:
     explicit RenderMathMLTable(Element* element) : RenderTable(element) { }
     

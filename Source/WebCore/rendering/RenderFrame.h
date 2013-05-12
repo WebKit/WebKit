@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFrameElement;
 
-class RenderFrame FINAL : public RenderFrameBase {
+class RenderFrame : public RenderFrameBase {
 public:
     explicit RenderFrame(HTMLFrameElement*);
 

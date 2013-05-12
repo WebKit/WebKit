@@ -33,7 +33,7 @@ class RenderSVGInlineText;
 class SVGTextElement;
 class RenderSVGInlineText;
 
-class RenderSVGText FINAL : public RenderSVGBlock {
+class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement*);
     virtual ~RenderSVGText();

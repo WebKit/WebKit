@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLOListElement;
 class RenderListMarker;
 
-class RenderListItem FINAL : public RenderBlock {
+class RenderListItem : public RenderBlock {
 public:
     explicit RenderListItem(Element*);
 

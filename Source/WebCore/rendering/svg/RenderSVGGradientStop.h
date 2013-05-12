@@ -30,7 +30,7 @@ class SVGGradientElement;
 class SVGStopElement;
 
 // This class exists mostly so we can hear about gradient stop style changes
-class RenderSVGGradientStop FINAL : public RenderObject {
+class RenderSVGGradientStop : public RenderObject {
 public:
     RenderSVGGradientStop(SVGStopElement*);
     virtual ~RenderSVGGradientStop();
