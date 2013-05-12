@@ -41,6 +41,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/KURL.h>
+#include <WebCore/SuddenTermination.h>
 #include <stdio.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -90,6 +91,7 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
     : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
+    , m_suddenTerminationCounter(0)
 #if ENABLE(CUSTOM_PROTOCOLS)
     , m_customProtocolManagerProxy(this)
 #endif
@@ -202,7 +204,7 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 #if ENABLE(NETWORK_PROCESS)
     // Terminate the web process immediately if we have enough information to confidently do so.
     // This only works if we're using a network process. Otherwise we have to wait for the web process to clean up.
-    if (canTerminateChildProcess() && m_context->usesNetworkProcess())
+    if (!m_suddenTerminationCounter && canTerminateChildProcess() && m_context->usesNetworkProcess())
         requestTermination();
 #endif
 }
@@ -650,6 +652,25 @@ void WebProcessProxy::requestTermination()
         webConnection()->didClose();
 
     disconnect();
+}
+
+
+void WebProcessProxy::enableSuddenTermination()
+{
+    if (!isValid())
+        return;
+
+    WebCore::enableSuddenTermination();
+    m_suddenTerminationCounter--;
+}
+
+void WebProcessProxy::disableSuddenTermination()
+{
+    if (!isValid())
+        return;
+
+    WebCore::disableSuddenTermination();
+    m_suddenTerminationCounter++;
 }
 
 } // namespace WebKit

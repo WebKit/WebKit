@@ -412,6 +412,9 @@ namespace WebCore {
         void willDetachDocumentFromFrame();
         void willDestroyCachedFrame();
 
+        void enableSuddenTermination();
+        void disableSuddenTermination();
+
     private:
         explicit DOMWindow(Document*);
 

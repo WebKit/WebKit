@@ -147,6 +147,9 @@ public:
 
     void print(Frame*);
 
+    void enableSuddenTermination();
+    void disableSuddenTermination();
+
 #if ENABLE(INPUT_TYPE_COLOR)
     PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif

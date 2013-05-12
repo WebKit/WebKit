@@ -1,3 +1,33 @@
+2013-05-12  Andreas Kling  <akling@apple.com>
+
+        Unload event listeners should prevent Safari from insta-killing the web process on last tab close.
+        <http://webkit.org/b/115988>
+        <rdar://problem/13870943>
+
+        Reviewed by Anders Carlsson.
+
+        Let WebCore control the UI process's suppression of the sudden termination mechanism.
+        This is implemented by having WebChromeClient push Enable/DisableSuddenTermination messages
+        over to the UI process where the appropriate NSProcessInfo calls are made.
+
+        We also use this information when deciding whether to insta-kill a web process when its last
+        page is closed. This mechanism is re-usable in WebCore to protect against sudden termination
+        by the UI process.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::enableSuddenTermination):
+        (WebKit::WebProcessProxy::disableSuddenTermination):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::enableSuddenTermination):
+        (WebKit::WebChromeClient::disableSuddenTermination):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2013-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13402976> Sandbox violations in com.nvidia.OpenGL on Lion.

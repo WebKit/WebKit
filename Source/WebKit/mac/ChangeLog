@@ -1,3 +1,16 @@
+2013-05-12  Andreas Kling  <akling@apple.com>
+
+        Unload event listeners should prevent Safari from insta-killing the web process on last tab close.
+        <http://webkit.org/b/115988>
+        <rdar://problem/13870943>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enableSuddenTermination):
+        (WebChromeClient::disableSuddenTermination):
+
 2013-05-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Implement WK2 version of WebInspectorFrontendClient::save

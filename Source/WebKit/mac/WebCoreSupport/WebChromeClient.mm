@@ -814,6 +814,16 @@ void WebChromeClient::willPopUpMenu(NSMenu *menu)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void WebChromeClient::enableSuddenTermination()
+{
+    [[NSProcessInfo processInfo] enableSuddenTermination];
+}
+
+void WebChromeClient::disableSuddenTermination()
+{
+    [[NSProcessInfo processInfo] disableSuddenTermination];
+}
+
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
 {
     NSString* filename;

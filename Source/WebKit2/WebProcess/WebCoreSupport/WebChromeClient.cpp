@@ -45,6 +45,7 @@
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
 #include "WebSecurityOrigin.h"
 #include <WebCore/AXObjectCache.h>
@@ -842,6 +843,16 @@ String WebChromeClient::plugInExtraStyleSheet() const
 String WebChromeClient::plugInExtraScript() const
 {
     return m_page->injectedBundleUIClient().plugInExtraScript();
+}
+
+void WebChromeClient::enableSuddenTermination()
+{
+    m_page->send(Messages::WebProcessProxy::EnableSuddenTermination());
+}
+
+void WebChromeClient::disableSuddenTermination()
+{
+    m_page->send(Messages::WebProcessProxy::DisableSuddenTermination());
 }
 
 } // namespace WebKit

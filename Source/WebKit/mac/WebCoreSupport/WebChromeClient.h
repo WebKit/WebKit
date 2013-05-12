@@ -136,6 +136,9 @@ public:
     virtual void makeFirstResponder(NSResponder *) OVERRIDE;
 
     virtual void willPopUpMenu(NSMenu *) OVERRIDE;
+
+    virtual void enableSuddenTermination() OVERRIDE;
+    virtual void disableSuddenTermination() OVERRIDE;
     
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename) OVERRIDE;
     virtual WTF::String generateReplacementFile(const WTF::String& path) OVERRIDE;

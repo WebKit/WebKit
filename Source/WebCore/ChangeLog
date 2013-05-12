@@ -1,3 +1,48 @@
+2013-05-12  Andreas Kling  <akling@apple.com>
+
+        Unload event listeners should prevent Safari from insta-killing the web process on last tab close.
+        <http://webkit.org/b/115988>
+        <rdar://problem/13870943>
+
+        Reviewed by Anders Carlsson.
+
+        Add two methods to Chrome (and ChromeClient):
+
+            - enableSuddenTermination()
+            - disableSuddenTermination()
+
+        ..and call these from DOMWindow instead of the free global functions.
+
+        For WebKit1, it just calls the NSProcessInfo methods to keep behavior the same.
+        For WebKit2, the new methods plumb through the information to the UI process.
+
+        Also updated the DOMWindow logic to think in terms of per-DOMWindow sudden termination counters
+        instead of a process-global one, since that gets confusing in a WK2 world.
+        When a DOMWindow transitions between having/not having unload/beforeunload event listeners,
+        we send a notification to the Chrome.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.h:
+        (WebCore::Chrome::enableSuddenTermination):
+        (WebCore::Chrome::disableSuddenTermination):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::enableSuddenTermination):
+        (WebCore::ChromeClient::disableSuddenTermination):
+        * page/DOMWindow.cpp:
+        (WebCore::addUnloadEventListener):
+        (WebCore::removeUnloadEventListener):
+        (WebCore::removeAllUnloadEventListeners):
+        (WebCore::addBeforeUnloadEventListener):
+        (WebCore::removeBeforeUnloadEventListener):
+        (WebCore::removeAllBeforeUnloadEventListeners):
+        (WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents):
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        (WebCore::DOMWindow::enableSuddenTermination):
+        (WebCore::DOMWindow::disableSuddenTermination):
+        * page/DOMWindow.h:
+        (DOMWindow):
+
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
         Remove Complex.h from WTF

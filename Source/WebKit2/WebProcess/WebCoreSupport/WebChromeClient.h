@@ -206,6 +206,9 @@ private:
 #if PLATFORM(MAC)
     virtual void makeFirstResponder() OVERRIDE;
 #endif
+
+    virtual void enableSuddenTermination() OVERRIDE;
+    virtual void disableSuddenTermination() OVERRIDE;
     
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const OVERRIDE;
 

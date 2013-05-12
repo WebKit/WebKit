@@ -175,20 +175,16 @@ static DOMWindowSet& windowsWithBeforeUnloadEventListeners()
 static void addUnloadEventListener(DOMWindow* domWindow)
 {
     DOMWindowSet& set = windowsWithUnloadEventListeners();
-    if (set.isEmpty())
-        disableSuddenTermination();
-    set.add(domWindow);
+    if (set.add(domWindow).isNewEntry)
+        domWindow->disableSuddenTermination();
 }
 
 static void removeUnloadEventListener(DOMWindow* domWindow)
 {
     DOMWindowSet& set = windowsWithUnloadEventListeners();
     DOMWindowSet::iterator it = set.find(domWindow);
-    if (it == set.end())
-        return;
-    set.remove(it);
-    if (set.isEmpty())
-        enableSuddenTermination();
+    if (set.remove(it))
+        domWindow->enableSuddenTermination();
 }
 
 static void removeAllUnloadEventListeners(DOMWindow* domWindow)
@@ -198,27 +194,22 @@ static void removeAllUnloadEventListeners(DOMWindow* domWindow)
     if (it == set.end())
         return;
     set.removeAll(it);
-    if (set.isEmpty())
-        enableSuddenTermination();
+    domWindow->enableSuddenTermination();
 }
 
 static void addBeforeUnloadEventListener(DOMWindow* domWindow)
 {
     DOMWindowSet& set = windowsWithBeforeUnloadEventListeners();
-    if (set.isEmpty())
-        disableSuddenTermination();
-    set.add(domWindow);
+    if (set.add(domWindow).isNewEntry)
+        domWindow->disableSuddenTermination();
 }
 
 static void removeBeforeUnloadEventListener(DOMWindow* domWindow)
 {
     DOMWindowSet& set = windowsWithBeforeUnloadEventListeners();
     DOMWindowSet::iterator it = set.find(domWindow);
-    if (it == set.end())
-        return;
-    set.remove(it);
-    if (set.isEmpty())
-        enableSuddenTermination();
+    if (set.remove(it))
+        domWindow->enableSuddenTermination();
 }
 
 static void removeAllBeforeUnloadEventListeners(DOMWindow* domWindow)
@@ -228,8 +219,7 @@ static void removeAllBeforeUnloadEventListeners(DOMWindow* domWindow)
     if (it == set.end())
         return;
     set.removeAll(it);
-    if (set.isEmpty())
-        enableSuddenTermination();
+    domWindow->enableSuddenTermination();
 }
 
 static bool allowsBeforeUnloadListeners(DOMWindow* window)
@@ -272,12 +262,11 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
 
         if (!frame->loader()->shouldClose())
             return false;
+
+        window->enableSuddenTermination();
     }
 
-    enableSuddenTermination();
-
     alreadyDispatched = true;
-
     return true;
 }
 
@@ -310,9 +299,9 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 
         window->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window->document());
         window->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), window->document());
-    }
 
-    enableSuddenTermination();
+        window->enableSuddenTermination();
+    }
 
     alreadyDispatched = true;
 }
@@ -2015,6 +2004,18 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         return;
     UserGestureIndicatorDisabler disabler;
     dialogFrame->page()->chrome()->runModal();
+}
+
+void DOMWindow::enableSuddenTermination()
+{
+    if (Page* page = this->page())
+        page->chrome()->enableSuddenTermination();
+}
+
+void DOMWindow::disableSuddenTermination()
+{
+    if (Page* page = this->page())
+        page->chrome()->disableSuddenTermination();
 }
 
 } // namespace WebCore

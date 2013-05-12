@@ -317,6 +317,9 @@ public:
     virtual void willPopUpMenu(NSMenu *) { }
 #endif
 
+    virtual void enableSuddenTermination() { }
+    virtual void disableSuddenTermination() { }
+
 #if PLATFORM(WIN)
     virtual void setLastSetCursorToCurrentCursor() = 0;
 #endif

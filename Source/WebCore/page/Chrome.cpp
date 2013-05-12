@@ -461,6 +461,16 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
+void Chrome::enableSuddenTermination()
+{
+    m_client->enableSuddenTermination();
+}
+
+void Chrome::disableSuddenTermination()
+{
+    m_client->disableSuddenTermination();
+}
+
 #if ENABLE(DIRECTORY_UPLOAD)
 void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 {

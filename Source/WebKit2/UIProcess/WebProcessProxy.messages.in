@@ -33,6 +33,9 @@ messages -> WebProcessProxy LegacyReceiver {
 
     ShouldTerminate() -> (bool shouldTerminate)
 
+    EnableSuddenTermination()
+    DisableSuddenTermination()
+
     # Plugin messages.
 #if ENABLE(NETSCAPE_PLUGIN_API)
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
