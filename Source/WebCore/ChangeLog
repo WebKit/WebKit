@@ -1,3 +1,26 @@
+2013-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Dropdowns on http://www.exploratorium.edu don't show anything
+        https://bugs.webkit.org/show_bug.cgi?id=115991
+
+        Reviewed by Dan Bernstein.
+        
+        We can't optimize away the backing store of a layer by saying that
+        it paints into a composited ancestor if its composited bounds are not contained
+        by that ancestor.
+
+        Test: compositing/backing/no-backing-for-clip-overhang.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Pass in our 
+        previously computed composited bounds relative to our composited ancestor,
+        and its composited bounds.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): If the ancestor's
+        composited bounds don't contain the layer's composited bounds, the layer
+        needs its own backing store.
+        * rendering/RenderLayerCompositor.h:
+
 2013-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r149955.

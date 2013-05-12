@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .container {
+      position: relative;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      left: 0;
+      top: 0;
+      border: 1px solid black;
+    }
+    
+    .clipping {
+      position: absolute;
+      overflow: hidden;
+      left: 20px;
+      top: 20px;
+      height: 100px;
+      width: 300px;
+      z-index: 0;
+      background-color: green;
+    }
+    
+    .box {
+        width: 10px;
+        height: 10px;
+        background-color: black;
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+  </style>
+
+  <script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+    
+  function dumpLayers()
+  {
+    var layersResult = document.getElementById('layers');
+    if (window.testRunner)
+      layersResult.innerText = window.internals.layerTreeAsText(document);
+  }
+
+  window.addEventListener('load', dumpLayers, false)
+  </script>
+
+</head>
+<body>
+
+  <div class="composited container">
+    <div class="clipping">
+        Text here
+      <div class="box composited">
+      </div>
+    </div>
+  </div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+
+</body>
+</html>
