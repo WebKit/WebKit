@@ -820,10 +820,6 @@
 #define ENABLE_WEB_TIMING 0
 #endif
 
-#if !defined(ENABLE_WEB_TIMING_MINIMAL)
-#define ENABLE_WEB_TIMING_MINIMAL 0
-#endif
-
 #if !defined(ENABLE_WORKERS)
 #define ENABLE_WORKERS 0
 #endif
@@ -848,10 +844,6 @@
 
 #if ENABLE(VIDEO_TRACK) && !ENABLE(VIDEO)
 #error "ENABLE(VIDEO_TRACK) requires ENABLE(VIDEO)"
-#endif
-
-#if ENABLE(WEB_TIMING) && ENABLE(WEB_TIMING_MINIMAL)
-#error "ENABLE(WEB_TIMING) and ENABLE(WEB_TIMING_MINIMAL) are mutually exclusive."
 #endif
 
 #endif /* WTF_FeatureDefines_h */

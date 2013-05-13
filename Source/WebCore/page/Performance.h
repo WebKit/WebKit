@@ -32,7 +32,7 @@
 #ifndef Performance_h
 #define Performance_h
 
-#if ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
+#if ENABLE(WEB_TIMING)
 
 #include "DOMWindowProperty.h"
 #include "EventTarget.h"
@@ -61,11 +61,9 @@ public:
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-#if !ENABLE(WEB_TIMING_MINIMAL)
     PassRefPtr<MemoryInfo> memory() const;
     PerformanceNavigation* navigation() const;
     PerformanceTiming* timing() const;
-#endif // !ENABLE(WEB_TIMING_MINIMAL)
     double now() const;
 
 #if ENABLE(PERFORMANCE_TIMELINE)
@@ -105,10 +103,8 @@ private:
 
     EventTargetData m_eventTargetData;
 
-#if !ENABLE(WEB_TIMING_MINIMAL)
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
-#endif // !ENABLE(WEB_TIMING_MINIMAL)
     
 #if ENABLE(RESOURCE_TIMING)
     Vector<RefPtr<PerformanceEntry> > m_resourceTimingBuffer;
@@ -122,6 +118,6 @@ private:
 
 }
 
-#endif // ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
+#endif // ENABLE(WEB_TIMING)
 
 #endif // Performance_h

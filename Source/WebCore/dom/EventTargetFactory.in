@@ -25,7 +25,7 @@ MessagePort
 NetworkInfoConnection conditional=NETWORK_INFO
 Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
-Performance conditional=WEB_TIMING|WEB_TIMING_MINIMAL
+Performance conditional=WEB_TIMING
 RTCDataChannel conditional=MEDIA_STREAM
 RTCDTMFSender conditional=MEDIA_STREAM
 RTCPeerConnection conditional=MEDIA_STREAM

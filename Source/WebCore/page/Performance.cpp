@@ -43,7 +43,7 @@
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
-#if ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
+#if ENABLE(WEB_TIMING)
 
 #include "Frame.h"
 
@@ -80,7 +80,6 @@ ScriptExecutionContext* Performance::scriptExecutionContext() const
     return frame()->document();
 }
 
-#if !ENABLE(WEB_TIMING_MINIMAL)
 PassRefPtr<MemoryInfo> Performance::memory() const
 {
     return MemoryInfo::create(m_frame);
@@ -101,7 +100,6 @@ PerformanceTiming* Performance::timing() const
 
     return m_timing.get();
 }
-#endif // !ENABLE(WEB_TIMING_MINIMAL)
 
 #if ENABLE(PERFORMANCE_TIMELINE)
 PassRefPtr<PerformanceEntryList> Performance::webkitGetEntries() const
@@ -256,4 +254,4 @@ double Performance::now() const
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_TIMING) || ENABLE(WEB_TIMING_MINIMAL)
+#endif // ENABLE(WEB_TIMING)
