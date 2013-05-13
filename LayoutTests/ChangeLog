@@ -1,3 +1,12 @@
+2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Mark fast/animation/request-animation-frame-too-rapid.html as failing on EFL WK2
+        due to r150015.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-05-13  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Simple shape-outside tests fail when subpixel layout is disabled

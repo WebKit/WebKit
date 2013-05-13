@@ -477,6 +477,9 @@ webkit.org/b/107286 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 
+# Regression(r150015)
+webkit.org/b/116055 fast/animation/request-animation-frame-too-rapid.html [ Failure ]
+
 # failing after r149292
 compositing/absolute-inside-out-of-view-fixed.html [ Failure ]
 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
