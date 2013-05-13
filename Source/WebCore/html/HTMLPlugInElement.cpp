@@ -43,7 +43,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "Widget.h"
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "npruntime_impl.h"

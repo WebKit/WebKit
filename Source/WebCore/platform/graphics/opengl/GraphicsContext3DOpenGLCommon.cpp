@@ -53,7 +53,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/Uint8Array.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if USE(OPENGL_ES_2)

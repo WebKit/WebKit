@@ -1,3 +1,32 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Stop including UnusedParam.h
+        https://bugs.webkit.org/show_bug.cgi?id=116003
+
+        Reviewed by Sam Weinig.
+
+        UnusedParam.h is empty now so there's no need to include it anymore.
+
+        * API/APICast.h:
+        * API/tests/JSNode.c:
+        * API/tests/JSNodeList.c:
+        * API/tests/minidom.c:
+        * API/tests/testapi.c:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecode/CodeBlock.cpp:
+        * heap/HandleStack.h:
+        * interpreter/JSStackInlines.h:
+        * jit/CompactJITCodeMap.h:
+        * jit/ExecutableAllocator.h:
+        * parser/SourceProvider.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSVariableObject.h:
+        * runtime/Options.cpp:
+        * runtime/PropertyOffset.h:
+
 2013-05-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add a basic cmake build for WTF and JavaScriptCore

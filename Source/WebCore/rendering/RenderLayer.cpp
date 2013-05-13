@@ -101,7 +101,6 @@
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(CSS_FILTERS)

@@ -33,10 +33,9 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import "ThemeMac.h"
+#import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/UnusedParam.h>
-#import "WebCoreSystemInterface.h"
 
 @interface CALayer(WebCoreCALayerPrivate)
 - (void)reloadValueForKeyPath:(NSString *)keyPath;

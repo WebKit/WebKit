@@ -1,3 +1,16 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Stop including UnusedParam.h
+        https://bugs.webkit.org/show_bug.cgi?id=116003
+
+        Reviewed by Sam Weinig.
+
+        UnusedParam.h is empty now so there's no need to include it anymore.
+
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        * WebView/WebDashboardRegion.mm:
+        * WebView/WebFullScreenController.mm:
+
 2013-05-12  Andreas Kling  <akling@apple.com>
 
         Unload event listeners should prevent Safari from insta-killing the web process on last tab close.

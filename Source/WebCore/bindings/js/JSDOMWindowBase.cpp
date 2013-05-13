@@ -38,7 +38,6 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <wtf/MainThread.h>
-#include <wtf/UnusedParam.h>
 
 using namespace JSC;
 

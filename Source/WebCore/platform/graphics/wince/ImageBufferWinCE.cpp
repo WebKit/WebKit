@@ -26,7 +26,6 @@
 #include "ImageData.h"
 #include "NotImplemented.h"
 #include "SharedBitmap.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

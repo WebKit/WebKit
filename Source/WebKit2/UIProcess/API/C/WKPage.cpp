@@ -35,7 +35,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Page.h>
-#include <wtf/UnusedParam.h>
 
 #ifdef __BLOCKS__
 #include <Block.h>

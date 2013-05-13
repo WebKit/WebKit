@@ -36,7 +36,6 @@
 #import "UUID.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/objc-runtime.h>
-#import <wtf/UnusedParam.h>
 
 namespace WebCore {
 

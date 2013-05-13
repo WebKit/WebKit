@@ -73,7 +73,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Uint8ClampedArray.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(CG)

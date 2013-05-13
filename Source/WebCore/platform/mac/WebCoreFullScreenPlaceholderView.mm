@@ -28,7 +28,6 @@
 
 #include "LocalizedStrings.h"
 #include "WebCoreFullScreenWarningView.h"
-#include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
 @interface CAFilter : NSObject

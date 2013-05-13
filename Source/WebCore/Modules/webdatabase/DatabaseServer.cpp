@@ -34,7 +34,6 @@
 #include "DatabaseBackendSync.h"
 #include "DatabaseSync.h"
 #include "DatabaseTracker.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

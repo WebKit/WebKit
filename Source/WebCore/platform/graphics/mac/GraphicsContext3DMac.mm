@@ -48,7 +48,6 @@
 #include <wtf/Int32Array.h>
 #include <wtf/Float32Array.h>
 #include <wtf/Uint8Array.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

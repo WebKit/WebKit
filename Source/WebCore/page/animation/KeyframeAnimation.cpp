@@ -37,7 +37,6 @@
 #include "RenderBoxModelObject.h"
 #include "RenderStyle.h"
 #include "StyleResolver.h"
-#include <wtf/UnusedParam.h>
 
 using namespace std;
 

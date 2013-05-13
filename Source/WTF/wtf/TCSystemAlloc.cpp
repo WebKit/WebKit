@@ -37,7 +37,6 @@
 #include "Assertions.h"
 #include "CheckedArithmetic.h"
 #include "TCSpinLock.h"
-#include "UnusedParam.h"
 #include "VMTags.h"
 #include <algorithm>
 #include <stdint.h>

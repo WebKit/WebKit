@@ -20,8 +20,6 @@
 #include "config.h"
 #include "ewk_js.h"
 
-#include <wtf/UnusedParam.h>
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NP_jsobject.h"

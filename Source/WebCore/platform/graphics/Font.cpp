@@ -34,7 +34,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/UnusedParam.h>
 
 using namespace WTF;
 using namespace Unicode;

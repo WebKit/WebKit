@@ -23,7 +23,6 @@
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "CredentialBackingStore.h"
 #endif
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

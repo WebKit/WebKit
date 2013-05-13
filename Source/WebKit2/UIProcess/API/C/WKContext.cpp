@@ -32,7 +32,6 @@
 #include "WebURLRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
 // Supplements

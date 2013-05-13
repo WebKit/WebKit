@@ -47,7 +47,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
-#include <wtf/UnusedParam.h>
 
 #if HAVE(SYS_PARAM_H)
 #include <sys/param.h>

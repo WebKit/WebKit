@@ -36,7 +36,6 @@
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

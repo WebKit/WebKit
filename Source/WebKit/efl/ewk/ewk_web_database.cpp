@@ -27,7 +27,6 @@
 #include "ewk_web_database_private.h"
 #include <Eina.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

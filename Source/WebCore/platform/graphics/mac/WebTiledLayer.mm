@@ -32,7 +32,6 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
-#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 

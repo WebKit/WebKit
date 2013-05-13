@@ -41,7 +41,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/ObjcRuntimeExtras.h>
 #include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
 
 void WebCoreObjCFinalizeOnMainThread(Class cls)
 {

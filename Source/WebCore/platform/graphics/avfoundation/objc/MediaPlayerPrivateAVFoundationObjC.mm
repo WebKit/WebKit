@@ -51,7 +51,6 @@
 #import <wtf/Uint16Array.h>
 #import <wtf/Uint32Array.h>
 #import <wtf/Uint8Array.h>
-#import <wtf/UnusedParam.h>
 #import <wtf/text/CString.h>
 
 #import <AVFoundation/AVFoundation.h>

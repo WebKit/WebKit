@@ -34,7 +34,6 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
-#include <wtf/UnusedParam.h>
 
 using namespace WebCore;
 

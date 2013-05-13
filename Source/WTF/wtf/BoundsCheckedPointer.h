@@ -30,7 +30,6 @@
 #define WTF_BoundsCheckedPointer_h
 
 #include <wtf/Assertions.h>
-#include <wtf/UnusedParam.h>
 
 namespace WTF {
 

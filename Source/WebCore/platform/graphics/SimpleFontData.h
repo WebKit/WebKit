@@ -38,7 +38,6 @@
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(MAC)

@@ -50,7 +50,6 @@
 #include "RenderWidget.h"
 #include "StylePropertySet.h"
 #include <wtf/HexNumber.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 

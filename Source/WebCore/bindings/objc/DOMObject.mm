@@ -38,7 +38,6 @@
 #import "ProcessingInstruction.h"
 #import "StyleSheet.h"
 #import "WebScriptObjectPrivate.h"
-#import <wtf/UnusedParam.h>
 
 @implementation DOMObject
 

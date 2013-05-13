@@ -48,7 +48,6 @@
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(INSPECTOR)
 #include "ProgressTracker.h"

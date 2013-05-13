@@ -64,7 +64,6 @@
 #include <wtf/ArrayBufferView.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(RESOURCE_TIMING)

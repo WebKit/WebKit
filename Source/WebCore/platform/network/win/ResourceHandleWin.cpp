@@ -39,7 +39,6 @@
 #include "Timer.h"
 
 #include <wtf/MainThread.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #include <windows.h>

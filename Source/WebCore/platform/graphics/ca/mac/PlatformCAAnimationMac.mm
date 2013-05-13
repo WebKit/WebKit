@@ -33,7 +33,6 @@
 #import "PlatformCAFilters.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/UnusedParam.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

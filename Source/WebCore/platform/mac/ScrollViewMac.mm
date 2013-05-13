@@ -32,7 +32,6 @@
 #import "Logging.h"
 #import "NotImplemented.h"
 #import "WebCoreFrameView.h"
-#import <wtf/UnusedParam.h>
 
 using namespace std;
 

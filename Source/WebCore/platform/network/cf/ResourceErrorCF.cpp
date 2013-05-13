@@ -32,7 +32,6 @@
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/UnusedParam.h>
 
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

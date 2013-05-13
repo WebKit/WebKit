@@ -47,7 +47,6 @@
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

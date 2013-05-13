@@ -28,12 +28,10 @@
 
 #import <IOKit/IOMessage.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
+#import <stdio.h>
 #import <wtf/Assertions.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/PassOwnPtr.h>
-#import <wtf/UnusedParam.h>
-
-#include <stdio.h>
 
 namespace WebCore {
 

@@ -36,7 +36,6 @@
 #include "ScrollTypes.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

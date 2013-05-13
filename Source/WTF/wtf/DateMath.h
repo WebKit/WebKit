@@ -52,7 +52,6 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/UnusedParam.h>
 
 namespace WTF {
 

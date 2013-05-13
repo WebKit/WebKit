@@ -31,7 +31,6 @@
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
-#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 

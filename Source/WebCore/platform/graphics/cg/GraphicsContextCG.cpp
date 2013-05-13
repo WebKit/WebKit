@@ -43,7 +43,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/UnusedParam.h>
 
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"

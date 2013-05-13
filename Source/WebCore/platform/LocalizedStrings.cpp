@@ -31,7 +31,6 @@
 #include "NotImplemented.h"
 #include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)

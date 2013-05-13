@@ -28,7 +28,6 @@
 
 #import "TileController.h"
 #import <wtf/CurrentTime.h>
-#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 

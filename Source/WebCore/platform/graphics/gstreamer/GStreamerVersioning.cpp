@@ -24,7 +24,6 @@
 
 #if USE(GSTREAMER)
 #include "IntSize.h"
-#include <wtf/UnusedParam.h>
 
 #ifdef GST_API_VERSION_1
 #include <gst/audio/audio.h>

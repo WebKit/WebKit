@@ -45,7 +45,6 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
 #include "ExclusionShapeValue.h"

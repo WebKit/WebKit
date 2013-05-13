@@ -79,7 +79,6 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
-#include <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"

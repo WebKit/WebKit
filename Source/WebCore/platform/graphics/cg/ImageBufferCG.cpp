@@ -40,7 +40,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 

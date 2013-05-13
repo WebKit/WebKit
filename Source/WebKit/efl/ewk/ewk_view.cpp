@@ -87,7 +87,6 @@
 #include <limits>
 #include <math.h>
 #include <sys/time.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionClientEfl.h"

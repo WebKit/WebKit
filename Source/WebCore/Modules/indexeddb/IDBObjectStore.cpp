@@ -43,7 +43,6 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

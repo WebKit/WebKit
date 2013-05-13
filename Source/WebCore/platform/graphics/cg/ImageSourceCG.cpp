@@ -35,7 +35,6 @@
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include <ApplicationServices/ApplicationServices.h>
-#include <wtf/UnusedParam.h>
 
 using namespace std;
 

@@ -39,7 +39,6 @@
 #include <limits.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 

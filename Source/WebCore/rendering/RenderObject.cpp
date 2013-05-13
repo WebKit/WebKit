@@ -78,7 +78,6 @@
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StackStats.h>
-#include <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"

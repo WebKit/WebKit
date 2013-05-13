@@ -28,7 +28,6 @@
 
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
-#include <wtf/UnusedParam.h>
 
 using namespace WebKit;
 

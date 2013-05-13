@@ -37,7 +37,6 @@
 #include "TextureMapperPlatformLayer.h"
 #include <QWindow>
 #include <qpa/qplatformpixmap.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if USE(TEXTURE_MAPPER_GL)

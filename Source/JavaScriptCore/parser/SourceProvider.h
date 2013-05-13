@@ -31,7 +31,6 @@
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 

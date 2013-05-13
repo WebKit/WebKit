@@ -34,7 +34,6 @@
 #include "Database.h"
 #include "InspectorInstrumentation.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

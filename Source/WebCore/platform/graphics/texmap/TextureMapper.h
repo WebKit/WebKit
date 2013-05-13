@@ -36,7 +36,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/UnusedParam.h>
 
 /*
     TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without

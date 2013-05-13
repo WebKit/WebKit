@@ -52,7 +52,6 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <stdio.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

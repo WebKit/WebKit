@@ -49,8 +49,6 @@
 #include "Settings.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
-
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 using namespace std;

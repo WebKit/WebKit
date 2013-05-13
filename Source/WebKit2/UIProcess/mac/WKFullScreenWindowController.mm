@@ -45,7 +45,6 @@
 #import <WebCore/WebWindowAnimation.h>
 #import <WebKit/WebNSWindowExtras.h>
 #import <WebKitSystemInterface.h>
-#import <wtf/UnusedParam.h>
 
 using namespace WebKit;
 using namespace WebCore;

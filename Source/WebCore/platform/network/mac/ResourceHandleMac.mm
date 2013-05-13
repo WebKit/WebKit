@@ -53,7 +53,6 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
 #import <wtf/SchedulePair.h>
-#import <wtf/UnusedParam.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 

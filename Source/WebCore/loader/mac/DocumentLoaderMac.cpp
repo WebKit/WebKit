@@ -30,7 +30,6 @@
 #include "DocumentLoader.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

@@ -38,7 +38,6 @@
 #include <algorithm>
 #include <cstring>
 #include <wtf/MainThread.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)

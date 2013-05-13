@@ -27,7 +27,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 #include <limits>

@@ -34,13 +34,10 @@
 #include <sys/sysctl.h>
 #elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
 #include <unistd.h>
-#elif OS(WINDOWS) || OS(QNX)
-#include <wtf/UnusedParam.h>
-#if OS(WINDOWS)
+#elif OS(WINDOWS)
 #include <windows.h>
 #elif OS(QNX)
 #include <sys/syspage.h>
-#endif
 #endif
 
 namespace WTF {

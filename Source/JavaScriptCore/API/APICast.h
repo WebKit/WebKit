@@ -29,7 +29,6 @@
 #include "JSAPIValueWrapper.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
-#include <wtf/UnusedParam.h>
 
 namespace JSC {
     class ExecState;

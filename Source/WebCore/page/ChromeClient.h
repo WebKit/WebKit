@@ -38,7 +38,6 @@
 #include "WebCoreKeyboardUIMode.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SQL_DATABASE)

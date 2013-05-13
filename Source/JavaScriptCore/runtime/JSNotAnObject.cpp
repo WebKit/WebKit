@@ -31,7 +31,6 @@
 #include "JSNotAnObject.h"
 
 #include "Operations.h"
-#include <wtf/UnusedParam.h>
 
 namespace JSC {
 

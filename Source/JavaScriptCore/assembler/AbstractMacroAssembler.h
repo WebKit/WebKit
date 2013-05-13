@@ -31,7 +31,6 @@
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(ASSEMBLER)
 

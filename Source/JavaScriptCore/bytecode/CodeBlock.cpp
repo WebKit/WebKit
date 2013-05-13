@@ -53,7 +53,6 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(DFG_JIT)
 #include "DFGOperations.h"

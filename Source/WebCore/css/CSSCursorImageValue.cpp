@@ -30,7 +30,6 @@
 #include "StylePendingImage.h"
 #include "TreeScope.h"
 #include <wtf/MathExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

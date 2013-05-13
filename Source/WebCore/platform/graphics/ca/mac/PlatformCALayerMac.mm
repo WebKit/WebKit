@@ -47,7 +47,6 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/UnusedParam.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)

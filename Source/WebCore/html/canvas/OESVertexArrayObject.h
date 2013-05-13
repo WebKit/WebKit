@@ -30,7 +30,6 @@
 #include "WebGLExtension.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

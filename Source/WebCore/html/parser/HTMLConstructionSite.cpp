@@ -51,7 +51,6 @@
 #include "NotImplemented.h"
 #include "Settings.h"
 #include "Text.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

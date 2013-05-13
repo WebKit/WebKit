@@ -61,7 +61,6 @@
 
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 
 #if OS(WINDOWS)
 #if OS(WINCE)

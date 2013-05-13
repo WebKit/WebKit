@@ -57,7 +57,6 @@
 #import "markup.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/UnusedParam.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 

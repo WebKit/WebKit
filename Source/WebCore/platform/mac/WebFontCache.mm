@@ -34,10 +34,8 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import <math.h>
-#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
-
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 

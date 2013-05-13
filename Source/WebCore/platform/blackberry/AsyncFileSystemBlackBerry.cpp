@@ -32,7 +32,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -23,7 +23,6 @@
 
 #include "ApplicationCacheStorage.h"
 #include "FileSystem.h"
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 // web application cache maximum storage size

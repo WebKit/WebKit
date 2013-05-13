@@ -50,7 +50,6 @@
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKURL.h>
 #include <WebKit2/WKView.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR)

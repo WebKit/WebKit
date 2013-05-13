@@ -39,10 +39,8 @@
 #include "WorkerContext.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
-
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

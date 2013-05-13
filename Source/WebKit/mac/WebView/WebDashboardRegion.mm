@@ -25,8 +25,6 @@
 
 #import "WebDashboardRegion.h"
 
-#import <wtf/UnusedParam.h>
-
 #if ENABLE(DASHBOARD_SUPPORT)
 
 @implementation WebDashboardRegion

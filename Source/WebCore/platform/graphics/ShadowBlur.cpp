@@ -37,7 +37,6 @@
 #include "Timer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/UnusedParam.h>
 
 using namespace std;
 

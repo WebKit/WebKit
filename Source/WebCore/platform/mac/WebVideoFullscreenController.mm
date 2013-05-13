@@ -37,7 +37,6 @@
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
-#import <wtf/UnusedParam.h>
 
 #if USE(GSTREAMER)
 #import <WebCore/GStreamerGWorld.h>

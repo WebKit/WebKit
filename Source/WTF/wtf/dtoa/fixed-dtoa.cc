@@ -29,7 +29,6 @@
 
 #include <math.h>
 
-#include "UnusedParam.h"
 #include "fixed-dtoa.h"
 #include "double.h"
 

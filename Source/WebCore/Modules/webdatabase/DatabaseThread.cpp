@@ -37,7 +37,6 @@
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include <wtf/AutodrainedPool.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

@@ -42,7 +42,6 @@
 #include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
 #include "TransformState.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

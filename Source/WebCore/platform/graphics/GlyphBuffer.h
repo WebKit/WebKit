@@ -32,7 +32,6 @@
 
 #include "FloatSize.h"
 #include "Glyph.h"
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if USE(CG)

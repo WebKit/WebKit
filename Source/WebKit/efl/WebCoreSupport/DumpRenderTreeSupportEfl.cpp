@@ -64,7 +64,6 @@
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <wtf/HashMap.h>
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(GEOLOCATION)
 #include <GeolocationClientMock.h>

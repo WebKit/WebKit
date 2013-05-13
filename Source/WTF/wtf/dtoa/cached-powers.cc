@@ -31,7 +31,6 @@
 #include <limits.h>
 #include <math.h>
 
-#include "UnusedParam.h"
 #include "utils.h"
 #include "cached-powers.h"
 

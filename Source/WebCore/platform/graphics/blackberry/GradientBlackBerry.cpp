@@ -29,7 +29,6 @@
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

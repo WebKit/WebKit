@@ -48,7 +48,6 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGUnitTypes.h"
 #include "SVGUseElement.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

@@ -1,3 +1,121 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Stop including UnusedParam.h
+        https://bugs.webkit.org/show_bug.cgi?id=116003
+
+        Reviewed by Sam Weinig.
+
+        UnusedParam.h is empty now so there's no need to include it anymore.
+
+        * Modules/encryptedmedia/CDMPrivateAVFoundation.mm:
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/objc/DOMObject.mm:
+        * css/CSSCursorImageValue.cpp:
+        * css/DeprecatedStyleBuilder.cpp:
+        * dom/EventDispatcher.cpp:
+        * dom/Node.cpp:
+        * editing/AlternativeTextController.h:
+        * editing/Editor.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        * html/parser/HTMLTokenizer.cpp:
+        * html/track/InbandTextTrack.cpp:
+        * inspector/InspectorCanvasInstrumentation.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorCounters.h:
+        * inspector/InspectorDatabaseInstrumentation.h:
+        * inspector/InspectorInstrumentation.h:
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/PingLoader.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/mac/DocumentLoaderMac.cpp:
+        * page/ChromeClient.h:
+        * page/Console.cpp:
+        * page/FrameView.cpp:
+        * page/PageConsole.cpp:
+        * page/animation/AnimationController.cpp:
+        * page/animation/ImplicitAnimation.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * platform/LocalizedStrings.cpp:
+        * platform/ScrollAnimator.h:
+        * platform/ThreadGlobalData.cpp:
+        * platform/blackberry/AsyncFileSystemBlackBerry.cpp:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/ShadowBlur.cpp:
+        * platform/graphics/SimpleFontData.cpp:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/blackberry/GradientBlackBerry.cpp:
+        * platform/graphics/blackberry/GraphicsContextBlackBerry.cpp:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/ca/mac/WebTileLayer.mm:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/clutter/PlatformClutterAnimation.cpp:
+        * platform/graphics/filters/ValidatedCustomFilterOperation.cpp:
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/mac/WebGLLayer.mm:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/graphics/mac/WebTiledLayer.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        * platform/mac/PasteboardMac.mm:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/SharedTimerMac.mm:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        * platform/mac/WebCoreObjCExtras.mm:
+        * platform/mac/WebFontCache.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        * platform/mac/WebWindowAnimation.mm:
+        * platform/network/blackberry/CredentialStorageBlackBerry.cpp:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        * platform/network/mac/CookieStorageMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/win/ResourceHandleWin.cpp:
+        * platform/text/TextEncodingDetectorICU.cpp:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        * rendering/svg/SVGRenderSupport.cpp:
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        * workers/WorkerContext.cpp:
+        * workers/WorkerScriptLoader.cpp:
+        * xml/XMLHttpRequest.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2013-05-12  Darin Adler  <darin@apple.com>
 
         [Mac] Move clearAllData from ClipboardMac to PasteboardMac

@@ -33,7 +33,6 @@
 #include "InspectorCounters.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringImpl.h>
 

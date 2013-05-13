@@ -44,7 +44,6 @@
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/runtime.h>
-#import <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "PlatformLayer.h"

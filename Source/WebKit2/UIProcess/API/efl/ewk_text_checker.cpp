@@ -29,11 +29,6 @@
 
 #if ENABLE(SPELLCHECK)
 #include "TextCheckerClientEfl.h"
-#else
-#include <wtf/UnusedParam.h>
-#endif // ENABLE(SPELLCHECK)
-
-#if ENABLE(SPELLCHECK)
 
 using namespace WebCore;
 using namespace WebKit;

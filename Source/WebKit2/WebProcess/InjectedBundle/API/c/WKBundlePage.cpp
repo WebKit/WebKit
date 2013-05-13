@@ -53,7 +53,6 @@
 #include <WebCore/KURL.h>
 #include <WebCore/Page.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/UnusedParam.h>
 
 using namespace WebKit;
 

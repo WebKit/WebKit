@@ -88,7 +88,6 @@
 #endif
 #include <string.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 
 #if OS(DARWIN)
 #include <malloc/malloc.h>

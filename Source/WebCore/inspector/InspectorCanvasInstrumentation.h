@@ -35,7 +35,6 @@
 #include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"
 #include "ScriptObject.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

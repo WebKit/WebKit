@@ -1,3 +1,18 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Stop including UnusedParam.h
+        https://bugs.webkit.org/show_bug.cgi?id=116003
+
+        Reviewed by Sam Weinig.
+
+        UnusedParam.h is empty now so there's no need to include it anymore.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        * ewk/ewk_js.cpp:
+        * ewk/ewk_security_origin.cpp:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_web_database.cpp:
+
 2013-05-08  Jose Lejin PJ  <jose.lejin@gmail.com>
 
         [EFL] Correct documentation for ewk_settings APIs

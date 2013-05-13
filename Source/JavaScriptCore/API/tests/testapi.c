@@ -31,7 +31,6 @@
 #include <math.h>
 #define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
-#include <wtf/UnusedParam.h>
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 #include <mach/mach.h>

@@ -44,7 +44,6 @@
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

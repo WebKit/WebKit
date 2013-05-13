@@ -35,7 +35,6 @@
 #include "SymbolTable.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/SegmentedVector.h>
-#include <wtf/UnusedParam.h>
 
 namespace JSC {
 

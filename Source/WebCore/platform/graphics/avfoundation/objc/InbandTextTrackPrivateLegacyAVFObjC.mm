@@ -35,7 +35,6 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
-#import <wtf/UnusedParam.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 #define AVPlayerItem getAVPlayerItemClass()

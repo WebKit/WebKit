@@ -50,7 +50,6 @@
 #include <WebKitQuartzCoreAdditions/WKCACFTypes.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
 
 // The softlink header files must be included after the AVCF and CoreMedia header files.
 #include "AVFoundationCFSoftLinking.h"

@@ -31,7 +31,6 @@
 #include "FloatRect.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/StringHasher.h>
-#include <wtf/UnusedParam.h>
 
 using WTF::pairIntHash;
 

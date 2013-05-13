@@ -94,7 +94,6 @@
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include <wtf/UnusedParam.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>
 

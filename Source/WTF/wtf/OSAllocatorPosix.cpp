@@ -32,7 +32,6 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
-#include <wtf/UnusedParam.h>
 
 namespace WTF {
 

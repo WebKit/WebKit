@@ -31,7 +31,6 @@
 #include "RenderSVGText.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

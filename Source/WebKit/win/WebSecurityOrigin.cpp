@@ -33,10 +33,6 @@
 #include <WebCore/BString.h>
 #include <WebCore/DatabaseManager.h>
 
-#if !ENABLE(SQL_DATABASE)
-#include <wtf/UnusedParam.h>
-#endif
-
 using namespace WebCore;
 
 // WebSecurityOrigin ---------------------------------------------------------------

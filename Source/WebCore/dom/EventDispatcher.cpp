@@ -41,7 +41,6 @@
 #include "ShadowRoot.h"
 #include "WindowEventContext.h"
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

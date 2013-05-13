@@ -36,7 +36,6 @@
 #include "IDBTracing.h"
 #include "IDBTransactionCoordinator.h"
 #include "SecurityOrigin.h"
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

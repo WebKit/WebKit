@@ -33,7 +33,6 @@
 #import <WebCoreSystemInterface.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 using namespace std;

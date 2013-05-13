@@ -29,7 +29,6 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "JSStack.h"
-#include <wtf/UnusedParam.h>
 
 namespace JSC {
 

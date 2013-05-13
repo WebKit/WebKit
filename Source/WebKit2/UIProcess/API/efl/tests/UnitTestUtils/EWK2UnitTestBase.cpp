@@ -23,7 +23,6 @@
 #include "EWK2UnitTestEnvironment.h"
 #include <Ecore.h>
 #include <glib-object.h>
-#include <wtf/UnusedParam.h>
 
 extern EWK2UnitTest::EWK2UnitTestEnvironment* environment;
 

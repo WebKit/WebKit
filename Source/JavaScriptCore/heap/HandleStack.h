@@ -30,8 +30,6 @@
 #include <wtf/BlockStack.h>
 #include "Handle.h"
 
-#include <wtf/UnusedParam.h>
-
 namespace JSC {
 
 class LocalScope;

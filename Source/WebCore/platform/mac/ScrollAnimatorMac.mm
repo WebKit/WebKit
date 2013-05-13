@@ -41,7 +41,6 @@
 #include "ScrollbarThemeMac.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/UnusedParam.h>
 
 using namespace WebCore;
 using namespace std;

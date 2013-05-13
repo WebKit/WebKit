@@ -36,7 +36,6 @@
 #include <QuartzCore/CACFTimingFunction.h>
 #include <QuartzCore/CACFValueFunction.h>
 #include <QuartzCore/CACFVector.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

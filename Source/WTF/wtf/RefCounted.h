@@ -26,7 +26,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/ThreadRestrictionVerifier.h>
-#include <wtf/UnusedParam.h>
 
 namespace WTF {
 

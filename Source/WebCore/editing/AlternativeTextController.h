@@ -34,7 +34,6 @@
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
