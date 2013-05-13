@@ -1,5 +1,21 @@
 2013-05-12  Darin Adler  <darin@apple.com>
 
+        [Mac] Move clearAllData from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116001
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::clearAllData): Added. Calls through to Pasteboard after
+        doing the canWriteData check, which is part of DOM rules, not the platform.
+
+        * dom/Clipboard.h: Made clearAllData non-virtual in non-legacy case.
+
+        * platform/mac/ClipboardMac.h: Removed clearAllData.
+        * platform/mac/ClipboardMac.mm: Ditto.
+
+2013-05-12  Darin Adler  <darin@apple.com>
+
         [Mac] Move clearData from ClipboardMac to PasteboardMac
         https://bugs.webkit.org/show_bug.cgi?id=116000
 

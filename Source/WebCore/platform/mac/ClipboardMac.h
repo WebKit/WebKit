@@ -53,7 +53,6 @@ public:
 
     virtual ~ClipboardMac();
     
-    void clearAllData();
     String getData(const String& type) const;
     bool setData(const String& type, const String& data);
     

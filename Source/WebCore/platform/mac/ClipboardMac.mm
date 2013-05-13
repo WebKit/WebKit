@@ -113,17 +113,6 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
     resultTypes.add(cocoaType);
 }
 
-void ClipboardMac::clearAllData()
-{
-    if (!canWriteData())
-        return;
-
-    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
-
-    Pasteboard pasteboard(m_pasteboardName);
-    pasteboard.clear();
-}
-
 static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false)
 {
     Vector<String> fileList;
