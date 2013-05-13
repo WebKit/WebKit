@@ -1,3 +1,22 @@
+2013-05-13  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Floats should not overhang from flex items
+        https://bugs.webkit.org/show_bug.cgi?id=115925
+
+        Reviewed by David Hyatt.
+
+        Allowing floats to overhand from flex items is not only against the
+        spec, it causes bad bugs. Fix this by having flex items properly avoid
+        floats.
+
+        Test: fast/block/float/float-not-removed-crash2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::avoidsFloats): Add flex items to avoid floats.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isFlexItemIncludingDeprecated): Determine if the current box is a
+            flex item or deprecated flex item.
+
 2013-05-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] Shape-inside on regions should respect region borders and paddings

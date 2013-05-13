@@ -1,3 +1,16 @@
+2013-05-13  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Fix the float logic to not return an anonymous block ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=115925
+
+        Reviewed by David Hyatt.
+
+        Cleaned up fuzzer test. Note that this will only crash when run under
+        a memory checker like ASAN.
+
+        * fast/block/float/float-not-removed-crash2-expected.txt: Added.
+        * fast/block/float/float-not-removed-crash2.html: Added.
+
 2013-05-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] Shape-inside on regions should respect region borders and paddings
