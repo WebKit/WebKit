@@ -700,7 +700,8 @@ public:
     WTF_EXPORT_STRING_API size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
 
-    bool startsWith(StringImpl* str, bool caseSensitive = true) { return (caseSensitive ? reverseFind(str, 0) : reverseFindIgnoringCase(str, 0)) == 0; }
+    WTF_EXPORT_STRING_API bool startsWith(const StringImpl*) const;
+    bool startsWith(StringImpl* str, bool caseSensitive) { return caseSensitive ? startsWith(str) : (reverseFindIgnoringCase(str, 0) == 0); }
     WTF_EXPORT_STRING_API bool startsWith(UChar) const;
     WTF_EXPORT_STRING_API bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>

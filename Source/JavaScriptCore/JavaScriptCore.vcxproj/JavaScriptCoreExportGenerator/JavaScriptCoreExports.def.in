@@ -474,6 +474,7 @@ EXPORTS
     ?startProfiling@LegacyProfiler@JSC@@QAEXPAVExecState@2@ABVString@WTF@@@Z
     ?startSampling@VM@JSC@@QAEXXZ
     ?startsWith@StringImpl@WTF@@QBE_NPBDI_N@Z
+    ?startsWith@StringImpl@WTF@@QBE_NPBV12@@Z
     ?startsWith@StringImpl@WTF@@QBE_N_W@Z
     ?stopProfiling@LegacyProfiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVString@4@@Z
     ?stopSampling@VM@JSC@@QAEXXZ

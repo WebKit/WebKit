@@ -1,3 +1,16 @@
+2013-05-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve stringProtoFuncLastIndexOf for the prefix case
+        https://bugs.webkit.org/show_bug.cgi?id=115952
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLastIndexOf):
+        Use the optimized string search when possible.
+
+        On Joseph Pecoraro's tests, this gives a ~30% speed improvement.
+
 2013-05-13  Zalan Bujtas  <zalan@apple.com>
 
         WebProcess consuming very high CPU on linkedin.com

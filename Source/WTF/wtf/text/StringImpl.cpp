@@ -1252,6 +1252,24 @@ ALWAYS_INLINE static bool equalInner(const StringImpl* stringImpl, unsigned star
     return equalIgnoringCase(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
 }
 
+bool StringImpl::startsWith(const StringImpl* str) const
+{
+    if (!str)
+        return false;
+
+    if (str->length() > length())
+        return false;
+
+    if (is8Bit()) {
+        if (str->is8Bit())
+            return equal(characters8(), str->characters8(), str->length());
+        return equal(characters8(), str->characters16(), str->length());
+    }
+    if (str->is8Bit())
+        return equal(characters16(), str->characters8(), str->length());
+    return equal(characters16(), str->characters16(), str->length());
+}
+
 bool StringImpl::startsWith(UChar character) const
 {
     return m_length && (*this)[0] == character;
