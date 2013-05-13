@@ -65,10 +65,11 @@ private:
     void createLocalStorageMap(CoreIPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void createSessionStorageMap(CoreIPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void destroyStorageMap(CoreIPC::Connection*, uint64_t storageMapID);
-    void getValues(CoreIPC::Connection*, uint64_t storageMapID, HashMap<String, String>& values);
-    void setItem(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString);
-    void removeItem(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
-    void clear(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& urlString);
+
+    void getValues(CoreIPC::Connection*, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values);
+    void setItem(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void removeItem(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
+    void clear(CoreIPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
     void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
     void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);

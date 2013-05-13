@@ -1,3 +1,42 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        [WK2] Crash in WebKit::StorageAreaMap::didSetItem()
+        https://bugs.webkit.org/show_bug.cgi?id=116026
+
+        Reviewed by Andreas Kling.
+
+        Make sure that we ignore any leftover messages from the UI process after we've reset
+        the storage map. Achieve this by keeping a seed count in the StorageAreaMap object that's incremented
+        everytime the map is reset. Associate every storage area change with the seed and ignore any incoming 
+        notification messages from the UI process if the seeds are different.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC):
+        (CoreIPC::callMemberFunction):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getValues):
+        (WebKit::StorageManager::setItem):
+        (WebKit::StorageManager::removeItem):
+        (WebKit::StorageManager::clear):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/Storage/StorageManager.messages.in:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::resetValues):
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        (WebKit::StorageAreaMap::didGetValues):
+        (WebKit::StorageAreaMap::didSetItem):
+        (WebKit::StorageAreaMap::didRemoveItem):
+        (WebKit::StorageAreaMap::didClear):
+        (WebKit::StorageAreaMap::applyChange):
+        * WebProcess/Storage/StorageAreaMap.h:
+        (StorageAreaMap):
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+
 2013-05-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2][CoordinatedGraphics] Avoid dispensable calls to WebView::updateViewportSize()

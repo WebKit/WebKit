@@ -443,7 +443,7 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
-void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storageMapID, HashMap<String, String>& values)
+void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
 
@@ -452,10 +452,10 @@ void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storage
 
     values = storageArea->items();
 
-    connection->send(Messages::StorageAreaMap::DidGetValues(), storageMapID);
+    connection->send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
 }
 
-void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString)
+void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
 
@@ -464,10 +464,10 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMa
 
     bool quotaError;
     storageArea->setItem(connection, sourceStorageAreaID, key, value, urlString, quotaError);
-    connection->send(Messages::StorageAreaMap::DidSetItem(key, quotaError), storageMapID);
+    connection->send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageMapID);
 }
 
-void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
+void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
 
@@ -475,10 +475,10 @@ void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storag
     ASSERT(storageArea);
 
     storageArea->removeItem(connection, sourceStorageAreaID, key, urlString);
-    connection->send(Messages::StorageAreaMap::DidRemoveItem(key), storageMapID);
+    connection->send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageMapID);
 }
 
-void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, const String& urlString)
+void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
 
@@ -486,7 +486,7 @@ void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapI
     ASSERT(storageArea);
 
     storageArea->clear(connection, sourceStorageAreaID, urlString);
-    connection->send(Messages::StorageAreaMap::DidClear(), storageMapID);
+    connection->send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageMapID);
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

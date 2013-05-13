@@ -63,7 +63,9 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPt
     , m_storageNamespaceID(storageNamespace->storageNamespaceID())
     , m_quotaInBytes(storageNamespace->quotaInBytes())
     , m_securityOrigin(securityOrigin)
+    , m_currentSeed(0)
     , m_hasPendingClear(false)
+    , m_hasPendingGetValues(false)
 {
     if (m_storageType == LocalStorage)
         WebProcess::shared().connection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
@@ -116,7 +118,7 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageMapID, sourceArea->storageAreaID(), key, value, sourceFrame->document()->url()), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key)
@@ -132,7 +134,7 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::shared().connection()->send(Messages::StorageManager::RemoveItem(m_storageMapID, sourceArea->storageAreaID(), key, sourceFrame->document()->url()), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::RemoveItem(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea)
@@ -141,7 +143,7 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
 
     m_hasPendingClear = true;
     m_storageMap = StorageMap::create(m_quotaInBytes);
-    WebProcess::shared().connection()->send(Messages::StorageManager::Clear(m_storageMapID, sourceArea->storageAreaID(), sourceFrame->document()->url()), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::Clear(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, sourceFrame->document()->url()), 0);
 }
 
 bool StorageAreaMap::contains(const String& key)
@@ -154,8 +156,11 @@ bool StorageAreaMap::contains(const String& key)
 void StorageAreaMap::resetValues()
 {
     m_storageMap = nullptr;
+
     m_pendingValueChanges.clear();
     m_hasPendingClear = false;
+    m_hasPendingGetValues = false;
+    m_currentSeed++;
 }
 
 void StorageAreaMap::loadValuesIfNeeded()
@@ -167,22 +172,29 @@ void StorageAreaMap::loadValuesIfNeeded()
     // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
     // (This flag does not yet exist). Since loadValuesIfNeeded() ends up being called from within JavaScript code, processing incoming synchronous messages
     // could lead to weird reentrency bugs otherwise.
-    WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageMapID), Messages::StorageManager::GetValues::Reply(values), 0);
+    WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(values);
 
-    // We want to ignore all changes until we get the DidGetValues message, so treat this as a pending clear.
-    m_hasPendingClear = true;
+    // We want to ignore all changes until we get the DidGetValues message.
+    m_hasPendingGetValues = true;
 }
 
-void StorageAreaMap::didGetValues()
+void StorageAreaMap::didGetValues(uint64_t storageMapSeed)
 {
-    m_hasPendingClear = false;
+    if (m_currentSeed != storageMapSeed)
+        return;
+
+    ASSERT(m_hasPendingGetValues);
+    m_hasPendingGetValues = false;
 }
 
-void StorageAreaMap::didSetItem(const String& key, bool quotaError)
+void StorageAreaMap::didSetItem(uint64_t storageMapSeed, const String& key, bool quotaError)
 {
+    if (m_currentSeed != storageMapSeed)
+        return;
+
     ASSERT(m_pendingValueChanges.contains(key));
 
     if (quotaError) {
@@ -193,15 +205,21 @@ void StorageAreaMap::didSetItem(const String& key, bool quotaError)
     m_pendingValueChanges.remove(key);
 }
 
-void StorageAreaMap::didRemoveItem(const String& key)
+void StorageAreaMap::didRemoveItem(uint64_t storageMapSeed, const String& key)
 {
-    ASSERT(m_pendingValueChanges.contains(key));
+    if (m_currentSeed != storageMapSeed)
+        return;
 
+    ASSERT(m_pendingValueChanges.contains(key));
     m_pendingValueChanges.remove(key);
 }
 
-void StorageAreaMap::didClear()
+void StorageAreaMap::didClear(uint64_t storageMapSeed)
 {
+    if (m_currentSeed != storageMapSeed)
+        return;
+
+    ASSERT(m_hasPendingClear);
     m_hasPendingClear = false;
 }
 
@@ -224,8 +242,8 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
 {
     ASSERT(m_storageMap->hasOneRef());
 
-    // There's a clear pending, we don't want any changes until we've gotten the DidClear message.
-    if (m_hasPendingClear)
+    // There's a clear pending or getValues pending we don't want to apply any changes until we get the corresponding DidClear/DidGetValues messages.
+    if (m_hasPendingClear || m_hasPendingGetValues)
         return;
 
     if (!key) {
