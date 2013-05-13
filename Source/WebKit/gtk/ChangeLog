@@ -1,3 +1,15 @@
+2013-05-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for updating the Web Inspector toolbar height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=115996
+
+        Reviewed by Joseph Pecoraro and Benjamin Poulain.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorFrontendClient::setToolbarHeight):
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
         Stop including UnusedParam.h

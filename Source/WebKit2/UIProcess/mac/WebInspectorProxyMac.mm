@@ -744,6 +744,11 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     inspectedViewFrameDidChange(width);
 }
 
+void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
+{
+    [m_inspectorWindow setContentBorderThickness:height forEdge:NSMaxYEdge];
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     NSString *path;

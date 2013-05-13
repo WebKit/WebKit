@@ -107,6 +107,7 @@ private:
 
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
+    void setToolbarHeight(unsigned);
 
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;

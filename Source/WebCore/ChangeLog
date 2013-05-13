@@ -1,3 +1,20 @@
+2013-05-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for updating the Web Inspector toolbar height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=115996
+
+        Reviewed by Joseph Pecoraro and Benjamin Poulain.
+
+        * inspector/InspectorFrontendClient.h:
+        (InspectorFrontendClient):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setToolbarHeight):
+        * inspector/InspectorFrontendHost.h:
+        (InspectorFrontendHost):
+        * inspector/InspectorFrontendHost.idl:
+        * testing/Internals.cpp:
+
 2013-05-13  Dean Jackson  <dino@apple.com>
 
         toDataURL can return an empty image in some cases

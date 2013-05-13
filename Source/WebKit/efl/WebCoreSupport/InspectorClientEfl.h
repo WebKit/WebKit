@@ -86,6 +86,7 @@ public:
 
     virtual void setAttachedWindowHeight(unsigned);
     virtual void setAttachedWindowWidth(unsigned);
+    virtual void setToolbarHeight(unsigned) OVERRIDE;
 
     void disconnectInspectorClient() { m_inspectorClient = 0; }
     void destroyInspectorWindow(bool notifyInspectorController);

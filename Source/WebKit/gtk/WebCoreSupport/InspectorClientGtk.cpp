@@ -269,6 +269,11 @@ void InspectorFrontendClient::setAttachedWindowWidth(unsigned width)
     notImplemented();
 }
 
+void InspectorFrontendClient::setToolbarHeight(unsigned height)
+{
+    notImplemented();
+}
+
 void InspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     if (!m_inspectorWebView)

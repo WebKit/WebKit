@@ -286,6 +286,11 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
     // Dock to right is not implemented in WebKit 1.
 }
 
+void WebInspectorFrontendClient::setToolbarHeight(unsigned height)
+{
+    [[m_windowController window] setContentBorderThickness:height forEdge:NSMaxYEdge];
+}
+
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;

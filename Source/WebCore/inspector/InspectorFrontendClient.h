@@ -63,6 +63,8 @@ public:
     virtual void changeAttachedWindowHeight(unsigned) = 0;
     virtual void changeAttachedWindowWidth(unsigned) = 0;
 
+    virtual void setToolbarHeight(unsigned) = 0;
+
     virtual void openInNewTab(const String& url) = 0;
 
     virtual bool canSave() = 0;

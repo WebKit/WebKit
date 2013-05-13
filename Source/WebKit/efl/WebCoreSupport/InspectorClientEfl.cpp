@@ -203,6 +203,11 @@ void InspectorFrontendClientEfl::setAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
+void InspectorFrontendClientEfl::setToolbarHeight(unsigned)
+{
+    notImplemented();
+}
+
 void InspectorFrontendClientEfl::destroyInspectorWindow(bool notifyInspectorController)
 {
     if (notifyInspectorController)

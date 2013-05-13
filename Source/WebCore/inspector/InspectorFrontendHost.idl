@@ -42,8 +42,11 @@
     void inspectedURLChanged(DOMString newURL);
 
     void requestSetDockSide(DOMString side);
+
     void setAttachedWindowHeight(unsigned long height);
     void setAttachedWindowWidth(unsigned long width);
+    void setToolbarHeight(float height);
+
     void moveWindowBy(float x, float y);
     void setInjectedScriptForOrigin(DOMString origin, DOMString script);
 

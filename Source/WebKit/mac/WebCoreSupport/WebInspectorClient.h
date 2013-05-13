@@ -110,6 +110,7 @@ public:
 
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void setAttachedWindowWidth(unsigned height);
+    virtual void setToolbarHeight(unsigned) OVERRIDE;
 
     virtual void inspectedURLChanged(const String& newURL);
 

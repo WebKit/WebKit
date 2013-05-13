@@ -1,3 +1,15 @@
+2013-05-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for updating the Web Inspector toolbar height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=115996
+
+        Reviewed by Joseph Pecoraro and Benjamin Poulain.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::setToolbarHeight):
+
 2013-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Sometimes NSUndoManager can get into an inconsistent state

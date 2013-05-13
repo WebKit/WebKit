@@ -156,6 +156,11 @@ void WebInspector::setAttachedWindowWidth(unsigned width)
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_page->pageID());
 }
 
+void WebInspector::setToolbarHeight(unsigned height)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetToolbarHeight(height), m_page->pageID());
+}
+
 // Called by WebInspector messages
 void WebInspector::show()
 {

@@ -175,6 +175,7 @@ public:
 protected:
     virtual void setAttachedWindowHeight(unsigned) OVERRIDE { }
     virtual void setAttachedWindowWidth(unsigned) OVERRIDE { }
+    virtual void setToolbarHeight(unsigned) OVERRIDE { }
 };
 
 InspectorFrontendClientDummy::InspectorFrontendClientDummy(InspectorController* controller, Page* page)

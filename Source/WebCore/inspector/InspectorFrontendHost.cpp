@@ -201,6 +201,12 @@ void InspectorFrontendHost::setAttachedWindowWidth(unsigned width)
         m_client->changeAttachedWindowWidth(width);
 }
 
+void InspectorFrontendHost::setToolbarHeight(unsigned height)
+{
+    if (m_client)
+        m_client->setToolbarHeight(height);
+}
+
 void InspectorFrontendHost::moveWindowBy(float x, float y) const
 {
     if (m_client)

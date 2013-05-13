@@ -336,6 +336,11 @@ void InspectorFrontendClientQt::setAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
+void InspectorFrontendClientQt::setToolbarHeight(unsigned)
+{
+    notImplemented();
+}
+
 void InspectorFrontendClientQt::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;

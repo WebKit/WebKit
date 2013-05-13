@@ -121,6 +121,7 @@ public:
 
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
+    void setToolbarHeight(unsigned height) { platformSetToolbarHeight(height); }
 
     bool isDebuggingJavaScript() const { return m_isDebuggingJavaScript; }
     void toggleJavaScriptDebugging();
@@ -166,9 +167,9 @@ private:
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
+    void platformSetToolbarHeight(unsigned);
     void platformSave(const String& filename, const String& content, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
-
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);

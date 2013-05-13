@@ -66,6 +66,8 @@ public:
 
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
+    void setToolbarHeight(unsigned);
+
     void moveWindowBy(float x, float y) const;
     void setInjectedScriptForOrigin(const String& origin, const String& script);
 

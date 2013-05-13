@@ -53,6 +53,7 @@ private:
 
     virtual void setAttachedWindowHeight(unsigned) OVERRIDE;
     virtual void setAttachedWindowWidth(unsigned) OVERRIDE;
+    virtual void setToolbarHeight(unsigned) OVERRIDE;
 
     virtual void inspectedURLChanged(const String&) OVERRIDE;
 
