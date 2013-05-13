@@ -247,7 +247,6 @@
     <ClInclude Include="..\wtf\unicode\Unicode.h" />
     <ClInclude Include="..\wtf\unicode\UnicodeMacrosFromICU.h" />
     <ClInclude Include="..\wtf\unicode\UTF8.h" />
-    <ClInclude Include="..\wtf\UnusedParam.h" />
     <ClInclude Include="..\wtf\ValueCheck.h" />
     <ClInclude Include="..\wtf\Vector.h" />
     <ClInclude Include="..\wtf\VMTags.h" />

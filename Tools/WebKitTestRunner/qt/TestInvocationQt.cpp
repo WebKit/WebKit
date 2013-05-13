@@ -35,7 +35,6 @@
 #include <WebKit2/WKImageQt.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
-#include <wtf/UnusedParam.h>
 
 namespace WTR {
 

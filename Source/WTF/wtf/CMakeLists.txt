@@ -105,7 +105,6 @@ set(WTF_HEADERS
     Threading.h
     ThreadingPrimitives.h
     TypeTraits.h
-    UnusedParam.h
     VMTags.h
     ValueCheck.h
     Vector.h

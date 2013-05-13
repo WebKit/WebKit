@@ -49,7 +49,6 @@
 #include <WebSettings.h>
 
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 using WebCore::toElement;

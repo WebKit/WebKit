@@ -672,9 +672,6 @@
     <ClInclude Include="..\wtf\Uint8Array.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\UnusedParam.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\ValueCheck.h">
       <Filter>wtf</Filter>
     </ClInclude>

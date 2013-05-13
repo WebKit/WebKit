@@ -1,3 +1,15 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove UnusedParam.h
+        https://bugs.webkit.org/show_bug.cgi?id=116029
+
+        Reviewed by Andreas Kling.
+
+        Stop including UnusedParam.h.
+
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+
 2013-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r149955.
