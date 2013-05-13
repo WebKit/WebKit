@@ -1385,11 +1385,6 @@ webkit.org/b/115632 fast/exclusions/shape-outside-floats/shape-outside-floats-el
 
 webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
-webkit.org/b/115783 fast/regions/webkit-flow-double-pagination-float-push.html [ ImageOnlyFailure ]
-webkit.org/b/115783 fast/regions/webkit-flow-float-pushed-to-last-region.html [ ImageOnlyFailure ]
-webkit.org/b/115783 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure ]
-webkit.org/b/115783 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

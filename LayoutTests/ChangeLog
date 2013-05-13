@@ -1,3 +1,13 @@
+2013-05-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        REGRESSION (r149668): 4 reftest failures under fast/regions on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=115783
+
+        Unreviewed rebaseline. They were fixed after r149802.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Dropdowns on http://www.exploratorium.edu don't show anything
