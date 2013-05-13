@@ -166,4 +166,14 @@ bool WKViewExitFullScreen(WKViewRef viewRef)
 #endif
 }
 
+void WKViewSetOpacity(WKViewRef view, double opacity)
+{
+    toImpl(view)->setOpacity(opacity);
+}
+
+double WKViewOpacity(WKViewRef view)
+{
+    return toImpl(view)->opacity();
+}
+
 #endif // USE(COORDINATED_GRAPHICS)

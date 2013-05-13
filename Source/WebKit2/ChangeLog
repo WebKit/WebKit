@@ -1,3 +1,25 @@
+2013-05-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [WK2][CoordinatedGraphics] WKView needs API for handling opacity
+        https://bugs.webkit.org/show_bug.cgi?id=116032
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add WKViewSetOpacity and WKViewOpacity APIs and use them in
+        WebView.cpp.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewSetOpacity):
+        (WKViewOpacity):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::paintToCurrentGLContext):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        (WebKit::WebView::setOpacity):
+        (WebKit::WebView::opacity):
+        (WebView):
+
 2013-05-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use WebCore layer archives for TestWebCore, WebKitPluginProcess

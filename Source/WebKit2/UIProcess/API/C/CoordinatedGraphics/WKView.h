@@ -98,6 +98,9 @@ WK_EXPORT bool WKViewGetShowsAsSource(WKViewRef);
 
 WK_EXPORT bool WKViewExitFullScreen(WKViewRef);
 
+WK_EXPORT void WKViewSetOpacity(WKViewRef view, double opacity);
+WK_EXPORT double WKViewOpacity(WKViewRef view);
+
 #ifdef __cplusplus
 }
 #endif

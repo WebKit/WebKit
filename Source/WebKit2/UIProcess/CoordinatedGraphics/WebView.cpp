@@ -49,6 +49,7 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
     , m_focused(false)
     , m_visible(false)
     , m_contentScaleFactor(1.0)
+    , m_opacity(1.0)
 {
     m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_page->pageGroup()->preferences()->setForceCompositingMode(true);
@@ -119,7 +120,7 @@ void WebView::paintToCurrentGLContext()
     scene->setDrawsBackground(m_page->drawsBackground());
     const FloatRect& viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_size));
 
-    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
+    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), m_opacity, viewport);
 }
 
 void WebView::setDrawsBackground(bool drawsBackground)
