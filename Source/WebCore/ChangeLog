@@ -1,3 +1,23 @@
+2013-05-12  Darin Adler  <darin@apple.com>
+
+        [Mac] Move writeRange/PlainText/URL from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116009
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::writeRange): Added. Moved from ClipboardMac,
+        but added some FIXMEs.
+        (WebCore::Clipboard::writePlainText): Ditto.
+        (WebCore::Clipboard::writeURL): Ditto.
+
+        * dom/Clipboard.h: Made writeURL, writeRange, and writePlainText
+        non-virtual in non-legacy clipboard implementations.
+
+        * platform/mac/ClipboardMac.h: Removed writeRange, writeURL, and
+        writePlainText.
+        * platform/mac/ClipboardMac.mm: Ditto.
+
 2013-05-13  Noam Rosenthal  <noam@webkit.org>
 
         [CoordGfx] requestAnimationFrame performance issues

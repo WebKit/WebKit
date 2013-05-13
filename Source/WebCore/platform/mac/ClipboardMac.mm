@@ -115,28 +115,6 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
     }
 }
     
-void ClipboardMac::writeRange(Range* range, Frame* frame)
-{
-    ASSERT(range);
-    ASSERT(frame);
-    Pasteboard pasteboard(m_pasteboardName);
-    pasteboard.writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame, IncludeImageAltTextForClipboard);
-}
-
-void ClipboardMac::writePlainText(const String& text)
-{
-    Pasteboard pasteboard(m_pasteboardName);
-    pasteboard.writePlainText(text, Pasteboard::CannotSmartReplace);
-}
-
-void ClipboardMac::writeURL(const KURL& url, const String& title, Frame* frame)
-{   
-    ASSERT(frame);
-    ASSERT(m_pasteboardName);
-    Pasteboard pasteboard(m_pasteboardName);
-    pasteboard.writeURL(url, title, frame);
-}
-    
 #if ENABLE(DRAG_SUPPORT)
 void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
