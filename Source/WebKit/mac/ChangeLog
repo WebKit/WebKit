@@ -1,3 +1,17 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove ChromeClient::willPopupMenu
+        https://bugs.webkit.org/show_bug.cgi?id=116063
+
+        Reviewed by Andreas Kling.
+
+        ChromeClient::willPopupMenu is only called in one place from WebKit, so just move the function to the call site.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+
 2013-05-12  Timothy Hatcher  <timothy@apple.com>
 
         Add support for updating the Web Inspector toolbar height.

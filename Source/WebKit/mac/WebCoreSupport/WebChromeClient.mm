@@ -807,13 +807,6 @@ void WebChromeClient::makeFirstResponder(NSResponder *responder)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::willPopUpMenu(NSMenu *menu)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    CallUIDelegate(m_webView, @selector(webView:willPopupMenu:), menu);
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void WebChromeClient::enableSuddenTermination()
 {
     [[NSProcessInfo processInfo] enableSuddenTermination];

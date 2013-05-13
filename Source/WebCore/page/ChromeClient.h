@@ -44,10 +44,7 @@
 #include "DatabaseDetails.h"
 #endif
 
-#ifndef __OBJC__
-class NSMenu;
-class NSResponder;
-#endif
+OBJC_CLASS NSResponder;
 
 namespace WebCore {
 
@@ -313,7 +310,6 @@ public:
     virtual void makeFirstResponder(NSResponder *) { }
     // Focuses on the containing view associated with this page.
     virtual void makeFirstResponder() { }
-    virtual void willPopUpMenu(NSMenu *) { }
 #endif
 
     virtual void enableSuddenTermination() { }

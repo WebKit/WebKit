@@ -20,8 +20,11 @@
 
 #import "PopupMenuMac.h"
 
+#import "WebDelegateImplementationCaching.h"
+#import "WebFrameInternal.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/BlockExceptions.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ChromeClient.h>
 #import <WebCore/EventHandler.h>
@@ -178,8 +181,13 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     [view addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:view];
     
-    if (Page* page = frame->page())
-        page->chrome()->client()->willPopUpMenu(menu);
+    if (Page* page = frame->page()) {
+        WebView* webView = kit(page);
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        CallUIDelegate(webView, @selector(webView:willPopupMenu:), menu);
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
     wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font);
 
     [m_popup dismissPopUp];
