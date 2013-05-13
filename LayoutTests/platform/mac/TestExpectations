@@ -1539,3 +1539,31 @@ webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-lr.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html
 webkit.org/b/115292 fast/writing-mode/vertical-baseline-alignment.html
 webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
+
+# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=52185
+webkit.org/b/52185 fast/table/007.html [ Failure Rebaseline ]
+webkit.org/b/52185 fast/table/colspanMinWidth.html [ Failure Rebaseline ]
+webkit.org/b/52185 fast/table/colspanMinWidth-vertical.html [ Failure Rebaseline ]
+webkit.org/b/52185 fast/table/spanOverlapRepaint.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug13169.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug133756-1.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug133756-2.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug17138.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug17548.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug220536.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug6304.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug73321.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug7714.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug86708.html [ ImageOnlyFailure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/bugs/bug8858.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/core/bloomberg.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/core/cell_heights.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla/other/test6.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug1010.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug131020-3.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug23847.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug58402-2.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug65372.html [ Failure Rebaseline ]
+webkit.org/b/52185 tables/mozilla_expected_failures/bugs/bug6933.html [ Failure Rebaseline ]
+webkit.org/b/52185 accessibility/table-cells.html [ Failure Rebaseline ]
+webkit.org/b/52185 accessibility/table-attributes.html [ Failure Rebaseline ]

@@ -1,3 +1,32 @@
+2013-05-13  Suchit Agrawal  <a.suchit@samsung.com>
+
+        Cell heights are disproportional when a row-spanning cell contains a block element that determines the height of the rows
+        https://bugs.webkit.org/show_bug.cgi?id=52185
+
+        Reviewed by David Hyatt.
+
+        Cells heights are not proper when rowspan cell have its own height and rowspan height
+        is more than the height of the rows present in rowspan.
+
+        After calculating logical height of the rows in the table, we are recalculating the height
+        of the rows present in rowspan. Based on the ratio of row's logical height, we are
+        distributing rowspan cell height in rows.
+
+        Test: fast/table/table-rowspan-height-distribution-in-rows.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore):
+
+        Update the logical height of the rows based on rowspan cell height.
+        (WebCore::RenderTableSection::distributeRowSpanHeightToRows):
+
+        It calculates logical height of the rows in the table.
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
+        Added new private API to distribute rowSpan cell height in rows.
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+
 2013-04-30  Balazs Kelemen  <b.kelemen@sisa.samsung.com>
 
         [GStreamer] cannot seek after video finished

@@ -1,3 +1,50 @@
+2013-05-13  Suchit Agrawal  <a.suchit@samsung.com>
+
+        Cell heights are disproportional when a row-spanning cell contains a block element that determines the height of the rows
+        https://bugs.webkit.org/show_bug.cgi?id=52185
+
+        Reviewed by David Hyatt.
+
+        Test case updated.
+        * fast/css/vertical-align-baseline-rowspan-007.htm:
+
+        Reference Test cases updated.
+        * fast/css/vertical-align-baseline-rowspan-007-expected.html:
+        * fast/css/vertical-align-baseline-rowspan-008-expected.html:
+
+        Added test cases based on changes in the code and different scenarios for rowspan height 
+        distribution in rows.
+        * fast/table/table-rowspan-height-distribution-in-rows.html: Added.
+        * platform/qt/fast/table/table-rowspan-height-distribution-in-rows-expected.png: Added.
+        * platform/qt/fast/table/table-rowspan-height-distribution-in-rows-expected.txt: Added.
+
+        Test cases need to rebaseline in qt, efl, gtk and mac platforms.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
+        Test case results are updated in qt platform.
+        * platform/qt/tables/mozilla/bugs/bug17548-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug17548-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug220536-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug220536-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug7714-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug7714-expected.txt:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.png:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/qt/tables/mozilla/other/test6-expected.png:
+        * platform/qt/tables/mozilla/other/test6-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1010-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1010-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug23847-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug6933-expected.txt:
+        * tables/mozilla/core/bloomberg-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+
 2013-04-30  Balazs Kelemen  <b.kelemen@sisa.samsung.com>
 
         [GStreamer] cannot seek after video finished

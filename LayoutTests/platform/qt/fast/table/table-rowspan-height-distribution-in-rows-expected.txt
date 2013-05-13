@@ -1,0 +1,238 @@
+layer at (0,0) size 785x2855
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x2855
+  RenderBlock {HTML} at (0,0) size 785x2856
+    RenderBody {BODY} at (8,18) size 769x2830
+      RenderBlock {H3} at (0,0) size 769x44
+        RenderText {#text} at (0,0) size 183x22
+          text run at (0,0) width 183: "Test for bugzilla bug : "
+        RenderInline {A} at (0,0) size 50x22 [color=#0000EE]
+          RenderText {#text} at (183,0) size 50x22
+            text run at (183,0) width 50: "52185"
+        RenderText {#text} at (233,0) size 734x44
+          text run at (233,0) width 501: ". Height is not property distributed in rows when rowspan cell"
+          text run at (0,22) width 355: "have more height then rows in the rowspan."
+      RenderBlock {H4} at (0,65) size 769x20
+        RenderText {#text} at (0,0) size 318x19
+          text run at (0,0) width 318: "Rows in rowspan should get proportional height."
+      RenderBlock {H5} at (0,106) size 769x16
+        RenderText {#text} at (0,0) size 242x15
+          text run at (0,0) width 242: "Test 1 - Rowindex same but rowspan diffrent."
+      RenderTable {TABLE} at (0,143) size 607x107 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x104
+          RenderTableRow {TR} at (0,2) size 605x0
+            RenderTableCell {TD} at (2,40) size 172x23 [border: (1px inset #808080)] [r=0 c=0 rs=5 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=5"
+            RenderTableCell {TD} at (176,15) size 173x23 [border: (1px inset #808080)] [r=0 c=1 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col1 - rowspan=3"
+            RenderTableCell {TD} at (351,28) size 173x23 [border: (1px inset #808080)] [r=0 c=2 rs=4 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col2 - rowspan=4"
+          RenderTableRow {TR} at (0,4) size 605x23
+            RenderTableCell {TD} at (526,4) size 77x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row1 col0"
+          RenderTableRow {TR} at (0,29) size 605x23
+            RenderTableCell {TD} at (526,29) size 77x23 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col0"
+          RenderTableRow {TR} at (0,54) size 605x23
+            RenderTableCell {TD} at (176,54) size 173x23 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,79) size 605x23
+            RenderTableCell {TD} at (176,79) size 173x23 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
+      RenderBlock {H5} at (0,271) size 769x16
+        RenderText {#text} at (0,0) size 438x15
+          text run at (0,0) width 438: "Test 2 - RowsIndex and rowspan are same but height is diffrent for rowspan cells."
+      RenderTable {TABLE} at (0,308) size 607x311 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x308
+          RenderTableRow {TR} at (0,2) size 605x0
+            RenderTableCell {TD} at (2,142) size 172x23 [border: (1px inset #808080)] [r=0 c=0 rs=5 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=5"
+            RenderTableCell {TD} at (176,142) size 173x23 [border: (1px inset #808080)] [r=0 c=1 rs=5 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col1 - rowspan=5"
+            RenderTableCell {TD} at (351,142) size 173x23 [border: (1px inset #808080)] [r=0 c=2 rs=5 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col2 - rowspan=5"
+          RenderTableRow {TR} at (0,4) size 605x74
+            RenderTableCell {TD} at (526,29) size 77x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row1 col0"
+          RenderTableRow {TR} at (0,80) size 605x74
+            RenderTableCell {TD} at (526,105) size 77x23 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col0"
+          RenderTableRow {TR} at (0,156) size 605x74
+            RenderTableCell {TD} at (526,181) size 77x23 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,232) size 605x74
+            RenderTableCell {TD} at (526,257) size 77x23 [border: (1px inset #808080)] [r=4 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
+      RenderBlock {H5} at (0,641) size 769x16
+        RenderText {#text} at (0,0) size 333x15
+          text run at (0,0) width 333: "Test 3 - One rowspan cell under other rowspan cell boundries"
+      RenderTable {TABLE} at (0,678) size 607x561 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x558
+          RenderTableRow {TR} at (0,2) size 605x23
+            RenderTableCell {TD} at (2,267) size 172x23 [border: (1px inset #808080)] [r=0 c=0 rs=7 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=7"
+            RenderTableCell {TD} at (176,2) size 173x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col1"
+            RenderTableCell {TD} at (351,2) size 76x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col2"
+          RenderTableRow {TR} at (0,27) size 605x0
+            RenderTableCell {TD} at (176,267) size 173x23 [border: (1px inset #808080)] [r=1 c=1 rs=4 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row1 col0 - rowspan=4"
+          RenderTableRow {TR} at (0,29) size 605x164
+            RenderTableCell {TD} at (351,99) size 76x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col0"
+            RenderTableCell {TD} at (429,268) size 174x23 [border: (1px inset #808080)] [r=2 c=3 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row2 col1 - rowspan=3"
+          RenderTableRow {TR} at (0,195) size 605x164
+            RenderTableCell {TD} at (351,265) size 76x23 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,361) size 605x170
+            RenderTableCell {TD} at (351,434) size 76x23 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
+          RenderTableRow {TR} at (0,533) size 605x23
+            RenderTableCell {TD} at (176,533) size 173x23 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row5 col0"
+      RenderBlock {H5} at (0,1260) size 769x16
+        RenderText {#text} at (0,0) size 671x15
+          text run at (0,0) width 671: "Test 4 - one rowspan cell starts under the boundies of previous rowspan cell but end after previous rowspan cell end boundry."
+      RenderTable {TABLE} at (0,1297) size 607x361 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x358
+          RenderTableRow {TR} at (0,2) size 605x59
+            RenderTableCell {TD} at (2,142) size 244x23 [border: (1px inset #808080)] [r=0 c=0 rs=5 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=5"
+            RenderTableCell {TD} at (248,20) size 244x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col1"
+            RenderTableCell {TD} at (494,20) size 109x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col2"
+          RenderTableRow {TR} at (0,63) size 605x59
+            RenderTableCell {TD} at (248,81) size 244x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row1 col0"
+          RenderTableRow {TR} at (0,124) size 605x59
+            RenderTableCell {TD} at (248,216) size 244x23 [border: (1px inset #808080)] [r=2 c=1 rs=4 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row2 col0 - rowspan=4"
+            RenderTableCell {TD} at (494,142) size 109x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col1"
+          RenderTableRow {TR} at (0,185) size 605x59
+            RenderTableCell {TD} at (494,203) size 109x23 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,246) size 605x60
+            RenderTableCell {TD} at (494,264) size 109x23 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
+          RenderTableRow {TR} at (0,308) size 605x23
+            RenderTableCell {TD} at (2,308) size 244x23 [border: (1px inset #808080)] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row5 col0"
+          RenderTableRow {TR} at (0,333) size 605x23
+            RenderTableCell {TD} at (2,333) size 244x23 [border: (1px inset #808080)] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row6 col0"
+      RenderBlock {H5} at (0,1679) size 769x16
+        RenderText {#text} at (0,0) size 200x15
+          text run at (0,0) width 200: "Test 5 - Consecutive 2 rowspan cells."
+      RenderTable {TABLE} at (0,1716) size 607x392 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x389
+          RenderTableRow {TR} at (0,2) size 605x23
+            RenderTableCell {TD} at (2,2) size 354x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col0"
+          RenderTableRow {TR} at (0,27) size 605x0
+            RenderTableCell {TD} at (2,77) size 354x104 [border: (1px inset #808080)] [r=1 c=0 rs=3 cs=1]
+              RenderBlock {DIV} at (2,2) size 350x100
+                RenderText {#text} at (0,0) size 145x19
+                  text run at (0,0) width 145: "row1 col0 - rowspan=3"
+          RenderTableRow {TR} at (0,29) size 605x100
+            RenderTableCell {TD} at (358,67) size 245x23 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col0"
+          RenderTableRow {TR} at (0,131) size 605x100
+            RenderTableCell {TD} at (358,169) size 245x23 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,233) size 605x23
+            RenderTableCell {TD} at (2,233) size 354x23 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
+          RenderTableRow {TR} at (0,258) size 605x0
+            RenderTableCell {TD} at (2,298) size 354x23 [border: (1px inset #808080)] [r=5 c=0 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row5 col0 - rowspan=3"
+          RenderTableRow {TR} at (0,260) size 605x50
+            RenderTableCell {TD} at (358,273) size 245x23 [border: (1px inset #808080)] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row6 col0"
+          RenderTableRow {TR} at (0,312) size 605x50
+            RenderTableCell {TD} at (358,325) size 245x23 [border: (1px inset #808080)] [r=7 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row7 col0"
+          RenderTableRow {TR} at (0,364) size 605x23
+            RenderTableCell {TD} at (2,364) size 354x23 [border: (1px inset #808080)] [r=8 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row8 col0"
+      RenderBlock {H5} at (0,2130) size 769x16
+        RenderText {#text} at (0,0) size 280x15
+          text run at (0,0) width 280: "Test 6 - Only one rowspan cells present in the table."
+      RenderTable {TABLE} at (0,2167) size 607x209 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x206
+          RenderTableRow {TR} at (0,2) size 605x49
+            RenderTableCell {TD} at (2,91) size 601x23 [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=4"
+      RenderBlock {H5} at (0,2397) size 769x16
+        RenderText {#text} at (0,0) size 297x15
+          text run at (0,0) width 297: "Test 7 - one or more table rows have only rowspan cells"
+      RenderTable {TABLE} at (0,2434) size 607x395 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 605x392
+          RenderTableRow {TR} at (0,2) size 605x57
+            RenderTableCell {TD} at (2,158) size 316x23 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 145x19
+                text run at (2,2) width 145: "row0 col0 - rowspan=4"
+            RenderTableCell {TD} at (320,19) size 140x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row0 col1"
+          RenderTableRow {TR} at (0,61) size 605x0
+            RenderTableCell {TD} at (320,201) size 140x23 [border: (1px inset #808080)] [r=1 c=1 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row1 col0"
+          RenderTableRow {TR} at (0,63) size 605x274
+            RenderTableCell {TD} at (462,215) size 141x23 [border: (1px inset #808080)] [r=2 c=2 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row2 col0"
+          RenderTableRow {TR} at (0,339) size 605x26
+            RenderTableCell {TD} at (2,340) size 316x23 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row3 col0"
+          RenderTableRow {TR} at (0,367) size 605x23
+            RenderTableCell {TD} at (2,367) size 316x23 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "row4 col0"
