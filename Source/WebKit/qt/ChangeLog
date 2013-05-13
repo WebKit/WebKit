@@ -1,3 +1,22 @@
+2013-05-13  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a crash on startup in FrameLoaderClientQt::callPolicyFunction with MSVC
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        It's not clear why it crashes, but here's my guess by looking at the generated
+        assembly code:
+        Since we're using a member function pointer to PolicyChecker, the representation
+        is not necessarily just a simple pointer and might be a bigger structure used
+        to handle virtual functions resolution.
+        For a function taking such a function "pointer" as parameter, the compiler doesn't
+        seem to have the caller and callee agree on which convention to use if the function
+        pointer's class is non-virtual and only one of the ends doesn't know about it.
+
+        Including the definition of the member function pointer's class fixes the crash.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2013-05-09  Andreas Kling  <akling@apple.com>
 
         [Qt][WK1]REGRESSION(r149532) tst_qwebelement and tst_qwebframe API tests crash.

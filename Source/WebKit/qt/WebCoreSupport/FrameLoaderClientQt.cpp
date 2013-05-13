@@ -60,6 +60,7 @@
 #include "PlatformMouseEvent.h"
 #include "PluginData.h"
 #include "PluginDatabase.h"
+#include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "QNetworkReplyHandler.h"
 #include "QWebFrameAdapter.h"
