@@ -1,3 +1,17 @@
+2013-05-13  Dean Jackson  <dino@apple.com>
+
+        toDataURL can return an empty image in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=115981
+        <rdar://problem/13760256>
+
+        Reviewed by Darin Adler.
+
+        Make sure that a canvas with content is not the same as one
+        without content.
+
+        * fast/canvas/toDataURL-not-empty-expected.txt: Added.
+        * fast/canvas/toDataURL-not-empty.html: Added.
+
 2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.

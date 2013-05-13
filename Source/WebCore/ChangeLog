@@ -1,3 +1,32 @@
+2013-05-13  Dean Jackson  <dino@apple.com>
+
+        toDataURL can return an empty image in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=115981
+        <rdar://problem/13760256>
+
+        Reviewed by Darin Adler.
+
+        In some accelerated rendering cases, calling toDataURL on
+        an off-screen canvas produced an empty image. The solution
+        was to force a CGContextFlush before extracting the data
+        for image generation.
+
+        While here, I collected the flushing code from other methods
+        into a single place. Also we were getting into a situation where
+        we called flush two times in a row.
+
+        Test: fast/canvas/toDataURL-not-empty.html
+
+        * platform/graphics/ImageBuffer.h:
+        (ImageBuffer): Define two new methods flushContext and flushContextIfNecessary.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::context): Call flushContextIfNecessary.
+        (WebCore::ImageBuffer::flushContextIfNecessary): Moved the 10.7 code in here.
+        (WebCore::ImageBuffer::flushContext): Calls CGContextFlush.
+        (WebCore::ImageBuffer::getUnmultipliedImageData): Call new helper.
+        (WebCore::ImageBuffer::getPremultipliedImageData): Call new helper.
+        (WebCore::ImageBuffer::toDataURL): Flush the CG context.
+
 2013-05-13  David Hyatt  <hyatt@apple.com>
 
         Regressions in flexbox layout caused by the flexing optimizations.

@@ -194,20 +194,31 @@ ImageBuffer::~ImageBuffer()
 GraphicsContext* ImageBuffer::context() const
 {
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+    flushContextIfNecessary();
+#endif
+    return m_context.get();
+}
+
+void ImageBuffer::flushContextIfNecessary() const
+{
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
     // Force a flush if last flush was more than 20ms ago
     if (m_context->isAcceleratedContext()) {
         double elapsedTime = currentTimeMS() - m_data.m_lastFlushTime;
         double maxFlushInterval = 20; // in ms
 
-        if (elapsedTime > maxFlushInterval) {
-            CGContextRef context = m_context->platformContext();
-            CGContextFlush(context);
-            m_data.m_lastFlushTime = currentTimeMS();
-        }
+        if (elapsedTime > maxFlushInterval)
+            flushContext();
     }
 #endif
+}
 
-    return m_context.get();
+void ImageBuffer::flushContext() const
+{
+    CGContextFlush(m_context->platformContext());
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+    m_data.m_lastFlushTime = currentTimeMS();
+#endif
 }
 
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
@@ -311,23 +322,17 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
-    if (m_context->isAcceleratedContext()) {
-        CGContextFlush(context()->platformContext());
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-        m_data.m_lastFlushTime = currentTimeMS();
-#endif
-    }
+    if (m_context->isAcceleratedContext())
+        flushContext();
+
     return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), true, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
-    if (m_context->isAcceleratedContext()) {
-        CGContextFlush(context()->platformContext());
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-        m_data.m_lastFlushTime = currentTimeMS();
-#endif
-    }
+    if (m_context->isAcceleratedContext())
+        flushContext();
+
     return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), false, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
@@ -444,6 +449,9 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    if (m_context->isAcceleratedContext())
+        flushContext();
 
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
