@@ -1,5 +1,12 @@
 2013-05-12  Darin Adler  <darin@apple.com>
 
+        Fix Mac build.
+
+        * platform/mac/PasteboardMac.mm: Add back include of ClipboardMac.h
+        that was removed by accident a couple of patches back.
+
+2013-05-12  Darin Adler  <darin@apple.com>
+
         [Mac] Moved files function from ClipboardMac to PasteboardMac
         https://bugs.webkit.org/show_bug.cgi?id=116008
 
