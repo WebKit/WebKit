@@ -1,5 +1,41 @@
 2013-05-12  Darin Adler  <darin@apple.com>
 
+        [Mac] Move setData from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116006
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::setData): Added. Calls through to Pasteboard
+        after doing checks needed at this level.
+
+        * dom/Clipboard.h: Made setData non-virtual in non-legacy case.
+
+        * platform/Pasteboard.h: Updated includes and forward declarations.
+        Removed static member function cocoaTypeFromHTMLClipboardType, since
+        it can now be private to PasteboardMac. Added static member function
+        addHTMLClipboardTypesForCocoaType, which is shared between the
+        ClipboardMac and PasteboardMac files for now. Added writeString.
+
+        * platform/mac/ClipboardMac.h: Removed setData.
+
+        * platform/mac/ClipboardMac.mm: Removed utiTypeFromCocoaType,
+        addHTMLClipboardTypesForCocoaType, and setData.
+        (WebCore::ClipboardMac::types): Call addHTMLClipboardTypesForCocoaType
+        as a Pasteboard static member function, for now.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType): Added. Moved from ClipboardMac.
+        (WebCore::Pasteboard::readString): Changed to call
+        cocoaTypeFromHTMLClipboardType as a file-local function, not a member
+        function (in fact, we didn't need to repeat the class name before, either,
+        so this is just removing something we didn't need).
+        (WebCore::utiTypeFromCocoaType): Added. Moved from ClipboardMac.
+        (WebCore::Pasteboard::addHTMLClipboardTypesForCocoaType): Ditto.
+        (WebCore::Pasteboard::writeString): Ditto.
+
+2013-05-12  Darin Adler  <darin@apple.com>
+
         [Mac] Move getData from ClipboardMac to PasteboardMac
         https://bugs.webkit.org/show_bug.cgi?id=116005
 

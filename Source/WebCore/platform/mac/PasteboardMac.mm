@@ -27,7 +27,6 @@
 #import "Pasteboard.h"
 
 #import "CachedImage.h"
-#import "ClipboardMac.h"
 #import "DOMRangeInternal.h"
 #import "Document.h"
 #import "DocumentFragment.h"
@@ -596,7 +595,7 @@ bool Pasteboard::hasData()
     return !types.isEmpty();
 }
 
-String Pasteboard::cocoaTypeFromHTMLClipboardType(const String& type)
+static String cocoaTypeFromHTMLClipboardType(const String& type)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dom-datatransfer-setdata
     String qType = type.lower();
@@ -680,7 +679,7 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
 
 String Pasteboard::readString(const String& type)
 {
-    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
+    const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
     String cocoaValue;
 
     // Grab the value off the pasteboard corresponding to the cocoaType
@@ -701,6 +700,79 @@ String Pasteboard::readString(const String& type)
         return cocoaValue;
 
     return String();
+}
+
+static String utiTypeFromCocoaType(const String& type)
+{
+    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
+        if (RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType)))
+            return String(mimeType.get());
+    }
+    return String();
+}
+
+void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
+{
+    // UTI may not do these right, so make sure we get the right, predictable result
+    if (cocoaType == String(NSStringPboardType)) {
+        resultTypes.add("text/plain");
+        return;
+    }
+    if (cocoaType == String(NSURLPboardType)) {
+        resultTypes.add("text/uri-list");
+        return;
+    }
+    if (cocoaType == String(NSFilenamesPboardType)) {
+        // If file list is empty, add nothing.
+        // Note that there is a chance that the file list count could have changed since we grabbed the types array.
+        // However, this is not really an issue for us doing a sanity check here.
+        Vector<String> fileList;
+        platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
+        if (!fileList.isEmpty()) {
+            // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
+            // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
+            resultTypes.add("text/uri-list");
+            resultTypes.add("Files");
+        }
+        return;
+    }
+    String utiType = utiTypeFromCocoaType(cocoaType);
+    if (!utiType.isEmpty()) {
+        resultTypes.add(utiType);
+        return;
+    }
+    // No mapping, just pass the whole string though
+    resultTypes.add(cocoaType);
+}
+
+bool Pasteboard::writeString(const String& type, const String& data)
+{
+    const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    String cocoaData = data;
+
+    if (cocoaType == String(NSURLPboardType) || cocoaType == String(kUTTypeFileURL)) {
+        NSURL *url = [NSURL URLWithString:cocoaData];
+        if ([url isFileURL])
+            return false;
+
+        Vector<String> types;
+        types.append(cocoaType);
+        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
+
+        return true;
+    }
+
+    if (!cocoaType.isEmpty()) {
+        // everything else we know of goes on the pboard as a string
+        Vector<String> types;
+        types.append(cocoaType);
+        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
+        return true;
+    }
+
+    return false;
 }
 
 }

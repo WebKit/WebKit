@@ -29,24 +29,21 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
 #if PLATFORM(MAC)
+#include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #endif
+
 #if PLATFORM(GTK)
 #include <PasteboardHelper.h>
 #endif
-#include <wtf/Vector.h>
 
 // FIXME: This class is too high-level to be in the platform directory, since it
 // uses the DOM and makes calls to Editor. It should either be divested of its
 // knowledge of the frame and editor or moved into the editing directory.
-
-#if PLATFORM(MAC)
-OBJC_CLASS NSAttributedString;
-OBJC_CLASS NSFileWrapper;
-OBJC_CLASS NSArray;
-#endif
 
 #if PLATFORM(WIN)
 #include <windows.h>
@@ -63,7 +60,6 @@ extern const char* WebURLPboardType;
 extern const char* WebURLsWithTitlesPboardType;
 #endif
 
-class ArchiveResource;
 class Clipboard;
 class DocumentFragment;
 class Frame;
@@ -93,8 +89,8 @@ public:
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
 
     // Functions needed temporarily until all code from ClipboardMac is moved to PasteboardMac.
-    static String cocoaTypeFromHTMLClipboardType(const String& type);
     static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false);
+    static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName);
 #endif
     
     static Pasteboard* generalPasteboard();
@@ -103,6 +99,7 @@ public:
 
     String readString(const String& type);
 
+    bool writeString(const String& type, const String& data);
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
     void writePlainText(const String&, SmartReplaceOption);
     void writeURL(const KURL&, const String&, Frame* = 0);

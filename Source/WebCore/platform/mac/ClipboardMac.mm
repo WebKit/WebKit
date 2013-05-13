@@ -70,83 +70,6 @@ ClipboardMac::~ClipboardMac()
         m_dragImage->removeClient(this);
 }
 
-static String utiTypeFromCocoaType(const String& type)
-{
-    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
-        if (RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType)))
-            return String(mimeType.get());
-    }
-    return String();
-}
-
-static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
-{
-    // UTI may not do these right, so make sure we get the right, predictable result
-    if (cocoaType == String(NSStringPboardType)) {
-        resultTypes.add("text/plain");
-        return;
-    }
-    if (cocoaType == String(NSURLPboardType)) {
-        resultTypes.add("text/uri-list");
-        return;
-    }
-    if (cocoaType == String(NSFilenamesPboardType)) {
-        // If file list is empty, add nothing.
-        // Note that there is a chance that the file list count could have changed since we grabbed the types array.
-        // However, this is not really an issue for us doing a sanity check here.
-        Vector<String> fileList;
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
-        if (!fileList.isEmpty()) {
-            // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
-            // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
-            resultTypes.add("text/uri-list");
-            resultTypes.add("Files");
-        }
-        return;
-    }
-    String utiType = utiTypeFromCocoaType(cocoaType);
-    if (!utiType.isEmpty()) {
-        resultTypes.add(utiType);
-        return;
-    }
-    // No mapping, just pass the whole string though
-    resultTypes.add(cocoaType);
-}
-
-bool ClipboardMac::setData(const String &type, const String &data)
-{
-    if (!canWriteData() || m_clipboardContents == DragAndDropFiles)
-        return false;
-    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
-
-    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
-    String cocoaData = data;
-
-    if (cocoaType == String(NSURLPboardType) || cocoaType == String(kUTTypeFileURL)) {
-        NSURL *url = [NSURL URLWithString:cocoaData];
-        if ([url isFileURL])
-            return false;
-
-        Vector<String> types;
-        types.append(cocoaType);
-        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
-        platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
-
-        return true;
-    }
-
-    if (!cocoaType.isEmpty()) {
-        // everything else we know of goes on the pboard as a string
-        Vector<String> types;
-        types.append(cocoaType);
-        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
-        platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
-        return true;
-    }
-
-    return false;
-}
-
 ListHashSet<String> ClipboardMac::types() const
 {
     if (!canReadTypes())
@@ -167,7 +90,7 @@ ListHashSet<String> ClipboardMac::types() const
         if (types[i] == "NeXT plain ascii pasteboard type")
             continue;   // skip this ancient type that gets auto-supplied by some system conversion
 
-        addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
+        Pasteboard::addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
     }
 
     return result;

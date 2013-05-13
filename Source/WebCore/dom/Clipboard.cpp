@@ -283,6 +283,14 @@ String Clipboard::getData(const String& type) const
     return m_pasteboard->readString(type);
 }
 
+bool Clipboard::setData(const String& type, const String& data)
+{
+    if (!canWriteData() || m_forFileDrag)
+        return false;
+
+    return m_pasteboard->writeString(type, data);
+}
+
 #endif
 
 } // namespace WebCore

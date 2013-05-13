@@ -52,9 +52,7 @@ public:
     }
 
     virtual ~ClipboardMac();
-    
-    bool setData(const String& type, const String& data);
-    
+
     // extensions beyond IE's API
     virtual ListHashSet<String> types() const;
     virtual PassRefPtr<FileList> files() const;
