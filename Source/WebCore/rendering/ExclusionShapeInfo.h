@@ -112,8 +112,8 @@ protected:
     const ExclusionShape* computedShape() const;
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
 
-    LayoutUnit logicalTopOffset() const;
-    LayoutUnit logicalLeftOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderStart() + m_renderer->paddingStart() : LayoutUnit(); }
+    LayoutUnit logicalTopOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit(); };
+    LayoutUnit logicalLeftOffset() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit(); }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;

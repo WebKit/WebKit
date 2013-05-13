@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-    if (window.internals)
-        window.internals.settings.setCSSExclusionsEnabled(true);
-</script>
 <style>
     .region {
         font: 14px Ahem, sans-serif;
@@ -17,19 +13,24 @@
     }
     #region_with_shape_inside {
         border: 1px solid black;
-        -webkit-shape-inside: rectangle(50px, 0px, 300px, 300px);
         overflow: hidden;
         background-color: orange;
+    }
+    #placeholder {
+        float: left;
+        width: 50px;
+        height: 300px;
     }
 </style>
 </head>
 <body>
 
 <div class="region">
-      <p>Despite the passage of time, Major Quilan still suffers grief and bereavement from the death of his wife, killed during the Chelgrian civil war that resulted from the Culture's interference. <p>Quilan is offered the chance to avenge the lost Chelgrians who died in the civil war and is inducted into a plot  to strike back
+      <p>Despite the passage of time, Major Quilan still suffers grief and bereavement from the death of his wife, killed during the Chelgrian civil war that resulted from the Culture's interference. <p>Quilan is offered the chance to avenge the lost Chelgrians who died in the civil war and is inducted into a plot to strike back at the Culture.</p>
 </div>
 <div id="region_with_shape_inside" class="region">
-at the Culture.</p>As part of the plot, his <p>"soulkeeper"</p> (a device normally used to store its owner's personality upon their death) is equipped with both the mind of a long-dead Chelgrian general and a device...
+    <div id="placeholder"></div>
+    <p>As part of the plot, his <p>"soulkeeper"</p> (a device normally used to store its owner's personality upon their death) is equipped with both the mind of a long-dead Chelgrian general and a device...
 </div>
 
 <p>Requires Ahem font. The content - what contains multiple nested paragraphs - flows into multiple regions, a shape-inside property is applied only on the second region. <br/>

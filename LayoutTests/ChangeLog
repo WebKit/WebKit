@@ -1,3 +1,34 @@
+2013-05-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Exclusions] Shape-inside on regions should respect region borders and paddings
+        https://bugs.webkit.org/show_bug.cgi?id=115456
+
+        Reviewed by David Hyatt.
+
+        I refactored the computation logic of shape-inside on regions by removing access to RenderFlowThread from ExclusionShapeInfo's logicalTopOffset
+        function, this means all the logic is now existing in RenderBlockLineLayout.cpp. By modifying the logicalTopOffset it turned out that the borders
+        and padding hadn't worked correctly, since borders and paddings were counted twice in the shape-inside's computation. This patch adds the necessary
+        modifications to let it respect the borders and padding in the correct way. I created 2 new helper functions to prevent increasing the code size of
+        the layoutRunsAndFloatsInRange function.
+
+        * fast/regions/shape-inside/shape-inside-on-additional-regions-expected.html: Modify to not use shape-inside for testing.
+        * fast/regions/shape-inside/shape-inside-on-additional-regions.html: Fix the shape-inside's dimension.
+        * fast/regions/shape-inside/shape-inside-on-first-region-block-content-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-first-region-block-content.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-expected.html: Match the shape-inside height to the container's height.
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions.html: Match the shape-inside height to the container's height.
+        * fast/regions/shape-inside/shape-inside-on-second-region-block-content-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-second-region-block-content.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-second-region-inline-content-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-second-region-inline-content.html: Added.
+        * fast/regions/shape-inside/shape-inside-with-region-borders-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-with-region-borders.html: Added.
+        * fast/regions/shape-inside/shape-inside-with-region-padding-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-with-region-padding.html: Added.
+
 2013-05-13  Bear Travis  <betravis@adobe.com>
 
         [css exclusions] Enable CSS Exclusions by default when CSS_EXCLUSIONS is set

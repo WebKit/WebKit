@@ -84,7 +84,8 @@ ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo(ExclusionS
         shapeInsideInfo = 0;
 
     if (!shapeInsideInfo && flowThreadContainingBlock() && allowsExclusionShapeInsideInfoSharing()) {
-        LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false);
+        // regionAtBlockOffset returns regions like an array first={0,N-1}, second={N,M-1}, ...
+        LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false) - LayoutUnit(1);
         RenderRegion* region = regionAtBlockOffset(offset);
         if (region)
             shapeInsideInfo = region->exclusionShapeInsideInfo();
@@ -1645,6 +1646,52 @@ static inline LayoutUnit adjustLogicalLineTop(ExclusionShapeInsideInfo* exclusio
 
     return exclusionShapeInsideInfo->shapeLogicalBottom();
 }
+
+void RenderBlock::updateLineBoundariesForExclusions(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
+{
+    LayoutUnit logicalHeight = this->logicalHeight();
+    RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight);
+    if (currentRegion)
+        exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
+    if (!exclusionShapeInsideInfo)
+        return;
+
+    LayoutUnit lineTop = logicalHeight + absoluteLogicalTop;
+    LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+
+    if (layoutState.flowThread()) {
+        RenderRegion* nextRegion = regionAtBlockOffset(logicalHeight + lineHeight - LayoutUnit(1));
+        lineTop += exclusionShapeInsideInfo->owner()->borderAndPaddingBefore();
+        // Content in a flow thread is relative to the beginning of the thread, but the shape calculation should be relative to the current region.
+        if (currentRegion == nextRegion)
+            lineTop -= currentRegion->logicalTopForFlowThreadContent();
+    }
+
+    // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which case these segments may be incorrect.
+    exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight);
+
+    // The overflow should be pushed below the content box
+    LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
+    if (!flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
+        setLogicalHeight(shapeContainingBlockHeight);
+        lineOverflowsFromShapeInside = true;
+    }
+}
+
+bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit absoluteLogicalTop, LineLayoutState& layoutState, InlineBidiResolver& resolver, FloatingObject* lastFloatFromPreviousLine, InlineIterator& end, WordMeasurements& wordMeasurements)
+{
+    LayoutUnit adjustedLogicalLineTop = adjustLogicalLineTop(exclusionShapeInsideInfo, resolver.position(), end, wordMeasurements);
+    if (!adjustedLogicalLineTop)
+        return false;
+
+    LayoutUnit newLogicalHeight = adjustedLogicalLineTop - absoluteLogicalTop;
+    RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight());
+    if (layoutState.flowThread())
+        newLogicalHeight -= currentRegion->logicalTopForFlowThreadContent();
+
+    end = restartLayoutRunsAndFloatsInRange(logicalHeight(), newLogicalHeight, lastFloatFromPreviousLine, resolver, end);
+    return true;
+}
 #endif
 
 void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines)
@@ -1670,15 +1717,10 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             absoluteLogicalTop = logicalTop();
         }
         // Begin layout at the logical top of our shape inside.
-        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop())
+        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop() && !layoutState.flowThread())
             setLogicalHeight(exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop);
     }
 
-    if (layoutState.flowThread()) {
-        // In a flow thread we need to update absoluteLogicalTop in every run to match to the current logical top increased by the height of the current line to calculate the right values for the
-        // actual shape when a line is beginning in a new region which has a shape on it. Usecase: shape-inside is applied not on the first, but on either of the following regions in the region chain.
-        absoluteLogicalTop = logicalTop() + lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    }
     bool lineOverflowsFromShapeInside = false;
 #endif
 
@@ -1700,21 +1742,9 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (containsFloats()) ? m_floatingObjects->set().last() : 0;
-#if ENABLE(CSS_EXCLUSIONS)
-        // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
-        // case these segments may be incorrect.
-        if (layoutState.flowThread())
-            exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
-        if (exclusionShapeInsideInfo) {
-            LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
-            exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
-            LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
-            if (!flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
-                setLogicalHeight(shapeContainingBlockHeight);
-                lineOverflowsFromShapeInside = true;
-            }
-        }
+#if ENABLE(CSS_EXCLUSIONS)
+        updateLineBoundariesForExclusions(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, lineOverflowsFromShapeInside);
 #endif
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
@@ -1730,12 +1760,9 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         }
 
 #if ENABLE(CSS_EXCLUSIONS)
-        if (LayoutUnit adjustedLogicalLineTop = adjustLogicalLineTop(exclusionShapeInsideInfo, resolver.position(), end, wordMeasurements)) {
-            end = restartLayoutRunsAndFloatsInRange(logicalHeight(), adjustedLogicalLineTop - absoluteLogicalTop, lastFloatFromPreviousLine, resolver, oldEnd);
+        if (adjustLogicalLineTopAndLogicalHeightIfNeeded(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, resolver, lastFloatFromPreviousLine, end, wordMeasurements))
             continue;
-        }
 #endif
-
         ASSERT(end != resolver.position());
 
         // This is a short-cut for empty lines.
