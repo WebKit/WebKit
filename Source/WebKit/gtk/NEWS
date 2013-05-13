@@ -1,4 +1,24 @@
 ==================
+WebKitGTK+   2.0.2
+==================
+
+What's new in WebKitGTK+ 2.0.2?
+
+  - Honor preload="none" attribute in GStreamer backend.
+  - Make the GStreamer not to do memory buffering when preload set to
+    none.
+  - Fix loading of plugins when MIME Type is not provided but can
+    guessed from the file extension.
+  - Fix a crash with some locales due to some property names marked
+    for translation by mistake.
+  - Fix a double-free in WebKitWebPlugin.
+  - Support C++11 static_assert.
+  - Fix the build without GStreamer.
+  - Fix the build with GCC 4.8 due to maybe-uninitialized errors.
+  - Fix the build due to unresolved symbols in ProcessLauncherGtk.cpp.
+  - Translation updates: Odia.
+
+==================
 WebKitGTK+   2.0.1
 ==================
 
