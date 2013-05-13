@@ -592,6 +592,32 @@ plugin_process_for_dep_list += \
 endif
 $(plugin_process_for_dep): $(plugin_process_for_dep_list)
 
+webcore_layer_gtk2_deps = \
+	libPlatform.la \
+	libPlatformGtk2.la \
+	libWebCorePlatform.la \
+	libWebCoreGtk2.la \
+	libWebCore.la \
+	libWebCoreModules.la
+if ENABLE_SVG
+webcore_layer_gtk2_deps += \
+	libWebCoreSVG.la
+endif
+if ENABLE_INDEXED_DATABASE
+webcore_layer_gtk2_deps += \
+	libLevelDB.la
+endif
+if USE_OPENGL
+webcore_layer_gtk2_deps += \
+	libANGLE.la
+endif
+
+webcore_layer_gtk2_archives = $(foreach lib, $(webcore_layer_gtk2_deps), $(shell echo $(lib) | sed "s/\(.*\)\.la/.libs\/\1.a/"))
+
+WebCoreLayerGtk2.a: $(webcore_layer_gtk2_deps)
+	$(AM_V_GEN)
+	$(AM_V_at)$(foreach archive, $(webcore_layer_gtk2_archives), $(shell ar t $(archive) | xargs -n50 ar cruT $@))
+
 Programs_WebKitPluginProcess_CPPFLAGS = \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \
@@ -649,59 +675,9 @@ Programs_WebKitPluginProcess_SOURCES = \
 
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
-	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-
-# FIXME: Due to layer violations and circular dependencies all these libraries have to be specified multiple times
-# when invoking the linker. This ensures any undefined symbols are resolved when linking. See wkb.ug/114901 for more detail.
-# First time around these libraries are simply listed by their file name that's later resolved to the path of the *.a archive
-# (i.e. .libs/libPlatformGtk2.a) by libtool.
-Programs_WebKitPluginProcess_LDADD += \
-	libPlatformGtk2.la \
-	libWebCoreGtk2.la \
-	libPlatform.la \
-	libWebCorePlatform.la \
-	libWebCore.la \
-	libWebCoreModules.la \
-	libWebKit2Platform.la
-if ENABLE_INDEXED_DATABASE
-Programs_WebKitPluginProcess_LDADD += \
-	libLevelDB.la
-endif
-if USE_OPENGL
-Programs_WebKitPluginProcess_LDADD += \
-	libANGLE.la
-endif
-if ENABLE_SVG
-Programs_WebKitPluginProcess_LDADD += \
-	libWebCoreSVG.la
-endif
-
-# FIXME: Second time around all the libraries are relisted, this time in the -lNAME form. Listed items are resolved into the
-# absolute paths to the *.a archive (i.e. $(abs_builddir)/.libs.libPlatformGtk2.a) by libtool.
-Programs_WebKitPluginProcess_LDADD += \
-	-lPlatformGtk2 -lWebCoreGtk2 -lPlatform -lWebCorePlatform -lWebCore -lWebCoreModules
-if ENABLE_INDEXED_DATABASE
-Programs_WebKitPluginProcess_LDADD += \
-	-lLevelDB
-endif
-if USE_OPENGL
-Programs_WebKitPluginProcess_LDADD += \
-	-lANGLE
-endif
-if ENABLE_SVG
-Programs_WebKitPluginProcess_LDADD += \
-	-lWebCoreSVG
-endif
-
-# FIXME: To make the matter worse, these four libraries are again required to be listed for linking. This time they're added by
-# specifying the symbolic link that points back to the ./lib*.la libtool archives which are again resolved into paths to the
-# *.a archives (i.e. .libs/libPlatformGtk2.la) by libtool. Phony targets are added for these files to prevent Automake to try
-# to build them as these symlinks are just a byproduct of libtool.
-.PHONY : .libs/libPlatformGtk2.la .libs/libWebCoreGtk2.la .libs/libPlatform.la .libs/libWebCorePlatform.la
-Programs_WebKitPluginProcess_LDADD += \
-	.libs/libPlatformGtk2.la .libs/libWebCoreGtk2.la .libs/libPlatform.la .libs/libWebCorePlatform.la
-
-Programs_WebKitPluginProcess_LDADD += \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	WebCoreLayerGtk2.a \
+	libWebKit2Platform.la \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
 	$(FREETYPE_LIBS) \

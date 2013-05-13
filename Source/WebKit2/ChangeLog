@@ -1,3 +1,25 @@
+2013-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Use WebCore layer archives for TestWebCore, WebKitPluginProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115918
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Due to layer violations and circular dependencies the WebKitPluginProcess requires for the
+        libraries containing the built code of the intertwining Platform and WebCore layers to be
+        specified multiple times when linking. This can be avoided by packing the two layers' archives
+        into one big archive, named after the WebCore layer due to no clear boundary between it and the
+        Platform layer. The big archive can then be specified only once when linking, simplifying the code
+        and suppressing all the layering violations so they do not cause build problems.
+
+        First the libtool libraries that the WebCore layer (as required by the WebKitPluginProcess) depends on
+        are specified. These are then used as dependencies for the archive creation rule as well as the list
+        from which the archive file paths are constructed and then used to dump the member files from these archives.
+        The member files are then added to the big archive. The latter is added to the list of libraries the
+        WebKitPluginProcess requires to successfully link.
+
+        * GNUmakefile.am:
+
 2013-05-13  Zalan Bujtas  <zalan@apple.com>
 
         WebProcess consuming very high CPU on linkedin.com
