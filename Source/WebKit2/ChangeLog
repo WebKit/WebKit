@@ -1,3 +1,28 @@
+2013-05-13  Noam Rosenthal  <noam@webkit.org>
+
+        [CoordGfx] requestAnimationFrame performance issues
+        https://bugs.webkit.org/show_bug.cgi?id=112345
+
+        Reviewed by Jocelyn Turcotte.
+
+        Changed the logic of requestAnimationFrame in Coordinated Graphics.
+        We don't send any IPC messages for requestAnimationFrame. Instead, we do one of two things:
+        - If there is already a frame pending in the UI process, do nothing, as the animations would
+          be serviced when the frame is returned to the web process.
+        - If there is no frame pending, we schedule a flush, making sure that that flush occurs at 
+          least 1/60 seconds after the last animation service, so that we don't get an infinite loop
+          of flushes.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::requestAnimationFrame):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::scheduleAnimation):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in:
+
 2013-05-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2][CoordinatedGraphics] WKView needs API for handling opacity

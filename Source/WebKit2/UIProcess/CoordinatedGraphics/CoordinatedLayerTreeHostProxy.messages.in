@@ -35,11 +35,6 @@ messages -> CoordinatedLayerTreeHostProxy {
     UpdateImageBacking(uint64_t imageID, WebKit::WebCoordinatedSurface::Handle handle)
     ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    RequestAnimationFrame()
-#endif
-
     SetBackgroundColor(WebCore::Color color)
 }
 #endif

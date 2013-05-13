@@ -94,6 +94,9 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_layerFlushSchedulingEnabled(true)
     , m_forceRepaintAsyncCallbackID(0)
     , m_animationsLocked(false)
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    , m_lastAnimationServiceTime(0)
+#endif
 {
     m_webPage->corePage()->settings()->setScrollingCoordinatorEnabled(true);
     m_webPage->corePage()->settings()->setApplyDeviceScaleFactorInCompositor(true);
@@ -139,7 +142,7 @@ void CoordinatedLayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
-    if (!m_layerFlushTimer.isActive())
+    if (!m_layerFlushTimer.isActive() || m_layerFlushTimer.nextFireInterval() > 0)
         m_layerFlushTimer.startOneShot(0);
 }
 
@@ -429,7 +432,8 @@ void CoordinatedLayerTreeHost::syncDisplayState()
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
-    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(currentTime());
+    m_lastAnimationServiceTime = WTF::monotonicallyIncreasingTime();
+    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(m_lastAnimationServiceTime);
 #endif
 
     m_webPage->layoutIfNeeded();
@@ -649,11 +653,15 @@ GraphicsLayerFactory* CoordinatedLayerTreeHost::graphicsLayerFactory()
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void CoordinatedLayerTreeHost::scheduleAnimation()
 {
-    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::RequestAnimationFrame());
-}
+    if (m_waitingForUIProcess)
+        return;
 
-void CoordinatedLayerTreeHost::animationFrameReady()
-{
+    if (m_layerFlushTimer.isActive())
+        return;
+
+    // According to the requestAnimationFrame spec, rAF callbacks should not be faster than 60FPS.
+    static const double MinimalTimeoutForAnimations = 1. / 60.;
+    m_layerFlushTimer.startOneShot(std::max<double>(0., MinimalTimeoutForAnimations - WTF::monotonicallyIncreasingTime() + m_lastAnimationServiceTime));
     scheduleLayerFlush();
 }
 #endif

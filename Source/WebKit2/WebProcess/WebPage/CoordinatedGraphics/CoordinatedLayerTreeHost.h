@@ -147,9 +147,6 @@ private:
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
     void scheduleReleaseInactiveAtlases();
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void animationFrameReady();
-#endif
 
     void releaseInactiveAtlasesTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
@@ -202,6 +199,10 @@ private:
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
     bool m_animationsLocked;
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    double m_lastAnimationServiceTime;
+#endif
 };
 
 } // namespace WebKit

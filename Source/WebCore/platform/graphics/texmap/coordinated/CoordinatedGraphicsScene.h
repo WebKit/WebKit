@@ -53,9 +53,6 @@ class CustomFilterProgramInfo;
 class CoordinatedGraphicsSceneClient {
 public:
     virtual ~CoordinatedGraphicsSceneClient() { }
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void animationFrameReady() = 0;
-#endif
     virtual void purgeBackingStores() = 0;
     virtual void renderNextFrame() = 0;
     virtual void updateViewport() = 0;
@@ -101,10 +98,6 @@ public:
     void setBackgroundColor(const Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void requestAnimationFrame();
-#endif
-
 private:
     void setRootLayerID(CoordinatedLayerID);
     void setLayerState(CoordinatedLayerID, const CoordinatedGraphicsLayerState&);
@@ -137,9 +130,6 @@ private:
 
     void dispatchOnMainThread(const Function<void()>&);
     void updateViewport();
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void animationFrameReady();
-#endif
     void renderNextFrame();
     void purgeBackingStores();
 
@@ -194,9 +184,6 @@ private:
     CoordinatedLayerID m_rootLayerID;
     FloatPoint m_scrollPosition;
     FloatPoint m_renderedContentsScrollPosition;
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    bool m_animationFrameRequested;
-#endif
     Color m_backgroundColor;
     bool m_setDrawsBackground;
 

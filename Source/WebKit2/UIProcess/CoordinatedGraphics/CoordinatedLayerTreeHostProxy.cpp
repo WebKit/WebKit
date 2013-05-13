@@ -140,19 +140,6 @@ void CoordinatedLayerTreeHostProxy::renderNextFrame()
     m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-void CoordinatedLayerTreeHostProxy::requestAnimationFrame()
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::requestAnimationFrame, m_scene.get()));
-    updateViewport();
-}
-
-void CoordinatedLayerTreeHostProxy::animationFrameReady()
-{
-    m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::AnimationFrameReady(), m_drawingAreaProxy->page()->pageID());
-}
-#endif
-
 void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 {
     m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());

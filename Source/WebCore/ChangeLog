@@ -1,3 +1,21 @@
+2013-05-13  Noam Rosenthal  <noam@webkit.org>
+
+        [CoordGfx] requestAnimationFrame performance issues
+        https://bugs.webkit.org/show_bug.cgi?id=112345
+
+        Reviewed by Jocelyn Turcotte.
+
+        Removed current requestAnimationFrame logic from CoordinatedGraphics. The new logic
+        is entirely in WebKit2 CoordinatedLayerTreeHost.
+
+        Covered by existing tests in fast/animations.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebCore::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        (CoordinatedGraphicsScene):
+
 2013-05-13  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [texmap][GStreamer] Composited Video support

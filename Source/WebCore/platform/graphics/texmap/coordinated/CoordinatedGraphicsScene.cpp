@@ -59,9 +59,6 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     : m_client(client)
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    , m_animationFrameRequested(false)
-#endif
     , m_backgroundColor(Color::white)
     , m_setDrawsBackground(false)
 {
@@ -116,28 +113,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
 
     if (layer->descendantsOrSelfHaveRunningAnimations())
         dispatchOnMainThread(bind(&CoordinatedGraphicsScene::updateViewport, this));
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    if (m_animationFrameRequested) {
-        m_animationFrameRequested = false;
-        dispatchOnMainThread(bind(&CoordinatedGraphicsScene::animationFrameReady, this));
-    }
-#endif
 }
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-void CoordinatedGraphicsScene::animationFrameReady()
-{
-    ASSERT(isMainThread());
-    if (m_client)
-        m_client->animationFrameReady();
-}
-
-void CoordinatedGraphicsScene::requestAnimationFrame()
-{
-    m_animationFrameRequested = true;
-}
-#endif
 
 void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext)
 {

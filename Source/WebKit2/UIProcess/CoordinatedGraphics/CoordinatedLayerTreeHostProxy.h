@@ -71,18 +71,11 @@ public:
 
     void commitCoordinatedGraphicsState(const WebCore::CoordinatedGraphicsState&);
     void setAnimationsLocked(bool);
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void requestAnimationFrame();
-#endif
     void setBackgroundColor(const WebCore::Color&);
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene() const { return m_scene.get(); }
 
-    // CoordinatedGraphicsSceneClient Methods.
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void animationFrameReady() OVERRIDE;
-#endif
     virtual void updateViewport() OVERRIDE;
     virtual void renderNextFrame() OVERRIDE;
     virtual void purgeBackingStores() OVERRIDE;
