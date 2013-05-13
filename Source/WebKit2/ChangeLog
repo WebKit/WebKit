@@ -1,3 +1,15 @@
+2013-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Use a template file for generated GObject enum files
+        https://bugs.webkit.org/show_bug.cgi?id=115867
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Use a template file instead of specifying portions of the file on the command-line.
+        * UIProcess/API/gtk/WebKitEnumTypes.cpp.template: Added.
+        * UIProcess/API/gtk/WebKitEnumTypes.h.template: Added.
+        * UIProcess/API/gtk/WebKitFindController.cpp: We can no longer rely on WebKitEnumTypes.h to pull in WebKitWebView.h.
+
 2013-05-13  Noam Rosenthal  <noam@webkit.org>
 
         [CoordGfx] requestAnimationFrame performance issues

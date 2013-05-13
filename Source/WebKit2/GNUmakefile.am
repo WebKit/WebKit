@@ -385,21 +385,7 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h: stamp-webkit2enumtyp
 
 stamp-webkit2enumtypes: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.am
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
-	&& glib-mkenums \
-			--fhead "#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)\n" \
-			--fhead "#error \"Only <webkit2/webkit2.h> can be included directly.\"\n" \
-			--fhead "#endif\n\n" \
-			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
-			--fhead "#define WEBKIT_ENUM_TYPES_H\n\n" \
-			--fhead "#include <glib-object.h>\n\n" \
-			--fhead "#include <webkit2/WebKitDefines.h>\n\n" \
-			--fhead "G_BEGIN_DECLS\n\n" \
-			--ftail "G_END_DECLS\n\n" \
-			--ftail "#endif\n" \
-			--fprod "#include <webkit2/@basename@>\n\n" \
-			--eprod "#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n\n" \
-			--eprod "WEBKIT_API GType\n@enum_name@_get_type(void);\n\n" \
-		$(libwebkit2gtkinclude_HEADERS) | \
+	&& glib-mkenums --template $(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.h.template $(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' | \
 		sed 's,WEBKIT_TYPE_KIT,WEBKIT_TYPE,' \
 		> wk2-xgen-gth \
@@ -409,22 +395,7 @@ stamp-webkit2enumtypes: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.a
 
 $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.am
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
-	&& glib-mkenums \
-			--fhead "#include <config.h>\n" \
-			--fhead "#include <glib-object.h>\n" \
-			--fhead "#include \"$(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h\"\n\n" \
-			--fhead "extern \"C\" {\n\n" \
-			--fprod "\n/* Enumerations from \"@filename@\". */" \
-			--vhead "static const G@Type@Value _@enum_name@_values[] = {" \
-			--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
-			--vtail "    { 0, NULL, NULL }\n};\n\n" \
-			--vtail "GType @enum_name@_get_type(void)\n{\n" \
-			--vtail "    static GType type = 0;\n\n" \
-			--vtail "    if (!type)\n" \
-			--vtail "        type = g_@type@_register_static(\"@EnumName@\", _@enum_name@_values);\n\n" \
-			--vtail "    return type;\n}\n\n" \
-			--ftail "}\n" \
-		$(libwebkit2gtkinclude_HEADERS) | \
+	&& glib-mkenums --template $(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.cpp.template $(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' \
 		> wk2-xgen-gtc \
 	&& cp wk2-xgen-gtc $@ \
@@ -720,6 +691,8 @@ EXTRA_DIST += \
 	$(WebKit2)/Scripts/webkit2/model.py \
 	$(WebKit2)/Scripts/webkit2/parser.py \
 	$(WebKit2)/UIProcess/API/gtk/webkit2marshal.list \
+	$(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.h.template \
+	$(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.cpp.template \
 	$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html \
 	$(WebKit2)/Scripts/generate-forwarding-headers.pl \
 	$(shell ls $(WebKit2)/PluginProcess/*.in) \

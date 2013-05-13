@@ -22,6 +22,7 @@
 
 #include "WebKitEnumTypes.h"
 #include "WebKitPrivate.h"
+#include "WebKitWebView.h"
 #include "WebKitWebViewBasePrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GRefPtr.h>
