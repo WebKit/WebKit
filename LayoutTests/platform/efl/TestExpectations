@@ -645,6 +645,7 @@ webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass
 
 # ASSERTION FAILED: static_cast<unsigned>(m_start + length) <= string.length().
 webkit.org/b/116024 fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Crash ]
+webkit.org/b/116024 fast/table/crash-split-table-section-no-cell-recalc.html [ Crash Pass ]
 
 # Sometimes crashes in PlatformContextCairo::drawSurfaceToContext().
 webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]

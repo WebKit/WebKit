@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark fast/table/crash-split-table-section-no-cell-recalc.html as crashing
+        on EFL port.
+
+        * platform/efl/TestExpectations:
+
+2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Unskip several tests that stopped crashing after r150030.
 
         * platform/efl-wk2/TestExpectations:
