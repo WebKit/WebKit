@@ -341,7 +341,7 @@ webkit.org/b/103127 css3/device-adapt/opera/constrain-022.xhtml [ Failure ]
 webkit.org/b/103130 css3/device-adapt/opera/orientation-001.xhtml [ Failure ]
 
 # Text input controller needs selectedRange implementation
-webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Failure ]
+webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Missing Failure ]
 
 # NPN_ReloadPlugins is not implemented.
 webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
