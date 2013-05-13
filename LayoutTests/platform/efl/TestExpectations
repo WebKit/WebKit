@@ -1483,6 +1483,12 @@ webkit.org/b/96881 java [ Skip ]
 # Ref test added in r130592 that is failing on both EFL and GTK ports
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
+# Ref test whose output looks exactly the same but fails of EFL port.
+Bug(EFL) fast/multicol/newmulticol/float-multicol.html [ ImageOnlyFailure Pass ]
+
+# Ref test that is failing on EFL port due to blurry rect borders.
+webkit.org/b/116023 svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure ]
+
 # EFL does not yet support global selection
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
