@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark several test cases as crashing on EFL port.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Mark 2 ref tests as failing on EFL port.
 
         * platform/efl/TestExpectations:
