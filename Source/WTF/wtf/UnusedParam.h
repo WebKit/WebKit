@@ -21,26 +21,6 @@
 #ifndef WTF_UnusedParam_h
 #define WTF_UnusedParam_h
 
-#include <wtf/Platform.h>
-
-#if COMPILER(INTEL) && !OS(WINDOWS) || COMPILER(RVCT)
-template<typename T>
-inline void unusedParam(T& x) { (void)x; }
-#define UNUSED_PARAM(variable) unusedParam(variable)
-#elif COMPILER(MSVC)
-#define UNUSED_PARAM(variable) (void)&variable
-#else
-#define UNUSED_PARAM(variable) (void)variable
-#endif
-
-/* This is to keep the compiler from complaining when for local labels are
-   declared but not referenced. For example, this can happen with code that
-   works with auto-generated code.
-*/
-#if COMPILER(MSVC)
-#define UNUSED_LABEL(label) if (false) goto label
-#else
-#define UNUSED_LABEL(label) UNUSED_PARAM(&& label)
-#endif
+/* FIXME: Remove this header */
 
 #endif /* WTF_UnusedParam_h */

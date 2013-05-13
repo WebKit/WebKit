@@ -175,8 +175,12 @@
 #define WTF_COMPILER_SUNCC 1
 #endif
 
-/* ==== Compiler features ==== */
+/* ABI */
+#if defined(__ARM_EABI__) || defined(__EABI__)
+#define WTF_COMPILER_SUPPORTS_EABI 1
+#endif
 
+/* ==== Compiler features ==== */
 
 /* ALWAYS_INLINE */
 
@@ -295,9 +299,28 @@
 #endif
 #endif
 
-/* ABI */
-#if defined(__ARM_EABI__) || defined(__EABI__)
-#define WTF_COMPILER_SUPPORTS_EABI 1
+/* UNUSED_PARAM */
+
+#if COMPILER(INTEL) && !(defined(WIN32) || defined(_WIN32)) || COMPILER(RVCT)
+template<typename T>
+inline void unusedParam(T& x) { (void)x; }
+#define UNUSED_PARAM(variable) unusedParam(variable)
+#elif COMPILER(MSVC)
+#define UNUSED_PARAM(variable) (void)&variable
+#else
+#define UNUSED_PARAM(variable) (void)variable
+#endif
+
+/* UNUSED_LABEL */
+
+/* This is to keep the compiler from complaining when for local labels are
+ declared but not referenced. For example, this can happen with code that
+ works with auto-generated code.
+ */
+#if COMPILER(MSVC)
+#define UNUSED_LABEL(label) if (false) goto label
+#else
+#define UNUSED_LABEL(label) UNUSED_PARAM(&& label)
 #endif
 
 #endif /* WTF_Compiler_h */
