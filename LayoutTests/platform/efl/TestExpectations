@@ -1791,6 +1791,10 @@ webkit.org/b/111860 fast/forms/number/number-validation-message.html [ Failure ]
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
+# HTTP tests that time out of EFL port.
+webkit.org/b/116021 http/tests/navigation/redirect-to-random-url-versus-memory-cache.html [ Skip ]
+webkit.org/b/116022 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
+
 # Failing after r133834
 webkit.org/b/101400 svg/css/shadow-changes.svg [ Failure ]
 webkit.org/b/101400 svg/css/composite-shadow-text.svg [ Failure ]
