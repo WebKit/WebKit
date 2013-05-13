@@ -36,7 +36,7 @@ namespace WebCore {
 
 Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-    , PassOwnPtr<Pasteboard> pasteboard
+    , PassOwnPtr<Pasteboard> pasteboard, bool forFileDrag
 #endif
 )
     : m_policy(policy)
@@ -46,6 +46,7 @@ Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
     , m_clipboardType(clipboardType)
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
     , m_pasteboard(pasteboard)
+    , m_forFileDrag(forFileDrag)
 #endif
 {
 }
@@ -272,6 +273,14 @@ void Clipboard::clearAllData()
         return;
 
     m_pasteboard->clear();
+}
+
+String Clipboard::getData(const String& type) const
+{
+    if (!canReadData() || m_forFileDrag)
+        return String();
+
+    return m_pasteboard->readString(type);
 }
 
 #endif

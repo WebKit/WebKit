@@ -94,11 +94,14 @@ public:
 
     // Functions needed temporarily until all code from ClipboardMac is moved to PasteboardMac.
     static String cocoaTypeFromHTMLClipboardType(const String& type);
+    static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false);
 #endif
     
     static Pasteboard* generalPasteboard();
 
     bool hasData();
+
+    String readString(const String& type);
 
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
     void writePlainText(const String&, SmartReplaceOption);
@@ -133,6 +136,7 @@ private:
 
 #if PLATFORM(MAC)
     String m_pasteboardName;
+    long m_changeCount;
 #endif
 
 #if PLATFORM(WIN)

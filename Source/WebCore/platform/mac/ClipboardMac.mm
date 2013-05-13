@@ -56,7 +56,7 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 #endif
 
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame *frame)
-    : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName))
+    : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
     , m_pasteboardName(pasteboardName)
     , m_clipboardContents(clipboardContents)
     , m_frame(frame)
@@ -111,77 +111,6 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
     }
     // No mapping, just pass the whole string though
     resultTypes.add(cocoaType);
-}
-
-static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false)
-{
-    Vector<String> fileList;
-    platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
-
-    if (fileList.isEmpty())
-        return fileList;
-
-    size_t count = onlyFirstURL ? 1 : fileList.size();
-    Vector<String> urls;
-    for (size_t i = 0; i < count; i++) {
-        NSURL *url = [NSURL fileURLWithPath:fileList[i]];
-        urls.append(String([url absoluteString]));
-    }
-    return urls;
-}
-
-static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, bool onlyFirstURL = false)
-{
-    // NOTE: We must always check [availableTypes containsObject:] before accessing pasteboard data
-    // or CoreFoundation will printf when there is not data of the corresponding type.
-    Vector<String> availableTypes;
-    Vector<String> absoluteURLs;
-    platformStrategies()->pasteboardStrategy()->getTypes(availableTypes, pasteboardName);
-
-    // Try NSFilenamesPboardType because it contains a list
-    if (availableTypes.contains(String(NSFilenamesPboardType))) {
-        absoluteURLs = absoluteURLsFromPasteboardFilenames(pasteboardName, onlyFirstURL);
-        if (!absoluteURLs.isEmpty())
-            return absoluteURLs;
-    }
-
-    // Fallback to NSURLPboardType (which is a single URL)
-    if (availableTypes.contains(String(NSURLPboardType))) {
-        absoluteURLs.append(platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), pasteboardName));
-        return absoluteURLs;
-    }
-
-    // No file paths on the pasteboard, return nil
-    return Vector<String>();
-}
-
-String ClipboardMac::getData(const String& type) const
-{
-    if (!canReadData() || m_clipboardContents == DragAndDropFiles)
-        return String();
-
-    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
-    String cocoaValue;
-
-    // Grab the value off the pasteboard corresponding to the cocoaType
-    if (cocoaType == String(NSURLPboardType)) {
-        // "url" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "url" only wants the first URL
-        bool onlyFirstURL = (equalIgnoringCase(type, "url"));
-        Vector<String> absoluteURLs = absoluteURLsFromPasteboard(m_pasteboardName, onlyFirstURL);
-        for (size_t i = 0; i < absoluteURLs.size(); i++)
-            cocoaValue = i ? "\n" + absoluteURLs[i]: absoluteURLs[i];
-    } else if (cocoaType == String(NSStringPboardType))
-        cocoaValue = [platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName) precomposedStringWithCanonicalMapping];
-    else if (!cocoaType.isEmpty())
-        cocoaValue = platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName);
-
-    // Enforce changeCount ourselves for security.  We check after reading instead of before to be
-    // sure it doesn't change between our testing the change count and accessing the data.
-    if (!cocoaValue.isEmpty() && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName)) {
-        return cocoaValue;
-    }
-
-    return String();
 }
 
 bool ClipboardMac::setData(const String &type, const String &data)
@@ -252,7 +181,7 @@ PassRefPtr<FileList> ClipboardMac::files() const
     if (!canReadData() || m_clipboardContents == DragAndDropData)
         return FileList::create();
 
-    Vector<String> absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboardName);
+    Vector<String> absoluteURLs = Pasteboard::absoluteURLsFromPasteboardFilenames(m_pasteboardName);
 
     RefPtr<FileList> fileList = FileList::create();
     for (size_t i = 0; i < absoluteURLs.size(); i++) {

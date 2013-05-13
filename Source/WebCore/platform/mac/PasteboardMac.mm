@@ -125,6 +125,7 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 Pasteboard::Pasteboard(const String& pasteboardName)
     : m_pasteboardName(pasteboardName)
+    , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
 {
     ASSERT(pasteboardName);
 }
@@ -633,6 +634,73 @@ void Pasteboard::clear(const String& type)
     String cocoaType = cocoaTypeFromHTMLClipboardType(type);
     if (!cocoaType.isEmpty())
         platformStrategies()->pasteboardStrategy()->setStringForType("", cocoaType, m_pasteboardName);
+}
+
+Vector<String> Pasteboard::absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL)
+{
+    Vector<String> fileList;
+    platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
+
+    if (fileList.isEmpty())
+        return fileList;
+
+    size_t count = onlyFirstURL ? 1 : fileList.size();
+    Vector<String> urls;
+    for (size_t i = 0; i < count; i++) {
+        NSURL *url = [NSURL fileURLWithPath:fileList[i]];
+        urls.append(String([url absoluteString]));
+    }
+    return urls;
+}
+
+static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, bool onlyFirstURL = false)
+{
+    // NOTE: We must always check [availableTypes containsObject:] before accessing pasteboard data
+    // or CoreFoundation will printf when there is not data of the corresponding type.
+    Vector<String> availableTypes;
+    Vector<String> absoluteURLs;
+    platformStrategies()->pasteboardStrategy()->getTypes(availableTypes, pasteboardName);
+
+    // Try NSFilenamesPboardType because it contains a list
+    if (availableTypes.contains(String(NSFilenamesPboardType))) {
+        absoluteURLs = Pasteboard::absoluteURLsFromPasteboardFilenames(pasteboardName, onlyFirstURL);
+        if (!absoluteURLs.isEmpty())
+            return absoluteURLs;
+    }
+
+    // Fallback to NSURLPboardType (which is a single URL)
+    if (availableTypes.contains(String(NSURLPboardType))) {
+        absoluteURLs.append(platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), pasteboardName));
+        return absoluteURLs;
+    }
+
+    // No file paths on the pasteboard, return nil
+    return Vector<String>();
+}
+
+String Pasteboard::readString(const String& type)
+{
+    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
+    String cocoaValue;
+
+    // Grab the value off the pasteboard corresponding to the cocoaType
+    if (cocoaType == String(NSURLPboardType)) {
+        // "url" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "url" only wants the first URL
+        bool onlyFirstURL = (equalIgnoringCase(type, "url"));
+        Vector<String> absoluteURLs = absoluteURLsFromPasteboard(m_pasteboardName, onlyFirstURL);
+        for (size_t i = 0; i < absoluteURLs.size(); i++)
+            cocoaValue = i ? "\n" + absoluteURLs[i]: absoluteURLs[i];
+    } else if (cocoaType == String(NSStringPboardType))
+        cocoaValue = [platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName) precomposedStringWithCanonicalMapping];
+    else if (!cocoaType.isEmpty())
+        cocoaValue = platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName);
+
+    // Enforce changeCount ourselves for security.  We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (!cocoaValue.isEmpty() && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+        return cocoaValue;
+
+    return String();
 }
 
 }

@@ -53,7 +53,6 @@ public:
 
     virtual ~ClipboardMac();
     
-    String getData(const String& type) const;
     bool setData(const String& type, const String& data);
     
     // extensions beyond IE's API

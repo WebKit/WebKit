@@ -1,3 +1,42 @@
+2013-05-12  Darin Adler  <darin@apple.com>
+
+        [Mac] Move getData from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116005
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard): Added a new boolean argument, forFileDrag,
+        to the constructor. Maybe we can find a better way to do this once we move
+        all the platforms over, but this boolean seems a good way to do it for now.
+        (WebCore::Clipboard::getData): Added. Calls through to Pasteboard after
+        doing the canReadData check, which is part of DOM rules, not the platform.
+        Also checks for the file drag case like the old ClipboardMac code did.
+
+        * dom/Clipboard.h: Made getData non-virtual in non-legacy case.
+
+        * platform/Pasteboard.h: Added a static member function named
+        absoluteURLsFromPasteboardFilenames, temporary so it can be shared between
+        ClipboardMac and PasteboardMac. Added a readString public function member,
+        and a m_changeCount data member. The type of m_changeCount is long since
+        that can always hold an NSInteger but yet is a type we can compile without
+        including the header file that defines NSInteger.
+
+        * platform/mac/ClipboardMac.h: Removed getData.
+        * platform/mac/ClipboardMac.mm: Removed getData.
+        (WebCore::ClipboardMac::ClipboardMac): Added code to pass in the new
+        forFileDrag boolean.
+        (WebCore::ClipboardMac::files): Call absoluteURLsFromPasteboardFilenames
+        as a static member function in Pasteboard since we moved it there.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::Pasteboard): Initialize the change count, so later
+        pasteboard operations can check it.
+        (WebCore::Pasteboard::absoluteURLsFromPasteboardFilenames): Added. Moved
+        here from ClipboardMac.
+        (WebCore::absoluteURLsFromPasteboard): Ditto.
+        (WebCore::Pasteboard::readString): Added. Moved here from ClipboardMac.
+
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
         Stop including UnusedParam.h

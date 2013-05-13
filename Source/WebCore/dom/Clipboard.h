@@ -81,7 +81,7 @@ namespace WebCore {
     
         LEGACY_VIRTUAL void clearData(const String& type) LEGACY_PURE;
         LEGACY_VIRTUAL void clearAllData() LEGACY_PURE;
-        virtual String getData(const String& type) const = 0;
+        LEGACY_VIRTUAL String getData(const String& type) const LEGACY_PURE;
         virtual bool setData(const String& type, const String& data) = 0;
     
         // extensions beyond IE's API
@@ -129,7 +129,7 @@ namespace WebCore {
         
     protected:
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>);
+        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag);
 #else
         Clipboard(ClipboardAccessPolicy, ClipboardType);
 #endif
@@ -155,6 +155,7 @@ namespace WebCore {
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
     private:
         OwnPtr<Pasteboard> m_pasteboard;
+        bool m_forFileDrag;
 #endif
     };
 
