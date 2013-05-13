@@ -638,7 +638,7 @@ void Node::normalize()
     }
 }
 
-const AtomicString& Node::virtualPrefix() const
+const AtomicString& Node::prefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
     return nullAtom;
@@ -652,12 +652,12 @@ void Node::setPrefix(const AtomicString& /*prefix*/, ExceptionCode& ec)
     ec = NAMESPACE_ERR;
 }
 
-const AtomicString& Node::virtualLocalName() const
+const AtomicString& Node::localName() const
 {
     return nullAtom;
 }
 
-const AtomicString& Node::virtualNamespaceURI() const
+const AtomicString& Node::namespaceURI() const
 {
     return nullAtom;
 }

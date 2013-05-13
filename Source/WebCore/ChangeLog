@@ -1,3 +1,18 @@
+2013-05-12  Andreas Kling  <akling@apple.com>
+
+        Node: Use FINAL instead of the non-virtual shadowing hack.
+        <http://webkit.org/b/115995>
+
+        Reviewed by Anders Carlsson.
+
+        Decorate Element/Attr implementations of prefix/localName/namespaceURI getters with FINAL
+        so that call sites with a more specific pointer type than Node* can avoid the virtual dispatch.
+
+        * dom/Attr.h:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+
 2013-05-11  Darin Adler  <darin@apple.com>
 
         [Mac] Give every Clipboard an underlying Pasteboard

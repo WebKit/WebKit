@@ -73,9 +73,9 @@ private:
     virtual String nodeName() const OVERRIDE { return name(); }
     virtual NodeType nodeType() const OVERRIDE { return ATTRIBUTE_NODE; }
 
-    const AtomicString& localName() const { return m_name.localName(); }
-    const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
-    const AtomicString& prefix() const { return m_name.prefix(); }
+    virtual const AtomicString& localName() const OVERRIDE { return m_name.localName(); }
+    virtual const AtomicString& namespaceURI() const OVERRIDE { return m_name.namespaceURI(); }
+    virtual const AtomicString& prefix() const OVERRIDE { return m_name.prefix(); }
 
     virtual void setPrefix(const AtomicString&, ExceptionCode&);
 
@@ -87,10 +87,6 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-
-    virtual const AtomicString& virtualPrefix() const { return prefix(); }
-    virtual const AtomicString& virtualLocalName() const { return localName(); }
-    virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
 
     Attribute& elementAttribute();
 
