@@ -1,3 +1,12 @@
+2013-05-02  Manoj Kumar Giri  <mgiri@redhat.com>
+
+        Updated WebKitGTK+ Translation for Odia [or] language.
+        https://bugs.webkit.org/show_bug.cgi?id=115030
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * or.po: updated translation.
+
 2013-04-05  Ani Peter  <peter.ani@gmail.com>
 
         Translation of WebKitGTK+ for Malayalam (ml)
