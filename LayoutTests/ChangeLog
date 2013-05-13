@@ -1,3 +1,16 @@
+2013-05-13  Bear Travis  <betravis@adobe.com>
+
+        [css exclusions] Enable CSS Exclusions by default when CSS_EXCLUSIONS is set
+        https://bugs.webkit.org/show_bug.cgi?id=115919
+
+        Reviewed by Dean Jackson.
+
+        Adding a test to make sure CSS Exclusions can be enabled, and are enabled by
+        default.
+
+        * fast/exclusions/css-exclusions-enabled-expected.txt: Added.
+        * fast/exclusions/css-exclusions-enabled.html: Added.
+
 2013-05-13  Suchit Agrawal  <a.suchit@samsung.com>
 
         Cell heights are disproportional when a row-spanning cell contains a block element that determines the height of the rows

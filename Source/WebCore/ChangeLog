@@ -1,3 +1,19 @@
+2013-05-13  Bear Travis  <betravis@adobe.com>
+
+        [css exclusions] Enable CSS Exclusions by default when CSS_EXCLUSIONS is set
+        https://bugs.webkit.org/show_bug.cgi?id=115919
+
+        Reviewed by Dean Jackson.
+
+        Change the RuntimeEnabledFeatures::isCSSExclusionsEnabled boolean to default
+        to true. CSS Exclusions can still be enabled / disabled in platforms by
+        setting the CSS_EXCLUSIONS compile flag in one of the FeatureDefine files.
+
+        Test: fast/exclusions/css-exclusions-enabled.html
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+
 2013-05-13  Suchit Agrawal  <a.suchit@samsung.com>
 
         Cell heights are disproportional when a row-spanning cell contains a block element that determines the height of the rows
