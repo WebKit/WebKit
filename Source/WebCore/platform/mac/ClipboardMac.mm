@@ -70,32 +70,6 @@ ClipboardMac::~ClipboardMac()
         m_dragImage->removeClient(this);
 }
 
-ListHashSet<String> ClipboardMac::types() const
-{
-    if (!canReadTypes())
-        return ListHashSet<String>();
-
-    Vector<String> types;
-    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-
-    // Enforce changeCount ourselves for security.  We check after reading instead of before to be
-    // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return ListHashSet<String>();
-
-    ListHashSet<String> result;
-    // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
-    // and a second which adds all the extra types from the cocoa clipboard (which is Mac-only behavior).
-    for (size_t i = 0; i < types.size(); i++) {
-        if (types[i] == "NeXT plain ascii pasteboard type")
-            continue;   // skip this ancient type that gets auto-supplied by some system conversion
-
-        Pasteboard::addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
-    }
-
-    return result;
-}
-
 // FIXME: We could cache the computed fileList if necessary
 // Currently each access gets a new copy, setData() modifications to the
 // clipboard are not reflected in any FileList objects the page has accessed and stored

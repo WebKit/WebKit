@@ -1,5 +1,31 @@
 2013-05-12  Darin Adler  <darin@apple.com>
 
+        [Mac] Move types function from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116007
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::types): Added. Calls through to Pasteboard
+        after doing checks needed at this level.
+
+        * dom/Clipboard.h: Made types function non-virtual in non-legacy case,
+        and removed non-helpful comment.
+
+        * platform/Pasteboard.h: Updated includes and comments at the top of
+        the file a bit. Removed static member function addHTMLClipboardTypesForCocoaType,
+        since it can now be private to PasteboardMac. Added member function types.
+
+        * platform/mac/ClipboardMac.h: Removed types function.
+        * platform/mac/ClipboardMac.mm: Ditto.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::addHTMLClipboardTypesForCocoaType): Made this a file-local
+        function instead of a static member function.
+        (WebCore::Pasteboard::types): Added. Moved from ClipboardMac.
+
+2013-05-12  Darin Adler  <darin@apple.com>
+
         [Mac] Move setData from ClipboardMac to PasteboardMac
         https://bugs.webkit.org/show_bug.cgi?id=116006
 

@@ -711,7 +711,7 @@ static String utiTypeFromCocoaType(const String& type)
     return String();
 }
 
-void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
+static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(NSStringPboardType)) {
@@ -773,6 +773,29 @@ bool Pasteboard::writeString(const String& type, const String& data)
     }
 
     return false;
+}
+
+ListHashSet<String> Pasteboard::types()
+{
+    Vector<String> types;
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+
+    // Enforce changeCount ourselves for security. We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+        return ListHashSet<String>();
+
+    ListHashSet<String> result;
+    // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
+    // and a second which adds all the extra types from the cocoa clipboard (which is Mac-only behavior).
+    for (size_t i = 0; i < types.size(); i++) {
+        if (types[i] == "NeXT plain ascii pasteboard type")
+            continue;   // skip this ancient type that gets auto-supplied by some system conversion
+
+        addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
+    }
+
+    return result;
 }
 
 }

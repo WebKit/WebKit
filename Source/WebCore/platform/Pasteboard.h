@@ -27,28 +27,28 @@
 #define Pasteboard_h
 
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
-#include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #endif
 
 #if PLATFORM(GTK)
+// FIXME: Why does this include need to be in the header?
 #include <PasteboardHelper.h>
 #endif
-
-// FIXME: This class is too high-level to be in the platform directory, since it
-// uses the DOM and makes calls to Editor. It should either be divested of its
-// knowledge of the frame and editor or moved into the editing directory.
 
 #if PLATFORM(WIN)
 #include <windows.h>
 typedef struct HWND__* HWND;
 #endif
+
+// FIXME: This class is too high-level to be in the platform directory, since it
+// uses the DOM and makes calls to Editor. It should either be divested of its
+// knowledge of the frame and editor or moved into the editing directory.
 
 namespace WebCore {
 
@@ -90,12 +90,12 @@ public:
 
     // Functions needed temporarily until all code from ClipboardMac is moved to PasteboardMac.
     static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false);
-    static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName);
 #endif
     
     static Pasteboard* generalPasteboard();
 
     bool hasData();
+    ListHashSet<String> types();
 
     String readString(const String& type);
 

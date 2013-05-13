@@ -84,8 +84,7 @@ namespace WebCore {
         LEGACY_VIRTUAL String getData(const String& type) const LEGACY_PURE;
         LEGACY_VIRTUAL bool setData(const String& type, const String& data) LEGACY_PURE;
     
-        // extensions beyond IE's API
-        virtual ListHashSet<String> types() const = 0;
+        LEGACY_VIRTUAL ListHashSet<String> types() const LEGACY_PURE;
         virtual PassRefPtr<FileList> files() const = 0;
 
         IntPoint dragLocation() const { return m_dragLoc; }

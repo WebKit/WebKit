@@ -291,6 +291,14 @@ bool Clipboard::setData(const String& type, const String& data)
     return m_pasteboard->writeString(type, data);
 }
 
+ListHashSet<String> Clipboard::types() const
+{
+    if (!canReadTypes())
+        return ListHashSet<String>();
+
+    return m_pasteboard->types();
+}
+
 #endif
 
 } // namespace WebCore

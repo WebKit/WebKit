@@ -52,9 +52,7 @@ public:
     }
 
     virtual ~ClipboardMac();
-
-    // extensions beyond IE's API
-    virtual ListHashSet<String> types() const;
+    
     virtual PassRefPtr<FileList> files() const;
 
     void setDragImage(CachedImage*, const IntPoint&);
