@@ -1,3 +1,15 @@
+2013-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix Qt Linux MIPS32R2 build after r149879.
+
+        Bring back GLIB_CHECK_VERSION for GBytes since Qt Linux MIPS32R2
+        depends on glib 2.24.2.
+
+        * wtf/gobject/GRefPtr.cpp:
+        (_GBytes):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Remove UnusedParam.h
