@@ -544,9 +544,11 @@ void WebEditorClient::registerUndoOrRedoStep(PassRefPtr<UndoStep> step, bool isR
     NSUndoManager *undoManager = [m_webView undoManager];
     NSString *actionName = undoNameForEditAction(step->editingAction());
     WebUndoStep *webEntry = [WebUndoStep stepWithUndoStep:step];
+    [undoManager beginUndoGrouping];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:webEntry];
     if (actionName)
         [undoManager setActionName:actionName];
+    [undoManager endUndoGrouping];
     m_haveUndoRedoOperations = YES;
 }
 

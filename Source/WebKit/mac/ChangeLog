@@ -1,3 +1,16 @@
+2013-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sometimes NSUndoManager can get into an inconsistent state
+        https://bugs.webkit.org/show_bug.cgi?id=116050
+
+        Reviewed by Enrica Casucci.
+
+        Always group undo items to work around a bug in NSUndoManager that manifests
+        when we call removeAllActionsWithTarget.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::registerUndoOrRedoStep):
+
 2013-05-13  Zalan Bujtas  <zalan@apple.com>
 
         WebProcess consuming very high CPU on linkedin.com

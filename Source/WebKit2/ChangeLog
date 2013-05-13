@@ -1,3 +1,16 @@
+2013-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sometimes NSUndoManager can get into an inconsistent state
+        https://bugs.webkit.org/show_bug.cgi?id=116050
+
+        Reviewed by Enrica Casucci.
+
+        Always group undo items to work around a bug in NSUndoManager that manifests
+        when we call removeAllActionsWithTarget.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         [WK2] Crash in WebKit::StorageAreaMap::didSetItem()

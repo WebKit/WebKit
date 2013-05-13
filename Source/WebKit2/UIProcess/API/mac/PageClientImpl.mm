@@ -286,9 +286,11 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
     String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_wkView undoManager];
+    [undoManager beginUndoGrouping];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == WebPageProxy::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
     if (!actionName.isEmpty())
         [undoManager setActionName:(NSString *)actionName];
+    [undoManager endUndoGrouping];
 }
 
 void PageClientImpl::clearAllEditCommands()
