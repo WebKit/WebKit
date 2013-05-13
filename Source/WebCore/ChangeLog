@@ -1,3 +1,16 @@
+2013-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r149749): Video becomes invisible when it starts playing at newyorkbygehry.com
+        https://bugs.webkit.org/show_bug.cgi?id=115963
+
+        Reviewed by Dean Jackson.
+
+        Test: media/video-remove-insert-repaints.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedInto): Set m_inActiveDocument when inserted into a document.
+        (WebCore::HTMLMediaElement::removedFrom): Fix logging.
+
 2013-05-12  David Kilzer  <ddkilzer@apple.com>
 
         Move sudden termination symbols to the Mac-only section

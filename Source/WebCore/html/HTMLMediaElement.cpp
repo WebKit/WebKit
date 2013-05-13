@@ -578,19 +578,25 @@ bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& chi
 Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode* insertionPoint)
 {
     LOG(Media, "HTMLMediaElement::insertedInto");
+
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument() && !getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
-        scheduleDelayedAction(LoadMediaResource);
+    if (insertionPoint->inDocument()) {
+        m_inActiveDocument = true;
+
+        if (m_networkState == NETWORK_EMPTY && !getAttribute(srcAttr).isEmpty())
+            scheduleDelayedAction(LoadMediaResource);
+    }
+
     configureMediaControls();
     return InsertionDone;
 }
 
 void HTMLMediaElement::removedFrom(ContainerNode* insertionPoint)
 {
-    m_inActiveDocument = false;
+    LOG(Media, "HTMLMediaElement::removedFrom");
 
+    m_inActiveDocument = false;
     if (insertionPoint->inDocument()) {
-        LOG(Media, "HTMLMediaElement::removedFrom");
         configureMediaControls();
         if (m_networkState > NETWORK_EMPTY)
             pause();
