@@ -1,3 +1,9 @@
+2013-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.0.2 release.
+
+        * NEWS: Added release notes for 2.0.2.
+
 2013-05-07  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Initialize WebKitWebPlugin path to prevent double-free

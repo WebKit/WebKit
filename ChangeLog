@@ -1,3 +1,9 @@
+2013-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.0.2 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2013-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.0.1 release.
