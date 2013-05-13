@@ -1295,9 +1295,8 @@ private:
 
     void didAssociateFormControlsTimerFired(Timer<Document>*);
 
-    void styleResolverThrowawayTimerFired(Timer<Document>*);
-    Timer<Document> m_styleResolverThrowawayTimer;
-    double m_lastStyleResolverAccessTime;
+    void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>*);
+    DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
     OwnPtr<StyleResolver> m_styleResolver;
     bool m_didCalculateStyleResolver;

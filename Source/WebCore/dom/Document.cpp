@@ -413,11 +413,12 @@ static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
 uint64_t Document::s_globalTreeVersion = 0;
 
+static const double timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds = 30;
+
 Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     : ContainerNode(0, CreateDocument)
     , TreeScope(this)
-    , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired)
-    , m_lastStyleResolverAccessTime(0)
+    , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired, timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds)
     , m_activeParserCount(0)
     , m_contextFeatures(ContextFeatures::defaultSwitch())
     , m_compatibilityMode(NoQuirksMode)
@@ -4465,18 +4466,10 @@ void Document::sharedObjectPoolClearTimerFired(Timer<Document>*)
 
 void Document::didAccessStyleResolver()
 {
-    static const int timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds = 60;
-    static const int holdOffTimeBeforeReschedulingTimerInSeconds = 5;
-
-    double currentTime = WTF::currentTime();
-
-    if (currentTime > m_lastStyleResolverAccessTime + holdOffTimeBeforeReschedulingTimerInSeconds) {
-        m_styleResolverThrowawayTimer.startOneShot(timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds);
-        m_lastStyleResolverAccessTime = currentTime;
-    }
+    m_styleResolverThrowawayTimer.restart();
 }
 
-void Document::styleResolverThrowawayTimerFired(Timer<Document>*)
+void Document::styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>*)
 {
     ASSERT(!m_inStyleRecalc);
     clearStyleResolver();

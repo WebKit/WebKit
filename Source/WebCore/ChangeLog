@@ -1,5 +1,23 @@
 2013-05-13  Andreas Kling  <akling@apple.com>
 
+        Document: Use a DeferrableOneShotTimer to throw out StyleResolver when unused.
+        <http://webkit.org/b/115929>
+
+        Reviewed by Anders Carlsson.
+
+        Nothing exciting here, just replacing a rickety-looking punting mechanism with a proper
+        DeferrableOneShotTimer. Note that the timeout changes from 60 to 30 seconds because DOST
+        works by punting a full interval on next timeout.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didAccessStyleResolver):
+        (WebCore::Document::styleResolverThrowawayTimerFired):
+        * dom/Document.h:
+        (Document):
+
+2013-05-13  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r149287): FoldingText only shows me half of my text.
         <http://webkit.org/b/115956>
         <rdar://problem/13831099>
