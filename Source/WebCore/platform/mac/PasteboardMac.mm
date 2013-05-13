@@ -635,7 +635,7 @@ void Pasteboard::clear(const String& type)
         platformStrategies()->pasteboardStrategy()->setStringForType("", cocoaType, m_pasteboardName);
 }
 
-Vector<String> Pasteboard::absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL)
+static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false)
 {
     Vector<String> fileList;
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
@@ -662,7 +662,7 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
 
     // Try NSFilenamesPboardType because it contains a list
     if (availableTypes.contains(String(NSFilenamesPboardType))) {
-        absoluteURLs = Pasteboard::absoluteURLsFromPasteboardFilenames(pasteboardName, onlyFirstURL);
+        absoluteURLs = absoluteURLsFromPasteboardFilenames(pasteboardName, onlyFirstURL);
         if (!absoluteURLs.isEmpty())
             return absoluteURLs;
     }
@@ -796,6 +796,20 @@ ListHashSet<String> Pasteboard::types()
     }
 
     return result;
+}
+
+Vector<String> Pasteboard::readFilenames()
+{
+    // FIXME: Seems silly to convert paths to URLs and then back to paths. Does that do anything helpful?
+    Vector<String> absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboardName);
+    Vector<String> paths;
+    paths.reserveCapacity(absoluteURLs.size());
+    for (size_t i = 0; i < absoluteURLs.size(); i++) {
+        NSURL *absoluteURL = [NSURL URLWithString:absoluteURLs[i]];
+        ASSERT([absoluteURL isFileURL]);
+        paths.uncheckedAppend([absoluteURL path]);
+    }
+    return paths;
 }
 
 }

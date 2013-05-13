@@ -58,7 +58,6 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame *frame)
     : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
     , m_pasteboardName(pasteboardName)
-    , m_clipboardContents(clipboardContents)
     , m_frame(frame)
 {
     m_changeCount = platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
@@ -68,25 +67,6 @@ ClipboardMac::~ClipboardMac()
 {
     if (m_dragImage)
         m_dragImage->removeClient(this);
-}
-
-// FIXME: We could cache the computed fileList if necessary
-// Currently each access gets a new copy, setData() modifications to the
-// clipboard are not reflected in any FileList objects the page has accessed and stored
-PassRefPtr<FileList> ClipboardMac::files() const
-{
-    if (!canReadData() || m_clipboardContents == DragAndDropData)
-        return FileList::create();
-
-    Vector<String> absoluteURLs = Pasteboard::absoluteURLsFromPasteboardFilenames(m_pasteboardName);
-
-    RefPtr<FileList> fileList = FileList::create();
-    for (size_t i = 0; i < absoluteURLs.size(); i++) {
-        NSURL *absoluteURL = [NSURL URLWithString:absoluteURLs[i]];
-        ASSERT([absoluteURL isFileURL]);
-        fileList->append(File::create([absoluteURL path], File::AllContentTypes));
-    }
-    return fileList.release(); // We will always return a FileList, sometimes empty
 }
 
 // The rest of these getters don't really have any impact on security, so for now make no checks

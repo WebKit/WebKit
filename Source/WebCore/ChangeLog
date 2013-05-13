@@ -1,3 +1,36 @@
+2013-05-12  Darin Adler  <darin@apple.com>
+
+        [Mac] Moved files function from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116008
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::files): Added. Moved the DOM-depdendent and
+        platform-independent part of the files function in ClipboardMac here.
+
+        * dom/Clipboard.h: Made files function non-virtual in non-legacy case.
+
+        * platform/Pasteboard.h: Removed static member function
+        absoluteURLsFromPasteboardFilenames since it can now be private to
+        PasteboardMac. Added member function readFilenames.
+
+        * platform/mac/ClipboardMac.h: Removed function member files and also
+        now-unused data member m_clipboardContents.
+
+        * platform/mac/ClipboardMac.mm: Removed files function.
+        (WebCore::ClipboardMac::ClipboardMac): Removed code to initialize
+        m_clipboardContents.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::absoluteURLsFromPasteboardFilenames): Changed from a static
+        member function to a file-local function.
+        (WebCore::absoluteURLsFromPasteboard): Changed to call the function
+        above in its new location.
+        (WebCore::Pasteboard::readFilenames): Added. Code from ClipboardMac,
+        minus the DOM-specific parts. Added a FIXME about the peculiar round
+        trip through NSURL this code takes.
+
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
         Fix WebKit2 build.

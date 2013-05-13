@@ -52,8 +52,6 @@ public:
     }
 
     virtual ~ClipboardMac();
-    
-    virtual PassRefPtr<FileList> files() const;
 
     void setDragImage(CachedImage*, const IntPoint&);
     void setDragImageElement(Node *, const IntPoint&);
@@ -77,7 +75,6 @@ private:
 
     String m_pasteboardName;
     int m_changeCount;
-    ClipboardContents m_clipboardContents;
     Frame* m_frame; // used on the source side to generate dragging images
 };
 

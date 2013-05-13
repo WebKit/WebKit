@@ -87,9 +87,6 @@ public:
     explicit Pasteboard(const String& pasteboardName);
     static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
-
-    // Functions needed temporarily until all code from ClipboardMac is moved to PasteboardMac.
-    static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false);
 #endif
     
     static Pasteboard* generalPasteboard();
@@ -98,6 +95,7 @@ public:
     ListHashSet<String> types();
 
     String readString(const String& type);
+    Vector<String> readFilenames();
 
     bool writeString(const String& type, const String& data);
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);

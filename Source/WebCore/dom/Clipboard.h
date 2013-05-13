@@ -85,7 +85,7 @@ namespace WebCore {
         LEGACY_VIRTUAL bool setData(const String& type, const String& data) LEGACY_PURE;
     
         LEGACY_VIRTUAL ListHashSet<String> types() const LEGACY_PURE;
-        virtual PassRefPtr<FileList> files() const = 0;
+        LEGACY_VIRTUAL PassRefPtr<FileList> files() const LEGACY_PURE;
 
         IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }

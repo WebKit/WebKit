@@ -299,6 +299,21 @@ ListHashSet<String> Clipboard::types() const
     return m_pasteboard->types();
 }
 
+// FIXME: We could cache the computed fileList if necessary
+// Currently each access gets a new copy, setData() modifications to the
+// clipboard are not reflected in any FileList objects the page has accessed and stored
+PassRefPtr<FileList> Clipboard::files() const
+{
+    if (!canReadData() || (m_clipboardType == DragAndDrop && !m_forFileDrag))
+        return FileList::create();
+
+    Vector<String> filenames = m_pasteboard->readFilenames();
+    RefPtr<FileList> fileList = FileList::create();
+    for (size_t i = 0; i < filenames.size(); ++i)
+        fileList->append(File::create(filenames[i], File::AllContentTypes));
+    return fileList.release();
+}
+
 #endif
 
 } // namespace WebCore
