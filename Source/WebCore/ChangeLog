@@ -1,3 +1,33 @@
+2013-05-11  Darin Adler  <darin@apple.com>
+
+        [Mac] Give every Clipboard an underlying Pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=115979
+
+        Reviewed by Andreas Kling.
+
+        This is the first step in Clipboard and Pasteboard refactoring
+        to fix the overlap and many layering violations.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard): Add an m_pasteboard data member,
+        Mac-only for now, but eventually for all platforms.
+        (WebCore::Clipboard::~Clipboard): No longer inline the destructor.
+
+        * dom/Clipboard.h: Add WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS
+        flag, currently true for all non-Mac platforms. Make the constructor
+        no longer inline. Added a PassOwnPtr<Pasteboard> argument to the
+        constructor and an OwnPtr<Pasteboard> data member.
+
+        * platform/Pasteboard.h: Added a create function to make it easy
+        to create a pasteboard given a pasteboard name.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::ClipboardMac): Create a pasteboard and pass
+        it to the Clipboard constructor.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::create): Added.
+
 2013-05-12  Andreas Kling  <akling@apple.com>
 
         Unload event listeners should prevent Safari from insta-killing the web process on last tab close.

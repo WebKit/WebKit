@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,6 +128,11 @@ Pasteboard::Pasteboard(const String& pasteboardName)
     : m_pasteboardName(pasteboardName)
 {
     ASSERT(pasteboardName);
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::create(const String& pasteboardName)
+{
+    return adoptPtr(new Pasteboard(pasteboardName));
 }
 
 void Pasteboard::clear()

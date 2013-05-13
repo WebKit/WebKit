@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,27 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Image.h"
+#include "Pasteboard.h"
 
 namespace WebCore {
 
-Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType) 
+Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+    , PassOwnPtr<Pasteboard> pasteboard
+#endif
+)
     : m_policy(policy)
     , m_dropEffect("uninitialized")
     , m_effectAllowed("uninitialized")
     , m_dragStarted(false)
     , m_clipboardType(clipboardType)
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+    , m_pasteboard(pasteboard)
+#endif
+{
+}
+
+Clipboard::~Clipboard()
 {
 }
     

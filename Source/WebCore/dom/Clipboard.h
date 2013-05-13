@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,11 @@
 #include "IntPoint.h"
 #include "Node.h"
 
+// This DOM object now works by calling through to classes in the platform layer.
+// Specifically, the class currently named Pasteboard. The legacy style instead
+// uses this as an abstract base class.
+#define WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS !PLATFORM(MAC)
+
 namespace WebCore {
 
     class CachedImage;
@@ -38,6 +43,7 @@ namespace WebCore {
     class DragData;
     class FileList;
     class Frame;
+    class Pasteboard;
 
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
@@ -50,7 +56,7 @@ namespace WebCore {
         
         static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
 
-        virtual ~Clipboard() { }
+        virtual ~Clipboard();
 
         bool isForCopyAndPaste() const { return m_clipboardType == CopyAndPaste; }
         bool isForDragAndDrop() const { return m_clipboardType == DragAndDrop; }
@@ -110,7 +116,11 @@ namespace WebCore {
 #endif
         
     protected:
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>);
+#else
         Clipboard(ClipboardAccessPolicy, ClipboardType);
+#endif
 
         bool dragStarted() const { return m_dragStarted; }
         
@@ -129,6 +139,11 @@ namespace WebCore {
         IntPoint m_dragLoc;
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Node> m_dragImageElement;
+
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+    private:
+        OwnPtr<Pasteboard> m_pasteboard;
+#endif
     };
 
     DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation);
