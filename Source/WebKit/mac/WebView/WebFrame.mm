@@ -357,11 +357,6 @@ WebView *getWebView(WebFrame *webFrame)
         if (!drawsBackground)
             [[[webFrame frameView] _scrollView] setDrawsBackground:NO];
         [[[webFrame frameView] _scrollView] setBackgroundColor:backgroundColor];
-        id documentView = [[webFrame frameView] documentView];
-        if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
-            [documentView setDrawsBackground:drawsBackground];
-        if ([documentView respondsToSelector:@selector(setBackgroundColor:)])
-            [documentView setBackgroundColor:backgroundColor];
 
         if (FrameView* view = frame->view()) {
             view->setTransparent(!drawsBackground);

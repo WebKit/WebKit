@@ -1,3 +1,19 @@
+2013-05-13  Darin Adler  <darin@apple.com>
+
+        [Mac] Layer-backed WebViews draw their background color even when setDrawsBackground:NO was called
+        https://bugs.webkit.org/show_bug.cgi?id=116014
+        <rdar://problem/12781227>
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]): Remove calls to setBackgroundColor: and
+        setDrawsBackground: on the document view. These were added to support a hypothetical document view
+        that wanted to draw its background like WebHTMLView does, but this was never communicated as a
+        document view protocol, formal or informal, and it's unlikely that it was ever used. The bug was
+        caused because there is an -[NSView setDrawsBackground:] method, probably an internal one, and we
+        were calling it unintentionally on a WebHTMLView.
+
 2013-05-12  Anders Carlsson  <andersca@apple.com>
 
         Stop including UnusedParam.h
