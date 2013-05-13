@@ -1,3 +1,37 @@
+2013-05-13  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Simple shape-outside tests fail when subpixel layout is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=115767
+
+        Reviewed by Dirk Schulze.
+
+        The overall goal of this change was to restore the (last) four excluded exclusions ref-tests
+        by making them work correctly when subpixel layout is disabled. All of the tests were
+        substantially simplified, as was the supporting javascript code. The original
+        shape-outside-floats-simple-rounded-rectangle test was replaced by three separate tests
+        because the original was bigger then then the 800x600 limit and because it unncessarily
+        combined three indepedent test cases.
+
+        * fast/exclusions/resources/rounded-rectangle.js:
+        (ellipseXIntercept): Return the 1st quadrant X intercept for an ellipse given a first quadrant Y intercept.
+        (scanConvertRoundedRectangleOutside): Return the line segment intervals that overlap a rounded rectangle.
+        (genLeftRightRoundedRectFloatShapeOutsideRefTest): Insert a stack of float divs that match the left or right edge of a rounded rectangle.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y-expected.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle-expected.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse-expected.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html: Removed.
+        * platform/mac/TestExpectations:
+
 2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed, rolling out r150022.

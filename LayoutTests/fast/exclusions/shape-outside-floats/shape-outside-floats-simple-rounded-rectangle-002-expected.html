@@ -10,44 +10,44 @@
     border: 1px solid black;    
 }
 
-.ellipse {
-    width: 320px;
+.rounded-rect-circle {
+    width: 160px;
     height: 160px;
-    border-radius: 160px / 80px;
+    border-radius: 80px;
     border: 1px solid blue;
     margin: -1px; /* shape-outside layout is unaffected by the border */
 }
 
-#left-ellipse-outline {
+#left-rounded-rect-circle-outline {
     position: absolute;
     top: 20px;
     left: 0px;
 }
 
-#right-ellipse-outline {
+#right-rounded-rect-circle-outline {
     position: absolute;
     top: 20px;
-    left: 180px;
+    left: 340px;
 }
 
-.left-ellipse-float-line {
+.left-rounded-rect-circle-float-line {
     float: left;
     clear: left;
     height: 20px;
 }
 
-.right-ellipse-float-line {
+.right-rounded-rect-circle-float-line {
     float: right;
     clear: right;
     height: 20px;
 }
 </style>
 
-<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=98673">Bug 98673</a> - [CSS Exclusions] shape-outside on floats for circle and ellipse shapes</h2>
-<p>The black squares should trace the right side of the ellipse's blue outline.</p>
+<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=100299">Bug 100299</a> - [CSS Exclusions] shape-outside on floats for rounded rectangle shapes</h2>
+<p>The black squares should trace the right side of the circle's blue outline.</p>
 <div class="container">
 X<br/>
-    <div id="left-ellipse-outline" class="ellipse"></div> 
+    <div id="left-rounded-rect-circle-outline" class="rounded-rect-circle"></div> 
     <!-- generated left-rounded-rect-float-line divs will be inserted here -->
 X<br/>
 X<br/>
@@ -60,10 +60,10 @@ X<br/>
 X
 </div>
 
-<p>The black squares should trace the left side of the ellipse's blue outline.</p>
+<p>The black squares should trace the left side of the circle's blue outline.</p>
 <div class="container" style="text-align: right">
 X<br/>
-    <div id="right-ellipse-outline" class="ellipse"></div>
+    <div id="right-rounded-rect-circle-outline" class="rounded-rect-circle"></div>
     <!-- generated right-rounded-rect-float-line divs will be inserted here -->
 X<br/>
 X<br/>
@@ -81,13 +81,15 @@ X
 <script src="../resources/subpixel-utils.js"></script>
 <script>
 genLeftRightRoundedRectFloatShapeOutsideRefTest({
-    roundedRect: {x: 0, y: 20, width: 320, height: 160, rx: 160, ry: 80},
+    roundedRect: {x: 0, y: 20, width: 160, height: 160, rx: 80, ry: 80},
     containerWidth: 500, 
     containerHeight: 200,
     lineHeight: 20,
-    floatElementClassSuffix: "ellipse-float-line",
-    insertElementIdSuffix: "ellipse-outline"
+    floatElementClassSuffix: "rounded-rect-circle-float-line",
+    insertElementIdSuffix: "rounded-rect-circle-outline"
 });
 </script>
 
 </html>
+
+

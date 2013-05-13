@@ -1515,10 +1515,6 @@ webkit.org/b/115292 fast/block/float/overhanging-tall-block.html
 webkit.org/b/115292 fast/events/clientXY-in-zoom-and-scroll.html
 webkit.org/b/115292 fast/events/constructors/mouse-event-constructor.html
 webkit.org/b/115292 fast/events/constructors/wheel-event-constructor.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html
-webkit.org/b/115292 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html
 webkit.org/b/115292 fast/forms/range/slider-mouse-events.html
 webkit.org/b/115292 fast/overflow/infiniteRecursionGuard.html
 webkit.org/b/115292 platform/mac-wk2/tiled-drawing/fixed/four-bars-zoomed.html

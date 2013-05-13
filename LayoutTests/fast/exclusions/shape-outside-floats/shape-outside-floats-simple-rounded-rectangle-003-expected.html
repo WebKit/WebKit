@@ -10,7 +10,7 @@
     border: 1px solid black;    
 }
 
-.ellipse {
+.rounded-rect-ellipse {
     width: 320px;
     height: 160px;
     border-radius: 160px / 80px;
@@ -18,36 +18,36 @@
     margin: -1px; /* shape-outside layout is unaffected by the border */
 }
 
-#left-ellipse-outline {
+#left-rounded-rect-ellipse-outline {
     position: absolute;
     top: 20px;
     left: 0px;
 }
 
-#right-ellipse-outline {
+#right-rounded-rect-ellipse-outline {
     position: absolute;
     top: 20px;
     left: 180px;
 }
 
-.left-ellipse-float-line {
+.left-rounded-rect-ellipse-float-line {
     float: left;
     clear: left;
     height: 20px;
 }
 
-.right-ellipse-float-line {
+.right-rounded-rect-ellipse-float-line {
     float: right;
     clear: right;
     height: 20px;
 }
 </style>
 
-<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=98673">Bug 98673</a> - [CSS Exclusions] shape-outside on floats for circle and ellipse shapes</h2>
+<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=100299">Bug 100299</a> - [CSS Exclusions] shape-outside on floats for rounded rectangle shapes</h2>
 <p>The black squares should trace the right side of the ellipse's blue outline.</p>
 <div class="container">
 X<br/>
-    <div id="left-ellipse-outline" class="ellipse"></div> 
+    <div id="left-rounded-rect-ellipse-outline" class="rounded-rect-ellipse"></div> 
     <!-- generated left-rounded-rect-float-line divs will be inserted here -->
 X<br/>
 X<br/>
@@ -63,7 +63,7 @@ X
 <p>The black squares should trace the left side of the ellipse's blue outline.</p>
 <div class="container" style="text-align: right">
 X<br/>
-    <div id="right-ellipse-outline" class="ellipse"></div>
+    <div id="right-rounded-rect-ellipse-outline" class="rounded-rect-ellipse"></div>
     <!-- generated right-rounded-rect-float-line divs will be inserted here -->
 X<br/>
 X<br/>
@@ -85,9 +85,11 @@ genLeftRightRoundedRectFloatShapeOutsideRefTest({
     containerWidth: 500, 
     containerHeight: 200,
     lineHeight: 20,
-    floatElementClassSuffix: "ellipse-float-line",
-    insertElementIdSuffix: "ellipse-outline"
+    floatElementClassSuffix: "rounded-rect-ellipse-float-line",
+    insertElementIdSuffix: "rounded-rect-ellipse-outline"
 });
 </script>
 
 </html>
+
+
