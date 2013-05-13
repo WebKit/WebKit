@@ -1,3 +1,10 @@
+2013-05-12  David Kilzer  <ddkilzer@apple.com>
+
+        Move sudden termination symbols to the Mac-only section
+
+        * WebCore.exp.in: Move the sudden termination symbols to the
+        !PLATFORM(IOS) section for reals this time.
+
 2013-05-12  Darin Adler  <darin@apple.com>
 
         Fix Mac build.
