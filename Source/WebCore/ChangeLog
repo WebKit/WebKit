@@ -1,3 +1,20 @@
+2013-05-13  David Hyatt  <hyatt@apple.com>
+
+        Regressions in flexbox layout caused by the flexing optimizations.
+        https://bugs.webkit.org/show_bug.cgi?id=116058
+        <rdar://problem/13863647>
+        
+        Reviewed by Beth Dakin.
+
+        Roll out the flex-related changes from r149597 so that the layout
+        algorithm goes back to the way it was. Leave the repainting optimizations
+        in place though.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+
 2013-05-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r150014.
