@@ -251,4 +251,13 @@ bool Clipboard::hasDropZoneType(const String& keyword)
     return false;
 }
 
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+
+bool Clipboard::hasData()
+{
+    return m_pasteboard->hasData();
+}
+
+#endif
+
 } // namespace WebCore

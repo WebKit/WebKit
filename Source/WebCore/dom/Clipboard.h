@@ -36,6 +36,18 @@
 // uses this as an abstract base class.
 #define WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS !PLATFORM(MAC)
 
+#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+#define LEGACY_VIRTUAL virtual
+#else
+#define LEGACY_VIRTUAL
+#endif
+
+#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+#define LEGACY_PURE = 0
+#else
+#define LEGACY_PURE
+#endif
+
 namespace WebCore {
 
     class CachedImage;
@@ -90,8 +102,8 @@ namespace WebCore {
         virtual void writeRange(Range*, Frame*) = 0;
         virtual void writePlainText(const String&) = 0;
 
-        virtual bool hasData() = 0;
-        
+        LEGACY_VIRTUAL bool hasData() LEGACY_PURE;
+
         void setAccessPolicy(ClipboardAccessPolicy);
         bool canReadTypes() const;
         bool canReadData() const;
@@ -148,7 +160,10 @@ namespace WebCore {
 
     DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation);
     String convertDragOperationToDropZoneOperation(DragOperation);
-    
+
+#undef LEGACY_VIRTUAL
+#undef LEGACY_PURE
+
 } // namespace WebCore
 
 #endif // Clipboard_h

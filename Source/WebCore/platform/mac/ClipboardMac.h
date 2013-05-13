@@ -58,8 +58,6 @@ public:
     String getData(const String& type) const;
     bool setData(const String& type, const String& data);
     
-    virtual bool hasData();
-    
     // extensions beyond IE's API
     virtual ListHashSet<String> types() const;
     virtual PassRefPtr<FileList> files() const;

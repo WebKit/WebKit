@@ -70,13 +70,6 @@ ClipboardMac::~ClipboardMac()
         m_dragImage->removeClient(this);
 }
 
-bool ClipboardMac::hasData()
-{
-    Vector<String> types;
-    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    return !types.isEmpty();
-}
-    
 static String cocoaTypeFromHTMLClipboardType(const String& type)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dom-datatransfer-setdata

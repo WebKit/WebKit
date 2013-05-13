@@ -1,3 +1,27 @@
+2013-05-12  Darin Adler  <darin@apple.com>
+
+        [Mac] Move hasData from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=115999
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::hasData): Added. Calls through to Pasteboard.
+
+        * dom/Clipboard.h: Added LEGACY_VIRTUAL and LEGACY_PURE macros,
+        only for within this header file. These help us keep many functions
+        as pure virtual in the legacy style Clipboard class, but have them
+        be non-virtual in the normal/future style. Use LEGACY_VIRTUAL and
+        LEGACY_PURE to make the hasData member non-virtual.
+
+        * platform/Pasteboard.h: Added hasData, and added some blank lines and a FIXME.
+
+        * platform/mac/ClipboardMac.h: Removed hasData override.
+        * platform/mac/ClipboardMac.mm: Ditto.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::hasData): Added. Moved code here from ClipboardMac.
+
 2013-05-12  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r149971): sudden termination is a Mac-only concept

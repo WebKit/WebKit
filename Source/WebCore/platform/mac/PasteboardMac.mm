@@ -589,4 +589,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     return 0;
 }
 
+bool Pasteboard::hasData()
+{
+    Vector<String> types;
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+    return !types.isEmpty();
+}
+
 }
