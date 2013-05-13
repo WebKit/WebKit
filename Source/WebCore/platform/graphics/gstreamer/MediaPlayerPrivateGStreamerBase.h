@@ -29,10 +29,6 @@
 
 #include <wtf/Forward.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
-#include "TextureMapperPlatformLayer.h"
-#endif
-
 typedef struct _GstBuffer GstBuffer;
 typedef struct _GstElement GstElement;
 typedef struct _GstMessage GstMessage;
@@ -47,11 +43,7 @@ class IntSize;
 class IntRect;
 class GStreamerGWorld;
 
-class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
-    , public TextureMapperPlatformLayer
-#endif
-{
+class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface {
 
 public:
     ~MediaPlayerPrivateGStreamerBase();
@@ -101,12 +93,6 @@ public:
     unsigned audioDecodedByteCount() const;
     unsigned videoDecodedByteCount() const;
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
-    virtual PlatformLayer* platformLayer() const { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
-    virtual bool supportsAcceleratedRendering() const { return true; }
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float);
-#endif
-
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
     GstElement* createVideoSink(GstElement* pipeline);
@@ -133,10 +119,6 @@ protected:
     unsigned long m_muteSignalHandler;
     GRefPtr<GstPad> m_videoSinkPad;
     mutable IntSize m_videoSize;
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
-    void updateTexture(GstBuffer*);
-    RefPtr<BitmapTexture> m_texture;
-#endif
 };
 }
 
