@@ -77,6 +77,9 @@ void WebView::initialize()
 
 void WebView::setSize(const WebCore::IntSize& size)
 {
+    if (m_size == size)
+        return;
+
     m_size = size;
 
     updateViewportSize();
