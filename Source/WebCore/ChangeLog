@@ -1,5 +1,34 @@
 2013-05-12  Darin Adler  <darin@apple.com>
 
+        [Mac] Move clearData from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116000
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::clearData): Added. Calls through to Pasteboard after
+        doing the canWriteData check, which is part of DOM rules, not the platform.
+
+        * dom/Clipboard.h: Made clearData non-virtual in non-legacy case.
+
+        * platform/Pasteboard.h: Added an overload of the clear function that takes
+        a single type and clears only that type. Also temporarily exported the
+        cocoaTypeFromHTMLClipboardType function as a static member so it can be used
+        in both ClipboardMac and PasteboardMac during the transition.
+
+        * platform/mac/ClipboardMac.h: Removed clearData.
+        * platform/mac/ClipboardMac.mm: Removed clearData.
+        (WebCore::ClipboardMac::getData): Changed to call cocoaTypeFromHTMLClipboardType
+        as a Pasteboard class static member function.
+        (WebCore::ClipboardMac::setData): Ditto.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::cocoaTypeFromHTMLClipboardType): Moved here from
+        ClipboardMac.
+        (WebCore::Pasteboard::clear): Added. Moved here from ClipboardMac.
+
+2013-05-12  Darin Adler  <darin@apple.com>
+
         [Mac] Move hasData from ClipboardMac to PasteboardMac
         https://bugs.webkit.org/show_bug.cgi?id=115999
 

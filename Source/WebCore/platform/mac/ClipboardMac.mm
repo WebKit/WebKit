@@ -70,39 +70,6 @@ ClipboardMac::~ClipboardMac()
         m_dragImage->removeClient(this);
 }
 
-static String cocoaTypeFromHTMLClipboardType(const String& type)
-{
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dom-datatransfer-setdata
-    String qType = type.lower();
-
-    if (qType == "text")
-        qType = "text/plain";
-    if (qType == "url")
-        qType = "text/uri-list";
-
-    // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
-    if (qType == "text/plain" || qType.startsWith("text/plain;"))
-        return String(NSStringPboardType);
-    if (qType == "text/uri-list")
-        // special case because UTI doesn't work with Cocoa's URL type
-        return String(NSURLPboardType); // note special case in getData to read NSFilenamesType
-
-    // Blacklist types that might contain subframe information
-    if (qType == "text/rtf" || qType == "public.rtf" || qType == "com.apple.traditional-mac-plain-text")
-        return String();
-
-    // Try UTI now
-    String mimeType = qType;
-    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), NULL))) {
-        RetainPtr<CFStringRef> pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType));
-        if (pbType)
-            return pbType.get();
-    }
-
-    // No mapping, just pass the whole string though
-    return qType;
-}
-
 static String utiTypeFromCocoaType(const String& type)
 {
     if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
@@ -144,18 +111,6 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
     }
     // No mapping, just pass the whole string though
     resultTypes.add(cocoaType);
-}
-
-void ClipboardMac::clearData(const String& type)
-{
-    if (!canWriteData())
-        return;
-
-    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
-
-    String cocoaType = cocoaTypeFromHTMLClipboardType(type);
-    if (!cocoaType.isEmpty())
-        platformStrategies()->pasteboardStrategy()->setStringForType("", cocoaType, m_pasteboardName);
 }
 
 void ClipboardMac::clearAllData()
@@ -216,7 +171,7 @@ String ClipboardMac::getData(const String& type) const
     if (!canReadData() || m_clipboardContents == DragAndDropFiles)
         return String();
 
-    const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
     String cocoaValue;
 
     // Grab the value off the pasteboard corresponding to the cocoaType
@@ -246,7 +201,7 @@ bool ClipboardMac::setData(const String &type, const String &data)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
-    const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    const String& cocoaType = Pasteboard::cocoaTypeFromHTMLClipboardType(type);
     String cocoaData = data;
 
     if (cocoaType == String(NSURLPboardType) || cocoaType == String(kUTTypeFileURL)) {

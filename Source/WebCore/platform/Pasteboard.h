@@ -91,6 +91,9 @@ public:
     explicit Pasteboard(const String& pasteboardName);
     static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
+
+    // Functions needed temporarily until all code from ClipboardMac is moved to PasteboardMac.
+    static String cocoaTypeFromHTMLClipboardType(const String& type);
 #endif
     
     static Pasteboard* generalPasteboard();
@@ -104,6 +107,7 @@ public:
     void writeClipboard(Clipboard*);
 
     void clear();
+    void clear(const String& type);
 
     bool canSmartReplace();
 

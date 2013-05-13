@@ -596,4 +596,44 @@ bool Pasteboard::hasData()
     return !types.isEmpty();
 }
 
+String Pasteboard::cocoaTypeFromHTMLClipboardType(const String& type)
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dom-datatransfer-setdata
+    String qType = type.lower();
+
+    if (qType == "text")
+        qType = "text/plain";
+    if (qType == "url")
+        qType = "text/uri-list";
+
+    // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
+    if (qType == "text/plain" || qType.startsWith("text/plain;"))
+        return String(NSStringPboardType);
+    if (qType == "text/uri-list")
+        // special case because UTI doesn't work with Cocoa's URL type
+        return String(NSURLPboardType); // note special case in getData to read NSFilenamesType
+
+    // Blacklist types that might contain subframe information
+    if (qType == "text/rtf" || qType == "public.rtf" || qType == "com.apple.traditional-mac-plain-text")
+        return String();
+
+    // Try UTI now
+    String mimeType = qType;
+    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), NULL))) {
+        RetainPtr<CFStringRef> pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType));
+        if (pbType)
+            return pbType.get();
+    }
+
+    // No mapping, just pass the whole string though
+    return qType;
+}
+
+void Pasteboard::clear(const String& type)
+{
+    String cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    if (!cocoaType.isEmpty())
+        platformStrategies()->pasteboardStrategy()->setStringForType("", cocoaType, m_pasteboardName);
+}
+
 }

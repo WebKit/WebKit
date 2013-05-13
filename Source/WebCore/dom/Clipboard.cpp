@@ -258,6 +258,14 @@ bool Clipboard::hasData()
     return m_pasteboard->hasData();
 }
 
+void Clipboard::clearData(const String& type)
+{
+    if (!canWriteData())
+        return;
+
+    m_pasteboard->clear(type);
+}
+
 #endif
 
 } // namespace WebCore
