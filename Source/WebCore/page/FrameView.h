@@ -495,7 +495,7 @@ private:
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) OVERRIDE;
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) OVERRIDE;
 
-    void dispatchResizeEvent();
+    void sendResizeEventIfNeeded();
 
     void updateScrollableAreaSet();
 

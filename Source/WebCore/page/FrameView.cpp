@@ -485,20 +485,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
         InspectorInstrumentation::mediaQueryResultChanged(document);
     }
 
-    if (renderView && !renderView->printing()) {
-        IntSize currentSize;
-        if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
-            currentSize = fixedLayoutSize();
-        else
-            currentSize = visibleContentRect(IncludeScrollbars).size();
-        float currentZoomFactor = renderView->style()->zoom();
-        bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
-        m_lastViewportSize = currentSize;
-        m_lastZoomFactor = currentZoomFactor;
-        if (resized)
-            dispatchResizeEvent();
-    }
-
+    sendResizeEventIfNeeded();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -2782,13 +2769,34 @@ void FrameView::performPostLayoutTasks()
     scrollToAnchor();
 
     m_actionScheduler->resume();
+
+    sendResizeEventIfNeeded();
 }
 
-void FrameView::dispatchResizeEvent()
+void FrameView::sendResizeEventIfNeeded()
 {
     ASSERT(m_frame);
 
+    RenderView* renderView = this->renderView();
+    if (!renderView || renderView->printing())
+        return;
+
     Page* page = m_frame->page();
+    IntSize currentSize;
+    if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
+        currentSize = fixedLayoutSize();
+    else
+        currentSize = visibleContentRect(IncludeScrollbars).size();
+
+    float currentZoomFactor = renderView->style()->zoom();
+    bool shouldSendResizeEvent = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
+
+    m_lastViewportSize = currentSize;
+    m_lastZoomFactor = currentZoomFactor;
+
+    if (!shouldSendResizeEvent)
+        return;
+
     bool isMainFrame = page && page->mainFrame() == m_frame;
     bool canSendResizeEventSynchronously = isMainFrame && !isInLayout();
 

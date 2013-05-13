@@ -1,3 +1,29 @@
+2013-05-13  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r149287): FoldingText only shows me half of my text.
+        <http://webkit.org/b/115956>
+        <rdar://problem/13831099>
+
+        Reviewed by Antti Koivisto.
+
+        Check if the FrameView geometry changed post-layout, and send a resize event if needed.
+        This brings us closer to the original resize event behavior, with the exception that
+        setFrameRect() still fires an event right away if possible. This means we are still
+        guarded from FOUC's but frames that layout via [WebHTMLView layoutToMinimumPageWidth]
+        also get resize events like they used to.
+
+        No new tests, because I don't know how to test this.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+
+            Factor out the resize event logic from setFrameRect() so we can call it from both
+            there and performPostLayoutTasks(). sendResizeEventIfNeeded() only sends an event
+            if view geometry or zoom factor has changed since last time it was called.
+
 2013-05-13  Antti Koivisto  <antti@apple.com>
 
         Remove unneeded counters from ScopeContentDistribution.
