@@ -1,3 +1,13 @@
+2013-05-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added platform specific expected files.
+
+        * platform/qt-5.0-wk1/compositing/backing/no-backing-for-clip-overhang-expected.txt: Added after r149969.
+        * platform/qt-5.0-wk2/compositing/contents-opaque/hidden-with-visible-child-expected.txt: Added after r149915.
+        * platform/qt-5.0-wk2/compositing/contents-opaque/hidden-with-visible-text-expected.txt: Added after r149915.
+        * platform/qt-5.0-wk2/compositing/contents-opaque/overflow-hidden-child-layers-expected.txt: Added after r149914.
+        * platform/qt/compositing/backing/no-backing-for-clip-overhang-expected.txt: Added after r149969.
+
 2013-05-12  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r149749): Video becomes invisible when it starts playing at newyorkbygehry.com
