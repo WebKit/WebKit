@@ -114,6 +114,7 @@ private:
 
     void cacheDuration();
     void updateStates();
+    void asyncStateChangeDone();
 
     void createGSTPlayBin();
     bool changePipelineState(GstState);
@@ -140,6 +141,9 @@ private:
     bool m_resetPipeline;
     bool m_paused;
     bool m_seeking;
+    bool m_seekIsPending;
+    float m_timeOfOverlappingSeek;
+    bool m_canFallBackToLastFinishedSeekPositon;
     bool m_buffering;
     float m_playbackRate;
     bool m_errorOccured;

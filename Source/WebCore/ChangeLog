@@ -1,3 +1,57 @@
+2013-04-30  Balazs Kelemen  <b.kelemen@sisa.samsung.com>
+
+        [GStreamer] cannot seek after video finished
+        https://bugs.webkit.org/show_bug.cgi?id=114044
+
+        Reviewed by Philippe Normand.
+
+        Test: media/video-seek-after-end.html
+
+        Rework the seeking logic to be able to seek after reseting the pipeline.
+        In addition to solve the actual problem this patch supposed to make seeking
+        more robust and correct.
+        The previous implementation tried to hide the complexity of asynchronous operations
+        on the pipeline. It did not handle the GST_MESSAGE_ASYNC_DONE message from the bus
+        but instead reported the seek as finished when it saw an asynchronous pending state
+        (GST_STATE_CHANGE_ASYNC) which could happen way before the seek is really done.
+        Now we pay attention to the GST_MESSAGE_ASYNC_DONE message to track the status of seeks.
+        Seeks are not the only operations executed asynchronously, changing the pipeling state is
+        similar. It means a seek can overlap with onother ongoing asynchronous operation.
+        This change address this by introducing an invariant for seeks, which is that we only request
+        a seek if there are no other ongoing asynchronous operations and the pipeline state is either
+        paused or playing (which is recommended anyway according to GStreamer's documentation).
+        This way we can be sure that the time when we get the next GST_MESSAGE_ASYNC_DONE message the
+        seek has been completed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::toGstClockTime): Factored time conversation into a helper.
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition): The position might not be available
+        if the pipeline still has a pending state. As a workaround, if we are right after a seek we can
+        use the seek time. Avoiding this situation would be possible by not allowing any asynchronous
+        operation to overlap. I believe it would add a lot more complexity so I decided to rather introduce
+        this workaround. Otherwise those overlapping operations are handled fine by GStreamer.
+
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay): Do not reset internal state variables.
+        This function called when there is an intent to restart playback but it does not actually restart it.
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime): Just removed a staling newline.
+        (WebCore::MediaPlayerPrivateGStreamer::seek): Take a look to the pipeline state and act upon that.
+        If there is an ongoing asynchronous operation make the seek pending, otherwise do it now.
+        Now we handle overlapping seeks as well because I saw that it can happen in some tests.
+        Added an early return for live streams as it doesn't makes sense to try seeking in them.
+
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Handle GST_MESSAGE_ASYNC_DONE and some refactoring.
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Only handle seeks in the pending case, the rest is
+        now handled in asyncStateChangeDone.
+        (WebCore::MediaPlayerPrivateGStreamer::cacheDuration): Do not reset the m_mediaDurationKnown if the pipeline
+        has an asynchronous pending state because it would fail. It does actually happen when we get a duration message
+        after restarting the pipeline and it would result in restarting playback from the start. It seems to be a bug
+        in GStreamer that it sends the duration message too early. Also sanitized this function by merging redundant branches.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+
 2013-05-12  Darin Adler  <darin@apple.com>
 
         [Mac] Move writeRange/PlainText/URL from ClipboardMac to PasteboardMac
