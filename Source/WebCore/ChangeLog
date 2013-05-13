@@ -1,3 +1,35 @@
+2013-05-13  Antti Koivisto  <antti@apple.com>
+
+        Remove unneeded counters from ScopeContentDistribution.
+        https://bugs.webkit.org/show_bug.cgi?id=116028
+
+        Reviewed by Andreas Kling.
+
+        They don't do much.
+
+        * WebCore.exp.in:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/ShadowRoot.h:
+        
+            No need for registration code anymore.
+
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ScopeContentDistribution::ScopeContentDistribution):
+        
+            Default m_insertionPointListIsValid to true to avoid crawling when there are no InsertionPoints.
+
+        (WebCore::ScopeContentDistribution::ensureInsertionPointList):
+        (WebCore::ScopeContentDistribution::registerInsertionPoint):
+        (WebCore::ScopeContentDistribution::unregisterInsertionPoint):
+        * html/shadow/ContentDistributor.h:
+        
+            Remove distributeNodeChildrenTo, it was only used by the older/younger shadow root code.
+
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-05-13  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Remove unused references from projects in Visual Studio

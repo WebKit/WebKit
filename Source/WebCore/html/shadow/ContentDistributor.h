@@ -76,26 +76,11 @@ public:
 
     void registerInsertionPoint(InsertionPoint*);
     void unregisterInsertionPoint(InsertionPoint*);
-    bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
-
-    void registerElementShadow() { ++m_numberOfElementShadowChildren; }
-    void unregisterElementShadow() { ASSERT(m_numberOfElementShadowChildren > 0); --m_numberOfElementShadowChildren; }
-    unsigned numberOfElementShadowChildren() const { return m_numberOfElementShadowChildren; }
-    bool hasElementShadowChildren() const { return m_numberOfElementShadowChildren > 0; }
 
     void invalidateInsertionPointList();
     const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
 
-    bool isUsedForRendering() const;
-
-    static bool hasContentElement(const ShadowRoot*);
-    static bool hasInsertionPoint(const ShadowRoot*);
-    static bool hasElementShadow(const ShadowRoot* holder) { return countElementShadow(holder); }
-    static unsigned countElementShadow(const ShadowRoot*);
-
 private:
-    unsigned m_numberOfContentElementChildren;
-    unsigned m_numberOfElementShadowChildren;
     bool m_insertionPointListIsValid;
     Vector<RefPtr<InsertionPoint> > m_insertionPointList;
 };
@@ -116,7 +101,6 @@ public:
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
     void distributeSelectionsTo(InsertionPoint*, const ContentDistribution& pool, Vector<bool>& distributed);
-    void distributeNodeChildrenTo(InsertionPoint*, ContainerNode*);
 
     void invalidateDistribution(Element* host);
     void didShadowBoundaryChange(Element* host);

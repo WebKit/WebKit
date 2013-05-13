@@ -75,9 +75,7 @@ Node* ContentDistribution::previousTo(const Node* node) const
 
 
 ScopeContentDistribution::ScopeContentDistribution()
-    : m_numberOfContentElementChildren(0)
-    , m_numberOfElementShadowChildren(0)
-    , m_insertionPointListIsValid(false)
+    : m_insertionPointListIsValid(true)
 {
 }
 
@@ -95,9 +93,6 @@ const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertion
     m_insertionPointListIsValid = true;
     ASSERT(m_insertionPointList.isEmpty());
 
-    if (!hasInsertionPoint(shadowRoot))
-        return m_insertionPointList;
-
     for (Element* element = ElementTraversal::firstWithin(shadowRoot); element; element = ElementTraversal::next(element, shadowRoot)) {
         if (element->isInsertionPoint())
             m_insertionPointList.append(toInsertionPoint(element));
@@ -106,48 +101,14 @@ const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertion
     return m_insertionPointList;
 }
 
-void ScopeContentDistribution::registerInsertionPoint(InsertionPoint* point)
+void ScopeContentDistribution::registerInsertionPoint(InsertionPoint*)
 {
-    switch (point->insertionPointType()) {
-    case InsertionPoint::ContentInsertionPoint:
-        ++m_numberOfContentElementChildren;
-        break;
-    }
-
     invalidateInsertionPointList();
 }
 
-void ScopeContentDistribution::unregisterInsertionPoint(InsertionPoint* point)
+void ScopeContentDistribution::unregisterInsertionPoint(InsertionPoint*)
 {
-    switch (point->insertionPointType()) {
-    case InsertionPoint::ContentInsertionPoint:
-        ASSERT(m_numberOfContentElementChildren > 0);
-        --m_numberOfContentElementChildren;
-        break;
-    }
-
     invalidateInsertionPointList();
-}
-
-bool ScopeContentDistribution::hasContentElement(const ShadowRoot* holder)
-{
-    if (!holder->scopeDistribution())
-        return false;
-
-    return holder->scopeDistribution()->hasContentElementChildren();
-}
-
-unsigned ScopeContentDistribution::countElementShadow(const ShadowRoot* holder)
-{
-    if (!holder->scopeDistribution())
-        return 0;
-
-    return holder->scopeDistribution()->numberOfElementShadowChildren();
-}
-
-bool ScopeContentDistribution::hasInsertionPoint(const ShadowRoot* holder)
-{
-    return hasContentElement(holder);
 }
 
 ContentDistributor::ContentDistributor()
@@ -256,34 +217,6 @@ void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, 
         distribution.append(child);
         m_nodeToInsertionPoint.add(child, insertionPoint);
         distributed[i] = true;
-    }
-
-    insertionPoint->setDistribution(distribution);
-}
-
-void ContentDistributor::distributeNodeChildrenTo(InsertionPoint* insertionPoint, ContainerNode* containerNode)
-{
-    ContentDistribution distribution;
-    for (Node* node = containerNode->firstChild(); node; node = node->nextSibling()) {
-        if (isActiveInsertionPoint(node)) {
-            InsertionPoint* innerInsertionPoint = toInsertionPoint(node);
-            if (innerInsertionPoint->hasDistribution()) {
-                for (size_t i = 0; i < innerInsertionPoint->size(); ++i) {
-                    distribution.append(innerInsertionPoint->at(i));
-                    if (!m_nodeToInsertionPoint.contains(innerInsertionPoint->at(i)))
-                        m_nodeToInsertionPoint.add(innerInsertionPoint->at(i), insertionPoint);
-                }
-            } else {
-                for (Node* child = innerInsertionPoint->firstChild(); child; child = child->nextSibling()) {
-                    distribution.append(child);
-                    m_nodeToInsertionPoint.add(child, insertionPoint);
-                }
-            }
-        } else {
-            distribution.append(node);
-            if (!m_nodeToInsertionPoint.contains(node))
-                m_nodeToInsertionPoint.add(node, insertionPoint);
-        }
     }
 
     insertionPoint->setDistribution(distribution);

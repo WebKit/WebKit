@@ -394,8 +394,6 @@ EXPORTS
         ?pseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@W4PseudoId@2@@Z
         ?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderObject@2@ABVString@WTF@@N@Z
         ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z
-        ?hasContentElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
-        ?countElementShadow@ScopeContentDistribution@WebCore@@SAIPBVShadowRoot@2@@Z
         ?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ
         ?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVKURL@2@@Z
         ?nonFastScrollableRects@Page@WebCore@@QAE?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z

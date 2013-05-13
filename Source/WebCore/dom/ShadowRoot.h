@@ -74,9 +74,6 @@ public:
 
     virtual void attach();
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
-
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
 
@@ -106,7 +103,6 @@ private:
     unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
-    unsigned m_registeredWithParentShadowRoot : 1;
 };
 
 inline Element* ShadowRoot::activeElement() const
