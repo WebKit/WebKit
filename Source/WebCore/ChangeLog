@@ -1,3 +1,10 @@
+2013-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Fix WebKit2 build.
+
+        * WebCore.exp.in:
+        Put WebCore::disableSuddenTermination and WebCore::enableSuddenTermination symbols in the right section.
+
 2013-05-12  Darin Adler  <darin@apple.com>
 
         [Mac] Move types function from ClipboardMac to PasteboardMac
