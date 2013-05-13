@@ -1,3 +1,16 @@
+2013-05-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [webkitpy] Make FileInfo.repository_name support SVN version > 1.6
+        https://bugs.webkit.org/show_bug.cgi?id=116016
+
+        Reviewed by Dirk Pranke.
+
+        Same fix as in the upstream style checker, but without hg support.
+        ( http://google-styleguide.googlecode.com/svn/trunk/cpplint/cpplint.py )
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (FileInfo.repository_name):
+
 2013-05-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use WebCore layer archives for TestWebCore, WebKitPluginProcess
