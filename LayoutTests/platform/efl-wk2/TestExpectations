@@ -79,11 +79,6 @@ webkit.org/b/109945 webgl/conformance/reading/read-pixels-test.html [ Crash Fail
 webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
-# Crash in WebKit::StorageAreaMap::didSetItem().
-webkit.org/b/116026 storage/domstorage/storage-functions-not-overwritten.html [ Crash ]
-webkit.org/b/116026 storage/domstorage/complex-keys.html [ Crash ]
-webkit.org/b/116026 fast/loader/history-forward-in-head.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

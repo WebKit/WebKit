@@ -2,6 +2,14 @@
 
         Unreviewed EFL gardening.
 
+        Unskip several tests that stopped crashing after r150030.
+
+        * platform/efl-wk2/TestExpectations:
+
+2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Mark fast/css/variables/var-inside-shape.html as failing on EFL after
         r150025.
 
