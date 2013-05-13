@@ -1,3 +1,19 @@
+2013-05-13  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Notification manager removal should not be tied to termination of web processes
+        https://bugs.webkit.org/show_bug.cgi?id=116038
+        <rdar://problem/10968680>
+
+        Reviewed by Ryosuke Niwa.
+
+        WebNotificationManagerProxy incorrectly removes the manager when web processes close.
+        Since it is a supplemental on the web context, the manager should only be removed
+        when the context is destroyed.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        * UIProcess/Notifications/WebNotificationManagerProxy.h: Remove implementation of
+        processDidClose().
+
 2013-05-13  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Use a template file for generated GObject enum files

@@ -69,11 +69,6 @@ void WebNotificationManagerProxy::contextDestroyed()
     m_provider.removeNotificationManager(this);
 }
 
-void WebNotificationManagerProxy::processDidClose(WebProcessProxy*)
-{
-    m_provider.removeNotificationManager(this);
-}
-
 void WebNotificationManagerProxy::refWebContextSupplement()
 {
     APIObject::ref();

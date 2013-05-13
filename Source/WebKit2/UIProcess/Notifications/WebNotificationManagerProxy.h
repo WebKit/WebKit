@@ -69,7 +69,6 @@ private:
 
     // WebContextSupplement
     virtual void contextDestroyed() OVERRIDE;
-    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
     virtual void refWebContextSupplement() OVERRIDE;
     virtual void derefWebContextSupplement() OVERRIDE;
 
