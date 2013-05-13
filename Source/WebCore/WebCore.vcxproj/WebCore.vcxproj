@@ -13450,8 +13450,6 @@
     <None Include="..\inspector\front-end\MetricsSidebarPane.js" />
     <None Include="..\inspector\front-end\NativeBreakpointsSidebarPane.js" />
     <None Include="..\inspector\front-end\NativeHeapGraph.js" />
-    <None Include="..\inspector\front-end\nativeMemoryProfiler.css" />
-    <None Include="..\inspector\front-end\NativeMemorySnapshotView.js" />
     <None Include="..\inspector\front-end\NavigatorOverlayController.js" />
     <None Include="..\inspector\front-end\navigatorView.css" />
     <None Include="..\inspector\front-end\NavigatorView.js" />

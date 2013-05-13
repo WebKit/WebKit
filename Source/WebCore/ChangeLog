@@ -1,3 +1,18 @@
+2013-05-13  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Remove unused references from projects in Visual Studio
+        https://bugs.webkit.org/show_bug.cgi?id=116002
+
+        Reviewed by Csaba Osztrogonác.
+
+        nativeMemoryProfiler.css and NativeMemorySnapshotView.js were removed in r149807.
+
+        No new tests, no behavior change.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2013-05-13  Zalan Bujtas  <zalan@apple.com>
 
         WebProcess consuming very high CPU on linkedin.com

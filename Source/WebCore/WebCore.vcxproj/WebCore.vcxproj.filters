@@ -14779,12 +14779,6 @@
     <None Include="..\inspector\front-end\NativeHeapGraph.js">
       <Filter>inspector\front-end</Filter>
     </None>
-    <None Include="..\inspector\front-end\nativeMemoryProfiler.css">
-      <Filter>inspector\front-end</Filter>
-    </None>
-    <None Include="..\inspector\front-end\NativeMemorySnapshotView.js">
-      <Filter>inspector\front-end</Filter>
-    </None>
     <None Include="..\inspector\front-end\NavigatorOverlayController.js">
       <Filter>inspector\front-end</Filter>
     </None>
