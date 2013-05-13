@@ -177,6 +177,8 @@ protected:
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView*);
+    GraphicsLayer* headerLayerForFrameView(FrameView*);
+    GraphicsLayer* footerLayerForFrameView(FrameView*);
 
     Page* m_page;
 

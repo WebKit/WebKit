@@ -62,7 +62,9 @@ public:
         RequestedScrollPosition,
         CounterScrollingLayer,
         HeaderHeight,
-        FooterHeight
+        FooterHeight,
+        HeaderLayer,
+        FooterLayer
     };
 
     virtual bool isScrollingNode() OVERRIDE { return true; }
@@ -120,6 +122,16 @@ public:
     void setCounterScrollingLayer(GraphicsLayer*);
     PlatformLayer* counterScrollingPlatformLayer() const;
 
+    // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
+    GraphicsLayer* headerLayer() const { return m_headerLayer; }
+    void setHeaderLayer(GraphicsLayer*);
+    PlatformLayer* headerPlatformLayer() const;
+
+    // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
+    GraphicsLayer* footerLayer() const { return m_footerLayer; }
+    void setFooterLayer(GraphicsLayer*);
+    PlatformLayer* footerPlatformLayer() const;
+
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
@@ -129,8 +141,12 @@ private:
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&);
 
     GraphicsLayer* m_counterScrollingLayer;
+    GraphicsLayer* m_headerLayer;
+    GraphicsLayer* m_footerLayer;
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_counterScrollingPlatformLayer;
+    RetainPtr<PlatformLayer> m_headerPlatformLayer;
+    RetainPtr<PlatformLayer> m_footerPlatformLayer;
 #endif
     
     IntRect m_viewportRect;

@@ -82,6 +82,8 @@ private:
 
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
+    RetainPtr<CALayer> m_headerLayer;
+    RetainPtr<CALayer> m_footerLayer;
     IntPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels;
 };

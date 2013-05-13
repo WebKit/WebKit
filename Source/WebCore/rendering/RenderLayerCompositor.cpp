@@ -1582,6 +1582,18 @@ GraphicsLayer* RenderLayerCompositor::scrollLayer() const
     return m_scrollLayer.get();
 }
 
+#if ENABLE(RUBBER_BANDING)
+GraphicsLayer* RenderLayerCompositor::headerLayer() const
+{
+    return m_layerForHeader.get();
+}
+
+GraphicsLayer* RenderLayerCompositor::footerLayer() const
+{
+    return m_layerForFooter.get();
+}
+#endif
+
 TiledBacking* RenderLayerCompositor::pageTiledBacking() const
 {
     RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
@@ -2541,8 +2553,13 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         m_renderView->frameView()->addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
 
-    m_layerForHeader->setPosition(FloatPoint(0, 0));
+    m_layerForHeader->setPosition(FloatPoint());
+    m_layerForHeader->setAnchorPoint(FloatPoint3D());
     m_layerForHeader->setSize(FloatSize(m_renderView->frameView()->visibleWidth(), m_renderView->frameView()->headerHeight()));
+
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+
     return m_layerForHeader.get();
 }
 
@@ -2568,7 +2585,12 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
     }
 
     m_layerForFooter->setPosition(FloatPoint(0, m_rootContentLayer->size().height() + m_renderView->frameView()->headerHeight()));
+    m_layerForFooter->setAnchorPoint(FloatPoint3D());
     m_layerForFooter->setSize(FloatSize(m_renderView->frameView()->visibleWidth(), m_renderView->frameView()->footerHeight()));
+
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+
     return m_layerForFooter.get();
 }
 

@@ -52,6 +52,44 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(GraphicsLayer* graphi
         m_scrollingStateTree->setHasChangedProperties(true);
 }
 
+PlatformLayer* ScrollingStateScrollingNode::headerPlatformLayer() const
+{
+    return m_headerPlatformLayer.get();
+}
+
+void ScrollingStateScrollingNode::setHeaderLayer(GraphicsLayer* graphicsLayer)
+{
+    PlatformLayer* platformHeaderLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
+    if (m_headerPlatformLayer == platformHeaderLayer)
+        return;
+
+    m_headerPlatformLayer = platformHeaderLayer;
+    m_headerLayer = graphicsLayer;
+
+    setPropertyChanged(HeaderLayer);
+    if (m_scrollingStateTree)
+        m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+PlatformLayer* ScrollingStateScrollingNode::footerPlatformLayer() const
+{
+    return m_footerPlatformLayer.get();
+}
+
+void ScrollingStateScrollingNode::setFooterLayer(GraphicsLayer* graphicsLayer)
+{
+    PlatformLayer* platformFooterLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
+    if (m_footerPlatformLayer == platformFooterLayer)
+        return;
+
+    m_footerPlatformLayer = platformFooterLayer;
+    m_footerLayer = graphicsLayer;
+
+    setPropertyChanged(FooterLayer);
+    if (m_scrollingStateTree)
+        m_scrollingStateTree->setHasChangedProperties(true);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

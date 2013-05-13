@@ -185,6 +185,11 @@ public:
     GraphicsLayer* rootGraphicsLayer() const;
     GraphicsLayer* scrollLayer() const;
 
+#if ENABLE(RUBBER_BANDING)
+    GraphicsLayer* headerLayer() const;
+    GraphicsLayer* footerLayer() const;
+#endif
+
     enum RootLayerAttachment {
         RootLayerUnattached,
         RootLayerAttachedViaChromeClient,

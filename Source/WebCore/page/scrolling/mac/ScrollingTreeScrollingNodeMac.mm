@@ -77,6 +77,12 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(ScrollingStateNode* sta
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode->counterScrollingPlatformLayer();
 
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
+        m_headerLayer = scrollingStateNode->headerPlatformLayer();
+
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
+        m_footerLayer = scrollingStateNode->footerPlatformLayer();
+
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)) {
         unsigned mainThreadScrollingReasons = this->shouldUpdateScrollLayerPositionOnMainThread();
 
@@ -308,6 +314,12 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), position, scrollOrigin(), frameScaleFactor(), false, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
+
+    if (m_headerLayer)
+        m_headerLayer.get().position = FloatPoint(scrollOffsetForFixedChildren.width(), 0);
+
+    if (m_footerLayer)
+        m_footerLayer.get().position = FloatPoint(scrollOffsetForFixedChildren.width(), totalContentsSize().height() - footerHeight());
 
     if (!m_children)
         return;

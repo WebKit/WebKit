@@ -122,6 +122,8 @@ private:
     void setScrollParametersForNode(const ScrollParameters&, ScrollingStateScrollingNode*);
     void setScrollLayerForNode(GraphicsLayer*, ScrollingStateNode*);
     void setCounterScrollingLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
+    void setHeaderLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
+    void setFooterLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
     void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
     void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
 

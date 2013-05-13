@@ -307,6 +307,41 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameVie
 #endif
 }
 
+GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameView)
+{
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+    Frame* frame = frameView->frame();
+    if (!frame)
+        return 0;
+
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return 0;
+
+    return renderView->compositor()->headerLayer();
+#else
+    UNUSED_PARAM(frameView);
+    return 0;
+#endif
+}
+
+GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameView)
+{
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+    Frame* frame = frameView->frame();
+    if (!frame)
+        return 0;
+
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return 0;
+    return renderView->compositor()->footerLayer();
+#else
+    UNUSED_PARAM(frameView);
+    return 0;
+#endif
+}
+
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView* frameView)
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -387,14 +422,26 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
         GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
+        GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
+        GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
+        IntSize scrollOffsetForFixed = frameView->scrollOffsetForFixedPosition();
+
         if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
             scrollLayer->setPosition(-frameView->scrollPosition());
             if (counterScrollingLayer)
-                counterScrollingLayer->setPosition(IntPoint(frameView->scrollOffsetForFixedPosition()));
+                counterScrollingLayer->setPosition(IntPoint(scrollOffsetForFixed));
+            if (headerLayer)
+                headerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
+            if (footerLayer)
+                footerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), frameView->totalContentsSize().height() - frameView->footerHeight()));
         } else {
             scrollLayer->syncPosition(-frameView->scrollPosition());
             if (counterScrollingLayer)
-                counterScrollingLayer->syncPosition(IntPoint(frameView->scrollOffsetForFixedPosition()));
+                counterScrollingLayer->syncPosition(IntPoint(scrollOffsetForFixed));
+            if (headerLayer)
+                headerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
+            if (footerLayer)
+                footerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), frameView->totalContentsSize().height() - frameView->footerHeight()));
 
             LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
             syncChildPositions(viewportRect);

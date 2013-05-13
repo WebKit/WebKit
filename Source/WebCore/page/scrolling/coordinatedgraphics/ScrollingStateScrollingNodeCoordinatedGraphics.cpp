@@ -43,6 +43,28 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(GraphicsLayer*)
     ASSERT_NOT_REACHED(); // ScrollingStateTree in coord graphics is used only to handle constrained elements.
 }
 
+PlatformLayer* ScrollingStateScrollingNode::headerPlatformLayer() const
+{
+    ASSERT_NOT_REACHED(); // ScrollingStateTree in coord graphics is used only to handle constrained elements.
+    return 0;
+}
+
+void ScrollingStateScrollingNode::setHeaderLayer(GraphicsLayer*)
+{
+    ASSERT_NOT_REACHED(); // ScrollingStateTree in coord graphics is used only to handle constrained elements.
+}
+
+PlatformLayer* ScrollingStateScrollingNode::footerPlatformLayer() const
+{
+    ASSERT_NOT_REACHED(); // ScrollingStateTree in coord graphics is used only to handle constrained elements.
+    return 0;
+}
+
+void ScrollingStateScrollingNode::setFooterLayer(GraphicsLayer*)
+{
+    ASSERT_NOT_REACHED(); // ScrollingStateTree in coord graphics is used only to handle constrained elements.
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

@@ -190,6 +190,8 @@ void ScrollingCoordinatorMac::frameViewRootLayerDidChange(FrameView* frameView)
     ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     setScrollLayerForNode(scrollLayerForFrameView(frameView), node);
     setCounterScrollingLayerForNode(counterScrollingLayerForFrameView(frameView), node);
+    setHeaderLayerForNode(headerLayerForFrameView(frameView), node);
+    setFooterLayerForNode(footerLayerForFrameView(frameView), node);
 }
 
 void ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation)
@@ -271,6 +273,24 @@ void ScrollingCoordinatorMac::setScrollLayerForNode(GraphicsLayer* scrollLayer, 
 void ScrollingCoordinatorMac::setCounterScrollingLayerForNode(GraphicsLayer* layer, ScrollingStateScrollingNode* node)
 {
     node->setCounterScrollingLayer(layer);
+    scheduleTreeStateCommit();
+}
+
+void ScrollingCoordinatorMac::setHeaderLayerForNode(GraphicsLayer* headerLayer, ScrollingStateScrollingNode* node)
+{
+    // Headers and footers are only supported on the root node.
+    ASSERT(node == m_scrollingStateTree->rootStateNode());
+
+    node->setHeaderLayer(headerLayer);
+    scheduleTreeStateCommit();
+}
+
+void ScrollingCoordinatorMac::setFooterLayerForNode(GraphicsLayer* footerLayer, ScrollingStateScrollingNode* node)
+{
+    // Headers and footers are only supported on the root node.
+    ASSERT(node == m_scrollingStateTree->rootStateNode());
+
+    node->setFooterLayer(footerLayer);
     scheduleTreeStateCommit();
 }
 

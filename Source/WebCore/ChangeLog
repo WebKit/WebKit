@@ -1,3 +1,74 @@
+2013-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Headers and footers should be pinned to the left edge of the window when scrolling 
+        horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=116061
+        -and corresponding-
+        <rdar://problem/13599215>
+
+        Reviewed by Simon Fraser.
+
+        The scrolling thread will need to know about the header and footer layers in order 
+        the implement this custom scrolling behavior. 
+
+        These getters will fetch the header or footer layer from the FrameView as 
+        appropriate.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::headerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::footerLayerForFrameView):
+        * page/scrolling/ScrollingCoordinator.h:
+
+        When we’re scrolling on the main thread, adjust the position of the header and 
+        footer layers here.
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+
+        ScrollingStateScrollingNode now stores GraphicsLayers and PlatformLayers for the 
+        header and footer, just like it already does for the counterScrollingLayer.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::headerLayer):
+        (WebCore::ScrollingStateScrollingNode::footerLayer):
+
+        Setters for the new layers.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinatorMac::setHeaderLayerForNode):
+        (WebCore::ScrollingCoordinatorMac::setFooterLayerForNode):
+
+        These setters and getters mirror the existing one for counterScrollingLayer.
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        (WebCore::ScrollingStateScrollingNode::headerPlatformLayer):
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateScrollingNode::footerPlatformLayer):
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer):
+
+        And the ScrollingTree will store CALayers for the header and footer.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        (ScrollingTreeScrollingNodeMac):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+
+        This is where the magic happens when we are scrolling on the scrolling thread. 
+        Adjust the horizontal position the behave like a fixed object, but keep the 
+        vertical position what it was when layer was created.
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        RenderLayerCompositor must now provide getters for the header and footer.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::headerLayer):
+        (WebCore::RenderLayerCompositor::footerLayer):
+
+        Set the anchor point for when we adjust the position later on. Also call 
+        frameViewRootLayerDidChange() to get the new layers picked up and sent to the 
+        scrolling tree.
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+
 2013-05-12  Timothy Hatcher  <timothy@apple.com>
 
         Add support for updating the Web Inspector toolbar height.

@@ -42,6 +42,8 @@ PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(Scro
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
     : ScrollingStateNode(stateTree, nodeID)
     , m_counterScrollingLayer(0)
+    , m_headerLayer(0)
+    , m_footerLayer(0)
     , m_frameScaleFactor(1)
     , m_wheelEventHandlerCount(0)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
@@ -78,6 +80,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_footerHeight(stateNode.footerHeight())
 {
     setCounterScrollingLayer(stateNode.counterScrollingLayer());
+    setHeaderLayer(stateNode.headerLayer());
+    setFooterLayer(stateNode.footerLayer());
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
