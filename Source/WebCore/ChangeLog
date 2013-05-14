@@ -1,3 +1,62 @@
+2013-05-14  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: united.com has overlapping elements and is broken by flex box changes.
+        https://bugs.webkit.org/show_bug.cgi?id=115329
+        <rdar://problem/13690610>
+        
+        The new flexbox spec says that flex-basis omitted in the flex shorthand defaults to
+        0 when flex-grow/shrink are set. This has undesirable behavior when objects don't
+        end up flexing at all, and it's something the spec is going to eventually address.
+        
+        For now, though, to fix the regression, I'm making a targeted "hack" to deliberately
+        violate the spec, but to do so as minimally as possible. This hack detects if there
+        is infinite available space on a line, and if so, it treats a flex-basis of 0 like
+        auto.
+        
+        This means that when height is constrained and set by a container, flexing will do
+        the right thing. Basically any time you end up actually flexing, the spec behavior
+        should happen. If you're just laying out at intrinsic sizes, though, and no flexing
+        is going to occur, we ignore a flex-basis of 0 and just use the child's normal size.
+        
+        Note that widths don't have to be patched because the preferred logical widths
+        algorithm is broken right now and not checking flex-basis. If it did, we'd have seen
+        the same bug in the width direction.
+        
+        This width issue is covered by https://bugs.webkit.org/show_bug.cgi?id=116117
+        
+        Reviewed by Simon Fraser.
+
+        Added fast/flexbox/auto-height-with-flex.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        Make sure we return LayoutUnit::max when you have infinite free space and not
+        max - borderPadding.
+
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        Only clear override size if it was set. Only mark for relayout if we did
+        an override size clear (i.e., if we were actually flexed). Add a new parameter,
+        hasInfiniteLineLength, that - if set - causes us to special case flex-basis:0
+        and treat it like flex-basis:auto.
+
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        Define hasInfiniteLineLength and pass it to all the functions that need it.
+
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        Remove the code that marks for layout and does a layout so early. This code
+        is moving (and changing) to preferredMainAxisContentExtentForChild.
+
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+        Computes whether or not we have infinite line length now.
+
+        (WebCore::RenderFlexibleBox::freezeViolations):
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        Propagate hasInfiniteLineLength through to preferredMainAxisContentExtentForChild.
+
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+        Add hasInfiniteLineLength parameter to a bunch of functions.
+
 2013-05-14  Andreas Kling  <akling@apple.com>
 
         Assertion failure in GlyphPage::setGlyphDataForIndex: (!glyph || fontData == m_fontDataForAllGlyphs)

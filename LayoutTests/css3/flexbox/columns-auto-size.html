@@ -54,7 +54,7 @@ body {
   <div data-expected-height="0" data-offset-y="0" style="-webkit-flex: 1; -moz-flex: 1"></div>
   <div data-expected-height="10" data-offset-y="0" style="height: 10px;"></div>
   <div data-expected-height="10" data-offset-y="10" style="-webkit-flex: 1 auto; -moz-flex: 1 auto"><div style="height: 10px"></div></div>
-  <div data-expected-height="0" data-offset-y="20" style="min-height: 0; -webkit-flex: 1; -moz-flex: 1"><div data-expected-height="10" data-offset-y="20" class="child-div" style="height: 10px"></div></div>
+  <div data-expected-height="10" data-offset-y="20" style="min-height: 0; -webkit-flex: 1; -moz-flex: 1"><div data-expected-height="10" data-offset-y="20" class="child-div" style="height: 10px"></div></div>
 </div>
 
 <div class="flexbox column horizontal">
@@ -103,7 +103,7 @@ body {
 
 <!-- The first div overflows to the left, so give it a margin-left so we can see box it paints. -->
 <div class="flexbox column vertical" style="margin-left: 100px;">
-  <div data-expected-width="0" data-offset-x="20" style="min-width: 0; -webkit-flex: 1; -moz-flex: 1"><div data-expected-width="50" data-offset-x="-30" class="child-div" style="width: 50px"></div></div>
+  <div data-expected-width="50" data-offset-x="20" style="min-width: 0; -webkit-flex: 1; -moz-flex: 1"><div data-expected-width="50" data-offset-x="20" class="child-div" style="width: 50px"></div></div>
   <div data-expected-width="0" data-offset-x="20" style="-webkit-flex: 1; -moz-flex: 1"></div>
   <div data-expected-width="10" data-offset-x="10" style="width: 10px;"></div>
   <div data-expected-width="10" data-offset-x="0" style="-webkit-flex: 1 auto; -moz-flex: 1 auto"><div style="width: 10px"></div></div>

@@ -1,3 +1,14 @@
+2013-05-14  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r147261): Many overlaid elements on united.com's account page
+        https://bugs.webkit.org/show_bug.cgi?id=116107
+        <rdar://problem/13690610> 
+
+        Reviewed by Simon Fraser.
+
+        * fast/flexbox/auto-height-with-flex-expected.html: Added.
+        * fast/flexbox/auto-height-with-flex.html: Added.
+
 2013-05-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo
