@@ -1,3 +1,19 @@
+2013-05-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: scanExternalObjectGraph should not create new JSVirtualMachine wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=116074
+
+        If scanExternalObjectGraph creates a new JSVirtualMachine wrapper during collection, when the 
+        scanExternalObjectGraph call finishes and the autorelease pool is drained we will dealloc the 
+        JSVirtualMachine which will cause us to try to take the API lock for the corresponding VM. 
+        If this happens on a GC thread other than the "main" thread, we will deadlock. The solution 
+        is to just check the VM cache, and if there is no JSVirtualMachine wrapper, return early.
+
+        Reviewed by Darin Adler.
+
+        * API/JSVirtualMachine.mm:
+        (scanExternalObjectGraph):
+
 2013-05-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve stringProtoFuncLastIndexOf for the prefix case
