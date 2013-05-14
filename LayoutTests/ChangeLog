@@ -1,3 +1,52 @@
+2013-05-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening
+        https://bugs.webkit.org/show_bug.cgi?id=116090
+
+        Unreviewed EFL gardening.
+
+        Rebaseline after r155023.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/table/007-expected.png:
+        * platform/efl/fast/table/007-expected.txt:
+        * platform/efl/fast/table/colspanMinWidth-expected.png:
+        * platform/efl/fast/table/colspanMinWidth-expected.txt:
+        * platform/efl/fast/table/spanOverlapRepaint-expected.png:
+        * platform/efl/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/efl/fast/table/table-rowspan-height-distribution-in-rows-expected.txt: Added.
+        * platform/efl/tables/mozilla/bugs/bug13169-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug13169-expected.txt: Added.
+        * platform/efl/tables/mozilla/bugs/bug133756-1-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug133756-2-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug133756-2-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug17138-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug17548-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug17548-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug220536-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug220536-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug6304-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug6304-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug73321-expected.txt: Renamed from LayoutTests/platform/efl-wk2/tables/mozilla/bugs/bug73321-expected.txt.
+        * platform/efl/tables/mozilla/bugs/bug7714-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug8858-expected.txt:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.png:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/efl/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/efl/tables/mozilla/other/test6-expected.png:
+        * platform/efl/tables/mozilla/other/test6-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1010-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1010-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug23847-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug65372-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug6933-expected.txt:
+
 2013-05-14  Alex Christensen  <achristensen@apple.com>
 
         The tests marked with the comment "WebKitTestRunner needs to sanitize file urls in the output"
