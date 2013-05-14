@@ -8193,9 +8193,6 @@
     <ClInclude Include="..\platform\graphics\GeneratedImage.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\Generator.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\Glyph.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>

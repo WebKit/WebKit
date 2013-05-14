@@ -5001,7 +5001,6 @@
 		BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFD4940E30592F009D10AD /* JSXMLHttpRequestUpload.h */; };
 		BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE013980C0BEF180043860A /* JSStyleSheet.cpp */; };
 		BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE013990C0BEF180043860A /* JSStyleSheet.h */; };
-		BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE04C890DAFF7A0007A0F41 /* Generator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE1C41B0D982980003B02F2 /* Location.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE1C4190D982980003B02F2 /* Location.h */; };
 		BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C41A0D982980003B02F2 /* Location.cpp */; };
 		BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C4390D9830D3003B02F2 /* JSLocation.cpp */; };
@@ -11725,7 +11724,6 @@
 		BCDFD4940E30592F009D10AD /* JSXMLHttpRequestUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestUpload.h; sourceTree = "<group>"; };
 		BCE013980C0BEF180043860A /* JSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheet.cpp; sourceTree = "<group>"; };
 		BCE013990C0BEF180043860A /* JSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStyleSheet.h; sourceTree = "<group>"; };
-		BCE04C890DAFF7A0007A0F41 /* Generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Generator.h; sourceTree = "<group>"; };
 		BCE1C4190D982980003B02F2 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		BCE1C41A0D982980003B02F2 /* Location.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Location.cpp; sourceTree = "<group>"; };
 		BCE1C4220D9829F2003B02F2 /* Location.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Location.idl; sourceTree = "<group>"; };
@@ -18415,7 +18413,6 @@
 				BCE4413512F7490B009B84B8 /* FontWidthVariant.h */,
 				4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
-				BCE04C890DAFF7A0007A0F41 /* Generator.h */,
 				2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */,
 				2D2FC0571460CD6F00263633 /* GeneratorGeneratedImage.h */,
 				086BBD0E136039C2008B15D8 /* Glyph.h */,
@@ -21934,7 +21931,6 @@
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
-				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
 				2D481F04146B5C6B00AA7834 /* GeneratorGeneratedImage.h in Headers */,
 				A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,

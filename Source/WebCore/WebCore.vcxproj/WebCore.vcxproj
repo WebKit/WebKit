@@ -11666,7 +11666,6 @@
     <ClInclude Include="..\platform\graphics\FontSmoothingMode.h" />
     <ClInclude Include="..\platform\graphics\FontTraitsMask.h" />
     <ClInclude Include="..\platform\graphics\GeneratedImage.h" />
-    <ClInclude Include="..\platform\graphics\Generator.h" />
     <ClInclude Include="..\platform\graphics\Glyph.h" />
     <ClInclude Include="..\platform\graphics\GlyphBuffer.h" />
     <ClInclude Include="..\platform\graphics\GlyphMetricsMap.h" />

@@ -29994,10 +29994,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\Generator.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\GeneratorGeneratedImage.cpp"
 					>
 				</File>

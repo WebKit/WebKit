@@ -1,3 +1,37 @@
+2013-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove platform/graphic's Generator
+        https://bugs.webkit.org/show_bug.cgi?id=116084
+
+        Reviewed by Darin Adler.
+
+        The Generator no longer abstract anything useful, its only
+        implementation is Gradient.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Generator.h: Removed.
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::draw):
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        * platform/graphics/GeneratorGeneratedImage.h:
+        (WebCore::GeneratorGeneratedImage::create):
+        (WebCore::GeneratorGeneratedImage::GeneratorGeneratedImage):
+        (GeneratorGeneratedImage):
+        * platform/graphics/Gradient.h:
+        (WebCore):
+        (Gradient):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore):
+        (GraphicsContext):
+
 2013-05-13  David Kilzer  <ddkilzer@apple.com>
 
         Upstream iOS Clipboard and Pasteboard changes

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #define GeneratorGeneratedImage_h
 
 #include "GeneratedImage.h"
-#include "Generator.h"
+#include "Gradient.h"
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 
 class GeneratorGeneratedImage : public GeneratedImage {
 public:
-    static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Generator> generator, const IntSize& size)
+    static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
     {
         return adoptRef(new GeneratorGeneratedImage(generator, size));
     }
@@ -49,13 +49,13 @@ protected:
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode);
 
-    GeneratorGeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)
-        : m_generator(generator)
+    GeneratorGeneratedImage(PassRefPtr<Gradient> generator, const IntSize& size)
+        : m_gradient(generator)
     {
         m_size = size;
     }
 
-    RefPtr<Generator> m_generator;
+    RefPtr<Gradient> m_gradient;
     OwnPtr<ImageBuffer> m_cachedImageBuffer;
     IntSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;

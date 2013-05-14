@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "BidiResolver.h"
 #include "BitmapImage.h"
-#include "Generator.h"
+#include "Gradient.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "RoundedRect.h"
@@ -664,11 +664,11 @@ void GraphicsContext::setTextDrawingMode(TextDrawingModeFlags mode)
     setPlatformTextDrawingMode(mode);
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
+void GraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)
 {
     if (paintingDisabled())
         return;
-    generator.fill(this, rect);
+    gradient.fill(this, rect);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)

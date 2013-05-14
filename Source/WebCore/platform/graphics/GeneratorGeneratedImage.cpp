@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect
     if (destRect.size() != srcRect.size())
         destContext->scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
     destContext->translate(-srcRect.x(), -srcRect.y());
-    destContext->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
+    destContext->fillRect(FloatRect(FloatPoint(), m_size), *m_gradient.get());
 }
 
 void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
@@ -50,7 +50,7 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     IntSize adjustedSize = m_size;
     FloatRect adjustedSrcRect = srcRect;
-    m_generator->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
+    m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 
     // Factor in the destination context's scale to generate at the best resolution
     AffineTransform destContextCTM = destContext->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
@@ -60,15 +60,15 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
     adjustedSrcRect.scale(xScale, yScale);
 
-    unsigned generatorHash = m_generator->hash();
+    unsigned generatorHash = m_gradient->hash();
 
     if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
-        m_cachedImageBuffer = destContext->createCompatibleBuffer(adjustedSize, m_generator->hasAlpha());
+        m_cachedImageBuffer = destContext->createCompatibleBuffer(adjustedSize, m_gradient->hasAlpha());
         if (!m_cachedImageBuffer)
             return;
 
         // Fill with the generated image.
-        m_cachedImageBuffer->context()->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator);
+        m_cachedImageBuffer->context()->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_gradient);
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;
