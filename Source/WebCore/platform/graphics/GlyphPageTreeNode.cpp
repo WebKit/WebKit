@@ -211,7 +211,10 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             // for only 128 out of 256 characters.
             bool haveGlyphs;
             if (!fontData->isSegmented()) {
-                m_page = GlyphPage::createForSingleFontData(this, static_cast<const SimpleFontData*>(fontData));
+                if (GlyphPage::mayUseMixedFontDataWhenFilling(buffer, bufferLength, static_cast<const SimpleFontData*>(fontData)))
+                    m_page = GlyphPage::createForMixedFontData(this);
+                else
+                    m_page = GlyphPage::createForSingleFontData(this, static_cast<const SimpleFontData*>(fontData));
                 haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, static_cast<const SimpleFontData*>(fontData));
             } else {
                 m_page = GlyphPage::createForMixedFontData(this);

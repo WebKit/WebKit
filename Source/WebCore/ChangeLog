@@ -1,3 +1,30 @@
+2013-05-14  Andreas Kling  <akling@apple.com>
+
+        Assertion failure in GlyphPage::setGlyphDataForIndex: (!glyph || fontData == m_fontDataForAllGlyphs)
+        <http://webkit.org/b/116113>
+        <rdar://problem/13833790>
+
+        Reviewed by Dan Bernstein.
+
+        If we're filling a full GlyphPage with a SimpleFontData that is actually a composite font reference,
+        we need to make sure we have per-glyph font data pointers, since it may end up using them.
+
+        Added GlyphPage::mayUseMixedFontDataWhenFilling() which can be implemented by the platform to let
+        GlyphPageTreeNode know that it should allocate a full-sized GlyphPage for mixed font data pointers
+        in case the font is a composite font reference, or if there are CJK ideographs in the text.
+
+        This code can be made smarter, but that's outside the scope of this change.
+        Fixes heavy asserting on bots running unreleased software.
+
+        * platform/graphics/GlyphPage.h:
+        (GlyphPage):
+        (WebCore::GlyphPage::mayUseMixedFontDataWhenFilling):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::shouldUseCoreText):
+        (WebCore::GlyphPage::mayUseMixedFontDataWhenFilling):
+
 2013-05-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo

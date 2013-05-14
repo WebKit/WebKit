@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     if (fontData->platformData().isCompositeFontReference())
         return true;
@@ -49,6 +49,12 @@ static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const Simple
     }
 
     return false;
+}
+
+bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+{
+    // FIXME: This could be smarter if the logic currently in GlyphPage::fill() got to make the decision about what kind of GlyphPage to construct.
+    return shouldUseCoreText(buffer, bufferLength, fontData);
 }
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
