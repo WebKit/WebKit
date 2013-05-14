@@ -311,11 +311,6 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
     if (InputType::themeSupportsDataListUI(this))
         shouldAddPickerIndicator = true;
 #endif
-    RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
-    if (theme->supportsCalendarPicker(formControlType())) {
-        shouldAddPickerIndicator = true;
-        m_pickerIndicatorIsAlwaysVisible = true;
-    }
     if (shouldAddPickerIndicator) {
         RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(document, *this);
         m_pickerIndicatorElement = pickerElement.get();
@@ -511,10 +506,6 @@ void BaseMultipleFieldsDateAndTimeInputType::listAttributeTargetChanged()
 
 void BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility()
 {
-    if (m_pickerIndicatorIsAlwaysVisible) {
-        showPickerIndicator();
-        return;
-    }
 #if ENABLE(DATALIST_ELEMENT)
     if (HTMLDataListElement* dataList = element()->dataList()) {
         RefPtr<HTMLCollection> options = dataList->options();

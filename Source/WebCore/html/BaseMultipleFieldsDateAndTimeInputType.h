@@ -121,7 +121,6 @@ private:
     ClearButtonElement* m_clearButton;
     PickerIndicatorElement* m_pickerIndicatorElement;
     bool m_pickerIndicatorIsVisible;
-    bool m_pickerIndicatorIsAlwaysVisible;
 };
 
 } // namespace WebCore

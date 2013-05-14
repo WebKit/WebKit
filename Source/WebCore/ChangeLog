@@ -1,3 +1,25 @@
+2013-05-14  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
+
+        Remove RenderTheme::supportsCalendarPicker
+        https://bugs.webkit.org/show_bug.cgi?id=116068
+
+        Reviewed by Benjamin Poulain.
+
+        No new tests needed because it doesn't affect behaviour.
+
+        This method was never overrided by any platform
+        and always leaded to the same behaviour.
+        The code which depended on it was also removed.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility):
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType):
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * rendering/RenderTheme.h:
+
 2013-04-30  Balazs Kelemen  <b.kelemen@sisa.samsung.com>
 
         [GStreamer] cannot seek after video finished
