@@ -4,7 +4,7 @@
     <title>Animating transform on large tiled layer.</title>
     <style type="text/css">
         #box {
-            -webkit-transition: -webkit-transform 1s step-end;
+            -webkit-transition: -webkit-transform 0.7s step-end;
             display: block;
             width: 1000px;
             height: 2000px;
@@ -31,17 +31,13 @@
         {
             if (window.testRunner) {
                 testRunner.waitUntilDone();
-                window.setTimeout(notifyDone, 1200);
+                window.setTimeout('window.resizeTo(1600, 1200)', 100);
             }
             window.onresize = function() {
                 var box = document.getElementById("box");
                 box.className = "end";
+                window.setTimeout('testRunner.notifyDone()', 1500);
             }
-            window.resizeTo(1600,1200);
-        }
-        function notifyDone()
-        {
-            testRunner.notifyDone();
         }
     </script>
 </head>
