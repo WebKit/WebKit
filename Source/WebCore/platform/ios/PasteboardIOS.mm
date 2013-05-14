@@ -195,9 +195,9 @@ void Pasteboard::writeImage(Node* node, Frame* frame)
 
     RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     NSString *mimeType = cachedImage->response().mimeType();
-    RetainPtr<NSString> uti = adoptCF((NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL));
+    RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL));
     if (uti) {
-        [dictionary.get() setObject:imageData.get() forKey:uti.get()];
+        [dictionary.get() setObject:imageData.get() forKey:(NSString *)uti.get()];
         [dictionary.get() setObject:(NSString *)node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(static_cast<HTMLElement*>(node)->getAttribute("src"))) forKey:(NSString *)kUTTypeURL];
     }
     frame->editor()->client()->writeDataToPasteboard(dictionary.get());

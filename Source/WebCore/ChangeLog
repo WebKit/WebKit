@@ -1,3 +1,11 @@
+2013-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r150049): Fix RetainPtr<> type in PasteboardIOS.mm
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeImage): Use RetainPtr<CFStringRef>
+        instead of RetainPtr<NSString>.
+
 2013-05-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove platform/graphic's Generator
