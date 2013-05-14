@@ -1,3 +1,31 @@
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add tests for secure event input
+        https://bugs.webkit.org/show_bug.cgi?id=116121
+
+        Reviewed by Mark Rowe.
+
+        * editing/secure-input: Added.
+        * editing/secure-input/password-input-changed-type-expected.txt: Added.
+        * editing/secure-input/password-input-changed-type.html: Added.
+        * editing/secure-input/password-input-focusing-expected.txt: Added.
+        * editing/secure-input/password-input-focusing-to-different-frame-expected.txt: Added.
+        * editing/secure-input/password-input-focusing-to-different-frame.html: Added.
+        * editing/secure-input/password-input-focusing.html: Added.
+        * editing/secure-input/removed-password-input-expected.txt: Added.
+        * editing/secure-input/removed-password-input.html: Added.
+        * editing/secure-input/reset-state-on-navigation-expected.txt: Added.
+        * editing/secure-input/reset-state-on-navigation.html: Added.
+        * editing/secure-input/resources: Added.
+        * editing/secure-input/resources/reset-state-on-navigation-target.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2013-05-14  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r147261): Many overlaid elements on united.com's account page

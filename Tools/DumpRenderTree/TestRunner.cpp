@@ -44,6 +44,10 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(MAC)
+#include <Carbon/Carbon.h>
+#endif
+
 const unsigned TestRunner::viewWidth = 800;
 const unsigned TestRunner::viewHeight = 600;
 
@@ -1834,6 +1838,11 @@ static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef this
 }
 #endif
 
+static JSValueRef getSecureEventInputIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, IsSecureEventInputEnabled());
+}
+
 static JSValueRef getTitleTextDirectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -2001,6 +2010,7 @@ JSStaticValue* TestRunner::staticValues()
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(EFL)
         { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
+        { "secureEventInputIsEnabled", getSecureEventInputIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "titleTextDirection", getTitleTextDirectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };

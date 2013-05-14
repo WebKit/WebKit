@@ -2742,3 +2742,6 @@ compositing/contents-opaque/control-layer.html
 compositing/filters/sw-layer-overlaps-hw-shadow.html
 compositing/filters/sw-shadow-overlaps-hw-layer.html
 compositing/filters/sw-shadow-overlaps-hw-shadow.html
+
+# No concept of secure text input
+editing/secure-input [ Failure ]

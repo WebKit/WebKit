@@ -85,6 +85,7 @@
 		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
+		E1BA671E1742DA6A00C20251 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1BA671D1742DA5A00C20251 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -218,6 +219,7 @@
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
+		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +230,7 @@
 				BC7934A511906584005EA8E2 /* Cocoa.framework in Frameworks */,
 				BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */,
 				0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
+				E1BA671E1742DA6A00C20251 /* Carbon.framework in Frameworks */,
 				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,6 +294,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				E1BA671D1742DA5A00C20251 /* Carbon.framework */,
 				BC7934A411906584005EA8E2 /* Cocoa.framework */,
 				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
 				41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */,

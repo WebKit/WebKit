@@ -803,4 +803,13 @@ void TestRunner::setAuthenticationPassword(JSStringRef password)
     WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
 }
 
+bool TestRunner::secureEventInputIsEnabled() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SecureEventInputIsEnabled"));
+    WKTypeRef returnData = 0;
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), messageName.get(), 0, &returnData);
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
+}
+
 } // namespace WTR

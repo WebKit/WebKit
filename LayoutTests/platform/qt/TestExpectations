@@ -496,6 +496,9 @@ fast/dom/MutationObserver/inline-event-listener.html
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 http/tests/security/contentTypeOptions
 
+# No concept of secure text input other than on Mac; support not yet implemented on Mac.
+editing/secure-input [ Failure ]
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

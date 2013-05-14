@@ -314,6 +314,9 @@ fast/workers/worker-cloneport.html
 sputnik/Unicode/Unicode_218/S7.6_A2.4.html
 sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 
+# Unclear yet why this test fails.
+editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
@@ -330,6 +333,9 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 # Snapshotted plugins not enabled on WK1 but are on WK2
 # Temporarily disabled while working out compositing failures
 plugins/snapshotting [ Skip ]
+
+# This test fails with WebKit1 only.
+editing/secure-input/reset-state-on-navigation.html [ Pass ]
 
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################

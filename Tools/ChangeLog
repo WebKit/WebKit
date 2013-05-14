@@ -1,5 +1,26 @@
 2013-05-14  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac] Add tests for secure event input
+        https://bugs.webkit.org/show_bug.cgi?id=116121
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (getSecureEventInputIsEnabledCallback):
+        (TestRunner::staticValues):
+        Expose an accessor for current secure event input state.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::secureEventInputIsEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        Expose an accessor for current secure event input state. This has to be done in
+        UI process, as this is where it's changed by WebKit.
+
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] Add a testing shim for secure event input functions
         https://bugs.webkit.org/show_bug.cgi?id=116122
 

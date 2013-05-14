@@ -43,6 +43,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
+#include <Carbon/Carbon.h>
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
@@ -663,6 +664,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled")) {
+#if PLATFORM(MAC)
+        WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(IsSecureEventInputEnabled()));
+#else
+        WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(false);
+#endif
+        return result;
+    }
     ASSERT_NOT_REACHED();
     return 0;
 }

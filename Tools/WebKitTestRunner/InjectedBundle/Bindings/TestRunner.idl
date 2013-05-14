@@ -187,5 +187,8 @@ interface TestRunner {
     void setHandlesAuthenticationChallenges(boolean value);
     void setAuthenticationUsername(DOMString username);
     void setAuthenticationPassword(DOMString password);
+
+    // Secure text input mode (Mac only)
+    readonly attribute boolean secureEventInputIsEnabled;
 };
 

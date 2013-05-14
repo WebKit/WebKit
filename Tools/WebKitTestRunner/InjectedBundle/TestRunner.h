@@ -273,6 +273,8 @@ public:
     void queueLoadingScript(JSStringRef script);
     void queueNonLoadingScript(JSStringRef script);
 
+    bool secureEventInputIsEnabled() const;
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
