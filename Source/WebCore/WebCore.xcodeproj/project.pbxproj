@@ -5166,6 +5166,8 @@
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
 		C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */; };
 		C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */; };
+		C585381913A7DD4E00A3BBEE /* ClipboardIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C585381713A7DD4E00A3BBEE /* ClipboardIOS.h */; };
+		C585381A13A7DD4E00A3BBEE /* ClipboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C585381813A7DD4E00A3BBEE /* ClipboardIOS.mm */; };
 		C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */; };
 		C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */; };
 		C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66511D4FB07004C3E4B /* JSIDBAny.h */; };
@@ -5540,6 +5542,7 @@
 		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45322A9140CE267005A0F92 /* SelectorQuery.cpp */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
+		E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390190EAFCACA003695C8 /* PasteboardIOS.mm */; };
 		E45390460EAFD637003695C8 /* SharedTimerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390350EAFD637003695C8 /* SharedTimerIOS.mm */; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47127CA163438A100ED6F5A /* StyleInvalidationAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */; };
@@ -11902,6 +11905,8 @@
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
 		C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndex.h; sourceTree = "<group>"; };
 		C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
+		C585381713A7DD4E00A3BBEE /* ClipboardIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClipboardIOS.h; path = ios/ClipboardIOS.h; sourceTree = "<group>"; };
+		C585381813A7DD4E00A3BBEE /* ClipboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClipboardIOS.mm; path = ios/ClipboardIOS.mm; sourceTree = "<group>"; };
 		C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBBindingUtilities.cpp; sourceTree = "<group>"; };
 		C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBBindingUtilities.h; sourceTree = "<group>"; };
 		C585A66511D4FB07004C3E4B /* JSIDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBAny.h; sourceTree = "<group>"; };
@@ -12347,6 +12352,7 @@
 		E44B4BB2141650D7002B1D8B /* SelectorChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorChecker.h; sourceTree = "<group>"; };
 		E45322A9140CE267005A0F92 /* SelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorQuery.cpp; sourceTree = "<group>"; };
 		E45322AA140CE267005A0F92 /* SelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorQuery.h; sourceTree = "<group>"; };
+		E45390190EAFCACA003695C8 /* PasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PasteboardIOS.mm; path = ios/PasteboardIOS.mm; sourceTree = "<group>"; };
 		E45390350EAFD637003695C8 /* SharedTimerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SharedTimerIOS.mm; path = ios/SharedTimerIOS.mm; sourceTree = "<group>"; };
 		E462A4A0113E71BE004A4220 /* IntPointHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntPointHash.h; sourceTree = "<group>"; };
 		E4778B7D115A581A00B5D372 /* JSCustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomEvent.cpp; sourceTree = "<group>"; };
@@ -16555,12 +16561,15 @@
 		A59E3C1B11580F340072928E /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				C585381713A7DD4E00A3BBEE /* ClipboardIOS.h */,
+				C585381813A7DD4E00A3BBEE /* ClipboardIOS.mm */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */,
 				26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */,
 				26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */,
 				265541371489811C000DFC5D /* KeyEventCodesIOS.h */,
 				265541381489811C000DFC5D /* KeyEventIOS.mm */,
+				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
 				E45390350EAFD637003695C8 /* SharedTimerIOS.mm */,
 			);
 			name = ios;
@@ -21138,6 +21147,7 @@
 				85031B3E0A44EFC700F992E0 /* Clipboard.h in Headers */,
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
+				C585381913A7DD4E00A3BBEE /* ClipboardIOS.h in Headers */,
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				97AABD1314FA09D5007457AE /* CloseEvent.h in Headers */,
@@ -24564,6 +24574,7 @@
 				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
+				C585381A13A7DD4E00A3BBEE /* ClipboardIOS.mm in Sources */,
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,
@@ -26165,6 +26176,7 @@
 				FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */,
 				447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */,
 				F55B3DC91251F12D003EF269 /* PasswordInputType.cpp in Sources */,
+				E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */,
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,
 				B275357F0B053814002CE64F /* Path.cpp in Sources */,
 				B27535630B053814002CE64F /* PathCG.cpp in Sources */,

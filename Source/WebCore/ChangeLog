@@ -1,3 +1,17 @@
+2013-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        Upstream iOS Clipboard and Pasteboard changes
+        <http://webkit.org/b/116062>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Clipboard.h:
+        * platform/Pasteboard.h:
+        * platform/ios/ClipboardIOS.h: Added.
+        * platform/ios/ClipboardIOS.mm: Added.
+        * platform/ios/PasteboardIOS.mm: Added.
+
 2013-05-13  Huang Dongsung  <luxtella@company100.net>
 
         [Mac] Use pageScaleFactor * deviceScaleFactor in requiresTiledLayer() and computePixelAlignment() of GraphicsLayerCA.

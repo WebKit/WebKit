@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef Pasteboard_h
@@ -53,7 +53,12 @@ typedef struct HWND__* HWND;
 namespace WebCore {
 
 #if PLATFORM(MAC)
+#if PLATFORM(IOS)
+// FIXME: This is only temporary until Pasteboard is refactored for iOS.
+extern NSString *WebArchivePboardType;
+#else
 extern const char* WebArchivePboardType;
+#endif
 extern const char* WebSmartPastePboardType;
 extern const char* WebURLNamePboardType;
 extern const char* WebURLPboardType;
@@ -100,8 +105,14 @@ public:
     bool writeString(const String& type, const String& data);
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
     void writePlainText(const String&, SmartReplaceOption);
+#if !PLATFORM(IOS)
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(Node*, const KURL&, const String& title);
+#else
+    void writeImage(Node*, Frame*);
+    void writePlainText(const String&, Frame*);
+    static NSArray* supportedPasteboardTypes();
+#endif
     void writeClipboard(Clipboard*);
 
     void clear();
@@ -129,9 +140,13 @@ public:
 private:
     Pasteboard();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     String m_pasteboardName;
     long m_changeCount;
+#endif
+
+#if PLATFORM(IOS)
+    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText);
 #endif
 
 #if PLATFORM(WIN)
