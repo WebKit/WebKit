@@ -1,3 +1,21 @@
+2013-05-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Improve hit testing for empty regions
+        https://bugs.webkit.org/show_bug.cgi?id=115534
+
+        Reviewed by David Hyatt.
+
+        As a better follow up after WebKit bug https://bugs.webkit.org/show_bug.cgi?id=107752,
+        we can improve the code by not doing hit testing on the render flow thread object when
+        we are trying to hit test the render flow thread background. In this case, we should just bail out.
+        No new tests, covered by existing regions tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::nodeAtPoint):
+        (WebCore):
+        (WebCore::RenderFlowThread::hitTestFlowThreadPortionInRegion):
+        * rendering/RenderFlowThread.h:
+
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Handle network errors when starting a new job
