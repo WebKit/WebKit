@@ -2676,8 +2676,10 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
     if (!m_drawsContent || !m_allowTiledLayer || m_isPageTiledBackingLayer)
         return false;
 
+    float effectiveScale = pageScaleFactor * deviceScaleFactor();
+
     // FIXME: catch zero-size height or width here (or earlier)?
-    return m_size.width() * pageScaleFactor > cMaxPixelDimension || m_size.height() * pageScaleFactor > cMaxPixelDimension;
+    return m_size.width() * effectiveScale > cMaxPixelDimension || m_size.height() * effectiveScale > cMaxPixelDimension;
 }
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
@@ -3008,7 +3010,8 @@ static inline bool isIntegral(float value)
 void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPoint& positionRelativeToBase,
     FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
 {
-    if (!m_maintainsPixelAlignment || isIntegral(pageScaleFactor) || !m_drawsContent || m_masksToBounds) {
+    float effectiveScale = pageScaleFactor * deviceScaleFactor();
+    if (!m_maintainsPixelAlignment || isIntegral(effectiveScale) || !m_drawsContent || m_masksToBounds) {
         position = m_position;
         size = m_size;
         anchorPoint = m_anchorPoint;
@@ -3019,12 +3022,12 @@ void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPo
     FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
     FloatRect scaledBounds = baseRelativeBounds;
     // Scale by the page scale factor to compute the screen-relative bounds.
-    scaledBounds.scale(pageScaleFactor);
+    scaledBounds.scale(effectiveScale);
     // Round to integer boundaries.
     FloatRect alignedBounds = enclosingIntRect(scaledBounds);
     
     // Convert back to layer coordinates.
-    alignedBounds.scale(1 / pageScaleFactor);
+    alignedBounds.scale(1 / effectiveScale);
     
     // Epsilon is necessary to ensure that backing store size computation in CA, which involves integer truncation,
     // will match our aligned bounds.
