@@ -1,3 +1,47 @@
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Crash due to an assert in FrameView::doDeferredRepaints
+        https://bugs.webkit.org/show_bug.cgi?id=115412
+
+        Reviewed by Rob Buis.
+
+        PR 115412
+
+        The problem is that we are calling
+        updateLayoutAndStyleIfNeededRecursive() (because of
+        zoomToInitialScaleOnLoad) from ChomeClient::layoutUpdated()
+        callback which is not expected. It's expected to be called right
+        before painting, and not right after painting. Even if a new
+        layout is not done, updateLayoutAndStyleIfNeededRecursive() calls
+        flushDeferredRepaints() and it's possible that this is called in
+        the middle of a beginDeferredRepaints() and endDeferredRepaints()
+        apparently.
+        In general only BackingStore should call
+        updateLayoutAndStyleIfNeededRecursive before painting, and a simple
+        layout is enough in all other cases like resizing. This patch renames
+        requestLayoutIfNeeded as updateLayoutAndStyleIfNeededRecursive to
+        make more obvious what it does, and adds layoutIfNeeded that calls
+        layout. The former is used by the BackingStore and the latter by
+        WebPage.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::requestLayoutIfNeeded):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::updateLayoutAndStyleIfNeededRecursive):
+        (BlackBerry::WebKit::WebPagePrivate::layoutIfNeeded):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::overflowExceedsContentsSize):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAnimationFinished):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPage::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-05-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove USE(OS_RANDOMNESS)

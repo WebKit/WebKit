@@ -390,7 +390,7 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
 #if USE(ACCELERATED_COMPOSITING)
     // It needs layout and render before committing root layer if we set OSDS
     if (m_webPage->d->needsOneShotDrawingSynchronization())
-        m_webPage->d->requestLayoutIfNeeded();
+        m_webPage->d->updateLayoutAndStyleIfNeededRecursive();
 
     // This will also blit since we set the OSDS flag above.
     m_webPage->d->commitRootLayerIfNeeded();
@@ -1105,7 +1105,7 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
 
 void BackingStorePrivate::requestLayoutIfNeeded() const
 {
-    m_webPage->d->requestLayoutIfNeeded();
+    m_webPage->d->updateLayoutAndStyleIfNeededRecursive();
 }
 
 void BackingStorePrivate::renderAndBlitVisibleContentsImmediately()

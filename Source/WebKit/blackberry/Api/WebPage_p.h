@@ -150,7 +150,8 @@ public:
     void zoomAnimationFinished(double finalScale, const WebCore::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge);
 
     // Called by the backing store as well as the method below.
-    void requestLayoutIfNeeded() const;
+    void updateLayoutAndStyleIfNeededRecursive() const;
+    void layoutIfNeeded() const;
     void setNeedsLayout();
 
     WebCore::IntPoint scrollPosition() const;

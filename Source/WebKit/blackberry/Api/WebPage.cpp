@@ -1246,8 +1246,8 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
 
     if (m_webPage->settings()->textReflowMode() == WebSettings::TextReflowEnabled) {
         // This is a hack for email which has reflow always turned on.
-        m_mainFrame->view()->setNeedsLayout();
-        requestLayoutIfNeeded();
+        setNeedsLayout();
+        layoutIfNeeded();
         if (m_currentPinchZoomNode)
             newScrollPosition = calculateReflowedScrollPosition(anchorOffset, scale == minimumScale() ? 1 : inverseScale);
         m_currentPinchZoomNode = 0;
@@ -1314,12 +1314,20 @@ void WebPagePrivate::setNeedsLayout()
     view->setNeedsLayout();
 }
 
-void WebPagePrivate::requestLayoutIfNeeded() const
+void WebPagePrivate::updateLayoutAndStyleIfNeededRecursive() const
 {
     FrameView* view = m_mainFrame->view();
     ASSERT(view);
     view->updateLayoutAndStyleIfNeededRecursive();
     ASSERT(!view->needsLayout());
+}
+
+void WebPagePrivate::layoutIfNeeded() const
+{
+    FrameView* view = m_mainFrame->view();
+    ASSERT(view);
+    if (view->needsLayout())
+        view->layout();
 }
 
 IntPoint WebPagePrivate::scrollPosition() const
@@ -1543,7 +1551,7 @@ void WebPagePrivate::overflowExceedsContentsSize()
     if (absoluteVisibleOverflowSize().width() < DEFAULT_MAX_LAYOUT_WIDTH && !hasVirtualViewport()) {
         if (setViewMode(viewMode())) {
             setNeedsLayout();
-            requestLayoutIfNeeded();
+            layoutIfNeeded();
         }
     }
 }
@@ -1644,7 +1652,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 #if DEBUG_WEBPAGE_LOAD
         Platform::logAlways(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad content is empty!");
 #endif
-        requestLayoutIfNeeded();
+        layoutIfNeeded();
         notifyTransformedContentsSizeChanged();
         return;
     }
@@ -1670,7 +1678,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
     }
 
     // zoomAboutPoint above can also toggle setNeedsLayout and cause recursive layout...
-    requestLayoutIfNeeded();
+    layoutIfNeeded();
 
     if (!performedZoom) {
         // We only notify if we didn't perform zoom, because zoom will notify on
@@ -2138,7 +2146,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
         return context;
     }
 
-    requestLayoutIfNeeded();
+    layoutIfNeeded();
 
     bool nodeAllowSelectionOverride = false;
     Node* linkNode = node->enclosingLinkEventParentOrSelf();
@@ -2903,7 +2911,7 @@ void WebPagePrivate::zoomAnimationFinished(double finalAnimationScale, const Web
     }
 
 #if ENABLE(VIEWPORT_REFLOW)
-    requestLayoutIfNeeded();
+    layoutIfNeeded();
     if (willUseTextReflow && m_shouldReflowBlock) {
         Platform::IntPoint roundedReflowOffset(
             std::floorf(m_finalAnimationDocumentScrollPositionReflowOffset.x()),
@@ -3648,7 +3656,7 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     bool stillNeedsLayout = needsLayout;
     while (stillNeedsLayout) {
         setNeedsLayout();
-        requestLayoutIfNeeded();
+        layoutIfNeeded();
         stillNeedsLayout = false;
 
         // Emulate the zoomToFitWidthOnLoad algorithm if we're rotating.
@@ -3676,7 +3684,7 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         IntRect actualVisibleRect = enclosingIntRect(rotationMatrix.inverse().mapRect(FloatRect(viewportRect)));
         m_mainFrame->view()->setFixedReportedSize(actualVisibleRect.size());
         m_mainFrame->view()->repaintFixedElementsAfterScrolling();
-        requestLayoutIfNeeded();
+        layoutIfNeeded();
         m_mainFrame->view()->updateFixedElementsAfterScrolling();
     }
 
@@ -3821,7 +3829,7 @@ void WebPage::setDefaultLayoutSize(const Platform::IntSize& platformSize)
     if (needsLayout) {
         d->setNeedsLayout();
         if (!d->isLoading())
-            d->requestLayoutIfNeeded();
+            d->layoutIfNeeded();
     }
 }
 
@@ -5518,7 +5526,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     // to texture.
     // The layout can also turn of compositing altogether, so we need to be prepared
     // to handle a one shot drawing synchronization after the layout.
-    requestLayoutIfNeeded();
+    layoutIfNeeded();
 
     // If we transitioned to drawing the root layer using compositor instead of
     // backing store, doing a one shot drawing synchronization with the
