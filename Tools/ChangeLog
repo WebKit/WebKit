@@ -1,3 +1,13 @@
+2013-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Update ORWT to know about the Windows 8 SDK and Debug Tools.
+        https://bugs.webkit.org/show_bug.cgi?id=116079
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (setUpWindowsCrashLogSaving): Locate ntsd.exe and use it.
+
 2013-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move generated ColorData.cpp, WebKitFontFamilyNames.(cpp|h) build targets into libPlatform

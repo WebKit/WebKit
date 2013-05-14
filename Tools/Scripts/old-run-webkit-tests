@@ -2827,16 +2827,23 @@ sub setUpWindowsCrashLogSaving()
         return;
     }
 
-    my $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Debugging Tools for Windows (x86)", "ntsd.exe");
-    unless (-f $ntsdPath) {
-        $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{ProgramW6432}), "Debugging Tools for Windows (x64)", "ntsd.exe");
-        unless (-f $ntsdPath) {
-            $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{SYSTEMROOT}), "system32", "ntsd.exe");
-            unless (-f $ntsdPath) {
-                print STDERR "Can't find ntsd.exe. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
-                return;
-            }
+    my @possiblePaths = (
+        File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"),
+        File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
+        File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Debugging Tools for Windows (x86)", "ntsd.exe"),
+        File::Spec->catfile(toCygwinPath($ENV{ProgramW6432}), "Debugging Tools for Windows (x64)", "ntsd.exe"),
+        File::Spec->catfile(toCygwinPath($ENV{SYSTEMROOT}), "system32", "ntsd.exe"),
+    );
+
+    my $ntsdPath = shift @possiblePaths;
+
+    while (not -f $ntsdPath) {
+        if (!@possiblePaths) {
+            print STDERR "Can't find ntsd.exe. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
+            return;
         }
+
+        $ntsdPath = shift @possiblePaths;
     }
 
     # If we used -c (instead of -cf) we could pass the commands directly on the command line. But
