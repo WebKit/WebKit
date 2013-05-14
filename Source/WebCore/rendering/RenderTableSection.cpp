@@ -255,199 +255,6 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     cell->setCol(table()->effColToCol(col));
 }
 
-// Distribute rowSpan cell height in rows those comes in rowSpan cell
-void RenderTableSection::distributeRowSpanHeightToRows(Vector<RenderTableCell*, 5>& rowSpanCells)
-{
-    RenderTableCell* cell;
-
-    // Rearranging the rowSpan cells in the order, we need to calculate the height of the rows.
-    cell = rowSpanCells[0];
-    for (unsigned i = 1; i < rowSpanCells.size(); i++) {
-        for (unsigned j = i; j > 0; j--) {
-            if (cell->rowIndex() == rowSpanCells[j]->rowIndex()) {
-                // if 2 or more cells have same rowIndex then height of the row will be calculated first for the cell
-                // which have lower rowSpan value.
-                if (cell->rowSpan() > rowSpanCells[j]->rowSpan()) {
-                    rowSpanCells[j - 1] = rowSpanCells[j];
-                    rowSpanCells[j - 1] = cell;
-                    if (j > 1)
-                        cell = rowSpanCells[j - 2];
-                } else if (cell->rowSpan() == rowSpanCells[j]->rowSpan()) {
-                    // If 2 or more cells have same rowIndex and same rowSpan then height of the row will be calculated
-                    // only for the cell which have more height. So more height cell pushed back in the list.
-                    if (cell->logicalHeightForRowSizing() > rowSpanCells[j]->logicalHeightForRowSizing()) {
-                        rowSpanCells[j - 1] = rowSpanCells[j];
-                        rowSpanCells[j] = cell;
-                    }
-                    break;
-                } else
-                    break;
-            } else {
-                // Height of the rows will be calculated first for the cell which comes under the boundries of other rowSpan cell.
-                if ((cell->rowIndex() + cell->rowSpan()) > rowSpanCells[j]->rowIndex() 
-                    && (cell->rowIndex() + cell->rowSpan()) >= (rowSpanCells[j]->rowIndex() + rowSpanCells[j]->rowSpan())) {
-                    rowSpanCells[j - 1] = rowSpanCells[j];
-                    rowSpanCells[j] = cell;
-                    if (j > 1)
-                        cell = rowSpanCells[j - 2];
-                } else
-                    break;
-            }
-        }
-        cell = rowSpanCells[i];
-    }
-
-    unsigned changedHeight = 0;
-    unsigned lastRowIndex = 0;
-    unsigned lastRowSpan = 1;
-
-    // Here we are recalculating the height of the rows in the rowSpan
-    for (unsigned i = 0; i < rowSpanCells.size(); i++) {
-        cell = rowSpanCells[i];
-
-        // If 2 or more cells have same rowIndex and same rowSpan then height of the row will be calculated
-        // only for the cell which have more height.
-        if ((i + 1) < rowSpanCells.size()) {
-            if (cell->rowIndex() == rowSpanCells[i + 1]->rowIndex() && cell->rowSpan() == rowSpanCells[i + 1]->rowSpan())
-                continue;
-        }
-
-        unsigned rowSpan = cell->rowSpan();
-        unsigned rowIndex = cell->rowIndex();
-        bool changedHeightApplied = false;
-        int initialPos = m_rowPos[rowIndex + rowSpan];
-
-        // Apply height changed by previous rowSpan cells
-        if (changedHeight > 0) {
-            // if previous rowSpan cell comes under the boundries of current rowSpan cell then apply the changed height
-            // to remain rows below previous rowSpan cell and till current rowSpan cell end boundry
-            if (lastRowIndex >= rowIndex) {
-                for (unsigned row = lastRowIndex + lastRowSpan; row <= (rowIndex + rowSpan); row++)
-                    m_rowPos[row] += changedHeight;
-
-                changedHeightApplied = true;
-            } else {
-                // if rowIndex of current rowSpan cell comes under the boundries of previous rowSpan cell then apply the changed height
-                // to remain rows below previous rowSpan cell and till current rowSpan cell end boundry
-                if (rowIndex < lastRowIndex + lastRowSpan) {
-                    for (unsigned row = lastRowIndex + lastRowSpan; row <= (rowIndex + rowSpan); row++)
-                        m_rowPos[row] += changedHeight;
-
-                    changedHeightApplied = true;
-                } else {
-                    // If rowIndex of current rowSpan cell is greater than the previous row span cell then apply the changed height
-                    // to rows below end of previous rowSpan cell and above current rowSpan cell.
-                    for (unsigned row = lastRowIndex + lastRowSpan; row < rowIndex; row++)
-                        m_rowPos[row] += changedHeight;
-                }
-            }
-        }
-
-        lastRowIndex = rowIndex;
-        lastRowSpan = rowSpan;
-
-        int totalRowsHeight = 0;
-        // Getting rowSpan cell height
-        int rowSpanCellHeight = cell->logicalHeightForRowSizing();
-        Vector<int> rowsHeight(rowSpan);
-        bool rowWithOnlyRowSpanCells = false;
-        int spacing = table()->vBorderSpacing();
-        int lastRowWithValidHeight = rowIndex;
-
-        unsigned effectiveCols = 0;
-        // Calculating number of effective columns within rowSpan
-        for (unsigned row = rowIndex; row < (rowIndex + rowSpan); row++) {
-            unsigned totalCols = m_grid[row].row.size();
-            unsigned col = 0;
-            unsigned nCols = 0;
-
-            if (totalCols) {
-                CellStruct rowSpanCell;
-                do {
-                    rowSpanCell = cellAt(row, col);
-                    if (rowSpanCell.cells.size())
-                        nCols++;
-                    else
-                        break;
-                    col++;
-                } while (col < totalCols);
-
-                if (nCols > effectiveCols)
-                    effectiveCols = nCols;
-            }
-        }
-
-        // Storing height of rows in current rowSpan cell, getting total height of rows and adjusting rowSpan cell height with border spacing.
-        for (unsigned row = rowIndex; row < (rowIndex + rowSpan); row++) {
-            rowsHeight[row - rowIndex] = (m_rowPos[row + 1] - (m_grid[row].rowRenderer ? spacing : 0)) - m_rowPos[row];
-            // If row height is zero and row having only rowSpan cells then one part of rowSpan cell height is applied to the row.
-            if (!rowsHeight[row - rowIndex]) {
-                unsigned totalCols = m_grid[row].row.size();
-                unsigned col = 0;
-
-                if (totalCols) {
-                    CellStruct rowSpanCell;
-                    unsigned rowSpanCells = 0;
-
-                    // Finding number of rowSpan cells.
-                    do {
-                        rowSpanCell = cellAt(row, col);
-                        if (rowSpanCell.cells.size() && rowSpanCell.cells[0]->rowSpan() > 1)
-                            rowSpanCells++;
-
-                        col++;
-                    } while (col < totalCols);
-
-                    // Row having only rowSpan cells then one part of rowSpan cell height is applied to the row.
-                    if (rowSpanCells == effectiveCols) {
-                        rowWithOnlyRowSpanCells = true;
-                        rowsHeight[row - rowIndex] = rowSpanCellHeight / rowSpan - (m_grid[row].rowRenderer ? spacing : 0);
-                    }
-                }
-            }
-            totalRowsHeight += rowsHeight[row - rowIndex];
-            if (rowsHeight[row - rowIndex])
-                lastRowWithValidHeight = row;
-            rowSpanCellHeight -= m_grid[row].rowRenderer ? spacing : 0;
-        }
-        rowSpanCellHeight += m_grid[lastRowWithValidHeight].rowRenderer ? spacing : 0;
-
-        if (rowWithOnlyRowSpanCells && rowSpanCellHeight < totalRowsHeight)
-            rowSpanCellHeight = totalRowsHeight;
-
-        if (rowWithOnlyRowSpanCells || (totalRowsHeight && rowSpanCellHeight > totalRowsHeight)) {
-            // Recalculating the height of rows based on rowSpan cell height if rowSpan cell height is more than total height of rows.
-            int remainHeight = rowSpanCellHeight;
-
-            if (!changedHeightApplied)
-                m_rowPos[rowIndex] += changedHeight;
-            for (unsigned row = rowIndex; row < (rowIndex + rowSpan); row++) {
-                int rowHeight = (rowSpanCellHeight * rowsHeight[row - rowIndex]) / totalRowsHeight;
-                remainHeight -= rowHeight;
-                m_rowPos[row + 1] = m_rowPos[row] + rowHeight + (m_grid[row].rowRenderer ? spacing : 0);
-            }
-            for (unsigned row = lastRowWithValidHeight; row < (rowIndex + rowSpan); row++)
-                m_rowPos[row + 1] += remainHeight;
-
-            changedHeight = (m_rowPos[rowIndex + rowSpan] - initialPos);
-            m_rowPos[rowIndex + rowSpan] -= changedHeight;
-        } else {
-            // Just apply changed height by previous rowSpan cells to rows in current rowSpan if it is not already applied.
-            if (!changedHeightApplied) {
-                for (unsigned row = rowIndex; row < rowIndex + rowSpan; row++)
-                    m_rowPos[row] += changedHeight;
-            } else
-                m_rowPos[rowIndex + rowSpan] -= changedHeight;
-        }
-    }
-
-    unsigned totalRows = m_grid.size();
-
-    // Apply changed height by rowSpan cells to rows present at the end of the table
-    for (unsigned row = lastRowIndex + lastRowSpan; row <= totalRows; row++)
-        m_rowPos[row] += changedHeight;
-}
-
 int RenderTableSection::calcRowLogicalHeight()
 {
 #ifndef NDEBUG
@@ -468,9 +275,6 @@ int RenderTableSection::calcRowLogicalHeight()
 
     unsigned totalRows = m_grid.size();
 
-    // Keeps all rowSpan cells.
-    Vector<RenderTableCell*, 5> rowSpanCells;
-
     for (unsigned r = 0; r < totalRows; r++) {
         m_grid[r].baseline = 0;
         LayoutUnit baselineDescent = 0;
@@ -488,22 +292,31 @@ int RenderTableSection::calcRowLogicalHeight()
                 if (current.inColSpan && cell->rowSpan() == 1)
                     continue;
 
-                if (cell->rowSpan() > 1) {
-                    // Storing rowSpan cells if row and rowIndex are same.
-                    if (cell->rowIndex() == r) {
-                        rowSpanCells.append(cell);
+                // FIXME: We are always adding the height of a rowspan to the last rows which doesn't match
+                // other browsers. See webkit.org/b/52185 for example.
+                if ((cell->rowIndex() + cell->rowSpan() - 1) != r) {
+                    // We will apply the height of the rowspan to the current row if next row is not valid.
+                    if ((r + 1) < totalRows) {
+                        unsigned col = 0;
+                        CellStruct nextRowCell = cellAt(r + 1, col);
 
-                        // Find out the baseline. The baseline is set on the first row in a rowSpan.
-                        if (cell->isBaselineAligned()) {
-                            LayoutUnit baselinePosition = cell->cellBaselinePosition();
-                            if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
-                                m_grid[r].baseline = max(m_grid[r].baseline, baselinePosition);
-                                m_rowPos[r + 1] = max<int>(m_rowPos[r + 1], m_rowPos[r] + m_grid[r].baseline);
-                            }
+                        // We are trying to find that next row is valid or not.
+                        while (nextRowCell.cells.size() && nextRowCell.cells[0]->rowSpan() > 1 && nextRowCell.cells[0]->rowIndex() < (r + 1)) {
+                            col++;
+                            if (col < totalCols)
+                                nextRowCell = cellAt(r + 1, col);
+                            else
+                                break;
                         }
+
+                        // We are adding the height of the rowspan to the current row if next row is not valid.
+                        if (col < totalCols && nextRowCell.cells.size())
+                            continue;
                     }
-                    continue;
                 }
+
+                // For row spanning cells, |r| is the last row in the span.
+                unsigned cellStartRow = cell->rowIndex();
 
                 if (cell->hasOverrideHeight()) {
                     if (!statePusher.didPush()) {
@@ -518,15 +331,22 @@ int RenderTableSection::calcRowLogicalHeight()
                 }
 
                 int cellLogicalHeight = cell->logicalHeightForRowSizing();
-                m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r] + cellLogicalHeight);
+                m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
 
-                // Find out the baseline.
+                // Find out the baseline. The baseline is set on the first row in a rowspan.
                 if (cell->isBaselineAligned()) {
                     LayoutUnit baselinePosition = cell->cellBaselinePosition();
                     if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
-                        m_grid[r].baseline = max(m_grid[r].baseline, baselinePosition);
-                        baselineDescent = max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
-                        m_rowPos[r + 1] = max<int>(m_rowPos[r + 1], m_rowPos[r] + m_grid[r].baseline + baselineDescent);
+                        m_grid[cellStartRow].baseline = max(m_grid[cellStartRow].baseline, baselinePosition);
+                        // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
+                        // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
+                        // non-spanning cells when computing a spanning cell's extent.
+                        int cellStartRowBaselineDescent = 0;
+                        if (cell->rowSpan() == 1) {
+                            baselineDescent = max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
+                            cellStartRowBaselineDescent = baselineDescent;
+                        }
+                        m_rowPos[cellStartRow + 1] = max<int>(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);
                     }
                 }
             }
@@ -536,10 +356,6 @@ int RenderTableSection::calcRowLogicalHeight()
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
         m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r]);
     }
-
-    // Calculating and applying the height of the rows in rowSpan if any rowSpan cell present in the table.
-    if (!rowSpanCells.isEmpty())
-        distributeRowSpanHeightToRows(rowSpanCells);
 
     ASSERT(!needsLayout());
 

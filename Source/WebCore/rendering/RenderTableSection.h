@@ -222,8 +222,6 @@ private:
 
     void ensureRows(unsigned);
 
-    void distributeRowSpanHeightToRows(Vector<RenderTableCell*, 5>& rowSpanCells);
-
     void distributeExtraLogicalHeightToPercentRows(int& extraLogicalHeight, int totalPercent);
     void distributeExtraLogicalHeightToAutoRows(int& extraLogicalHeight, unsigned autoRowsCount);
     void distributeRemainingExtraLogicalHeight(int& extraLogicalHeight);
