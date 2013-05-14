@@ -346,15 +346,6 @@ platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
 # WebKitTestRunner needs layoutTestController.addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
-# WebKitTestRunner needs to sanitize file urls in the output
-http/tests/misc/image-blocked-src-change.html
-http/tests/misc/image-blocked-src-no-change.html
-userscripts/script-not-run-for-fragments.html
-userscripts/user-script-image-document.html
-userscripts/user-script-plugin-document.html
-userscripts/user-script-audio-document.html
-userscripts/user-script-video-document.html
-
 # WebKit2 needs showModalDialog
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html

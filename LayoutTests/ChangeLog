@@ -1,3 +1,14 @@
+2013-05-14  Alex Christensen  <achristensen@apple.com>
+
+        The tests marked with the comment "WebKitTestRunner needs to sanitize file urls in the output"
+        run successfully with WebKitTestRunner.  They should not be skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=116083
+
+        Reviewed by Darin Adler.
+
+        * platform/wk2/TestExpectations:
+        Unskip tests.
+
 2013-05-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.
