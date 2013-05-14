@@ -366,6 +366,11 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     Page* page = document()->page();
     if (!page)
         return;
+
+    // Reset any author styles that may apply as we only want explicit
+    // styles defined in the injected user agents stylesheets to specify
+    // the look-and-feel of the snapshotted plug-in overlay. 
+    root->setResetStyleInheritance(true);
     
     String mimeType = loadedMimeType();
 

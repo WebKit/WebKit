@@ -1,3 +1,16 @@
+2013-05-14  Antoine Quint  <graouts@apple.com>
+
+        Snapshotted plug-ins shadow tree should reset style inheritance
+        https://bugs.webkit.org/show_bug.cgi?id=116098
+
+        Reset the styles such that only injected user-agent stylesheets affect
+        the rendering of snapshotted plug-ins' shadow content.
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+
 2013-05-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Improve hit testing for empty regions
