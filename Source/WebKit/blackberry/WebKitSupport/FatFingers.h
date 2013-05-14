@@ -72,9 +72,6 @@ private:
 
     typedef std::pair<WebCore::Node*, Platform::IntRectRegion> IntersectingRegion;
 
-    enum CachedResultsStrategy { GetFromRenderTree = 0, GetFromCache };
-    typedef HashMap<RefPtr<WebCore::Document>, ListHashSet<RefPtr<WebCore::Node> > > CachedRectHitTestResults;
-
     bool checkFingerIntersection(const Platform::IntRectRegion&,
         const Platform::IntRectRegion& remainingFingerRegion,
         WebCore::Node*,
@@ -105,7 +102,6 @@ private:
     WebPagePrivate* m_webPage;
     WebCore::IntPoint m_contentPos;
     TargetType m_targetType;
-    CachedRectHitTestResults m_cachedRectHitTestResults;
 };
 
 class FatFingersResult {

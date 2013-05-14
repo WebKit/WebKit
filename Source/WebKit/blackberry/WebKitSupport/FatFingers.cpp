@@ -159,8 +159,6 @@ const FatFingersResult FatFingers::findBestPoint()
     IntRect viewportRect = m_webPage->mainFrame()->view()->visibleContentRect();
     m_contentPos = Platform::pointClampedToRect(m_contentPos, viewportRect);
 
-    m_cachedRectHitTestResults.clear();
-
     FatFingersResult result(m_contentPos);
 
     // Lets set nodeUnderFatFinger to the result of a point based hit test here. If something
@@ -198,8 +196,6 @@ const FatFingersResult FatFingers::findBestPoint()
     IntRectRegion remainingFingerRegion = IntRectRegion(fingerRectForPoint(m_contentPos));
 
     bool foundOne = findIntersectingRegions(m_webPage->m_mainFrame->document(), intersectingRegions, remainingFingerRegion);
-
-    m_cachedRectHitTestResults.clear();
 
     if (!foundOne)
         return result;
@@ -314,7 +310,11 @@ bool FatFingers::findIntersectingRegions(Document* document, Vector<Intersecting
     // Iterate over the list of nodes (and subrects of nodes where possible), for each saving the
     // intersection of the bounding box with the finger rect.
     ListHashSet<RefPtr<Node> > intersectedNodes;
-    getNodesFromRect(document, frameContentPos, intersectedNodes);
+
+    if (m_webPage->m_cachedRectHitTestResults.contains(document))
+        intersectedNodes = m_webPage->m_cachedRectHitTestResults.get(document);
+    else
+        getNodesFromRect(document, frameContentPos, intersectedNodes);
 
     ListHashSet<RefPtr<Node> >::const_iterator it = intersectedNodes.begin();
     ListHashSet<RefPtr<Node> >::const_iterator end = intersectedNodes.end();
@@ -478,7 +478,7 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
 
     document->renderView()->layer()->hitTest(requestType, result);
     intersectedNodes = result.rectBasedTestResult();
-    m_cachedRectHitTestResults.add(document, intersectedNodes);
+    m_webPage->m_cachedRectHitTestResults.add(document, intersectedNodes);
 }
 
 void FatFingers::setSuccessfulFatFingersResult(FatFingersResult& result, Node* bestNode, const WebCore::IntPoint& adjustedPoint)
