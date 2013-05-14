@@ -45,6 +45,7 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformPerformanceMonitor.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
 #include <BlackBerryPlatformViewportAccessor.h>
@@ -1160,6 +1161,8 @@ void BackingStorePrivate::blitVisibleContents(bool force)
     if (dstRect.isEmpty())
         return;
 
+    BlackBerry::Platform::PerformanceMonitor::instance()->reportFrameRenderBegin();
+
     const Platform::IntRect pixelViewportRect = viewportAccessor->pixelViewportRect();
     const Platform::FloatRect documentViewportRect = viewportAccessor->documentFromPixelContents(pixelViewportRect);
     Platform::IntRect pixelSrcRect = pixelViewportRect;
@@ -1351,6 +1354,8 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 #endif
 
     m_webPage->client()->postToSurface(dstRect);
+
+    BlackBerry::Platform::PerformanceMonitor::instance()->reportFrameRenderEnd(true /*didRender*/);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

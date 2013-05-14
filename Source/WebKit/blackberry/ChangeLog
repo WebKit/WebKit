@@ -1,3 +1,19 @@
+2013-05-14  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Hook up frame render begin/end in PerformanceMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=116110
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Jeff Rogers, Jonathan Jiang.
+        Internal PR 299155.
+
+        Mark frame render begin & end for BlackBerry performance monitoring
+        in blitVisibleContents.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Use requestAnimationFrame for animations
