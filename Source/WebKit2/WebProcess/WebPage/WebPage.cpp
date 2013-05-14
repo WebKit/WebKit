@@ -681,6 +681,11 @@ String WebPage::renderTreeExternalRepresentation() const
     return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);
 }
 
+String WebPage::renderTreeExternalRepresentationForPrinting() const
+{
+    return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextPrintingMode);
+}
+
 uint64_t WebPage::renderTreeSize() const
 {
     if (!m_page)

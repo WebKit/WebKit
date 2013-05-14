@@ -1,3 +1,20 @@
+2013-05-13  Alex Christensen  <achristensen@apple.com>
+
+        Added testRunner.setPrinting.
+        https://bugs.webkit.org/show_bug.cgi?id=42693
+        rdar://problem/8213845
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderTreeExternalRepresentationForPrinting): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        Added WKBundlePageCopyRenderTreeExternalRepresentationForPrinting declaration.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::renderTreeExternalRepresentationForPrinting): Added.
+        * WebProcess/WebPage/WebPage.h:
+        Added renderTreeExternalRepresentationForPrinting declaration.
+
 2013-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Add support for updating the Web Inspector toolbar height.

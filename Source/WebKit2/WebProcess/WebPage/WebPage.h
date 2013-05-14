@@ -295,6 +295,7 @@ public:
     EditorState editorState() const;
 
     String renderTreeExternalRepresentation() const;
+    String renderTreeExternalRepresentationForPrinting() const;
     uint64_t renderTreeSize() const;
 
     void setTracksRepaints(bool);

@@ -1,3 +1,21 @@
+2013-05-13  Alex Christensen  <achristensen@apple.com>
+
+        Added testRunner.setPrinting.
+        https://bugs.webkit.org/show_bug.cgi?id=42693
+        rdar://problem/8213845
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        Added setPrinting JavaScript function.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        Dump the external representation for printing if setPrinting has been called.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::isPrinting): Added.
+        (WTR::TestRunner::setPrinting): Added.
+        Added and initialized m_isPrinting member boolean.
+
 2013-05-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [webkitpy] Make FileInfo.repository_name support SVN version > 1.6

@@ -73,6 +73,7 @@ interface TestRunner {
     void dispatchPendingLoadRequests();
     void setCacheModel(int model);
     void setAsynchronousSpellCheckingEnabled(boolean value);
+    void setPrinting();
 
     // Special DOM functions.
     void clearBackForwardList();

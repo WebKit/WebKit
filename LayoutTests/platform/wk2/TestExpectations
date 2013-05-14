@@ -183,17 +183,6 @@ fast/encoding/idn-security.html
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html
 
-# WebKitTestRunner needs layoutTestController.setPrinting
-# <https://bugs.webkit.org/show_bug.cgi?id=42693>
-printing/compositing-layer-printing.html
-printing/iframe-print.html
-printing/media-queries-print.html
-printing/page-rule-in-media-query.html
-printing/setPrinting.html
-printing/single-line-must-not-be-split-into-two-pages.html
-printing/simultaneous-position-float-change.html
-printing/width-overflow.html
-
 # WebKitTestRunner needs layoutTestController.setWillSendRequestClearHeader
 # <https://bugs.webkit.org/show_bug.cgi?id=42699>
 http/tests/security/no-referrer.html
