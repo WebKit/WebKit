@@ -1,3 +1,13 @@
+2013-05-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip several tests which already passed and add png expected results.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/selection/doubleclick-crash-expected.png: Added.
+        * platform/efl/editing/selection/select-missing-image-expected.png: Added.
+
 2013-05-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         compositing/transitions/transform-on-large-layer.html is flaky
