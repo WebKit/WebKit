@@ -1,3 +1,18 @@
+2013-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Ellipsis text is placed to wrong position, when the truncated text is fully cut off in RTL direction.
+        https://bugs.webkit.org/show_bug.cgi?id=115858
+
+        Reviewed by Darin Adler.
+
+        Take text direction into account to calculate ellipsis position in case of
+        full truncation.
+
+        Test: fast/css/text-overflow-ellipsis-full-truncate-rtl.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Implement platform strategies
