@@ -43,7 +43,7 @@ namespace WebKit {
 
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
-    m_page->performDictionaryLookupForSelection(DictionaryPopupInfo::ContextMenu, frame, frame->selection()->selection());
+    m_page->performDictionaryLookupForSelection(frame, frame->selection()->selection());
 }
 
 bool WebContextMenuClient::isSpeaking()

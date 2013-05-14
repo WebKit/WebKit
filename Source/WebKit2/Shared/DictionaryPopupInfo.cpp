@@ -37,7 +37,6 @@ namespace WebKit {
 void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << origin;
-    encoder.encodeEnum(type);
 
 #if PLATFORM(MAC)
     bool hadOptions = options;
@@ -50,8 +49,6 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder& decoder, DictionaryPopupInfo& result)
 {
     if (!decoder.decode(result.origin))
-        return false;
-    if (!decoder.decodeEnum(result.type))
         return false;
 #if PLATFORM(MAC)
     bool hadOptions;

@@ -501,7 +501,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
     VisibleSelection selection = m_page->focusController()->focusedOrMainFrame()->selection()->selection();
     if (shouldUseSelection(position, selection)) {
-        performDictionaryLookupForSelection(DictionaryPopupInfo::HotKey, frame, selection);
+        performDictionaryLookupForSelection(frame, selection);
         return;
     }
 
@@ -522,10 +522,10 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!finalRange)
         return;
 
-    performDictionaryLookupForRange(DictionaryPopupInfo::HotKey, frame, finalRange.get(), options);
+    performDictionaryLookupForRange(frame, finalRange.get(), options);
 }
 
-void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type, Frame* frame, const VisibleSelection& selection)
+void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
 {
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -549,10 +549,10 @@ void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type
     // Since we already have the range we want, we just need to grab the returned options.
     WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
 
-    performDictionaryLookupForRange(type, frame, selectedRange.get(), options);
+    performDictionaryLookupForRange(frame, selectedRange.get(), options);
 }
 
-void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Frame* frame, Range* range, NSDictionary *options)
+void WebPage::performDictionaryLookupForRange(Frame* frame, Range* range, NSDictionary *options)
 {
     if (range->text().stripWhiteSpace().isEmpty())
         return;
@@ -568,7 +568,6 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
     
     DictionaryPopupInfo dictionaryPopupInfo;
-    dictionaryPopupInfo.type = type;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style->fontMetrics().ascent() * pageScaleFactor()));
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
 

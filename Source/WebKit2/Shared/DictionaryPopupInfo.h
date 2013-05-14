@@ -43,13 +43,7 @@ struct DictionaryPopupInfo {
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, DictionaryPopupInfo&);
 
-    enum Type {
-        ContextMenu,
-        HotKey
-    };
-
     WebCore::FloatPoint origin;
-    Type type;
 #if PLATFORM(MAC)
     RetainPtr<CFDictionaryRef> options;
 #endif

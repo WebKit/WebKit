@@ -920,7 +920,6 @@ IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CGPoint point)
 {
     DictionaryPopupInfo dictionaryPopupInfo;
-    dictionaryPopupInfo.type = DictionaryPopupInfo::ContextMenu;
     dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
 
     AttributedString attributedString;

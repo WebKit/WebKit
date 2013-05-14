@@ -514,7 +514,7 @@ public:
     void dummy(bool&);
 
 #if PLATFORM(MAC)
-    void performDictionaryLookupForSelection(DictionaryPopupInfo::Type, WebCore::Frame*, const WebCore::VisibleSelection&);
+    void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&);
 
     bool isSpeaking();
     void speak(const String&);
@@ -760,7 +760,7 @@ private:
 
 #if PLATFORM(MAC)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*, NSDictionary *options);
+    void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range*, NSDictionary *options);
 
     void setWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);

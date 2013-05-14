@@ -1,3 +1,26 @@
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove unused "type" field from DictionaryPopupInfo
+        https://bugs.webkit.org/show_bug.cgi?id=116011
+
+        Reviewed by Darin Adler.
+
+        It is unused, and furthermore, PDFPlugin sets it incorrectly anyway.
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showDefinitionForAttributedString):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        (WebKit::WebPage::performDictionaryLookupForRange):
+
 2013-05-14  Michael Brüning  <michael.bruning@digia.com>
 
         [WK2] Make WebPageProxy use deviceScaleFactor() in creationParameters().
