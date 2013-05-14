@@ -1,3 +1,15 @@
+2013-05-14  Andrei Bucur  <abucur@adobe.com>
+
+        Modify checkLayout to receive the log container as an optional parameter
+        https://bugs.webkit.org/show_bug.cgi?id=112793
+
+        Reviewed by Darin Adler.
+
+        Add a way to specify the container manually for checkLayout. This is helpful to measure regions for nested
+        named flows (and probably other cases as well).
+
+        * resources/check-layout.js: Added an optional parameter to window.checkLayout.
+
 2013-04-30  Balazs Kelemen  <b.kelemen@sisa.samsung.com>
 
         [GStreamer] cannot seek after video finished

@@ -179,7 +179,7 @@ function checkExpectedValues(node, failures)
     return output.checked;
 }
 
-window.checkLayout = function(selectorList)
+window.checkLayout = function(selectorList, overrideContainer)
 {
     if (!selectorList) {
         console.error("You must provide a CSS selector of nodes to check.");
@@ -194,7 +194,7 @@ window.checkLayout = function(selectorList)
         checkedLayout |= checkExpectedValues(node.parentNode, failures);
         checkedLayout |= checkSubtreeExpectedValues(node, failures);
 
-        var container = node.parentNode.className == 'container' ? node.parentNode : node;
+        var container = overrideContainer || (node.parentNode.className == 'container' ? node.parentNode : node);
 
         var pre = document.createElement('pre');
         if (failures.length)
