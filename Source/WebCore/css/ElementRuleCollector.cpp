@@ -277,22 +277,6 @@ void ElementRuleCollector::matchHostRules(bool includeEmptyRules)
 #endif
 }
 
-#if ENABLE(SHADOW_DOM)
-inline void ElementRuleCollector::matchShadowDistributedRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
-{
-    if (m_ruleSets.shadowDistributedRules().isEmpty())
-        return;
-
-    TemporaryChange<bool> canUseFastReject(m_canUseFastReject, false);
-    TemporaryChange<SelectorChecker::BehaviorAtBoundary> behaviorAtBoundary(m_behaviorAtBoundary, SelectorChecker::CrossesBoundary);
-
-    Vector<MatchRequest> matchRequests;
-    m_ruleSets.shadowDistributedRules().collectMatchRequests(includeEmptyRules, matchRequests);
-    for (size_t i = 0; i < matchRequests.size(); ++i)
-        collectMatchingRules(matchRequests[i], ruleRange);
-}
-#endif
-
 void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 {
     clearMatchedRules();
@@ -306,9 +290,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
-#if ENABLE(SHADOW_DOM)
-    matchShadowDistributedRules(includeEmptyRules, ruleRange);
-#endif
+
     sortAndTransferMatchedRules();
 
     matchScopedAuthorRules(includeEmptyRules);

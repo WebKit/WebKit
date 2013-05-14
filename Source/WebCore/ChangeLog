@@ -1,3 +1,46 @@
+2013-05-14  Antti Koivisto  <antti@apple.com>
+
+        Remove ::-webkit-distributed()
+        https://bugs.webkit.org/show_bug.cgi?id=116106
+
+        Reviewed by Andreas Kling.
+
+        This experimental Shadow DOM selector code is unused and has no owner.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::rewriteSpecifiersWithNamespaceIfNeeded):
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::CSSParserSelector):
+        * css/CSSParserValues.h:
+        (CSSParserSelector):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.cpp:
+        * css/CSSSelectorList.h:
+        (CSSSelectorList):
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::resetAuthorStyle):
+        * css/DocumentRuleSets.h:
+        (DocumentRuleSets):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        * css/ElementRuleCollector.h:
+        (ElementRuleCollector):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        * html/shadow/InsertionPoint.cpp:
+        * html/shadow/InsertionPoint.h:
+
 2013-05-14  Daker Fernandes Pinheiro  <daker.pinheiro@openbossa.org>
 
         Remove RenderTheme::supportsCalendarPicker

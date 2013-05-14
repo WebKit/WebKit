@@ -148,9 +148,6 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         case CSSSelector::DirectAdjacent:
         case CSSSelector::IndirectAdjacent:
         case CSSSelector::ShadowDescendant:
-#if ENABLE(SHADOW_DOM)
-        case CSSSelector::ShadowDistributed:
-#endif
             skipOverSubselectors = true;
             break;
         case CSSSelector::Descendant:

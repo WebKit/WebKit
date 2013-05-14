@@ -215,7 +215,6 @@ static inline bool isCSSTokenAString(int yytype)
 %token <string> CUEFUNCTION
 #endif
 %token <string> NOTFUNCTION
-%token <string> DISTRIBUTEDFUNCTION
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
@@ -1454,19 +1453,6 @@ pseudo:
                 $$ = 0;
         } else
             $$ = 0;
-    }
-#endif
-#if ENABLE_SHADOW_DOM
-    | ':' ':' DISTRIBUTEDFUNCTION maybe_space selector maybe_space ')' {
-        if (!$5)
-            $$ = 0;
-        else {
-            $$ = parser->createFloatingSelector();
-            $$->setMatch(CSSSelector::PseudoElement);
-            $$->setFunctionArgumentSelector($5);
-            $3.lower();
-            $$->setValue($3);
-        }
     }
 #endif
     // use by :-webkit-any.

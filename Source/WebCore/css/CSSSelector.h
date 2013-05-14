@@ -78,9 +78,6 @@ namespace WebCore {
             IndirectAdjacent,
             SubSelector,
             ShadowDescendant,
-#if ENABLE(SHADOW_DOM)
-            ShadowDistributed
-#endif
         };
 
         enum PseudoType {
@@ -169,9 +166,6 @@ namespace WebCore {
 #if ENABLE(IFRAME_SEAMLESS)
             PseudoSeamlessDocument,
 #endif
-#if ENABLE(SHADOW_DOM)
-            PseudoDistributed
-#endif
         };
 
         enum MarginBoxType {
@@ -226,10 +220,6 @@ namespace WebCore {
         bool isCustomPseudoElement() const;
         bool isSiblingSelector() const;
         bool isAttributeSelector() const;
-#if ENABLE(SHADOW_DOM)
-        bool isDistributedPseudoElement() const;
-        bool isShadowDistributed() const;
-#endif
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
@@ -341,18 +331,6 @@ inline bool CSSSelector::isAttributeSelector() const
         || m_match == CSSSelector::Begin
         || m_match == CSSSelector::End;
 }
-
-#if ENABLE(SHADOW_DOM)
-inline bool CSSSelector::isDistributedPseudoElement() const
-{
-    return m_match == PseudoElement && pseudoType() == PseudoDistributed;
-}
-
-inline bool CSSSelector::isShadowDistributed() const
-{
-    return m_relation == CSSSelector::ShadowDistributed;
-}
-#endif
 
 inline void CSSSelector::setValue(const AtomicString& value)
 {
