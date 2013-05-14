@@ -58,6 +58,7 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, C
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_ForegroundColorARGB, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, CFStringRef)
 
 #define kCMTextMarkupAttribute_Alignment getkCMTextMarkupAttribute_Alignment()
 #define kCMTextMarkupAlignmentType_Start getkCMTextMarkupAlignmentType_Start()
@@ -77,6 +78,7 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB
 #define kCMTextMarkupAttribute_FontFamilyName getkCMTextMarkupAttribute_FontFamilyName()
 #define kCMTextMarkupAttribute_ForegroundColorARGB getkCMTextMarkupAttribute_ForegroundColorARGB()
 #define kCMTextMarkupAttribute_BackgroundColorARGB getkCMTextMarkupAttribute_BackgroundColorARGB()
+#define kCMTextMarkupAttribute_CharacterBackgroundColorARGB getkCMTextMarkupAttribute_CharacterBackgroundColorARGB()
 
 using namespace std;
 
@@ -261,7 +263,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                     tagStart.append(rightToLeftMark);
                 continue;
             }
-            
+
             if (CFStringCompare(key, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, 0) == kCFCompareEqualTo) {
                 if (CFGetTypeID(value) != CFNumberGetTypeID())
                     continue;
@@ -272,7 +274,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 cueData->setBaseFontSize(baseFontSize);
                 continue;
             }
-            
+
             if (CFStringCompare(key, kCMTextMarkupAttribute_RelativeFontSize, 0) == kCFCompareEqualTo) {
                 if (CFGetTypeID(value) != CFNumberGetTypeID())
                     continue;
@@ -295,7 +297,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 cueData->setFontName(valueString);
                 continue;
             }
-            
+
             if (CFStringCompare(key, kCMTextMarkupAttribute_ForegroundColorARGB, 0) == kCFCompareEqualTo) {
                 CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
@@ -316,6 +318,17 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
                 cueData->setBackgroundColor(color);
+            }
+
+            if (CFStringCompare(key, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, 0) == kCFCompareEqualTo) {
+                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
+                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                    continue;
+                
+                RGBA32 color;
+                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                    continue;
+                cueData->setHighlightColor(color);
             }
         }
 

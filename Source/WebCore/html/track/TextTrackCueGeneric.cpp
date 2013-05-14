@@ -84,9 +84,8 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 
     if (cue->foregroundColor().isValid())
         cueElement->setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
-    
-    if (cue->backgroundColor().isValid())
-        cueElement->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
+    if (cue->highlightColor().isValid())
+        cueElement->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->highlightColor().serialized());
 
     if (cue->getWritingDirection() == TextTrackCue::Horizontal)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
@@ -103,6 +102,8 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     else
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
 
+    if (cue->backgroundColor().isValid())
+        setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
     setInlineStyleProperty(CSSPropertyWebkitWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
     setInlineStyleProperty(CSSPropertyWordBreak, CSSValueNormal);

@@ -86,7 +86,10 @@ public:
 
     Color backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32 color) { m_backgroundColor.setRGB(color); }
-
+    
+    Color highlightColor() const { return m_highlightColor; }
+    void setHighlightColor(RGBA32 color) { m_highlightColor.setRGB(color); }
+    
     enum Status {
         Uninitialized,
         Partial,
@@ -122,6 +125,7 @@ private:
     double m_relativeFontSize;
     Color m_foregroundColor;
     Color m_backgroundColor;
+    Color m_highlightColor;
     Status m_status;
 };
 

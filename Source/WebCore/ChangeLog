@@ -1,3 +1,23 @@
+2013-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] update in-band caption attributes
+        https://bugs.webkit.org/show_bug.cgi?id=116057
+
+        Reviewed by Dean Jackson.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::updateCueFromCueData): Copy highlight color.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties): "highlight" color sets the cue
+            background, "background" color sets the cue container background.
+        * html/track/TextTrackCueGeneric.h:
+
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Process "highlight" color.
+
 2013-05-13  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r150049): Fix RetainPtr<> type in PasteboardIOS.mm
