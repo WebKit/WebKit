@@ -168,10 +168,8 @@ video:-webkit-full-screen::-webkit-media-controls-status-display {
 }
 
 video:-webkit-full-screen::-webkit-media-controls-closed-captions-container {
-    bottom: 64px;
-    right: 38px;
-}
-
-video:-webkit-full-screen::-webkit-media-controls-closed-captions-track-list {
-    max-height: 500px;
+    bottom: 114px;
+    right: -webkit-calc(50% - 183px); /* 183px is 221px (half the media controller's width) minus 38px (the right position of the captions icon). */
+    max-width: -webkit-calc(50% + 173px); /* right + 10px */
+    max-height: -webkit-calc(100% - 124px); /* bottom + 10px */
 }
