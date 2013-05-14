@@ -40,7 +40,7 @@ namespace WebCore {
 
 SINGLETON_INITIALIZER_THREADUNSAFE(NetworkManager)
 
-bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, Frame* frame, bool defersLoading)
+int NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, Frame* frame, bool defersLoading)
 {
     ASSERT(job.get());
     // We shouldn't call methods on PassRefPtr so make a new RefPt.
@@ -48,11 +48,10 @@ bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, Fram
     return startJob(playerId, refJob, refJob->firstRequest(), frame, defersLoading);
 }
 
-bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, Frame* frame, bool defersLoading)
+int NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, Frame* frame, bool defersLoading)
 {
     Page* page = frame->page();
-    if (!page)
-        return false;
+    ASSERT(page);
     BlackBerry::Platform::NetworkStreamFactory* streamFactory = page->chrome()->platformPageClient()->networkStreamFactory();
     return startJob(playerId, page->groupName(), job, request, streamFactory, frame, defersLoading ? 1 : 0);
 }
@@ -138,7 +137,7 @@ static void setAuthCredentials(NetworkRequest& platformRequest, const Authentica
         platformRequest.setCredentials(authType, authProtocol, authScheme, username.utf8().data(), password.utf8().data());
 }
 
-bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, Frame* frame, int deferLoadingCount, int redirectCount, bool rereadCookies)
+int NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, Frame* frame, int deferLoadingCount, int redirectCount, bool rereadCookies)
 {
     // Make sure the ResourceHandle doesn't go out of scope while calling callbacks.
     RefPtr<ResourceHandle> guardJob(job);
@@ -171,23 +170,26 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
         platformRequest.setOverrideContentType(request.overrideContentType());
 
     NetworkJob* networkJob = new NetworkJob;
-    if (!networkJob)
-        return false;
-    if (!networkJob->initialize(playerId, pageGroupName, url, platformRequest, guardJob, streamFactory, frame, deferLoadingCount, redirectCount)) {
-        delete networkJob;
-        return false;
-    }
+    networkJob->initialize(playerId, pageGroupName, url, platformRequest, guardJob, streamFactory, frame, deferLoadingCount, redirectCount);
 
     // Make sure we have only one NetworkJob for one ResourceHandle.
     ASSERT(!findJobForHandle(guardJob));
 
     m_jobs.append(networkJob);
 
-    int result = networkJob->streamOpen();
-    if (result)
-        return false;
+    switch (networkJob->streamOpen()) {
+    case BlackBerry::Platform::FilterStream::ResultOk:
+        return BlackBerry::Platform::FilterStream::StatusSuccess;
+    case BlackBerry::Platform::FilterStream::ResultNotReady:
+        return BlackBerry::Platform::FilterStream::StatusErrorNotReady;
+    case BlackBerry::Platform::FilterStream::ResultNotHandled:
+    default:
+        // This should never happen.
+        break;
+    }
 
-    return true;
+    ASSERT_NOT_REACHED();
+    return BlackBerry::Platform::FilterStream::StatusErrorConnectionFailed;
 }
 
 bool NetworkManager::stopJob(PassRefPtr<ResourceHandle> job)

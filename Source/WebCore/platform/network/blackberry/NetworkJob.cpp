@@ -115,7 +115,7 @@ NetworkJob::~NetworkJob()
         AuthenticationChallengeManager::instance()->cancelAuthenticationChallenge(this);
 }
 
-bool NetworkJob::initialize(int playerId,
+void NetworkJob::initialize(int playerId,
     const String& pageGroupName,
     const KURL& url,
     const BlackBerry::Platform::NetworkRequest& request,
@@ -164,8 +164,7 @@ bool NetworkJob::initialize(int playerId,
         m_contentDisposition = "filename=" + String(request.getSuggestedSaveName());
 
     BlackBerry::Platform::FilterStream* wrappedStream = m_streamFactory->createNetworkStream(request, m_playerId);
-    if (!wrappedStream)
-        return false;
+    ASSERT(wrappedStream);
 
     BlackBerry::Platform::NetworkRequest::TargetType targetType = request.getTargetType();
     if ((targetType == BlackBerry::Platform::NetworkRequest::TargetIsMainFrame
@@ -177,8 +176,6 @@ bool NetworkJob::initialize(int playerId,
     }
 
     setWrappedStream(wrappedStream);
-
-    return true;
 }
 
 int NetworkJob::cancelJob()
@@ -645,7 +642,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
     RefPtr<ResourceHandle> handle = m_handle;
     cancelJob();
 
-    NetworkManager::instance()->startJob(m_playerId,
+    int status = NetworkManager::instance()->startJob(m_playerId,
         m_pageGroupName,
         handle,
         newRequest,
@@ -654,7 +651,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
         m_deferLoadingCount,
         increaseRedirectCount ? m_redirectCount + 1 : m_redirectCount,
         rereadCookies);
-    return true;
+    return status == BlackBerry::Platform::FilterStream::StatusSuccess;
 }
 
 bool NetworkJob::handleRedirect()

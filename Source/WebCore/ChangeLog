@@ -1,3 +1,34 @@
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Handle network errors when starting a new job
+        https://bugs.webkit.org/show_bug.cgi?id=116101
+
+        Reviewed by Rob Buis.
+
+        Make startJob() return a network status that can be used by the
+        caller to create a network error.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::initialize): createNetworkStream() should
+        always return a valid pointer so use an ASSERT instead of an early
+        return to make sure we have a valid stream.
+        (WebCore::NetworkJob::startNewJobWithRequest): Only return true if
+        the network job was started successfully.
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob): Make initialize method void instead of bool since it
+        can't fail.
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob): Return a network error or
+        StatusSuccess.
+        * platform/network/blackberry/NetworkManager.h:
+        (NetworkManager):
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+        (WebCore::ResourceHandle::start): Return true if job was started
+        successfully.
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        Check return value of startJob and fill the ResourceError with the
+        network status returned to finish the load.
+
 2013-05-14  Antoine Quint  <graouts@apple.com>
 
         [Mac] captions menu is not positioned correctly in full-screen

@@ -52,7 +52,7 @@ public:
     NetworkJob();
     ~NetworkJob();
 
-    bool initialize(int playerId,
+    void initialize(int playerId,
         const String& pageGroupName,
         const KURL&,
         const BlackBerry::Platform::NetworkRequest&,

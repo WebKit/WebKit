@@ -117,7 +117,7 @@ bool ResourceHandle::start()
     if (!frame || !frame->loader() || !frame->loader()->client() || !client())
         return false;
     int playerId = static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->playerId();
-    return NetworkManager::instance()->startJob(playerId, this, frame, d->m_defersLoading);
+    return NetworkManager::instance()->startJob(playerId, this, frame, d->m_defersLoading) == BlackBerry::Platform::FilterStream::StatusSuccess;
 }
 
 void ResourceHandle::pauseLoad(bool pause)
@@ -157,7 +157,12 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool shouldContentSniff = false;
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &syncLoader, defersLoading, shouldContentSniff));
-    NetworkManager::instance()->startJob(playerId, handle, frame, defersLoading);
+    int status = NetworkManager::instance()->startJob(playerId, handle, frame, defersLoading);
+    if (status != BlackBerry::Platform::FilterStream::StatusSuccess) {
+        handle->cancel();
+        error = ResourceError(ResourceError::platformErrorDomain, status, request.url().string(), BlackBerry::Platform::String::emptyString());
+        return;
+    }
 
     const double syncLoadTimeOut = 60; // seconds
 
