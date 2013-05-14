@@ -5,16 +5,16 @@ This test makes sure that various properties on the window object are correctly 
 [object History] 
 [object Storage] 
 true 
-[object BarInfo] 
+[object BarProp] 
 [object StyleMedia] 
-[object BarInfo] 
+[object BarProp] 
 [object Navigator] 
-[object BarInfo] 
+[object BarProp] 
 [object Screen] 
-[object BarInfo] 
+[object BarProp] 
 true 
 [object Storage] 
-[object BarInfo] 
-[object BarInfo] 
+[object BarProp] 
+[object BarProp] 
 
 All tests passed.

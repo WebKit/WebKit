@@ -294,8 +294,8 @@ ALERT: PASS: window.images should be 'undefined' and is.
 ALERT: PASS: window.innerHeight should be '150' and is.
 ALERT: PASS: window.innerWidth should be '300' and is.
 ALERT: PASS: window.length should be '0' and is.
-ALERT: PASS: window.locationbar should be '[object BarInfo]' and is.
-ALERT: PASS: window.menubar should be '[object BarInfo]' and is.
+ALERT: PASS: window.locationbar should be '[object BarProp]' and is.
+ALERT: PASS: window.menubar should be '[object BarProp]' and is.
 ALERT: PASS: window.name should be '' and is.
 ALERT: PASS: window.navigator should be '[object Navigator]' and is.
 ALERT: PASS: window.offscreenBuffering should be 'true' and is.
@@ -329,20 +329,20 @@ ALERT: PASS: window.outerHeight matched the expected value.
 ALERT: PASS: window.outerWidth matched the expected value.
 ALERT: PASS: window.pageXOffset should be '0' and is.
 ALERT: PASS: window.pageYOffset should be '0' and is.
-ALERT: PASS: window.personalbar should be '[object BarInfo]' and is.
+ALERT: PASS: window.personalbar should be '[object BarProp]' and is.
 ALERT: PASS: window.plugins should be 'undefined' and is.
 ALERT: PASS: window.screen should be '[object Screen]' and is.
 ALERT: PASS: window.screenLeft should be '0' and is.
 ALERT: PASS: window.screenTop matched the expected value.
 ALERT: PASS: window.screenX should be '0' and is.
 ALERT: PASS: window.screenY matched the expected value.
-ALERT: PASS: window.scrollbars should be '[object BarInfo]' and is.
+ALERT: PASS: window.scrollbars should be '[object BarProp]' and is.
 ALERT: PASS: window.scrollX should be '0' and is.
 ALERT: PASS: window.scrollY should be '0' and is.
 ALERT: PASS: window.self should be '[object Window]' and is.
 ALERT: PASS: window.status should be '' and is.
-ALERT: PASS: window.statusbar should be '[object BarInfo]' and is.
-ALERT: PASS: window.toolbar should be '[object BarInfo]' and is.
+ALERT: PASS: window.statusbar should be '[object BarProp]' and is.
+ALERT: PASS: window.toolbar should be '[object BarProp]' and is.
 ALERT: PASS: window.window should be '[object Window]' and is.
 ALERT: PASS: window.parent should be parentOld and is.
 ALERT: PASS: window.top should be topOld and is.

@@ -1,3 +1,26 @@
+2013-05-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Rename BarInfo to BarProp and remove [NoInterfaceObject]
+        https://bugs.webkit.org/show_bug.cgi?id=116027
+
+        Reviewed by Andreas Kling.
+
+        Rebaseline fast/js/global-constructors-attributes.html now that there is a new
+        'BarProp' global constructor.
+
+        Rebaseline a few other tests now that BarInfo was renamed to BarProp.
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/js/global-constructors-attributes-expected.txt:
+        * fast/loader/window-properties-restored-from-page-cache-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-13  Dean Jackson  <dino@apple.com>
 
         toDataURL can return an empty image in some cases

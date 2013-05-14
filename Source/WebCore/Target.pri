@@ -907,7 +907,7 @@ SOURCES += \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
     page/AutoscrollController.cpp \
-    page/BarInfo.cpp \
+    page/BarProp.cpp \
     page/CaptionUserPreferences.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
@@ -2079,7 +2079,7 @@ HEADERS += \
     page/animation/KeyframeAnimation.h \
     page/AdjustViewSizeOrNot.h \
     page/AutoscrollController.h \
-    page/BarInfo.h \
+    page/BarProp.h \
     page/CaptionUserPreferences.h \
     page/Chrome.h \
     page/Console.h \

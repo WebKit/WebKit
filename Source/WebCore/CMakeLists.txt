@@ -553,7 +553,7 @@ set(WebCore_IDL_FILES
 
     loader/appcache/DOMApplicationCache.idl
 
-    page/BarInfo.idl
+    page/BarProp.idl
     page/Console.idl
     page/Crypto.idl
     page/DOMSecurityPolicy.idl
@@ -1725,7 +1725,7 @@ set(WebCore_SOURCES
     mathml/MathMLTextElement.cpp
 
     page/AutoscrollController.cpp
-    page/BarInfo.cpp
+    page/BarProp.cpp
     page/CaptionUserPreferences.cpp
     page/Chrome.cpp
     page/Console.cpp

@@ -442,7 +442,7 @@ IDL_BINDINGS += \
     $$PWD/inspector/ScriptProfile.idl \
     $$PWD/inspector/ScriptProfileNode.idl \
     $$PWD/loader/appcache/DOMApplicationCache.idl \
-    $$PWD/page/BarInfo.idl \
+    $$PWD/page/BarProp.idl \
     $$PWD/page/Console.idl \
     $$PWD/page/Crypto.idl \
     $$PWD/page/DOMSecurityPolicy.idl \

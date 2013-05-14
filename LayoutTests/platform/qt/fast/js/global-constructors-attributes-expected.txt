@@ -23,6 +23,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Audio').hasOwnProperty('get') is f
 PASS Object.getOwnPropertyDescriptor(global, 'Audio').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Audio').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Audio').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'BarProp').value is BarProp
+PASS Object.getOwnPropertyDescriptor(global, 'BarProp').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'BarProp').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'BarProp').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'BarProp').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').value is BeforeLoadEvent
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').hasOwnProperty('set') is false

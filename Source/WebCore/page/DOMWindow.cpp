@@ -28,7 +28,7 @@
 #include "DOMWindow.h"
 
 #include "BackForwardController.h"
-#include "BarInfo.h"
+#include "BarProp.h"
 #include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
@@ -628,57 +628,57 @@ Crypto* DOMWindow::crypto() const
     return m_crypto.get();
 }
 
-BarInfo* DOMWindow::locationbar() const
+BarProp* DOMWindow::locationbar() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_locationbar)
-        m_locationbar = BarInfo::create(m_frame, BarInfo::Locationbar);
+        m_locationbar = BarProp::create(m_frame, BarProp::Locationbar);
     return m_locationbar.get();
 }
 
-BarInfo* DOMWindow::menubar() const
+BarProp* DOMWindow::menubar() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_menubar)
-        m_menubar = BarInfo::create(m_frame, BarInfo::Menubar);
+        m_menubar = BarProp::create(m_frame, BarProp::Menubar);
     return m_menubar.get();
 }
 
-BarInfo* DOMWindow::personalbar() const
+BarProp* DOMWindow::personalbar() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_personalbar)
-        m_personalbar = BarInfo::create(m_frame, BarInfo::Personalbar);
+        m_personalbar = BarProp::create(m_frame, BarProp::Personalbar);
     return m_personalbar.get();
 }
 
-BarInfo* DOMWindow::scrollbars() const
+BarProp* DOMWindow::scrollbars() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_scrollbars)
-        m_scrollbars = BarInfo::create(m_frame, BarInfo::Scrollbars);
+        m_scrollbars = BarProp::create(m_frame, BarProp::Scrollbars);
     return m_scrollbars.get();
 }
 
-BarInfo* DOMWindow::statusbar() const
+BarProp* DOMWindow::statusbar() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_statusbar)
-        m_statusbar = BarInfo::create(m_frame, BarInfo::Statusbar);
+        m_statusbar = BarProp::create(m_frame, BarProp::Statusbar);
     return m_statusbar.get();
 }
 
-BarInfo* DOMWindow::toolbar() const
+BarProp* DOMWindow::toolbar() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_toolbar)
-        m_toolbar = BarInfo::create(m_frame, BarInfo::Toolbar);
+        m_toolbar = BarProp::create(m_frame, BarProp::Toolbar);
     return m_toolbar.get();
 }
 

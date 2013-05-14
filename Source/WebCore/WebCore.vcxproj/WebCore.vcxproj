@@ -192,7 +192,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarInfo.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarProp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -3897,7 +3897,7 @@
     <ClCompile Include="..\page\animation\AnimationBase.cpp" />
     <ClCompile Include="..\page\animation\AnimationController.cpp" />
     <ClCompile Include="..\page\AutoscrollController.cpp" />
-    <ClCompile Include="..\page\BarInfo.cpp" />
+    <ClCompile Include="..\page\BarProp.cpp" />
     <ClCompile Include="..\page\CaptionUserPreferences.cpp" />
     <ClCompile Include="..\page\Chrome.cpp" />
     <ClCompile Include="..\page\animation\CompositeAnimation.cpp" />
@@ -10647,7 +10647,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\InspectorTypeBuilder.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSAbstractWorker.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSAttr.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarInfo.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarProp.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBeforeLoadEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBlob.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSCanvasGradient.h" />
@@ -11349,7 +11349,7 @@
     <ClInclude Include="..\page\animation\AnimationController.h" />
     <ClInclude Include="..\page\animation\AnimationControllerPrivate.h" />
     <ClInclude Include="..\page\AutoscrollController.h" />
-    <ClInclude Include="..\page\BarInfo.h" />
+    <ClInclude Include="..\page\BarProp.h" />
     <ClInclude Include="..\page\Chrome.h" />
     <ClInclude Include="..\page\ChromeClient.h" />
     <ClInclude Include="..\page\animation\CompositeAnimation.h" />

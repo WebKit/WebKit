@@ -31,7 +31,7 @@
 #include "JSArrayBuffer.cpp"
 #include "JSArrayBufferView.cpp"
 #include "JSAttr.cpp"
-#include "JSBarInfo.cpp"
+#include "JSBarProp.cpp"
 #include "JSBeforeLoadEvent.cpp"
 #include "JSBlob.cpp"
 #include "JSCanvasGradient.cpp"

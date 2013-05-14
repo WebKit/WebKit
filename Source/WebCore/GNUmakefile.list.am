@@ -69,8 +69,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioTrack.h \
 	DerivedSources/WebCore/JSAudioTrackList.cpp \
 	DerivedSources/WebCore/JSAudioTrackList.h \
-	DerivedSources/WebCore/JSBarInfo.cpp \
-	DerivedSources/WebCore/JSBarInfo.h \
+	DerivedSources/WebCore/JSBarProp.cpp \
+	DerivedSources/WebCore/JSBarProp.h \
 	DerivedSources/WebCore/JSBatteryManager.cpp \
 	DerivedSources/WebCore/JSBatteryManager.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
@@ -1615,7 +1615,7 @@ dom_binding_idls += \
 	$(WebCore)/inspector/ScriptProfile.idl \
 	$(WebCore)/inspector/ScriptProfileNode.idl \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
-	$(WebCore)/page/BarInfo.idl \
+	$(WebCore)/page/BarProp.idl \
 	$(WebCore)/page/Console.idl \
 	$(WebCore)/page/Crypto.idl \
 	$(WebCore)/page/DOMSecurityPolicy.idl \
@@ -4194,8 +4194,8 @@ webcore_sources += \
 	Source/WebCore/page/AlternativeTextClient.h \
 	Source/WebCore/page/AutoscrollController.cpp \
 	Source/WebCore/page/AutoscrollController.h \
-	Source/WebCore/page/BarInfo.cpp \
-	Source/WebCore/page/BarInfo.h \
+	Source/WebCore/page/BarProp.cpp \
+	Source/WebCore/page/BarProp.h \
 	Source/WebCore/page/CaptionUserPreferences.cpp \
 	Source/WebCore/page/CaptionUserPreferences.h \
 	Source/WebCore/page/Chrome.cpp \

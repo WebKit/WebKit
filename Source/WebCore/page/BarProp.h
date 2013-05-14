@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BarInfo_h
-#define BarInfo_h
+#ifndef BarProp_h
+#define BarProp_h
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
@@ -36,22 +36,22 @@
 
 namespace WebCore {
 
-    class Frame;
+class Frame;
 
-    class BarInfo : public ScriptWrappable, public RefCounted<BarInfo>, public DOMWindowProperty {
-    public:
-        enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
+class BarProp : public ScriptWrappable, public RefCounted<BarProp>, public DOMWindowProperty {
+public:
+    enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 
-        static PassRefPtr<BarInfo> create(Frame* frame, Type type) { return adoptRef(new BarInfo(frame, type)); }
+    static PassRefPtr<BarProp> create(Frame* frame, Type type) { return adoptRef(new BarProp(frame, type)); }
 
-        Type type() const;
-        bool visible() const;
+    Type type() const;
+    bool visible() const;
 
-    private:
-        BarInfo(Frame*, Type);
-        Type m_type;
-    };
+private:
+    BarProp(Frame*, Type);
+    Type m_type;
+};
 
 } // namespace WebCore
 
-#endif // BarInfo_h
+#endif // BarProp_h

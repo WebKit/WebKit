@@ -739,7 +739,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSBarInfo.cpp"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSBarProp.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -791,7 +791,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSBarInfo.h"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSBarProp.h"
 				>
 			</File>
 			<File
@@ -27259,11 +27259,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\BarInfo.cpp"
+				RelativePath="..\page\BarProp.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\BarInfo.h"
+				RelativePath="..\page\BarProp.h"
 				>
 			</File>
 			<File

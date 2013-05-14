@@ -1,8 +1,8 @@
 webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMAttr.cpp \
 	DerivedSources/webkitdom/WebKitDOMAttrPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMBarInfo.cpp \
-	DerivedSources/webkitdom/WebKitDOMBarInfoPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMBarProp.cpp \
+	DerivedSources/webkitdom/WebKitDOMBarPropPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMBatteryManager.cpp \
 	DerivedSources/webkitdom/WebKitDOMBatteryManagerPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMBlob.cpp \
@@ -397,7 +397,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMTimeRanges.h \
 	DerivedSources/webkitdom/WebKitDOMValidityState.h \
 	DerivedSources/webkitdom/WebKitDOMDOMApplicationCache.h \
-	DerivedSources/webkitdom/WebKitDOMBarInfo.h \
+	DerivedSources/webkitdom/WebKitDOMBarProp.h \
 	DerivedSources/webkitdom/WebKitDOMConsole.h \
 	DerivedSources/webkitdom/WebKitDOMCustom.h \
 	DerivedSources/webkitdom/WebKitDOMDOMWindowCSS.h \

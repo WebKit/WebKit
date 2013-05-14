@@ -5193,7 +5193,7 @@
     <ClCompile Include="..\page\AutoscrollController.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\BarInfo.cpp">
+    <ClCompile Include="..\page\BarProp.cpp">
       <Filter>page</Filter>
     </ClCompile>
     <ClCompile Include="..\page\Chrome.cpp">
@@ -5497,7 +5497,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSAttr.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarInfo.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarProp.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBeforeLoadEvent.cpp">
@@ -12667,7 +12667,7 @@
     <ClInclude Include="..\page\AutoscrollController.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClInclude Include="..\page\BarInfo.h">
+    <ClInclude Include="..\page\BarProp.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\Chrome.h">
@@ -13007,7 +13007,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSAttr.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarInfo.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBarProp.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSBeforeLoadEvent.h">
