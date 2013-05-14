@@ -51,8 +51,6 @@ namespace WebCore {
 
         void addColorStop(float value, const String& color, ExceptionCode&);
 
-        void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient->getColor(value, r, g, b, a); }
-
 #if ENABLE(DASHBOARD_SUPPORT)
         void setDashboardCompatibilityMode() { m_dashbardCompatibilityMode = true; }
 #endif

@@ -1,3 +1,20 @@
+2013-05-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of Gradient::getColor()
+        https://bugs.webkit.org/show_bug.cgi?id=116089
+
+        Reviewed by Andreas Kling.
+
+        This code is now useless, remove it.
+
+        * html/canvas/CanvasGradient.h:
+        (CanvasGradient):
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::Gradient):
+        (WebCore::Gradient::hash):
+        * platform/graphics/Gradient.h:
+        (Gradient):
+
 2013-05-14  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: united.com has overlapping elements and is broken by flex box changes.
