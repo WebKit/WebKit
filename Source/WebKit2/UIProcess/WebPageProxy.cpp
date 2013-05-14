@@ -3939,7 +3939,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
-    parameters.deviceScaleFactor = m_intrinsicDeviceScaleFactor;
+    parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.overridePrivateBrowsingEnabled = m_overridePrivateBrowsingEnabled;

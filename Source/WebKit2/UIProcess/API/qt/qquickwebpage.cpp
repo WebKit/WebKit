@@ -29,6 +29,7 @@
 #include "qquickwebview_p_p.h"
 #include "qwebkittest_p.h"
 #include <QQuickWindow>
+#include <WKPage.h>
 #include <WebCore/CoordinatedGraphicsScene.h>
 
 using namespace WebKit;
@@ -78,8 +79,9 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     const QWindow* window = this->window();
     ASSERT(window);
 
-    if (window && webViewPrivate->deviceScaleFactor() != window->devicePixelRatio()) {
-        webViewPrivate->setIntrinsicDeviceScaleFactor(window->devicePixelRatio());
+    WKPageRef pageRef = webViewPrivate->webPage.get();
+    if (window && WKPageGetBackingScaleFactor(pageRef) != window->devicePixelRatio()) {
+        WKPageSetCustomBackingScaleFactor(pageRef, window->devicePixelRatio());
         // This signal is queued since if we are running a threaded renderer. This might cause failures
         // if tests are reading the new value between the property change and the signal emission.
         emit d->viewportItem->experimental()->test()->devicePixelRatioChanged();

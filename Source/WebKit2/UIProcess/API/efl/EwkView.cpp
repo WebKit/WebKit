@@ -480,7 +480,7 @@ void EwkView::setCursor(const Cursor& cursor)
 void EwkView::setDeviceScaleFactor(float scale)
 {
     const WKSize& deviceSize = WKViewGetSize(wkView());
-    page()->setIntrinsicDeviceScaleFactor(scale);
+    WKPageSetCustomBackingScaleFactor(wkPage(), scale);
 
     // Update internal viewport size after device-scale change.
     WKViewSetSize(wkView(), deviceSize);

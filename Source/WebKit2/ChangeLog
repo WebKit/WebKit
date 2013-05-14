@@ -1,3 +1,27 @@
+2013-05-14  Michael Brüning  <michael.bruning@digia.com>
+
+        [WK2] Make WebPageProxy use deviceScaleFactor() in creationParameters().
+        https://bugs.webkit.org/show_bug.cgi?id=110218
+
+        Reviewed by Darin Adler.
+
+        Make the WebPageProxy::creationParameters use the accessor
+        deviceScaleFactor() instead of using m_intrinsicDeviceScaleFactor
+        directly. This will restore the custom device scale factor when
+        reattaching to the WebProcess after a crash.
+
+        Moreover, it will enable the Qt and ELF ports to use the
+        existing C API for overriding the device scale factor instead
+        of using the WebPageProxy directly or adding new C API to set
+        the intrinsic device scale factor.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setDeviceScaleFactor):
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+
 2013-05-13  Alex Christensen  <achristensen@apple.com>
 
         Added testRunner.setPrinting.
