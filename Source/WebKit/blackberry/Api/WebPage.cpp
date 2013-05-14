@@ -429,6 +429,10 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #endif
     , m_didStartAnimations(false)
     , m_animationStartTime(0)
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    , m_isRunningRefreshAnimationClient(false)
+    , m_animationScheduled(false)
+#endif
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -454,6 +458,11 @@ WebPagePrivate::~WebPagePrivate()
     m_webPage->setVisible(false);
     if (BackingStorePrivate::currentBackingStoreOwner() == m_webPage)
         BackingStorePrivate::setCurrentBackingStoreOwner(0);
+
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    stopRefreshAnimationClient();
+    cancelCallOnMainThread(handleServiceScriptedAnimationsOnMainThread, this);
+#endif
 
     delete m_webSettings;
     m_webSettings = 0;
@@ -6306,6 +6315,55 @@ bool WebPage::isProcessingUserGesture() const
 {
     return ScriptController::processingUserGesture();
 }
+
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+void WebPagePrivate::animationFrameChanged()
+{
+    if (!m_animationMutex.tryLock())
+        return;
+
+    if (!m_animationScheduled) {
+        stopRefreshAnimationClient();
+        m_animationMutex.unlock();
+        return;
+    }
+
+    m_animationScheduled = false;
+    callOnMainThread(handleServiceScriptedAnimationsOnMainThread, this);
+    m_animationMutex.unlock();
+}
+
+void WebPagePrivate::scheduleAnimation()
+{
+    if (m_animationScheduled)
+        return;
+    MutexLocker lock(m_animationMutex);
+    m_animationScheduled = true;
+    startRefreshAnimationClient();
+}
+
+void WebPagePrivate::startRefreshAnimationClient()
+{
+    if (m_isRunningRefreshAnimationClient)
+        return;
+    m_isRunningRefreshAnimationClient = true;
+    BlackBerry::Platform::AnimationFrameRateController::instance()->addClient(this);
+}
+
+void WebPagePrivate::stopRefreshAnimationClient()
+{
+    if (!m_isRunningRefreshAnimationClient)
+        return;
+    m_isRunningRefreshAnimationClient = false;
+    BlackBerry::Platform::AnimationFrameRateController::instance()->removeClient(this);
+}
+
+void WebPagePrivate::handleServiceScriptedAnimationsOnMainThread(void* data)
+{
+    WebPagePrivate* webPagePrivate = static_cast<WebPagePrivate*>(data);
+    webPagePrivate->m_mainFrame->view()->serviceScriptedAnimations(currentTime());
+}
+#endif
 
 }
 }

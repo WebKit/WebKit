@@ -1,5 +1,16 @@
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] Use requestAnimationFrame for animations
+        https://bugs.webkit.org/show_bug.cgi?id=115896
+
+        Reviewed by Rob Buis.
+
+        * wtf/Platform.h: Disable REQUEST_ANIMATION_FRAME_TIMER and
+        WTF_USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR for BlackBerry
+        port.
+
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Implement platform strategies
         https://bugs.webkit.org/show_bug.cgi?id=112162
 

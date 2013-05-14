@@ -1,5 +1,33 @@
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] Use requestAnimationFrame for animations
+        https://bugs.webkit.org/show_bug.cgi?id=115896
+
+        Reviewed by Rob Buis.
+
+        Make WebPagePrivate a
+        BlackBerry::Platform::AnimationFrameRateClient and use it to
+        schedule animations.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::animationFrameChanged):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleAnimation):
+        (BlackBerry::WebKit::WebPagePrivate::startRefreshAnimationClient):
+        (BlackBerry::WebKit::WebPagePrivate::stopRefreshAnimationClient):
+        (BlackBerry::WebKit::WebPagePrivate::handleServiceScriptedAnimationsOnMainThread):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::scheduleAnimation):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Implement platform strategies
         https://bugs.webkit.org/show_bug.cgi?id=112162
 

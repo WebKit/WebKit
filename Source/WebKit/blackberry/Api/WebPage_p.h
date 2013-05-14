@@ -100,6 +100,9 @@ class WebPagePrivate : public PageClientBlackBerry
 #if USE(ACCELERATED_COMPOSITING)
     , public WebCore::GraphicsLayerClient
 #endif
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    , public BlackBerry::Platform::AnimationFrameRateClient
+#endif
     , public Platform::GuardedPointerBase {
 public:
     enum ViewMode { Desktop, FixedDesktop };
@@ -454,6 +457,15 @@ public:
     void updateBackgroundColor(const WebCore::Color& backgroundColor);
     WebCore::Color documentBackgroundColor() const;
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    // BlackBerry::Platform::AnimationFrameRateClient.
+    virtual void animationFrameChanged();
+    void scheduleAnimation();
+    void startRefreshAnimationClient();
+    void stopRefreshAnimationClient();
+    static void handleServiceScriptedAnimationsOnMainThread(void*);
+#endif
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::InspectorClientBlackBerry* m_inspectorClient;
@@ -639,6 +651,12 @@ public:
 
     bool m_didStartAnimations;
     double m_animationStartTime;
+
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    Mutex m_animationMutex;
+    bool m_isRunningRefreshAnimationClient;
+    bool m_animationScheduled;
+#endif
 
 protected:
     virtual ~WebPagePrivate();

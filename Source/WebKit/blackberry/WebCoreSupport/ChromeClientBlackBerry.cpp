@@ -824,4 +824,11 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
     return nullptr;
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+void ChromeClientBlackBerry::scheduleAnimation()
+{
+    m_webPagePrivate->scheduleAnimation();
+}
+#endif
+
 } // namespace WebCore
