@@ -1,3 +1,13 @@
+2013-05-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=116035
+
+        Reviewed by Simon Hausmann.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::networkReplyParentChanged):
+
 2013-05-12  Timothy Hatcher  <timothy@apple.com>
 
         Add support for updating the Web Inspector toolbar height.
