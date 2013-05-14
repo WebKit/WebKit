@@ -1167,6 +1167,46 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderObject* c
     anonBlock->destroy();
 }
 
+void RenderBlock::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert)
+{
+    moveAllChildrenTo(toBlock, fullRemoveInsert);
+
+    // When a portion of the render tree is being detached, anonymous blocks
+    // will be combined as their children are deleted. In this process, the
+    // anonymous block later in the tree is merged into the one preceeding it.
+    // It can happen that the later block (this) contains floats that the
+    // previous block (toBlock) did not contain, and thus are not in the
+    // floating objects list for toBlock. This can result in toBlock containing
+    // floats that are not in it's floating objects list, but are in the
+    // floating objects lists of siblings and parents. This can cause problems
+    // when the float itself is deleted, since the deletion code assumes that
+    // if a float is not in it's containing block's floating objects list, it
+    // isn't in any floating objects list. In order to preserve this condition
+    // (removing it has serious performance implications), we need to copy the
+    // floating objects from the old block (this) to the new block (toBlock).
+    // The float's metrics will likely all be wrong, but since toBlock is
+    // already marked for layout, this will get fixed before anything gets
+    // displayed.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=115566
+    if (m_floatingObjects) {
+        if (!toBlock->m_floatingObjects)
+            toBlock->createFloatingObjects();
+
+        const FloatingObjectSet& fromFloatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = fromFloatingObjectSet.end();
+
+        for (FloatingObjectSetIterator it = fromFloatingObjectSet.begin(); it != end; ++it) {
+            FloatingObject* floatingObject = *it;
+
+            // Don't insert the object again if it's already in the list
+            if (toBlock->containsFloat(floatingObject->renderer()))
+                continue;
+
+            toBlock->m_floatingObjects->add(floatingObject->clone());
+        }
+    }
+}
+
 void RenderBlock::removeChild(RenderObject* oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
@@ -1219,7 +1259,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock->moveAllChildrenTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());        
+            nextBlock->moveAllChildrenIncludingFloatsTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock->deleteLineBoxTree();

@@ -1,3 +1,37 @@
+2013-05-14  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo
+        https://bugs.webkit.org/show_bug.cgi?id=115566
+
+        Reviewed by David Hyatt.
+
+        When a portion of the render tree is being detached, anonymous blocks
+        will be combined as their children are deleted. In this process, the
+        anonymous block later in the tree is merged into the one preceeding it.
+        It can happen that the later block contains floats that the previous
+        block did not contain, and thus are not in the floating objects list for
+        the new block. This can result in the new block containing floats that
+        are not in it's floating objects list, but are in the floating objects
+        lists of siblings and parents. This can cause problems when the float
+        itself is deleted, since the deletion code assumes that if a float is not
+        in it's containing block's floating objects list, it isn't in any
+        floating objects list, causing dangling pointers in the floating objects
+        lists of the siblings and parents. In order to preserve this condition
+        (removing it has serious performance implications), we need to copy the
+        floating objects from the old block to the new block.  The float's
+        metrics will likely all be wrong, but since the new block is already
+        marked for layout, this will get fixed before anything gets displayed.
+
+        Test: fast/block/float/float-append-child-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo): Copy
+            floating objects list in addition to children.
+        (WebCore::RenderBlock::FloatingObject::clone): Added.
+        (WebCore::RenderBlock::removeChild): Use new method to copy children.
+        * rendering/RenderBlock.h:
+        (RenderBlock): Add method.
+
 2013-05-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150023.
