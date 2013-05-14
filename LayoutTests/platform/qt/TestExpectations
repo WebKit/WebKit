@@ -368,6 +368,7 @@ fast/css/variables/use-before-defined.html
 fast/css/variables/var-inside-box-reflect.html
 fast/css/variables/var-inside-pair.html
 fast/css/variables/var-inside-quad.html
+fast/css/variables/var-inside-shape.html
 fast/css/variables/var-inside-shorthand.html
 fast/css/variables/variable-chain.html
 inspector/styles/variables/css-variables.html

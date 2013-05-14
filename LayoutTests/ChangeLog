@@ -1,3 +1,10 @@
+2013-05-14  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/TestExpectations: Skip test using disabled feature.
+        * platform/qt/http/tests/security/cross-frame-access-put-expected.txt: Rebaselining after r149869.
+
 2013-05-14  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed EFL gardening
