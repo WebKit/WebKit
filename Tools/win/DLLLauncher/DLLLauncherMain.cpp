@@ -48,6 +48,9 @@ using namespace std;
 #endif
 
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#if defined(_MSC_VER) && (_MSC_VER >= 1600)
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.VC80.CRT' version='8.0.50727.6195' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='1fc8b3b9a1e18e3b' language='*'\"")
+#endif
 
 static void enableTerminationOnHeapCorruption()
 {

@@ -1,5 +1,18 @@
 2013-05-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Switch to embedded manifest commands for launcher executables.
+        https://bugs.webkit.org/show_bug.cgi?id=116109
+
+        Reviewed by Darin Adler.
+
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj: Remove the
+        now-unused WinLauncher.exe.manifest file.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.filters: Ditto.
+        * win/DLLLauncher/DLLLauncherMain.cpp: Add embedded manifest command
+        when building with VS2010 or newer.
+
+2013-05-14  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Update ORWT to know about the Windows 8 SDK and Debug Tools.
         https://bugs.webkit.org/show_bug.cgi?id=116079
 
