@@ -15,6 +15,7 @@
 			dependencies = (
 				41816F8313859C7A0057AAA4 /* PBXTargetDependency */,
 				41816F8513859C7D0057AAA4 /* PBXTargetDependency */,
+				E1BA671C1742CBF800C20251 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -5468,6 +5469,9 @@
 		E1B7839C163740A70007B692 /* SharedWorkerStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1B784201639CBBE0007B692 /* SharedWorkerRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */; };
 		E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */; };
+		E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1BA67181742BEE600C20251 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
+		E1BA671A1742BEF400C20251 /* WebCoreTestShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1C2F24A1533A2120083F974 /* SettingsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C2F2481533A2120083F974 /* SettingsMac.mm */; };
@@ -6081,6 +6085,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = DD041FBE09D9DDBE0010AF2A;
 			remoteInfo = "Derived Sources";
+		};
+		E1BA66F51742BDE000C20251 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93F198A508245E59001E9ABC;
+			remoteInfo = WebCore;
+		};
+		E1BA671B1742CBF800C20251 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1BA66F31742BDE000C20251;
+			remoteInfo = WebCoreTestShim;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -10408,7 +10426,7 @@
 		AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebAccessibilityObjectWrapperMac.mm; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
-		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = ../../../../../System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<group>"; };
+		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptCanvasModule.cpp; sourceTree = "<group>"; };
 		AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptCanvasModule.h; sourceTree = "<group>"; };
 		AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesis.cpp; sourceTree = "<group>"; };
@@ -12282,6 +12300,10 @@
 		E1B7839B163740A70007B692 /* SharedWorkerStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorkerStrategy.h; path = workers/SharedWorkerStrategy.h; sourceTree = "<group>"; };
 		E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorkerRepository.cpp; path = workers/SharedWorkerRepository.cpp; sourceTree = "<group>"; };
 		E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleClient.cpp; sourceTree = "<group>"; };
+		E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerInterposing.h; sourceTree = "<group>"; };
+		E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebCoreTestShim.xcconfig; sourceTree = "<group>"; };
+		E1BA67161742BDE000C20251 /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTestShimLibrary.cpp; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
 		E1C2F2481533A2120083F974 /* SettingsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsMac.mm; sourceTree = "<group>"; };
@@ -12964,6 +12986,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E1BA670E1742BDE000C20251 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1BA67181742BEE600C20251 /* Carbon.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -12987,6 +13017,7 @@
 				5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 				417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */,
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
+				E1BA67161742BDE000C20251 /* libWebCoreTestShim.dylib */,
 			);
 			name = Products;
 			sourceTree = SOURCE_ROOT;
@@ -13694,6 +13725,7 @@
 				449098B10F8F82520076A327 /* FeatureDefines.xcconfig */,
 				1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */,
 				1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */,
+				E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */,
 				4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */,
 			);
 			path = Configurations;
@@ -13958,6 +13990,7 @@
 				CDC26B3D160A62B00026757B /* MockCDM.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
 				EB081CD91696084400553730 /* TypeConversions.idl */,
+				E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */,
 			);
 			path = testing;
 			sourceTree = "<group>";
@@ -14601,6 +14634,7 @@
 				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */,
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
+				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
 				5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */,
 				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
@@ -23799,6 +23833,7 @@
 				F55B3DDA1251F12D003EF269 /* TextInputType.h in Headers */,
 				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
 				93309E1C099E64920056E581 /* TextIterator.h in Headers */,
+				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
 				930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */,
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
@@ -24074,6 +24109,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E1BA66F61742BDE000C20251 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -24141,6 +24183,24 @@
 			productReference = 93F19B1A08245E5A001E9ABC /* WebCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		E1BA66F31742BDE000C20251 /* WebCoreTestShim */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E1BA67121742BDE000C20251 /* Build configuration list for PBXNativeTarget "WebCoreTestShim" */;
+			buildPhases = (
+				E1BA66F61742BDE000C20251 /* Headers */,
+				E1BA67021742BDE000C20251 /* Sources */,
+				E1BA670E1742BDE000C20251 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E1BA66F41742BDE000C20251 /* PBXTargetDependency */,
+			);
+			name = WebCoreTestShim;
+			productName = WebCoreTestSupport;
+			productReference = E1BA67161742BDE000C20251 /* libWebCoreTestShim.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -24174,6 +24234,7 @@
 				5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 				5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */,
 				417DA6CF13734E02007C57FB /* WebCoreTestSupport */,
+				E1BA66F31742BDE000C20251 /* WebCoreTestShim */,
 			);
 		};
 /* End PBXProject section */
@@ -27031,6 +27092,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E1BA67021742BDE000C20251 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1BA671A1742BEF400C20251 /* WebCoreTestShimLibrary.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -27063,6 +27132,16 @@
 			isa = PBXTargetDependency;
 			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
 			targetProxy = DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */;
+		};
+		E1BA66F41742BDE000C20251 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93F198A508245E59001E9ABC /* WebCore */;
+			targetProxy = E1BA66F51742BDE000C20251 /* PBXContainerItemProxy */;
+		};
+		E1BA671C1742CBF800C20251 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1BA66F31742BDE000C20251 /* WebCoreTestShim */;
+			targetProxy = E1BA671B1742CBF800C20251 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -27261,6 +27340,27 @@
 			};
 			name = Production;
 		};
+		E1BA67131742BDE000C20251 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		E1BA67141742BDE000C20251 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		E1BA67151742BDE000C20251 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -27330,6 +27430,16 @@
 				DD041FC209D9DDDC0010AF2A /* Debug */,
 				DD041FC309D9DDDC0010AF2A /* Release */,
 				DD041FC409D9DDDC0010AF2A /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		E1BA67121742BDE000C20251 /* Build configuration list for PBXNativeTarget "WebCoreTestShim" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1BA67131742BDE000C20251 /* Debug */,
+				E1BA67141742BDE000C20251 /* Release */,
+				E1BA67151742BDE000C20251 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -1,3 +1,21 @@
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add a testing shim for secure event input functions
+        https://bugs.webkit.org/show_bug.cgi?id=116122
+
+        Reviewed by Mark Rowe.
+
+        Added a new target with a dynamic library that interposes secure event input functions.
+        We need this to avoid interfering with user session state.
+
+        * Configurations/WebCoreTestShim.xcconfig: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/DynamicLinkerInterposing.h: Moved from Source/WebKit2/Shared/mac/DyldInterpose.h.
+        * testing/WebCoreTestShimLibrary.cpp: Added.
+        (shimEnableSecureEventInput):
+        (shimDisableSecureEventInput):
+        (shimIsSecureEventInputEnabled):
+
 2013-05-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of Gradient::getColor()

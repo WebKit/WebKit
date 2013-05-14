@@ -1,3 +1,13 @@
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add a testing shim for secure event input functions
+        https://bugs.webkit.org/show_bug.cgi?id=116122
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitpy/port/mac.py: (MacPort.setup_environ_for_server):
+        Inject WebCore testing shim library to override system framework functions.
+
 2013-05-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Switch to embedded manifest commands for launcher executables.

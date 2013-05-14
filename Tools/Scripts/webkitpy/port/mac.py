@@ -94,7 +94,9 @@ class MacPort(ApplePort):
             if self.get_option('leaks'):
                 env['MallocStackLogging'] = '1'
             if self.get_option('guard_malloc'):
-                env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+                env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib:' + self._build_path("libWebCoreTestShim.dylib")
+            else:
+                env['DYLD_INSERT_LIBRARIES'] = self._build_path("libWebCoreTestShim.dylib")
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 

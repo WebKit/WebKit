@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,47 +22,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "SecItemShimLibrary.h"
 
-#import <Security/SecItem.h>
-#import <WebCore/DynamicLinkerInterposing.h>
-#import <wtf/Platform.h>
+#include "DynamicLinkerInterposing.h"
+#include <Carbon/Carbon.h>
 
-namespace WebKit {
+static int sSecureInputEnableCount;
 
-extern "C" void WebKitSecItemShimInitialize(const SecItemShimCallbacks&);
-
-static SecItemShimCallbacks secItemShimCallbacks;
-
-static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
+static OSStatus shimEnableSecureEventInput()
 {
-    return secItemShimCallbacks.secItemCopyMatching(query, result);
+    ++sSecureInputEnableCount;
+    return noErr;
 }
 
-static OSStatus shimSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
+static OSStatus shimDisableSecureEventInput()
 {
-    return secItemShimCallbacks.secItemAdd(query, result);
+    if (!sSecureInputEnableCount)
+        return paramErr;
+    --sSecureInputEnableCount;
+    return noErr;
 }
 
-static OSStatus shimSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
+static Boolean shimIsSecureEventInputEnabled()
 {
-    return secItemShimCallbacks.secItemUpdate(query, attributesToUpdate);
+    return sSecureInputEnableCount;
 }
 
-static OSStatus shimSecItemDelete(CFDictionaryRef query)
-{
-    return secItemShimCallbacks.secItemDelete(query);
-}
-
-DYLD_INTERPOSE(shimSecItemCopyMatching, SecItemCopyMatching)
-DYLD_INTERPOSE(shimSecItemAdd, SecItemAdd)
-DYLD_INTERPOSE(shimSecItemUpdate, SecItemUpdate)
-DYLD_INTERPOSE(shimSecItemDelete, SecItemDelete)
-
-__attribute__((visibility("default")))
-void WebKitSecItemShimInitialize(const SecItemShimCallbacks& callbacks)
-{
-    secItemShimCallbacks = callbacks;
-}
-
-} // namespace WebKit
+DYLD_INTERPOSE(shimEnableSecureEventInput, EnableSecureEventInput)
+DYLD_INTERPOSE(shimDisableSecureEventInput, DisableSecureEventInput)
+DYLD_INTERPOSE(shimIsSecureEventInputEnabled, IsSecureEventInputEnabled)

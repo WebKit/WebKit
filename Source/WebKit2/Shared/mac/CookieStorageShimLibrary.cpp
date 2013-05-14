@@ -28,7 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "DyldInterpose.h"
+#include <WebCore/DynamicLinkerInterposing.h>
 
 extern "C" CFDictionaryRef _CFHTTPCookieStorageCopyRequestHeaderFieldsForURL(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inCookieStorage, CFURLRef inRequestURL);
 

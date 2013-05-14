@@ -26,9 +26,9 @@
 #import <wtf/Platform.h>
 #import "PluginProcessShim.h"
 
-#import "DYLDInterpose.h"
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
+#import <WebCore/DynamicLinkerInterposing.h>
 #import <WebKitSystemInterface.h>
 #import <stdio.h>
 #import <objc/message.h>

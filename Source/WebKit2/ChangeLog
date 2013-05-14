@@ -1,3 +1,18 @@
+2013-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add a testing shim for secure event input functions
+        https://bugs.webkit.org/show_bug.cgi?id=116122
+
+        Reviewed by Mark Rowe.
+
+        Moved DyldInterpose.h to WebCore, as we now use it there too.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/mac/CookieStorageShimLibrary.cpp:
+        * Shared/mac/DyldInterpose.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/mac/SecItemShimLibrary.mm:
+
 2013-05-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Win] REGRESSION(r149944): mmap is not available on Windows
