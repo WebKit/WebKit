@@ -450,15 +450,14 @@ noinst_LTLIBRARIES += \
 	libWebCoreSVG.la
 endif
 
-# Artificial dependency to try to force a relink of the WebCore libraries
-# When their makefiles change.
+# Artificial dependencies to try to force a relink of the WebCore libraries when their makefiles change.
 webcore_lib_for_dep = libWebCore.la
 $(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am $(srcdir)/Source/autotools/symbols.filter
 
-webcoremodules_lib_for_dep = libWebcoreModules.la
+webcoremodules_lib_for_dep = libWebCoreModules.la
 $(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
-webcoreplatform_lib_for_dep = libWebcorePlatform.la
+webcoreplatform_lib_for_dep = libWebCorePlatform.la
 $(webcoreplatform_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
 webcoresvg_lib_for_dep = libWebCoreSVG.la

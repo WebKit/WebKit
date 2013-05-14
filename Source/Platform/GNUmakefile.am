@@ -48,6 +48,13 @@ noinst_LTLIBRARIES += \
 	libPlatform.la \
 	libPlatformGtk.la
 
+# Artificial dependencies to try to force a relink of the Platform libraries when their makefile changes.
+platform_lib_for_dep = libPlatform.la
+$(platform_lib_for_dep): $(srcdir)/Source/Platform/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
+platformgtk_lib_for_dep = libPlatformGtk.la
+$(platformgtk_lib_for_dep): $(srcdir)/Source/Platform/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
 libPlatform_la_SOURCES = \
 	$(platform_sources)
 
