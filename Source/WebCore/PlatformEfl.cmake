@@ -158,8 +158,6 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/SocketStreamHandleSoup.cpp
     platform/network/soup/SoupURIUtils.cpp
 
-    platform/PlatformStrategies.cpp
-
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
 

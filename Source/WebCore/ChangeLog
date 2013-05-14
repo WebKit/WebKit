@@ -1,3 +1,34 @@
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Implement platform strategies
+        https://bugs.webkit.org/show_bug.cgi?id=112162
+
+        Reviewed by Rob Buis.
+
+        This is just a refactoring, covered by existing tests.
+
+        * CMakeLists.txt: Move PlatformStrategies.cpp from platform
+        specific makefiles to the global one now that all platforms using
+        cmake implement platform strategies.
+        * PlatformBlackBerry.cmake:
+        * PlatformEfl.cmake:
+        * PlatformWinCE.cmake:
+        * loader/CookieJar.cpp: Remove the preprocessor error that is not
+        needed anymore.
+        * loader/blackberry/CookieJarBlackBerry.cpp: Removed.
+        * platform/network/blackberry/CookieJarBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        * plugins/blackberry/PluginDataBlackBerry.cpp: Removed.
+
 2013-05-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.

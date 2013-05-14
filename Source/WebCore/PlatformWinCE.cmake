@@ -31,7 +31,6 @@ list(APPEND WebCore_SOURCES
 
     platform/Cursor.cpp
     platform/LocalizedStrings.cpp
-    platform/PlatformStrategies.cpp
     platform/ScrollAnimatorNone.cpp
 
     platform/win/BitmapInfo.cpp

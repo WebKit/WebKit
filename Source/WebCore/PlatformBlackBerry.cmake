@@ -44,6 +44,7 @@ list(APPEND WebCore_SOURCES
     platform/network/NetworkStorageSessionStub.cpp
     platform/network/ProxyServer.cpp
     platform/network/blackberry/AutofillBackingStore.cpp
+    platform/network/blackberry/CookieJarBlackBerry.cpp
     platform/network/blackberry/DNSBlackBerry.cpp
     platform/network/blackberry/DeferredData.cpp
     platform/network/blackberry/NetworkJob.cpp
@@ -94,7 +95,6 @@ list(APPEND WebCore_SOURCES
     editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
     html/shadow/MediaControlsBlackBerry.cpp
-    loader/blackberry/CookieJarBlackBerry.cpp
     page/blackberry/AccessibilityObjectBlackBerry.cpp
     page/blackberry/DragControllerBlackBerry.cpp
     page/blackberry/EventHandlerBlackBerry.cpp
@@ -204,7 +204,6 @@ endif ()
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/blackberry/NPCallbacksBlackBerry.cpp
-        plugins/blackberry/PluginDataBlackBerry.cpp
         plugins/blackberry/PluginPackageBlackBerry.cpp
         plugins/blackberry/PluginViewBlackBerry.cpp
         plugins/blackberry/PluginViewPrivateBlackBerry.cpp

@@ -1,3 +1,13 @@
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Implement platform strategies
+        https://bugs.webkit.org/show_bug.cgi?id=112162
+
+        Reviewed by Rob Buis.
+
+        * wtf/Platform.h: Add BlackBerry platform to the list of platforms
+        using platform strategies.
+
 2013-05-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve stringProtoFuncLastIndexOf for the prefix case

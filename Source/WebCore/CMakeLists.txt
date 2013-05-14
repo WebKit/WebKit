@@ -1832,6 +1832,7 @@ set(WebCore_SOURCES
     platform/NotImplemented.cpp
     platform/PlatformEvent.cpp
     platform/PlatformInstrumentation.cpp
+    platform/PlatformStrategies.cpp
     platform/RunLoop.cpp
     platform/RuntimeApplicationChecks.cpp
     platform/ScrollAnimator.cpp
