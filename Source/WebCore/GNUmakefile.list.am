@@ -5,7 +5,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/CSSPropertyNames.cpp \
 	DerivedSources/WebCore/CSSValueKeywords.h \
 	DerivedSources/WebCore/CSSValueKeywords.cpp \
-	DerivedSources/WebCore/ColorData.cpp \
 	DerivedSources/WebCore/EventFactory.cpp \
 	DerivedSources/WebCore/EventHeaders.h \
 	DerivedSources/WebCore/EventInterfaces.h \
@@ -898,8 +897,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/SettingsMacros.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
-	DerivedSources/WebCore/WebKitFontFamilyNames.cpp \
-	DerivedSources/WebCore/WebKitFontFamilyNames.h \
 	DerivedSources/WebCore/XLinkNames.cpp \
 	DerivedSources/WebCore/XMLNames.cpp \
 	DerivedSources/WebCore/XMLNames.h \
@@ -909,6 +906,11 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XMLViewerJS.h \
 	DerivedSources/WebCore/XPathGrammar.cpp \
 	DerivedSources/WebCore/XPathGrammar.h
+
+platform_built_sources += \
+	DerivedSources/Platform/ColorData.cpp \
+	DerivedSources/Platform/WebKitFontFamilyNames.cpp \
+	DerivedSources/Platform/WebKitFontFamilyNames.h
 
 # These files need to be part of WebCore otherwise they cause undefined
 # symbols havoc

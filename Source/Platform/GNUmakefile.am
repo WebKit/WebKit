@@ -6,12 +6,15 @@
 # For now we only build the libPlatformGtk library as there are no source files in place yet
 # that could be built into libPlatform.
 
-platformgtk_cppflags += \
-	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
+platform_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/KHR \
+	-I$(top_builddir)/DerivedSources/Platform
+
+platformgtk_cppflags += \
+	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
 	-DDATA_DIR=\"${datadir}\"
 
 # This is the minimal set of Source/WebCore/platform subdirectories that contain headers required by the GTK-specific
@@ -58,6 +61,9 @@ $(platformgtk_lib_for_dep): $(srcdir)/Source/Platform/GNUmakefile.am $(srcdir)/S
 libPlatform_la_SOURCES = \
 	$(platform_sources)
 
+nodist_libPlatform_la_SOURCES = \
+	$(platform_built_sources)
+
 libPlatform_la_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
@@ -92,6 +98,7 @@ libPlatformGtk_la_CFLAGS = \
 libPlatformGtk_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
+	$(platform_cppflags) \
 	$(platformgtk_cppflags) \
 	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -99,3 +106,10 @@ libPlatformGtk_la_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
+
+DerivedSources/Platform/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
+	$(AM_V_GEN)$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_PLATFORM) $(WebCore)/platform/ColorData.gperf
+
+DerivedSources/Platform/WebKitFontFamilyNames.cpp: DerivedSources/Platform/WebKitFontFamilyNames.h
+DerivedSources/Platform/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/css/WebKitFontFamilyNames.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in --outputDir "$(GENSOURCES_PLATFORM)"

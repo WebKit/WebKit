@@ -166,6 +166,7 @@ Programs_TestWebKitAPI_TestWebCore_SOURCES = \
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
+	$(platform_cppflags) \
 	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \

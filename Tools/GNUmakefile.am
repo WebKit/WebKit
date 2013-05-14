@@ -83,6 +83,7 @@ BUILT_SOURCES += $(libwebcoreinternals_built_sources)
 
 libWebCoreInternals_la_CPPFLAGS = \
 	$(global_cppflags) \
+	$(platform_cppflags) \
 	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
@@ -116,6 +117,7 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/Source/WebKit/gtk \
 	$(javascriptcore_cppflags) \
+	$(platform_cppflags) \
 	$(platformgtk_cppflags) \
 	$(webcore_cppflags)
 

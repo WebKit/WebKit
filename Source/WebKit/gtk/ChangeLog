@@ -1,3 +1,13 @@
+2013-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move generated ColorData.cpp, WebKitFontFamilyNames.(cpp|h) build targets into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115921
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add platform_cppflags to the list of CPPFLAGS for libwebkit2gtk, libWebCoreGtk2,
+        libPlatformGtk2 and WebKitPluginProcess.
+
 2013-05-12  Timothy Hatcher  <timothy@apple.com>
 
         Add support for updating the Web Inspector toolbar height.
