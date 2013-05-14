@@ -1729,7 +1729,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData* elementData = ensureUniqueElementData();
 
-    unsigned index = elementData->getAttributeItemIndex(attrNode->qualifiedName());
+    unsigned index = elementData->getAttributeItemIndexForAttributeNode(attrNode);
     if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData->attributeItem(index)->value());
@@ -1765,13 +1765,16 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 
     synchronizeAttribute(attr->qualifiedName());
 
-    unsigned index = elementData()->getAttributeItemIndex(attr->qualifiedName());
+    unsigned index = elementData()->getAttributeItemIndexForAttributeNode(attr);
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
 
-    return detachAttribute(index);
+    RefPtr<Attr> attrNode = attr;
+    detachAttrNodeFromElementWithValue(attr, elementData()->attributeItem(index)->value());
+    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    return attrNode.release();
 }
 
 bool Element::parseAttributeName(QualifiedName& out, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode& ec)
@@ -3140,9 +3143,22 @@ unsigned ElementData::getAttributeItemIndexSlowCase(const AtomicString& name, bo
     return attributeNotFound;
 }
 
+unsigned ElementData::getAttributeItemIndexForAttributeNode(const Attr* attr) const
+{
+    ASSERT(attr);
+    const Attribute* attributes = attributeBase();
+    unsigned count = length();
+    for (unsigned i = 0; i < count; ++i) {
+        if (attributes[i].name() == attr->qualifiedName())
+            return i;
+    }
+    return attributeNotFound;
+}
+
 Attribute* UniqueElementData::getAttributeItem(const QualifiedName& name)
 {
-    for (unsigned i = 0; i < length(); ++i) {
+    unsigned count = length();
+    for (unsigned i = 0; i < count; ++i) {
         if (m_attributeVector.at(i).name().matches(name))
             return &m_attributeVector.at(i);
     }

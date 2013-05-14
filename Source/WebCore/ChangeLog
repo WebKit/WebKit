@@ -1,3 +1,30 @@
+2013-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removing Attr can delete a wrong Attribute in ElementData
+        https://bugs.webkit.org/show_bug.cgi?id=116077
+
+        Reviewed by Benjamin Poulain.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/e861452a292e185501e48940305947aa6a4e23c2
+        after simplifying and renaming functions to be more WebKit style.
+
+        The XML parser can produce elements with attributes whose names have
+        distinct prefixes, but the same expanded name. When one of these
+        attributes is put up for adoption, it may be its similarly named
+        sibling that is removed from its owner element. As a result the
+        original owner hangs onto the adopted attribute, despite the fact that
+        it is now in a different document. Sometimes it's just hard to let go.
+
+        Test: fast/dom/adopt-attribute-crash.svg
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::ElementData::getAttributeItemIndex):
+        * dom/Element.h:
+        (ElementData):
+        (Element):
+
 2013-05-14  Antti Koivisto  <antti@apple.com>
 
         Remove ::-webkit-distributed()
