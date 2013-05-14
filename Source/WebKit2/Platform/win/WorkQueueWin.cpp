@@ -227,8 +227,10 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
     MutexLocker lock(timerContext->timerMutex);
     ASSERT(timerContext->timer);
     ASSERT(timerContext->queue->m_timerQueue);
-    if (!::DeleteTimerQueueTimer(timerContext->queue->m_timerQueue, timerContext->timer, 0))
-        ASSERT_WITH_MESSAGE(false, "::DeleteTimerQueueTimer failed with error %lu", ::GetLastError());
+    if (!::DeleteTimerQueueTimer(timerContext->queue->m_timerQueue, timerContext->timer, 0)) {
+        // Getting ERROR_IO_PENDING here means that the timer will be destroyed once the callback is done executing.
+        ASSERT_WITH_MESSAGE(::GetLastError() == ERROR_IO_PENDING, "::DeleteTimerQueueTimer failed with error %lu", ::GetLastError());
+    }
 }
 
 void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)

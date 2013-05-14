@@ -1,3 +1,16 @@
+2013-05-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [WK2][Win] Fix ASSERT(DeleteTimerQueueTimer...)
+        https://bugs.webkit.org/show_bug.cgi?id=116039
+
+        Reviewed by Benjamin Poulain.
+
+        According to the documentation, DeleteTimerQueueTimer can be expected to return
+        false with an ERROR_IO_PENDING error when called from the timer's callback.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::timerCallback):
+
 2013-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unused "type" field from DictionaryPopupInfo
