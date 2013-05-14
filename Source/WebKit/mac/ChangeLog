@@ -1,3 +1,14 @@
+2013-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Make -[WebNavigationData url] the destination of the navigation
+        https://bugs.webkit.org/show_bug.cgi?id=114904
+
+        Reviewed by Dave Kilzer.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory): Initialize the WebNavigationData with the
+        current URL, not the original request URL.
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Remove ChromeClient::willPopupMenu

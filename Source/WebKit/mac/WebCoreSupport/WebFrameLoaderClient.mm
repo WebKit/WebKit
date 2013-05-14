@@ -881,7 +881,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if ([view historyDelegate]) {
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
         if (implementations->navigatedFunc) {
-            WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->urlForHistory()
+            WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->url()
                                                                              title:nilOrNSString(loader->title().string())
                                                                    originalRequest:loader->originalRequestCopy().nsURLRequest(UpdateHTTPBody)
                                                                           response:loader->response().nsURLResponse()
