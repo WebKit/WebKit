@@ -1,3 +1,18 @@
+2013-05-13  Alvaro Lopez Ortega  <alvaro@alobbs.com>
+
+        Nightly build's jsc doesn't work without DYLD_FRAMEWORK...
+        https://bugs.webkit.org/show_bug.cgi?id=79065
+
+        Reviewed by Darin Adler.
+
+        Fixes the build process so the depencencies of the jsc binary are
+        modified before its copied to its target directory. In this way
+        jsc should always use relative reference to the JavaScriptCore
+        libraries.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Fixes the commands in
+        the "Copy Into Framework" target.
+
 2013-05-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: scanExternalObjectGraph should not create new JSVirtualMachine wrappers

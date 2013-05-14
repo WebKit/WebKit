@@ -3707,7 +3707,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptcore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
+			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Update the jsc binary to refer to JavaScriptcore.framework relative to its location, then copy it\ninstall_name_tool -change \"${SYSTEM_LIBRARY_DIR}/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/jsc\"\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"";
 		};
 		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
 			isa = PBXShellScriptBuildPhase;
