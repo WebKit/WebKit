@@ -1,3 +1,20 @@
+2013-05-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Some layout tests fail to account for inline pixel snapping
+        https://bugs.webkit.org/show_bug.cgi?id=116115
+
+        Reviewed by Dirk Schulze.
+
+        Adjust the expected locations of spans to account for the fact that inline layout snaps boxes' logical top
+        and bottom to pixels, and the fact that line segment layout rounds the logical left and floors the logical
+        right of segments.
+
+        * fast/exclusions/shape-inside/shape-inside-polygon-layout.html: Use the quiet variable!
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon-expected.txt:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+
 2013-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add tests for secure event input

@@ -51,7 +51,8 @@
   // The top of the polygon is a horzontal edge at y=1.42%, and its parent's height is 500px.  The top of
   // the first line, span "a", will align with the top of the polygon. The ExclusionShape::firstIncludedIntervalLogicalTop()
   // methods use ceiledLayoutUnit() to ensure that their return value is within the shape.
-  var lineATop = SubPixelLayout.ceilSnapToLayoutUnit(.0142 * 500);
+
+  var lineATop = Math.floor(SubPixelLayout.ceilSnapToLayoutUnit(.0142 * 500)); 
 
   // Verify that all four one-character lines are vertically adjacent and 15 pixels high.
   var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()

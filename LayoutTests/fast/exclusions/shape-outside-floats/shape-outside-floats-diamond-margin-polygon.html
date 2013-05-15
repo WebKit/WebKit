@@ -59,29 +59,29 @@ function elementRect(elementId)
 
 function marginLeftXIntercept(lineNumber)
 {
-    return SubPixelLayout.snapToLayoutUnit(lineNumber * 20 + 20 * Math.sqrt(2) + 50);
+    var f = SubPixelLayout.snapToLayoutUnit(lineNumber * 20 + 20 * Math.sqrt(2) + 50);
+    return Math.round(f);
 }
 
 var quiet = true; // PASS output depends on SubPixelLayout.isEnabled()
 
 shouldBe("elementRect('l1').top", "0");
-shouldBeCloseTo("elementRect('l1').left", marginLeftXIntercept(1), 1);
+shouldBeCloseTo("elementRect('l1').left", marginLeftXIntercept(1), 1, quiet);
 
 shouldBe("elementRect('l2').top", "20");
-shouldBeCloseTo("elementRect('l2').left", marginLeftXIntercept(2), 1);
+shouldBeCloseTo("elementRect('l2').left", marginLeftXIntercept(2), 1, quiet);
 
 shouldBe("elementRect('l3').top", "40");
-shouldBeCloseTo("elementRect('l3').left", marginLeftXIntercept(3), 1);
+shouldBeCloseTo("elementRect('l3').left", marginLeftXIntercept(3), 1, quiet);
 
 shouldBe("elementRect('l4').top", "80");
-shouldBeCloseTo("elementRect('l4').left", marginLeftXIntercept(3), 1);
+shouldBeCloseTo("elementRect('l4').left", marginLeftXIntercept(3), 1, quiet);
 
 shouldBe("elementRect('l5').top", "100");
-shouldBeCloseTo("elementRect('l5').left", marginLeftXIntercept(2), 1);
+shouldBeCloseTo("elementRect('l5').left", marginLeftXIntercept(2), 1, quiet);
 
 shouldBe("elementRect('l6').top", "120");
-shouldBeCloseTo("elementRect('l6').left", marginLeftXIntercept(1), 1);
+shouldBeCloseTo("elementRect('l6').left", marginLeftXIntercept(1), 1, quiet);
 
 </script>
 </html>
-

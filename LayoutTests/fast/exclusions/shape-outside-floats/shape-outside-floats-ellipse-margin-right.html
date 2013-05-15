@@ -69,7 +69,8 @@ function elementRect(elementId)
 function marginEllipseRightXIntercept(y, cx, rx, ry)
 {
     var containerWidth = document.getElementById("container").getBoundingClientRect().width;
-    return String( SubPixelLayout.snapToLayoutUnit(containerWidth - (cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2)))) );
+    var f = SubPixelLayout.snapToLayoutUnit(containerWidth - (cx + rx * Math.sqrt(1 - Math.pow((ry - y) / ry, 2))));
+    return String( Math.floor(f) );
 }
 
 // In the ".right" tests below, it's the lower edge of the 20px Ahem glyph that that defines the element rect's left edge. 
