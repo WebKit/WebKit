@@ -96,7 +96,7 @@ namespace WebCore {
         
         LEGACY_VIRTUAL DragImageRef createDragImage(IntPoint& dragLocation) const LEGACY_PURE;
 #if ENABLE(DRAG_SUPPORT)
-        virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) = 0;
+        LEGACY_VIRTUAL void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) LEGACY_PURE;
 #endif
         LEGACY_VIRTUAL void writeURL(const KURL&, const String&, Frame*) LEGACY_PURE;
         LEGACY_VIRTUAL void writeRange(Range*, Frame*) LEGACY_PURE;

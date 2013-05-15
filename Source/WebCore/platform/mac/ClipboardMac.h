@@ -53,10 +53,6 @@ public:
 
     virtual ~ClipboardMac();
 
-#if ENABLE(DRAG_SUPPORT)
-    virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*);
-#endif
-    
     // Methods for getting info in Cocoa's type system
     const String& pasteboardName() { return m_pasteboardName; }
 

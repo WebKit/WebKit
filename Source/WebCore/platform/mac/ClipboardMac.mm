@@ -67,11 +67,11 @@ ClipboardMac::~ClipboardMac()
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
+void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);
     if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboardName, kit(element), url, title, frame);
+        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard->name(), kit(element), url, title, frame);
 }
 #endif // ENABLE(DRAG_SUPPORT)
     

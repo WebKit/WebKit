@@ -1,3 +1,23 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        [Mac] Make Clipboard::declareAndWriteDragImage non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=116156
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.h: Make declareAndWriteDragImage non-virtual for non-legacy.
+
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::name): Added. Can be used in Mac platform code to do
+        pasteboard operations directly instead of through the Pasteboard class
+        functions. Not sure if we'll need it long term or not.
+
+        * platform/mac/ClipboardMac.h: Removed declareAndWriteDragImage function.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::declareAndWriteDragImage): Made this function a Clipboard
+        member instead of ClipboardMac.
+
 2013-05-15  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Remove version #if guards

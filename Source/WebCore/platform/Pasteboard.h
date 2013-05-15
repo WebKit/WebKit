@@ -82,6 +82,7 @@ public:
 
 #if PLATFORM(MAC)
     static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
+    String name() { return m_pasteboardName; }
 
     // This is required to support OS X services.
     void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard);
