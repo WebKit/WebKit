@@ -341,7 +341,7 @@ docs_build_stamp_list += \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
 endif
 
-docs-build.stamp: $(doc_build_stamp_list)
+docs-build.stamp: $(docs_build_stamp_list)
 	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
 
