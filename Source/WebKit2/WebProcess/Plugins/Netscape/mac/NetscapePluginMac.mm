@@ -30,6 +30,7 @@
 
 #import "NetscapeBrowserFuncs.h"
 #import "PluginController.h"
+#import "WKNPAPIPlugInContainerInternal.h"
 #import "WebEvent.h"
 #import <Carbon/Carbon.h>
 #import <WebCore/GraphicsContext.h>
@@ -178,6 +179,19 @@ mach_port_t NetscapePlugin::compositingRenderServerPort()
     return controller()->compositingRenderServerPort();
 }
 
+void NetscapePlugin::openPluginPreferencePane()
+{
+    controller()->openPluginPreferencePane();
+}
+
+WKNPAPIPlugInContainer* NetscapePlugin::plugInContainer()
+{
+    if (!m_plugInContainer)
+        m_plugInContainer = adoptNS([[WKNPAPIPlugInContainer alloc] _initWithNetscapePlugin:this]);
+
+    return m_plugInContainer.get();
+}
+
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
@@ -272,6 +286,8 @@ bool NetscapePlugin::platformPostInitialize()
 
 void NetscapePlugin::platformDestroy()
 {
+    [m_plugInContainer _invalidate];
+
 #ifndef NP_NO_CARBON
     if (m_eventModel == NPEventModelCarbon) {
         if (WindowRef window = windowRef()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginModuleInfo_h
-#define PluginModuleInfo_h
-
-#include <WebCore/PluginData.h>
-
-#if PLATFORM(MAC)
-#include <mach/machine.h>
-#endif
+#import "WKNPAPIPlugInContainer.h"
 
 namespace WebKit {
-
-enum PluginModuleLoadPolicy {
-    // The plug-in module should be loaded normally.
-    PluginModuleLoadNormally,
-
-    // The plug-in should be blocked from being instantiated.
-    // Note that the plug-in will still be seen by e.g. navigator.plugins
-    PluginModuleBlocked,
-
-    // The plug-in module is inactive and should not be instantiated unless the user explicitly allows it.
-    PluginModuleInactive
+class NetscapePlugin;
 };
 
-struct PluginModuleInfo {
-    String path;
-    WebCore::PluginInfo info;
+@interface WKNPAPIPlugInContainer : NSObject <WKNPAPIPlugInContainer> {
+    WebKit::NetscapePlugin* _plugin;
+}
 
-#if PLATFORM(MAC)
-    cpu_type_t pluginArchitecture;
-    String bundleIdentifier;
-    String versionString;
-    String preferencePanePath;
-#endif
-};
+- (id)_initWithNetscapePlugin:(WebKit::NetscapePlugin*)plugin;
+- (void)_invalidate;
 
-} // namespace WebKit
-
-#endif // PluginModuleInfo_h
+@end

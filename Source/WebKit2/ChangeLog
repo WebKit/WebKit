@@ -1,3 +1,78 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Need a way for NPAPI plug-ins to open preference panes
+        https://bugs.webkit.org/show_bug.cgi?id=116173
+        <rdar://problem/13503848>
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.h:
+        Add openPluginPreferencePane().
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::openPluginPreferencePane):
+        Send OpenPluginPreferencePane to the UI process.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        Get the preference pane path.
+        
+        * Shared/Plugins/PluginModuleInfo.h:
+        Add preferencePanePath member variable.
+
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        Add openPluginPreferencePane message handler.
+
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        ADd OpenPluginPreferencePane message.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::openPluginPreferencePane):
+        Get the path to the preference pane and use LS to open it.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle WKNVPlugInContainer.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add WKNVPlugInContainer member variable.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::openPluginPreferencePane):
+        Call through to the plug-in controller.
+
+        (WebKit::NetscapePlugin::plugInContainer):
+        Create a WKNPAPIPlugInContainer object if necessary.
+
+        (WebKit::NetscapePlugin::platformDestroy):
+        Invalidate the WKNPAPIPlugInContainer object.
+
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.h:
+        New file with the protocol definition.
+
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.mm:
+        (-[WKNPAPIPlugInContainer dealloc]):
+        Assert that the plug-in is null (that we've been invalidated).
+
+        (-[WKNPAPIPlugInContainer _invalidate]):
+        Set the plug-in to null.
+
+        (-[WKNPAPIPlugInContainer openPlugInPreferencePane]):
+        Call through to the plug-in.
+
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainerInternal.h:
+        New file with the interface declaration for the object that implements the protocol.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add openPluginPreferencePane member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::openPluginPreferencePane):
+        Add stub; this should never be called since we always go through the UI process.
+
 2013-05-15  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2][Mac] Split resetTextInputState into two functions

@@ -133,6 +133,7 @@ private:
     void endModal();
 
     void applicationDidBecomeActive();
+    void openPluginPreferencePane();
 #endif
 
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);

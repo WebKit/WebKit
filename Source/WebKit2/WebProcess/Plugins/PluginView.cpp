@@ -1424,6 +1424,12 @@ mach_port_t PluginView::compositingRenderServerPort()
 {
     return WebProcess::shared().compositingRenderServerPort();
 }
+
+void PluginView::openPluginPreferencePane()
+{
+    ASSERT_NOT_REACHED();
+}
+
 #endif
 
 float PluginView::contentsScaleFactor()

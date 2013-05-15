@@ -31,6 +31,9 @@ messages -> PluginProcessProxy LegacyReceiver {
 #if PLATFORM(MAC)
     SetModalWindowIsShowing(bool modalWindowIsShowing)
     SetFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
+    
+    # Open the plug-ins preference pane (as specified in the plug-in's Info.plist file).
+    OpenPluginPreferencePane()
 #endif
 }
 

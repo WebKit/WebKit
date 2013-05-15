@@ -258,6 +258,8 @@
 		1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
+		1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */; };
+		1AD09F2C1743F8E600A95E50 /* WKNPAPIPlugInContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */; };
 		1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */; };
 		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
@@ -1697,6 +1699,9 @@
 		1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginSiteDataManager.cpp; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
+		1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNPAPIPlugInContainer.mm; sourceTree = "<group>"; };
+		1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainer.h; sourceTree = "<group>"; };
+		1AD09F2D1743FB0300A95E50 /* WKNPAPIPlugInContainerInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainerInternal.h; sourceTree = "<group>"; };
 		1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxyMap.cpp; sourceTree = "<group>"; };
 		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
@@ -3162,6 +3167,9 @@
 			children = (
 				1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */,
 				1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */,
+				1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */,
+				1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */,
+				1AD09F2D1743FB0300A95E50 /* WKNPAPIPlugInContainerInternal.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -5454,6 +5462,7 @@
 				1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */,
 				1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */,
 				1AA3D75C1651B44F008713D0 /* RemoteLayerTreeHost.h in Headers */,
+				1AD09F2C1743F8E600A95E50 /* WKNPAPIPlugInContainer.h in Headers */,
 				1AA3D7621651B7D3008713D0 /* RemoteLayerTreeHostMessages.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
 				E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */,
@@ -6586,6 +6595,7 @@
 				BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */,
 				BC06F43B12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp in Sources */,
 				512C06881638F67E00ABB911 /* HostRecord.cpp in Sources */,
+				1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */,
 				BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */,
 				BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */,
 				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,

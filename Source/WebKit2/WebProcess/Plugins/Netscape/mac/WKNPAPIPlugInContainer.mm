@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginModuleInfo_h
-#define PluginModuleInfo_h
+#import "config.h"
+#import "WKNPAPIPluginContainerInternal.h"
 
-#include <WebCore/PluginData.h>
+#import "NetscapePlugin.h"
 
-#if PLATFORM(MAC)
-#include <mach/machine.h>
+using namespace WebKit;
+
+@implementation WKNPAPIPlugInContainer
+
+- (id)_initWithNetscapePlugin:(NetscapePlugin *)plugin
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _plugin = plugin;
+
+    return self;
+}
+
+#if !ASSERT_DISABLED
+- (void)dealloc
+{
+    ASSERT(!_plugin);
+
+    [super dealloc];
+}
 #endif
 
-namespace WebKit {
+- (void)_invalidate
+{
+    ASSERT(_plugin);
 
-enum PluginModuleLoadPolicy {
-    // The plug-in module should be loaded normally.
-    PluginModuleLoadNormally,
+    _plugin = nullptr;
+}
 
-    // The plug-in should be blocked from being instantiated.
-    // Note that the plug-in will still be seen by e.g. navigator.plugins
-    PluginModuleBlocked,
+- (BOOL)openPlugInPreferencePane
+{
+    if (!_plugin)
+        return NO;
 
-    // The plug-in module is inactive and should not be instantiated unless the user explicitly allows it.
-    PluginModuleInactive
-};
+    _plugin->openPluginPreferencePane();
+    return YES;
+}
 
-struct PluginModuleInfo {
-    String path;
-    WebCore::PluginInfo info;
+@end
 
-#if PLATFORM(MAC)
-    cpu_type_t pluginArchitecture;
-    String bundleIdentifier;
-    String versionString;
-    String preferencePanePath;
-#endif
-};
-
-} // namespace WebKit
-
-#endif // PluginModuleInfo_h

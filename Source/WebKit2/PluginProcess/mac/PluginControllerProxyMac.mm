@@ -31,6 +31,7 @@
 #import "LayerHostingContext.h"
 #import "PluginCreationParameters.h"
 #import "PluginProcess.h"
+#import "PluginProcessProxyMessages.h"
 #import "PluginProxyMessages.h"
 #import "WebProcessConnection.h"
 #import <QuartzCore/QuartzCore.h>
@@ -52,6 +53,11 @@ void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState
 mach_port_t PluginControllerProxy::compositingRenderServerPort()
 {
     return PluginProcess::shared().compositingRenderServerPort();
+}
+
+void PluginControllerProxy::openPluginPreferencePane()
+{
+    PluginProcess::shared().parentProcessConnection()->send(Messages::PluginProcessProxy::OpenPluginPreferencePane(), 0);
 }
 
 void PluginControllerProxy::platformInitialize(const PluginCreationParameters& creationParameters)

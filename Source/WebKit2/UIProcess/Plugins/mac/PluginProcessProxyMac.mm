@@ -329,6 +329,31 @@ void PluginProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEna
     m_connection->send(Messages::PluginProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
+void PluginProcessProxy::openPluginPreferencePane()
+{
+    if (!m_pluginInfo.preferencePanePath)
+        return;
+
+    NSURL *preferenceURL = [NSURL fileURLWithPath:m_pluginInfo.preferencePanePath];
+    if (!preferenceURL) {
+        LOG_ERROR("Creating URL for preference pane path \"%@\" failed.", (NSString *)m_pluginInfo.preferencePanePath);
+        return;
+    }
+
+    NSArray *preferenceURLs = [NSArray arrayWithObject:preferenceURL];
+
+    LSLaunchURLSpec prefSpec;
+    prefSpec.appURL = 0;
+    prefSpec.itemURLs = reinterpret_cast<CFArrayRef>(preferenceURLs);
+    prefSpec.passThruParams = 0;
+    prefSpec.launchFlags = kLSLaunchAsync | kLSLaunchDontAddToRecents;
+    prefSpec.asyncRefCon = 0;
+
+    OSStatus error = LSOpenFromURLSpec(&prefSpec, 0);
+    if (error != noErr)
+        LOG_ERROR("LSOpenFromURLSpec to open \"%@\" failed with error %d.", (NSString *)m_pluginInfo.preferencePanePath, error);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

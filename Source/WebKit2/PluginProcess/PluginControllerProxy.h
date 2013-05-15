@@ -101,9 +101,10 @@ private:
     virtual void didFailToInitializePlugin() OVERRIDE;
 
 #if PLATFORM(MAC)
-    virtual void pluginFocusOrWindowFocusChanged(bool);
-    virtual void setComplexTextInputState(PluginComplexTextInputState);
-    virtual mach_port_t compositingRenderServerPort();
+    virtual void pluginFocusOrWindowFocusChanged(bool) OVERRIDE;
+    virtual void setComplexTextInputState(PluginComplexTextInputState) OVERRIDE;
+    virtual mach_port_t compositingRenderServerPort() OVERRIDE;
+    virtual void openPluginPreferencePane() OVERRIDE;
 #endif
 
     virtual float contentsScaleFactor();

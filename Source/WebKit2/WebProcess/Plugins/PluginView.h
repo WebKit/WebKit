@@ -191,6 +191,7 @@ private:
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus);
     virtual void setComplexTextInputState(PluginComplexTextInputState);
     virtual mach_port_t compositingRenderServerPort();
+    virtual void openPluginPreferencePane() OVERRIDE;
 #endif
     virtual float contentsScaleFactor();
     virtual String proxiesForURL(const String&);

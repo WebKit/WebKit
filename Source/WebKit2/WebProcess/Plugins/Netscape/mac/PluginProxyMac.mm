@@ -97,7 +97,6 @@ void PluginProxy::setLayerHostingContextID(uint32_t layerHostingContextID)
     makeRenderLayer(m_pluginLayer.get(), m_remoteLayerClientID);
 }
 
-
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
