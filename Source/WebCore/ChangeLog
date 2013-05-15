@@ -1,3 +1,14 @@
+2013-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert http://trac.webkit.org/changeset/150047
+        
+        It introduced unwanted behavioral differences between
+        Retina and non-Retina Mac hardware.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::requiresTiledLayer):
+        (WebCore::GraphicsLayerCA::computePixelAlignment):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Remove the ClipboardMac class and header file
