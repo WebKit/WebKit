@@ -41,7 +41,7 @@ static void readCurlCookieToken(const char*& cookie, String& token)
         cookie++;
 }
 
-static void addMatchingCurlCookie(const char* cookie, const String& domain, const String& path, String& cookies)
+static void addMatchingCurlCookie(const char* cookie, const String& domain, const String& path, StringBuilder& cookies, bool httponly)
 {
     // Check if the cookie matches domain and path, and is not expired.
     // If so, add it to the list of cookies.
@@ -71,8 +71,13 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
     bool subDomain = false;
 
     // HttpOnly cookie entries begin with "#HttpOnly_".
-    if (cookieDomain.startsWith("#HttpOnly_"))
-        return;
+    if (cookieDomain.startsWith("#HttpOnly_")) {
+        if (httponly)
+            cookieDomain.remove(0, 10);
+        else
+            return;
+    }
+
 
     if (cookieDomain[0] == '.') {
         // Check if domain is a subdomain of the domain in the cookie.
@@ -120,7 +125,14 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
     readCurlCookieToken(cookie, strValue);
 
     // The cookie matches, add it to the cookie list.
-    cookies = cookies + strName + "=" + strValue + "; ";
+
+    if (cookies.length() > 0)
+        cookies.append("; ");
+
+    cookies.append(strName);
+    cookies.append("=");
+    cookies.append(strValue);
+
 }
 
 static String getNetscapeCookieFormat(const KURL& url, const String& value)
@@ -233,10 +245,9 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     curl_easy_cleanup(curl);
 }
 
-String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
+static String cookiesForSession(const NetworkStorageSession&, const KURL&, const KURL& url, bool httponly)
 {
     String cookies;
-
     CURL* curl = curl_easy_init();
 
     if (!curl)
@@ -252,14 +263,16 @@ String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
     if (list) {
         String domain = url.host();
         String path = url.path();
+        StringBuilder cookiesBuilder;
 
         struct curl_slist* item = list;
         while (item) {
             const char* cookie = item->data;
-            addMatchingCurlCookie(cookie, domain, path, cookies);
+            addMatchingCurlCookie(cookie, domain, path, cookiesBuilder, httponly);
             item = item->next;
         }
 
+        cookies = cookiesBuilder.toString();
         curl_slist_free_all(list);
     }
 
@@ -268,10 +281,14 @@ String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
     return cookies;
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    // FIXME: include HttpOnly cookie.
-    return "";
+    return cookiesForSession(session, firstParty, url, false);
+}
+
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+{
+    return cookiesForSession(session, firstParty, url, true);
 }
 
 bool cookiesEnabled(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& /*url*/)

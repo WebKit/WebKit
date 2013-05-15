@@ -1,3 +1,17 @@
+2013-05-15  Dávid Szabolcs  <David.Szabolcs@stud.u-szeged.hu>
+
+        [curl] Add support for HttpOnly cookies
+        https://bugs.webkit.org/show_bug.cgi?id=116102
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::addMatchingCurlCookie):
+        (WebCore::cookiesForSession):
+        (WebCore::cookiesForDOM):
+        (WebCore):
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r147548): Broken comboboxes
