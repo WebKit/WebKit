@@ -711,7 +711,11 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
     if (noDefaultProcessing && policy == ClipboardWritable) {
         Pasteboard* pasteboard = Pasteboard::generalPasteboard();
         pasteboard->clear();
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+        pasteboard->writePasteboard(clipboard->pasteboard());
+#else
         pasteboard->writeClipboard(clipboard.get());
+#endif
     }
 
     // invalidate clipboard here for security

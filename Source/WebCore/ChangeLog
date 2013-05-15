@@ -1,3 +1,33 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        [Mac] Thin out the ClipboardMac class and header file to prepare for deleting them
+        https://bugs.webkit.org/show_bug.cgi?id=116159
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::pasteboard): Added. For clients that have a DOM clipboard
+        object and need to get to the Pasteboard platform abstraction.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent): Call writePasteboard instead of writeClipboard.
+        Our long term plan is to delete writeClipboard.
+
+        * platform/Pasteboard.h: Added writePasteboard function.
+        (WebCore::Pasteboard::name): Made this const.
+
+        * platform/mac/ClipboardMac.h: Deleted unneeded includes and forward declarations.
+        Deleted all the data members and the virtual destructor.
+
+        * platform/mac/ClipboardMac.mm: Deleted the many includes that are no longer needed.
+        Deleted the destructor, since it's now automatically generated. Deleted the comment
+        on an #endif since it's only a few source lines away from the #if.
+        (WebCore::ClipboardMac::ClipboardMac): Deleted the code to set the data members,
+        since they are no longer used.
+
+        * platform/mac/PasteboardMac.mm: Changed include to Clipboard.h instead of ClipboardMac.h.
+        (WebCore::Pasteboard::writePasteboard): Replaced writeClipboard with this.
+
 2013-05-15  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Get rid of addNativeSnapshotChunk and HeapSnapshotChunk from Memory domain

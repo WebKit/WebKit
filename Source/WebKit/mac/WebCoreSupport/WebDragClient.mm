@@ -50,6 +50,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/Image.h>
 #import <WebCore/Page.h>
+#import <WebCore/Pasteboard.h>
 
 using namespace WebCore;
 
@@ -85,7 +86,7 @@ WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntP
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::Clipboard* clipboard)
 {
     ASSERT(clipboard);
-    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:static_cast<WebCore::ClipboardMac*>(clipboard)->pasteboardName()]];
+    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:clipboard->pasteboard().name()]];
 }
 
 void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
@@ -102,7 +103,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
     [topHTMLView _stopAutoscrollTimer];
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:static_cast<ClipboardMac*>(clipboard)->pasteboardName()];
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:clipboard->pasteboard().name()];
 
     NSImage *dragNSImage = dragImage.get();
     WebHTMLView *sourceHTMLView = htmlView.get();

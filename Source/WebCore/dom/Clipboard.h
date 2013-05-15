@@ -127,6 +127,10 @@ namespace WebCore {
         virtual PassRefPtr<DataTransferItemList> items() = 0;
 #endif
         
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+        const Pasteboard& pasteboard() { return *m_pasteboard; }
+#endif
+
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
         void updateDragImage();
 #endif

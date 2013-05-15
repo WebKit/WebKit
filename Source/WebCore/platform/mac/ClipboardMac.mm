@@ -27,24 +27,15 @@
 #import "ClipboardMac.h"
 
 #import "CachedImage.h"
-#import "CachedImageClient.h"
 #import "DOMElementInternal.h"
+#import "Document.h"
 #import "DragClient.h"
 #import "DragController.h"
 #import "DragData.h"
-#import "Editor.h"
-#import "FileList.h"
 #import "Frame.h"
 #import "FrameSnapshottingMac.h"
-#import "Image.h"
 #import "Page.h"
 #import "Pasteboard.h"
-#import "PasteboardStrategy.h"
-#import "PlatformStrategies.h"
-#import "RenderImage.h"
-#import "ScriptExecutionContext.h"
-#import "SecurityOrigin.h"
-#import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
@@ -57,12 +48,6 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)
     : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
-    , m_pasteboardName(pasteboardName)
-{
-    m_changeCount = platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
-}
-
-ClipboardMac::~ClipboardMac()
 {
 }
 
@@ -73,7 +58,7 @@ void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, cons
     if (Page* page = frame->page())
         page->dragController()->client()->declareAndWriteDragImage(m_pasteboard->name(), kit(element), url, title, frame);
 }
-#endif // ENABLE(DRAG_SUPPORT)
+#endif
     
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {

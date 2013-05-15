@@ -26,16 +26,11 @@
 #ifndef ClipboardMac_h
 #define ClipboardMac_h
 
-#include "CachedImageClient.h"
 #include "Clipboard.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS NSImage;
 
 namespace WebCore {
 
 class Frame;
-class FileList;
 
 class ClipboardMac : public Clipboard {
     WTF_MAKE_FAST_ALLOCATED;
@@ -51,16 +46,8 @@ public:
         return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, clipboardContents));
     }
 
-    virtual ~ClipboardMac();
-
-    // Methods for getting info in Cocoa's type system
-    const String& pasteboardName() { return m_pasteboardName; }
-
 private:
     ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, ClipboardContents);
-
-    String m_pasteboardName;
-    int m_changeCount;
 };
 
 }

@@ -27,7 +27,7 @@
 #import "Pasteboard.h"
 
 #import "CachedImage.h"
-#import "ClipboardMac.h"
+#import "Clipboard.h"
 #import "DOMRangeInternal.h"
 #import "Document.h"
 #import "DocumentFragment.h"
@@ -326,9 +326,9 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, cocoaURL), m_pasteboardName);
 }
 
-void Pasteboard::writeClipboard(Clipboard* clipboard)
+void Pasteboard::writePasteboard(const Pasteboard& pasteboard)
 {
-    platformStrategies()->pasteboardStrategy()->copy(static_cast<ClipboardMac*>(clipboard)->pasteboardName(), m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->copy(pasteboard.m_pasteboardName, m_pasteboardName);
 }
 
 bool Pasteboard::canSmartReplace()
