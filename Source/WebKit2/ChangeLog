@@ -1,3 +1,18 @@
+2013-05-14  Simon Cooper  <scooper@apple.com>
+
+        Add a preference that can disable the fake SYSV SHM shim
+        https://bugs.webkit.org/show_bug.cgi?id=116127
+        <rdar://problem/13810524>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shim_disabled):
+        (WebKit::shim_shmdt):
+        (WebKit::shim_shmat):
+        (WebKit::shim_shmget):
+        (WebKit::shim_shmctl):
+
 2013-05-14  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Not updating tiled backing coverage when main frame scrollability changes
