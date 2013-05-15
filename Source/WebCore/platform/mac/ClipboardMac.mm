@@ -46,6 +46,11 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 }
 #endif
 
+PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
+{
+    return ClipboardMac::create(Clipboard::DragAndDrop, NSDragPboard, ClipboardWritable, ClipboardMac::DragAndDropData, 0);
+}
+
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)
     : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
 {

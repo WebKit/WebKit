@@ -674,10 +674,10 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
     // Must be done before ondragstart adds types and data to the pboard,
-    // also done for security, as it erases data from the last drag
-    Pasteboard pasteboard(NSDragPboard);
-    pasteboard.clear();
-    return ClipboardMac::create(Clipboard::DragAndDrop, String(NSDragPboard), ClipboardWritable, ClipboardMac::DragAndDropData, m_frame);
+    // also done for security, as it erases data from the last drag.
+    OwnPtr<Pasteboard> pasteboard = Pasteboard::create(NSDragPboard);
+    pasteboard->clear();
+    return Clipboard::createForDragAndDrop();
 }
 
 #endif

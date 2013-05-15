@@ -132,6 +132,8 @@ namespace WebCore {
 #endif
 
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
+        static PassRefPtr<Clipboard> createForDragAndDrop();
+
         void updateDragImage();
 #endif
 

@@ -1,5 +1,22 @@
 2013-05-15  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove call to ClipboardMac::create from EventHandler::createDraggingClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116161
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.h: Added createForDragAndDrop function.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingClipboard): Changed to use new Clipboard function
+        instead of ClipboardMac::create.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::createForDragAndDrop): Added. For now it does exactly what the
+        EventHandler::createDraggingClipboard function did, soon to be refactored better.
+
+2013-05-15  Darin Adler  <darin@apple.com>
+
         [Mac] Thin out the ClipboardMac class and header file to prepare for deleting them
         https://bugs.webkit.org/show_bug.cgi?id=116159
 
