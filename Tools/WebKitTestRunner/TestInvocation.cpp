@@ -668,7 +668,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 #if PLATFORM(MAC)
         WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(IsSecureEventInputEnabled()));
 #else
-        WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(false);
+        WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(false));
 #endif
         return result;
     }
