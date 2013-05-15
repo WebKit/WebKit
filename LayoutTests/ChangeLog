@@ -2,6 +2,13 @@
 
         Unreviewed GTK gardening.
 
+        * platform/gtk/TestExpectations: Removing two redundant flaky crasher expectations. Adjusting one expectation,
+        assigning it a mock bug modifier so the TestExpectations linting passes.
+
+2013-05-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
         * platform/gtk/TestExpectations: Removing failure expectations for 7 CSS Regions and CSS Exclusions reftests.
 
 2013-05-15  Zan Dobersek  <zdobersek@igalia.com>
