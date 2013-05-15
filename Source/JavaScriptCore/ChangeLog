@@ -1,3 +1,18 @@
+2013-05-15  Nico Weber  <thakis@chromium.org>
+
+        WebKit doesn't support MSVS2003 any more, remove preprocessor checks for older versions.
+        https://bugs.webkit.org/show_bug.cgi?id=116157
+
+        Reviewed by Anders Carlsson.
+
+        Also remove a gcc3.2 workaround.
+
+        Merges parts of these two commits by the talented Nico Weber:
+        https://chromium.googlesource.com/chromium/blink/+/3677e2f47348daeff405a40b6f90fbdf0654c2f5
+        https://chromium.googlesource.com/chromium/blink/+/0fcd96c448dc30be1416dcc15713c53710c1a312
+
+        * os-win32/inttypes.h:
+
 2013-05-13  Alvaro Lopez Ortega  <alvaro@alobbs.com>
 
         Nightly build's jsc doesn't work without DYLD_FRAMEWORK...

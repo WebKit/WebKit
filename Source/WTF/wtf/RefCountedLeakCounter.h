@@ -38,7 +38,7 @@ namespace WTF {
 
 #ifndef NDEBUG
     private:
-#if COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
+#if COMPILER(MINGW) || OS(WINCE)
         int m_count;
 #else
         volatile int m_count;

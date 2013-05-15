@@ -38,11 +38,6 @@
 #error "This inttypes.h file should only be compiled with MSVC"
 #endif
 
-#ifdef WTF_COMPILER_MSVC7_OR_LOWER
-// https://bugs.webkit.org/show_bug.cgi?id=76210
-#error "Visual Studio 2005 or newer is required"
-#endif
-
 #if _MSC_VER > 1000
 #pragma once
 #endif

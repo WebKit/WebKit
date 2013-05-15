@@ -82,7 +82,7 @@ namespace WTF {
 #if OS(WINCE)
 inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
-#elif COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER)
+#elif COMPILER(MINGW)
 inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
 
