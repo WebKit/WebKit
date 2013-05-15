@@ -1,5 +1,14 @@
 2013-05-15  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove the ClipboardMac class and header file
+        https://bugs.webkit.org/show_bug.cgi?id=116165
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebDragClient.mm: Import Clipboard.h instead of ClipboardMac.h.
+
+2013-05-15  Darin Adler  <darin@apple.com>
+
         [Mac] Thin out the ClipboardMac class and header file to prepare for deleting them
         https://bugs.webkit.org/show_bug.cgi?id=116159
 

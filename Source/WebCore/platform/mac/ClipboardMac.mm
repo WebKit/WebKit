@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "ClipboardMac.h"
+#import "Clipboard.h"
 
 #import "CachedImage.h"
 #import "DOMElementInternal.h"
@@ -55,11 +55,6 @@ PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy pol
 {
     String pasteboardName = policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard);
     return adoptRef(new Clipboard(policy, CopyAndPaste, Pasteboard::create(pasteboardName)));
-}
-
-ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)
-    : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
-{
 }
 
 void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)

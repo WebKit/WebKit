@@ -30,7 +30,7 @@
 #include "BlockExceptions.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ClipboardMac.h"
+#include "Clipboard.h"
 #include "DragController.h"
 #include "EventNames.h"
 #include "FocusController.h"

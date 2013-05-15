@@ -1,5 +1,20 @@
 2013-05-15  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove the ClipboardMac class and header file
+        https://bugs.webkit.org/show_bug.cgi?id=116165
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove ClipboardMac.h.
+        * editing/mac/EditorMac.mm: Import Clipboard.h rather than ClipboardMac.h.
+        * page/mac/EventHandlerMac.mm: Ditto.
+        * platform/mac/ClipboardMac.h: Removed.
+
+        * platform/mac/ClipboardMac.mm: Import Clipboard.h rather than ClipboardMac.h.
+        Deleted ClipboardMac constructor.
+
+2013-05-15  Darin Adler  <darin@apple.com>
+
         [Mac] Change Clipboard::create functions so they don't use ClipboardMac::create any more
         https://bugs.webkit.org/show_bug.cgi?id=116163
 

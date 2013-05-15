@@ -27,7 +27,7 @@
 #import "Editor.h"
 
 #import "ColorMac.h"
-#import "ClipboardMac.h"
+#import "Clipboard.h"
 #import "CachedResourceLoader.h"
 #import "DocumentFragment.h"
 #import "DOMRangeInternal.h"
