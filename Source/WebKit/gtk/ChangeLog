@@ -1,3 +1,10 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * webkit/webkitwebview.cpp:
+        (webkitWebViewDirectionChanged):
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Frame::editor() should return a reference

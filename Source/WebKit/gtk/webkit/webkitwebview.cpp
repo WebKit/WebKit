@@ -5501,19 +5501,19 @@ void webkitWebViewDirectionChanged(WebKitWebView* webView, GtkTextDirection prev
     if (!focusedFrame)
         return;
 
-    Editor* editor = focusedFrame->editor();
-    if (!editor || !editor->canEdit())
+    Editor& editor = focusedFrame->editor();
+    if (!editor.canEdit())
         return;
 
     switch (direction) {
     case GTK_TEXT_DIR_NONE:
-        editor->setBaseWritingDirection(NaturalWritingDirection);
+        editor.setBaseWritingDirection(NaturalWritingDirection);
         break;
     case GTK_TEXT_DIR_LTR:
-        editor->setBaseWritingDirection(LeftToRightWritingDirection);
+        editor.setBaseWritingDirection(LeftToRightWritingDirection);
         break;
     case GTK_TEXT_DIR_RTL:
-        editor->setBaseWritingDirection(RightToLeftWritingDirection);
+        editor.setBaseWritingDirection(RightToLeftWritingDirection);
         break;
     default:
         g_assert_not_reached();
