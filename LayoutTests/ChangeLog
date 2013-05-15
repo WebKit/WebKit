@@ -2,6 +2,12 @@
 
         Unreviewed GTK gardening.
 
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt: Rebaselining after r149845.
+
+2013-05-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
         * platform/gtk/TestExpectations: Adding faillure expectations for two reftests that
         started failing after r150025 and r150065.
 
