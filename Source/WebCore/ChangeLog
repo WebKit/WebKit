@@ -1,3 +1,24 @@
+2013-05-15  Joe Mason  <jmason@blackberry.com>
+
+        [BlackBerry] When HTTP auth fails, only purge credentials that match the failed credentials
+        https://bugs.webkit.org/show_bug.cgi?id=116164
+
+        Reviewed by Rob Buis.
+
+        Internal PR: 338490
+        Internally Reviewed By: Lyon Chen
+
+        When there are multiple HTTP requests in flight with the same bad credentials (common with
+        proxy auth if the user mistyped their password), the first 407 that's received will cause
+        the credentials to be purged and the password dialog to open for new credentials. This means
+        that all 407's received after this should only purge the credentials if they have not
+        already been updated from the dialog; otherwise they will be wiping out credentials that
+        haven't failed yet.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        (WebCore::NetworkJob::purgeCredentials):
+
 2013-05-15  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Use caching when requesting children object on iOS

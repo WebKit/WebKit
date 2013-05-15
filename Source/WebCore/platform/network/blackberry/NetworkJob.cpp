@@ -862,6 +862,7 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
         challenge.setStored(true);
         updateCurrentWebChallenge(challenge);
     } else {
+        ASSERT(credential.isEmpty());
         if (m_handle->firstRequest().targetType() == ResourceRequest::TargetIsFavicon) {
             // The favicon loading is triggerred after the main resource has been loaded
             // and parsed, so if we cancel the authentication challenge when loading the main
@@ -964,6 +965,10 @@ void NetworkJob::purgeCredentials()
 
     purgeCredentials(m_handle->getInternal()->m_hostWebChallenge);
     purgeCredentials(m_handle->getInternal()->m_proxyWebChallenge);
+
+    m_handle->getInternal()->m_currentWebChallenge.nullify();
+    m_handle->getInternal()->m_proxyWebChallenge.nullify();
+    m_handle->getInternal()->m_hostWebChallenge.nullify();
 }
 
 void NetworkJob::purgeCredentials(AuthenticationChallenge& challenge)
@@ -990,11 +995,17 @@ void NetworkJob::purgeCredentials(AuthenticationChallenge& challenge)
         m_handle->getInternal()->m_pass = "";
     }
 
-    CredentialStorage::remove(challenge.protectionSpace());
-    challenge.setStored(false);
+    // Do not compare credential objects with == here, since we don't care about the persistence.
+
+    const Credential& storedCredential = CredentialStorage::get(challenge.protectionSpace());
+    if (storedCredential.user() == purgeUsername && storedCredential.password() == purgePassword) {
+        CredentialStorage::remove(challenge.protectionSpace());
+        challenge.setStored(false);
+    }
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    if (challenge.proposedCredential() == credentialBackingStore().getLogin(challenge.protectionSpace()))
-        credentialBackingStore().removeLogin(challenge.protectionSpace(), challenge.proposedCredential().user());
+    const Credential& persistedCredential = credentialBackingStore().getLogin(challenge.protectionSpace());
+    if (persistedCredential.user() == purgeUsername && persistedCredential.password() == purgePassword)
+        credentialBackingStore().removeLogin(challenge.protectionSpace(), purgeUsername);
 #endif
 }
 
