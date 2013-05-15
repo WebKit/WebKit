@@ -94,7 +94,7 @@ namespace WebCore {
         Node* dragImageElement() const { return m_dragImageElement.get(); }
         LEGACY_VIRTUAL void setDragImageElement(Node*, const IntPoint&) LEGACY_PURE;
         
-        virtual DragImageRef createDragImage(IntPoint& dragLocation) const = 0;
+        LEGACY_VIRTUAL DragImageRef createDragImage(IntPoint& dragLocation) const LEGACY_PURE;
 #if ENABLE(DRAG_SUPPORT)
         virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) = 0;
 #endif

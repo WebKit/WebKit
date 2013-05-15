@@ -46,28 +46,25 @@ public:
         CopyAndPasteGeneric
     };
 
-    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame* frame)
+    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame*)
     {
-        return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, clipboardContents, frame));
+        return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, clipboardContents));
     }
 
     virtual ~ClipboardMac();
 
-    virtual DragImageRef createDragImage(IntPoint& dragLoc) const;
 #if ENABLE(DRAG_SUPPORT)
     virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*);
 #endif
     
     // Methods for getting info in Cocoa's type system
-    NSImage *dragNSImage(NSPoint&) const; // loc converted from dragLoc, based on whole image size
     const String& pasteboardName() { return m_pasteboardName; }
 
 private:
-    ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, ClipboardContents, Frame*);
+    ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, ClipboardContents);
 
     String m_pasteboardName;
     int m_changeCount;
-    Frame* m_frame; // used on the source side to generate dragging images
 };
 
 }

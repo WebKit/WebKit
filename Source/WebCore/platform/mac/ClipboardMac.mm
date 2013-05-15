@@ -55,10 +55,9 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 }
 #endif
 
-ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents, Frame *frame)
+ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)
     : Clipboard(policy, clipboardType, Pasteboard::create(pasteboardName), clipboardContents == DragAndDropFiles)
     , m_pasteboardName(pasteboardName)
-    , m_frame(frame)
 {
     m_changeCount = platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
 }
@@ -76,33 +75,25 @@ void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, c
 }
 #endif // ENABLE(DRAG_SUPPORT)
     
-DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const
-{
-    NSPoint nsloc = NSMakePoint(loc.x(), loc.y());
-    DragImageRef result = dragNSImage(nsloc);
-    loc = (IntPoint)nsloc;
-    return result;
-}
-    
-NSImage *ClipboardMac::dragNSImage(NSPoint& loc) const
+DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {
     NSImage *result = nil;
     if (m_dragImageElement) {
-        if (m_frame) {
+        Document* document = m_dragImageElement->document();
+        if (Frame* frame = document->frame()) {
             NSRect imageRect;
             NSRect elementRect;
-            result = snapshotDragImage(m_frame, m_dragImageElement.get(), &imageRect, &elementRect);
+            result = snapshotDragImage(frame, m_dragImageElement.get(), &imageRect, &elementRect);
             // Client specifies point relative to element, not the whole image, which may include child
             // layers spread out all over the place.
-            loc.x = elementRect.origin.x - imageRect.origin.x + m_dragLoc.x();
-            loc.y = elementRect.origin.y - imageRect.origin.y + m_dragLoc.y();
-            loc.y = imageRect.size.height - loc.y;
+            location.setX(elementRect.origin.x - imageRect.origin.x + m_dragLoc.x());
+            location.setY(imageRect.size.height - (elementRect.origin.y - imageRect.origin.y + m_dragLoc.y()));
         }
     } else if (m_dragImage) {
         result = m_dragImage->image()->getNSImage();
         
-        loc = m_dragLoc;
-        loc.y = [result size].height - loc.y;
+        location = m_dragLoc;
+        location.setY([result size].height - location.y());
     }
     return result;
 }
