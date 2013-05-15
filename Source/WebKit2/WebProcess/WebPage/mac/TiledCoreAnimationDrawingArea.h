@@ -110,6 +110,7 @@ private:
     void updateDebugInfoLayer(bool showLayer);
 
     void updateIntrinsicContentSizeTimerFired(WebCore::Timer<TiledCoreAnimationDrawingArea>*);
+    void updateMainFrameClipsToExposedRect();
     
     void invalidateAllPageOverlays();
 
@@ -131,7 +132,6 @@ private:
     bool m_hasRootCompositingLayer;
 
     WebCore::FloatRect m_exposedRect;
-    bool m_clipsToExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;

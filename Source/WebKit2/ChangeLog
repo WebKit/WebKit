@@ -1,3 +1,32 @@
+2013-05-14  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Not updating tiled backing coverage when main frame scrollability changes
+        https://bugs.webkit.org/show_bug.cgi?id=116123
+        <rdar://problem/13836559>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        Add updateMainFrameClipsToExposedRect.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        Remove m_clipsToExposedRect. We don't actually need it.
+
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged):
+        Call updateMainFrameClipsToExposedRect so that we can always update
+        tiled backing coverage and can factor out our calls to setClipsToExposedRect.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateMainFrameClipsToExposedRect):
+        Factor out setClipsToExposedRect calls to here, and also call
+        FrameView::adjustTiledBackingCoverage so that the FrameView's tiled
+        backing is informed to allow overdraw in the UI-process-scrolling case.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        Use updateMainFrameClipsToExposedRect.
+
 2013-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add a testing shim for secure event input functions
