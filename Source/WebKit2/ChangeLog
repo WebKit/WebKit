@@ -1,3 +1,13 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        WKPageGetPluginInformationDisplayNameKey doesn't return the right key
+        https://bugs.webkit.org/show_bug.cgi?id=116188
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPluginInformationDisplayNameKey):
+
 2013-05-15  Alexey Proskuryakov  <ap@apple.com>
 
         More fixing after WebProcessShim renaming in r149074.
