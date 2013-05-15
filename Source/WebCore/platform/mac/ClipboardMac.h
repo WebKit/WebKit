@@ -37,7 +37,7 @@ namespace WebCore {
 class Frame;
 class FileList;
 
-class ClipboardMac : public Clipboard, public CachedImageClient {
+class ClipboardMac : public Clipboard {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ClipboardContents {
@@ -53,9 +53,6 @@ public:
 
     virtual ~ClipboardMac();
 
-    void setDragImage(CachedImage*, const IntPoint&);
-    void setDragImageElement(Node *, const IntPoint&);
-    
     virtual DragImageRef createDragImage(IntPoint& dragLoc) const;
 #if ENABLE(DRAG_SUPPORT)
     virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*);
@@ -67,8 +64,6 @@ public:
 
 private:
     ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, ClipboardContents, Frame*);
-
-    void setDragImage(CachedImage*, Node*, const IntPoint&);
 
     String m_pasteboardName;
     int m_changeCount;

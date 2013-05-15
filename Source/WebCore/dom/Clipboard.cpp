@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Clipboard.h"
 
+#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "Editor.h"
 #include "FileList.h"
 #include "Frame.h"
@@ -34,6 +36,23 @@
 #include "Pasteboard.h"
 
 namespace WebCore {
+
+#if ENABLE(DRAG_SUPPORT)
+
+class DragImageLoader FINAL : private CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassOwnPtr<DragImageLoader> create(Clipboard*);
+    void startLoading(CachedResourceHandle<CachedImage>&);
+    void stopLoading(CachedResourceHandle<CachedImage>&);
+
+private:
+    DragImageLoader(Clipboard*);
+    virtual void imageChanged(CachedImage*, const IntRect*) OVERRIDE;
+    Clipboard* m_clipboard;
+};
+
+#endif
 
 Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
@@ -54,6 +73,10 @@ Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
 
 Clipboard::~Clipboard()
 {
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
+    if (m_dragImageLoader && m_dragImage)
+        m_dragImageLoader->stopLoading(m_dragImage);
+#endif
 }
     
 void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
@@ -337,6 +360,99 @@ void Clipboard::writeURL(const KURL& url, const String& title, Frame* frame)
     // The pasteboard writeURL function should not take a frame argument, nor does this function need a frame.
     m_pasteboard->writeURL(url, title, frame);
 }
+
+#if !ENABLE(DRAG_SUPPORT)
+
+void Clipboard::setDragImage(CachedImage*, const IntPoint&)
+{
+}
+
+void Clipboard::setDragImageElement(Node*, const IntPoint&)
+{
+}
+
+#else
+
+void Clipboard::setDragImage(CachedImage* image, const IntPoint& location)
+{
+    if (!canSetDragImage())
+        return;
+
+    m_dragLoc = location;
+
+    if (m_dragImageLoader && m_dragImage)
+        m_dragImageLoader->stopLoading(m_dragImage);
+    m_dragImage = image;
+    if (m_dragImage) {
+        if (!m_dragImageLoader)
+            m_dragImageLoader = DragImageLoader::create(this);
+        m_dragImageLoader->startLoading(m_dragImage);
+    }
+
+    m_dragImageElement = 0;
+
+    updateDragImage();
+}
+
+// FIXME: Should change Node to Element.
+void Clipboard::setDragImageElement(Node* element, const IntPoint& location)
+{
+    if (!canSetDragImage())
+        return;
+
+    m_dragLoc = location;
+
+    if (m_dragImageLoader && m_dragImage)
+        m_dragImageLoader->stopLoading(m_dragImage);
+    m_dragImage = 0;
+
+    m_dragImageElement = element;
+
+    updateDragImage();
+}
+
+void Clipboard::updateDragImage()
+{
+    // Don't allow setting the image if we haven't started dragging yet; we'll rely on the dragging code
+    // to install this drag image as part of getting the drag kicked off.
+    if (!dragStarted())
+        return;
+
+    IntPoint computedHotSpot;
+    DragImageRef computedImage = createDragImage(computedHotSpot);
+    if (!computedImage)
+        return;
+
+    m_pasteboard->setDragImage(computedImage, computedHotSpot);
+}
+
+PassOwnPtr<DragImageLoader> DragImageLoader::create(Clipboard* clipboard)
+{
+    return adoptPtr(new DragImageLoader(clipboard));
+}
+
+DragImageLoader::DragImageLoader(Clipboard* clipboard)
+    : m_clipboard(clipboard)
+{
+}
+
+void DragImageLoader::startLoading(CachedResourceHandle<WebCore::CachedImage>& image)
+{
+    // FIXME: Does this really trigger a load? Does it need to?
+    image->addClient(this);
+}
+
+void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& image)
+{
+    image->removeClient(this);
+}
+
+void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
+{
+    m_clipboard->updateDragImage();
+}
+
+#endif
 
 #endif
 

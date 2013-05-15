@@ -1,3 +1,44 @@
+2013-05-14  Darin Adler  <darin@apple.com>
+
+        [Mac] Move setDragImage from ClipboardMac to PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116036
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::~Clipboard): Stop loading the drag image when
+        the clipboard object is deallocated. It would be better if there was
+        a more-well-defined time to stop the load.
+        (WebCore::Clipboard::setDragImage): Added. Sets up a drag image
+        based on a CachedImage. This tells the image loader to load the image
+        and updates the drag image when the image arrives. Copied from the
+        code in ClipboardMac, but refactored to use a separate loader object.
+        (WebCore::Clipboard::setDragImageElement): Added. Sets up a drag image
+        based on an element.
+        (WebCore::Clipboard::updateDragImage): Added. Common code to update
+        drag image when a new one is set or when a drag image load completes.
+        (WebCore::DragImageLoader::create): Added.
+        (WebCore::DragImageLoader::DragImageLoader): Ditto.
+        (WebCore::DragImageLoader::startLoading): Ditto.
+        (WebCore::DragImageLoader::stopLoading): Ditto.
+        (WebCore::DragImageLoader::imageChanged): Ditto.
+
+        * dom/Clipboard.h: Made setDragImage and setDragImageElement non-virtual
+        for non-legacy. Added updateDragImage and m_dragImageLoader.
+
+        * platform/Pasteboard.h: Added setDragImage function.
+
+        * platform/mac/ClipboardMac.h: Removed CachedImageClient as a base class
+        for ClipboardMac. Removed setDragImage and setDragImageElement.
+
+        * platform/mac/ClipboardMac.mm: Removed setDragImage and setDragImageElement.
+        (WebCore::ClipboardMac::~ClipboardMac): Removed code to remove self as
+        client loading the drag image. This is now in the Clipboard base class.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage): Added. Contains code moved here
+        from ClipboardMac.
+
 2013-05-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use ElementTraversal in SelectorDataList::execute

@@ -53,6 +53,7 @@ namespace WebCore {
     class CachedImage;
     class DataTransferItemList;
     class DragData;
+    class DragImageLoader;
     class FileList;
     class Frame;
     class Pasteboard;
@@ -89,9 +90,9 @@ namespace WebCore {
 
         IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }
-        virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
+        LEGACY_VIRTUAL void setDragImage(CachedImage*, const IntPoint&) LEGACY_PURE;
         Node* dragImageElement() const { return m_dragImageElement.get(); }
-        virtual void setDragImageElement(Node*, const IntPoint&) = 0;
+        LEGACY_VIRTUAL void setDragImageElement(Node*, const IntPoint&) LEGACY_PURE;
         
         virtual DragImageRef createDragImage(IntPoint& dragLocation) const = 0;
 #if ENABLE(DRAG_SUPPORT)
@@ -126,6 +127,10 @@ namespace WebCore {
         virtual PassRefPtr<DataTransferItemList> items() = 0;
 #endif
         
+#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
+        void updateDragImage();
+#endif
+
     protected:
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
         Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag);
@@ -155,6 +160,9 @@ namespace WebCore {
     private:
         OwnPtr<Pasteboard> m_pasteboard;
         bool m_forFileDrag;
+#if ENABLE(DRAG_SUPPORT)
+        OwnPtr<DragImageLoader> m_dragImageLoader;
+#endif
 #endif
     };
 

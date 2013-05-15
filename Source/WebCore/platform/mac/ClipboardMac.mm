@@ -65,56 +65,8 @@ ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboard
 
 ClipboardMac::~ClipboardMac()
 {
-    if (m_dragImage)
-        m_dragImage->removeClient(this);
 }
 
-// The rest of these getters don't really have any impact on security, so for now make no checks
-
-void ClipboardMac::setDragImage(CachedImage* img, const IntPoint &loc)
-{
-    setDragImage(img, 0, loc);
-}
-
-void ClipboardMac::setDragImageElement(Node *node, const IntPoint &loc)
-{
-    setDragImage(0, node, loc);
-}
-
-void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
-{
-    if (canSetDragImage()) {
-        if (m_dragImage)
-            m_dragImage->removeClient(this);
-        m_dragImage = image;
-        if (m_dragImage)
-            m_dragImage->addClient(this);
-
-        m_dragLoc = loc;
-        m_dragImageElement = node;
-        
-        if (dragStarted() && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName)) {
-            NSPoint cocoaLoc;
-            NSImage* cocoaImage = dragNSImage(cocoaLoc);
-            if (cocoaImage) {
-                // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
-                // Instead we must drop down to the CoreGraphics API.
-                wkSetDragImage(cocoaImage, cocoaLoc);
-
-                // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
-                // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.
-                // This is the most innocuous event to use, per Kristen Forster.
-                NSEvent* ev = [NSEvent mouseEventWithType:NSMouseMoved location:NSZeroPoint
-                    modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
-                [NSApp postEvent:ev atStart:YES];
-            }
-        }
-        // Else either 1) we haven't started dragging yet, so we rely on the part to install this drag image
-        // as part of getting the drag kicked off, or 2) Someone kept a ref to the clipboard and is trying to
-        // set the image way too late.
-    }
-}
-    
 #if ENABLE(DRAG_SUPPORT)
 void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
