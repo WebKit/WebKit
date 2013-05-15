@@ -272,7 +272,6 @@ struct JITStackFrame {
     void* savedR13;
     void* savedRPR;
     void* savedR14;
-    void* savedTimeoutReg;
 
     JSStack* stack;
     CallFrame* callFrame;

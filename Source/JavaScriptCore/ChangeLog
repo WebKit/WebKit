@@ -1,3 +1,17 @@
+2013-05-15  Julien Brianceau  <jbrianceau@nds.com>
+
+        Remove savedTimeoutReg from JITStackFrame for sh4 base JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=116143
+
+        Reviewed by Geoffrey Garen.
+
+        Since r148119, timeoutCheckRegister is removed from baseline JIT.
+        So we don't need to save r8 register in JITStackFrame anymore for sh4.
+
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        (JITStackFrame):
+
 2013-05-15  Nico Weber  <thakis@chromium.org>
 
         WebKit doesn't support MSVS2003 any more, remove preprocessor checks for older versions.
