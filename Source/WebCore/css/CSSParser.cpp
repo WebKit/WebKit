@@ -2318,14 +2318,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecorationLine:
+#endif // CSS3_TEXT
         // none | [ underline || overline || line-through || blink ] | inherit
         return parseTextDecoration(propId, important);
 
 #if ENABLE(CSS3_TEXT)
-    case CSSPropertyWebkitTextDecorationLine:
-        // none | [ underline || overline || line-through ] | inherit
-        return parseTextDecoration(propId, important);
-
     case CSSPropertyWebkitTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
         if (id == CSSValueSolid || id == CSSValueDouble || id == CSSValueDotted || id == CSSValueDashed || id == CSSValueWavy)
@@ -9359,16 +9358,9 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
     while (isValid && value) {
         switch (value->id) {
         case CSSValueBlink:
-#if ENABLE(CSS3_TEXT)
-            // Blink value is not accepted by -webkit-text-decoration-line.
-            isValid = propId != CSSPropertyWebkitTextDecorationLine;
-            if (isValid)
-                list->append(cssValuePool().createIdentifierValue(value->id));
-            break;
-#endif // CSS3_TEXT
-        case CSSValueUnderline:
-        case CSSValueOverline:
         case CSSValueLineThrough:
+        case CSSValueOverline:
+        case CSSValueUnderline:
             list->append(cssValuePool().createIdentifierValue(value->id));
             break;
         default:

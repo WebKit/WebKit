@@ -49,18 +49,18 @@ PASS computedStyle.webkitTextDecorationLine is 'line-through'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through'
 
-Value 'underline overline line-through':
-PASS e.style.webkitTextDecorationLine is 'underline overline line-through'
+Value 'blink' (valid but ignored):
+PASS e.style.webkitTextDecorationLine is 'blink'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
-PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
-PASS computedStyle.webkitTextDecorationLine is 'underline overline line-through'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'blink'
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
 
-Value 'blink' (invalid, last valid value is used):
-PASS e.style.webkitTextDecorationLine is 'underline overline line-through'
+Value 'underline overline line-through blink':
+PASS e.style.webkitTextDecorationLine is 'underline overline line-through blink'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
-PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through blink'
 PASS computedStyle.webkitTextDecorationLine is 'underline overline line-through'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'

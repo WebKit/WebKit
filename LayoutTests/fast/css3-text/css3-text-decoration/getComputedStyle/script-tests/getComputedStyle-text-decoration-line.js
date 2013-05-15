@@ -59,15 +59,15 @@ testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[o
 testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "line-through");
 debug('');
 
-debug("Value 'underline overline line-through':");
-e.style.webkitTextDecorationLine = 'underline overline line-through';
-testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "underline overline line-through");
-testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "underline overline line-through");
+debug("Value 'blink' (valid but ignored):");
+e.style.webkitTextDecorationLine = 'blink';
+testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "blink");
+testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSPrimitiveValue]", "none");
 debug('');
 
-debug("Value 'blink' (invalid, last valid value is used):");
-e.style.webkitTextDecorationLine = 'blink';
-testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "underline overline line-through");
+debug("Value 'underline overline line-through blink':");
+e.style.webkitTextDecorationLine = 'underline overline line-through blink';
+testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "underline overline line-through blink");
 testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValueList]", "underline overline line-through");
 debug('');
 

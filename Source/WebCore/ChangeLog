@@ -1,3 +1,21 @@
+2013-05-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] text-decoration-line now accepts "blink" as valid value
+        https://bugs.webkit.org/show_bug.cgi?id=116104
+
+        Reviewed by Andreas Kling.
+
+        As of November 13th 2012, the W3C specification has been updated to
+        accept "blink" as a valid property value in text-decoration-line. Though
+        accepting the value as valid, it is ignored as CSS Level 1
+        text-decoration property currently does.
+
+        Updated related layout tests to reflect changes in specification.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTextDecoration):
+
 2013-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         Revert http://trac.webkit.org/changeset/150047
