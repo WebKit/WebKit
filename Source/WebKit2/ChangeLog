@@ -1,3 +1,12 @@
+2013-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13902706> Lion: com.apple.tsm.uiserver sandbox error in Console when
+        launching Safari
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Silence the violation.
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Frame::editor() should return a reference

@@ -305,3 +305,7 @@
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.speech.recognitionserver"))
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+(deny mach-lookup (with no-log) (global-name "com.apple.tsm.uiserver")) ;; <rdar://problem/13902706>
+#endif
