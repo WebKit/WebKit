@@ -308,7 +308,9 @@ namespace WebCore {
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
-                
+
+        void clearMainResource();
+
         Frame* m_frame;
         RefPtr<CachedResourceLoader> m_cachedResourceLoader;
 

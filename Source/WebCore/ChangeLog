@@ -1,3 +1,25 @@
+2013-05-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We should clear mainResource in DocumentLoader::cancelMainResourceLoad.
+        https://bugs.webkit.org/show_bug.cgi?id=116119
+
+        Reviewed by Oliver Hunt.
+
+        MainResourceLoader::clearResource() was left out in r146239 when moving MainResourceLoader::cancel()
+        to DocumentLoader::cancelMainResourceLoad(), we need to add it back to make sure m_mainResource is
+        cleared when we cancel the loader.
+
+        No new tests needed.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::continueAfterNavigationPolicy):
+        (WebCore::DocumentLoader::cancelMainResourceLoad):
+        (WebCore::DocumentLoader::clearMainResource):
+        (WebCore):
+        * loader/DocumentLoader.h: add helper method clearMainResource()
+        (DocumentLoader):
+
 2013-05-15  Joe Mason  <jmason@blackberry.com>
 
         [BlackBerry] When HTTP auth fails, only purge credentials that match the failed credentials

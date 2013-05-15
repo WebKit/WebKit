@@ -143,10 +143,7 @@ DocumentLoader::~DocumentLoader()
         m_iconDataCallback->invalidate();
     m_cachedResourceLoader->clearDocumentLoader();
     
-    if (m_mainResource) {
-        m_mainResource->removeClient(this);
-        m_mainResource = 0;
-    }
+    clearMainResource();
 }
 
 PassRefPtr<ResourceBuffer> DocumentLoader::mainResourceData() const
@@ -546,10 +543,7 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
         RefPtr<ResourceLoader> resourceLoader = mainResourceLoader();
         ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
         resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
-        if (m_mainResource) {
-            m_mainResource->removeClient(this);
-            m_mainResource = 0;
-        }
+        clearMainResource();
         resourceLoader->setSendCallbackPolicy(SendCallbacks);
         handleSubstituteDataLoadSoon();
     }
@@ -1409,7 +1403,17 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
     if (mainResourceLoader())
         mainResourceLoader()->cancel(error);
 
+    clearMainResource();
+
     mainReceivedError(error);
+}
+
+void DocumentLoader::clearMainResource()
+{
+    if (m_mainResource) {
+        m_mainResource->removeClient(this);
+        m_mainResource = 0;
+    }
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)
