@@ -1,3 +1,14 @@
+2013-05-15  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Get rid of addNativeSnapshotChunk and HeapSnapshotChunk from Memory domain
+        https://bugs.webkit.org/show_bug.cgi?id=116144
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests, no behavior change.
+
+        * inspector/Inspector.json:
+
 2013-05-15  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.
