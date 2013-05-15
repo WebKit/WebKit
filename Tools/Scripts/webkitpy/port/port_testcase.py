@@ -555,6 +555,10 @@ MOCK output of child process
         self.assertFalse(port._is_redhat_based())
         self.assertTrue(port._is_debian_based())
 
+        port._filesystem = MockFileSystem({'/etc/arch-release': ''})
+        self.assertFalse(port._is_redhat_based())
+        self.assertTrue(port._is_arch_based())
+
     def test_apache_config_file_name_for_platform(self):
         port = TestWebKitPort()
         self._assert_config_file_for_platform(port, 'cygwin', 'cygwin-httpd.conf')
