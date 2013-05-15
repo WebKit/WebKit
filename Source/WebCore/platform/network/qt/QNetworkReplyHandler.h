@@ -94,9 +94,10 @@ private Q_SLOTS:
     void didReceiveReadyRead();
     void receiveSniffedMIMEType();
     void setFinished();
+    void replyDestroyed();
 
 private:
-    void resetConnections();
+    void stopForwarding();
     void emitMetaDataChanged();
 
     QNetworkReply* m_reply;

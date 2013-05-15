@@ -1,3 +1,28 @@
+2013-05-15  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=116035
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        The previous fix only moved the crash location from WebKit down to QNetworkReplyHttpImpl
+        which expects its QNetworkAccessManager to still be alive.
+
+        Fix it by watching the QNetworkReply's destroyed() signal and avoid the dangling pointer
+        instead. The QNetworkReply doesn't need to be aborted in this case anyway.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::release):
+        (WebCore::QNetworkReplyWrapper::stopForwarding):
+          Rename resetConnections to stopForwarding since not all connections are related
+          to data forwarding to the client anymore.
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::replyDestroyed):
+        (WebCore::QNetworkReplyWrapper::didReceiveFinished):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (QNetworkReplyWrapper):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Make Clipboard::declareAndWriteDragImage non-virtual

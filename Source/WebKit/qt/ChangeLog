@@ -1,3 +1,14 @@
+2013-05-15  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=116035
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::networkReplyParentDidntChange): Change test to match the new expectation.
+        (tst_QWebPage::destroyQNAMBeforeAbortDoesntCrash):
+
 2013-05-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.
