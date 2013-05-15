@@ -1,3 +1,13 @@
+2013-05-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Expunge pthreads2VC.dll from DumpRenderTree Project
+        https://bugs.webkit.org/show_bug.cgi?id=115889
+
+        Reviewed by Benjamin Poulain.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeCommon.props:
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops:
+
 2013-05-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Identify proper run environment for scripts.
