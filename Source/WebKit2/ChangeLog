@@ -1,3 +1,27 @@
+2013-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2][Mac] Split resetTextInputState into two functions
+        https://bugs.webkit.org/show_bug.cgi?id=116174
+
+        Reviewed by Anders Carlsson.
+
+        Splitting resetTextInputState into resetSecureInputState and
+        notifyInputContextAboutDiscardedComposition, paving the way for a fix where these
+        won't be happening simultaneously.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::resetSecureInputState):
+        (WebKit::PageClientImpl::notifyInputContextAboutDiscardedComposition):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView resignFirstResponder]):
+        (-[WKView _resetSecureInputState]):
+        (-[WKView _notifyInputContextAboutDiscardedComposition]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
 2013-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add padding to all public class structs for future expansion without breaking ABI

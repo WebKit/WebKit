@@ -357,8 +357,11 @@ struct WKViewInterpretKeyEventsParameters {
 
     if (_data->_page->editorState().hasComposition && !_data->_page->editorState().shouldIgnoreCompositionSelectionChange)
         _data->_page->cancelComposition();
-    [self _resetTextInputState];
-    
+
+    [self _notifyInputContextAboutDiscardedComposition];
+
+    [self _resetSecureInputState];
+
     if (!_data->_page->maintainsInactiveSelection())
         _data->_page->clearSelection();
     
@@ -1459,18 +1462,6 @@ static const short kIOHIDEventTypeScroll = 6;
     parameters->executingSavedKeypressCommands = false;
 
     LOG(TextInput, "...done executing saved keypress commands.");
-}
-
-- (void)_notifyInputContextAboutDiscardedComposition
-{
-    // <rdar://problem/9359055>: -discardMarkedText can only be called for active contexts.
-    // FIXME: We fail to ever notify the input context if something (e.g. a navigation) happens while the window is not key.
-    // This is not a problem when the window is key, because we discard marked text on resigning first responder.
-    if (![[self window] isKeyWindow] || self != [[self window] firstResponder])
-        return;
-
-    LOG(TextInput, "-> discardMarkedText");
-    [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
 }
 
 - (NSTextInputContext *)inputContext
@@ -2926,14 +2917,24 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self _notifyInputContextAboutDiscardedComposition];
 }
 
-- (void)_resetTextInputState
+- (void)_resetSecureInputState
 {
-    [self _notifyInputContextAboutDiscardedComposition];
-
     if (_data->_inSecureInputState) {
         DisableSecureEventInput();
         _data->_inSecureInputState = NO;
     }
+}
+
+- (void)_notifyInputContextAboutDiscardedComposition
+{
+    // <rdar://problem/9359055>: -discardMarkedText can only be called for active contexts.
+    // FIXME: We fail to ever notify the input context if something (e.g. a navigation) happens while the window is not key.
+    // This is not a problem when the window is key, because we discard marked text on resigning first responder.
+    if (![[self window] isKeyWindow] || self != [[self window] firstResponder])
+        return;
+
+    LOG(TextInput, "-> discardMarkedText");
+    [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
 }
 
 #if ENABLE(FULLSCREEN_API)

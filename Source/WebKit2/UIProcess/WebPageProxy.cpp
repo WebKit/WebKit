@@ -2250,8 +2250,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 #if PLATFORM(MAC)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
     // FIXME (bug 59121): A load going on in one frame shouldn't affect typing in sibling frames.
-    m_pageClient->resetTextInputState();
-    // FIXME: Should this be moved inside resetTextInputState()?
+    m_pageClient->notifyInputContextAboutDiscardedComposition();
+    m_pageClient->resetSecureInputState();
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif

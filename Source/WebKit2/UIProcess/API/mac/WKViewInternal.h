@@ -82,8 +82,9 @@ namespace WebKit {
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 - (void)_setPromisedData:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName;
 - (void)_updateSecureInputState;
+- (void)_resetSecureInputState;
+- (void)_notifyInputContextAboutDiscardedComposition;
 - (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
-- (void)_resetTextInputState;
 
 - (WebKit::ColorSpaceData)_colorSpace;
 

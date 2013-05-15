@@ -333,9 +333,14 @@ void PageClientImpl::updateTextInputState(bool updateSecureInputState)
     [m_wkView _updateTextInputStateIncludingSecureInputState:updateSecureInputState];
 }
 
-void PageClientImpl::resetTextInputState()
+void PageClientImpl::resetSecureInputState()
 {
-    [m_wkView _resetTextInputState];
+    [m_wkView _resetSecureInputState];
+}
+
+void PageClientImpl::notifyInputContextAboutDiscardedComposition()
+{
+    [m_wkView _notifyInputContextAboutDiscardedComposition];
 }
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
