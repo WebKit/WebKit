@@ -1,3 +1,26 @@
+2013-05-15  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Implement offsetParent for elements inside named flow
+        https://bugs.webkit.org/show_bug.cgi?id=113276
+
+        In the offsetParent algorithm, the nearest ancestor search skips from the topmost named flow elements directly to the body element.
+        http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
+
+        As a result of this change, the DumpRenderTree tool would crash in 
+        WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent when running the selecting-text-through-different-region-flows.html
+        test. The RenderObjects inside a flow are attached to the RenderFlowThread. However, the RenderFlowThread is attached to the 
+        RenderView directly, meaning that we are going to bypass the <body>'s RenderObject while iterating the parents.
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/regions/offsetParent-body-in-flow-thread.html
+               fast/regions/offsetParent-in-flow-thread.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Make Clipboard::createDragImage non-virtual

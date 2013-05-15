@@ -1,3 +1,20 @@
+2013-05-15  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Implement offsetParent for elements inside named flow
+        https://bugs.webkit.org/show_bug.cgi?id=113276
+
+        Reviewed by Darin Adler.
+
+        In the offsetParent algorithm, the nearest ancestor search skips from the topmost named flow elements directly to the body element.
+
+        Added new test for offsetParent when body is flowed into a region.
+        Updated existing offsetParent test.
+
+        * fast/regions/offsetParent-body-in-flow-thread-expected.txt: Added.
+        * fast/regions/offsetParent-body-in-flow-thread.html: Added.
+        * fast/regions/offsetParent-in-flow-thread-expected.txt:
+        * fast/regions/offsetParent-in-flow-thread.html:
+
 2013-05-14  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Some layout tests fail to account for inline pixel snapping

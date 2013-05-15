@@ -1,4 +1,4 @@
-Test offsetParent for elements inside a named flow.
+Test offsetParent for body in a named flow.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

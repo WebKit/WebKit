@@ -496,8 +496,15 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 referencePoint.move(relativePositionOffset());
             else if (isStickyPositioned())
                 referencePoint.move(stickyPositionOffset());
+            
+            // FIXME: The offset position for elements inside named flow threads is not correctly computed when the offsetParent is body
+            // See https://bugs.webkit.org/show_bug.cgi?id=115899
+            
+            // CSS regions specification says that region flows should return the body element as their offsetParent.
+            // Since we will bypass the body’s renderer anyway, just end the loop if we encounter a region flow (named flow thread).
+            // See http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
             const RenderObject* curr = parent();
-            while (curr != offsetParent) {
+            while (curr != offsetParent && !curr->isRenderNamedFlowThread()) {
                 // FIXME: What are we supposed to do inside SVG content?
                 if (curr->isBox() && !curr->isTableRow())
                     referencePoint.moveBy(toRenderBox(curr)->topLeftLocation());

@@ -3,13 +3,23 @@
     <head>
         <script src="../js/resources/js-test-pre.js"></script>
     </head>
+
+    <style>
+
+        #region {
+            -webkit-flow-from: flow;
+        }
+
+    </style>
+
     <body>
         <script>
-            description("Test offsetParent for elements inside a named flow.")
+            description("Test offsetParent for body in a named flow.")
 
+            document.body.style.webkitFlowInto = "flow";
+            
             var article = document.createElement("div");
             document.body.appendChild(article);
-            article.style.webkitFlowInto = "flow";
             shouldBe("article.offsetParent", "document.body");
 
             var chapter = document.createElement("div");
@@ -33,8 +43,12 @@
             shouldBe("tdChild.offsetParent", "document.body");
 
             shouldBeNull("document.body.offsetParent");
+
+            document.body.style.webkitFlowInto = null;
         </script>
         <script src="../js/resources/js-test-post.js"></script>
+
+        <div id="region"/>
     </body>
 </html>
 
