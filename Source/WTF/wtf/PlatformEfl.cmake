@@ -2,12 +2,9 @@ list(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
     efl/OwnPtrEfl.cpp
     efl/RefPtrEfl.cpp
+
     gobject/GOwnPtr.cpp
     gobject/GRefPtr.cpp
-
-    OSAllocatorPosix.cpp
-    ThreadIdentifierDataPthreads.cpp
-    ThreadingPthreads.cpp
 )
 
 list(APPEND WTF_LIBRARIES
@@ -21,7 +18,6 @@ list(APPEND WTF_LIBRARIES
     ${EINA_LIBRARIES}
     ${EO_LIBRARIES}
     ${EVAS_LIBRARIES}
-    ${CMAKE_DL_LIBS}
 )
 
 list(APPEND WTF_INCLUDE_DIRECTORIES

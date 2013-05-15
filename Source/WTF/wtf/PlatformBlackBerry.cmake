@@ -1,8 +1,4 @@
 list(APPEND WTF_SOURCES
-    OSAllocatorPosix.cpp
-    TCSystemAlloc.cpp
-    ThreadIdentifierDataPthreads.cpp
-    ThreadingPthreads.cpp
     blackberry/MainThreadBlackBerry.cpp
 )
 

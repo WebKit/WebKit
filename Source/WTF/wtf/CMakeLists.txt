@@ -214,6 +214,10 @@ set(WTF_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
 )
 
+set(APPEND WTF_LIBRARIES
+    ${CMAKE_DL_LIBS}
+)
+
 if (WTF_USE_ICU_UNICODE)
     list(APPEND WTF_HEADERS
         unicode/icu/UnicodeIcu.h
@@ -235,6 +239,25 @@ elseif (WTF_USE_WCHAR_UNICODE)
     list(APPEND WTF_SOURCES
         unicode/CollatorDefault.cpp
         unicode/wchar/UnicodeWchar.cpp
+    )
+endif ()
+
+if (WIN32)
+    list(APPEND WTF_SOURCES
+        OSAllocatorWin.cpp
+        ThreadSpecificWin.cpp
+        ThreadingWin.cpp
+
+        win/OwnPtrWin.cpp
+    )
+else ()
+    list(APPEND WTF_HEADERS
+        ThreadIdentifierDataPthreads.h
+    )
+    list(APPEND WTF_SOURCES
+        OSAllocatorPosix.cpp
+        ThreadIdentifierDataPthreads.cpp
+        ThreadingPthreads.cpp
     )
 endif ()
 
