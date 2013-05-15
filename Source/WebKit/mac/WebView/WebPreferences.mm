@@ -1777,8 +1777,21 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitDiagnosticLoggingEnabledKey];
 }
 
+static bool needsScreenFontsEnabledQuirk()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    static bool is1PasswordNeedingScreenFontsQuirk = WKExecutableWasLinkedOnOrBeforeMountainLion()
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"ws.agile.1Password"];
+    return is1PasswordNeedingScreenFontsQuirk;
+#else
+    return NO;
+#endif
+}
+
 - (BOOL)screenFontSubstitutionEnabled
 {
+    if (needsScreenFontsEnabledQuirk())
+        return YES;
     return [self _boolValueForKey:WebKitScreenFontSubstitutionEnabledKey];
 }
 
