@@ -104,7 +104,10 @@ my $shouldUseGuardMalloc;
 my $xcodeVersion;
 
 # Variables for Win32 support
+my $programFilesPath;
 my $vcBuildPath;
+my $vsInstallDir;
+my $vsVersion;
 my $windowsSourceDir;
 my $winVersion;
 my $willUseVCExpressWhenBuilding = 0;
@@ -411,6 +414,41 @@ sub xcodeSDK
     return $xcodeSDK;
 }
 
+sub programFilesPath
+{
+    return $programFilesPath if defined $programFilesPath;
+
+    $programFilesPath = $ENV{'PROGRAMFILES(X86)'} || $ENV{'PROGRAMFILES'} || "C:\\Program Files";
+
+    return $programFilesPath;
+}
+
+sub visualStudioInstallDir
+{
+    return $vsInstallDir if defined $vsInstallDir;
+
+    if ($ENV{'VSINSTALLDIR'}) {
+        $vsInstallDir = $ENV{'VSINSTALLDIR'};
+        $vsInstallDir =~ s|[\\/]$||;
+    } else {
+        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 8");
+    }
+    chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
+
+    return $vsInstallDir;
+}
+
+sub visualStudioVersion
+{
+    return $vsVersion if defined $vsVersion;
+
+    my $installDir = visualStudioInstallDir();
+
+    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "8";
+
+    return $vsVersion;
+}
+
 sub determineConfigurationForVisualStudio
 {
     return if defined $configurationForVisualStudio;
@@ -434,7 +472,8 @@ sub determineConfigurationProductDir
     determineBaseProductDir();
     determineConfiguration();
     if (isAppleWinWebKit()) {
-        $configurationProductDir = File::Spec->catdir($baseProductDir, configurationForVisualStudio(), "bin");
+        my $binDir = (visualStudioVersion() eq "8") ? "bin" : "bin32";
+        $configurationProductDir = File::Spec->catdir($baseProductDir, configurationForVisualStudio(), $binDir);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
@@ -1591,22 +1630,15 @@ sub setupCygwinEnv()
     return if !isCygwin() && !isWindows();
     return if $vcBuildPath;
 
-    my $vsInstallDir;
-    my $programFilesPath = $ENV{'PROGRAMFILES(X86)'} || $ENV{'PROGRAMFILES'} || "C:\\Program Files";
-    if ($ENV{'VSINSTALLDIR'}) {
-        $vsInstallDir = $ENV{'VSINSTALLDIR'};
-    } else {
-        $vsInstallDir = File::Spec->catdir($programFilesPath, "Microsoft Visual Studio 8");
-    }
-    chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
-    $vcBuildPath = File::Spec->catfile($vsInstallDir, qw(Common7 IDE devenv.com));
+    my $programFilesPath = programFilesPath();
+    $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
     if (-e $vcBuildPath) {
         # Visual Studio is installed; we can use pdevenv to build.
         # FIXME: Make pdevenv work with non-Cygwin Perl.
         $vcBuildPath = File::Spec->catfile(sourceDir(), qw(Tools Scripts pdevenv)) if isCygwin();
     } else {
         # Visual Studio not found, try VC++ Express
-        $vcBuildPath = File::Spec->catfile($vsInstallDir, qw(Common7 IDE VCExpress.exe));
+        $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE VCExpress.exe));
         if (! -e $vcBuildPath) {
             print "*************************************************************\n";
             print "Cannot find '$vcBuildPath'\n";

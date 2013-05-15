@@ -1,3 +1,21 @@
+2013-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Identify proper run environment for scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=116114
+
+        Reviewed by David Kilzer.
+
+        Determine (based on Visual Studio version) which path to use for
+        executables (bin versus bin32).
+
+        * Scripts/webkitdirs.pm:
+        (determineVisualStudioInstallDir): Added.
+        (determineVisualStudioVersion): Added.
+        (determineConfigurationProductDir): Modified to choose proper bin
+        or bin32 directory.
+        (visualStudioVersion): Added
+        (setupCygwinEnv): Modified to use new determineVisualStudioInstallDir
+
 2013-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add tests for secure event input
