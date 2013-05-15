@@ -71,6 +71,11 @@ struct _WebKitNavigationPolicyDecision {
 
 struct _WebKitNavigationPolicyDecisionClass {
     WebKitPolicyDecisionClass parent_class;
+
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
 };
 
 WEBKIT_API GType

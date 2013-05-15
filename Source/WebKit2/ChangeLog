@@ -1,3 +1,72 @@
+2013-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add padding to all public class structs for future expansion without breaking ABI
+        https://bugs.webkit.org/show_bug.cgi?id=112565
+
+        Reviewed by Anders Carlsson.
+
+        Use 4 pointers for most of the classes that are unlikely to grow
+        and 8 for WebKitWebView and WebKitWebContext.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.h:
+        (_WebKitBackForwardListClass):
+        * UIProcess/API/gtk/WebKitBackForwardListItem.h:
+        (_WebKitBackForwardListItemClass):
+        * UIProcess/API/gtk/WebKitContextMenu.h:
+        (_WebKitContextMenuClass):
+        * UIProcess/API/gtk/WebKitContextMenuItem.h:
+        (_WebKitContextMenuItemClass):
+        * UIProcess/API/gtk/WebKitCookieManager.h:
+        (_WebKitCookieManagerClass):
+        * UIProcess/API/gtk/WebKitDownload.h:
+        (_WebKitDownloadClass):
+        * UIProcess/API/gtk/WebKitFaviconDatabase.h:
+        (_WebKitFaviconDatabaseClass):
+        * UIProcess/API/gtk/WebKitFileChooserRequest.h:
+        (_WebKitFileChooserRequestClass):
+        * UIProcess/API/gtk/WebKitFindController.h:
+        (_WebKitFindControllerClass):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.h:
+        (_WebKitFormSubmissionRequestClass):
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h:
+        (_WebKitGeolocationPermissionRequestClass):
+        * UIProcess/API/gtk/WebKitHitTestResult.h:
+        (_WebKitHitTestResultClass):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.h:
+        (_WebKitNavigationPolicyDecisionClass):
+        * UIProcess/API/gtk/WebKitPlugin.h:
+        (_WebKitPluginClass):
+        * UIProcess/API/gtk/WebKitPolicyDecision.h:
+        (_WebKitPolicyDecisionClass):
+        * UIProcess/API/gtk/WebKitPrintOperation.h:
+        (_WebKitPrintOperationClass):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.h:
+        (_WebKitResponsePolicyDecisionClass):
+        * UIProcess/API/gtk/WebKitSecurityManager.h:
+        (_WebKitSecurityManagerClass):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        (_WebKitSettingsClass):
+        * UIProcess/API/gtk/WebKitURIRequest.h:
+        (_WebKitURIRequestClass):
+        * UIProcess/API/gtk/WebKitURIResponse.h:
+        (_WebKitURIResponseClass):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h:
+        (_WebKitURISchemeRequestClass):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        (_WebKitWebContextClass):
+        * UIProcess/API/gtk/WebKitWebInspector.h:
+        (_WebKitWebInspectorClass):
+        * UIProcess/API/gtk/WebKitWebResource.h:
+        (_WebKitWebResourceClass):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass):
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        (_WebKitWebViewBaseClass):
+        * UIProcess/API/gtk/WebKitWebViewGroup.h:
+        (_WebKitWebViewGroupClass):
+        * UIProcess/API/gtk/WebKitWindowProperties.h:
+        (_WebKitWindowPropertiesClass):
+
 2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove WTF_USE_PLATFORM_STRATEGIES
