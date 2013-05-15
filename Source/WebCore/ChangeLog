@@ -1,3 +1,20 @@
+2013-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r147548): Broken comboboxes
+        https://bugs.webkit.org/show_bug.cgi?id=115475
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The problem is that r147548 made the popup to be closed when a
+        blur event is received. Right before showing the popup the input
+        element is focused, so that after the the popup is shown the focus
+        event is emitted and the event handler is called again hiding the
+        popup.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Check
+        element has lost the focus before closing the popup menu.
+
 2013-05-14  Darin Adler  <darin@apple.com>
 
         [Mac] Move setDragImage from ClipboardMac to PasteboardMac
