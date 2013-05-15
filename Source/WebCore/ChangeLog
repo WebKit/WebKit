@@ -1,3 +1,13 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        List platforms that still use the legacy clipboard instead of just saying "not Mac"
+        https://bugs.webkit.org/show_bug.cgi?id=116177
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.h: Replaced the "!MAC || IOS" with a list of platforms still on the
+        legacy model.
+
 2013-05-15  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         We should clear mainResource in DocumentLoader::cancelMainResourceLoad.
