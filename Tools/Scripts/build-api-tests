@@ -65,7 +65,11 @@ if (isAppleMacWebKit()) {
     $result = buildXCodeProject("TestWebKitAPI", $clean, XcodeOptions(), @ARGV);
 } elsif (isAppleWinWebKit()) {
     chdir "Tools/TestWebKitAPI" or die;
-    $result = buildVisualStudioProject("win/TestWebKitAPI.sln", $clean);
+    my $solutionPath = "TestWebKitAPI.vcxproj/TestWebKitAPI.sln";
+    if (visualStudioVersion() eq "8") {
+        $solutionPath = "win/TestWebKitAPI.sln";
+    }
+    $result = buildVisualStudioProject($solutionPath, $clean);
 } else {
     die "TestWebKitAPI is not supported on this platform.\n";
 }

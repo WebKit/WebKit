@@ -1681,17 +1681,27 @@ sub dieIfWindowsPlatformSDKNotInstalled
 {
     my $registry32Path = "/proc/registry/";
     my $registry64Path = "/proc/registry64/";
-    my $windowsPlatformSDKRegistryEntry = "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1";
+    my @windowsPlatformSDKRegistryEntries = (
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v8.0A",
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v8.0",
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v7.1A",
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v7.0A",
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1",
+    );
 
     # FIXME: It would be better to detect whether we are using 32- or 64-bit Windows
     # and only check the appropriate entry. But for now we just blindly check both.
-    return if (-e $registry32Path . $windowsPlatformSDKRegistryEntry) || (-e $registry64Path . $windowsPlatformSDKRegistryEntry);
+    my $recommendedPlatformSDK = $windowsPlatformSDKRegistryEntries[0];
+
+    while (@windowsPlatformSDKRegistryEntries) {
+        my $windowsPlatformSDKRegistryEntry = shift @windowsPlatformSDKRegistryEntries;
+        return if (-e $registry32Path . $windowsPlatformSDKRegistryEntry) || (-e $registry64Path . $windowsPlatformSDKRegistryEntry);
+    }
 
     print "*************************************************************\n";
-    print "Cannot find registry entry '$windowsPlatformSDKRegistryEntry'.\n";
-    print "Please download and install the Microsoft Windows Server 2003 R2\n";
-    print "Platform SDK from <http://www.microsoft.com/downloads/details.aspx?\n";
-    print "familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&displaylang=en>.\n\n";
+    print "Cannot find registry entry '$recommendedPlatformSDK'.\n";
+    print "Please download and install the Microsoft Windows SDK\n";
+    print "from <http://www.microsoft.com/en-us/download/details.aspx?id=8279>.\n\n";
     print "Then follow step 2 in the Windows section of the \"Installing Developer\n";
     print "Tools\" instructions at <http://www.webkit.org/building/tools.html>.\n";
     print "*************************************************************\n";

@@ -1,3 +1,17 @@
+2013-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Update various build tools to understand VS2010 environment.
+        https://bugs.webkit.org/show_bug.cgi?id=116169.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/build-api-tests: Identify VS2010 environment.
+        * Scripts/build-dumprendertree: Ditto.
+        * Scripts/build-webkit: Ditto.
+        * Scripts/webkitdirs.pm:
+        (dieIfWindowsPlatformSDKNotInstalled): Update to recognize a wider
+        range of acceptable SDK's.
+
 2013-05-15  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Allow http tests on Arch Linux

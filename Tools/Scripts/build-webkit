@@ -337,7 +337,11 @@ for my $dir (@projects) {
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($project eq "WebKit") {
-            $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
+            my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
+            if (visualStudioVersion() eq "8") {
+                $webkitSolutionPath = "win/WebKit.vcproj/WebKit.sln";
+            }
+            $result = buildVisualStudioProject($webkitSolutionPath, $clean);
         }
     }
     # Various build* calls above may change the CWD.
