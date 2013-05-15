@@ -32,8 +32,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "CFDictionaryPropertyBag.h"
 #include "COMEnumVariant.h"
+#include "COMPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebNotificationCenter.h"
 #include "WebSecurityOrigin.h"
@@ -398,13 +398,9 @@ void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const
 
     COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
 
-    RetainPtr<CFMutableDictionaryRef> userInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    static CFStringRef databaseNameKey = MarshallingHelpers::LPCOLESTRToCFStringRef(WebDatabaseNameKey);
-    CFDictionarySetValue(userInfo.get(), databaseNameKey, databaseName.createCFString().get());
-
-    COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
-    userInfoBag->setDictionary(userInfo.get());
+    HashMap<String, String> userInfo;
+    userInfo.set(WebDatabaseNameKey, databaseName);
+    COMPtr<IPropertyBag> userInfoBag(AdoptCOM, COMPropertyBag<String>::adopt(userInfo));
 
     notifyCenter->postNotificationName(databaseDidModifyOriginName, securityOrigin.get(), userInfoBag.get());
 }
