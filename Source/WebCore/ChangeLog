@@ -1,3 +1,22 @@
+2013-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Implement run-in remove child cases.
+        https://bugs.webkit.org/show_bug.cgi?id=86520
+
+        Move runin to original position when sibling element is destroyed.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/runin/runin-remove-child-simple.html
+               fast/runin/runin-sibling-inline.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::moveRunInUnderSiblingBlockIfNeeded):
+            If moveRunInUnderSiblingBlockIfNeeded is called when the sibling run-in block
+            is being destroyed, it means that the run-in is moving to original position and
+            we do not need to do nothing.
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Remove WebSocketHandshakeResponse class

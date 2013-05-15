@@ -256,6 +256,11 @@ void RenderBlock::willBeDestroyed()
     // Mark as being destroyed to avoid trouble with merges in removeChild().
     m_beingDestroyed = true;
 
+    if (!documentBeingDestroyed()) {
+        if (firstChild() && firstChild()->isRunIn())
+            moveRunInToOriginalPosition(firstChild());
+    }
+
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     children()->destroyLeftoverChildren();
@@ -1980,6 +1985,9 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
 
     RenderObject* curr = runIn->nextSibling();
     if (!curr || !curr->isRenderBlock() || !curr->childrenInline())
+        return;
+
+    if (toRenderBlock(curr)->beingDestroyed())
         return;
 
     // Per CSS3, "A run-in cannot run in to a block that already starts with a

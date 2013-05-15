@@ -1,3 +1,17 @@
+2013-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Implement run-in remove child cases.
+        https://bugs.webkit.org/show_bug.cgi?id=86520
+
+        Move runin to original position when sibling element is destroyed.
+
+        Reviewed by David Hyatt.
+
+        * fast/runin/runin-remove-child-simple-expected.txt: Added.
+        * fast/runin/runin-remove-child-simple.html: Added.
+        * fast/runin/runin-sibling-inline-expected.txt: Added.
+        * fast/runin/runin-sibling-inline.html: Added.
+
 2013-05-15  Dongseong Hwang  <dongseong.hwang@intel.com>
 
         Remove an overloaded strokeRect in <canvas>
