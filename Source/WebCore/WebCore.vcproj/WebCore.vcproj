@@ -25910,14 +25910,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\websockets\WebSocketHandshakeRequest.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\websockets\WebSocketHandshakeRequest.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Modules\websockets\WebSocketHandshakeResponse.cpp"
 					>
 				</File>

@@ -3710,7 +3710,6 @@
     <ClCompile Include="..\Modules\websockets\WebSocketExtensionParser.cpp" />
     <ClCompile Include="..\Modules\websockets\WebSocketFrame.cpp" />
     <ClCompile Include="..\Modules\websockets\WebSocketHandshake.cpp" />
-    <ClCompile Include="..\Modules\websockets\WebSocketHandshakeRequest.cpp" />
     <ClCompile Include="..\Modules\websockets\WebSocketHandshakeResponse.cpp" />
     <ClCompile Include="..\Modules\websockets\WorkerThreadableWebSocketChannel.cpp" />
     <ClCompile Include="..\Modules\speech\DOMWindowSpeechSynthesis.cpp" />
@@ -11308,8 +11307,6 @@
     <ClInclude Include="..\Modules\websockets\WebSocketExtensionProcessor.h" />
     <ClInclude Include="..\Modules\websockets\WebSocketFrame.h" />
     <ClInclude Include="..\Modules\websockets\WebSocketHandshake.h" />
-    <ClInclude Include="..\Modules\websockets\WebSocketHandshakeRequest.h" />
-    <ClInclude Include="..\Modules\websockets\WebSocketHandshakeResponse.h" />
     <ClInclude Include="..\Modules\websockets\WorkerThreadableWebSocketChannel.h" />
     <ClInclude Include="..\Modules\speech\DOMWindowSpeechSynthesis.h" />
     <ClInclude Include="..\Modules\speech\SpeechSynthesis.h" />

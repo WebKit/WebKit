@@ -67,7 +67,6 @@
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "WebSocketFrame.h"
-#include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 #include "XMLHttpRequest.h"
 
@@ -487,10 +486,10 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
     m_frontend->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
 }
 
-void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
+void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest& request)
 {
     RefPtr<TypeBuilder::Network::WebSocketRequest> requestObject = TypeBuilder::Network::WebSocketRequest::create()
-        .setHeaders(buildObjectForHeaders(request.headerFields()));
+        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()));
     m_frontend->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), currentTime(), requestObject);
 }
 

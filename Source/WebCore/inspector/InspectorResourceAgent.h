@@ -74,7 +74,6 @@ class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
-class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
@@ -127,7 +126,7 @@ public:
 
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL);
-    void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
+    void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse&);
     void didCloseWebSocket(unsigned long identifier);
     void didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame&);

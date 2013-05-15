@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "ResourceRequest.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
@@ -257,7 +258,7 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)
     if (!m_document)
         return;
     if (m_identifier)
-        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, *m_handshake->clientHandshakeRequest());
+        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, m_handshake->clientHandshakeRequest());
     CString handshakeMessage = m_handshake->clientHandshakeMessage();
     if (!handle->send(handshakeMessage.data(), handshakeMessage.length()))
         fail("Failed to send WebSocket handshake.");

@@ -2259,8 +2259,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/websockets/WebSocketFrame.h \
 	Source/WebCore/Modules/websockets/WebSocketHandshake.cpp \
 	Source/WebCore/Modules/websockets/WebSocketHandshake.h \
-	Source/WebCore/Modules/websockets/WebSocketHandshakeRequest.cpp \
-	Source/WebCore/Modules/websockets/WebSocketHandshakeRequest.h \
 	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.cpp \
 	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.h \
 	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.cpp \

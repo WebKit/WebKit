@@ -1,3 +1,42 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebSocketHandshakeRequest class
+        https://bugs.webkit.org/show_bug.cgi?id=116178
+
+        Reviewed by Andreas Kling.
+
+        Turns out WebSocketHandshakeRequest is just used by the web inspector, and there's no reason 
+        why we can't just use a ResourceRequest instead.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        * Modules/websockets/WebSocketHandshake.h:
+        (WebCore):
+        * Modules/websockets/WebSocketHandshakeRequest.cpp: Removed.
+        * Modules/websockets/WebSocketHandshakeRequest.h: Removed.
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequest):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore):
+        (InspectorResourceAgent):
+        * platform/network/HTTPRequest.cpp:
+        (WebCore):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         Try to fix iOS build.

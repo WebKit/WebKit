@@ -36,13 +36,13 @@
 #include "KURL.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
-#include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class ResourceRequest;
 class ScriptExecutionContext;
 
 class WebSocketHandshake {
@@ -67,7 +67,7 @@ public:
     String clientLocation() const;
 
     CString clientHandshakeMessage() const;
-    PassRefPtr<WebSocketHandshakeRequest> clientHandshakeRequest() const;
+    ResourceRequest clientHandshakeRequest() const;
 
     void reset();
     void clearScriptExecutionContext();

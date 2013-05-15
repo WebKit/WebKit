@@ -588,9 +588,6 @@
     <ClCompile Include="..\Modules\websockets\WebSocketHandshake.cpp">
       <Filter>Modules\websockets</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\websockets\WebSocketHandshakeRequest.cpp">
-      <Filter>Modules\websockets</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\websockets\WebSocketHandshakeResponse.cpp">
       <Filter>Modules\websockets</Filter>
     </ClCompile>
@@ -7282,9 +7279,6 @@
       <Filter>Modules\websockets</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\websockets\WebSocketHandshake.h">
-      <Filter>Modules\websockets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\websockets\WebSocketHandshakeRequest.h">
       <Filter>Modules\websockets</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\websockets\WebSocketHandshakeResponse.h">

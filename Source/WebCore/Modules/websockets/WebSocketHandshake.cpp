@@ -43,6 +43,7 @@
 #include "HTTPParsers.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "ResourceRequest.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -236,41 +237,42 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     return builder.toString().utf8();
 }
 
-PassRefPtr<WebSocketHandshakeRequest> WebSocketHandshake::clientHandshakeRequest() const
+ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
 {
     // Keep the following consistent with clientHandshakeMessage().
     // FIXME: do we need to store m_secWebSocketKey1, m_secWebSocketKey2 and
-    // m_key3 in WebSocketHandshakeRequest?
-    RefPtr<WebSocketHandshakeRequest> request = WebSocketHandshakeRequest::create("GET", m_url);
-    request->addHeaderField("Upgrade", "websocket");
-    request->addHeaderField("Connection", "Upgrade");
-    request->addHeaderField("Host", hostName(m_url, m_secure));
-    request->addHeaderField("Origin", clientOrigin());
+    // m_key3 in the request?
+    ResourceRequest request(m_url);
+    request.setHTTPMethod("GET");
+
+    request.addHTTPHeaderField("Connection", "Upgrade");
+    request.addHTTPHeaderField("Host", hostName(m_url, m_secure));
+    request.addHTTPHeaderField("Origin", clientOrigin());
     if (!m_clientProtocol.isEmpty())
-        request->addHeaderField("Sec-WebSocket-Protocol", m_clientProtocol);
+        request.addHTTPHeaderField("Sec-WebSocket-Protocol", m_clientProtocol);
 
     KURL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
         Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty())
-            request->addHeaderField("Cookie", cookie);
+            request.addHTTPHeaderField("Cookie", cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
 
-    request->addHeaderField("Pragma", "no-cache");
-    request->addHeaderField("Cache-Control", "no-cache");
+    request.addHTTPHeaderField("Pragma", "no-cache");
+    request.addHTTPHeaderField("Cache-Control", "no-cache");
 
-    request->addHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
-    request->addHeaderField("Sec-WebSocket-Version", "13");
+    request.addHTTPHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
+    request.addHTTPHeaderField("Sec-WebSocket-Version", "13");
     const String extensionValue = m_extensionDispatcher.createHeaderValue();
     if (extensionValue.length())
-        request->addHeaderField("Sec-WebSocket-Extensions", extensionValue);
+        request.addHTTPHeaderField("Sec-WebSocket-Extensions", extensionValue);
 
     // Add a User-Agent header.
-    request->addHeaderField("User-Agent", m_context->userAgent(m_context->url()));
+    request.addHTTPHeaderField("User-Agent", m_context->userAgent(m_context->url()));
 
-    return request.release();
+    return request;
 }
 
 void WebSocketHandshake::reset()
