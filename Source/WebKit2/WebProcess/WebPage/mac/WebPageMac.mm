@@ -168,16 +168,16 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
         if (commands[i].commandName == "insertText:") {
-            ASSERT(!frame->editor()->hasComposition());
+            ASSERT(!frame->editor().hasComposition());
 
-            if (!frame->editor()->canEdit())
+            if (!frame->editor().canEdit())
                 continue;
 
             // An insertText: might be handled by other responders in the chain if we don't handle it.
             // One example is space bar that results in scrolling down the page.
-            eventWasHandled |= frame->editor()->insertText(commands[i].text, event);
+            eventWasHandled |= frame->editor().insertText(commands[i].text, event);
         } else {
-            Editor::Command command = frame->editor()->command(commandNameForSelectorName(commands[i].commandName));
+            Editor::Command command = frame->editor().command(commandNameForSelectorName(commands[i].commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
@@ -233,7 +233,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands
         // (e.g. Tab that inserts a Tab character, or Enter).
         bool haveTextInsertionCommands = false;
         for (size_t i = 0; i < commands.size(); ++i) {
-            if (frame->editor()->command(commandNameForSelectorName(commands[i].commandName)).isTextInsertion())
+            if (frame->editor().command(commandNameForSelectorName(commands[i].commandName)).isTextInsertion())
                 haveTextInsertionCommands = true;
         }
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
@@ -265,7 +265,7 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
             frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
         }
 
-        frame->editor()->setComposition(text, underlines, selectionStart, selectionEnd);
+        frame->editor().setComposition(text, underlines, selectionStart, selectionEnd);
     }
 
     newState = editorState();
@@ -275,7 +275,7 @@ void WebPage::confirmComposition(EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    frame->editor()->confirmComposition();
+    frame->editor().confirmComposition();
 
     newState = editorState();
 }
@@ -284,7 +284,7 @@ void WebPage::cancelComposition(EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    frame->editor()->cancelComposition();
+    frame->editor().cancelComposition();
 
     newState = editorState();
 }
@@ -299,13 +299,13 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
             frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
-    if (!frame->editor()->hasComposition()) {
+    if (!frame->editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
-        handled = frame->editor()->insertText(text, m_keyboardEventBeingInterpreted);
+        handled = frame->editor().insertText(text, m_keyboardEventBeingInterpreted);
     } else {
         handled = true;
-        frame->editor()->confirmComposition(text);
+        frame->editor().confirmComposition(text);
     }
 
     newState = editorState();
@@ -321,8 +321,8 @@ void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeSt
             frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
-    ASSERT(!frame->editor()->hasComposition());
-    handled = frame->editor()->insertDictatedText(text, dictationAlternativeLocations, m_keyboardEventBeingInterpreted);
+    ASSERT(!frame->editor().hasComposition());
+    handled = frame->editor().insertDictatedText(text, dictationAlternativeLocations, m_keyboardEventBeingInterpreted);
     newState = editorState();
 }
 
@@ -334,7 +334,7 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     if (!frame)
         return;
 
-    RefPtr<Range> range = frame->editor()->compositionRange();
+    RefPtr<Range> range = frame->editor().compositionRange();
     size_t locationSize;
     size_t lengthSize;
     if (range && TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
@@ -437,7 +437,7 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
     ASSERT(range->startContainer());
     ASSERT(range->endContainer());
      
-    IntRect rect = frame->editor()->firstRectForRange(range.get());
+    IntRect rect = frame->editor().firstRectForRange(range.get());
     resultRect = frame->view()->contentsToWindow(rect);
 }
 
@@ -654,7 +654,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& re
         result = false;
         return;
     }
-    frame->editor()->readSelectionFromPasteboard(pasteboardName);
+    frame->editor().readSelectionFromPasteboard(pasteboardName);
     result = true;
 }
 
@@ -676,7 +676,7 @@ void WebPage::getStringSelectionForPasteboard(String& stringValue)
     if (frame->selection()->isNone())
         return;
 
-    stringValue = frame->editor()->stringSelectionForPasteboard();
+    stringValue = frame->editor().stringSelectionForPasteboard();
 }
 
 void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
@@ -685,7 +685,7 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedM
     if (!frame || frame->selection()->isNone())
         return;
 
-    RefPtr<SharedBuffer> buffer = frame->editor()->dataSelectionForPasteboard(pasteboardType);
+    RefPtr<SharedBuffer> buffer = frame->editor().dataSelectionForPasteboard(pasteboardType);
     if (!buffer) {
         size = 0;
         return;

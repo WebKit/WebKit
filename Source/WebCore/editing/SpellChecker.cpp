@@ -212,7 +212,7 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         return;
     }
 
-    m_frame->editor()->markAndReplaceFor(m_processingRequest, results);
+    m_frame->editor().markAndReplaceFor(m_processingRequest, results);
 
     if (m_lastProcessedSequence < sequence)
         m_lastProcessedSequence = sequence;

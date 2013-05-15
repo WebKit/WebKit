@@ -2427,7 +2427,7 @@ static inline IMP getMethod(id o, SEL s)
     Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return;
-    coreFrame->editor()->command(name).execute(value);
+    coreFrame->editor().command(name).execute(value);
 }
 
 - (void)_setCustomHTMLTokenizerTimeDelay:(double)timeDelay
@@ -5382,7 +5382,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Page* page = core(self);
     if (!page)
         return nil;
-    return kit(page->mainFrame()->editor()->rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
+    return kit(page->mainFrame()->editor().rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
 }
 
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
@@ -5443,7 +5443,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         Frame* mainFrame = [self _mainCoreFrame];
         if (mainFrame) {
             if (flag) {
-                mainFrame->editor()->applyEditingStyleToBodyElement();
+                mainFrame->editor().applyEditingStyleToBodyElement();
                 // If the WebView is made editable and the selection is empty, set it to something.
                 if (![self selectedDOMRange])
                     mainFrame->selection()->setSelectionFromNone();
@@ -5730,7 +5730,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     WebFrame *webFrame = [self _selectedOrMainFrame];
     Frame* coreFrame = core(webFrame);
     if (coreFrame)
-        coreFrame->editor()->deleteSelectionWithSmartDelete([(WebHTMLView *)[[webFrame frameView] documentView] _canSmartCopyOrDelete]);
+        coreFrame->editor().deleteSelectionWithSmartDelete([(WebHTMLView *)[[webFrame frameView] documentView] _canSmartCopyOrDelete]);
 }
     
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style
@@ -5741,7 +5741,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Frame* coreFrame = core(webFrame);
     // FIXME: We shouldn't have to make a copy here.
     if (coreFrame)
-        coreFrame->editor()->applyStyle(core(style)->copyProperties().get());
+        coreFrame->editor().applyStyle(core(style)->copyProperties().get());
 }
 
 @end
@@ -5788,7 +5788,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 {
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (coreFrame)
-        return coreFrame->editor()->fontAttributesForSelectionStart();
+        return coreFrame->editor().fontAttributesForSelectionStart();
     
     return nil;
 }
@@ -5832,7 +5832,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     Node* coreStartNode= core(startNode);
     if (coreStartNode->document() != coreFrame->document())
         return;
-    return coreFrame->editor()->simplifyMarkup(coreStartNode, core(endNode));    
+    return coreFrame->editor().simplifyMarkup(coreStartNode, core(endNode));    
 }
 
 @end
@@ -6567,7 +6567,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     WebFrame *webFrame = [self _selectedOrMainFrame];
     Frame* coreFrame = core(webFrame);
     if (coreFrame)
-        coreFrame->editor()->handleAlternativeTextUIResult(text);
+        coreFrame->editor().handleAlternativeTextUIResult(text);
 }
 #endif
 

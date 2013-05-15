@@ -441,7 +441,7 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* drag
 {
     ASSERT(m_page->dragCaretController()->hasCaret());
     String text = m_page->dragCaretController()->isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
-    Node* target = innerFrame->editor()->findEventTargetFrom(m_page->dragCaretController()->caretPosition());
+    Node* target = innerFrame->editor().findEventTargetFrom(m_page->dragCaretController()->caretPosition());
     return target->dispatchEvent(TextEvent::createForDrop(innerFrame->document()->domWindow(), text), IGNORE_EXCEPTION);
 }
 
@@ -475,10 +475,10 @@ bool DragController::concludeEditDrag(DragData* dragData)
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
         style->setProperty(CSSPropertyColor, color.serialized(), false);
-        if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))
+        if (!innerFrame->editor().shouldApplyStyle(style.get(), innerRange.get()))
             return false;
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        innerFrame->editor()->applyStyle(style.get(), EditActionSetColor);
+        innerFrame->editor().applyStyle(style.get(), EditActionSetColor);
         return true;
     }
 
@@ -511,7 +511,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, innerFrame.get(), range, true, chosePlainText);
-        if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
+        if (!fragment || !innerFrame->editor().shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
             return false;
         }
 
@@ -519,7 +519,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (dragIsMove(innerFrame->selection(), dragData)) {
             // NSTextView behavior is to always smart delete on moving a selection,
             // but only to smart insert if the selection granularity is word granularity.
-            bool smartDelete = innerFrame->editor()->smartInsertDeleteEnabled();
+            bool smartDelete = innerFrame->editor().smartInsertDeleteEnabled();
             bool smartInsert = smartDelete && innerFrame->selection()->granularity() == WordGranularity && dragData->canSmartReplace();
             applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete));
         } else {
@@ -534,7 +534,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         }
     } else {
         String text = dragData->asPlainText(innerFrame.get());
-        if (text.isEmpty() || !innerFrame->editor()->shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
+        if (text.isEmpty() || !innerFrame->editor().shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
             return false;
         }
 
@@ -789,7 +789,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     if (state.m_dragType == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
             if (enclosingTextFormControl(src->selection()->start()))
-                clipboard->writePlainText(src->editor()->selectedTextForClipboard());
+                clipboard->writePlainText(src->editor().selectedTextForClipboard());
             else {
                 RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
                 ASSERT(selectionRange);

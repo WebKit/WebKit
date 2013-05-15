@@ -178,16 +178,16 @@ static Frame* targetFrameForEditing(WebPage* page)
     if (!frame)
         return 0;
 
-    Editor* editor = frame->editor();
-    if (!editor->canEdit())
+    Editor& editor = frame->editor();
+    if (!editor.canEdit())
         return 0;
 
-    if (editor->hasComposition()) {
+    if (editor.hasComposition()) {
         // We should verify the parent node of this IME composition node are
         // editable because JavaScript may delete a parent node of the composition
         // node. In this case, WebKit crashes while deleting texts from the parent
         // node, which doesn't exist any longer.
-        if (PassRefPtr<Range> range = editor->compositionRange()) {
+        if (PassRefPtr<Range> range = editor.compositionRange()) {
             Node* node = range->startContainer();
             if (!node || !node->isContentEditable())
                 return 0;
@@ -203,7 +203,7 @@ void WebPage::confirmComposition(const String& compositionString)
     if (!targetFrame)
         return;
 
-    targetFrame->editor()->confirmComposition(compositionString);
+    targetFrame->editor().confirmComposition(compositionString);
 }
 
 void WebPage::setComposition(const String& compositionString, const Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition)
@@ -212,7 +212,7 @@ void WebPage::setComposition(const String& compositionString, const Vector<WebCo
     if (!targetFrame)
         return;
 
-    targetFrame->editor()->setComposition(compositionString, underlines, cursorPosition, 0);
+    targetFrame->editor().setComposition(compositionString, underlines, cursorPosition, 0);
 }
 
 void WebPage::cancelComposition()
@@ -221,7 +221,7 @@ void WebPage::cancelComposition()
     if (!frame)
         return;
 
-    frame->editor()->cancelComposition();
+    frame->editor().cancelComposition();
 }
 
 } // namespace WebKit

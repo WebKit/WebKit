@@ -751,7 +751,7 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 
-    String str = frame->editor()->selectedTextForClipboard();
+    String str = frame->editor().selectedTextForClipboard();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);
@@ -759,7 +759,7 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
         ::GlobalFree(medium.hGlobal);
 
     medium.hGlobal = 0;
-    if (frame->editor()->canSmartCopyOrDelete())
+    if (frame->editor().canSmartCopyOrDelete())
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 

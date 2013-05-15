@@ -648,7 +648,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     RefPtr<Range> range = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), endOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
     RefPtr<Range> rangeToBeReplaced = Range::create(document(), mergeDestination.deepEquivalent().parentAnchoredEquivalent(), mergeDestination.deepEquivalent().parentAnchoredEquivalent());
-    if (!document()->frame()->editor()->client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
+    if (!document()->frame()->editor().client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
         return;
     
     // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block
@@ -794,7 +794,7 @@ void DeleteSelectionCommand::doApply()
     if (!m_replace) {
         Element* textControl = enclosingTextFormControl(m_selectionToDelete.start());
         if (textControl && textControl->focused())
-            document()->frame()->editor()->textWillBeDeletedInTextField(textControl);
+            document()->frame()->editor().textWillBeDeletedInTextField(textControl);
     }
 
     // save this to later make the selection with
@@ -854,7 +854,7 @@ void DeleteSelectionCommand::doApply()
 
     if (!originalString.isEmpty()) {
         if (Frame* frame = document()->frame())
-            frame->editor()->deletedAutocorrectionAtPosition(m_endingPosition, originalString);
+            frame->editor().deletedAutocorrectionAtPosition(m_endingPosition, originalString);
     }
 
     setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().isDirectional()));

@@ -283,7 +283,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
         return;
 
     if (Frame* frame = document()->frame())
-        frame->editor()->textDidChangeInTextArea(this);
+        frame->editor().textDidChangeInTextArea(this);
     // When typing in a textarea, childrenChanged is not called, so we need to force the directionality check.
     calculateAndAdjustDirectionality();
 }

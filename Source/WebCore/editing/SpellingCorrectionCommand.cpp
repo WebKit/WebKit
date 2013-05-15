@@ -63,7 +63,7 @@ private:
     virtual void doUnapply() OVERRIDE
     {
         if (!m_hasBeenUndone) {
-            document()->frame()->editor()->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
+            document()->frame()->editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         

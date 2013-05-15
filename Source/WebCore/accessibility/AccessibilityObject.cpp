@@ -320,11 +320,9 @@ bool AccessibilityObject::hasMisspelling() const
     if (!frame)
         return false;
     
-    Editor* editor = frame->editor();
-    if (!editor)
-        return false;
+    Editor& editor = frame->editor();
     
-    TextCheckerClient* textChecker = editor->textChecker();
+    TextCheckerClient* textChecker = editor.textChecker();
     if (!textChecker)
         return false;
     

@@ -1,3 +1,66 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _selectedString]):
+        (-[WebFrame _firstRectForDOMRange:]):
+        (-[WebFrame _markDOMRange]):
+        (-[WebFrame _insertParagraphSeparatorInQuotedContent]):
+        (-[WebFrame _setTypingStyle:withUndoAction:]):
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView _shouldDeleteRange:]):
+        (-[WebHTMLView _canEdit]):
+        (-[WebHTMLView _canEditRichly]):
+        (-[WebHTMLView _insertOrderedList]):
+        (-[WebHTMLView _insertUnorderedList]):
+        (-[WebHTMLView _canIncreaseSelectionListLevel]):
+        (-[WebHTMLView _canDecreaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevelOrdered]):
+        (-[WebHTMLView _increaseSelectionListLevelUnordered]):
+        (-[WebHTMLView _decreaseSelectionListLevel]):
+        (-[WebHTMLView Editor::coreCommandBySelector:]):
+        (-[WebHTMLView Editor::coreCommandByName:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]):
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]):
+        (-[WebHTMLView checkSpelling:]):
+        (-[WebHTMLView showGuessPanel:]):
+        (-[WebHTMLView toggleBaseWritingDirection:]):
+        (-[WebHTMLView changeBaseWritingDirection:]):
+        (-[WebHTMLView _changeBaseWritingDirectionTo:]):
+        (-[WebHTMLView _updateFontPanel]):
+        (-[WebHTMLView markedRange]):
+        (-[WebHTMLView hasMarkedText]):
+        (-[WebHTMLView unmarkText]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        (-[WebHTMLView _updateSelectionForInputManager]):
+        (-[WebHTMLView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]):
+        (-[WebHTMLView markedTextMatchesAreHighlighted]):
+        (-[WebHTMLView _findString:options:]):
+        * WebView/WebView.mm:
+        (-[WebView _executeCoreCommandByName:value:]):
+        (-[WebView editableDOMRangeForPoint:]):
+        (-[WebView setEditable:]):
+        (-[WebView deleteSelection]):
+        (-[WebView applyStyle:]):
+        (-[WebView typingAttributes]):
+        (-[WebView _simplifyMarkup:endNode:]):
+        (-[WebView handleAcceptedAlternativeText:]):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Remove the ClipboardMac class and header file

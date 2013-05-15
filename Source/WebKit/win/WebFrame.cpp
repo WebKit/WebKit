@@ -1005,7 +1005,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::hasSpellingMarker(
     Frame* coreFrame = core(this);
     if (!coreFrame)
         return E_FAIL;
-    *result = coreFrame->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+    *result = coreFrame->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
     return S_OK;
 }
 
@@ -1021,16 +1021,16 @@ HRESULT STDMETHODCALLTYPE WebFrame::clearOpener()
 HRESULT WebFrame::setTextDirection(BSTR direction)
 {
     Frame* coreFrame = core(this);
-    if (!coreFrame || !coreFrame->editor())
+    if (!coreFrame)
         return E_FAIL;
 
     String directionString(direction, SysStringLen(direction));
     if (directionString == "auto")
-        coreFrame->editor()->setBaseWritingDirection(NaturalWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(NaturalWritingDirection);
     else if (directionString == "ltr")
-        coreFrame->editor()->setBaseWritingDirection(LeftToRightWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(LeftToRightWritingDirection);
     else if (directionString == "rtl")
-        coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
     return S_OK;
 }
 
@@ -1052,7 +1052,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::selectedString(
     if (!coreFrame)
         return E_FAIL;
 
-    String text = coreFrame->displayStringModifiedByEncoding(coreFrame->editor()->selectedText());
+    String text = coreFrame->displayStringModifiedByEncoding(coreFrame->editor().selectedText());
 
     *result = BString(text).release();
     return S_OK;
@@ -1064,7 +1064,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::selectAll()
     if (!coreFrame)
         return E_FAIL;
 
-    if (!coreFrame->editor()->command("SelectAll").execute())
+    if (!coreFrame->editor().command("SelectAll").execute())
         return E_FAIL;
 
     return S_OK;

@@ -266,7 +266,7 @@ AttributeState elementAttributeState(const Element* element, const QualifiedName
 
 bool elementHasContinuousSpellCheckingEnabled(const PassRefPtr<WebCore::Element> element)
 {
-    return element && element->document()->frame() && element->document()->frame()->editor()->isContinuousSpellCheckingEnabled();
+    return element && element->document()->frame() && element->document()->frame()->editor().isContinuousSpellCheckingEnabled();
 }
 
 // Check if this is an input field that will be focused & require input support.

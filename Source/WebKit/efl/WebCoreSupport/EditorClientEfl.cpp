@@ -142,13 +142,13 @@ void EditorClientEfl::respondToChangedSelection(Frame* coreFrame)
     if (!coreFrame)
         return;
 
-    if (coreFrame->editor() && coreFrame->editor()->ignoreCompositionSelectionChange())
+    if (coreFrame->editor().ignoreCompositionSelectionChange())
         return;
 
     Evas_Object* webFrame = EWKPrivate::kitFrame(coreFrame);
     ewk_frame_editor_client_selection_changed(webFrame);
 
-    coreFrame->editor()->cancelCompositionIfSelectionIsInvalid();
+    coreFrame->editor().cancelCompositionIfSelectionIsInvalid();
 }
 
 void EditorClientEfl::didEndEditing()
@@ -324,7 +324,7 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
         }
     }
 
-    Editor::Command command = frame->editor()->command(interpretKeyEvent(event));
+    Editor::Command command = frame->editor().command(interpretKeyEvent(event));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
@@ -337,7 +337,7 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
         return true;
 
     // Don't allow text insertion for nodes that cannot edit.
-    if (!frame->editor()->canEdit())
+    if (!frame->editor().canEdit())
         return false;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
@@ -348,7 +348,7 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
     if (keyEvent->ctrlKey() || keyEvent->altKey())
         return false;
 
-    return frame->editor()->insertText(event->keyEvent()->text(), event);
+    return frame->editor().insertText(event->keyEvent()->text(), event);
 }
 
 void EditorClientEfl::handleKeyboardEvent(KeyboardEvent* event)

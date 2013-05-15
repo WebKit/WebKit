@@ -1,3 +1,216 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        A frame's editor can never be null. Change Frame::editor() to return a reference to reflect this.
+        Also, make Frame::m_editor a const member variable so nobody will accidentally set it to null.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetSpelling):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus):
+        (WebCore::Document::setFocusedNode):
+        (WebCore::command):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::EditCommandComposition::reapply):
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::defaultEventHandler):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show):
+        * editing/DeleteButtonController.h:
+        (WebCore::DeleteButtonControllerDisableScope::DeleteButtonControllerDisableScope):
+        (WebCore::DeleteButtonControllerDisableScope::~DeleteButtonControllerDisableScope):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::StyleChange):
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame):
+        (WebCore::executeToggleStyle):
+        (WebCore::executeApplyParagraphStyle):
+        (WebCore::expandSelectionToGranularity):
+        (WebCore::stateStyle):
+        (WebCore::valueStyle):
+        (WebCore::executeCopy):
+        (WebCore::executeCut):
+        (WebCore::executeDefaultParagraphSeparator):
+        (WebCore::executeDelete):
+        (WebCore::executeDeleteBackward):
+        (WebCore::executeDeleteBackwardByDecomposingPreviousCharacter):
+        (WebCore::executeDeleteForward):
+        (WebCore::executeDeleteToBeginningOfLine):
+        (WebCore::executeDeleteToBeginningOfParagraph):
+        (WebCore::executeDeleteToEndOfLine):
+        (WebCore::executeDeleteToEndOfParagraph):
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeDeleteWordBackward):
+        (WebCore::executeDeleteWordForward):
+        (WebCore::executeFindString):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeIgnoreSpelling):
+        (WebCore::executeInsertNewline):
+        (WebCore::executeMakeTextWritingDirectionLeftToRight):
+        (WebCore::executeMakeTextWritingDirectionNatural):
+        (WebCore::executeMakeTextWritingDirectionRightToLeft):
+        (WebCore::executeToggleOverwrite):
+        (WebCore::executePaste):
+        (WebCore::executePasteGlobalSelection):
+        (WebCore::executePasteAndMatchStyle):
+        (WebCore::executePasteAsPlainText):
+        (WebCore::executeRedo):
+        (WebCore::executeRemoveFormat):
+        (WebCore::executeSelectToMark):
+        (WebCore::executeSetMark):
+        (WebCore::executeStyleWithCSS):
+        (WebCore::executeUseCSS):
+        (WebCore::executeSwapWithMark):
+        (WebCore::executeTakeFindStringFromSelection):
+        (WebCore::executeTranspose):
+        (WebCore::executeUndo):
+        (WebCore::executeYank):
+        (WebCore::executeYankAndSelect):
+        (WebCore::supportedCopyCut):
+        (WebCore::supportedPaste):
+        (WebCore::enabledVisibleSelection):
+        (WebCore::enabledVisibleSelectionAndMark):
+        (WebCore::enableCaretInEditableText):
+        (WebCore::enabledCopy):
+        (WebCore::enabledCut):
+        (WebCore::enabledInEditableText):
+        (WebCore::enabledDelete):
+        (WebCore::enabledPaste):
+        (WebCore::enabledRedo):
+        (WebCore::enabledTakeFindStringFromSelection):
+        (WebCore::enabledUndo):
+        (WebCore::stateOrderedList):
+        (WebCore::stateStyleWithCSS):
+        (WebCore::stateUnorderedList):
+        (WebCore::valueDefaultParagraphSeparator):
+        * editing/FrameSelection.cpp:
+        (WebCore::shouldAlwaysUseDirectionalSelection):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::nextWordPositionForPlatform):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modify):
+        (WebCore::shouldStopBlinkingDueToTypingCommand):
+        (WebCore::FrameSelection::shouldDeleteSelection):
+        (WebCore::FrameSelection::shouldChangeSelection):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/htmlediting.cpp:
+        (WebCore::createDefaultParagraphElement):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::endEditing):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::subtreeHasChanged):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEvent):
+        (WebCore::TextFieldInputType::didSetValueByUserEdit):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::clear):
+        * page/ContextMenuController.cpp:
+        (WebCore::insertUnicodeCharacter):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::find):
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handlePasteGlobalSelection):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::defaultTextInputEventHandler):
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+        * page/FocusController.cpp:
+        (WebCore::relinquishesEditingFocus):
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint):
+        * page/Frame.h:
+        (Frame):
+        (WebCore::Frame::editor):
+        * page/Page.cpp:
+        (WebCore::Page::findString):
+        (WebCore::Page::findStringMatchingRanges):
+        (WebCore::Page::rangeOfString):
+        (WebCore::Page::markAllMatchesForText):
+        (WebCore::Page::setDeviceScaleFactor):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writeRange):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asURL):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::getStringSelection):
+        (WebCore::Pasteboard::getDataSelection):
+        (WebCore::Pasteboard::writeSelectionForTypes):
+        (WebCore::writeURLForTypes):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::documentFragmentWithRTF):
+        (WebCore::Pasteboard::documentFragment):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::dictationAlternatives):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        * testing/Internals.cpp:
+        (WebCore::spellchecker):
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::hasSpellingMarker):
+        (WebCore::Internals::hasAutocorrectedMarker):
+        (WebCore::Internals::setContinuousSpellCheckingEnabled):
+        (WebCore::Internals::setAutomaticQuoteSubstitutionEnabled):
+        (WebCore::Internals::setAutomaticLinkDetectionEnabled):
+        (WebCore::Internals::setAutomaticDashSubstitutionEnabled):
+        (WebCore::Internals::setAutomaticTextReplacementEnabled):
+        (WebCore::Internals::setAutomaticSpellingCorrectionEnabled):
+        (WebCore::Internals::isOverwriteModeEnabled):
+        (WebCore::Internals::toggleOverwriteModeEnabled):
+        (WebCore::Internals::hasGrammarMarker):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Make Clipboard class no longer polymorphic by removing the last virtual functions

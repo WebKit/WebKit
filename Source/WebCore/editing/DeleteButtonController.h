@@ -83,13 +83,13 @@ public:
         : m_frame(frame)
     {
         if (frame)
-            frame->editor()->deleteButtonController()->disable();
+            frame->editor().deleteButtonController()->disable();
     }
 
     ~DeleteButtonControllerDisableScope()
     {
         if (m_frame)
-            m_frame->editor()->deleteButtonController()->enable();
+            m_frame->editor().deleteButtonController()->enable();
     }
 
 private:

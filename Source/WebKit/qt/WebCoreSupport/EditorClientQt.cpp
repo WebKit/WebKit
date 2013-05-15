@@ -206,12 +206,12 @@ void EditorClientQt::respondToChangedSelection(Frame* frame)
     if (supportsGlobalSelection() && frame->selection()->isRange()) {
         bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
         Pasteboard::generalPasteboard()->setSelectionMode(true);
-        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor()->canSmartCopyOrDelete(), frame);
+        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
     }
 
     m_page->respondToChangedSelection();
-    if (!frame->editor()->ignoreCompositionSelectionChange())
+    if (!frame->editor().ignoreCompositionSelectionChange())
         emit m_page->microFocusChanged();
 }
 
@@ -248,7 +248,7 @@ void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
     Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
-    if (m_inUndoRedo || (frame && !frame->editor()->lastEditCommand() /* HACK!! Don't recreate undos */))
+    if (m_inUndoRedo || (frame && !frame->editor().lastEditCommand() /* HACK!! Don't recreate undos */))
         return;
     m_page->registerUndoStep(step);
 #endif // QT_NO_UNDOSTACK
@@ -455,7 +455,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
             // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
             // (e.g. Tab that inserts a Tab character, or Enter).
-            if (frame->editor()->command(cmd).isTextInsertion()
+            if (frame->editor().command(cmd).isTextInsertion()
                 && kevent->type() == PlatformEvent::RawKeyDown)
                 return;
 
@@ -467,7 +467,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         {
             String commandName = editorCommandForKeyDownEvent(event);
             if (!commandName.isEmpty()) {
-                if (frame->editor()->command(commandName).execute()) // Event handled.
+                if (frame->editor().command(commandName).execute()) // Event handled.
                     event->setDefaultHandled();
                 return;
             }
@@ -495,7 +495,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             }
 
             if (shouldInsertText) {
-                frame->editor()->insertText(kevent->text(), event);
+                frame->editor().insertText(kevent->text(), event);
                 event->setDefaultHandled();
                 return;
             }
@@ -526,7 +526,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             {
                 String commandName = editorCommandForKeyDownEvent(event);
                 ASSERT(!commandName.isEmpty());
-                frame->editor()->command(commandName).execute();
+                frame->editor().command(commandName).execute();
                 event->setDefaultHandled();
                 return;
             }

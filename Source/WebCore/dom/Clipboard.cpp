@@ -345,7 +345,7 @@ void Clipboard::writeRange(Range* range, Frame* frame)
     // FIXME: This is a design mistake, a layering violation that should be fixed.
     // The code to write the range to a pasteboard should be an Editor function that takes a pasteboard argument.
     // FIXME: The frame argument seems redundant, since a Range is in a particular document, which has a corresponding frame.
-    m_pasteboard->writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame, IncludeImageAltTextForClipboard);
+    m_pasteboard->writeSelection(range, frame->editor().smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame, IncludeImageAltTextForClipboard);
 }
 
 void Clipboard::writePlainText(const String& text)

@@ -139,7 +139,7 @@ void Pasteboard::clear()
 
 String Pasteboard::getStringSelection(Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
+    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
 }
@@ -152,7 +152,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
         return SharedBuffer::wrapNSData((NSData *)data.get());
     }
 
-    RefPtr<Range> range = frame->editor()->selectedRange();
+    RefPtr<Range> range = frame->editor().selectedRange();
     Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
     ASSERT(commonAncestor);
     Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
@@ -180,7 +180,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
 void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     NSAttributedString* attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
+    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor().selectedRange().get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
     
@@ -188,11 +188,11 @@ void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, b
 
     Vector<String> clientTypes;
     Vector<RefPtr<SharedBuffer> > clientData;
-    frame->editor()->client()->getClientPasteboardDataForRange(frame->editor()->selectedRange().get(), clientTypes, clientData);
+    frame->editor().client()->getClientPasteboardDataForRange(frame->editor().selectedRange().get(), clientTypes, clientData);
     types.appendVector(clientTypes);
 
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
-    frame->editor()->client()->didSetSelectionTypesForPasteboard();
+    frame->editor().client()->didSetSelectionTypesForPasteboard();
 
     for (size_t i = 0; i < clientTypes.size(); ++i)
         platformStrategies()->pasteboardStrategy()->setBufferForType(clientData[i], clientTypes[i], m_pasteboardName);
@@ -241,7 +241,7 @@ static void writeURLForTypes(const Vector<String>& types, const String& pasteboa
     ASSERT(!url.isEmpty());
     
     NSURL *cocoaURL = url;
-    NSString *userVisibleString = frame->editor()->client()->userVisibleString(cocoaURL);
+    NSString *userVisibleString = frame->editor().client()->userVisibleString(cocoaURL);
     
     NSString *title = (NSString*)titleStr;
     if ([title length] == 0) {
@@ -380,7 +380,7 @@ String Pasteboard::plainText(Frame* frame)
         // FIXME: using the editorClient to call into webkit, for now, since 
         // calling _web_userVisibleString from WebCore involves migrating a sizable web of 
         // helper code that should either be done in a separate patch or figured out in another way.
-        string = frame->editor()->client()->userVisibleString([NSURL URLWithString:string]);
+        string = frame->editor().client()->userVisibleString([NSURL URLWithString:string]);
         if ([string length] > 0)
             return [string precomposedStringWithCanonicalMapping];
     }
@@ -435,7 +435,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
         frame->page()->setDefersLoading(true);
 
     Vector<RefPtr<ArchiveResource> > resources;
-    RefPtr<DocumentFragment> fragment = frame->editor()->client()->documentFragmentFromAttributedString(string, resources);
+    RefPtr<DocumentFragment> fragment = frame->editor().client()->documentFragmentFromAttributedString(string, resources);
 
     size_t size = resources.size();
     if (size) {
@@ -513,7 +513,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         for (size_t i = 0; i < paths.size(); i++) {
             // Non-image file types; _web_userVisibleString is appropriate here because this will
             // be pasted as visible text.
-            NSString *url = frame->editor()->client()->userVisibleString([NSURL fileURLWithPath:paths[i]]);
+            NSString *url = frame->editor().client()->userVisibleString([NSURL fileURLWithPath:paths[i]]);
             RefPtr<Node> textNode = frame->document()->createTextNode(url);
             refNodesVector.append(textNode.get());
             nodesVector.append(textNode.get());

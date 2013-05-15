@@ -480,7 +480,7 @@ Eina_Bool ewk_frame_editable_set(Evas_Object* ewkFrame, Eina_Bool editable)
         return true;
     smartData->editable = editable;
     if (editable)
-        smartData->frame->editor()->applyEditingStyleToBodyElement();
+        smartData->frame->editor().applyEditingStyleToBodyElement();
     return true;
 }
 
@@ -488,7 +488,7 @@ const char* ewk_frame_selection_get(const Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
-    WTF::CString selectedText = smartData->frame->editor()->selectedText().utf8();
+    WTF::CString selectedText = smartData->frame->editor().selectedText().utf8();
     if (selectedText.isNull())
         return 0;
     return eina_stringshare_add(selectedText.data());
@@ -500,7 +500,7 @@ Eina_Bool ewk_frame_text_search(const Evas_Object* ewkFrame, const char* text, E
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
 
-    return smartData->frame->editor()->findString(WTF::String::fromUTF8(text), forward, caseSensitive, wrap, true);
+    return smartData->frame->editor().findString(WTF::String::fromUTF8(text), forward, caseSensitive, wrap, true);
 }
 
 unsigned int ewk_frame_text_matches_mark(Evas_Object* ewkFrame, const char* string, Eina_Bool caseSensitive, Eina_Bool highlight, unsigned int limit)
@@ -509,8 +509,8 @@ unsigned int ewk_frame_text_matches_mark(Evas_Object* ewkFrame, const char* stri
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, 0);
 
-    smartData->frame->editor()->setMarkedTextMatchesAreHighlighted(highlight);
-    return smartData->frame->editor()->countMatchesForText(WTF::String::fromUTF8(string), 0, caseSensitive, limit, true, 0);
+    smartData->frame->editor().setMarkedTextMatchesAreHighlighted(highlight);
+    return smartData->frame->editor().countMatchesForText(WTF::String::fromUTF8(string), 0, caseSensitive, limit, true, 0);
 }
 
 Eina_Bool ewk_frame_text_matches_unmark_all(Evas_Object* ewkFrame)
@@ -526,7 +526,7 @@ Eina_Bool ewk_frame_text_matches_highlight_set(Evas_Object* ewkFrame, Eina_Bool 
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
-    smartData->frame->editor()->setMarkedTextMatchesAreHighlighted(highlight);
+    smartData->frame->editor().setMarkedTextMatchesAreHighlighted(highlight);
     return true;
 }
 
@@ -534,7 +534,7 @@ Eina_Bool ewk_frame_text_matches_highlight_get(const Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
-    return smartData->frame->editor()->markedTextMatchesAreHighlighted();
+    return smartData->frame->editor().markedTextMatchesAreHighlighted();
 }
 
 /**

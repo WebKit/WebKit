@@ -77,7 +77,7 @@ void WebContextMenuClient::downloadURL(const KURL&)
 #if !PLATFORM(MAC)
 void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 {
-    String searchString = frame->editor()->selectedText();
+    String searchString = frame->editor().selectedText();
     searchString.stripWhiteSpace();
     String encoded = encodeWithURLEscapeSequences(searchString);
     encoded.replace("%20", "+");

@@ -309,12 +309,12 @@ QString QWebPageAdapter::selectedText() const
     Frame* frame = page->focusController()->focusedOrMainFrame();
     if (frame->selection()->selection().selectionType() == VisibleSelection::NoSelection)
         return QString();
-    return frame->editor()->selectedText();
+    return frame->editor().selectedText();
 }
 
 QString QWebPageAdapter::selectedHtml() const
 {
-    return page->focusController()->focusedOrMainFrame()->editor()->selectedRange()->toHTML();
+    return page->focusController()->focusedOrMainFrame()->editor().selectedRange()->toHTML();
 }
 
 bool QWebPageAdapter::isContentEditable() const
@@ -329,7 +329,7 @@ void QWebPageAdapter::setContentEditable(bool editable)
 
     Frame* frame = mainFrameAdapter()->frame;
     if (editable) {
-        frame->editor()->applyEditingStyleToBodyElement();
+        frame->editor().applyEditingStyleToBodyElement();
         // FIXME: mac port calls this if there is no selectedDOMRange
         // frame->setSelectionFromNone();
     }
@@ -567,9 +567,9 @@ bool QWebPageAdapter::performDrag(const QMimeData *data, const QPoint &pos, Qt::
 void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
 {
     WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
-    WebCore::Editor *editor = frame->editor();
+    WebCore::Editor &editor = frame->editor();
 
-    if (!editor->canEdit()) {
+    if (!editor.canEdit()) {
         ev->ignore();
         return;
     }
@@ -610,12 +610,12 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
             }
 
             if (!ev->preeditString().isEmpty())
-                editor->setComposition(ev->preeditString(), underlines, qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
+                editor.setComposition(ev->preeditString(), underlines, qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
             else {
                 // If we are in the middle of a composition, an empty pre-edit string and a selection of zero
                 // cancels the current composition
-                if (editor->hasComposition() && !(a.start + a.length))
-                    editor->setComposition(QString(), underlines, 0, 0);
+                if (editor.hasComposition() && !(a.start + a.length))
+                    editor.setComposition(QString(), underlines, 0, 0);
             }
             break;
         }
@@ -630,16 +630,16 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
         if (isHTMLTextFormControlElement(node))
             toHTMLTextFormControlElement(node)->setSelectionRange(start, start + ev->replacementLength());
         // Commit regardless of whether commitString is empty, to get rid of selection.
-        editor->confirmComposition(ev->commitString());
+        editor.confirmComposition(ev->commitString());
     } else if (!ev->commitString().isEmpty()) {
-        if (editor->hasComposition())
-            editor->confirmComposition(ev->commitString());
+        if (editor.hasComposition())
+            editor.confirmComposition(ev->commitString());
         else
-            editor->insertText(ev->commitString(), 0);
+            editor.insertText(ev->commitString(), 0);
     } else if (!hasSelection && !ev->preeditString().isEmpty())
-        editor->setComposition(ev->preeditString(), underlines, 0, 0);
-    else if (ev->preeditString().isEmpty() && editor->hasComposition())
-        editor->confirmComposition(String());
+        editor.setComposition(ev->preeditString(), underlines, 0, 0);
+    else if (ev->preeditString().isEmpty() && editor.hasComposition())
+        editor.confirmComposition(String());
 
     ev->accept();
 }
@@ -650,7 +650,7 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     if (!frame)
         return QVariant();
 
-    WebCore::Editor* editor = frame->editor();
+    WebCore::Editor& editor = frame->editor();
 
     RenderObject* renderer = 0;
     RenderTextControl* renderTextControl = 0;
@@ -678,14 +678,14 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant(QFont());
     }
     case Qt::ImCursorPosition: {
-        if (editor->hasComposition())
+        if (editor.hasComposition())
             return QVariant(frame->selection()->end().offsetInContainerNode());
         return QVariant(frame->selection()->extent().offsetInContainerNode());
     }
     case Qt::ImSurroundingText: {
         if (renderTextControl && renderTextControl->textFormControlElement()) {
             QString text = renderTextControl->textFormControlElement()->value();
-            RefPtr<Range> range = editor->compositionRange();
+            RefPtr<Range> range = editor.compositionRange();
             if (range)
                 text.remove(range->startPosition().offsetInContainerNode(), TextIterator::rangeLength(range.get()));
             return QVariant(text);
@@ -693,7 +693,7 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant();
     }
     case Qt::ImCurrentSelection: {
-        if (!editor->hasComposition() && renderTextControl && renderTextControl->textFormControlElement()) {
+        if (!editor.hasComposition() && renderTextControl && renderTextControl->textFormControlElement()) {
             int start = frame->selection()->start().offsetInContainerNode();
             int end = frame->selection()->end().offsetInContainerNode();
             if (end > start)
@@ -703,7 +703,7 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
 
     }
     case Qt::ImAnchorPosition: {
-        if (editor->hasComposition())
+        if (editor.hasComposition())
             return QVariant(frame->selection()->start().offsetInContainerNode());
         return QVariant(frame->selection()->base().offsetInContainerNode());
     }
@@ -955,7 +955,7 @@ void QWebPageAdapter::didCloseInspector()
 void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, const char* commandName, bool* enabled, bool* checked)
 {
     WebCore::FrameLoader* loader = mainFrameAdapter()->frame->loader();
-    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
+    WebCore::Editor& editor = page->focusController()->focusedOrMainFrame()->editor();
 
     switch (action) {
     case QWebPageAdapter::Back:
@@ -973,14 +973,14 @@ void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, c
     case QWebPageAdapter::SetTextDirectionDefault:
     case QWebPageAdapter::SetTextDirectionLeftToRight:
     case QWebPageAdapter::SetTextDirectionRightToLeft:
-        *enabled = editor->canEdit();
+        *enabled = editor.canEdit();
         *checked = false;
         break;
     default: {
 
         // if it's an editor command, let its logic determine state
         if (commandName) {
-            Editor::Command command = editor->command(commandName);
+            Editor::Command command = editor.command(commandName);
             *enabled = command.isEnabled();
             if (*enabled)
                 *checked = command.state() != FalseTriState;
@@ -997,7 +997,7 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
     Frame* frame = page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
-    Editor* editor = frame->editor();
+    Editor& editor = frame->editor();
 
     // Convenience
     QWebHitTestResultPrivate hitTest;
@@ -1028,10 +1028,10 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
 #if defined(Q_WS_X11)
         bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
         Pasteboard::generalPasteboard()->setSelectionMode(true);
-        editor->copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
+        editor.copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
 #endif
-        editor->copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
+        editor.copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
         break;
     }
     case OpenImageInNewWindow:
@@ -1058,13 +1058,13 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         break;
 
     case SetTextDirectionDefault:
-        editor->setBaseWritingDirection(NaturalWritingDirection);
+        editor.setBaseWritingDirection(NaturalWritingDirection);
         break;
     case SetTextDirectionLeftToRight:
-        editor->setBaseWritingDirection(LeftToRightWritingDirection);
+        editor.setBaseWritingDirection(LeftToRightWritingDirection);
         break;
     case SetTextDirectionRightToLeft:
-        editor->setBaseWritingDirection(RightToLeftWritingDirection);
+        editor.setBaseWritingDirection(RightToLeftWritingDirection);
         break;
 #if ENABLE(INSPECTOR)
     case InspectElement: {
@@ -1075,7 +1075,7 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
 #endif
     default:
         if (commandName)
-            editor->command(commandName).execute();
+            editor.command(commandName).execute();
         break;
     }
 }
@@ -1314,8 +1314,8 @@ void QWebPageAdapter::focusOutEvent(QFocusEvent *)
 bool QWebPageAdapter::handleShortcutOverrideEvent(QKeyEvent* event)
 {
     WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
-    WebCore::Editor* editor = frame->editor();
-    if (!editor->canEdit())
+    WebCore::Editor& editor = frame->editor();
+    if (!editor.canEdit())
         return false;
     if (event->modifiers() == Qt::NoModifier
         || event->modifiers() == Qt::ShiftModifier

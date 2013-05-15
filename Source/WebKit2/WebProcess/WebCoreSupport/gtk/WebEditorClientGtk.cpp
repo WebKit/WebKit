@@ -50,7 +50,7 @@ bool WebEditorClient::executePendingEditorCommands(Frame* frame, Vector<WTF::Str
 {
     Vector<Editor::Command> commands;
     for (size_t i = 0; i < pendingEditorCommands.size(); i++) {
-        Editor::Command command = frame->editor()->command(pendingEditorCommands.at(i).utf8().data());
+        Editor::Command command = frame->editor().command(pendingEditorCommands.at(i).utf8().data());
         if (command.isTextInsertion() && !allowTextInsertion)
             return false;
 
@@ -95,14 +95,14 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
         }
 
         // Only allow text insertion commands if the current node is editable.
-        if (executePendingEditorCommands(frame, pendingEditorCommands, frame->editor()->canEdit())) {
+        if (executePendingEditorCommands(frame, pendingEditorCommands, frame->editor().canEdit())) {
             event->setDefaultHandled();
             return;
         }
     }
 
     // Don't allow text insertion for nodes that cannot edit.
-    if (!frame->editor()->canEdit())
+    if (!frame->editor().canEdit())
         return;
 
     // This is just a normal text insertion, so wait to execute the insertion
@@ -119,7 +119,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (platformEvent->ctrlKey() || platformEvent->altKey())
         return;
 
-    if (frame->editor()->insertText(platformEvent->text(), event))
+    if (frame->editor().insertText(platformEvent->text(), event))
         event->setDefaultHandled();
 }
 

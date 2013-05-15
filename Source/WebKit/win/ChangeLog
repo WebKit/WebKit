@@ -1,3 +1,47 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        * WebFrame.cpp:
+        (WebFrame::hasSpellingMarker):
+        (WebFrame::setTextDirection):
+        (WebFrame::selectedString):
+        (WebFrame::selectAll):
+        * WebView.cpp:
+        (WebView::execCommand):
+        (WebView::handleEditingKeyboardEvent):
+        (WebView::executeCoreCommandByName):
+        (WebView::selectedText):
+        (WebView::deleteEnabled):
+        (WebView::editingEnabled):
+        (WebView::replaceSelectionWithText):
+        (WebView::copy):
+        (WebView::cut):
+        (WebView::paste):
+        (WebView::copyURL):
+        (WebView::delete_):
+        (WebView::checkSpelling):
+        (WebView::showGuessPanel):
+        (WebView::clearUndoRedoOperations):
+        (WebView::prepareCandidateWindow):
+        (WebView::resetIME):
+        (WebView::updateSelectionForIME):
+        (WebView::onIMEComposition):
+        (WebView::onIMEEndComposition):
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequest):
+        (WebView::setCompositionForTesting):
+        (WebView::hasCompositionForTesting):
+        (WebView::confirmCompositionForTesting):
+        (WebView::compositionRangeForTesting):
+        (WebView::firstRectForCharacterRangeForTesting):
+        (WebView::selectedRangeForTesting):
+
 2013-05-15  Patrick Gansterer  <paroga@webkit.org>
 
         Remove unnecessary dependecy on CoreFoundation from WebDatabaseManager

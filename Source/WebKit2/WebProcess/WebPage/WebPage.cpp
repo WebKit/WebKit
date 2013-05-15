@@ -601,8 +601,8 @@ EditorState WebPage::editorState() const
     result.isContentEditable = frame->selection()->isContentEditable();
     result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
     result.isInPasswordField = frame->selection()->isInPasswordField();
-    result.hasComposition = frame->editor()->hasComposition();
-    result.shouldIgnoreCompositionSelectionChange = frame->editor()->ignoreCompositionSelectionChange();
+    result.hasComposition = frame->editor().hasComposition();
+    result.shouldIgnoreCompositionSelectionChange = frame->editor().ignoreCompositionSelectionChange();
 
 #if PLATFORM(QT)
     size_t location = 0;
@@ -641,8 +641,8 @@ EditorState WebPage::editorState() const
         result.editorRect = frame->view()->contentsToWindow(selectionRoot->pixelSnappedBoundingBox());
 
     RefPtr<Range> range;
-    if (result.hasComposition && (range = frame->editor()->compositionRange())) {
-        frame->editor()->getCompositionSelection(result.anchorPosition, result.cursorPosition);
+    if (result.hasComposition && (range = frame->editor().compositionRange())) {
+        frame->editor().getCompositionSelection(result.anchorPosition, result.cursorPosition);
 
         result.compositionRect = frame->view()->contentsToWindow(range->boundingBox());
     }
@@ -657,7 +657,7 @@ EditorState WebPage::editorState() const
     }
 
     if (range)
-        result.cursorRect = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(range.get()));
+        result.cursorRect = frame->view()->contentsToWindow(frame->editor().firstRectForRange(range.get()));
 
     // FIXME: We should only transfer innerText when it changes and do this on the UI side.
     if (result.isContentEditable && !result.isInPasswordField) {
@@ -768,7 +768,7 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
         return;
     }
     
-    frame->editor()->command(commandName).execute(argument);
+    frame->editor().command(commandName).execute(argument);
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)
@@ -780,7 +780,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame))
         return pluginView->isEditingCommandEnabled(commandName);
     
-    Editor::Command command = frame->editor()->command(commandName);
+    Editor::Command command = frame->editor().command(commandName);
     return command.isSupported() && command.isEnabled();
 }
     
@@ -1778,7 +1778,7 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
         if (PluginView* pluginView = focusedPluginViewForFrame(frame))
             isEnabled = pluginView->isEditingCommandEnabled(commandName);
         else {
-            Editor::Command command = frame->editor()->command(commandName);
+            Editor::Command command = frame->editor().command(commandName);
             state = command.state();
             isEnabled = command.isSupported() && command.isEnabled();
         }
@@ -2560,7 +2560,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
     if (!keyEvent)
         return false;
 
-    Editor::Command command = frame->editor()->command(interpretKeyEvent(evt));
+    Editor::Command command = frame->editor().command(interpretKeyEvent(evt));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
@@ -2573,14 +2573,14 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
         return true;
 
     // Don't allow text insertion for nodes that cannot edit.
-    if (!frame->editor()->canEdit())
+    if (!frame->editor().canEdit())
         return false;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
     if (evt->charCode() < ' ')
         return false;
 
-    return frame->editor()->insertText(evt->keyEvent()->text(), evt);
+    return frame->editor().insertText(evt->keyEvent()->text(), evt);
 }
 #endif
 
@@ -2859,7 +2859,7 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    frame->editor()->advanceToNextMisspelling(startBeforeSelection);
+    frame->editor().advanceToNextMisspelling(startBeforeSelection);
 }
 
 void WebPage::changeSpellingToWord(const String& word)
@@ -2886,17 +2886,17 @@ void WebPage::unmarkAllBadGrammar()
 #if USE(APPKIT)
 void WebPage::uppercaseWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->uppercaseWord();
+    m_page->focusController()->focusedOrMainFrame()->editor().uppercaseWord();
 }
 
 void WebPage::lowercaseWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->lowercaseWord();
+    m_page->focusController()->focusedOrMainFrame()->editor().lowercaseWord();
 }
 
 void WebPage::capitalizeWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->capitalizeWord();
+    m_page->focusController()->focusedOrMainFrame()->editor().capitalizeWord();
 }
 #endif
     
@@ -2933,7 +2933,7 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 {
     bool selectReplacement = true;
     bool smartReplace = false;
-    return frame->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
+    return frame->editor().replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
 void WebPage::clearSelection()
@@ -3596,7 +3596,7 @@ void WebPage::handleAlternativeTextUIResult(const String& result)
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
-    frame->editor()->handleAlternativeTextUIResult(result);
+    frame->editor().handleAlternativeTextUIResult(result);
 }
 #endif
 
@@ -3618,29 +3618,29 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame || !frame->editor()->canEdit())
+    if (!frame || !frame->editor().canEdit())
         return;
 
     Vector<CompositionUnderline> underlines;
     underlines.append(CompositionUnderline(0, compositionString.length(), Color(Color::black), false));
-    frame->editor()->setComposition(compositionString, underlines, from, from + length);
+    frame->editor().setComposition(compositionString, underlines, from, from + length);
 }
 
 bool WebPage::hasCompositionForTesting()
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    return frame && frame->editor()->hasComposition();
+    return frame && frame->editor().hasComposition();
 }
 
 void WebPage::confirmCompositionForTesting(const String& compositionString)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame || !frame->editor()->canEdit())
+    if (!frame || !frame->editor().canEdit())
         return;
 
     if (compositionString.isNull())
-        frame->editor()->confirmComposition();
-    frame->editor()->confirmComposition(compositionString);
+        frame->editor().confirmComposition();
+    frame->editor().confirmComposition(compositionString);
 }
 
 void WebPage::numWheelEventHandlersChanged(unsigned numWheelEventHandlers)
@@ -3796,19 +3796,19 @@ static Frame* targetFrameForEditing(WebPage* page)
 {
     Frame* targetFrame = page->corePage()->focusController()->focusedOrMainFrame();
 
-    if (!targetFrame || !targetFrame->editor())
+    if (!targetFrame)
         return 0;
 
-    Editor* editor = targetFrame->editor();
-    if (!editor->canEdit())
+    Editor& editor = targetFrame->editor();
+    if (!editor.canEdit())
         return 0;
 
-    if (editor->hasComposition()) {
+    if (editor.hasComposition()) {
         // We should verify the parent node of this IME composition node are
         // editable because JavaScript may delete a parent node of the composition
         // node. In this case, WebKit crashes while deleting texts from the parent
         // node, which doesn't exist any longer.
-        if (PassRefPtr<Range> range = editor->compositionRange()) {
+        if (PassRefPtr<Range> range = editor.compositionRange()) {
             Node* node = range->startContainer();
             if (!node || !node->isContentEditable())
                 return 0;
@@ -3825,8 +3825,7 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
         return;
     }
 
-    Editor* editor = targetFrame->editor();
-    editor->confirmComposition(compositionString);
+    targetFrame->editor().confirmComposition(compositionString);
 
     if (selectionStart == -1) {
         send(Messages::WebPageProxy::EditorStateChanged(editorState()));
@@ -3858,19 +3857,19 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
 
         Element* scope = targetFrame->selection()->rootEditableElement();
         RefPtr<Range> replacementRange = TextIterator::rangeFromLocationAndLength(scope, replacementStart, replacementLength);
-        targetFrame->editor()->setIgnoreCompositionSelectionChange(true);
+        targetFrame->editor().setIgnoreCompositionSelectionChange(true);
         targetFrame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
-        targetFrame->editor()->setIgnoreCompositionSelectionChange(false);
+        targetFrame->editor().setIgnoreCompositionSelectionChange(false);
     }
 
-    targetFrame->editor()->setComposition(text, underlines, selectionStart, selectionEnd);
+    targetFrame->editor().setComposition(text, underlines, selectionStart, selectionEnd);
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 
 void WebPage::cancelComposition()
 {
     if (Frame* targetFrame = targetFrameForEditing(this))
-        targetFrame->editor()->cancelComposition();
+        targetFrame->editor().cancelComposition();
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 #endif

@@ -2012,9 +2012,9 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
             frame()->selection()->setSelection(newSelection);
         }
 
-        if (!frame()->editor()->shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertActionTyped))
+        if (!frame()->editor().shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertActionTyped))
             return;
-        frame()->editor()->replaceSelectionWithText(autocorrectedString, false, false);
+        frame()->editor().replaceSelectionWithText(autocorrectedString, false, false);
 
         // Reset the charet one character further.
         frame()->selection()->moveTo(frame()->selection()->end());

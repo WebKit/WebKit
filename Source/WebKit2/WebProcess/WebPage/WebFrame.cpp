@@ -324,7 +324,7 @@ String WebFrame::selectionAsString() const
     if (!m_coreFrame)
         return String();
 
-    return m_coreFrame->displayStringModifiedByEncoding(m_coreFrame->editor()->selectedText());
+    return m_coreFrame->displayStringModifiedByEncoding(m_coreFrame->editor().selectedText());
 }
 
 IntSize WebFrame::size() const
@@ -700,15 +700,15 @@ String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
 
 void WebFrame::setTextDirection(const String& direction)
 {
-    if (!m_coreFrame || !m_coreFrame->editor())
+    if (!m_coreFrame)
         return;
 
     if (direction == "auto")
-        m_coreFrame->editor()->setBaseWritingDirection(NaturalWritingDirection);
+        m_coreFrame->editor().setBaseWritingDirection(NaturalWritingDirection);
     else if (direction == "ltr")
-        m_coreFrame->editor()->setBaseWritingDirection(LeftToRightWritingDirection);
+        m_coreFrame->editor().setBaseWritingDirection(LeftToRightWritingDirection);
     else if (direction == "rtl")
-        m_coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
+        m_coreFrame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
 }
 
 #if PLATFORM(MAC)

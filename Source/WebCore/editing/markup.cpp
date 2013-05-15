@@ -655,7 +655,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     RefPtr<Range> updatedRangeRef;
     if (frame) {
-        updatedRangeRef = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
+        updatedRangeRef = frame->editor().avoidIntersectionWithDeleteButtonController(range);
         updatedRange = updatedRangeRef.get();
         if (!updatedRange)
             return emptyString();
@@ -769,7 +769,7 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
     HTMLElement* deleteButtonContainerElement = 0;
 #if ENABLE(DELETION_UI)
     if (Frame* frame = node->document()->frame()) {
-        deleteButtonContainerElement = frame->editor()->deleteButtonController()->containerElement();
+        deleteButtonContainerElement = frame->editor().deleteButtonController()->containerElement();
         if (node->isDescendantOf(deleteButtonContainerElement))
             return "";
     }

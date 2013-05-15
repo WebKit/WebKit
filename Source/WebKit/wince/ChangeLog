@@ -1,3 +1,13 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+
 2013-04-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix.

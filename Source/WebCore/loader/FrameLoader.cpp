@@ -482,7 +482,7 @@ bool FrameLoader::closeURL()
     Document* currentDocument = m_frame->document();
     stopLoading(currentDocument && !currentDocument->inPageCache() ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly);
     
-    m_frame->editor()->clearUndoRedoOperations();
+    m_frame->editor().clearUndoRedoOperations();
     return true;
 }
 
@@ -495,7 +495,7 @@ bool FrameLoader::didOpenURL()
     }
 
     m_frame->navigationScheduler()->cancel();
-    m_frame->editor()->clearLastEditCommand();
+    m_frame->editor().clearLastEditCommand();
 
     m_isComplete = false;
     m_didCallImplicitClose = false;
@@ -544,7 +544,7 @@ void FrameLoader::cancelAndClear()
 
 void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
 {
-    m_frame->editor()->clear();
+    m_frame->editor().clear();
 
     if (!m_needsClear)
         return;

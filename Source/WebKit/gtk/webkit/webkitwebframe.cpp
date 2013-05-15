@@ -1134,7 +1134,7 @@ void webkit_web_frame_replace_selection(WebKitWebFrame* frame, const char* text)
     Frame* coreFrame = core(frame);
     bool selectReplacement = false;
     bool smartReplace = true;
-    coreFrame->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
+    coreFrame->editor().replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
 /**

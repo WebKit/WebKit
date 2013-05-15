@@ -146,7 +146,7 @@ void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
     if (!element()->focused())
         return;
     Frame* frame = element()->document()->frame();
-    if (!frame || !frame->editor()->doTextFieldCommandFromEvent(element(), event))
+    if (!frame || !frame->editor().doTextFieldCommandFromEvent(element(), event))
         return;
     event->setDefaultHandled();
 }
@@ -473,8 +473,8 @@ void TextFieldInputType::didSetValueByUserEdit(ValueChangeState state)
         return;
     if (Frame* frame = element()->document()->frame()) {
         if (state == ValueChangeStateNone)
-            frame->editor()->textFieldDidBeginEditing(element());
-        frame->editor()->textDidChangeInTextField(element());
+            frame->editor().textFieldDidBeginEditing(element());
+        frame->editor().textDidChangeInTextField(element());
     }
 }
 

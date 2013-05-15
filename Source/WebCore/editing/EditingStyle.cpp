@@ -1344,7 +1344,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     RefPtr<MutableStylePropertySet> mutableStyle = getPropertiesNotIn(style->style(), computedStyle.get());
 
     reconcileTextDecorationProperties(mutableStyle.get());
-    if (!document->frame()->editor()->shouldStyleWithCSS())
+    if (!document->frame()->editor().shouldStyleWithCSS())
         extractTextStyles(document, mutableStyle.get(), computedStyle->useFixedFontDefaultSize());
 
     // Changing the whitespace style in a tab span would collapse the tab into a space.

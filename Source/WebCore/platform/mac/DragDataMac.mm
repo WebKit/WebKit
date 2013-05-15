@@ -162,7 +162,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
         NSString *scheme = [URLFromPasteboard scheme];
         // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [frame->editor()->client()->canonicalizeURL(URLFromPasteboard) absoluteString];
+            return [frame->editor().client()->canonicalizeURL(URLFromPasteboard) absoluteString];
     }
     
     if (types.contains(String(NSStringPboardType))) {
@@ -172,7 +172,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
         // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
         // FIXME: Should we allow only http family schemes, or anything non-local?
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [frame->editor()->client()->canonicalizeURL(URLFromPasteboard) absoluteString];
+            return [frame->editor().client()->canonicalizeURL(URLFromPasteboard) absoluteString];
     }
     
     if (types.contains(String(NSFilenamesPboardType))) {
@@ -182,7 +182,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
             BOOL isDirectory;
             if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && isDirectory)
                 return String();
-            return [frame->editor()->client()->canonicalizeURL([NSURL fileURLWithPath:files[0]]) absoluteString];
+            return [frame->editor().client()->canonicalizeURL([NSURL fileURLWithPath:files[0]]) absoluteString];
         }
     }
     

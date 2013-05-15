@@ -548,8 +548,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         context->concatCTM(rotation(boxRect, Clockwise));
 
     // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer()->node() && renderer()->frame()->editor()->compositionNode() == renderer()->node();
-    bool useCustomUnderlines = containsComposition && renderer()->frame()->editor()->compositionUsesCustomUnderlines();
+    bool containsComposition = renderer()->node() && renderer()->frame()->editor().compositionNode() == renderer()->node();
+    bool useCustomUnderlines = containsComposition && renderer()->frame()->editor().compositionUsesCustomUnderlines();
 
     // Determine the text colors and selection colors.
     Color textFillColor;
@@ -657,8 +657,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(context, boxOrigin, styleToUse, font,
-                renderer()->frame()->editor()->compositionStart(),
-                renderer()->frame()->editor()->compositionEnd());
+                renderer()->frame()->editor().compositionStart(),
+                renderer()->frame()->editor().compositionEnd());
 
         paintDocumentMarkers(context, boxOrigin, styleToUse, font, true);
 
@@ -785,7 +785,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintDocumentMarkers(context, boxOrigin, styleToUse, font, false);
 
         if (useCustomUnderlines) {
-            const Vector<CompositionUnderline>& underlines = renderer()->frame()->editor()->customCompositionUnderlines();
+            const Vector<CompositionUnderline>& underlines = renderer()->frame()->editor().customCompositionUnderlines();
             size_t numUnderlines = underlines.size();
 
             for (size_t index = 0; index < numUnderlines; ++index) {
@@ -1359,7 +1359,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
     // Optionally highlight the text
-    if (renderer()->frame()->editor()->markedTextMatchesAreHighlighted()) {
+    if (renderer()->frame()->editor().markedTextMatchesAreHighlighted()) {
         Color color = marker->activeMatch() ?
             renderer()->theme()->platformActiveTextSearchHighlightColor() :
             renderer()->theme()->platformInactiveTextSearchHighlightColor();

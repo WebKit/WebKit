@@ -210,7 +210,7 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
     if (supportsGlobalSelection() && frame->selection()->isRange()) {
         bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
         Pasteboard::generalPasteboard()->setSelectionMode(true);
-        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor()->canSmartCopyOrDelete(), frame);
+        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
     }
 }

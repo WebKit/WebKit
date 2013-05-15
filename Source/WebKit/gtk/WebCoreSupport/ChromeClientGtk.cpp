@@ -599,7 +599,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     // synced with cursor movement. For instance, a text field can move without
     // the selection changing.
     Frame* focusedFrame = core(m_webView)->focusController()->focusedOrMainFrame();
-    if (focusedFrame && focusedFrame->editor()->canEdit())
+    if (focusedFrame && focusedFrame->editor().canEdit())
         m_webView->priv->imFilter.setCursorRect(frame->selection()->absoluteCaretBounds());
 }
 

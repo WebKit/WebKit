@@ -220,7 +220,7 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
         return;
     WebView *webView = [webFrame webView];
     if ([webView mainFrame] == webFrame && [webView isEditable])
-        core(webFrame)->editor()->applyEditingStyleToBodyElement();
+        core(webFrame)->editor().applyEditingStyleToBodyElement();
 }
 
 - (BOOL)canProvideDocumentSource

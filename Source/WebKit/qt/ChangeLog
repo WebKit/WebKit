@@ -1,3 +1,23 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::executeCoreCommandByName):
+        (DumpRenderTreeSupportQt::isCommandEnabled):
+        (DumpRenderTreeSupportQt::firstRectForCharacterRange):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::registerUndoStep):
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::selectedText):
+        (QWebPageAdapter::selectedHtml):
+        (QWebPageAdapter::setContentEditable):
+
 2013-05-15  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix a crash under ~PingLoader when the QNAM on the page has been destroyed.

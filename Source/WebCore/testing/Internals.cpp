@@ -236,10 +236,10 @@ static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerType
 
 static SpellChecker* spellchecker(Document* document)
 {
-    if (!document || !document->frame() || !document->frame()->editor())
+    if (!document || !document->frame())
         return 0;
 
-    return document->frame()->editor()->spellChecker();
+    return document->frame()->editor().spellChecker();
 }
 
 const char* Internals::internalsId = "internals";
@@ -284,10 +284,10 @@ void Internals::resetToConsistentState(Page* page)
     page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
     page->group().captionPreferences()->setTestingMode(false);
 #endif
-    if (!page->mainFrame()->editor()->isContinuousSpellCheckingEnabled())
-        page->mainFrame()->editor()->toggleContinuousSpellChecking();
-    if (page->mainFrame()->editor()->isOverwriteModeEnabled())
-        page->mainFrame()->editor()->toggleOverwriteModeEnabled();
+    if (!page->mainFrame()->editor().isContinuousSpellCheckingEnabled())
+        page->mainFrame()->editor().toggleContinuousSpellChecking();
+    if (page->mainFrame()->editor().isOverwriteModeEnabled())
+        page->mainFrame()->editor().toggleOverwriteModeEnabled();
 }
 
 Internals::Internals(Document* document)
@@ -1426,7 +1426,7 @@ bool Internals::hasSpellingMarker(Document* document, int from, int length, Exce
     if (!document || !document->frame())
         return 0;
 
-    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
     
 bool Internals::hasAutocorrectedMarker(Document* document, int from, int length, ExceptionCode&)
@@ -1434,7 +1434,7 @@ bool Internals::hasAutocorrectedMarker(Document* document, int from, int length,
     if (!document || !document->frame())
         return 0;
     
-    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
+    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&)
@@ -1442,8 +1442,8 @@ void Internals::setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&)
     if (!contextDocument() || !contextDocument()->frame())
         return;
 
-    if (enabled != contextDocument()->frame()->editor()->isContinuousSpellCheckingEnabled())
-        contextDocument()->frame()->editor()->toggleContinuousSpellChecking();
+    if (enabled != contextDocument()->frame()->editor().isContinuousSpellCheckingEnabled())
+        contextDocument()->frame()->editor().toggleContinuousSpellChecking();
 }
 
 void Internals::setAutomaticQuoteSubstitutionEnabled(bool enabled, ExceptionCode&)
@@ -1452,8 +1452,8 @@ void Internals::setAutomaticQuoteSubstitutionEnabled(bool enabled, ExceptionCode
         return;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (enabled != contextDocument()->frame()->editor()->isAutomaticQuoteSubstitutionEnabled())
-        contextDocument()->frame()->editor()->toggleAutomaticQuoteSubstitution();
+    if (enabled != contextDocument()->frame()->editor().isAutomaticQuoteSubstitutionEnabled())
+        contextDocument()->frame()->editor().toggleAutomaticQuoteSubstitution();
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1465,8 +1465,8 @@ void Internals::setAutomaticLinkDetectionEnabled(bool enabled, ExceptionCode&)
         return;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (enabled != contextDocument()->frame()->editor()->isAutomaticLinkDetectionEnabled())
-        contextDocument()->frame()->editor()->toggleAutomaticLinkDetection();
+    if (enabled != contextDocument()->frame()->editor().isAutomaticLinkDetectionEnabled())
+        contextDocument()->frame()->editor().toggleAutomaticLinkDetection();
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1478,8 +1478,8 @@ void Internals::setAutomaticDashSubstitutionEnabled(bool enabled, ExceptionCode&
         return;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (enabled != contextDocument()->frame()->editor()->isAutomaticDashSubstitutionEnabled())
-        contextDocument()->frame()->editor()->toggleAutomaticDashSubstitution();
+    if (enabled != contextDocument()->frame()->editor().isAutomaticDashSubstitutionEnabled())
+        contextDocument()->frame()->editor().toggleAutomaticDashSubstitution();
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1491,8 +1491,8 @@ void Internals::setAutomaticTextReplacementEnabled(bool enabled, ExceptionCode&)
         return;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (enabled != contextDocument()->frame()->editor()->isAutomaticTextReplacementEnabled())
-        contextDocument()->frame()->editor()->toggleAutomaticTextReplacement();
+    if (enabled != contextDocument()->frame()->editor().isAutomaticTextReplacementEnabled())
+        contextDocument()->frame()->editor().toggleAutomaticTextReplacement();
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1504,8 +1504,8 @@ void Internals::setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCod
         return;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (enabled != contextDocument()->frame()->editor()->isAutomaticSpellingCorrectionEnabled())
-        contextDocument()->frame()->editor()->toggleAutomaticSpellingCorrection();
+    if (enabled != contextDocument()->frame()->editor().isAutomaticSpellingCorrectionEnabled())
+        contextDocument()->frame()->editor().toggleAutomaticSpellingCorrection();
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1516,7 +1516,7 @@ bool Internals::isOverwriteModeEnabled(Document* document, ExceptionCode&)
     if (!document || !document->frame())
         return 0;
 
-    return document->frame()->editor()->isOverwriteModeEnabled();
+    return document->frame()->editor().isOverwriteModeEnabled();
 }
 
 void Internals::toggleOverwriteModeEnabled(Document* document, ExceptionCode&)
@@ -1524,7 +1524,7 @@ void Internals::toggleOverwriteModeEnabled(Document* document, ExceptionCode&)
     if (!document || !document->frame())
         return;
 
-    document->frame()->editor()->toggleOverwriteModeEnabled();
+    document->frame()->editor().toggleOverwriteModeEnabled();
 }
 
 #if ENABLE(INSPECTOR)
@@ -1619,7 +1619,7 @@ bool Internals::hasGrammarMarker(Document* document, int from, int length, Excep
     if (!document || !document->frame())
         return 0;
 
-    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
+    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
 unsigned Internals::numberOfScrollableAreas(Document* document, ExceptionCode&)

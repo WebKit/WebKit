@@ -291,7 +291,7 @@ void DumpRenderTreeSupportEfl::executeCoreCommandByName(const Evas_Object* ewkVi
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);
+    page->focusController()->focusedOrMainFrame()->editor().command(name).execute(value);
 }
 
 bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const String& text, WebCore::FindOptions options)
@@ -328,7 +328,7 @@ bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, cons
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, false);
 
-    return page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
+    return page->focusController()->focusedOrMainFrame()->editor().command(name).isEnabled();
 }
 
 void DumpRenderTreeSupportEfl::forceLayout(Evas_Object* ewkFrame)
@@ -550,14 +550,14 @@ void DumpRenderTreeSupportEfl::setComposition(Evas_Object* ewkView, const char* 
     if (!page->focusController() || !page->focusController()->focusedOrMainFrame())
         return;
 
-    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
-    if (!editor || (!editor->canEdit() && !editor->hasComposition()))
+    WebCore::Editor& editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor.canEdit() && !editor.hasComposition())
         return;
 
     const String compositionString = String::fromUTF8(text);
     Vector<WebCore::CompositionUnderline> underlines;
     underlines.append(WebCore::CompositionUnderline(0, compositionString.length(), WebCore::Color(0, 0, 0), false));
-    editor->setComposition(compositionString, underlines, start, start + length);
+    editor.setComposition(compositionString, underlines, start, start + length);
 }
 
 bool DumpRenderTreeSupportEfl::hasComposition(const Evas_Object* ewkView)
@@ -567,11 +567,7 @@ bool DumpRenderTreeSupportEfl::hasComposition(const Evas_Object* ewkView)
     if (!page->focusController() || !page->focusController()->focusedOrMainFrame())
         return false;
 
-    const WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
-    if (!editor)
-        return false;
-
-    return editor->hasComposition();
+    return page->focusController()->focusedOrMainFrame()->editor().hasComposition();
 }
 
 bool DumpRenderTreeSupportEfl::compositionRange(Evas_Object* ewkView, int* start, int* length)
@@ -583,12 +579,12 @@ bool DumpRenderTreeSupportEfl::compositionRange(Evas_Object* ewkView, int* start
     if (!page->focusController() || !page->focusController()->focusedOrMainFrame())
         return false;
 
-    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
-    if (!editor || !editor->hasComposition())
+    WebCore::Editor& editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor.hasComposition())
         return false;
 
-    *start = editor->compositionStart();
-    *length = editor->compositionEnd() - *start;
+    *start = editor.compositionStart();
+    *length = editor.compositionEnd() - *start;
     return true;
 }
 
@@ -599,40 +595,37 @@ void DumpRenderTreeSupportEfl::confirmComposition(Evas_Object* ewkView, const ch
     if (!page->focusController() || !page->focusController()->focusedOrMainFrame())
         return;
 
-    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
-    if (!editor)
-        return;
+    WebCore::Editor& editor = page->focusController()->focusedOrMainFrame()->editor();
 
-    if (!editor->hasComposition()) {
-        editor->insertText(String::fromUTF8(text), 0);
+    if (!editor.hasComposition()) {
+        editor.insertText(String::fromUTF8(text), 0);
         return;
     }
 
     if (text) {
-        editor->confirmComposition(String::fromUTF8(text));
+        editor.confirmComposition(String::fromUTF8(text));
         return;
     }
-    editor->confirmComposition();
+    editor.confirmComposition();
 }
 
 WebCore::IntRect DumpRenderTreeSupportEfl::firstRectForCharacterRange(Evas_Object* ewkView, int location, int length)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, WebCore::IntRect());
 
-    if (!page->focusController() || !page->focusController()->focusedOrMainFrame() || !page->focusController()->focusedOrMainFrame()->editor())
+    if (!page->focusController() || !page->focusController()->focusedOrMainFrame())
         return WebCore::IntRect();
 
     if ((location + length < location) && (location + length))
         length = 0;
 
     WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
-    WebCore::Editor* editor = frame->editor();
 
     RefPtr<WebCore::Range> range = WebCore::TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
     if (!range)
         return WebCore::IntRect();
 
-    return editor->firstRectForRange(range.get());
+    return frame->editor().firstRectForRange(range.get());
 }
 
 bool DumpRenderTreeSupportEfl::selectedRange(Evas_Object* ewkView, int* start, int* length)

@@ -283,7 +283,7 @@ void DeleteButtonController::show(HTMLElement* element)
     if (!enabled() || !element || !element->inDocument() || !isDeletableElement(element))
         return;
 
-    EditorClient* client = m_frame->editor()->client();
+    EditorClient* client = m_frame->editor().client();
     if (!client || !client->shouldShowDeleteInterface(element))
         return;
 

@@ -82,7 +82,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     RefPtr<Range> range = selectedRange();
     bool choosePlainText;
     
-    m_frame->editor()->client()->setInsertionPasteboard(NSGeneralPboard);
+    m_frame->editor().client()->setInsertionPasteboard(NSGeneralPboard);
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, choosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
@@ -102,7 +102,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
             pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
     }
 #endif
-    m_frame->editor()->client()->setInsertionPasteboard(String());
+    m_frame->editor().client()->setInsertionPasteboard(String());
 }
 
 bool Editor::insertParagraphSeparatorInQuotedContent()

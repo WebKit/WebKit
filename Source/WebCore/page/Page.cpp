@@ -565,7 +565,7 @@ bool Page::findString(const String& target, FindOptions options)
     Frame* frame = focusController()->focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
-        if (frame->editor()->findString(target, (options & ~WrapAround) | StartInSelection)) {
+        if (frame->editor().findString(target, (options & ~WrapAround) | StartInSelection)) {
             if (frame != startFrame)
                 startFrame->selection()->clear();
             focusController()->setFocusedFrame(frame);
@@ -577,7 +577,7 @@ bool Page::findString(const String& target, FindOptions options)
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
     if (shouldWrap && !startFrame->selection()->isNone()) {
-        bool found = startFrame->editor()->findString(target, options | WrapAround | StartInSelection);
+        bool found = startFrame->editor().findString(target, options | WrapAround | StartInSelection);
         focusController()->setFocusedFrame(frame);
         return found;
     }
@@ -594,7 +594,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
     Frame* frame = mainFrame();
     Frame* frameWithSelection = 0;
     do {
-        frame->editor()->countMatchesForText(target, 0, options, limit ? (limit - matchRanges->size()) : 0, true, matchRanges);
+        frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges->size()) : 0, true, matchRanges);
         if (frame->selection()->isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, false);
@@ -627,7 +627,7 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : mainFrame();
     Frame* startFrame = frame;
     do {
-        if (RefPtr<Range> resultRange = frame->editor()->rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
+        if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
             return resultRange.release();
 
         frame = incrementFrame(frame, !(options & Backwards), shouldWrap);
@@ -636,7 +636,7 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
     if (shouldWrap && referenceRange) {
-        if (RefPtr<Range> resultRange = startFrame->editor()->rangeOfString(target, referenceRange, options | WrapAround | StartInSelection))
+        if (RefPtr<Range> resultRange = startFrame->editor().rangeOfString(target, referenceRange, options | WrapAround | StartInSelection))
             return resultRange.release();
     }
 
@@ -657,8 +657,8 @@ unsigned int Page::markAllMatchesForText(const String& target, FindOptions optio
 
     Frame* frame = mainFrame();
     do {
-        frame->editor()->setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        matches += frame->editor()->countMatchesForText(target, 0, options, limit ? (limit - matches) : 0, true, 0);
+        frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        matches += frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matches) : 0, true, 0);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 
@@ -788,7 +788,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
 #endif
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->editor()->deviceScaleFactorChanged();
+        frame->editor().deviceScaleFactorChanged();
 
     pageCache()->markPagesForFullStyleRecalc(this);
 }

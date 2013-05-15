@@ -395,7 +395,7 @@ bool EditorClientWinCE::handleEditingKeyboardEvent(KeyboardEvent* event)
         }
     }
 
-    Editor::Command command = frame->editor()->command(interpretKeyEvent(event));
+    Editor::Command command = frame->editor().command(interpretKeyEvent(event));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
@@ -415,7 +415,7 @@ bool EditorClientWinCE::handleEditingKeyboardEvent(KeyboardEvent* event)
     if (keyEvent->ctrlKey() || keyEvent->altKey())
         return false;
 
-    return frame->editor()->insertText(event->keyEvent()->text(), event);
+    return frame->editor().insertText(event->keyEvent()->text(), event);
 }
 
 void EditorClientWinCE::handleKeyboardEvent(KeyboardEvent* event)

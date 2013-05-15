@@ -105,7 +105,7 @@ void SelectionHandler::cancelSelection()
 
 BlackBerry::Platform::String SelectionHandler::selectedText() const
 {
-    return m_webPage->focusedOrMainFrame()->editor()->selectedText();
+    return m_webPage->focusedOrMainFrame()->editor().selectedText();
 }
 
 WebCore::IntRect SelectionHandler::clippingRectForVisibleContent() const

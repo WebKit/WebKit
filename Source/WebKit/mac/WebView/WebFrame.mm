@@ -493,7 +493,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSString *)_selectedString
 {
-    return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->editor()->selectedText());
+    return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->editor().selectedText());
 }
 
 - (NSString *)_stringForRange:(DOMRange *)range
@@ -602,7 +602,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range
 {
-   return _private->coreFrame->editor()->firstRectForRange(core(range));
+   return _private->coreFrame->editor().firstRectForRange(core(range));
 }
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
@@ -676,7 +676,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_markDOMRange
 {
-    return kit(_private->coreFrame->editor()->mark().toNormalizedRange().get());
+    return kit(_private->coreFrame->editor().mark().toNormalizedRange().get());
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
@@ -746,7 +746,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (_private->coreFrame->selection()->isNone())
         return;
 
-    _private->coreFrame->editor()->insertParagraphSeparatorInQuotedContent();
+    _private->coreFrame->editor().insertParagraphSeparatorInQuotedContent();
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -775,7 +775,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!_private->coreFrame || !style)
         return;
     // FIXME: We shouldn't have to create a copy here.
-    _private->coreFrame->editor()->computeAndSetTypingStyle(core(style)->copyProperties().get(), undoAction);
+    _private->coreFrame->editor().computeAndSetTypingStyle(core(style)->copyProperties().get(), undoAction);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -928,7 +928,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)
         return;
-    _private->coreFrame->editor()->replaceSelectionWithFragment(core(fragment), selectReplacement, smartReplace, matchStyle);
+    _private->coreFrame->editor().replaceSelectionWithFragment(core(fragment), selectReplacement, smartReplace, matchStyle);
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace

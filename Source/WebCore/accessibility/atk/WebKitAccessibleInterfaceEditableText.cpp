@@ -79,7 +79,7 @@ static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const 
     coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(*position, 0)));
     coreObject->setFocused(true);
     // FIXME: We should set position to the actual inserted text length, which may be less than that requested.
-    if (document->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string).substring(0, length), false, 0))
+    if (document->frame()->editor().insertTextWithoutSendingTextEvent(String::fromUTF8(string).substring(0, length), false, 0))
         *position += length;
 }
 
@@ -106,7 +106,7 @@ static void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint s
 
     coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(startPos, endPos - startPos)));
     coreObject->setFocused(true);
-    document->frame()->editor()->performDelete();
+    document->frame()->editor().performDelete();
 }
 
 static void webkitAccessibleEditableTextPasteText(AtkEditableText*, gint)

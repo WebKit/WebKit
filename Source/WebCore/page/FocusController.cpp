@@ -537,7 +537,7 @@ static bool relinquishesEditingFocus(Node *node)
     if (!frame || !root)
         return false;
 
-    return frame->editor()->shouldEndEditing(rangeOfContents(root).get());
+    return frame->editor().shouldEndEditing(rangeOfContents(root).get());
 }
 
 static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFrame, Node* newFocusedNode)

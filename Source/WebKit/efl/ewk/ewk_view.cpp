@@ -1668,7 +1668,7 @@ const char* ewk_view_selection_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    CString selectedString = priv->page->focusController()->focusedOrMainFrame()->editor()->selectedText().utf8();
+    CString selectedString = priv->page->focusController()->focusedOrMainFrame()->editor().selectedText().utf8();
     if (selectedString.isNull())
         return 0;
     return eina_stringshare_add(selectedString.data());
@@ -1683,7 +1683,7 @@ Eina_Bool ewk_view_editor_command_execute(const Evas_Object* ewkView, const Ewk_
     if (!commandString)
         return false;
 
-    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(commandString).execute(WTF::String::fromUTF8(value));
+    return priv->page->focusController()->focusedOrMainFrame()->editor().command(commandString).execute(WTF::String::fromUTF8(value));
 }
 
 Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_Event_Mouse_Down* downEvent)
@@ -4102,11 +4102,11 @@ void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direct
     if (!focusedFrame)
         return;
 
-    WebCore::Editor* editor = focusedFrame->editor();
-    if (!editor->canEdit())
+    WebCore::Editor& editor = focusedFrame->editor();
+    if (!editor.canEdit())
         return;
 
-    editor->setBaseWritingDirection(static_cast<WritingDirection>(direction));
+    editor.setBaseWritingDirection(static_cast<WritingDirection>(direction));
 }
 
 void ewk_view_did_first_visually_nonempty_layout(Evas_Object* ewkView)

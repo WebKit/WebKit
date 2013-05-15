@@ -1,3 +1,62 @@
+2013-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Frame::editor() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=116037
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection):
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::executePendingEditorCommands):
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        (WebKit::WebContextMenuClient::searchWithSpotlight):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::changeWordCase):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::selectionAsString):
+        (WebKit::WebFrame::setTextDirection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        (WebKit::WebPage::executeEditingCommand):
+        (WebKit::WebPage::isEditingCommandEnabled):
+        (WebKit::WebPage::validateCommand):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::advanceToNextMisspelling):
+        (WebKit::WebPage::uppercaseWord):
+        (WebKit::WebPage::lowercaseWord):
+        (WebKit::WebPage::capitalizeWord):
+        (WebKit::WebPage::replaceSelectionWithText):
+        (WebKit::WebPage::handleAlternativeTextUIResult):
+        (WebKit::WebPage::setCompositionForTesting):
+        (WebKit::WebPage::hasCompositionForTesting):
+        (WebKit::WebPage::confirmCompositionForTesting):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::cancelComposition):
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::cancelComposition):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::cancelComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::firstRectForCharacterRange):
+        (WebKit::WebPage::readSelectionFromPasteboard):
+        (WebKit::WebPage::getStringSelectionForPasteboard):
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Need a way for NPAPI plug-ins to open preference panes

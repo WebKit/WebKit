@@ -442,7 +442,7 @@ static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
     // selection->selection().firstRange can return 0 here, but if that was the case
     // selection->selection().isNonOrphanedCaretOrRange() would have returned false
     // above, so we do not have to check it.
-    IntRect firstRect = frame->editor()->firstRectForRange(selection->selection().firstRange().get());
+    IntRect firstRect = frame->editor().firstRectForRange(selection->selection().firstRange().get());
     return IntPoint(firstRect.x(), firstRect.maxY());
 }
 
@@ -938,7 +938,7 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
     else
         focusController->setFocusedFrame(core(webView)->mainFrame());
 
-    if (focusController->focusedFrame()->editor()->canEdit())
+    if (focusController->focusedFrame()->editor().canEdit())
         webView->priv->imFilter.notifyFocusedIn();
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
@@ -1181,31 +1181,31 @@ static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, con
 static void webkit_web_view_real_select_all(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("SelectAll").execute();
+    frame->editor().command("SelectAll").execute();
 }
 
 static void webkit_web_view_real_cut_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("Cut").execute();
+    frame->editor().command("Cut").execute();
 }
 
 static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("Copy").execute();
+    frame->editor().command("Copy").execute();
 }
 
 static void webkit_web_view_real_undo(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("Undo").execute();
+    frame->editor().command("Undo").execute();
 }
 
 static void webkit_web_view_real_redo(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("Redo").execute();
+    frame->editor().command("Redo").execute();
 }
 
 static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMovementStep step, gint count)
@@ -1264,7 +1264,7 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
 static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->command("Paste").execute();
+    frame->editor().command("Paste").execute();
 }
 
 static gboolean webkit_web_view_real_should_allow_editing_action(WebKitWebView*)
@@ -4389,7 +4389,7 @@ void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean
 
     Frame *frame = core(webView)->mainFrame();
     do {
-        frame->editor()->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
         frame = frame->tree()->traverseNextWithWrap(false);
     } while (frame);
 }
@@ -4459,7 +4459,7 @@ gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return frame->editor()->canCut() || frame->editor()->canDHTMLCut();
+    return frame->editor().canCut() || frame->editor().canDHTMLCut();
 }
 
 /**
@@ -4475,7 +4475,7 @@ gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return frame->editor()->canCopy() || frame->editor()->canDHTMLCopy();
+    return frame->editor().canCopy() || frame->editor().canDHTMLCopy();
 }
 
 /**
@@ -4491,7 +4491,7 @@ gboolean webkit_web_view_can_paste_clipboard(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return frame->editor()->canPaste() || frame->editor()->canDHTMLPaste();
+    return frame->editor().canPaste() || frame->editor().canDHTMLPaste();
 }
 
 /**
@@ -4547,7 +4547,7 @@ void webkit_web_view_delete_selection(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->performDelete();
+    frame->editor().performDelete();
 }
 
 /**
@@ -4629,7 +4629,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
     g_return_if_fail(frame);
 
     if (flag) {
-        frame->editor()->applyEditingStyleToBodyElement();
+        frame->editor().applyEditingStyleToBodyElement();
         // TODO: If the WebKitWebView is made editable and the selection is empty, set it to something.
         //if (!webkit_web_view_get_selected_dom_range(webView))
         //    mainFrame->setSelectionFromNone();
@@ -5090,7 +5090,7 @@ gboolean webkit_web_view_can_undo(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return frame->editor()->canUndo();
+    return frame->editor().canUndo();
 }
 
 /**
@@ -5125,7 +5125,7 @@ gboolean webkit_web_view_can_redo(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return frame->editor()->canRedo();
+    return frame->editor().canRedo();
 }
 
 /**
