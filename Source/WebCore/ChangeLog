@@ -1,3 +1,21 @@
+2013-05-15  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Remove version #if guards
+        https://bugs.webkit.org/show_bug.cgi?id=116152
+
+        Reviewed by Brent Fulgham.
+
+        No tests required.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading): Removed version guard.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback): Ditto.
+        (WebCore::headerCallback): Ditto.
+        (WebCore::readCallback): Ditto.
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob): Ditto.
+        (WebCore::ResourceHandleManager::initializeHandle): Ditto.
+
 2013-05-15  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r150089): Make WebCoreTestShim build for iOS

@@ -146,7 +146,6 @@ void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
 
 void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-#if LIBCURL_VERSION_NUM > 0x071200
     if (!d->m_handle)
         return;
 
@@ -161,9 +160,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
             // Restarting the handle has failed so just cancel it.
             cancel();
     }
-#else
-    LOG_ERROR("Deferred loading is implemented if libcURL version is above 7.18.0");
-#endif
 }
 
 bool ResourceHandle::loadsBlocked()
