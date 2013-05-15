@@ -1,5 +1,21 @@
 2013-05-15  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove call to ClipboardMac::create from Editor::newGeneralClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116162
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.h: Add createForCopyAndPaste function.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard): Call createForCopyAndPaste.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::createForCopyAndPaste): Added. Moved code here from
+        Editor::newGeneralClipboard.
+
+2013-05-15  Darin Adler  <darin@apple.com>
+
         [Mac] Remove call to ClipboardMac::create from EventHandler::createDraggingClipboard
         https://bugs.webkit.org/show_bug.cgi?id=116161
 

@@ -128,6 +128,8 @@ namespace WebCore {
 #endif
         
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+        static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
+
         const Pasteboard& pasteboard() { return *m_pasteboard; }
 #endif
 

@@ -36,6 +36,8 @@
 #import "FrameSnapshottingMac.h"
 #import "Page.h"
 #import "Pasteboard.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 
 namespace WebCore {
 
@@ -49,6 +51,12 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* 
 PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
 {
     return ClipboardMac::create(Clipboard::DragAndDrop, NSDragPboard, ClipboardWritable, ClipboardMac::DragAndDropData, 0);
+}
+
+PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
+{
+    return ClipboardMac::create(Clipboard::CopyAndPaste,
+        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, ClipboardMac::CopyAndPasteGeneric, 0);
 }
 
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)

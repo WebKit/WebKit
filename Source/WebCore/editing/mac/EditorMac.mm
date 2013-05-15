@@ -57,10 +57,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return ClipboardMac::create(Clipboard::CopyAndPaste,
-        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, ClipboardMac::CopyAndPasteGeneric, frame);
+    return Clipboard::createForCopyAndPaste(policy);
 }
 
 void Editor::showFontPanel()
