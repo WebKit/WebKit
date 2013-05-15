@@ -1,3 +1,10 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        Try to fix iOS build.
+
+        * platform/Pasteboard.h: Fix #if so that we don't try to compile pasteboard name code
+        on iOS.
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Frame::editor() should return a reference
