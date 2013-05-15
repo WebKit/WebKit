@@ -53,7 +53,6 @@ public:
     // characters in |source| (after collapsing \r\n, etc).
     ALWAYS_INLINE bool peek(SegmentedString& source)
     {
-    PeekAgain:
         m_nextInputCharacter = source.currentChar();
 
         // Every branch in this function is expensive, so we have a
@@ -65,6 +64,31 @@ public:
             m_skipNextNewLine = false;
             return true;
         }
+        return processNextInputCharacter(source);
+    }
+
+    // Returns whether there are more characters in |source| after advancing.
+    ALWAYS_INLINE bool advance(SegmentedString& source)
+    {
+        source.advanceAndUpdateLineNumber();
+        if (source.isEmpty())
+            return false;
+        return peek(source);
+    }
+
+    bool skipNextNewLine() const { return m_skipNextNewLine; }
+
+    void reset(bool skipNextNewLine = false)
+    {
+        m_nextInputCharacter = '\0';
+        m_skipNextNewLine = skipNextNewLine;
+    }
+
+private:
+    bool processNextInputCharacter(SegmentedString& source)
+    {
+    ProcessAgain:
+        ASSERT(m_nextInputCharacter == source.currentChar());
 
         if (m_nextInputCharacter == '\n' && m_skipNextNewLine) {
             m_skipNextNewLine = false;
@@ -87,7 +111,8 @@ public:
                     source.advancePastNonNewline();
                     if (source.isEmpty())
                         return false;
-                    goto PeekAgain;
+                    m_nextInputCharacter = source.currentChar();
+                    goto ProcessAgain;
                 }
                 m_nextInputCharacter = 0xFFFD;
             }
@@ -95,24 +120,6 @@ public:
         return true;
     }
 
-    // Returns whether there are more characters in |source| after advancing.
-    ALWAYS_INLINE bool advance(SegmentedString& source)
-    {
-        source.advanceAndUpdateLineNumber();
-        if (source.isEmpty())
-            return false;
-        return peek(source);
-    }
-
-    bool skipNextNewLine() const { return m_skipNextNewLine; }
-
-    void reset(bool skipNextNewLine = false)
-    {
-        m_nextInputCharacter = '\0';
-        m_skipNextNewLine = skipNextNewLine;
-    }
-
-private:
     bool shouldTreatNullAsEndOfFileMarker(SegmentedString& source) const
     {
         return source.isClosed() && source.length() == 1;
