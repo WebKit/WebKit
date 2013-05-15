@@ -1388,6 +1388,10 @@ webkit.org/b/115632 fast/exclusions/shape-outside-floats/shape-outside-floats-el
 
 webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
+webkit.org/b/116059 fast/css/variables/var-inside-shape.html [ ImageOnlyFailure ]
+
+webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
