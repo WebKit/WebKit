@@ -1,3 +1,10 @@
+2013-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r150089): Make WebCoreTestShim build for iOS
+
+        * Configurations/WebCoreTestShim.xcconfig: Exclude
+        WebCoreTestShimLibrary.cpp when building for iOS.
+
 2013-05-15  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Implement offsetParent for elements inside named flow
