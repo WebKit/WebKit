@@ -26,8 +26,6 @@
 #ifndef PasteboardStrategy_h
 #define PasteboardStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -64,6 +62,5 @@ protected:
 };
 
 }
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // !PasteboardStrategy_h

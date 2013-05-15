@@ -26,8 +26,6 @@
 #ifndef DatabaseStrategy_h
 #define DatabaseStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include "AbstractDatabaseServer.h"
 
 namespace WebCore {
@@ -43,7 +41,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // DatabaseStrategy_h

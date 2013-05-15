@@ -30,8 +30,6 @@
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 
-#if USE(PLATFORM_STRATEGIES)
-
 namespace WebCore {
 
 ResourceLoadScheduler* LoaderStrategy::resourceLoadScheduler()
@@ -53,5 +51,3 @@ BlobRegistry* LoaderStrategy::createBlobRegistry()
 
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)

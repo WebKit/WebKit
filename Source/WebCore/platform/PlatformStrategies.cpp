@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(PLATFORM_STRATEGIES)
-
 #include "PlatformStrategies.h"
 
 namespace WebCore {
@@ -59,4 +56,3 @@ bool hasPlatformStrategies()
 
 } // namespace WebCore
 
-#endif // USE(PLATFORM_STRATEGIES)

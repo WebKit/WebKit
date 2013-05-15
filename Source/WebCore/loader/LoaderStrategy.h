@@ -26,8 +26,6 @@
 #ifndef LoaderStrategy_h
 #define LoaderStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include "ResourceHandleTypes.h"
 #include <wtf/Vector.h>
 
@@ -57,7 +55,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // LoaderStrategy_h

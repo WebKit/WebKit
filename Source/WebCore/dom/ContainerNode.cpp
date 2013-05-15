@@ -725,11 +725,7 @@ void ContainerNode::suspendPostAttachCallbacks()
                 s_shouldReEnableMemoryCacheCallsAfterAttach = true;
             }
         }
-#if USE(PLATFORM_STRATEGIES)
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->suspendPendingRequests();
-#else
-        resourceLoadScheduler()->suspendPendingRequests();
-#endif
     }
     ++s_attachDepth;
 }
@@ -746,11 +742,7 @@ void ContainerNode::resumePostAttachCallbacks()
             if (Page* page = document()->page())
                 page->setMemoryCacheClientCallsEnabled(true);
         }
-#if USE(PLATFORM_STRATEGIES)
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();
-#else
-        resourceLoadScheduler()->resumePendingRequests();
-#endif
     }
     --s_attachDepth;
 }

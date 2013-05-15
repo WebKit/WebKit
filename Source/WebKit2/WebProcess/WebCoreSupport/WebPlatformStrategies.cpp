@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebPlatformStrategies.h"
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include "BlockingResponseMap.h"
 #include "DataReference.h"
 #include "NetworkResourceLoadParameters.h"
@@ -453,5 +451,3 @@ void WebPlatformStrategies::setStringForType(const String& string, const String&
 #endif
 
 } // namespace WebKit
-
-#endif // USE(PLATFORM_STRATEGIES)

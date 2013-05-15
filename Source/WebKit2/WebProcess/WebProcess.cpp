@@ -180,11 +180,8 @@ WebProcess::WebProcess()
     , m_inWindowPageCount(0)
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 {
-#if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
-#endif // USE(PLATFORM_STRATEGIES)
-
 
     // FIXME: This should moved to where WebProcess::initialize is called,
     // so that ports have a chance to customize, and ifdefs in this file are

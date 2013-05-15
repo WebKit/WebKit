@@ -28,8 +28,6 @@
 
 #include "StorageNamespaceImpl.h"
 
-#if USE(PLATFORM_STRATEGIES)
-
 namespace WebCore {
 
 PassRefPtr<StorageNamespace> StorageStrategy::localStorageNamespace(PageGroup* pageGroup)
@@ -48,5 +46,3 @@ PassRefPtr<StorageNamespace> StorageStrategy::transientLocalStorageNamespace(Pag
 }
 
 } // namespace WebCore
-
-#endif // USE(STORAGE_STRATEGIES)

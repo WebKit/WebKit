@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DatabaseStrategy.h"
 
-#if USE(PLATFORM_STRATEGIES)
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseServer.h"
@@ -41,4 +40,3 @@ AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)
-#endif // USE(PLATFORM_STRATEGIES)

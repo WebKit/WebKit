@@ -35,11 +35,8 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "PageGroup.h"
-
-#if USE(PLATFORM_STRATEGIES)
 #include "PlatformStrategies.h"
 #include "VisitedLinkStrategy.h"
-#endif
 
 namespace WebCore {
 
@@ -127,11 +124,7 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
 
     m_linksCheckedForVisitedState.add(hash);
 
-#if USE(PLATFORM_STRATEGIES)
     return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element->document()->baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
-#else
-    return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
-#endif
 }
 
 

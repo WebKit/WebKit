@@ -69,7 +69,6 @@ ResourceLoadScheduler* resourceLoadScheduler()
     static ResourceLoadScheduler* globalScheduler = 0;
     
     if (!globalScheduler) {
-#if USE(PLATFORM_STRATEGIES)
         static bool isCallingOutToStrategy = false;
         
         // If we're re-entering resourceLoadScheduler() while calling out to the LoaderStrategy,
@@ -82,9 +81,6 @@ ResourceLoadScheduler* resourceLoadScheduler()
         
         TemporaryChange<bool> recursionGuard(isCallingOutToStrategy, true);
         globalScheduler = platformStrategies()->loaderStrategy()->resourceLoadScheduler();
-#else
-        globalScheduler = new ResourceLoadScheduler;
-#endif
     }
 
     return globalScheduler;

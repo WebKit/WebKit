@@ -342,12 +342,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         m_fragmentIdentifierForRequest = String();
     }
 
-#if USE(PLATFORM_STRATEGIES)
     m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, request, request.priority(), options);
-#else
-    m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, request, request.priority(), options);
-#endif
-
     if (!m_loader) {
         failBeforeStarting();
         return;

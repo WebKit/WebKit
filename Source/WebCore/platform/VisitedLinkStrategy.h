@@ -26,8 +26,6 @@
 #ifndef VisitedLinkStrategy_h
 #define VisitedLinkStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 namespace WebCore {
 
 typedef uint64_t LinkHash;
@@ -46,7 +44,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // VisitedLinkStrategy_h

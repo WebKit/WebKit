@@ -26,8 +26,6 @@
 #ifndef CookiesStrategy_h
 #define CookiesStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -53,7 +51,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // CookiesStrategy_h

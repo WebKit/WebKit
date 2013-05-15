@@ -26,8 +26,6 @@
 #ifndef PlatformStrategies_h
 #define PlatformStrategies_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 namespace WebCore {
 
 class CookiesStrategy;
@@ -139,7 +137,5 @@ void setPlatformStrategies(PlatformStrategies*);
 bool hasPlatformStrategies();
     
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // PlatformStrategies_h

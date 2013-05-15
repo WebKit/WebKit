@@ -49,6 +49,8 @@
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
 #import "Page.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 #import "RenderImage.h"
 #import "ResourceBuffer.h"
 #import "Text.h"
@@ -59,11 +61,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
-
-#if USE(PLATFORM_STRATEGIES)
-#include "PasteboardStrategy.h"
-#include "PlatformStrategies.h"
-#endif
 
 namespace WebCore {
 

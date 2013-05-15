@@ -92,13 +92,8 @@ void ResourceLoader::releaseResources()
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
     m_reachedTerminalState = true;
 
-#if USE(PLATFORM_STRATEGIES)
     platformStrategies()->loaderStrategy()->resourceLoadScheduler()->remove(this);
-#endif
     m_identifier = 0;
-#if !USE(PLATFORM_STRATEGIES)
-    resourceLoadScheduler()->remove(this);
-#endif
 
     if (m_handle) {
         // Clear out the ResourceHandle's client so that it doesn't try to call
@@ -257,13 +252,9 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader()->documentLoader(), request, redirectResponse);
 #endif
 
-    if (!redirectResponse.isNull()) {
-#if USE(PLATFORM_STRATEGIES)
+    if (!redirectResponse.isNull())
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
-#else
-        resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
-#endif
-    }
+
     m_request = request;
 
     if (!redirectResponse.isNull() && !m_documentLoader->isCommitted())

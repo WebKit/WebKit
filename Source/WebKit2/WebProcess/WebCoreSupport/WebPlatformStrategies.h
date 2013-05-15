@@ -26,8 +26,6 @@
 #ifndef WebPlatformStrategies_h
 #define WebPlatformStrategies_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
@@ -125,7 +123,5 @@ void handleDidGetPlugins(uint64_t requestID, const Vector<WebCore::PluginInfo>&)
 #endif // ENABLE(PLUGIN_PROCESS)
 
 } // namespace WebKit
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // WebPlatformStrategies_h

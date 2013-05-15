@@ -2578,11 +2578,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         ASSERT(!newRequest.isNull());
         
         if (!documentLoader()->applicationCacheHost()->maybeLoadSynchronously(newRequest, error, response, data)) {
-#if USE(PLATFORM_STRATEGIES)
             platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, clientCredentialPolicy, error, response, data);
-#else
-            ResourceHandle::loadResourceSynchronously(networkingContext(), newRequest, storedCredentials, error, response, data);
-#endif
             documentLoader()->applicationCacheHost()->maybeLoadFallbackSynchronously(newRequest, error, response, data);
         }
     }

@@ -39,11 +39,7 @@ BlobRegistry& blobRegistry()
 {
     ASSERT(isMainThread());
 
-#if USE(PLATFORM_STRATEGIES)
     static BlobRegistry& instance = *platformStrategies()->loaderStrategy()->createBlobRegistry();
-#else
-    DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
-#endif
     return instance;
 }
 

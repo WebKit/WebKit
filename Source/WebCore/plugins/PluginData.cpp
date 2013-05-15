@@ -24,10 +24,8 @@
 #include "config.h"
 #include "PluginData.h"
 
-#if USE(PLATFORM_STRATEGIES)
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
-#endif
 
 namespace WebCore {
 
@@ -78,7 +76,6 @@ String PluginData::pluginFileForMimeType(const String& mimeType) const
     return String();
 }
 
-#if USE(PLATFORM_STRATEGIES)
 void PluginData::refresh()
 {
     platformStrategies()->pluginStrategy()->refreshPlugins();
@@ -90,6 +87,5 @@ void PluginData::initPlugins(const Page* page)
     
     platformStrategies()->pluginStrategy()->getPluginInfo(page, m_plugins);
 }
-#endif
 
 }

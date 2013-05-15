@@ -26,8 +26,6 @@
 #ifndef PluginStrategy_h
 #define PluginStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include "PluginData.h"
 
 namespace WebCore {
@@ -44,7 +42,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // PluginStrategy_h

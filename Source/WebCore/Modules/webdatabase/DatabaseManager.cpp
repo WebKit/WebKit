@@ -36,21 +36,16 @@
 #include "DatabaseBackendSync.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
+#include "DatabaseStrategy.h"
 #include "DatabaseSync.h"
 #include "DatabaseTask.h"
 #include "ExceptionCode.h"
 #include "InspectorDatabaseInstrumentation.h"
 #include "Logging.h"
+#include "PlatformStrategies.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-
-#if USE(PLATFORM_STRATEGIES)
-#include "DatabaseStrategy.h"
-#include "PlatformStrategies.h"
-#else
-#include "DatabaseServer.h"
-#endif
 
 namespace WebCore {
 
@@ -66,18 +61,14 @@ DatabaseManager& DatabaseManager::manager()
 }
 
 DatabaseManager::DatabaseManager()
-    : m_client(0)
+    : m_server(platformStrategies()->databaseStrategy()->getDatabaseServer())
+    , m_client(0)
     , m_databaseIsAvailable(true)
 #if !ASSERT_DISABLED
     , m_databaseContextRegisteredCount(0)
     , m_databaseContextInstanceCount(0)
 #endif
 {
-#if USE(PLATFORM_STRATEGIES)
-    m_server = platformStrategies()->databaseStrategy()->getDatabaseServer();
-#else
-    m_server = new DatabaseServer;
-#endif
     ASSERT(m_server); // We should always have a server to work with.
 }
 

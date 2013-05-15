@@ -26,8 +26,6 @@
 #ifndef StorageStrategy_h
 #define StorageStrategy_h
 
-#if USE(PLATFORM_STRATEGIES)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -50,7 +48,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
 
 #endif // StorageStrategy_h

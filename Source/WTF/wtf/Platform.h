@@ -885,11 +885,6 @@
 /* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
-/* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
-#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY)
-#define WTF_USE_PLATFORM_STRATEGIES 1
-#endif
-
 #if PLATFORM(WIN)
 #define WTF_USE_CROSS_PLATFORM_CONTEXT_MENUS 1
 #endif

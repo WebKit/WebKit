@@ -807,11 +807,7 @@ void CachedResourceLoader::performPostLoadActions()
 {
     checkForPendingPreloads();
 
-#if USE(PLATFORM_STRATEGIES)
     platformStrategies()->loaderStrategy()->resourceLoadScheduler()->servePendingRequests();
-#else
-    resourceLoadScheduler()->servePendingRequests();
-#endif
 }
 
 void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
