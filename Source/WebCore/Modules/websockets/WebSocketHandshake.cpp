@@ -299,8 +299,11 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         return len;
     }
     LOG(Network, "WebSocketHandshake %p readServerHandshake() Status code is %d", this, statusCode);
-    m_response.setStatusCode(statusCode);
-    m_response.setStatusText(statusText);
+
+    m_serverHandshakeResponse = ResourceResponse();
+    m_serverHandshakeResponse.setHTTPStatusCode(statusCode);
+    m_serverHandshakeResponse.setHTTPStatusText(statusText);
+
     if (statusCode != 101) {
         m_mode = Failed;
         m_failureReason = "Unexpected response code: " + String::number(statusCode);
@@ -340,32 +343,32 @@ String WebSocketHandshake::failureReason() const
 
 String WebSocketHandshake::serverWebSocketProtocol() const
 {
-    return m_response.headerFields().get("sec-websocket-protocol");
+    return m_serverHandshakeResponse.httpHeaderFields().get("sec-websocket-protocol");
 }
 
 String WebSocketHandshake::serverSetCookie() const
 {
-    return m_response.headerFields().get("set-cookie");
+    return m_serverHandshakeResponse.httpHeaderFields().get("set-cookie");
 }
 
 String WebSocketHandshake::serverSetCookie2() const
 {
-    return m_response.headerFields().get("set-cookie2");
+    return m_serverHandshakeResponse.httpHeaderFields().get("set-cookie2");
 }
 
 String WebSocketHandshake::serverUpgrade() const
 {
-    return m_response.headerFields().get("upgrade");
+    return m_serverHandshakeResponse.httpHeaderFields().get("upgrade");
 }
 
 String WebSocketHandshake::serverConnection() const
 {
-    return m_response.headerFields().get("connection");
+    return m_serverHandshakeResponse.httpHeaderFields().get("connection");
 }
 
 String WebSocketHandshake::serverWebSocketAccept() const
 {
-    return m_response.headerFields().get("sec-websocket-accept");
+    return m_serverHandshakeResponse.httpHeaderFields().get("sec-websocket-accept");
 }
 
 String WebSocketHandshake::acceptedExtensions() const
@@ -373,9 +376,9 @@ String WebSocketHandshake::acceptedExtensions() const
     return m_extensionDispatcher.acceptedExtensions();
 }
 
-const WebSocketHandshakeResponse& WebSocketHandshake::serverHandshakeResponse() const
+const ResourceResponse& WebSocketHandshake::serverHandshakeResponse() const
 {
-    return m_response;
+    return m_serverHandshakeResponse;
 }
 
 void WebSocketHandshake::addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor> processor)
@@ -463,8 +466,6 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
 
 const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* end)
 {
-    m_response.clearHeaderFields();
-
     AtomicString name;
     String value;
     bool sawSecWebSocketExtensionsHeaderField = false;
@@ -496,17 +497,17 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
                 m_failureReason = "The Sec-WebSocket-Accept header MUST NOT appear more than once in an HTTP response";
                 return 0;
             }
-            m_response.addHeaderField(name, value);
+            m_serverHandshakeResponse.addHTTPHeaderField(name, value);
             sawSecWebSocketAcceptHeaderField = true;
         } else if (equalIgnoringCase("Sec-WebSocket-Protocol", name)) {
             if (sawSecWebSocketProtocolHeaderField) {
                 m_failureReason = "The Sec-WebSocket-Protocol header MUST NOT appear more than once in an HTTP response";
                 return 0;
             }
-            m_response.addHeaderField(name, value);
+            m_serverHandshakeResponse.addHTTPHeaderField(name, value);
             sawSecWebSocketProtocolHeaderField = true;
         } else
-            m_response.addHeaderField(name, value);
+            m_serverHandshakeResponse.addHTTPHeaderField(name, value);
     }
     return p;
 }

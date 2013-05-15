@@ -3197,8 +3197,6 @@
 		97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0A14FA09D5007457AE /* WebSocketFrame.h */; };
 		97AABD2614FA09D5007457AE /* WebSocketHandshake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */; };
 		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; };
-		97AABD2A14FA09D5007457AE /* WebSocketHandshakeResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97AABD0F14FA09D5007457AE /* WebSocketHandshakeResponse.cpp */; };
-		97AABD2B14FA09D5007457AE /* WebSocketHandshakeResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */; };
 		97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */; };
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; };
 		97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */; };
@@ -9655,8 +9653,6 @@
 		97AABD0A14FA09D5007457AE /* WebSocketFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketFrame.h; path = Modules/websockets/WebSocketFrame.h; sourceTree = "<group>"; };
 		97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketHandshake.cpp; path = Modules/websockets/WebSocketHandshake.cpp; sourceTree = "<group>"; };
 		97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketHandshake.h; path = Modules/websockets/WebSocketHandshake.h; sourceTree = "<group>"; };
-		97AABD0F14FA09D5007457AE /* WebSocketHandshakeResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketHandshakeResponse.cpp; path = Modules/websockets/WebSocketHandshakeResponse.cpp; sourceTree = "<group>"; };
-		97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketHandshakeResponse.h; path = Modules/websockets/WebSocketHandshakeResponse.h; sourceTree = "<group>"; };
 		97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerThreadableWebSocketChannel.cpp; path = Modules/websockets/WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerThreadableWebSocketChannel.h; path = Modules/websockets/WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
 		97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowNotifications.cpp; path = Modules/notifications/DOMWindowNotifications.cpp; sourceTree = "<group>"; };
@@ -16401,8 +16397,6 @@
 				97AABD0A14FA09D5007457AE /* WebSocketFrame.h */,
 				97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */,
 				97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */,
-				97AABD0F14FA09D5007457AE /* WebSocketHandshakeResponse.cpp */,
-				97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */,
 				A886CDC214FBBAA300D279F4 /* WorkerContextWebSocket.idl */,
 				97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */,
 				97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */,
@@ -23990,7 +23984,6 @@
 				97AABD2414FA09D5007457AE /* WebSocketExtensionProcessor.h in Headers */,
 				97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */,
 				97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */,
-				97AABD2B14FA09D5007457AE /* WebSocketHandshakeResponse.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,
 				0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */,
 				1AC2D845171734A100652FC0 /* Storage.h in Headers */,
@@ -26975,7 +26968,6 @@
 				4A5A2ADB161E7E00005889DD /* WebSocketExtensionParser.cpp in Sources */,
 				AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */,
 				97AABD2614FA09D5007457AE /* WebSocketHandshake.cpp in Sources */,
-				97AABD2A14FA09D5007457AE /* WebSocketHandshakeResponse.cpp in Sources */,
 				0F580FA41496939100FB5BD8 /* WebTiledBackingLayer.mm in Sources */,
 				0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */,
 				1AA7161E149BF2FA0016EC19 /* WebTileLayer.mm in Sources */,

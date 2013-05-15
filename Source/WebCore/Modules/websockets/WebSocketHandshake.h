@@ -34,9 +34,9 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "KURL.h"
+#include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
-#include "WebSocketHandshakeResponse.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -84,7 +84,7 @@ public:
     String serverWebSocketAccept() const;
     String acceptedExtensions() const;
 
-    const WebSocketHandshakeResponse& serverHandshakeResponse() const;
+    const ResourceResponse& serverHandshakeResponse() const;
 
     void addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor>);
 
@@ -107,7 +107,7 @@ private:
 
     Mode m_mode;
 
-    WebSocketHandshakeResponse m_response;
+    ResourceResponse m_serverHandshakeResponse;
 
     String m_failureReason;
 

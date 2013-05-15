@@ -67,7 +67,6 @@
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "WebSocketFrame.h"
-#include "WebSocketHandshakeResponse.h"
 #include "XMLHttpRequest.h"
 
 #include <wtf/CurrentTime.h>
@@ -493,12 +492,12 @@ void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long ide
     m_frontend->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), currentTime(), requestObject);
 }
 
-void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
+void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse& response)
 {
     RefPtr<TypeBuilder::Network::WebSocketResponse> responseObject = TypeBuilder::Network::WebSocketResponse::create()
-        .setStatus(response.statusCode())
-        .setStatusText(response.statusText())
-        .setHeaders(buildObjectForHeaders(response.headerFields()));
+        .setStatus(response.httpStatusCode())
+        .setStatusText(response.httpStatusText())
+        .setHeaders(buildObjectForHeaders(response.httpHeaderFields()));
     m_frontend->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), currentTime(), responseObject);
 }
 

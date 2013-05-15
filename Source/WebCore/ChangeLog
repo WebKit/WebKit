@@ -1,3 +1,44 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebSocketHandshakeResponse class
+        https://bugs.webkit.org/show_bug.cgi?id=116190
+
+        Reviewed by Andreas Kling.
+
+        Just use ResourceResponse instead of WebSocketHandshakeResponse.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::serverWebSocketProtocol):
+        (WebCore::WebSocketHandshake::serverSetCookie):
+        (WebCore::WebSocketHandshake::serverSetCookie2):
+        (WebCore::WebSocketHandshake::serverUpgrade):
+        (WebCore::WebSocketHandshake::serverConnection):
+        (WebCore::WebSocketHandshake::serverWebSocketAccept):
+        (WebCore::WebSocketHandshake::serverHandshakeResponse):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WebSocketHandshakeResponse.cpp: Removed.
+        * Modules/websockets/WebSocketHandshakeResponse.h: Removed.
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponse):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore):
+        (InspectorResourceAgent):
+
 2013-05-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] media engine may deliver NULL in-band "cue"

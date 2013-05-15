@@ -74,7 +74,6 @@ class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
-class WebSocketHandshakeResponse;
 #endif
 
 typedef String ErrorString;
@@ -127,7 +126,7 @@ public:
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
-    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse&);
+    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse&);
     void didCloseWebSocket(unsigned long identifier);
     void didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);

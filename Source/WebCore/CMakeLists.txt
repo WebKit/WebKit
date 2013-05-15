@@ -963,7 +963,6 @@ set(WebCore_SOURCES
     Modules/websockets/WebSocketExtensionParser.cpp
     Modules/websockets/WebSocketFrame.cpp
     Modules/websockets/WebSocketHandshake.cpp
-    Modules/websockets/WebSocketHandshakeResponse.cpp
     Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
     accessibility/AXObjectCache.cpp
