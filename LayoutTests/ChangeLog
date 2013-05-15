@@ -1,3 +1,18 @@
+2013-05-15  Dongseong Hwang  <dongseong.hwang@intel.com>
+
+        Remove an overloaded strokeRect in <canvas>
+        https://bugs.webkit.org/show_bug.cgi?id=116017
+
+        Reviewed by Benjamin Poulain.
+
+        canvas/philip/tests/2d.missingargs.html can cover
+        fast/canvas/canvas-overloads-strokeRect.html, so this patch removed it.
+
+        * fast/canvas/canvas-overloads-strokeRect-expected.txt: Removed.
+        * fast/canvas/canvas-overloads-strokeRect.html: Removed.
+        * fast/canvas/script-tests/canvas-overloads-strokeRect.js: Removed.
+        * fast/canvas/script-tests/canvas-strokeRect.js:
+
 2013-05-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] text-decoration-line now accepts "blink" as valid value

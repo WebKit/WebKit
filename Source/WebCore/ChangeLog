@@ -1,3 +1,23 @@
+2013-05-15  Dongseong Hwang  <dongseong.hwang@intel.com>
+
+        Remove an overloaded strokeRect in <canvas>
+        https://bugs.webkit.org/show_bug.cgi?id=116017
+
+        Reviewed by Benjamin Poulain.
+
+        The canvas spec [1] does not define strokeRect with 5 arguments, so this issue
+        remains only strokeRect with 4 arguments.
+
+        [1] http://www.w3.org/TR/2dcontext2/
+
+        Covered by existing tests: canvas/philip/tests/2d.missingargs.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (CanvasRenderingContext2D):
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2013-05-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] text-decoration-line now accepts "blink" as valid value

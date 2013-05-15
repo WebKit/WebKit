@@ -122,7 +122,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void setFillColor(float r, float g, float b, float a);
     void setFillColor(float c, float m, float y, float k, float a);
 
-    void strokeRect(float x, float y, float width, float height, optional float lineWidth);
+    void strokeRect(float x, float y, float width, float height);
 
     void drawImage(HTMLImageElement? image, float x, float y)
         raises (DOMException);
