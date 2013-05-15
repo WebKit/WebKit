@@ -24,7 +24,6 @@
             "filename": r"Source/WebCore/Modules/geolocation/"
                         r"|Source/WebCore/page/GeolocationClient.h"
                         r"|Source/WebCore/bindings/js/JSGeolocationCustom.cpp"
-                        r"|Source/WebCore/bindings/v8/custom/V8GeolocationCustom.cpp"
                         r"|Source/WebCore/platform/mock/GeolocationClientMock.(h|cpp)"
                         r"|Source/WebKit2/WebProcess/Geolocation/",
         },
