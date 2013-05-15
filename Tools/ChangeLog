@@ -1,3 +1,11 @@
+2013-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows, others] Unreviewed build fix after r150090.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (getSecureEventInputIsEnabledCallback): IsSecureEventInputEnabled
+        doesn't exist on other platforms.
+
 2013-05-14  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Expunge pthreads2VC.dll from DumpRenderTree Project

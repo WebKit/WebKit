@@ -1840,7 +1840,11 @@ static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef this
 
 static JSValueRef getSecureEventInputIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
+#if PLATFORM(MAC)
     return JSValueMakeBoolean(context, IsSecureEventInputEnabled());
+#else
+    return JSValueMakeBoolean(context, false);
+#endif
 }
 
 static JSValueRef getTitleTextDirectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
