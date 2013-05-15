@@ -48,7 +48,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                     if (!actualCodePages || (actualCodePages & fontCodePages))
                         setGlyphDataForIndex(offset + i, buffer[i], fontData);
                     else
-                        setGlyphDataForIndex(offset + i, buffer[i], 0);
+                        setGlyphDataForIndex(offset + i, 0, 0);
                 }
                 return true;
             } else if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface()) {
@@ -58,7 +58,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                     if (!actualCodePages || (actualCodePages & fontCodePages))
                         setGlyphDataForIndex(offset + i, buffer[i], fontData);
                     else
-                        setGlyphDataForIndex(offset + i, buffer[i], 0);
+                        setGlyphDataForIndex(offset + i, 0, 0);
                 }
                 return true;
             }
