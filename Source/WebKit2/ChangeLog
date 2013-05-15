@@ -1,3 +1,25 @@
+2013-05-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Process suppression should throttle scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=115812
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/13799726>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setThrottled):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+            - Added setThrottled, forwards to WebCore::Page.
+        * WebProcess/WebProcess.cpp:
+        (WebKit):
+        (WebKit::WebProcess::setProcessSuppressionEnabled):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+            - Intercept calls to setProcessSuppressionEnabled, also mark all pages as being throttled.
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         WKPageGetPluginInformationDisplayNameKey doesn't return the right key

@@ -1,3 +1,33 @@
+2013-05-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Process suppression should throttle scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=115812
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/13799726>
+
+        * WebCore.exp.in:
+            - Expose Page::setThrottled
+        * dom/Document.cpp:
+        (WebCore::Document::scriptedAnimationControllerSetThrottled):
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+            - Forwards to ScriptedAnimationController::setThrottled
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::setThrottled):
+        (WebCore):
+        * dom/ScriptedAnimationController.h:
+            - Force use of a timer.
+        (ScriptedAnimationController):
+        * page/Page.cpp:
+        (WebCore::Page::setThrottled):
+        (WebCore):
+        * page/Page.h:
+        (Page):
+            - When under throttling force the ScriptedAnimationController to use a timer.
+
 2013-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Implement run-in remove child cases.

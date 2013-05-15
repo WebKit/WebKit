@@ -65,6 +65,7 @@ public:
 
     void suspend();
     void resume();
+    void setThrottled(bool);
 
     void windowScreenDidChange(PlatformDisplayID);
 

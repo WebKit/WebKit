@@ -950,6 +950,14 @@ void Page::resumeScriptedAnimations()
     }
 }
 
+void Page::setThrottled(bool isThrottled)
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            frame->document()->scriptedAnimationControllerSetThrottled(isThrottled);
+    }
+}
+
 void Page::userStyleSheetLocationChanged()
 {
     // FIXME: Eventually we will move to a model of just being handed the sheet

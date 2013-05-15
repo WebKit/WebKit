@@ -3755,6 +3755,12 @@ void WebPage::setVisibilityState(uint32_t visibilityState, bool isInitialState)
 }
 #endif
 
+void WebPage::setThrottled(bool isThrottled)
+{
+    if (m_page)
+        m_page->setThrottled(isThrottled);
+}
+
 void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
 {
     m_scrollingPerformanceLoggingEnabled = enabled;

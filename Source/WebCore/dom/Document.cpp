@@ -4886,6 +4886,14 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 #endif
 }
 
+void Document::scriptedAnimationControllerSetThrottled(bool isThrottled)
+{
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->setThrottled(isThrottled);
+#endif
+}
+
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
     UNUSED_PARAM(displayID);

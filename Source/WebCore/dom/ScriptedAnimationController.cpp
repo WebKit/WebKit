@@ -82,6 +82,13 @@ void ScriptedAnimationController::resume()
         scheduleAnimation();
 }
 
+void ScriptedAnimationController::setThrottled(bool isThrottled)
+{
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_useTimer = isThrottled;
+#endif
+}
+
 ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCallback(PassRefPtr<RequestAnimationFrameCallback> callback)
 {
     ScriptedAnimationController::CallbackId id = ++m_nextCallbackId;
