@@ -69,7 +69,7 @@ namespace WebCore {
         
         static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
 
-        virtual ~Clipboard();
+        LEGACY_VIRTUAL ~Clipboard();
 
         bool isForCopyAndPaste() const { return m_clipboardType == CopyAndPaste; }
         bool isForDragAndDrop() const { return m_clipboardType == DragAndDrop; }
@@ -124,7 +124,7 @@ namespace WebCore {
         void setDragHasStarted() { m_dragStarted = true; }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-        virtual PassRefPtr<DataTransferItemList> items() = 0;
+        LEGACY_VIRTUAL PassRefPtr<DataTransferItemList> items() = 0;
 #endif
         
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)

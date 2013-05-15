@@ -1,3 +1,15 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        [Mac] Make Clipboard class no longer polymorphic by removing the last virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=116166
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Add ~Clipboard since it's no longer a virtual function, but to the
+        non-iOS section, since iOS is still using the legacy version of Clipboard.
+
+        * dom/Clipboard.h: Mark items non-virtual, too. It's not implemented on Mac yet.
+
 2013-05-15  Dongseong Hwang  <dongseong.hwang@intel.com>
 
         Remove an overloaded strokeRect in <canvas>
