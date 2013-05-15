@@ -302,7 +302,12 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     // Try a fuzzy hit test first to find an accessible element.
-    RefPtr<AccessibilityObject> axObject = m_object->accessibilityHitTest(IntPoint(point));
+    RefPtr<AccessibilityObject> axObject;
+    {
+        AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
+        axObject = m_object->accessibilityHitTest(IntPoint(point));
+    }
+
     if (!axObject)
         return nil;
     
@@ -324,6 +329,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
+    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] accessibilityElementCount];
     
@@ -335,6 +341,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
+    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] accessibilityElementAtIndex:index];
     
@@ -354,6 +361,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NSNotFound;
     
+    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
         return [[self attachmentView] indexOfAccessibilityElement:element];
     
@@ -1071,6 +1079,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
+
+    AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     
     // As long as there's a parent wrapper, that's the correct chain to climb.
     AccessibilityObject* parent = m_object->parentObjectUnignored(); 

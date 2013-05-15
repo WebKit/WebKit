@@ -1,3 +1,29 @@
+2013-05-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Use caching when requesting children object on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=116112
+
+        Reviewed by David Kilzer.
+
+        Building up the children list in the AX hierarchy can be time consuming. On iOS, this
+        is now much more noticeable (I believe due to the way tables calculate their AX ignored flag).
+
+        We can speed everything up if we just cache the isIgnored() attribute while building up children.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXAttributeCacheEnabler::AXAttributeCacheEnabler):
+        (WebCore):
+        (WebCore::AXAttributeCacheEnabler::~AXAttributeCacheEnabler):
+        * accessibility/AXObjectCache.h:
+        (AXAttributeCacheEnabler):
+        (WebCore):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[WebAccessibilityObjectWrapper accessibilityElementCount]):
+        (-[WebAccessibilityObjectWrapper accessibilityElementAtIndex:]):
+        (-[WebAccessibilityObjectWrapper indexOfAccessibilityElement:]):
+        (-[WebAccessibilityObjectWrapper accessibilityContainer]):
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Remove WebSocketHandshakeRequest class

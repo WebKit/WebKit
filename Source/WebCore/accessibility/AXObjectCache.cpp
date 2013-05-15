@@ -954,6 +954,19 @@ bool isNodeAriaVisible(Node* node)
     return equalIgnoringCase(toElement(node)->getAttribute(aria_hiddenAttr), "false");
 }
 
+AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)
+    : m_cache(cache)
+{
+    if (m_cache)
+        m_cache->startCachingComputedObjectAttributesUntilTreeMutates();
+}
+    
+AXAttributeCacheEnabler::~AXAttributeCacheEnabler()
+{
+    if (m_cache)
+        m_cache->stopCachingComputedObjectAttributes();
+}
+    
 } // namespace WebCore
 
 #endif // HAVE(ACCESSIBILITY)

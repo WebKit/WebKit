@@ -240,6 +240,16 @@ private:
     AXID getAXID(AccessibilityObject*);
 };
 
+class AXAttributeCacheEnabler
+{
+public:
+    explicit AXAttributeCacheEnabler(AXObjectCache *cache);
+    ~AXAttributeCacheEnabler();
+    
+private:
+    AXObjectCache* m_cache;
+};
+    
 bool nodeHasRole(Node*, const String& role);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
