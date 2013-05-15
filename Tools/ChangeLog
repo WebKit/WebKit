@@ -1,3 +1,11 @@
+2013-05-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing the current test-webkitpy failure.
+
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (test_setup_environ_for_server): Adjusting the expected DYLD_INSERT_LIBRARIES environment variable value
+        in webkitpy.port.mac_unittest.test_setup_environ_for_server after r150089.
+
 2013-05-14  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Fix build after r150090.

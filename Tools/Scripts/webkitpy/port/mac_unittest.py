@@ -116,7 +116,7 @@ java/
         port = self.make_port(options=MockOptions(leaks=True, guard_malloc=True))
         env = port.setup_environ_for_server(port.driver_name())
         self.assertEqual(env['MallocStackLogging'], '1')
-        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
+        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib:/mock-build/libWebCoreTestShim.dylib')
 
     def _assert_search_path(self, port_name, baseline_path, search_paths, use_webkit2=False):
         port = self.make_port(port_name=port_name, options=MockOptions(webkit_test_runner=use_webkit2))
