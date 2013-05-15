@@ -346,7 +346,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
     if (!client())
         return;
 
-    LOG(Media, "InbandTextTrackPrivateAVF::processCue - %li cues at time %.2f\n", CFArrayGetCount(attributedStrings), time);
+    LOG(Media, "InbandTextTrackPrivateAVF::processCue - %li cues at time %.2f\n", attributedStrings ? CFArrayGetCount(attributedStrings) : 0, time);
 
     if (m_pendingCueStatus != None) {
         // Cues do not have an explicit duration, they are displayed until the next "cue" (which might be empty) is emitted.

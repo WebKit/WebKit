@@ -1,3 +1,13 @@
+2013-05-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] media engine may deliver NULL in-band "cue"
+        https://bugs.webkit.org/show_bug.cgi?id=116180
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCue): NULL check before logging cue count.
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         List platforms that still use the legacy clipboard instead of just saying "not Mac"
