@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "NodeTraversal.h"
 #include "SelectorChecker.h"
 #include "SelectorCheckerFastPath.h"
 #include "StaticNodeList.h"
@@ -135,30 +136,15 @@ void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedEle
     }
 
     unsigned selectorCount = m_selectors.size();
-
-    Node* n = rootNode->firstChild();
-    while (n) {
-        if (n->isElementNode()) {
-            Element* element = toElement(n);
-            for (unsigned i = 0; i < selectorCount; ++i) {
-                if (selectorMatches(m_selectors[i], element, rootNode)) {
-                    matchedElements.append(element);
-                    if (firstMatchOnly)
-                        return;
-                    break;
-                }
-            }
-            if (element->firstChild()) {
-                n = element->firstChild();
-                continue;
+    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+        for (unsigned i = 0; i < selectorCount; ++i) {
+            if (selectorMatches(m_selectors[i], element, rootNode)) {
+                matchedElements.append(element);
+                if (firstMatchOnly)
+                    return;
+                break;
             }
         }
-        while (!n->nextSibling()) {
-            n = n->parentNode();
-            if (n == rootNode)
-                return;
-        }
-        n = n->nextSibling();
     }
 }
 
