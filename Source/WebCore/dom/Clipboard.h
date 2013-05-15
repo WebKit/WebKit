@@ -141,7 +141,7 @@ namespace WebCore {
 
     protected:
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag);
+        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag = false);
 #else
         Clipboard(ClipboardAccessPolicy, ClipboardType);
 #endif

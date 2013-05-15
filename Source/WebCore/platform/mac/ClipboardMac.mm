@@ -41,22 +41,20 @@
 
 namespace WebCore {
 
-#if ENABLE(DRAG_SUPPORT)
-PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame*)
 {
-    return ClipboardMac::create(DragAndDrop, dragData->pasteboardName(), policy, dragData->containsFiles() ? ClipboardMac::DragAndDropFiles : ClipboardMac::DragAndDropData, frame);
+    return adoptRef(new Clipboard(policy, DragAndDrop, Pasteboard::create(dragData->pasteboardName()), dragData->containsFiles()));
 }
-#endif
 
 PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
 {
-    return ClipboardMac::create(Clipboard::DragAndDrop, NSDragPboard, ClipboardWritable, ClipboardMac::DragAndDropData, 0);
+    return adoptRef(new Clipboard(ClipboardWritable, DragAndDrop, Pasteboard::create(NSDragPboard)));
 }
 
 PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
 {
-    return ClipboardMac::create(Clipboard::CopyAndPaste,
-        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, ClipboardMac::CopyAndPasteGeneric, 0);
+    String pasteboardName = policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard);
+    return adoptRef(new Clipboard(policy, CopyAndPaste, Pasteboard::create(pasteboardName)));
 }
 
 ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, ClipboardContents clipboardContents)
@@ -64,14 +62,12 @@ ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboard
 {
 }
 
-#if ENABLE(DRAG_SUPPORT)
 void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);
     if (Page* page = frame->page())
         page->dragController()->client()->declareAndWriteDragImage(m_pasteboard->name(), kit(element), url, title, frame);
 }
-#endif
     
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {

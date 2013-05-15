@@ -1,5 +1,23 @@
 2013-05-15  Darin Adler  <darin@apple.com>
 
+        [Mac] Change Clipboard::create functions so they don't use ClipboardMac::create any more
+        https://bugs.webkit.org/show_bug.cgi?id=116163
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.h: Made the file drag boolean default to false, better for most callers.
+
+        * platform/mac/ClipboardMac.mm: Remove #if ENABLE(DRAG_SUPPORT); that's always on for Mac
+        and it's not helpful to have the conditionals in here. It's helpful in cross-platform
+        source files.
+        (WebCore::Clipboard::create): Create a Pasteboard and then create a Clipboard with new.
+        Later could refactor to have the Pasteboard creation be platform-specific, and make these
+        functions platform-independent.
+        (WebCore::Clipboard::createForDragAndDrop): Ditto.
+        (WebCore::Clipboard::createForCopyAndPaste): Ditto.
+
+2013-05-15  Darin Adler  <darin@apple.com>
+
         [Mac] Remove call to ClipboardMac::create from Editor::newGeneralClipboard
         https://bugs.webkit.org/show_bug.cgi?id=116162
 
