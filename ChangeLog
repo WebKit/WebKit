@@ -1,3 +1,10 @@
+2013-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+        More fixing after WebProcessShim renaming in r149074.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        Updated to insert the right shim.
+
 2013-05-15  Patrick Gansterer  <paroga@webkit.org>
 
         Consolidate lists in WTF CMake files

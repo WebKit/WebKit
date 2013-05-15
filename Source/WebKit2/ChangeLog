@@ -1,5 +1,12 @@
 2013-05-15  Alexey Proskuryakov  <ap@apple.com>
 
+        More fixing after WebProcessShim renaming in r149074.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer): Updated a comment to mention the shim by its new name.
+
+2013-05-15  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/13902706> Lion: com.apple.tsm.uiserver sandbox error in Console when
         launching Safari
 
