@@ -381,8 +381,8 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
     def did_pass_testing_ews(self, patch):
         # Only Mac and Mac WK2 run tests
         # FIXME: We shouldn't have to hard-code it here.
-        status = self._tool.status_server.patch_status("mac", patch.id())
-        return status == self._pass_status
+        patch_status = self._tool.status_server.patch_status
+        return patch_status("mac-ews", patch.id()) == self._pass_status or patch_status("mac-wk2-ews", patch.id()) == self._pass_status
 
     # StepSequenceErrorHandler methods
 
