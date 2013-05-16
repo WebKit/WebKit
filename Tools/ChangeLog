@@ -1,5 +1,24 @@
 2013-05-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
+        [GTK] Build Xvfb with jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=115907
+
+        Reviewed by Martin Robinson.
+
+        Build our own Xvfb so that we can avoid problems with the system Xvfb
+        relying on symbols not present in our jhbuilt libraries such as pixman,
+        and also to ensure we have the fix for a GLX module crasher.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): enable accelerated compositing.
+        * gtk/install-dependencies: list packages required for building Xvfb.
+        * gtk/jhbuild.modules: add xserver as a jhbuild module.
+        * gtk/patches/xserver-remove-bogus-dependencies.patch: Added.
+        * gtk/patches/xserver-fix-glx-init.patch: Added. Fixes a crash while
+        initializing the GLX module for Xvfb.
+
+2013-05-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
         [jhbuild] Should remove the sources directory as well when cleaning
         https://bugs.webkit.org/show_bug.cgi?id=116229
 

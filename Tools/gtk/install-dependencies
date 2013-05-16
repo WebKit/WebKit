@@ -86,8 +86,7 @@ function installDependenciesWithApt {
         libgpg-error-dev \
         pulseaudio-utils \
         python-gi \
-        ruby \
-        xvfb
+        ruby
 
     # These are dependencies necessary for building the jhbuild.
     apt-get install \
@@ -99,7 +98,18 @@ function installDependenciesWithApt {
         libp11-kit-dev \
         libtiff4-dev \
         libcroco3-dev \
-        ragel
+        ragel \
+        xutils-dev \
+        xtrans-dev \
+        libxfont-dev \
+        libpciaccess-dev \
+        x11proto-gl-dev \
+        x11proto-input-dev \
+        x11proto-video-dev \
+        x11proto-scrnsaver-dev \
+        x11proto-resource-dev \
+        x11proto-xf86dri-dev \
+        libxkbfile-dev
 }
 
 function installDependenciesWithYum {
@@ -151,8 +161,7 @@ function installDependenciesWithYum {
         libgpg-error-devel \
         pulseaudio-utils \
         pygobject3-base \
-        ruby \
-        xorg-x11-server-Xvfb
+        ruby
 
     # These are dependencies necessary for building the jhbuild.
     yum install \
@@ -164,7 +173,13 @@ function installDependenciesWithYum {
         libtiff-devel \
         libcroco-devel \
         mesa-libEGL-devel \
-        ragel
+        ragel \
+        xorg-x11-util-macros \
+        xorg-x11-xtrans-devel \
+        xorg-x11-proto-devel \
+        libXfont-devel \
+        libxkbfile-devel \
+        libpciaccess-devel
 }
 
 checkInstaller
