@@ -30,9 +30,9 @@
 
 #include "WebInspectorServer.h"
 
+#include "HTTPRequest.h"
 #include "WebInspectorProxy.h"
 #include "WebSocketServerConnection.h"
-#include <WebCore/HTTPRequest.h>
 
 using namespace WebCore;
 

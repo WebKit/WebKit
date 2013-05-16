@@ -5880,8 +5880,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/HTTPHeaderMap.h \
 	Source/WebCore/platform/network/HTTPParsers.cpp \
 	Source/WebCore/platform/network/HTTPParsers.h \
-	Source/WebCore/platform/network/HTTPRequest.cpp \
-	Source/WebCore/platform/network/HTTPRequest.h \
 	Source/WebCore/platform/network/MIMEHeader.cpp \
 	Source/WebCore/platform/network/MIMEHeader.h \
 	Source/WebCore/platform/network/NetworkingContext.h \

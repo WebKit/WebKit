@@ -54,9 +54,9 @@ private:
     ~WebInspectorServer();
 
     // WebSocketServerClient implementation. Events coming from remote connections.
-    virtual void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>);
-    virtual bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>);
-    virtual void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>);
+    virtual void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
+    virtual bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
+    virtual void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
     virtual void didReceiveWebSocketMessage(WebSocketServerConnection*, const String& message);
     virtual void didCloseWebSocketConnection(WebSocketServerConnection*);
 

@@ -915,6 +915,7 @@ enable?(SECCOMP_FILTERS) {
 
 enable?(INSPECTOR_SERVER) {
     HEADERS += \
+        UIProcess/InspectorServer/HTTPRequest.h \
         UIProcess/InspectorServer/WebInspectorServer.h \
         UIProcess/InspectorServer/WebSocketServer.h \
         UIProcess/InspectorServer/WebSocketServerClient.h \
@@ -922,6 +923,7 @@ enable?(INSPECTOR_SERVER) {
         UIProcess/InspectorServer/qt/WebSocketServerQt.h
 
     SOURCES += \
+        UIProcess/InspectorServer/HTTPRequest.cpp \
         UIProcess/InspectorServer/WebInspectorServer.cpp \
         UIProcess/InspectorServer/WebSocketServer.cpp \
         UIProcess/InspectorServer/WebSocketServerConnection.cpp \

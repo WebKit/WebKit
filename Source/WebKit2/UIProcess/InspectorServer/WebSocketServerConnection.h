@@ -37,12 +37,12 @@
 
 namespace WebCore {
 class HTTPHeaderMap;
-class HTTPRequest;
 class SocketStreamHandle;
 }
 
 namespace WebKit {
 
+class HTTPRequest;
 class WebSocketServer;
 class WebSocketServerClient;
 
@@ -76,7 +76,7 @@ private:
     void readHTTPMessage();
 
     // WebSocket Mode.
-    void upgradeToWebSocketServerConnection(PassRefPtr<WebCore::HTTPRequest>);
+    void upgradeToWebSocketServerConnection(PassRefPtr<HTTPRequest>);
     void readWebSocketFrames();
     bool readWebSocketFrame();
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(INSPECTOR_SERVER)
 
-#include <WebCore/HTTPRequest.h>
+#include "HTTPRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,13 +41,13 @@ public:
     virtual ~WebSocketServerClient() { }
 
     // Received an HTTP request but didn't know what to do with it.
-    virtual void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>) { }
+    virtual void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) { }
 
     // Received a WebSocket Upgrade HTTP request. Ask if we should handle it and upgrade.
-    virtual bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>) { return true; }
+    virtual bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) { return true; }
 
     // Established a WebSocket Connection.
-    virtual void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<WebCore::HTTPRequest>) { }
+    virtual void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) { }
 
     // Received a WebSocket message.
     virtual void didReceiveWebSocketMessage(WebSocketServerConnection*, const String&) { }

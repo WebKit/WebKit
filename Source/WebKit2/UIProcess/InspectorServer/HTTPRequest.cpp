@@ -28,7 +28,9 @@
 
 #include <wtf/text/CString.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 PassRefPtr<HTTPRequest> HTTPRequest::parseHTTPRequestFromBuffer(const char* data, size_t length, String& failureReason)
 {

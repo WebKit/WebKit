@@ -32,50 +32,50 @@
 #ifndef HTTPRequest_h
 #define HTTPRequest_h
 
-#include "HTTPHeaderMap.h"
-#include "HTTPParsers.h"
-#include "KURL.h"
+#include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/HTTPParsers.h>
+#include <WebCore/KURL.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WebKit {
 
 class HTTPRequest : public RefCounted<HTTPRequest> {
 public:
     static PassRefPtr<HTTPRequest> create() { return adoptRef(new HTTPRequest()); }
-    static PassRefPtr<HTTPRequest> create(const String& requestMethod, const KURL& url, HTTPVersion version) { return adoptRef(new HTTPRequest(requestMethod, url, version)); }
+    static PassRefPtr<HTTPRequest> create(const String& requestMethod, const WebCore::KURL& url, WebCore::HTTPVersion version) { return adoptRef(new HTTPRequest(requestMethod, url, version)); }
     static PassRefPtr<HTTPRequest> parseHTTPRequestFromBuffer(const char* data, size_t length, String& failureReason);
     virtual ~HTTPRequest();
 
     String requestMethod() const { return m_requestMethod; }
     void setRequestMethod(const String& method) { m_requestMethod = method; }
 
-    KURL url() const { return m_url; }
-    void setURL(const KURL& url) { m_url = url; }
+    WebCore::KURL url() const { return m_url; }
+    void setURL(const WebCore::KURL& url) { m_url = url; }
 
     const Vector<unsigned char>& body() const { return m_body; }
 
-    const HTTPHeaderMap& headerFields() const { return m_headerFields; }
+    const WebCore::HTTPHeaderMap& headerFields() const { return m_headerFields; }
     void addHeaderField(const AtomicString& name, const String& value) { m_headerFields.add(name, value); }
     void addHeaderField(const char* name, const String& value) { m_headerFields.add(name, value); }
 
 protected:
     HTTPRequest();
-    HTTPRequest(const String& requestMethod, const KURL&, HTTPVersion);
+    HTTPRequest(const String& requestMethod, const WebCore::KURL&, WebCore::HTTPVersion);
 
     // Parsing helpers.
     size_t parseRequestLine(const char* data, size_t length, String& failureReason);
     size_t parseHeaders(const char* data, size_t length, String& failureReason);
     size_t parseRequestBody(const char* data, size_t length);
 
-    KURL m_url;
-    HTTPVersion m_httpVersion;
+    WebCore::KURL m_url;
+    WebCore::HTTPVersion m_httpVersion;
     String m_requestMethod;
-    HTTPHeaderMap m_headerFields;
+    WebCore::HTTPHeaderMap m_headerFields;
     Vector<unsigned char> m_body;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // HTTPRequest_h

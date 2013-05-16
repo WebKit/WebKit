@@ -1869,9 +1869,6 @@
     <ClCompile Include="..\platform\network\HTTPParsers.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\HTTPRequest.cpp">
-      <Filter>platform\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\network\MIMEHeader.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>

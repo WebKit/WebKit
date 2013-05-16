@@ -30,9 +30,9 @@
 
 #include "WebSocketServerConnection.h"
 
+#include "HTTPRequest.h"
 #include "WebSocketServer.h"
 #include "WebSocketServerClient.h"
-#include <WebCore/HTTPRequest.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandle.h>

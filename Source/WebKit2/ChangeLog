@@ -1,3 +1,29 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Move HTTPRequest class to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=116192
+
+        Reviewed by Darin Adler.
+
+        Move HTTPRequest to WebKit2 and put it in the WebKit namespace.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/InspectorServer/HTTPRequest.cpp: Renamed from Source/WebCore/platform/network/HTTPRequest.cpp.
+        * UIProcess/InspectorServer/HTTPRequest.h: Renamed from Source/WebCore/platform/network/HTTPRequest.h.
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/WebSocketServerClient.h:
+        (WebKit::WebSocketServerClient::didReceiveUnrecognizedHTTPRequest):
+        (WebKit::WebSocketServerClient::didReceiveWebSocketUpgradeHTTPRequest):
+        (WebKit::WebSocketServerClient::didEstablishWebSocketConnection):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+        (WebKit):
+        (WebSocketServerConnection):
+
 2013-05-15  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [GTK] [WebKit2] enable displaying console.log messages to system console

@@ -4615,7 +4615,6 @@
     <ClCompile Include="..\platform\network\FormDataBuilder.cpp" />
     <ClCompile Include="..\platform\network\HTTPHeaderMap.cpp" />
     <ClCompile Include="..\platform\network\HTTPParsers.cpp" />
-    <ClCompile Include="..\platform\network\HTTPRequest.cpp" />
     <ClCompile Include="..\platform\network\MIMEHeader.cpp" />
     <ClCompile Include="..\platform\network\NetworkStateNotifier.cpp" />
     <ClCompile Include="..\platform\network\NetworkStorageSessionStub.cpp">
