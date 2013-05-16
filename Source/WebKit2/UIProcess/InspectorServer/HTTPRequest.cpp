@@ -102,7 +102,7 @@ size_t HTTPRequest::parseRequestBody(const char* data, size_t length)
 }
 
 HTTPRequest::HTTPRequest()
-    : m_httpVersion(Unknown)
+    : m_httpVersion(WebCore::Unknown)
 {
 }
 

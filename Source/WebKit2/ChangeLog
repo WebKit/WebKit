@@ -1,3 +1,13 @@
+2013-05-16  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Win] Unreviewed buildfix after r150161.
+
+        'Unknown' in HTTPRequest.cpp is ambiguous symbol with MSVC,
+        because it is also defined in MS SDK 7.1 winioctl.h.
+
+        * UIProcess/InspectorServer/HTTPRequest.cpp:
+        (WebKit::HTTPRequest::HTTPRequest):
+
 2013-05-16  Andras Becsi  <andras.becsi@digia.com>
 
         [WK2] PluginInformation.cpp fails to build because of missing ENABLE(NETSCAPE_PLUGIN_API) guard
