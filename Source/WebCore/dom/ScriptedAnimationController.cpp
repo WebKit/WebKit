@@ -43,6 +43,7 @@ using namespace std;
 
 // Allow a little more than 60fps to make sure we can at least hit that frame rate.
 #define MinimumAnimationInterval 0.015
+#define MinimumThrottledAnimationInterval 10
 #endif
 
 namespace WebCore {
@@ -56,6 +57,7 @@ ScriptedAnimationController::ScriptedAnimationController(Document* document, Pla
     , m_lastAnimationFrameTimeMonotonic(0)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_useTimer(false)
+    , m_throttled(false)
 #endif
 #endif
 {
@@ -85,7 +87,11 @@ void ScriptedAnimationController::resume()
 void ScriptedAnimationController::setThrottled(bool isThrottled)
 {
 #if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    m_useTimer = isThrottled;
+    m_throttled = isThrottled;
+    if (m_animationTimer.isActive()) {
+        m_animationTimer.stop();
+        scheduleAnimation();
+    }
 #endif
 }
 
@@ -174,7 +180,7 @@ void ScriptedAnimationController::scheduleAnimation()
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (!m_useTimer) {
+    if (!m_useTimer && !m_throttled) {
         if (DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this))
             return;
 
@@ -184,7 +190,12 @@ void ScriptedAnimationController::scheduleAnimation()
     if (m_animationTimer.isActive())
         return;
 
-    double scheduleDelay = max<double>(MinimumAnimationInterval - (monotonicallyIncreasingTime() - m_lastAnimationFrameTimeMonotonic), 0);
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    double animationInterval = m_throttled ? MinimumThrottledAnimationInterval : MinimumAnimationInterval;
+#else
+    double animationInterval = MinimumAnimationInterval;
+#endif
+    double scheduleDelay = max<double>(animationInterval - (monotonicallyIncreasingTime() - m_lastAnimationFrameTimeMonotonic), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
     if (FrameView* frameView = m_document->view())

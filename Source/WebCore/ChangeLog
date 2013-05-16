@@ -1,3 +1,21 @@
+2013-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        ScriptedAnimationController::setThrottled should extend MinimumAnimationInterval
+        https://bugs.webkit.org/show_bug.cgi?id=116193
+
+        Reviewed by Simon Fraser.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+            - initialize m_throttled
+        (WebCore::ScriptedAnimationController::setThrottled):
+            - sets m_throttled, reschedule when this changes.
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+            - if throtled don't use a display link, and extend the timeout.
+        * dom/ScriptedAnimationController.h:
+        (ScriptedAnimationController):
+            - Added m_throttled
+
 2013-05-08  Gavin Barraclough  <barraclough@apple.com>
 
         Process suppression should throttle scripted animations

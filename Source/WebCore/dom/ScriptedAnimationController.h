@@ -91,6 +91,7 @@ private:
     virtual void displayRefreshFired(double timestamp);
 
     bool m_useTimer;
+    bool m_throttled;
 #endif
 #endif
 };
