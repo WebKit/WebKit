@@ -60,6 +60,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << mediaVolume;
     encoder << mayStartMediaWhenInWindow;
     encoder << overridePrivateBrowsingEnabled;
+    encoder << minimumLayoutWidth;
 
 #if PLATFORM(MAC)
     encoder.encodeEnum(layerHostingMode);
@@ -122,6 +123,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return false;
     if (!decoder.decode(parameters.overridePrivateBrowsingEnabled))
+        return false;
+    if (!decoder.decode(parameters.minimumLayoutWidth))
         return false;
     
 #if PLATFORM(MAC)

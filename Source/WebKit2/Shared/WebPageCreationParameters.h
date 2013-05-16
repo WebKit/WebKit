@@ -91,6 +91,8 @@ struct WebPageCreationParameters {
 
     bool overridePrivateBrowsingEnabled;
 
+    float minimumLayoutWidth;
+
 #if PLATFORM(MAC)
     LayerHostingMode layerHostingMode;
     ColorSpaceData colorSpace;

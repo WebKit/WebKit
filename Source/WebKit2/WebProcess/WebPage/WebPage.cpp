@@ -379,6 +379,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setIsInWindow(parameters.isInWindow);
 
+    setMinimumLayoutWidth(parameters.minimumLayoutWidth);
+
     m_userAgent = parameters.userAgent;
 
     WebBackForwardListProxy::setHighestItemIDFromUIProcess(parameters.highestUsedBackForwardItemID);

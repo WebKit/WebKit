@@ -3943,6 +3943,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.overridePrivateBrowsingEnabled = m_overridePrivateBrowsingEnabled;
+    parameters.minimumLayoutWidth = m_minimumLayoutWidth;
 
 #if PLATFORM(MAC)
     parameters.layerHostingMode = m_layerHostingMode;
@@ -4312,10 +4313,11 @@ void WebPageProxy::setMinimumLayoutWidth(double minimumLayoutWidth)
     if (m_minimumLayoutWidth == minimumLayoutWidth)
         return;
 
+    m_minimumLayoutWidth = minimumLayoutWidth;
+
     if (!isValid())
         return;
 
-    m_minimumLayoutWidth = minimumLayoutWidth;
     m_process->send(Messages::WebPage::SetMinimumLayoutWidth(minimumLayoutWidth), m_pageID, 0);
     m_drawingArea->minimumLayoutWidthDidChange();
 
