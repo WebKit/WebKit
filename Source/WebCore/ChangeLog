@@ -1,5 +1,25 @@
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
+        Stop using the factory pattern in FileIconLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=116197
+
+        Reviewed by Andreas Kling.
+
+        Move the FileIconLoader member out of FileIconLoaderClient and into FileInputType and remove the factory gunk.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::~FileInputType):
+        (WebCore::FileInputType::requestIcon):
+        * html/FileInputType.h:
+        (FileInputType):
+        * platform/FileIconLoader.cpp:
+        (WebCore::FileIconLoader::invalidate):
+        * platform/FileIconLoader.h:
+        (WebCore::FileIconLoaderClient::~FileIconLoaderClient):
+        (FileIconLoader):
+
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
         Fix FileChooserClient design
         https://bugs.webkit.org/show_bug.cgi?id=116195
 

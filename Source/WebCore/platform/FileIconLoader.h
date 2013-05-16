@@ -41,23 +41,16 @@ class Icon;
 
 class FileIconLoaderClient {
 public:
+    virtual ~FileIconLoaderClient() { }
     virtual void updateRendering(PassRefPtr<Icon>) = 0;
-    virtual ~FileIconLoaderClient();
-
-protected:
-    FileIconLoader* newFileIconLoader();
-
-private:
-    void discardLoader();
-
-    RefPtr<FileIconLoader> m_loader;
 };
 
 class FileIconLoader : public RefCounted<FileIconLoader> {
 public:
     static PassRefPtr<FileIconLoader> create(FileIconLoaderClient*);
 
-    void disconnectClient();
+    void invalidate();
+
     void notifyFinished(PassRefPtr<Icon>);
 
 private:

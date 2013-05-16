@@ -101,6 +101,9 @@ FileInputType::~FileInputType()
 {
     if (m_fileChooser)
         m_fileChooser->invalidate();
+
+    if (m_fileIconLoader)
+        m_fileIconLoader->invalidate();
 }
 
 Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
@@ -335,8 +338,14 @@ void FileInputType::requestIcon(const Vector<String>& paths)
     if (!paths.size())
         return;
 
-    if (Chrome* chrome = this->chrome())
-        chrome->loadIconForFiles(paths, newFileIconLoader());
+    Chrome* chrome = this->chrome();
+    if (!chrome)
+        return;
+
+    if (m_fileIconLoader)
+        m_fileIconLoader = FileIconLoader::create(this);
+
+    chrome->loadIconForFiles(paths, m_fileIconLoader.get());
 }
 
 void FileInputType::applyFileChooserSettings(const FileChooserSettings& settings)
