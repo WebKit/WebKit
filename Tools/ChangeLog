@@ -1,3 +1,15 @@
+2013-05-15  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Remove Intel Wk2 Buildbots from Master
+        https://bugs.webkit.org/show_bug.cgi?id=116149
+
+        Removing Intel maintained EFL Wk2 bots except the handle for efl-linux-slave-2
+        since Gyuyoung Kim from Samsung plans to take over and maintain it.
+
+        Reviewed by Benjamin Poulain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-05-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Update various build tools to understand VS2010 environment.
