@@ -1173,11 +1173,12 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL
     
     if ([view historyDelegate]) {
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
-        if (!implementations->setTitleFunc)
-            return;
-            
         // FIXME: use direction of title.
-        CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string(), (NSString *)url);
+        if (implementations->setTitleFunc)
+            CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:inFrame:), (NSString *)title.string(), (NSString *)url, m_webFrame.get());
+        else if (implementations->deprecatedSetTitleFunc)
+            CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string(), (NSString *)url);
+
         return;
     }
     

@@ -101,6 +101,7 @@ struct WebHistoryDelegateImplementationCache {
     IMP navigatedFunc;
     IMP clientRedirectFunc;
     IMP serverRedirectFunc;
+    IMP deprecatedSetTitleFunc;
     IMP setTitleFunc;
     IMP populateVisitedLinksFunc;
 };

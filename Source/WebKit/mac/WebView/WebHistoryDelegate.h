@@ -37,7 +37,7 @@
 
 - (void)webView:(WebView *)webView didPerformServerRedirectFromURL:(NSString *)sourceURL toURL:(NSString *)destinationURL inFrame:(WebFrame *)webFrame;
 
-- (void)webView:(WebView *)webView updateHistoryTitle:(NSString *)title forURL:(NSString *)url;
+- (void)webView:(WebView *)webView updateHistoryTitle:(NSString *)title forURL:(NSString *)url inFrame:(WebFrame *)webFrame;
 
 - (void)populateVisitedLinksForWebView:(WebView *)webView;
 

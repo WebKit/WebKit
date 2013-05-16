@@ -1,3 +1,24 @@
+2013-05-16  Dan Bernstein  <mitz@apple.com>
+
+        -webView:updateHistoryTitle:forURL: does not pass a frame to the delegate
+        https://bugs.webkit.org/show_bug.cgi?id=116243
+
+        Reviewed by Anders Carlsson.
+
+        Added a WebFrame parameter to the delegate method.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setTitle): Pass the frame to the delegate. Maintain
+        compatibility with clients that implement the old delegate method that
+        doesn’t take a frame.
+        * WebView/WebDelegateImplementationCaching.h:
+        (WebHistoryDelegateImplementationCache): Added a field to cache the
+        implementation of the old delegate method.
+        * WebView/WebHistoryDelegate.h: Changed the signature of the delegate method.
+        * WebView/WebView.mm:
+        (-[WebView _cacheHistoryDelegateImplementations]): Cache the implementation
+        of the new delegate method, but also check for the old one.
+
 2013-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Re-land r150168 with some OS version guards.
