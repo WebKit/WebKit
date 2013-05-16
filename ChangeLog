@@ -1,3 +1,14 @@
+2013-05-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for building WebCore to the cmake build
+        https://bugs.webkit.org/show_bug.cgi?id=116128
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/PlatformGTK.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake: Added more logic and variables to support WebCore and properly
+        defined some existing variables.
+
 2013-05-15  Alexey Proskuryakov  <ap@apple.com>
 
         More fixing after WebProcessShim renaming in r149074.

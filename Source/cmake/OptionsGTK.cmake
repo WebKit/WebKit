@@ -69,22 +69,37 @@ set(WEBKIT_MICRO_VERSION ${PROJECT_VERSION_PATCH})
 set(WEBKIT_MINOR_VERSION ${PROJECT_VERSION_MINOR})
 set(WEBKIT_MAJOR_VERSION ${PROJECT_VERSION_MAJOR})
 
+set(ENABLE_WEBCORE ON)
+set(ENABLE_INSPECTOR ON)
+set(ENABLE_PLUGIN_PROCESS OFF)
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBKIT2 OFF)
-set(ENABLE_WEBCORE OFF)
-set(ENABLE_INSPECTOR OFF)
-set(ENABLE_PLUGIN_PROCESS OFF)
 
 set(WTF_USE_ICU_UNICODE 1)
 set(WTF_USE_SOUP 1)
+set(WTF_USE_ICU_UNICODE 1)
+
 set(JSC_EXECUTABLE_NAME jsc)
 set(WTF_LIBRARY_NAME WTFGTK)
 set(JavaScriptCore_LIBRARY_NAME javascriptcoregtk)
 set(WebCore_LIBRARY_NAME WebCoreGTK)
 set(WebKit_LIBRARY_NAME webkitgtk-3.0)
 set(WebKit2_LIBRARY_NAME webkit2gtk-3.0)
-set(DATA_INSTALL_DIR "share/${WebKit_LIBRARY_NAME}" CACHE PATH "Shared data path")
 set(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/gtksymbols.filter")
+
+set(DATA_BUILD_DIR "${CMAKE_BINARY_DIR}/share/${WebKit_LIBRARY_NAME}")
+set(DATA_INSTALL_DIR "${DATADIR}/webkitgtk-3.0")
+
+add_definitions(-DBUILDING_GTK__=1)
+add_definitions(-DGETTEXT_PACKAGE="WebKitGTK-3.0")
+add_definitions(-DDATA_DIR="${DATADIR}")
+add_definitions(-DWEBKITGTK_API_VERSION_STRING="3.0")
+add_definitions(-DUSER_AGENT_GTK_MAJOR_VERSION=537)
+add_definitions(-DUSER_AGENT_GTK_MINOR_VERSION=30)
+
+# FIXME: These need to be configurable.
+add_definitions(-DWTF_PLATFORM_X11=1)
+add_definitions(-DMOZ_X11)
 
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
@@ -107,26 +122,50 @@ find_package(Xt REQUIRED)
 find_package(ATK REQUIRED)
 find_package(GStreamer 1.0.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
+# We don't use find_package for GLX because it is part of -lGL, unlike EGL.
+find_package(OpenGL)
+check_include_files("GL/glx.h" GLX_FOUND)
+find_package(EGL)
+
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
 endif ()
 
-add_definitions(-DBUILDING_GTK__=1)
-add_definitions(-DGETTEXT_PACKAGE="WebKitGTK-3.0")
-add_definitions(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}")
-add_definitions(-DWEBKITGTK_API_VERSION_STRING="3.0")
-add_definitions(-DUSER_AGENT_GTK_MAJOR_VERSION=537)
-add_definitions(-DUSER_AGENT_GTK_MINOR_VERSION=30)
-
-# FIXME: These need to be configurable.
-add_definitions(-DWTF_PLATFORM_X11=1)
-add_definitions(-DMOZ_X11)
+if (NOT ENABLE_SVG)
+    set(ENABLE_SVG_FONTS 0)
+endif ()
 
 # Optimize binary size for release builds by removing dead sections on unix/gcc
 if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
     set(CMAKE_C_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+endif ()
+
+if (${OPENGL_FOUND} AND (${GLX_FOUND} OR ${EGL_FOUND}))
+    set(ENABLE_WEBGL 1)
+    set(WTF_USE_TEXTURE_MAPPER 1)
+    set(WTF_USE_3D_GRAPHICS 1)
+
+    add_definitions(-DWTF_USE_OPENGL=1)
+    add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
+    add_definitions(-DWTF_USE_3D_GRAPHICS=1)
+    add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
+    add_definitions(-DWTF_USE_TEXTURE_MAPPER_GL=1)
+    add_definitions(-DENABLE_3D_RENDERING=1)
+
+    if (${EGL_FOUND})
+        add_definitions(-DWTF_USE_EGL=1)
+    endif ()
+
+    if (${GLX_FOUND})
+        add_definitions(-DWTF_USE_GLX=1)
+    endif ()
+endif ()
+
+if (ENABLE_INDEXED_DATABASE)
+    set(WTF_USE_LEVELDB 1)
+    add_definitions(-DWTF_USE_LEVELDB=1)
 endif ()
 
 set(CPACK_SOURCE_GENERATOR TBZ2)

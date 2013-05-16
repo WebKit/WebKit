@@ -1,3 +1,16 @@
+2013-05-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for building WebCore to the cmake build
+        https://bugs.webkit.org/show_bug.cgi?id=116128
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Added.
+        * platform/gtk/GtkVersioning.c: Include "config.h" because we removed
+        the autotoolsconfig.h include from the header.
+        * platform/gtk/GtkVersioning.h: Remove autotoolsconfig.h include to support for
+        non-autotools build systems.
+
 2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         DocumentOrderedMap doesn't need to have two HashMaps

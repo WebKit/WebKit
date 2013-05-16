@@ -18,6 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "GtkVersioning.h"
 
 #include <gtk/gtk.h>
