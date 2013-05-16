@@ -41,22 +41,6 @@
 
 namespace WebCore {
 
-PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame*)
-{
-    return adoptRef(new Clipboard(policy, DragAndDrop, Pasteboard::create(dragData->pasteboardName()), dragData->containsFiles()));
-}
-
-PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
-{
-    return adoptRef(new Clipboard(ClipboardWritable, DragAndDrop, Pasteboard::create(NSDragPboard)));
-}
-
-PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
-{
-    String pasteboardName = policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard);
-    return adoptRef(new Clipboard(policy, CopyAndPaste, Pasteboard::create(pasteboardName)));
-}
-
 void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);

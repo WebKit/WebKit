@@ -63,6 +63,7 @@ extern const char* WebURLsWithTitlesPboardType;
 
 class Clipboard;
 class DocumentFragment;
+class DragData;
 class Frame;
 class HitTestResult;
 class KURL;
@@ -84,7 +85,6 @@ public:
     static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
     String name() const { return m_pasteboardName; }
 
-    // This is required to support OS X services.
     void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard);
     explicit Pasteboard(const String& pasteboardName);
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
@@ -94,7 +94,16 @@ public:
     static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
 #endif
 
+    // Deprecated. Use createForCopyAndPaste instead.
     static Pasteboard* generalPasteboard();
+
+    static PassOwnPtr<Pasteboard> createForCopyAndPaste();
+    static PassOwnPtr<Pasteboard> createPrivate(); // Corresponds to the "unique pasteboard" concept on Mac. Used in editing, not sure exactly for what purpose.
+
+#if ENABLE(DRAG_SUPPORT)
+    static PassOwnPtr<Pasteboard> createForDragAndDrop();
+    static PassOwnPtr<Pasteboard> createForDragAndDrop(const DragData&);
+#endif
 
     bool hasData();
     ListHashSet<String> types();

@@ -1,3 +1,30 @@
+2013-05-15  Darin Adler  <darin@apple.com>
+
+        [Mac] Make Clipboard::create functions for Mac platform independent by moving Pasteboard creation to Pasteboard functions
+        https://bugs.webkit.org/show_bug.cgi?id=116179
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::createForCopyAndPaste): Moved the function here from
+        ClipboardMac, and have it use Pasteboard functions that are not Mac-specific.
+        (WebCore::Clipboard::create): Ditto.
+        (WebCore::Clipboard::createForDragAndDrop): Ditto.
+
+        * platform/DragData.h:
+        (WebCore::DragData::pasteboardName): Made this const.
+
+        * platform/Pasteboard.h: Added new create functions, used by the clipboard
+        create functions above.
+
+        * platform/mac/ClipboardMac.mm: Removed the functions that were moved to the
+        Clipboard.cpp file.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::createForCopyAndPaste): Added.
+        (WebCore::Pasteboard::createPrivate): Added.
+        (WebCore::Pasteboard::createForDragAndDrop): Added.
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Fix a thinko.

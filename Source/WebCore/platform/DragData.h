@@ -116,7 +116,7 @@ public:
     unsigned numberOfFiles() const;
     int modifierKeyState() const;
 #if PLATFORM(MAC)
-    const String& pasteboardName() { return m_pasteboardName; }
+    const String& pasteboardName() const { return m_pasteboardName; }
 #endif
 
 #if ENABLE(FILE_SYSTEM)

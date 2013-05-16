@@ -32,6 +32,7 @@
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "DragData.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "ExceptionCodePlaceholder.h"
@@ -130,6 +131,26 @@ Pasteboard::Pasteboard(const String& pasteboardName)
 PassOwnPtr<Pasteboard> Pasteboard::create(const String& pasteboardName)
 {
     return adoptPtr(new Pasteboard(pasteboardName));
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+{
+    return create(NSGeneralPboard);
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
+{
+    return create(platformStrategies()->pasteboardStrategy()->uniqueName());
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+{
+    return create(NSDragPboard);
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+{
+    return create(dragData.pasteboardName());
 }
 
 void Pasteboard::clear()

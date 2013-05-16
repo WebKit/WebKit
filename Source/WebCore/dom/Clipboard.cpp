@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "CachedImageClient.h"
+#include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
 #include "Frame.h"
@@ -278,6 +279,11 @@ bool Clipboard::hasDropZoneType(const String& keyword)
 
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
 
+PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
+{
+    return adoptRef(new Clipboard(policy, CopyAndPaste, policy == ClipboardWritable ? Pasteboard::createPrivate() : Pasteboard::createForCopyAndPaste()));
+}
+
 bool Clipboard::hasData()
 {
     return m_pasteboard->hasData();
@@ -349,6 +355,19 @@ void Clipboard::setDragImageElement(Node*, const IntPoint&)
 }
 
 #else
+
+// FIXME: Should be named createForDragAndDrop.
+// FIXME: Should take const DragData& instead of DragData*.
+// FIXME: Should not take Frame*.
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame*)
+{
+    return adoptRef(new Clipboard(policy, DragAndDrop, Pasteboard::createForDragAndDrop(*dragData), dragData->containsFiles()));
+}
+
+PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
+{
+    return adoptRef(new Clipboard(ClipboardWritable, DragAndDrop, Pasteboard::createForDragAndDrop()));
+}
 
 void Clipboard::setDragImage(CachedImage* image, const IntPoint& location)
 {
