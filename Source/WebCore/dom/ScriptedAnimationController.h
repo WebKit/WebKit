@@ -90,8 +90,8 @@ private:
     // Override for DisplayRefreshMonitorClient
     virtual void displayRefreshFired(double timestamp);
 
-    bool m_useTimer;
-    bool m_throttled;
+    bool m_isUsingTimer;
+    bool m_isThrottled;
 #endif
 #endif
 };

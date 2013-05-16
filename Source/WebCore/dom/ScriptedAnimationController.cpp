@@ -56,8 +56,8 @@ ScriptedAnimationController::ScriptedAnimationController(Document* document, Pla
     , m_animationTimer(this, &ScriptedAnimationController::animationTimerFired)
     , m_lastAnimationFrameTimeMonotonic(0)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    , m_useTimer(false)
-    , m_throttled(false)
+    , m_isUsingTimer(false)
+    , m_isThrottled(false)
 #endif
 #endif
 {
@@ -87,7 +87,10 @@ void ScriptedAnimationController::resume()
 void ScriptedAnimationController::setThrottled(bool isThrottled)
 {
 #if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    m_throttled = isThrottled;
+    if (m_isThrottled == isThrottled)
+        return;
+
+    m_isThrottled = isThrottled;
     if (m_animationTimer.isActive()) {
         m_animationTimer.stop();
         scheduleAnimation();
@@ -180,21 +183,22 @@ void ScriptedAnimationController::scheduleAnimation()
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (!m_useTimer && !m_throttled) {
+    if (!m_isUsingTimer && !m_isThrottled) {
         if (DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this))
             return;
 
-        m_useTimer = true;
+        m_isUsingTimer = true;
     }
 #endif
     if (m_animationTimer.isActive())
         return;
 
-#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    double animationInterval = m_throttled ? MinimumThrottledAnimationInterval : MinimumAnimationInterval;
-#else
     double animationInterval = MinimumAnimationInterval;
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (m_isThrottled)
+        animationInterval = MinimumThrottledAnimationInterval;
 #endif
+
     double scheduleDelay = max<double>(animationInterval - (monotonicallyIncreasingTime() - m_lastAnimationFrameTimeMonotonic), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
