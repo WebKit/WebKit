@@ -1,3 +1,21 @@
+2013-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store for the WebFrameView's layer when the WebView is layer-backed
+        https://bugs.webkit.org/show_bug.cgi?id=116172
+
+        Reviewed by Tim Horton.
+
+        When the WebView is layer-backed, AppKit will create a layer with backing store for
+        the WebFrameView because it implements drawRect:. However, this method only paints
+        when there is no documentView, so this layer’s backing store is wasteful.
+
+        We can avoid allocation of this backing store by implementing -wantsUpdateLayer
+        and -updateLayer, and setting the view’s backgroundColor.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView wantsUpdateLayer]):
+        (-[WebFrameView updateLayer]):
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Frame::editor() should return a reference
