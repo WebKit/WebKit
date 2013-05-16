@@ -26,12 +26,11 @@
 #import "config.h"
 #import "ColorMac.h"
 
+#import <WebCore/BlockExceptions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
 namespace WebCore {
-
-// NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
 static bool useOldAquaFocusRingColor;
 
@@ -56,7 +55,14 @@ static RGBA32 makeRGBAFromNSColor(NSColor *c)
     CGFloat greenComponent;
     CGFloat blueComponent;
     CGFloat alpha;
-    [c getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSColor *rgbColor = [c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    if (!rgbColor)
+        return makeRGBA(0, 0, 0, 0);
+
+    [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return makeRGBA(255 * redComponent, 255 * greenComponent, 255 * blueComponent, 255 * alpha);
 }
