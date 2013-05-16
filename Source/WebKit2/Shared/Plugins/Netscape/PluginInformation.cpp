@@ -98,11 +98,13 @@ String pluginInformationPluginURLKey()
 
 void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     map.set(pluginInformationPathKey(), WebString::create(plugin.path));
     map.set(pluginInformationDisplayNameKey(), WebString::create(plugin.info.name));
     map.set(pluginInformationDefaultLoadPolicyKey(), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(plugin))));
 
     getPlatformPluginModuleInformation(plugin, map);
+#endif
 }
 
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin)
