@@ -1,5 +1,11 @@
 2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add more Mac test expectations.
+
+        * platform/mac/TestExpectations:
+
+2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a test expectation per bug 116238 and remove lines erroneously added in r150090.
 
         * platform/mac/TestExpectations:

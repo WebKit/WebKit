@@ -1540,3 +1540,7 @@ webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ ImageOnlyFailure ]
+
+webkit.org/b/116240 [ Release ] fast/flexbox/auto-height-with-flex.html [ ImageOnlyFailure ]
+
+webkit.org/b/116241 inspector/storage-panel-dom-storage-update.html [ Failure ]
