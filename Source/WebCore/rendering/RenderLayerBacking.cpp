@@ -1165,8 +1165,10 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         layerChanged = true;
     }
 
-    if (layerChanged)
+    if (layerChanged) {
+        m_graphicsLayer->setNeedsDisplay();
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+    }
 
     return layerChanged;
 }
@@ -1214,6 +1216,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     }
     
     if (layerChanged) {
+        m_graphicsLayer->setNeedsDisplay();
         // This assumes that the background layer is only used for fixed backgrounds, which is currently a correct assumption.
         if (renderer()->view())
             compositor()->fixedRootBackgroundLayerChanged();
