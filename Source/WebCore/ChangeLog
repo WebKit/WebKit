@@ -1,3 +1,30 @@
+2013-05-15  Andy Estes  <aestes@apple.com>
+
+        Resources from non-HTTP schemes should not be cached indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=113626
+
+        Reviewed by Ryosuke Niwa.
+
+        With the exception of schemes that we know will always return the same
+        result for a given URL, we should not indefinitely cache non-HTTP
+        resources when their freshness cannot be verified.
+
+        Writing a test for this is blocked on https://webkit.org/b/116199.
+
+        The following two existing tests of memory cache behavior were
+        converted to HTTP tests so that they continue to function as expected:
+
+        Tests: http/tests/cache/display-image-unset-allows-cached-image-load.html
+               http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::freshnessLifetime): Returned a freshness
+        lifetime of 0 for non-HTTP schemes that can't be indefinitely cached.
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely):
+        Checked whether the scheme is blob:, data:, or applewebdata:.
+        * platform/SchemeRegistry.h:
+
 2013-05-15  Tim Horton  <timothy_horton@apple.com>
 
         makeRGBAFromNSColor throws an exception if given a color in a greyscale colorspace

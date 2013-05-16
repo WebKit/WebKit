@@ -24,7 +24,6 @@
 #include "config.h"
 #include "CachedResource.h"
 
-#include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceHandle.h"
@@ -38,11 +37,13 @@
 #include "KURL.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
+#include "MemoryCache.h"
 #include "PlatformStrategies.h"
 #include "PurgeableBuffer.h"
 #include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "SubresourceLoader.h"
@@ -399,7 +400,7 @@ bool CachedResource::isExpired() const
 
     return currentAge() > freshnessLifetime();
 }
-    
+
 double CachedResource::currentAge() const
 {
     // RFC2616 13.2.3
@@ -411,12 +412,15 @@ double CachedResource::currentAge() const
     double residentTime = currentTime() - m_responseTimestamp;
     return correctedReceivedAge + residentTime;
 }
-    
+
 double CachedResource::freshnessLifetime() const
 {
-    // Cache non-http resources liberally
-    if (!m_response.url().protocolIsInHTTPFamily())
+    if (SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(m_response.url().protocol()))
         return std::numeric_limits<double>::max();
+
+    // Don't cache other non-HTTP resources since we can't check for freshness.
+    if (!m_response.url().protocolIsInHTTPFamily())
+        return 0;
 
     // RFC2616 13.2.4
     double maxAgeValue = m_response.cacheControlMaxAge();

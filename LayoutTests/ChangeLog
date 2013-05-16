@@ -1,3 +1,24 @@
+2013-05-15  Andy Estes  <aestes@apple.com>
+
+        Resources from non-HTTP schemes should not be cached indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=113626
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert existing memory cache tests to HTTP tests.
+
+        * fast/loader/resources/compass.jpg: Removed.
+        * fast/loader/resources/image1.html: Removed.
+        * fast/loader/resources/image2.html: Removed.
+        * fast/loader/willsendrequest-returns-null-for-memory-cache-load-expected.txt: Removed.
+        * http/tests/cache/display-image-unset-allows-cached-image-load-expected.txt: Renamed from LayoutTests/fast/loader/display-image-unset-allows-cached-image-load-expected.txt.
+        * http/tests/cache/display-image-unset-allows-cached-image-load.html: Renamed from LayoutTests/fast/loader/display-image-unset-allows-cached-image-load.html.
+        * http/tests/cache/resources/cached-image.html: Renamed from LayoutTests/fast/loader/resources/cached-image.html.
+        * http/tests/cache/resources/image1.html: Added.
+        * http/tests/cache/resources/image2.html: Added.
+        * http/tests/cache/willsendrequest-returns-null-for-memory-cache-load-expected.txt: Added.
+        * http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html: Renamed from LayoutTests/fast/loader/willsendrequest-returns-null-for-memory-cache-load.html.
+
 2013-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Implement run-in remove child cases.
