@@ -391,24 +391,22 @@ void CSSParserString::lower()
     makeLower(characters16(), characters16(), length());
 }
 
-AtomicString CSSParserString::lowerSubstring(unsigned position, unsigned length) const
+#if ENABLE(CSS_VARIABLES)
+AtomicString CSSParserString::substring(unsigned position, unsigned length) const
 {
     ASSERT(m_length >= position + length);
 
     RefPtr<StringImpl> result;
 
     if (is8Bit()) {
-        LChar* buffer;
-        result = StringImpl::createUninitialized(length, buffer);
-        makeLower(characters8() + position, buffer, length);
+        result = StringImpl::create(characters8() + position, length);
     } else {
-        UChar* buffer = 0;
-        result = StringImpl::createUninitialized(length, buffer);
-        makeLower(characters16() + position, buffer, length);
+        result = StringImpl::create(characters16() + position, length);
     }
 
     return AtomicString(result);
 }
+#endif
 
 void CSSParser::setupParser(const char* prefix, unsigned prefixLength, const String& string, const char* suffix, unsigned suffixLength)
 {
@@ -1758,7 +1756,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSPa
 inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveVariableNameValue(CSSParserValue* value)
 {
     ASSERT(value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME);
-    AtomicString variableName = String(value->string).lower();
+    AtomicString variableName = String(value->string);
     return CSSPrimitiveValue::create(variableName, CSSPrimitiveValue::CSS_VARIABLE_NAME);
 }
 #endif
@@ -3330,7 +3328,7 @@ void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr
     static const unsigned prefixLength = sizeof("-webkit-var-") - 1;
     
     ASSERT(name.length() > prefixLength);
-    AtomicString variableName = name.lowerSubstring(prefixLength, name.length() - prefixLength);
+    AtomicString variableName = name.substring(prefixLength, name.length() - prefixLength);
 
     StringBuilder builder;
     for (unsigned i = 0, size = value->size(); i < size; i++) {

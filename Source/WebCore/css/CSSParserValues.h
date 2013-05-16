@@ -94,7 +94,9 @@ struct CSSParserString {
     operator String() const { return is8Bit() ? String(m_data.characters8, m_length) : String(m_data.characters16, m_length); }
     operator AtomicString() const { return is8Bit() ? AtomicString(m_data.characters8, m_length) : AtomicString(m_data.characters16, m_length); }
 
-    AtomicString lowerSubstring(unsigned position, unsigned length) const;
+#if ENABLE(CSS_VARIABLES)
+    AtomicString substring(unsigned position, unsigned length) const;
+#endif
 
     union {
         LChar* characters8;
