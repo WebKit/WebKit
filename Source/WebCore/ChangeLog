@@ -1,3 +1,12 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix a thinko.
+
+        We want to invalidate the file icon loader if it exists, not create it!
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::requestIcon):
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         Move drag-specific Clipboard functions inside ENABLE(DRAG_SUPPORT)
