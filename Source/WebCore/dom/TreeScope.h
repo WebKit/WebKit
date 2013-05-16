@@ -56,6 +56,7 @@ public:
 
     Node* focusedNode();
     Element* getElementById(const AtomicString&) const;
+    const Vector<Element*>* getAllElementsById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
     bool containsMultipleElementsWithId(const AtomicString& id) const;
     void addElementById(const AtomicString& elementId, Element*);

@@ -149,6 +149,15 @@ Element* TreeScope::getElementById(const AtomicString& elementId) const
     return m_elementsById->getElementById(elementId.impl(), this);
 }
 
+const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elementId) const
+{
+    if (elementId.isEmpty())
+        return 0;
+    if (!m_elementsById)
+        return 0;
+    return m_elementsById->getAllElementsById(elementId.impl(), this);
+}
+
 void TreeScope::addElementById(const AtomicString& elementId, Element* element)
 {
     if (!m_elementsById)

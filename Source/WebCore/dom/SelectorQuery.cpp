@@ -98,21 +98,23 @@ PassRefPtr<Element> SelectorDataList::queryFirst(Node* rootNode) const
     return toElement(result.first().get());
 }
 
-bool SelectorDataList::canUseIdLookup(Node* rootNode) const
+const CSSSelector* SelectorDataList::selectorForIdLookup(Node* rootNode) const
 {
     // We need to return the matches in document order. To use id lookup while there is possiblity of multiple matches
     // we would need to sort the results. For now, just traverse the document in that case.
     if (m_selectors.size() != 1)
-        return false;
-    if (m_selectors[0].selector->m_match != CSSSelector::Id)
-        return false;
+        return 0;
     if (!rootNode->inDocument())
-        return false;
+        return 0;
     if (rootNode->document()->inQuirksMode())
-        return false;
-    if (rootNode->document()->containsMultipleElementsWithId(m_selectors[0].selector->value()))
-        return false;
-    return true;
+        return 0;
+    for (const CSSSelector* selector = m_selectors[0].selector; selector; selector = selector->tagHistory()) {
+        if (selector->m_match == CSSSelector::Id)
+            return selector;
+        if (selector->relation() != CSSSelector::SubSelector)
+            break;
+    }
+    return 0;
 }
 
 static inline bool isTreeScopeRoot(Node* node)
@@ -124,10 +126,24 @@ static inline bool isTreeScopeRoot(Node* node)
 template <bool firstMatchOnly>
 void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
 {
-    if (canUseIdLookup(rootNode)) {
+    if (const CSSSelector* idSelector = selectorForIdLookup(rootNode)) {
         ASSERT(m_selectors.size() == 1);
-        const CSSSelector* selector = m_selectors[0].selector;
-        Element* element = rootNode->treeScope()->getElementById(selector->value());
+        const AtomicString& idToMatch = idSelector->value();
+        if (UNLIKELY(rootNode->treeScope()->containsMultipleElementsWithId(idToMatch))) {
+            const Vector<Element*>* elements = rootNode->treeScope()->getAllElementsById(idToMatch);
+            ASSERT(elements);
+            size_t count = elements->size();
+            for (size_t i = 0; i < count; ++i) {
+                Element* element = elements->at(i);
+                if (selectorMatches(m_selectors[0], element, rootNode)) {
+                    matchedElements.append(element);
+                    if (firstMatchOnly)
+                        return;
+                }
+            }
+            return;
+        }
+        Element* element = rootNode->treeScope()->getElementById(idToMatch);
         if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;
         if (selectorMatches(m_selectors[0], element, rootNode))

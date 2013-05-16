@@ -1150,9 +1150,11 @@ bool Element::isInert() const
 
 Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertionPoint)
 {
+    bool wasInDocument = inDocument();
     // need to do superclass processing first so inDocument() is true
     // by the time we reach updateId
     ContainerNode::insertedInto(insertionPoint);
+    ASSERT(!wasInDocument || inDocument());
 
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
@@ -1171,21 +1173,30 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
     if (hasRareData())
         elementRareData()->clearClassListValueForQuirksMode();
 
-    TreeScope* scope = insertionPoint->treeScope();
-    if (scope != treeScope())
-        return InsertionDone;
+    TreeScope* newScope = insertionPoint->treeScope();
+    HTMLDocument* newDocument = !wasInDocument && inDocument() && newScope->documentScope()->isHTMLDocument() ? toHTMLDocument(newScope->documentScope()) : 0;
+    if (newScope != treeScope())
+        newScope = 0;
 
     const AtomicString& idValue = getIdAttribute();
-    if (!idValue.isNull())
-        updateId(scope, nullAtom, idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
+    if (!idValue.isNull()) {
+        if (newScope)
+            updateIdForTreeScope(newScope, nullAtom, idValue);
+        if (newDocument)
+            updateIdForDocument(newDocument, nullAtom, idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
+    }
 
     const AtomicString& nameValue = getNameAttribute();
-    if (!nameValue.isNull())
-        updateName(scope, nullAtom, nameValue);
+    if (!nameValue.isNull()) {
+        if (newScope)
+            updateNameForTreeScope(newScope, nullAtom, nameValue);
+        if (newDocument)
+            updateNameForDocument(newDocument, nullAtom, nameValue);
+    }
 
-    if (hasTagName(labelTag)) {
-        if (scope->shouldCacheLabelsByForAttribute())
-            updateLabel(scope, nullAtom, fastGetAttribute(forAttr));
+    if (newScope && hasTagName(labelTag)) {
+        if (newScope->shouldCacheLabelsByForAttribute())
+            updateLabel(newScope, nullAtom, fastGetAttribute(forAttr));
     }
 
     return InsertionDone;
@@ -1217,19 +1228,31 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 
     setSavedLayerScrollOffset(IntSize());
 
-    if (insertionPoint->isInTreeScope() && treeScope() == document()) {
+    if (insertionPoint->isInTreeScope()) {
+        TreeScope* oldScope = insertionPoint->treeScope();
+        HTMLDocument* oldDocument = inDocument() && oldScope->documentScope()->isHTMLDocument() ? toHTMLDocument(oldScope->documentScope()) : 0;
+        if (oldScope != treeScope())
+            oldScope = 0;
+
         const AtomicString& idValue = getIdAttribute();
-        if (!idValue.isNull())
-            updateId(insertionPoint->treeScope(), idValue, nullAtom, AlwaysUpdateHTMLDocumentNamedItemMaps);
+        if (!idValue.isNull()) {
+            if (oldScope)
+                updateIdForTreeScope(oldScope, idValue, nullAtom);
+            if (oldDocument)
+                updateIdForDocument(oldDocument, idValue, nullAtom, AlwaysUpdateHTMLDocumentNamedItemMaps);
+        }
 
         const AtomicString& nameValue = getNameAttribute();
-        if (!nameValue.isNull())
-            updateName(insertionPoint->treeScope(), nameValue, nullAtom);
+        if (!nameValue.isNull()) {
+            if (oldScope)
+                updateNameForTreeScope(oldScope, nameValue, nullAtom);
+            if (oldDocument)
+                updateNameForDocument(oldDocument, nameValue, nullAtom);
+        }
 
-        if (hasTagName(labelTag)) {
-            TreeScope* treeScope = insertionPoint->treeScope();
-            if (treeScope->shouldCacheLabelsByForAttribute())
-                updateLabel(treeScope, fastGetAttribute(forAttr), nullAtom);
+        if (oldScope && hasTagName(labelTag)) {
+            if (oldScope->shouldCacheLabelsByForAttribute())
+                updateLabel(oldScope, fastGetAttribute(forAttr), nullAtom);
         }
     }
 
@@ -2630,10 +2653,17 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
     if (oldName == newName)
         return;
 
-    updateName(treeScope(), oldName, newName);
+    updateNameForTreeScope(treeScope(), oldName, newName);
+
+    if (!inDocument())
+        return;
+    Document* htmlDocument = document();
+    if (!htmlDocument->isHTMLDocument())
+        return;
+    updateNameForDocument(toHTMLDocument(htmlDocument), oldName, newName);
 }
 
-void Element::updateName(TreeScope* scope, const AtomicString& oldName, const AtomicString& newName)
+void Element::updateNameForTreeScope(TreeScope* scope, const AtomicString& oldName, const AtomicString& newName)
 {
     ASSERT(isInTreeScope());
     ASSERT(oldName != newName);
@@ -2642,28 +2672,27 @@ void Element::updateName(TreeScope* scope, const AtomicString& oldName, const At
         scope->removeElementByName(oldName, this);
     if (!newName.isEmpty())
         scope->addElementByName(newName, this);
+}
 
-    if (!inDocument())
-        return;
-    
-    Document* ownerDocument = document();
-    if (!ownerDocument->isHTMLDocument())
-        return;
+void Element::updateNameForDocument(HTMLDocument* document, const AtomicString& oldName, const AtomicString& newName)
+{
+    ASSERT(inDocument());
+    ASSERT(oldName != newName);
 
     if (WindowNameCollection::nodeMatchesIfNameAttributeMatch(this)) {
         const AtomicString& id = WindowNameCollection::nodeMatchesIfIdAttributeMatch(this) ? getIdAttribute() : nullAtom;
         if (!oldName.isEmpty() && oldName != id)
-            toHTMLDocument(ownerDocument)->windowNamedItemMap().remove(oldName.impl(), this);
+            document->windowNamedItemMap().remove(oldName.impl(), this);
         if (!newName.isEmpty() && newName != id)
-            toHTMLDocument(ownerDocument)->windowNamedItemMap().add(newName.impl(), this);
+            document->windowNamedItemMap().add(newName.impl(), this);
     }
 
     if (DocumentNameCollection::nodeMatchesIfNameAttributeMatch(this)) {
         const AtomicString& id = DocumentNameCollection::nodeMatchesIfIdAttributeMatch(this) ? getIdAttribute() : nullAtom;
         if (!oldName.isEmpty() && oldName != id)
-            toHTMLDocument(ownerDocument)->documentNamedItemMap().remove(oldName.impl(), this);
+            document->documentNamedItemMap().remove(oldName.impl(), this);
         if (!newName.isEmpty() && newName != id)
-            toHTMLDocument(ownerDocument)->documentNamedItemMap().add(newName.impl(), this);
+            document->documentNamedItemMap().add(newName.impl(), this);
     }
 }
 
@@ -2675,10 +2704,17 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     if (oldId == newId)
         return;
 
-    updateId(treeScope(), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
+    updateIdForTreeScope(treeScope(), oldId, newId);
+
+    if (!inDocument())
+        return;
+    Document* htmlDocument = document();
+    if (!htmlDocument->isHTMLDocument())
+        return;
+    updateIdForDocument(toHTMLDocument(htmlDocument), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
-void Element::updateId(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
+void Element::updateIdForTreeScope(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId)
 {
     ASSERT(isInTreeScope());
     ASSERT(oldId != newId);
@@ -2687,28 +2723,27 @@ void Element::updateId(TreeScope* scope, const AtomicString& oldId, const Atomic
         scope->removeElementById(oldId, this);
     if (!newId.isEmpty())
         scope->addElementById(newId, this);
+}
 
-    if (!inDocument())
-        return;
-
-    Document* ownerDocument = document();
-    if (!ownerDocument->isHTMLDocument())
-        return;
+void Element::updateIdForDocument(HTMLDocument* document, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
+{
+    ASSERT(inDocument());
+    ASSERT(oldId != newId);
 
     if (WindowNameCollection::nodeMatchesIfIdAttributeMatch(this)) {
         const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::nodeMatchesIfNameAttributeMatch(this) ? getNameAttribute() : nullAtom;
         if (!oldId.isEmpty() && oldId != name)
-            toHTMLDocument(ownerDocument)->windowNamedItemMap().remove(oldId.impl(), this);
+            document->windowNamedItemMap().remove(oldId.impl(), this);
         if (!newId.isEmpty() && newId != name)
-            toHTMLDocument(ownerDocument)->windowNamedItemMap().add(newId.impl(), this);
+            document->windowNamedItemMap().add(newId.impl(), this);
     }
 
     if (DocumentNameCollection::nodeMatchesIfIdAttributeMatch(this)) {
         const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && DocumentNameCollection::nodeMatchesIfNameAttributeMatch(this) ? getNameAttribute() : nullAtom;
         if (!oldId.isEmpty() && oldId != name)
-            toHTMLDocument(ownerDocument)->documentNamedItemMap().remove(oldId.impl(), this);
+            document->documentNamedItemMap().remove(oldId.impl(), this);
         if (!newId.isEmpty() && newId != name)
-            toHTMLDocument(ownerDocument)->documentNamedItemMap().add(newId.impl(), this);
+            document->documentNamedItemMap().add(newId.impl(), this);
     }
 }
 

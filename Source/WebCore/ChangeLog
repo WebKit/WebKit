@@ -1,3 +1,66 @@
+2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DocumentOrderedMap doesn't need to have two HashMaps
+        https://bugs.webkit.org/show_bug.cgi?id=116167
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, we had two hash maps: m_map and m_duplicateCounts in DocumentOrderedMap to keep track
+        of the first element and the number of duplicates for a given name. This patch simplifies this structure
+        by having a single hash map that contains both the pointer and the number of duplicates.
+
+        In addition, this patch fixes a regression introduced in r149652 that window and document name maps
+        were not updated for some elements inside a SVG use element, and makes use of the newly added list of
+        the matching elements in SelectorQuery.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::clear): Updated to use the new hash map.
+        (WebCore::DocumentOrderedMap::add): Ditto.
+        (WebCore::DocumentOrderedMap::remove): Ditto.
+        (WebCore::DocumentOrderedMap::get): Ditto.
+        (WebCore::DocumentOrderedMap::getAllElementsById): Added.
+
+        * dom/DocumentOrderedMap.h:
+
+        (WebCore::DocumentOrderedMap::MapEntry::MapEntry): Added.
+        (WebCore::DocumentOrderedMap::containsSingle): Updated to use new hash map.
+        (WebCore::DocumentOrderedMap::contains): Ditto.
+        (WebCore::DocumentOrderedMap::containsMultiple): Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto): This function didn't add this element to window and document's name maps
+        if the element had already been inserted into a tree scope, and the current call was inserting an ancestor
+        of the tree scope into the document. We were exiting early per scope != treeScope().
+
+        Fixed the bug by splitting updateId into two functions updateIdForTreeScope and updateIdForDocument.
+        The former is called when this element is inserted into a new tree scope, and the latter is called when
+        this element is inserted into a HTML document even if it had already been inside some tree scope.
+
+        (WebCore::Element::removedFrom): This function didn't remove this element from tree scope's id maps if
+        the tree scope wasn't a document. Fixed the bug by simply checking that the removal happens beneath the
+        current tree scope.
+        (WebCore::Element::updateName):
+        (WebCore::Element::updateNameForTreeScope): Renamed from updateName.
+        (WebCore::Element::updateNameForDocument): Extracted from updateName.
+        (WebCore::Element::updateId):
+        (WebCore::Element::updateIdForTreeScope): Renamed from updateId.
+        (WebCore::Element::updateIdForDocument): Extracted from updateId.
+
+        * dom/Element.h:
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::canUseIdLookup): Refactored to return the id subselector instead of checking if
+        the first subselector happens to be matching an id.
+        (WebCore::SelectorDataList::execute): Use the subselector canUseIdLookup returned. Also make use of newly
+        added getAllElementsById when there are multiple matching elements for a given id.
+
+        * dom/SelectorQuery.h:
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getAllElementsById): Added.
+
+        * dom/TreeScope.h:
+
 2013-05-15  Darin Adler  <darin@apple.com>
 
         [Mac] Make Clipboard::create functions for Mac platform independent by moving Pasteboard creation to Pasteboard functions

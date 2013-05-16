@@ -33,6 +33,7 @@
 
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ public:
     bool contains(AtomicStringImpl*) const;
     bool containsSingle(AtomicStringImpl*) const;
     bool containsMultiple(AtomicStringImpl*) const;
+
     // concrete instantiations of the get<>() method template
     Element* getElementById(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByName(AtomicStringImpl*, const TreeScope*) const;
@@ -58,33 +60,48 @@ public:
     Element* getElementByWindowNamedItem(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByDocumentNamedItem(AtomicStringImpl*, const TreeScope*) const;
 
+    const Vector<Element*>* getAllElementsById(AtomicStringImpl*, const TreeScope*) const;
+
     void checkConsistency() const;
 
 private:
     template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const TreeScope*) const;
 
-    typedef HashMap<AtomicStringImpl*, Element*> Map;
+    struct MapEntry {
+        MapEntry()
+            : element(0)
+            , count(0)
+        { }
+        explicit MapEntry(Element* firstElement)
+            : element(firstElement)
+            , count(1)
+        { }
 
-    // We maintain the invariant that m_duplicateCounts is the count of all elements with a given key
-    // excluding the one referenced in m_map, if any. This means it one less than the total count
-    // when the first node with a given key is cached, otherwise the same as the total count.
+        Element* element;
+        unsigned count;
+        Vector<Element*> orderedList;
+    };
+
+    typedef HashMap<AtomicStringImpl*, MapEntry> Map;
+
     mutable Map m_map;
-    mutable HashCountedSet<AtomicStringImpl*> m_duplicateCounts;
 };
 
 inline bool DocumentOrderedMap::containsSingle(AtomicStringImpl* id) const
 {
-    return (m_map.contains(id) ? 1 : 0) + m_duplicateCounts.count(id) == 1;
+    Map::const_iterator it = m_map.find(id);
+    return it != m_map.end() && it->value.count == 1;
 }
 
 inline bool DocumentOrderedMap::contains(AtomicStringImpl* id) const
 {
-    return m_map.contains(id) || m_duplicateCounts.contains(id);
+    return m_map.contains(id);
 }
 
 inline bool DocumentOrderedMap::containsMultiple(AtomicStringImpl* id) const
 {
-    return (m_map.contains(id) ? 1 : 0) + m_duplicateCounts.count(id) > 1;
+    Map::const_iterator it = m_map.find(id);
+    return it != m_map.end() && it->value.count > 1;
 }
 
 } // namespace WebCore

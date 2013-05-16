@@ -80,7 +80,6 @@ inline bool keyMatchesDocumentNamedItem(AtomicStringImpl* key, Element* element)
 void DocumentOrderedMap::clear()
 {
     m_map.clear();
-    m_duplicateCounts.clear();
 }
 
 void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
@@ -88,29 +87,15 @@ void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
     ASSERT(key);
     ASSERT(element);
 
-    if (!m_duplicateCounts.contains(key)) {
-        // Fast path. The key is not already in m_duplicateCounts, so we assume that it's
-        // also not already in m_map and try to add it. If that add succeeds, we're done.
-        Map::AddResult addResult = m_map.add(key, element);
-        if (addResult.isNewEntry)
-            return;
+    Map::AddResult addResult = m_map.add(key, MapEntry(element));
+    if (addResult.isNewEntry)
+        return;
 
-        // The add failed, so this key was already cached in m_map.
-        // There are multiple elements with this key. Remove the m_map
-        // cache for this key so get searches for it next time it is called.
-        m_map.remove(addResult.iterator);
-        m_duplicateCounts.add(key);
-    } else {
-        // There are multiple elements with this key. Remove the m_map
-        // cache for this key so get will search for it next time it is called.
-        Map::iterator cachedItem = m_map.find(key);
-        if (cachedItem != m_map.end()) {
-            m_map.remove(cachedItem);
-            m_duplicateCounts.add(key);
-        }
-    }
-
-    m_duplicateCounts.add(key);
+    MapEntry& entry = addResult.iterator->value;
+    ASSERT(entry.count);
+    entry.element = 0;
+    entry.count++;
+    entry.orderedList.clear();
 }
 
 void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
@@ -119,11 +104,20 @@ void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
     ASSERT(element);
 
     m_map.checkConsistency();
-    Map::iterator cachedItem = m_map.find(key);
-    if (cachedItem != m_map.end() && cachedItem->value == element)
-        m_map.remove(cachedItem);
-    else
-        m_duplicateCounts.remove(key);
+    Map::iterator it = m_map.find(key);
+    ASSERT(it != m_map.end());
+    MapEntry& entry = it->value;
+
+    ASSERT(entry.count);
+    if (entry.count == 1) {
+        ASSERT(!entry.element || entry.element == element);
+        m_map.remove(it);
+    } else {
+        if (entry.element == element)
+            entry.element = 0;
+        entry.count--;
+        entry.orderedList.clear(); // FIXME: Remove the element instead if there are only few items left.
+    }
 }
 
 template<bool keyMatches(AtomicStringImpl*, Element*)>
@@ -134,22 +128,23 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* 
 
     m_map.checkConsistency();
 
-    Element* element = m_map.get(key);
-    if (element)
+    Map::iterator it = m_map.find(key);
+    if (it == m_map.end())
+        return 0;
+
+    MapEntry& entry = it->value;
+    ASSERT(entry.count);
+    if (entry.element)
+        return entry.element;
+
+    // We know there's at least one node that matches; iterate to find the first one.
+    for (Element* element = ElementTraversal::firstWithin(scope->rootNode()); element; element = ElementTraversal::next(element)) {
+        if (!keyMatches(key, element))
+            continue;
+        entry.element = element;
         return element;
-
-    if (m_duplicateCounts.contains(key)) {
-        // We know there's at least one node that matches; iterate to find the first one.
-        for (element = ElementTraversal::firstWithin(scope->rootNode()); element; element = ElementTraversal::next(element)) {
-            if (!keyMatches(key, element))
-                continue;
-            m_duplicateCounts.remove(key);
-            m_map.set(key, element);
-            return element;
-        }
-        ASSERT_NOT_REACHED();
     }
-
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -186,6 +181,35 @@ Element* DocumentOrderedMap::getElementByWindowNamedItem(AtomicStringImpl* key, 
 Element* DocumentOrderedMap::getElementByDocumentNamedItem(AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesDocumentNamedItem>(key, scope);
+}
+
+const Vector<Element*>* DocumentOrderedMap::getAllElementsById(AtomicStringImpl* key, const TreeScope* scope) const
+{
+    ASSERT(key);
+    ASSERT(scope);
+
+    m_map.checkConsistency();
+
+    Map::iterator it = m_map.find(key);
+    if (it == m_map.end())
+        return 0;
+
+    MapEntry& entry = it->value;
+    ASSERT(entry.count);
+    if (!entry.count)
+        return 0;
+
+    if (entry.orderedList.isEmpty()) {
+        entry.orderedList.reserveCapacity(entry.count);
+        for (Element* element = entry.element ? entry.element : ElementTraversal::firstWithin(scope->rootNode()); element; element = ElementTraversal::next(element)) {
+            if (!keyMatchesId(key, element))
+                continue;
+            entry.orderedList.append(element);
+        }
+        ASSERT(entry.orderedList.size() == entry.count);
+    }
+
+    return &entry.orderedList;
 }
 
 } // namespace WebCore

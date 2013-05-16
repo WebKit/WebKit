@@ -58,7 +58,7 @@ private:
     };
 
     bool selectorMatches(const SelectorData&, Element*, const Node*) const;
-    bool canUseIdLookup(Node* rootNode) const;
+    const CSSSelector* selectorForIdLookup(Node* rootNode) const;
     template <bool firstMatchOnly>
     void execute(Node* rootNode, Vector<RefPtr<Node> >&) const;
 
