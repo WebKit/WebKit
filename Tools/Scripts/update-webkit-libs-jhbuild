@@ -101,14 +101,16 @@ sub runJhbuild
 
 sub cleanJhbuild()
 {
-    runJhbuild("clean");
-
     # If the configuration changed, dependencies may have been removed.
     # Since we lack a granular way of uninstalling those we wipe out the
     # jhbuild root and start from scratch.
     my $jhbuildPath = getJhbuildPath();
     if (system("rm -rf $jhbuildPath/Root") ne 0) {
         die "Cleaning jhbuild root failed!";
+    }
+
+    if (system("rm -rf $jhbuildPath/Source") ne 0) {
+        die "Cleaning jhbuild sources failed!";
     }
 }
 
