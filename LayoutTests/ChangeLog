@@ -1,5 +1,14 @@
 2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION: canvas/philip/tests/2d.text.draw.fontface.notinpage.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116245
+
+        Add a passing/failing test expectation.
+
+        * platform/mac/TestExpectations:
+
+2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         [Mac] fast/events/mouse-cursor-image-set.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=116244
 
