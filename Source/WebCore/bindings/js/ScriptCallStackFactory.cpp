@@ -93,7 +93,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
 PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::JSValue& exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    RefCountedArray<StackFrame> stackTrace = exec->vm().exceptionStack;
+    RefCountedArray<StackFrame> stackTrace = exec->vm().exceptionStack();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         if (!stackTrace[i].callee && frames.size())
             break;

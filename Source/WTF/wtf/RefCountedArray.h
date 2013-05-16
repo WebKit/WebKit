@@ -83,7 +83,7 @@ public:
         Header::fromPayload(m_data)->refCount = 1;
         Header::fromPayload(m_data)->length = other.size();
         ASSERT(Header::fromPayload(m_data)->length == other.size());
-        memcpy(m_data, other.begin(), sizeof(T) * other.size());
+        VectorTypeOperations<T>::uninitializedCopy(other.begin(), other.end(), m_data);
     }
     
     RefCountedArray& operator=(const RefCountedArray& other)
@@ -97,6 +97,7 @@ public:
             return *this;
         if (--Header::fromPayload(oldData)->refCount)
             return *this;
+        VectorTypeOperations<T>::destruct(oldData, oldData + Header::fromPayload(oldData)->length);
         fastFree(Header::fromPayload(oldData));
         return *this;
     }
@@ -107,6 +108,7 @@ public:
             return;
         if (--Header::fromPayload(m_data)->refCount)
             return;
+        VectorTypeOperations<T>::destruct(begin(), end());
         fastFree(Header::fromPayload(m_data));
     }
     

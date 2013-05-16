@@ -1,3 +1,15 @@
+2013-05-15  Oliver Hunt  <oliver@apple.com>
+
+        RefCountedArray needs to use vector initialisers for its backing store
+        https://bugs.webkit.org/show_bug.cgi?id=116194
+
+        Reviewed by Gavin Barraclough.
+
+        Update to use new functions for operating on the exception stack.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStackFromException):
+
 2013-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         ScriptedAnimationController::setThrottled should extend MinimumAnimationInterval

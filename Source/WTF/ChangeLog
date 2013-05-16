@@ -1,3 +1,17 @@
+2013-05-15  Oliver Hunt  <oliver@apple.com>
+
+        RefCountedArray needs to use vector initialisers for its backing store
+        https://bugs.webkit.org/show_bug.cgi?id=116194
+
+        Reviewed by Gavin Barraclough.
+
+        Use VectorOperations to operate on the backing store
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::~RefCountedArray):
+
 2013-05-15  Nico Weber  <thakis@chromium.org>
 
         WebKit doesn't support MSVS2003 any more, remove preprocessor checks for older versions.

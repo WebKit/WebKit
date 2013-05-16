@@ -70,7 +70,7 @@ namespace JSC  {
         void clearException() { vm().exception = JSValue(); }
         void clearSupplementaryExceptionInfo()
         {
-            vm().exceptionStack = RefCountedArray<StackFrame>();
+            vm().clearExceptionStack();
         }
 
         JSValue exception() const { return vm().exception; }

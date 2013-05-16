@@ -514,6 +514,11 @@ void VM::releaseExecutableMemory()
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();
 }
+
+void VM::clearExceptionStack()
+{
+    m_exceptionStack = RefCountedArray<StackFrame>();
+}
     
 void releaseExecutableMemory(VM& vm)
 {

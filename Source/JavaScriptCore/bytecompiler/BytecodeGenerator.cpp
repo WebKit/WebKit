@@ -40,6 +40,7 @@
 #include "Operations.h"
 #include "Options.h"
 #include "StrongInlines.h"
+#include "UnlinkedCodeBlock.h"
 #include <wtf/text/WTFString.h>
 
 using namespace std;

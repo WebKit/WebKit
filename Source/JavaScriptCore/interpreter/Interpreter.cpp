@@ -694,7 +694,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 
     Vector<StackFrame> stackTrace;
     getStackTrace(&callFrame->vm(), stackTrace);
-    vm->exceptionStack = RefCountedArray<StackFrame>(stackTrace);
+    vm->exceptionStack() = RefCountedArray<StackFrame>(stackTrace);
     if (stackTrace.isEmpty() || !error.isObject())
         return;
 
@@ -745,10 +745,10 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
         isTermination = isTerminatedExecutionException(exception);
     } else {
-        if (!callFrame->vm().exceptionStack.size()) {
+        if (!callFrame->vm().exceptionStack().size()) {
             Vector<StackFrame> stack;
             Interpreter::getStackTrace(&callFrame->vm(), stack);
-            callFrame->vm().exceptionStack = RefCountedArray<StackFrame>(stack);
+            callFrame->vm().exceptionStack() = RefCountedArray<StackFrame>(stack);
         }
     }
 

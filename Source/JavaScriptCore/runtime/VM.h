@@ -326,7 +326,8 @@ namespace JSC {
         NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 
         JSValue exception;
-        RefCountedArray<StackFrame> exceptionStack;
+        JS_EXPORT_PRIVATE void clearExceptionStack();
+        RefCountedArray<StackFrame>& exceptionStack() { return m_exceptionStack; }
 
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
@@ -491,6 +492,7 @@ namespace JSC {
 #endif
         bool m_inDefineOwnProperty;
         RefPtr<CodeCache> m_codeCache;
+        RefCountedArray<StackFrame> m_exceptionStack;
 
         TypedArrayDescriptor m_int8ArrayDescriptor;
         TypedArrayDescriptor m_int16ArrayDescriptor;

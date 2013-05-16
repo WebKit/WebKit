@@ -592,7 +592,7 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(VM& vm, JSGlobalObject* dynam
         vm.resetDateCache();
     }
     // Clear the exception stack between entries
-    vm.exceptionStack = RefCountedArray<StackFrame>();
+    vm.clearExceptionStack();
 }
 
 void slowValidateCell(JSGlobalObject* globalObject)
