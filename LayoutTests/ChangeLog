@@ -1,3 +1,18 @@
+2013-05-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Enable the CSSVariables setting in css-variable-definition.html test
+        https://bugs.webkit.org/show_bug.cgi?id=116231
+
+        Reviewed by Andreas Kling.
+
+        CSSVariablesEnabled setting must be set to true to allow
+        CSSVariables at runtime.
+
+        Modified also the indent size to 4 spaces.
+
+        * css3/css-variable-definition-expected.html:
+        * css3/css-variable-definition.html:
+
 2013-05-15  Andy Estes  <aestes@apple.com>
 
         Resources from non-HTTP schemes should not be cached indefinitely
