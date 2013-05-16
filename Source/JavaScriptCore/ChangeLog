@@ -1,3 +1,10 @@
+2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Windows build fix attempt after r150160.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-05-15  Oliver Hunt  <oliver@apple.com>
 
         RefCountedArray needs to use vector initialisers for its backing store

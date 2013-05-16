@@ -149,6 +149,7 @@ EXPORTS
     ?className@JSProxy@JSC@@KA?AVString@WTF@@PBVJSObject@2@@Z
     ?clear@SourceProviderCache@JSC@@QAEXXZ
     ?clearAll@BitVector@WTF@@QAEXXZ
+    ?clearExceptionStack@VM@JSC@@QAEXXZ
     ?codePointCompare@WTF@@YAHABVString@1@0@Z
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ

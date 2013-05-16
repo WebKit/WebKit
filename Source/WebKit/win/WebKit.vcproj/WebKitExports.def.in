@@ -125,7 +125,6 @@ EXPORTS
         ?didCancelFrame@InspectorController@WebCore@@QAEXXZ
 #endif
         ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
-        ?clearExceptionStack@VM@JSC@@QAEXXZ
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ
