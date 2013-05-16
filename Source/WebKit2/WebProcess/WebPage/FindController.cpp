@@ -251,6 +251,9 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
 
     frame->selection()->setSelection(oldSelection);
 
+    if (handle.isNull())
+        return;
+
     m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(handle, matchIndex));
 }
 
