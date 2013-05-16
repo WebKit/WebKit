@@ -67,16 +67,9 @@ struct FileChooserSettings {
 
 class FileChooserClient {
 public:
+    virtual ~FileChooserClient() { }
+
     virtual void filesChosen(const Vector<FileChooserFileInfo>&) = 0;
-    virtual ~FileChooserClient();
-
-protected:
-    FileChooser* newFileChooser(const FileChooserSettings&);
-
-private:
-    void discardChooser();
-
-    RefPtr<FileChooser> m_chooser;
 };
 
 class FileChooser : public RefCounted<FileChooser> {
@@ -84,7 +77,7 @@ public:
     static PassRefPtr<FileChooser> create(FileChooserClient*, const FileChooserSettings&);
     ~FileChooser();
 
-    void disconnectClient() { m_client = 0; }
+    void invalidate();
 
     void chooseFile(const String& path);
     void chooseFiles(const Vector<String>& paths);

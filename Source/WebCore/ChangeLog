@@ -1,3 +1,37 @@
+2013-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix FileChooserClient design
+        https://bugs.webkit.org/show_bug.cgi?id=116195
+
+        Reviewed by Andreas Kling.
+
+        FileChooserClient doesn't match the standard WebCore client idiom of only having virtual member functions.
+        Instead it holds on to its FileChooser and it's even a factory for creating new file choosers(!).
+
+        Fix this by making it an abstract class, and moving FileChooser into FileInputType.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::~FileInputType):
+        Invalidate the file chooser.
+
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        Apply the file chooser settings.
+
+        (WebCore::FileInputType::applyFileChooserSettings):
+        Recreate the file chooser with new settings.
+
+        (WebCore::FileInputType::receiveDropForDirectoryUpload):
+        Apply the settings.
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::invalidate):
+        Set m_client to null.
+
+        (WebCore::FileChooser::chooseFiles):
+        Early return.
+
+        * platform/FileChooser.h:
+
 2013-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         ScriptedAnimationController::setThrottled should extend MinimumAnimationInterval

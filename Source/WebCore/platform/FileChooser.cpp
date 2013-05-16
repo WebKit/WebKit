@@ -31,26 +31,7 @@
 
 namespace WebCore {
 
-FileChooserClient::~FileChooserClient()
-{
-    discardChooser();
-}
-
-FileChooser* FileChooserClient::newFileChooser(const FileChooserSettings& settings)
-{
-    discardChooser();
-
-    m_chooser = FileChooser::create(this, settings);
-    return m_chooser.get();
-}
-
-void FileChooserClient::discardChooser()
-{
-    if (m_chooser)
-        m_chooser->disconnectClient();
-}
-
-inline FileChooser::FileChooser(FileChooserClient* client, const FileChooserSettings& settings)
+FileChooser::FileChooser(FileChooserClient* client, const FileChooserSettings& settings)
     : m_client(client)
     , m_settings(settings)
 {
@@ -63,6 +44,13 @@ PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Fil
 
 FileChooser::~FileChooser()
 {
+}
+
+void FileChooser::invalidate()
+{
+    ASSERT(m_client);
+
+    m_client = 0;
 }
 
 void FileChooser::chooseFile(const String& filename)
@@ -78,12 +66,13 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
     if (m_settings.selectedFiles == filenames)
         return;
 
-    if (m_client) {
-        Vector<FileChooserFileInfo> files;
-        for (unsigned i = 0; i < filenames.size(); ++i)
-            files.append(FileChooserFileInfo(filenames[i]));
-        m_client->filesChosen(files);
-    }
+    if (!m_client)
+        return;
+
+    Vector<FileChooserFileInfo> files;
+    for (unsigned i = 0; i < filenames.size(); ++i)
+        files.append(FileChooserFileInfo(filenames[i]));
+    m_client->filesChosen(files);
 }
 
 void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
@@ -92,6 +81,7 @@ void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
     Vector<String> paths;
     for (unsigned i = 0; i < files.size(); ++i)
         paths.append(files[i].path);
+
     if (m_settings.selectedFiles == paths)
         return;
 
