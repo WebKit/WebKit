@@ -79,10 +79,6 @@ using namespace WebCore;
 - (BOOL)_scrollTo:(const NSPoint *)newOrigin animate:(BOOL)animate; // need the boolean result from this method
 @end
 
-@interface NSView (Details)
-- (void)setBackgroundColor:(NSColor *)color;
-@end
-
 enum {
     SpaceKey = 0x0020
 };
@@ -462,7 +458,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)drawRect:(NSRect)rect
 {
-    if (![self documentView]) {
+    if ([self documentView] == nil) {
         // Need to paint ourselves if there's no documentView to do it instead.
         if ([[self _webView] drawsBackground]) {
             [[[self _webView] backgroundColor] set];
@@ -476,32 +472,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         }
 #endif
     }
-}
-
-- (BOOL)wantsUpdateLayer
-{
-    return YES;
-}
-
-- (void)updateLayer
-{
-    // Do what -drawRect: does but by setting a backgroundColor on the view. This avoids
-    // backing store for this view when the WebView is layer-backed.
-    if (![self documentView]) {
-        if ([[self _webView] drawsBackground]) {
-            [self setBackgroundColor:[[self _webView] backgroundColor]];
-            return;
-        }
-    } else {
-#ifndef NDEBUG
-        if ([[self _scrollView] drawsBackground]) {
-            [self setBackgroundColor:[NSColor cyanColor]];
-            return;
-        }
-#endif
-    }
-
-    [self setBackgroundColor:[NSColor clearColor]];
 }
 
 - (NSRect)visibleRect
