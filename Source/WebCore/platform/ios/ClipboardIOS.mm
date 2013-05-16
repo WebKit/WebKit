@@ -60,7 +60,7 @@ ClipboardIOS::ClipboardIOS(ClipboardType clipboardType, ClipboardAccessPolicy po
     : Clipboard(policy, clipboardType)
     , m_frame(frame)
 {
-    m_changeCount = m_frame->editor()->client()->pasteboardChangeCount();
+    m_changeCount = m_frame->editor().client()->pasteboardChangeCount();
 }
 
 ClipboardIOS::~ClipboardIOS()
@@ -69,7 +69,7 @@ ClipboardIOS::~ClipboardIOS()
 
 bool ClipboardIOS::hasData()
 {
-    return m_frame->editor()->client()->getPasteboardItemsCount() != 0;
+    return m_frame->editor().client()->getPasteboardItemsCount() != 0;
 }
 
 static String utiTypeFromCocoaType(NSString* type)
@@ -138,7 +138,7 @@ void ClipboardIOS::clearData(const String& type)
     if (RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type)) {
         RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
         [representations.get() setValue:0 forKey:cocoaType.get()];
-        m_frame->editor()->client()->writeDataToPasteboard(representations.get());
+        m_frame->editor().client()->writeDataToPasteboard(representations.get());
     }
 }
 
@@ -148,7 +148,7 @@ void ClipboardIOS::clearAllData()
         return;
 
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
-    m_frame->editor()->client()->writeDataToPasteboard(representations.get());
+    m_frame->editor().client()->writeDataToPasteboard(representations.get());
 }
 
 String ClipboardIOS::getData(const String& type) const
@@ -160,7 +160,7 @@ String ClipboardIOS::getData(const String& type) const
     NSString *cocoaValue = nil;
 
     // Grab the value off the pasteboard corresponding to the cocoaType.
-    RetainPtr<NSArray> pasteboardItem = m_frame->editor()->client()->readDataFromPasteboard(cocoaType.get(), 0);
+    RetainPtr<NSArray> pasteboardItem = m_frame->editor().client()->readDataFromPasteboard(cocoaType.get(), 0);
 
     if ([pasteboardItem.get() count] == 0)
         return String();
@@ -195,7 +195,7 @@ String ClipboardIOS::getData(const String& type) const
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && m_changeCount == m_frame->editor()->client()->pasteboardChangeCount())
+    if (cocoaValue && m_changeCount == m_frame->editor().client()->pasteboardChangeCount())
         return cocoaValue;
 
     return String();
@@ -214,7 +214,7 @@ bool ClipboardIOS::setData(const String& type, const String& data)
     if ([cocoaType.get() isEqualToString:(NSString*)kUTTypeURL]) {
         RetainPtr<NSURL> url = adoptNS([[NSURL alloc] initWithString:cocoaData]);
         [representations.get() setValue:url.get() forKey:(NSString*)kUTTypeURL];
-        m_frame->editor()->client()->writeDataToPasteboard(representations.get());
+        m_frame->editor().client()->writeDataToPasteboard(representations.get());
         return true;
     }
 
@@ -222,7 +222,7 @@ bool ClipboardIOS::setData(const String& type, const String& data)
         // Everything else we know of goes on the pboard as the original string
         // we received as parameter.
         [representations.get() setValue:cocoaData forKey:cocoaType.get()];
-        m_frame->editor()->client()->writeDataToPasteboard(representations.get());
+        m_frame->editor().client()->writeDataToPasteboard(representations.get());
         return true;
     }
 
@@ -238,7 +238,7 @@ ListHashSet<String> ClipboardIOS::types() const
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != m_frame->editor()->client()->pasteboardChangeCount())
+    if (m_changeCount != m_frame->editor().client()->pasteboardChangeCount())
         return ListHashSet<String>();
 
     ListHashSet<String> result;
@@ -260,7 +260,7 @@ void ClipboardIOS::writeRange(Range* range, Frame* frame)
 {
     ASSERT(range);
     ASSERT(frame);
-    Pasteboard::generalPasteboard()->writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
+    Pasteboard::generalPasteboard()->writeSelection(range, frame->editor().smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
 }
 
 void ClipboardIOS::writePlainText(const String& text)

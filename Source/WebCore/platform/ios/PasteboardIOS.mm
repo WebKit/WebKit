@@ -116,7 +116,7 @@ void Pasteboard::clear()
 
 String Pasteboard::getStringSelection(Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
+    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
 }
@@ -135,7 +135,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelet
     if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(selectedRange->startPosition().anchorNode()), selectedRange->startPosition()) >= 0)
         selectedRange->setStart(enclosingAnchor, 0, ec);
 
-    frame->editor()->client()->didSetSelectionTypesForPasteboard();
+    frame->editor().client()->didSetSelectionTypesForPasteboard();
 
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
@@ -161,7 +161,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelet
     // Put plain string on the pasteboard.
     [representations.get() setValue:getStringSelection(frame, shouldSerializeSelectedTextForClipboard) forKey:(NSString *)kUTTypeText];
 
-    frame->editor()->client()->writeDataToPasteboard(representations.get());
+    frame->editor().client()->writeDataToPasteboard(representations.get());
 }
 
 void Pasteboard::writePlainText(const String& text, Frame *frame)
@@ -170,7 +170,7 @@ void Pasteboard::writePlainText(const String& text, Frame *frame)
 
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
     [representations.get() setValue:text forKey:(NSString *)kUTTypeText];
-    frame->editor()->client()->writeDataToPasteboard(representations.get());
+    frame->editor().client()->writeDataToPasteboard(representations.get());
 }
 
 void Pasteboard::writeImage(Node* node, Frame* frame)
@@ -200,7 +200,7 @@ void Pasteboard::writeImage(Node* node, Frame* frame)
         [dictionary.get() setObject:imageData.get() forKey:(NSString *)uti.get()];
         [dictionary.get() setObject:(NSString *)node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(static_cast<HTMLElement*>(node)->getAttribute("src"))) forKey:(NSString *)kUTTypeURL];
     }
-    frame->editor()->client()->writeDataToPasteboard(dictionary.get());
+    frame->editor().client()->writeDataToPasteboard(dictionary.get());
 }
 
 void Pasteboard::writePlainText(const String&, SmartReplaceOption)
@@ -218,7 +218,7 @@ bool Pasteboard::canSmartReplace()
 
 String Pasteboard::plainText(Frame* frame)
 {
-    RetainPtr<NSArray> pasteboardItem = frame->editor()->client()->readDataFromPasteboard((NSString *)kUTTypeText, 0);
+    RetainPtr<NSArray> pasteboardItem = frame->editor().client()->readDataFromPasteboard((NSString *)kUTTypeText, 0);
 
     if ([pasteboardItem.get() count] == 0)
         return String();
@@ -300,7 +300,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
         frame->page()->setDefersLoading(true);
 
     Vector<RefPtr<ArchiveResource> > resources;
-    RefPtr<DocumentFragment> fragment = frame->editor()->client()->documentFragmentFromAttributedString(string.get(), resources);
+    RefPtr<DocumentFragment> fragment = frame->editor().client()->documentFragmentFromAttributedString(string.get(), resources);
 
     size_t size = resources.size();
     if (size) {
@@ -317,20 +317,20 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragmentForPasteboardItemAtIndex(Frame* frame, int index, bool allowPlainText, bool& chosePlainText)
 {
-    RefPtr<DocumentFragment> fragment = frame->editor()->client()->documentFragmentFromDelegate(index);
+    RefPtr<DocumentFragment> fragment = frame->editor().client()->documentFragmentFromDelegate(index);
     if (fragment)
         return fragment.release();
 
     // First try to ask the client about the supported types. It will return null if the client
     // has no selection.
-    NSArray *supportedTypes = frame->editor()->client()->supportedPasteboardTypesForCurrentSelection();
+    NSArray *supportedTypes = frame->editor().client()->supportedPasteboardTypesForCurrentSelection();
     if (!supportedTypes)
         supportedTypes = supportedPasteboardTypes();
     int numberOfTypes = [supportedTypes count];
 
     for (int i = 0; i < numberOfTypes; i++) {
         NSString *type = [supportedTypes objectAtIndex:i];
-        RetainPtr<NSArray> pasteboardItem = frame->editor()->client()->readDataFromPasteboard(type, index);
+        RetainPtr<NSArray> pasteboardItem = frame->editor().client()->readDataFromPasteboard(type, index);
 
         if ([pasteboardItem.get() count] == 0)
             continue;
@@ -380,7 +380,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragmentForPasteboardItemAtInde
             }
             NSURL *url = (NSURL *)value;
 
-            if (!frame->editor()->client()->hasRichlyEditableSelection()) {
+            if (!frame->editor().client()->hasRichlyEditableSelection()) {
                 fragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), [url absoluteString]);
                 if (fragment)
                     return fragment.release();
@@ -427,7 +427,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     if (!frame)
         return 0;
 
-    int numberOfItems = frame->editor()->client()->getPasteboardItemsCount();
+    int numberOfItems = frame->editor().client()->getPasteboardItemsCount();
 
     if (!numberOfItems)
         return 0;

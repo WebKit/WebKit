@@ -1,3 +1,26 @@
+2013-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r150140): Frame::editor() should return a reference for iOS, too
+
+        * platform/ios/ClipboardIOS.mm:
+        (WebCore::ClipboardIOS::ClipboardIOS):
+        (WebCore::ClipboardIOS::hasData):
+        (WebCore::ClipboardIOS::clearData):
+        (WebCore::ClipboardIOS::clearAllData):
+        (WebCore::ClipboardIOS::getData):
+        (WebCore::ClipboardIOS::setData):
+        (WebCore::ClipboardIOS::types):
+        (WebCore::ClipboardIOS::writeRange):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::getStringSelection):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::documentFragmentWithRTF):
+        (WebCore::Pasteboard::documentFragmentForPasteboardItemAtIndex):
+        (WebCore::Pasteboard::documentFragment):
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Stop using the factory pattern in FileIconLoaderClient
