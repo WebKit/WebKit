@@ -1,3 +1,18 @@
+2013-05-16  Andy Estes  <aestes@apple.com>
+
+        Do not indefinitely cache resources from blob URLs.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Alexey pointed out after I landed r150169 that blob URLs backed by
+        files should return an error if the file changed after the URL was
+        created. By indefinitely caching them in memory, we don't give the
+        loader a chance to check for modification. Remove "blob" from the list
+        of schemes that should be indefinitely cached.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely):
+
 2013-05-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [CSS] CSS Variables are case-sensitive

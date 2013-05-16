@@ -326,7 +326,7 @@ bool SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(const String&
     if (equalIgnoringCase(scheme, "applewebdata"))
         return true;
 #endif
-    return equalIgnoringCase(scheme, "blob") || equalIgnoringCase(scheme, "data");
+    return equalIgnoringCase(scheme, "data");
 }
 
 } // namespace WebCore
