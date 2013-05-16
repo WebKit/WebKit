@@ -209,6 +209,8 @@ public:
     virtual bool shouldNotifyOnFormChanges() { return false; }
 };
 
+// FIXME (bug 116233): Get rid of EmptyFrameLoaderClient. It is a travesty.
+
 class EmptyFrameLoaderClient : public FrameLoaderClient {
     WTF_MAKE_NONCOPYABLE(EmptyFrameLoaderClient); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -373,6 +375,8 @@ public:
 #endif
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() OVERRIDE;
+
+    virtual bool isEmptyFrameLoaderClient() OVERRIDE { return true; }
 };
 
 class EmptyTextCheckerClient : public TextCheckerClient {

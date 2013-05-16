@@ -348,6 +348,9 @@ namespace WebCore {
         virtual void dispatchWillInsertBody() { }
 
         virtual void dispatchDidChangeResourcePriority(unsigned long /*identifier*/, ResourceLoadPriority) { }
+
+        // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
+        virtual bool isEmptyFrameLoaderClient() { return false; }
     };
 
 } // namespace WebCore

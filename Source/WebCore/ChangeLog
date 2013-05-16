@@ -1,3 +1,18 @@
+2013-05-16  Brady Eidson  <beidson@apple.com>
+
+        svg/as-image/img-zoom-svg-stylesheet.html crashes with NetworkProcess enabled.
+        <rdar://problem/13837408> and https://bugs.webkit.org/show_bug.cgi?id=115917
+
+        Reviewed by Sam Weinig.
+
+        Give WebKit2 the ability to not mis-cast.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::isEmptyFrameLoaderClient): Defaults to false, and include a FIXME
+          to remove it once https://bugs.webkit.org/show_bug.cgi?id=116233 is resolved.
+
+        * loader/EmptyClients.h: Make isEmptyFrameLoaderClient() return true, and add a FIXME to remove it.
+
 2013-05-14  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for building WebCore to the cmake build

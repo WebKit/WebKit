@@ -105,21 +105,31 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     bool privateBrowsingEnabled = resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled();
 
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
-    WebPage* webPage = webFrame->page();
+    // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
+    // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
+    // but in the meantime we have to make sure not to mis-cast.
+    WebFrame* webFrame = 0;
+    WebPage* webPage = 0;
+    if (!resourceLoader->frameLoader()->client()->isEmptyFrameLoaderClient()) {
+        webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
+        webPage = webFrame->page();
+    }
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;
-    loadParameters.webPageID = webPage->pageID();
-    loadParameters.webFrameID = webFrame->frameID();
+    loadParameters.webPageID = webPage ? webPage->pageID() : 0;
+    loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.request = resourceLoader->request();
     loadParameters.priority = priority;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.allowStoredCredentials = allowStoredCredentials;
-    loadParameters.clientCredentialPolicy = resourceLoader->clientCredentialPolicy();
+    // If there is no WebFrame then this resource cannot be authenticated with the client.
+    loadParameters.clientCredentialPolicy = (webFrame && webPage) ? resourceLoader->clientCredentialPolicy() : DoNotAskClientForAnyCredentials;
     loadParameters.inPrivateBrowsingMode = privateBrowsingEnabled;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
+
+    ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
