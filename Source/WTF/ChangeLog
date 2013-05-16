@@ -1,3 +1,9 @@
+2013-05-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix after r150123
+
+        * wtf/CMakeLists.txt: 
+
 2013-05-15  Oliver Hunt  <oliver@apple.com>
 
         RefCountedArray needs to use vector initialisers for its backing store
