@@ -123,7 +123,6 @@ WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 
 typedef void (*WTFCrashHookFunction)();
 WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
-WTF_EXPORT_PRIVATE void WTFInvokeCrashHook();
 WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
 #ifdef __cplusplus
@@ -138,29 +137,23 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#ifndef CRASH
-#if COMPILER(CLANG)
-#define CRASH() \
-    (WTFReportBacktrace(), \
-     WTFInvokeCrashHook(), \
-     (*(int *)(uintptr_t)0xbbadbeef = 0), \
-     __builtin_trap())
-#else
-#define CRASH() \
-    (WTFReportBacktrace(), \
-     WTFInvokeCrashHook(), \
-     (*(int *)(uintptr_t)0xbbadbeef = 0), \
-     ((void(*)())0)() /* More reliable, but doesn't say BBADBEEF */ \
-    )
-#endif
-#endif
-
 #if COMPILER(CLANG)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
 #else
 #define NO_RETURN_DUE_TO_CRASH
 #endif
 
+#ifndef CRASH
+#define CRASH() WTFCrash()
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+WTF_EXPORT_PRIVATE void WTFCrash() NO_RETURN_DUE_TO_CRASH;
+#ifdef __cplusplus
+}
+#endif
 
 /* BACKTRACE
 
