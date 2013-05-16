@@ -1,5 +1,11 @@
 2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows build fix attempt after r150160.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Windows build fix attempt after r150156.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
