@@ -1,3 +1,13 @@
+2013-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Documentation for WEBKIT_DEBUG logging channels is out of date
+        https://bugs.webkit.org/show_bug.cgi?id=114764
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * docs/webkitenvironment.xml: Update documentation to reflect current list of
+        logging channels.
+
 2013-05-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [GTK] TargetFrame and innerNodeFrame confused
