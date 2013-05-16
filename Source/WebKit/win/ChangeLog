@@ -1,3 +1,9 @@
+2013-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r150156.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-05-13  Anders Carlsson  <andersca@apple.com>
 
         Frame::editor() should return a reference

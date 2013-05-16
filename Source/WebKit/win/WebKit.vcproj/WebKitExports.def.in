@@ -136,6 +136,7 @@ EXPORTS
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
         ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
+        ?scriptedAnimationControllerSetThrottled@Document@WebCore@@UAEX_N@Z
         ?signal@ThreadCondition@WTF@@QAEXXZ
         ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
         ?tlsKeyCount@WTF@@YAAAJXZ
