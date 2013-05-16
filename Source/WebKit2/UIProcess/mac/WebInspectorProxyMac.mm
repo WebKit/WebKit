@@ -625,6 +625,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     NSRect inspectedViewFrame = [inspectedView frame];
     NSRect inspectorFrame = NSZeroRect;
     NSRect parentBounds = [[inspectedView superview] bounds];
+    CGFloat inspectedViewTop = NSMaxY(inspectedViewFrame);
 
     switch (m_attachmentSide) {
         case AttachmentSideBottom: {
@@ -634,7 +635,8 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
             CGFloat parentHeight = NSHeight(parentBounds);
             CGFloat inspectorHeight = InspectorFrontendClientLocal::constrainedAttachedWindowHeight(currentDimension, parentHeight);
 
-            inspectedViewFrame = NSMakeRect(0, inspectorHeight, NSWidth(parentBounds), parentHeight - inspectorHeight);
+            // Preserve the top position of the inspected view so banners in Safari still work.
+            inspectedViewFrame = NSMakeRect(0, inspectorHeight, NSWidth(parentBounds), inspectedViewTop - inspectorHeight);
             inspectorFrame = NSMakeRect(0, 0, NSWidth(inspectedViewFrame), inspectorHeight);
             break;
         }
@@ -646,8 +648,10 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
             CGFloat parentWidth = NSWidth(parentBounds);
             CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
 
-            inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, NSHeight(parentBounds));
-            inspectorFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(inspectedViewFrame));
+            // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
+            // top position for the inspector view since the banners only stretch as wide as the the inspected view.
+            inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, inspectedViewTop);
+            inspectorFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds));
             break;
         }
     }
@@ -714,9 +718,9 @@ void WebInspectorProxy::platformDetach()
     [m_inspectorView.get() removeFromSuperview];
 
     // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
-    // attached inspector used to.
+    // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.
 
-    [inspectedView setFrame:[[inspectedView superview] bounds]];
+    inspectedView.frame = NSMakeRect(0, 0, NSWidth(inspectedView.superview.bounds), NSMaxY(inspectedView.frame));
 
     // Return early if we are not visible. This means the inspector was closed while attached
     // and we should not create and show the inspector window.

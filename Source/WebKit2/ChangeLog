@@ -1,3 +1,17 @@
+2013-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Find Banner in Safari work again with the docked Web Inspector.
+
+        https://webkit.org/b/116182
+        rdar://problem/13857423
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformDetach):
+        Preserve the top position of the inspected view so banners in Safari still work.
+
 2013-05-16  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Minimum layout width is lost if the WebProcess crashes
