@@ -1,3 +1,11 @@
+2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline. The flakiness dashboard tells us that it started at r150101
+        but reverting the change locally didn't fix the problem as far as Beth and I checked.
+
+        * platform/mac/platform/mac/fast/text/thai-combining-mark-positioning-expected.txt: Added.
+        * platform/mac/platform/mac/fast/text/webfont-after-tiny-monospace-text-expected.txt: Added.
+
 2013-05-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Enable the CSSVariables setting in css-variable-definition.html test
