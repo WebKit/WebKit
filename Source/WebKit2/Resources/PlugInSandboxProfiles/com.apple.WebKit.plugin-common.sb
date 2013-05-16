@@ -176,6 +176,7 @@
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cmio.VDCAssistant")
     (global-name "com.apple.cookied") ;; FIXME: <rdar://problem/10790768> Limit access to cookies.
+    (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.ocspd")
     (global-name "com.apple.pasteboard.1")
     (global-name "com.apple.pbs.fetch_services")
@@ -230,19 +231,29 @@
 
 ;; Printing
 (define (webkit-printing)
+    (if (defined? 'authorization-right-obtain)
+        (allow authorization-right-obtain
+               (right-name "system.print.operator")
+               (right-name "system.printingmanager")))
+    (if (defined? 'mach-register)
+        (deny mach-register (with no-log)
+               (global-name-regex #"^com\.apple\.ICA-[0-9]+$")))
+    (if (defined? 'mach-task-name)
+        (allow mach-task-name))
     (allow network-outbound (literal "/private/var/run/cupsd"))
     (allow mach-lookup
         (global-name "com.apple.printuitool.agent")
         (global-name "com.apple.printtool.agent")
         (global-name "com.apple.printtool.daemon"))
     (allow file-read*
+        (subpath "/Library/Printers")
         (home-literal "/.cups/lpoptions")
         (home-literal "/.cups/client.conf")
         (literal "/private/etc/cups/client.conf")
         (literal "/private/etc/cups/lpoptions")
         (subpath "/private/etc/cups/ppd")
-        (subpath "/private/var/run/cupsd")
-        (shared-preferences-read "org.cups.PrintingPrefs")))
+        (subpath "/private/var/run/cupsd"))
+    (shared-preferences-read "org.cups.PrintingPrefs"))
 
 ;; Text Services Manager
 (allow iokit-set-properties (iokit-property "CapsLockDelayOverride"))

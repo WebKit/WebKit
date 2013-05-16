@@ -27,3 +27,4 @@
     (mount-relative-regex #"^/\.TemporaryItems/"))
 
 (webkit-powerbox)
+(webkit-printing)

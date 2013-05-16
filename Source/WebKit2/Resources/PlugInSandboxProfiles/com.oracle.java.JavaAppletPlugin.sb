@@ -35,3 +35,5 @@
 
 (deny job-creation (with no-log))
 (deny file-write* (with no-log) (subpath "/Library/Application Support/Oracle"))
+
+(webkit-printing)

@@ -20,3 +20,5 @@
 ;; FIXME: <rdar://problem/13636078>
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^CoreCLR_"))
+
+(webkit-printing)

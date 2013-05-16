@@ -1,3 +1,21 @@
+2013-05-15  Simon Cooper  <scooper@apple.com>
+
+        Enable printing in plugins
+        https://bugs.webkit.org/show_bug.cgi?id=116201
+        <rdar://problem/12347902>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add the printing entitlement so that legacy printing drivers can
+        customize the print panel. Update the printing rules and enable them
+        for the plugins.
+
+        * Configurations/PluginService.entitlements:
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+
 2013-05-15  Anders Carlsson  <andersca@apple.com>
 
         Move HTTPRequest class to WebKit2
