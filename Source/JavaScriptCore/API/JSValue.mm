@@ -971,7 +971,6 @@ JSValueRef valueInternalValue(JSValue * value)
 
     _context = [context retain];
     m_value = value;
-    JSValueProtect([_context JSGlobalContextRef], m_value);
     return self;
 }
 
@@ -1089,7 +1088,6 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 
 - (void)dealloc
 {
-    JSValueUnprotect([_context JSGlobalContextRef], m_value);
     [_context release];
     _context = nil;
     [super dealloc];
