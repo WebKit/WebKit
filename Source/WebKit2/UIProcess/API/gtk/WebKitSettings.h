@@ -386,6 +386,13 @@ WEBKIT_API void
 webkit_settings_set_enable_accelerated_2d_canvas               (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_write_console_messages_to_stdout    (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_write_console_messages_to_stdout    (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

@@ -1,3 +1,28 @@
+2013-05-15  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [GTK] [WebKit2] enable displaying console.log messages to system console
+        https://bugs.webkit.org/show_bug.cgi?id=115578
+
+        Reviewed by Martin Robinson.
+
+        Add a setting to enable/disable displaying of page messages to system
+        console. Property is called enable-write-console-messages-to-stdout.
+        Getter API function is
+        webkit_settings_get_enable_write_console_messages_to_stdout
+        Setter API function is
+        webkit_settings_set_enable_write_console_messages_to_stdout
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_write_console_messages_to_stdout):
+        (webkit_settings_set_enable_write_console_messages_to_stdout):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2013-05-08  Gavin Barraclough  <barraclough@apple.com>
 
         Process suppression should throttle scripted animations
