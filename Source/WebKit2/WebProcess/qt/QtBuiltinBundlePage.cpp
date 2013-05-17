@@ -80,6 +80,8 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // registerIntentServiceForFrame
         0, // didLayout
         0, // featuresUsedInPage
+        0, // willLoadURLRequest
+        0, // willLoadDataRequest
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 }

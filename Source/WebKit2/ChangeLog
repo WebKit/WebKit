@@ -1,3 +1,12 @@
+2013-05-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>, Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed build fix.
+
+        Add missing Qt specific initializer for willLoadURLRequest and willLoadDataRequest.
+
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2013-05-16  Beth Dakin  <bdakin@apple.com>
 
         Remove WKBundlePageGetHeaderLayer/Footer SPI
