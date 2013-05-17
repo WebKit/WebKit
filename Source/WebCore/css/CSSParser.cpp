@@ -396,15 +396,9 @@ AtomicString CSSParserString::substring(unsigned position, unsigned length) cons
 {
     ASSERT(m_length >= position + length);
 
-    RefPtr<StringImpl> result;
-
-    if (is8Bit()) {
-        result = StringImpl::create(characters8() + position, length);
-    } else {
-        result = StringImpl::create(characters16() + position, length);
-    }
-
-    return AtomicString(result);
+    if (is8Bit())
+        return AtomicString(characters8() + position, length);
+    return AtomicString(characters16() + position, length);
 }
 #endif
 
@@ -1756,8 +1750,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSPa
 inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveVariableNameValue(CSSParserValue* value)
 {
     ASSERT(value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME);
-    AtomicString variableName = String(value->string);
-    return CSSPrimitiveValue::create(variableName, CSSPrimitiveValue::CSS_VARIABLE_NAME);
+    return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME);
 }
 #endif
 

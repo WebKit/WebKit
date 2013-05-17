@@ -1,3 +1,17 @@
+2013-05-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [CSS] Minor cleanups in CSS variables handling
+        https://bugs.webkit.org/show_bug.cgi?id=116318
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests, only a cleanup.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserString::substring): Optimize.
+        (WebCore::CSSParser::createPrimitiveVariableNameValue):
+        Remove intermediate variable.
+
 2013-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add DOMWindowConstructors.idl to Xcode project file
