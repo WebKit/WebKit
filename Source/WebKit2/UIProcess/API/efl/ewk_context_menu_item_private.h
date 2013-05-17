@@ -30,6 +30,7 @@
 #include "WKEinaSharedString.h"
 #include "ewk_context_menu.h"
 #include "ewk_context_menu_item.h"
+#include "ewk_context_menu_private.h"
 #include <wtf/PassOwnPtr.h>
 
 /**
@@ -78,8 +79,8 @@ private:
     bool m_isChecked;
     bool m_isEnabled;
 
-    Ewk_Context_Menu* m_parentMenu;
-    Ewk_Context_Menu* m_subMenu;
+    EwkContextMenu* m_parentMenu;
+    EwkContextMenu* m_subMenu;
 };
 
 #endif // ewk_context_menu_item_private_h

@@ -35,7 +35,7 @@ using namespace WebKit;
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action);
 
-EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, Ewk_Context_Menu* parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, EwkContextMenu* parentMenu)
     : m_type(static_cast<Ewk_Context_Menu_Item_Type>(WKContextMenuItemGetType(item)))
     , m_action(getEwkActionFromWKTag((WKContextMenuItemGetTag(item))))
     , m_title(WKEinaSharedString(AdoptWK, WKContextMenuItemCopyTitle(item)))
@@ -46,7 +46,7 @@ EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, Ewk_Context_Me
 {
 }
 
-EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu, Ewk_Context_Menu* parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu, EwkContextMenu* parentMenu)
     : m_type(type)
     , m_action(action)
     , m_title(title)
@@ -64,7 +64,9 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
 
 Ewk_Context_Menu_Item* ewk_context_menu_item_new_with_submenu(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
 {
-    return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled, subMenu).leakPtr();
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, subMenu, subMenuImpl, 0);
+
+    return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled, subMenuImpl).leakPtr();
 }
 
 Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(const Ewk_Context_Menu_Item* item)

@@ -278,7 +278,7 @@ private:
     bool m_touchEventsEnabled;
 #endif
     WebCore::Timer<EwkView> m_displayTimer;
-    OwnPtr<EwkContextMenu> m_contextMenu;
+    RefPtr<EwkContextMenu> m_contextMenu;
     OwnPtr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
 #if ENABLE(INPUT_TYPE_COLOR)

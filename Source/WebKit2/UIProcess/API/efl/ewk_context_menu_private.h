@@ -27,26 +27,29 @@
 #define ewk_context_menu_private_h
 
 #include "ewk_context_menu_item.h"
+#include "ewk_object_private.h"
 #include <Eina.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 class EwkView;
 
-class EwkContextMenu {
+class EwkContextMenu : public EwkObject {
 public:
-    static PassOwnPtr<EwkContextMenu> create(EwkView* viewImpl, WKArrayRef items)
+    EWK_OBJECT_DECLARE(EwkContextMenu)
+
+    static PassRefPtr<EwkContextMenu> create(EwkView* viewImpl, WKArrayRef items)
     {
-        return adoptPtr(new EwkContextMenu(viewImpl, items));
+        return adoptRef(new EwkContextMenu(viewImpl, items));
     }
 
-    static PassOwnPtr<EwkContextMenu> create()
+    static PassRefPtr<EwkContextMenu> create()
     {
-        return adoptPtr(new EwkContextMenu());
+        return adoptRef(new EwkContextMenu());
     }
 
-    static PassOwnPtr<EwkContextMenu> create(Eina_List* items)
+    static PassRefPtr<EwkContextMenu> create(Eina_List* items)
     {
-        return adoptPtr(new EwkContextMenu(items));
+        return adoptRef(new EwkContextMenu(items));
     }
 
     ~EwkContextMenu();

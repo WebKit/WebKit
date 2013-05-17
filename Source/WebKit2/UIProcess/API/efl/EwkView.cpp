@@ -844,7 +844,7 @@ void EwkView::showContextMenu(WKPoint position, WKArrayRef items)
     if (m_contextMenu)
         hideContextMenu();
 
-    m_contextMenu = Ewk_Context_Menu::create(this, items);
+    m_contextMenu = EwkContextMenu::create(this, items);
 
     sd->api->context_menu_show(sd, position.x, position.y, m_contextMenu.get());
 }

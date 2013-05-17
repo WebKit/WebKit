@@ -80,12 +80,12 @@ void EwkContextMenu::hide()
     m_viewImpl->hideContextMenu();
 }
 
-void Ewk_Context_Menu::appendItem(EwkContextMenuItem* item)
+void EwkContextMenu::appendItem(EwkContextMenuItem* item)
 {
     m_contextMenuItems = eina_list_append(m_contextMenuItems, item);
 }
 
-void Ewk_Context_Menu::removeItem(EwkContextMenuItem* item)
+void EwkContextMenu::removeItem(EwkContextMenuItem* item)
 {
     m_contextMenuItems = eina_list_remove(m_contextMenuItems, item);
 }
@@ -97,51 +97,51 @@ void EwkContextMenu::contextMenuItemSelected(WKContextMenuItemRef item)
 
 Ewk_Context_Menu* ewk_context_menu_new()
 {
-    return EwkContextMenu::create().leakPtr();
+    return EwkContextMenu::create().leakRef();
 }
 
 Ewk_Context_Menu* ewk_context_menu_new_with_items(Eina_List* items)
 {
-    return EwkContextMenu::create(items).leakPtr();
+    return EwkContextMenu::create(items).leakRef();
 }
 
 Eina_Bool ewk_context_menu_item_append(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, menu, impl, false);
 
-    menu->appendItem(item);
+    impl->appendItem(item);
 
     return true;
 }
 
 Eina_Bool ewk_context_menu_item_remove(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, menu, impl, false);
 
-    menu->removeItem(item);
+    impl->removeItem(item);
 
     return true;
 }
 
 Eina_Bool ewk_context_menu_hide(Ewk_Context_Menu* menu)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, menu, impl, false);
 
-    menu->hide();
+    impl->hide();
 
     return true;
 }
 
 const Eina_List* ewk_context_menu_items_get(const Ewk_Context_Menu* menu)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContextMenu, menu, impl, 0);
 
-    return menu->items();
+    return impl->items();
 }
 
 Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, menu, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
     WKContextMenuItemRef wkItem;
@@ -158,7 +158,7 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
         return false;
     }
 
-    menu->contextMenuItemSelected(wkItem);
+    impl->contextMenuItemSelected(wkItem);
 
     return true;
 }

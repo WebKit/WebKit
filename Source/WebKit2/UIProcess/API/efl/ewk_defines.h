@@ -35,8 +35,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Context_Menu */
-typedef struct EwkContextMenu Ewk_Context_Menu;
+/**
+ * Declare Ewk_Context_Menu as Ewk_Object.
+ *
+ * @see Ewk_Object
+ */
+typedef struct EwkObject Ewk_Context_Menu;
 
 /** Creates a type name for Ewk_Context_Menu_Item */
 typedef struct EwkContextMenuItem Ewk_Context_Menu_Item;
