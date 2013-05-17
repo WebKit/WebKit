@@ -898,11 +898,6 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# [Qt] 2 math sputnik test fail on 32 bit
-# https://bugs.webkit.org/show_bug.cgi?id=88519
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-
 # =========================================================================== #
 # Fluctuating/flakey tests
 # =========================================================================== #

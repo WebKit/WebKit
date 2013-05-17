@@ -1,3 +1,19 @@
+2013-05-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        2 math sputnik test fail on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=88519
+
+        Reviewed by Jocelyn Turcotte.
+
+        Update the expected values to match recent changes in test262.
+        The old tested values are considered outside the validation range.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html:
+        * sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html:
+
 2013-05-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added platform specific expected after r143389.
