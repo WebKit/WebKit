@@ -295,7 +295,12 @@ String WebFrame::contentsAsString() const
         for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
             if (!builder.isEmpty())
                 builder.append(' ');
-            builder.append(static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame()->contentsAsString());
+
+            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(child->loader()->client());
+            WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+            ASSERT(webFrame);
+
+            builder.append(webFrame->contentsAsString());
         }
         // FIXME: It may make sense to use toStringPreserveCapacity() here.
         return builder.toString();
@@ -394,7 +399,8 @@ WebFrame* WebFrame::parentFrame() const
     if (!m_coreFrame || !m_coreFrame->ownerElement() || !m_coreFrame->ownerElement()->document())
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(m_coreFrame->ownerElement()->document()->frame()->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(m_coreFrame->ownerElement()->document()->frame()->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 PassRefPtr<ImmutableArray> WebFrame::childFrames()
@@ -410,7 +416,9 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
     vector.reserveInitialCapacity(size);
 
     for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
-        WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame();
+        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(child->loader()->client());
+        WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+        ASSERT(webFrame);
         vector.uncheckedAppend(webFrame);
     }
 
@@ -613,7 +621,9 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
         return 0;
 
     Frame* coreFrame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl()->frame();
-    return static_cast<WebFrameLoaderClient*>(coreFrame->loader()->client())->webFrame();
+
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(coreFrame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
@@ -736,8 +746,11 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 {
     if (!m_callback)
         return true;
-        
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    ASSERT(webFrame);
+
     return m_callback(toAPI(m_topLevelWebFrame), toAPI(webFrame), m_context);
 }
 

@@ -62,7 +62,10 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
 
     Frame* frame = geolocation->frame();
 
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    ASSERT(webFrame);
+
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
     m_page->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->frameID(), origin->databaseIdentifier()));

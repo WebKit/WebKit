@@ -235,7 +235,8 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
     if (!frame)
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
@@ -247,7 +248,8 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
     if (!frame)
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
@@ -259,7 +261,8 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!frame)
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 } // namespace WebKit

@@ -64,7 +64,8 @@ WebFrame* InjectedBundleHitTestResult::frame() const
     if (!frame)
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 WebFrame* InjectedBundleHitTestResult::targetFrame() const
@@ -73,7 +74,8 @@ WebFrame* InjectedBundleHitTestResult::targetFrame() const
     if (!frame)
         return 0;
 
-    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 String InjectedBundleHitTestResult::absoluteImageURL() const

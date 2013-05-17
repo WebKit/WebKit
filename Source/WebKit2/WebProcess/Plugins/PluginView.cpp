@@ -253,7 +253,8 @@ static inline WebPage* webPage(HTMLPlugInElement* pluginElement)
     Frame* frame = pluginElement->document()->frame();
     ASSERT(frame);
 
-    WebPage* webPage = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->page();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    WebPage* webPage = webFrameLoaderClient ? webFrameLoaderClient->webFrame()->page() : 0;
     ASSERT(webPage);
 
     return webPage;
@@ -1103,7 +1104,10 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     // Now ask the frame to load the request.
     targetFrame->loader()->load(FrameLoadRequest(targetFrame, request->request()));
 
-    WebFrame* targetWebFrame = static_cast<WebFrameLoaderClient*>(targetFrame->loader()->client())->webFrame();
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(targetFrame->loader()->client());
+    WebFrame* targetWebFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    ASSERT(targetWebFrame);
+
     if (WebFrame::LoadListener* loadListener = targetWebFrame->loadListener()) {
         // Check if another plug-in view or even this view is waiting for the frame to load.
         // If it is, tell it that the load was cancelled because it will be anyway.

@@ -71,8 +71,9 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
 
 WebFrame* InjectedBundleDOMWindowExtension::frame() const
 {
-    WebCore::Frame* frame = m_coreExtension->frame();
-    return frame ? static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame() : 0;
+    Frame* frame = m_coreExtension->frame();
+    WebFrameLoaderClient* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader()->client()) : 0;
+    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
 InjectedBundleScriptWorld* InjectedBundleDOMWindowExtension::world() const

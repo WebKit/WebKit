@@ -1,3 +1,79 @@
+2013-05-17  Brady Eidson  <beidson@apple.com>
+
+        Replace WebFrameLoaderClient static_casts with a function that might return null.
+        https://bugs.webkit.org/show_bug.cgi?id=116253
+
+        The general approach here is:
+        1 - Introduce a toWebFrameLoaderClient() function to convert FrameLoaderClients, and that may return null.
+        2 - Adopt toWebFrameLoaderClient() everywhere we used to do a direct static_cast<WebFrameLoaderClient*>
+        3 - In functions that already support a "return 0" scenario, a failed cast results in a return 0.
+        4 - In other functions that assume no failure to get the WebFrameLoaderClient, add an ASSERT.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add the utility function to cast:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::toWebFrameLoaderClient):
+
+        Adopt it everywhere:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::documentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        (WebKit::InjectedBundleDOMWindowExtension::frame):
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::frame):
+        (WebKit::InjectedBundleHitTestResult::targetFrame):
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::webPage):
+        (WebKit::PluginView::performFrameLoadURLRequest):
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedNodeChanged):
+        (WebKit::WebChromeClient::focusedFrameChanged):
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::print):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::runOpenPanel):
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendSubmitEvent):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentsAsString):
+        (WebKit::WebFrame::parentFrame):
+        (WebKit::WebFrame::childFrames):
+        (WebKit::WebFrame::frameForContext):
+        (WebKit::WebFrameFilter::shouldIncludeSubframe):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameHasCustomRepresentation):
+
 2013-05-17  Sam Weinig  <sam@webkit.org>
 
         Expose new load-with-userData API to Objective-C

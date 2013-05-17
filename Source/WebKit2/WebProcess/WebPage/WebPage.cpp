@@ -2975,8 +2975,11 @@ void WebPage::clearSelection()
 
 bool WebPage::mainFrameHasCustomRepresentation() const
 {
-    if (Frame* frame = mainFrame())
-        return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->frameHasCustomRepresentation();
+    if (Frame* frame = mainFrame()) {
+        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+        ASSERT(webFrameLoaderClient);
+        return webFrameLoaderClient->frameHasCustomRepresentation();
+    }
 
     return false;
 }

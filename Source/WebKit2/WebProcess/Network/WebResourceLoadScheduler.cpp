@@ -108,12 +108,9 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
     // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
     // but in the meantime we have to make sure not to mis-cast.
-    WebFrame* webFrame = 0;
-    WebPage* webPage = 0;
-    if (!resourceLoader->frameLoader()->client()->isEmptyFrameLoaderClient()) {
-        webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
-        webPage = webFrame->page();
-    }
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader->frameLoader()->client());
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebPage* webPage = webFrame ? webFrame->page() : 0;
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;

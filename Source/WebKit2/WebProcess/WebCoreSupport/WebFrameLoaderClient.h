@@ -232,6 +232,12 @@ private:
     bool m_frameCameFromPageCache;
 };
 
+// As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.
+inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient* client)
+{
+    return client->isEmptyFrameLoaderClient() ? 0 : static_cast<WebFrameLoaderClient*>(client);
+}
+
 } // namespace WebKit
 
 #endif // WebFrameLoaderClient_h
