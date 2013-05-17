@@ -1,3 +1,17 @@
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Reduce number of WebFrameLoaderClient static casts in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=116320
+
+        Reviewed by Antti Koivisto.
+
+        We already have a function to return a WebFrame from a WebCore::Frame, use it.
+
+        * DOM/WebDOMOperations.mm:
+        (WebFrameFilter::shouldIncludeSubframe):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource webFrame]):
+
 2013-05-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150034.

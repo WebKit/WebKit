@@ -99,9 +99,8 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 {
     if (!m_filterBlock)
         return true;
-        
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
-    return m_filterBlock(webFrame);
+
+    return m_filterBlock(kit(frame));
 }
 
 @implementation DOMNode (WebDOMNodeOperations)
