@@ -28,8 +28,6 @@
 
 #include "SecurityOriginData.h"
 #include "WebContext.h"
-#include "WebKeyValueStorageManagerMessages.h"
-#include "WebKeyValueStorageManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
 using namespace WebCore;
@@ -49,7 +47,6 @@ PassRefPtr<WebKeyValueStorageManagerProxy> WebKeyValueStorageManagerProxy::creat
 WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy(WebContext* context)
     : WebContextSupplement(context)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebKeyValueStorageManagerProxy::messageReceiverName(), this);
 }
 
 WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy()
@@ -57,21 +54,6 @@ WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy()
 }
 
 // WebContextSupplement
-
-void WebKeyValueStorageManagerProxy::contextDestroyed()
-{
-    invalidateCallbackMap(m_arrayCallbacks);
-}
-
-void WebKeyValueStorageManagerProxy::processDidClose(WebProcessProxy*)
-{
-    invalidateCallbackMap(m_arrayCallbacks);
-}
-
-bool WebKeyValueStorageManagerProxy::shouldTerminate(WebProcessProxy*) const
-{
-    return m_arrayCallbacks.isEmpty();
-}
 
 void WebKeyValueStorageManagerProxy::refWebContextSupplement()
 {
@@ -83,7 +65,7 @@ void WebKeyValueStorageManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-static void didGetKeyValueStorageOriginsCallback(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context)
+static void didGetKeyValueStorageOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context)
 {
     RefPtr<ArrayCallback> callback = adoptRef(static_cast<ArrayCallback*>(context));
 
@@ -98,15 +80,9 @@ static void didGetKeyValueStorageOriginsCallback(const Vector<RefPtr<WebCore::Se
 
 void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
-    context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOriginsCallback);
+    context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOrigins);
 }
     
-void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
-{
-    RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
-    performAPICallbackWithSecurityOriginDataVector(originDatas, callback.get());
-}
-
 void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
     context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());

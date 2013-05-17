@@ -37,14 +37,9 @@
 
 namespace WebKit {
 
-struct SecurityOriginData;
-class WebContext;
-class WebProcessProxy;
-class WebSecurityOrigin;
-
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebKeyValueStorageManagerProxy : public TypedAPIObject<APIObject::TypeKeyValueStorageManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebKeyValueStorageManagerProxy : public TypedAPIObject<APIObject::TypeKeyValueStorageManager>, public WebContextSupplement {
 public:
     static const char* supplementName();
 
@@ -61,19 +56,9 @@ public:
 private:
     explicit WebKeyValueStorageManagerProxy(WebContext*);
 
-    void didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
-
     // WebContextSupplement
-    virtual void contextDestroyed() OVERRIDE;
-    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
-    virtual bool shouldTerminate(WebProcessProxy*) const OVERRIDE;
     virtual void refWebContextSupplement() OVERRIDE;
     virtual void derefWebContextSupplement() OVERRIDE;
-
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-
-    HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
 };
 
 } // namespace WebKit

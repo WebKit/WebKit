@@ -42,7 +42,6 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
-#include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManager.h"
 #include "WebMemorySampler.h"
 #include "WebPage.h"
@@ -186,8 +185,6 @@ WebProcess::WebProcess()
     // FIXME: This should moved to where WebProcess::initialize is called,
     // so that ports have a chance to customize, and ifdefs in this file are
     // limited.
-    addSupplement<WebKeyValueStorageManager>();
-
     addSupplement<WebGeolocationManager>();
     addSupplement<WebApplicationCacheManager>();
     addSupplement<WebResourceCacheManager>();

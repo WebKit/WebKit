@@ -1,5 +1,32 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Remove dead local storage code
+        https://bugs.webkit.org/show_bug.cgi?id=116360
+
+        Reviewed by Beth Dakin.
+
+        Storage is all handled in the UI process now so we no longer need a WebKeyValueStorageManager in the web process.
+
+        * DerivedSources.make:
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy):
+        (WebKit):
+        (WebKit::didGetKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins):
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        (WebKeyValueStorageManagerProxy):
+        * UIProcess/WebKeyValueStorageManagerProxy.messages.in: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebKeyValueStorageManager.cpp: Removed.
+        * WebProcess/Storage/WebKeyValueStorageManager.h: Removed.
+        * WebProcess/Storage/WebKeyValueStorageManager.messages.in: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Use the UI process storage manager for deleting local storage data
         https://bugs.webkit.org/show_bug.cgi?id=116358
         <rdar://problem/13852829>
