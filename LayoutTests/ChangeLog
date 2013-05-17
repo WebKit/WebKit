@@ -1,3 +1,10 @@
+2013-05-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Unreviewed. Skip webgl and transforms/3d tests again, until we find out why they do
+        not run in the release bot.
+
+        * platform/gtk/TestExpectations:
+
 2013-05-17  Frédéric Wang  <fred.wang@free.fr>
 
         Bad spacing inside MathML formulas when text-indent is specified

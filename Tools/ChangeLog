@@ -1,3 +1,11 @@
+2013-05-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Unreviewed. Disable accelerated compositing until we figure out why it does not work
+        properly in the 64 bits release bot.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2013-05-17  David Kilzer  <ddkilzer@apple.com>
 
         Make filter-build-webkit testable using LoadAsModule

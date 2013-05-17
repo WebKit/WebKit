@@ -439,7 +439,7 @@ static void resetDefaultsToConsistentValues()
     WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
     GOwnPtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "DumpRenderTreeGtk", "databases", NULL));
     g_object_set(G_OBJECT(settings),
-        "enable-accelerated-compositing", TRUE,
+        "enable-accelerated-compositing", FALSE,
         "enable-private-browsing", FALSE,
         "enable-developer-extras", FALSE,
         "enable-spell-checking", TRUE,
