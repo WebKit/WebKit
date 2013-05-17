@@ -1367,7 +1367,7 @@ void PluginView::setStatusbarText(const String& statusbarText)
     if (!page)
         return;
 
-    page->chrome()->setStatusbarText(frame(), statusbarText);
+    page->chrome().setStatusbarText(frame(), statusbarText);
 }
 
 bool PluginView::isAcceleratedCompositingEnabled()

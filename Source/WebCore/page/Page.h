@@ -179,7 +179,7 @@ public:
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
     int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
 
-    Chrome* chrome() const { return m_chrome.get(); }
+    Chrome& chrome() const { return *m_chrome; }
     DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
     DragController* dragController() const { return m_dragController.get(); }
@@ -413,7 +413,7 @@ private:
 
     void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
 
-    OwnPtr<Chrome> m_chrome;
+    const OwnPtr<Chrome> m_chrome;
     OwnPtr<DragCaretController> m_dragCaretController;
 
 #if ENABLE(DRAG_SUPPORT)

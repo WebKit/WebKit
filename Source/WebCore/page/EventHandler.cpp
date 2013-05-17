@@ -1718,8 +1718,8 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
         frameView->mouseMovedInContentArea();  
 
     hoveredNode.setToNonShadowAncestor();
-    page->chrome()->mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
-    page->chrome()->setToolTip(hoveredNode);
+    page->chrome().mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
+    page->chrome().setToolTip(hoveredNode);
     return result;
 }
 
@@ -3665,7 +3665,7 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
     if (!page)
         return false;
 
-    bool tabsToLinksClientCallResult = page->chrome()->client()->keyboardUIMode() & KeyboardAccessTabsToLinks;
+    bool tabsToLinksClientCallResult = page->chrome().client()->keyboardUIMode() & KeyboardAccessTabsToLinks;
     return eventInvertsTabsToLinksClientCallResult(event) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 

@@ -151,7 +151,7 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
     if (!page)
         return true;
 
-    return page->chrome()->shouldInterruptJavaScript();
+    return page->chrome().shouldInterruptJavaScript();
 }
 
 bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)

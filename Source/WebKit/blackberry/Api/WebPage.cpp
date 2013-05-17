@@ -3150,7 +3150,7 @@ void WebPagePrivate::setVisible(bool visible)
                 m_page->suspendScriptedAnimations();
 
             if (m_webPage->hasOpenedPopup())
-                m_page->chrome()->client()->closePagePopup(0);
+                m_page->chrome().client()->closePagePopup(0);
         }
 
         m_visible = visible;

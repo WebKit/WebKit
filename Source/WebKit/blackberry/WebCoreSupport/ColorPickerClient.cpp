@@ -87,7 +87,7 @@ void ColorPickerClient::generateHTML(const BlackBerry::Platform::String& value)
 void ColorPickerClient::closePopup()
 {
     ASSERT(m_webPage);
-    m_webPage->m_page->chrome()->client()->closePagePopup(0);
+    m_webPage->m_page->chrome().client()->closePagePopup(0);
 }
 
 IntSize ColorPickerClient::contentSize()

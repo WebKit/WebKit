@@ -134,8 +134,7 @@ void RenderThemeQStyle::setPaletteFromPageClientIfExists(QPalette& palette) cons
     if (!m_page)
         return;
 
-    ASSERT(m_page->chrome());
-    ChromeClient* chromeClient = m_page->chrome()->client();
+    ChromeClient* chromeClient = m_page->chrome().client();
     if (!chromeClient)
         return;
 

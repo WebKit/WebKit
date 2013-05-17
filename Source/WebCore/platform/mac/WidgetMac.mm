@@ -110,7 +110,7 @@ void Widget::setFocus(bool focused)
     // Call this even when there is no platformWidget(). WK2 will focus on the widget in the UIProcess.
     NSView *view = [platformWidget() _webcore_effectiveFirstResponder];
     if (Page* page = frame->page())
-        page->chrome()->focusNSView(view);
+        page->chrome().focusNSView(view);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

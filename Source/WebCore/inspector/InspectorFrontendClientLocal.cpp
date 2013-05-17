@@ -228,9 +228,9 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 {
-    FloatRect frameRect = m_frontendPage->chrome()->windowRect();
+    FloatRect frameRect = m_frontendPage->chrome().windowRect();
     frameRect.move(x, y);
-    m_frontendPage->chrome()->setWindowRect(frameRect);
+    m_frontendPage->chrome().setWindowRect(frameRect);
 }
 
 void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)

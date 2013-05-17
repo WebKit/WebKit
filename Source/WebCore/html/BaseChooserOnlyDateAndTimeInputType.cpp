@@ -50,13 +50,10 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
         return;
     if (!element()->document()->page())
         return;
-    Chrome* chrome = element()->document()->page()->chrome();
-    if (!chrome)
-        return;
     DateTimeChooserParameters parameters;
     if (!element()->setupDateTimeChooserParameters(parameters))
         return;
-    m_dateTimeChooser = chrome->openDateTimeChooser(this, parameters);
+    m_dateTimeChooser = element()->document()->page()->chrome().openDateTimeChooser(this, parameters);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()

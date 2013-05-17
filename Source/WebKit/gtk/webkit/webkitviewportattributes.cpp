@@ -521,11 +521,11 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
     WebKitViewportAttributesPrivate* priv = viewportAttributes->priv;
     WebKitWebView* webView = priv->webView;
 
-    IntRect windowRect(webView->priv->corePage->chrome()->windowRect());
+    IntRect windowRect(webView->priv->corePage->chrome().windowRect());
     priv->deviceWidth = windowRect.width();
     priv->deviceHeight = windowRect.height();
 
-    IntRect rect(webView->priv->corePage->chrome()->pageRect());
+    IntRect rect(webView->priv->corePage->chrome().pageRect());
     priv->availableWidth = rect.width();
     priv->availableHeight = rect.height();
 

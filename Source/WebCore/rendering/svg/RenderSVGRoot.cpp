@@ -130,10 +130,10 @@ bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
         return false;
 
     // Test whether we're embedded through an img.
-    if (!frame->page() || !frame->page()->chrome())
+    if (!frame->page())
         return false;
 
-    ChromeClient* chromeClient = frame->page()->chrome()->client();
+    ChromeClient* chromeClient = frame->page()->chrome().client();
     if (!chromeClient || !chromeClient->isSVGImageChromeClient())
         return false;
 

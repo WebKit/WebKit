@@ -1327,8 +1327,8 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Ewk_Vie
     int deviceDPI = WebCore::getDPI();
     priv->settings.devicePixelRatio = deviceDPI / WebCore::ViewportArguments::deprecatedTargetDPI;
 
-    WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome()->client()->pageRect());
-    WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome()->client()->windowRect());
+    WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome().client()->pageRect());
+    WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome().client()->windowRect());
 
     WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewportArguments, desktopWidth, deviceRect.width(), deviceRect.height(), priv->settings.devicePixelRatio, availableRect.size());
     WebCore::restrictMinimumScaleFactorToViewportSize(attributes, availableRect.size(), priv->settings.devicePixelRatio);
@@ -4589,7 +4589,7 @@ void _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewk
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     if (!priv->acceleratedCompositingContext)
-        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(priv->page->chrome());
+        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(&priv->page->chrome());
 }
 
 bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)

@@ -126,7 +126,7 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
     // Some platforms may have flipped coordinate systems, but the given coordinates
     // assume the origin is in the top-left of the window. Convert.
     IntPoint convertedPoint = m_page->mainFrame()->view()->convertToContainingWindow(IntPoint(x, y));
-    IntPoint globalPoint = m_page->chrome()->rootViewToScreen(IntRect(IntPoint(x, y), IntSize(0, 0))).location();
+    IntPoint globalPoint = m_page->chrome().rootViewToScreen(IntRect(IntPoint(x, y), IntSize(0, 0))).location();
 
     PlatformMouseEvent event(
         convertedPoint,

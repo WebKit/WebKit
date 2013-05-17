@@ -235,7 +235,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                     if (!path.isEmpty()) {
                         if (Page* page = document->page()) {
                             String generatedFileName;
-                            shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
+                            shouldGenerateFile = page->chrome().client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
                             if (shouldGenerateFile)
                                 name = generatedFileName;
                         }
@@ -394,7 +394,7 @@ void FormData::generateFiles(Document* document)
     Page* page = document->page();
     if (!page)
         return;
-    ChromeClient* client = page->chrome()->client();
+    ChromeClient* client = page->chrome().client();
 
     size_t n = m_elements.size();
     for (size_t i = 0; i < n; ++i) {

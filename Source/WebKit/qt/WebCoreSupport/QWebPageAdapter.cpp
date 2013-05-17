@@ -161,9 +161,9 @@ static void openNewWindow(const QUrl& url, Frame* frame)
         WindowFeatures features;
         NavigationAction action;
         FrameLoadRequest request = frameLoadRequest(url, frame);
-        if (Page* newPage = oldPage->chrome()->createWindow(frame, request, features, action)) {
+        if (Page* newPage = oldPage->chrome().createWindow(frame, request, features, action)) {
             newPage->mainFrame()->loader()->loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
-            newPage->chrome()->show();
+            newPage->chrome().show();
         }
     }
 }
@@ -266,7 +266,7 @@ void QWebPageAdapter::deletePage()
 
 QWebPageAdapter* QWebPageAdapter::kit(Page* page)
 {
-    return static_cast<ChromeClientQt*>(page->chrome()->client())->m_webPage;
+    return static_cast<ChromeClientQt*>(page->chrome().client())->m_webPage;
 }
 
 ViewportArguments QWebPageAdapter::viewportArguments() const

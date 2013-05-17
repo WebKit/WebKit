@@ -1,3 +1,10 @@
+2013-05-16  Andreas Kling  <akling@apple.com>
+
+        Page::chrome() should return a reference.
+        <http://webkit.org/b/116185>
+
+        Reviewed by Anders Carlsson.
+
 2013-05-16  Dan Bernstein  <mitz@apple.com>
 
         -webView:updateHistoryTitle:forURL: does not pass a frame to the delegate

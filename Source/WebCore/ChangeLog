@@ -1,3 +1,13 @@
+2013-05-16  Andreas Kling  <akling@apple.com>
+
+        Page::chrome() should return a reference.
+        <http://webkit.org/b/116185>
+
+        Reviewed by Anders Carlsson.
+
+        A Page's chrome() can never be null. Change Page::chrome() to return a reference to reflect this.
+        Also, make Page::m_chrome a const member variable so nobody will accidentally set it to null.
+
 2013-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Content disappears when scrolling http://www.childrenscancer.org/zach/

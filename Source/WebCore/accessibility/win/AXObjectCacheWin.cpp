@@ -69,7 +69,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         return;
 
     Page* page = document->page();
-    if (!page || !page->chrome()->platformPageClient())
+    if (!page || !page->chrome().platformPageClient())
         return;
 
     DWORD msaaEvent;
@@ -104,7 +104,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     ASSERT(obj->axObjectID() >= 1);
     ASSERT(obj->axObjectID() <= numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome()->platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -140,7 +140,7 @@ void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newFocusedNode)
         return;
 
     Page* page = newFocusedNode->document()->page();
-    if (!page || !page->chrome()->platformPageClient())
+    if (!page || !page->chrome().platformPageClient())
         return;
 
     AccessibilityObject* focusedObject = focusedUIElementForPage(page);

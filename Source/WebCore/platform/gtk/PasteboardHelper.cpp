@@ -95,9 +95,7 @@ static inline GdkDisplay* displayFromFrame(Frame* frame)
     ASSERT(frame);
     Page* page = frame->page();
     ASSERT(page);
-    Chrome* chrome = page->chrome();
-    ASSERT(chrome);
-    PlatformPageClient client = chrome->platformPageClient();
+    PlatformPageClient client = page->chrome().platformPageClient();
     return client ? gtk_widget_get_display(client) : gdk_display_get_default();
 }
 

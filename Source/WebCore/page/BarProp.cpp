@@ -58,13 +58,13 @@ bool BarProp::visible() const
     case Locationbar:
     case Personalbar:
     case Toolbar:
-        return page->chrome()->toolbarsVisible();
+        return page->chrome().toolbarsVisible();
     case Menubar:
-        return page->chrome()->menubarVisible();
+        return page->chrome().menubarVisible();
     case Scrollbars:
-        return page->chrome()->scrollbarsVisible();
+        return page->chrome().scrollbarsVisible();
     case Statusbar:
-        return page->chrome()->statusbarVisible();
+        return page->chrome().statusbarVisible();
     }
 
     ASSERT_NOT_REACHED();

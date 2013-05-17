@@ -324,7 +324,7 @@ JSValueRef SimplePDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function
     if (!page)
         return JSValueMakeUndefined(ctx);
     
-    page->chrome()->print(coreFrame);
+    page->chrome().print(coreFrame);
     
     return JSValueMakeUndefined(ctx);
 }

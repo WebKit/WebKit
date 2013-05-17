@@ -1522,12 +1522,12 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         
         // If we have an empty chrome client (like SVG) then we should use the page
         // of the scroll view parent to help us get to the screen rect.
-        if (parent && page && page->chrome()->client()->isEmptyChromeClient())
+        if (parent && page && page->chrome().client()->isEmptyChromeClient())
             page = parent->page();
         
         if (page) {
             IntRect rect = IntRect(intPoint, IntSize(0, 0));            
-            intPoint = page->chrome()->rootViewToScreen(rect).location();
+            intPoint = page->chrome().rootViewToScreen(rect).location();
         }
         
         return intPoint;

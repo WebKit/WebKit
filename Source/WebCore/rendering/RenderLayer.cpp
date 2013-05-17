@@ -2347,7 +2347,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 // The canAutoscroll function in EventHandler also knows about this.
                 if (Frame* frame = frameView->frame()) {
                     if (Page* page = frame->page())
-                        page->chrome()->scrollRectIntoView(pixelSnappedIntRect(rect));
+                        page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
                 }
             }
         }

@@ -196,7 +196,7 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, false, false));
     }
 
-    m_page->chrome()->focusedFrameChanged(newFrame.get());
+    m_page->chrome().focusedFrameChanged(newFrame.get());
 
     m_isChangingFocusedFrame = false;
 }
@@ -295,10 +295,10 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     if (!node) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
-        if (!initialFocus && m_page->chrome()->canTakeFocus(direction)) {
+        if (!initialFocus && m_page->chrome().canTakeFocus(direction)) {
             document->setFocusedNode(0);
             setFocusedFrame(0);
-            m_page->chrome()->takeFocus(direction);
+            m_page->chrome().takeFocus(direction);
             return true;
         }
 

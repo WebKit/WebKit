@@ -110,13 +110,10 @@ void PickerIndicatorElement::openPopup()
         return;
     if (!m_pickerIndicatorOwner)
         return;
-    Chrome* chrome = document()->page()->chrome();
-    if (!chrome)
-        return;
     DateTimeChooserParameters parameters;
     if (!m_pickerIndicatorOwner->setupDateTimeChooserParameters(parameters))
         return;
-    m_chooser = chrome->openDateTimeChooser(this, parameters);
+    m_chooser = document()->page()->chrome().openDateTimeChooser(this, parameters);
 }
 
 void PickerIndicatorElement::closePopup()

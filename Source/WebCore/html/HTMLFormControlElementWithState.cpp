@@ -67,7 +67,7 @@ void HTMLFormControlElementWithState::notifyFormStateChanged()
         return;
 
     if (Page* page = frame->page())
-        page->chrome()->client()->formStateDidChange(this);
+        page->chrome().client()->formStateDidChange(this);
 }
 
 bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const

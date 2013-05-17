@@ -151,7 +151,7 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
 void SelectPopupClient::closePopup()
 {
     ASSERT(m_webPage);
-    m_webPage->m_page->chrome()->client()->closePagePopup(0);
+    m_webPage->m_page->chrome().client()->closePagePopup(0);
 }
 
 IntSize SelectPopupClient::contentSize()

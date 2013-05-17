@@ -141,7 +141,7 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
 void DatePickerClient::closePopup()
 {
     ASSERT(m_webPage);
-    m_webPage->m_page->chrome()->client()->closePagePopup(0);
+    m_webPage->m_page->chrome().client()->closePagePopup(0);
 }
 
 IntSize DatePickerClient::contentSize()

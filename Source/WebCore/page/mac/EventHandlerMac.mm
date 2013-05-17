@@ -104,7 +104,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event);
-    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome()->platformPageClient()));
+    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()));
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -129,7 +129,7 @@ void EventHandler::focusDocumentView()
 
     if (FrameView* frameView = m_frame->view()) {
         if (NSView *documentView = frameView->documentView())
-            page->chrome()->focusNSView(documentView);
+            page->chrome().focusNSView(documentView);
     }
 
     page->focusController()->setFocusedFrame(m_frame);
@@ -203,11 +203,11 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (!page)
         return true;
 
-    if (page->chrome()->client()->firstResponder() != view) {
+    if (page->chrome().client()->firstResponder() != view) {
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
         if ([currentNSEvent() clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey])
-            page->chrome()->client()->makeFirstResponder(view);
+            page->chrome().client()->makeFirstResponder(view);
     }
 
     // We need to "defer loading" while tracking the mouse, because tearing down the
@@ -660,7 +660,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 {
     NSView *windowView = nil;
     if (Page* page = m_frame->page())
-        windowView = page->chrome()->platformPageClient();
+        windowView = page->chrome().platformPageClient();
     return PlatformEventFactory::createPlatformMouseEvent(currentNSEvent(), windowView);
 }
 
@@ -688,7 +688,7 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
     if (!page)
         return false;
 
-    KeyboardUIMode keyboardUIMode = page->chrome()->client()->keyboardUIMode();
+    KeyboardUIMode keyboardUIMode = page->chrome().client()->keyboardUIMode();
     bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls
