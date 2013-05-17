@@ -1,3 +1,17 @@
+2013-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        Add tests for shouldIgnoreLine() in filter-build-webkit
+        Part 2 of 3: <http://webkit.org/b/116247>
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/filter-build-webkit:
+        (shouldIgnoreLine): Add.  Extract code from global scope into
+        subroutine to make it testable.
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl: Add.
+        Tests shouldIgnoreLine() using output from a real build
+        transcript.
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename "WebKit Queues" to explicitly call out for EWS and CQ on build.webkit.org
