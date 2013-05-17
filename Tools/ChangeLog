@@ -1,3 +1,18 @@
+2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leaks builders exit early frequently
+        https://bugs.webkit.org/show_bug.cgi?id=116355
+
+        Reviewed by Stephanie Lewis.
+
+        Throttle the number of processes to use, and also bump up the number of crashes/timeouts
+        we tolerate from 20 to 50.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_child_processes):
+
 2013-05-17  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Remove chrome-channels command from the webkit-patch
