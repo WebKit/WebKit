@@ -180,6 +180,7 @@ class ChangeLogAnalyzer(object):
 
     def _analyze_entries(self, entries, changelog_path):
         dirname = self._filesystem.dirname(changelog_path)
+        i = 0
         for i, entry in enumerate(entries):
             self._print_status('(%s) entries' % i)
             assert(entry.authors())
@@ -201,6 +202,5 @@ class ChangeLogAnalyzer(object):
 
             self._summary['reviewed' if reviewers_for_entry else 'unreviewed'] += 1
 
-            i += 1
         self._print_status('(%s) entries' % i)
         return i
