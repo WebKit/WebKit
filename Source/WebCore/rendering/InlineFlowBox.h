@@ -310,7 +310,7 @@ protected:
 #if ENABLE(CSS3_TEXT)
     // Maximum logicalTop among all children of an InlineFlowBox. Used to
     // calculate the offset for TextUnderlinePositionUnder.
-    void computeMaxLogicalTop(float& maxLogicalTop);
+    void computeMaxLogicalTop(float& maxLogicalTop) const;
 #endif // CSS3_TEXT
 private:
     unsigned m_includeLogicalLeftEdge : 1;

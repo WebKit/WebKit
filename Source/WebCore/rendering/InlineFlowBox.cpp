@@ -747,7 +747,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
 }
 
 #if ENABLE(CSS3_TEXT)
-void InlineFlowBox::computeMaxLogicalTop(float& maxLogicalTop)
+void InlineFlowBox::computeMaxLogicalTop(float& maxLogicalTop) const
 {
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isOutOfFlowPositioned())

@@ -1,3 +1,34 @@
+2013-05-17  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
+
+        Improve -webkit-text-underline-position memory usage.
+        https://bugs.webkit.org/show_bug.cgi?id=116108
+
+        Reviewed by Benjamin Poulain.
+
+        Remove m_maxLogicalTop private variable from RootInlineBox to reduce
+        the overall memory used to render RootInlineBoxes (eight bytes per RootInlineBox
+        instance in a 64-bit machine). RootInline::maxLogicalTop() now computes
+        the maxLogicalTop value everytime it is called. In a typical page
+        computeMaxLogicalTop is called less than 10 times for each
+        InlineTextBox that uses -webkit-text-underline-position. That is a small
+        price users of -webkit-text-underline-position will pay so that
+        everybody can benefit from the memory reduction in RootInlineBox.
+
+        No new tests, no change in behavior.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeMaxLogicalTop): Make it const.
+        * rendering/InlineFlowBox.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox): Remove m_maxLogicalTop.
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection): Remove
+        computeMaxLogicalTop call and obsolete comment.
+        (WebCore):
+        (WebCore::RootInlineBox::maxLogicalTop): Compute maxLogicalTop before
+        returning its value.
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+
 2013-05-17  Alexis Menard  <alexis@webkit.org>
 
         Make sure to call release() on our smart pointers when we should.

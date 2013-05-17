@@ -54,9 +54,6 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineBottom(0)
     , m_lineTopWithLeading(0)
     , m_lineBottomWithLeading(0)
-#if ENABLE(CSS3_TEXT)
-    , m_maxLogicalTop(0)
-#endif // CSS3_TEXT
 {
     setIsHorizontal(block->isHorizontalWritingMode());
 }
@@ -283,8 +280,6 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     // SVG will handle vertical alignment on its own.
     if (isSVGRootInlineBox())
         return 0;
-
-    // FIXME: figure out how to call computeMaxLogicalTop() when SVG is enabled.
 #endif
 
     LayoutUnit maxPositionTop = 0;
@@ -337,13 +332,17 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
         heightOfBlock += gridSnapAdjustment;
     }
 
-#if ENABLE(CSS3_TEXT)
-    m_maxLogicalTop = 0;
-    computeMaxLogicalTop(m_maxLogicalTop);
-#endif // CSS3_TEXT
-
     return heightOfBlock + maxHeight;
 }
+
+#if ENABLE(CSS3_TEXT)
+float RootInlineBox::maxLogicalTop() const
+{
+    float maxLogicalTop = 0;
+    computeMaxLogicalTop(maxLogicalTop);
+    return maxLogicalTop;
+}
+#endif // CSS3_TEXT
 
 LayoutUnit RootInlineBox::beforeAnnotationsAdjustment() const
 {
