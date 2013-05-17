@@ -603,6 +603,7 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
     UNUSED_PARAM(text);
     UNUSED_PARAM(offset);
     UNUSED_PARAM(boundaryType);
+    UNUSED_PARAM(textPosition);
     UNUSED_PARAM(startOffset);
     UNUSED_PARAM(endOffset);
 
