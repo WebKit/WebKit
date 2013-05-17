@@ -288,13 +288,7 @@
 ;; FIXME: This can be removed once <rdar://problem/13011633> is fixed.
 (deny file-read* (with no-log)
        (home-literal "/Library/Preferences/com.apple.speech.recognition.AppleSpeechRecognition.prefs.plist")
-       (subpath "/Library/Components")
-       (subpath "/Library/Keyboard Layouts")
-       (subpath "/Library/Input Methods")
        (subpath "/Library/InputManagers")
-       (home-subpath "/Library/Components")
-       (home-subpath "/Library/Keyboard Layouts")
-       (home-subpath "/Library/Input Methods")
        (home-subpath "/Library/InputManagers")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
        (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le"))
@@ -305,6 +299,14 @@
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.speech.recognitionserver"))
+;; Also part of unnecessary NSApplication initialization, but we can't block access to these yet, see <rdar://problem/13869765>.
+(allow file-read*
+       (subpath "/Library/Components")
+       (subpath "/Library/Keyboard Layouts")
+       (subpath "/Library/Input Methods")
+       (home-subpath "/Library/Components")
+       (home-subpath "/Library/Keyboard Layouts")
+       (home-subpath "/Library/Input Methods"))
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
 (deny mach-lookup (with no-log) (global-name "com.apple.tsm.uiserver")) ;; <rdar://problem/13902706>

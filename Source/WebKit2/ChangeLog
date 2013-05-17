@@ -1,3 +1,11 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13869765> Lion: Crashes in islcCanLoadInputMethodFromBundleID.
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Allow text input directories.
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         WKKeyValueStorageManagerGetKeyValueStorageOrigins should get origins from the UI process
