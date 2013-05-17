@@ -57,45 +57,24 @@ void PageBanner::addToPage(Type type, WebPage* webPage)
     ASSERT(m_webPage);
 
     switch (m_type) {
-    case Header: {
-        FrameView* frameView = m_webPage->mainFrameView();
-        if (!frameView)
-            return;
-
-        frameView->setHeaderHeight(m_height);
-
-        GraphicsLayer* parentLayer = frameView->setWantsLayerForHeader(m_layer);
-        if (!parentLayer) {
-            m_webPage->corePage()->removeLayoutMilestones(DidFirstFlushForHeaderLayer);
-            return;
-        }
-
-        m_webPage->corePage()->addLayoutMilestones(DidFirstFlushForHeaderLayer);
-
-        m_layer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
-        [parentLayer->platformLayer() addSublayer:m_layer.get()];
-
+    case Header:
+        m_webPage->corePage()->addHeaderWithHeight(m_height);
         break;
-    }
-    case Footer: {
-        FrameView* frameView = m_webPage->mainFrameView();
-        if (!frameView)
-            return;
-
-        frameView->setFooterHeight(m_height);
-
-        GraphicsLayer* parentLayer = frameView->setWantsLayerForFooter(m_layer);
-        if (!parentLayer)
-            return;
-
-        m_layer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
-        [parentLayer->platformLayer() addSublayer:m_layer.get()];
-
+    case Footer:
+        m_webPage->corePage()->addFooterWithHeight(m_height);
         break;
-    }
     case NotSet:
         ASSERT_NOT_REACHED();
     }
+}
+
+void PageBanner::didAddParentLayer(GraphicsLayer* parentLayer)
+{
+    if (!parentLayer)
+        return;
+
+    m_layer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
+    [parentLayer->platformLayer() addSublayer:m_layer.get()];
 }
 
 void PageBanner::detachFromPage()

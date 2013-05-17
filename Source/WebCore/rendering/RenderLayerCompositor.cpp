@@ -663,6 +663,12 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
                 layer->backing()->attachToScrollingCoordinatorWithParent(0);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+#if ENABLE(RUBBER_BANDING)
+                if (Page* page = this->page()) {
+                    updateLayerForHeader(page->headerHeight());
+                    updateLayerForFooter(page->footerHeight());
+                }
+#endif
             }
 
             // This layer and all of its descendants have cached repaints rects that are relative to
@@ -2560,6 +2566,9 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
 
+    if (Page* page = this->page())
+        page->chrome().client()->didAddHeaderLayer(m_layerForHeader.get());
+
     return m_layerForHeader.get();
 }
 
@@ -2590,6 +2599,9 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+
+    if (Page* page = this->page())
+        page->chrome().client()->didAddFooterLayer(m_layerForFooter.get());
 
     return m_layerForFooter.get();
 }

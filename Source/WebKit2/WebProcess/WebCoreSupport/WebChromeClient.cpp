@@ -31,6 +31,7 @@
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
+#include "PageBanner.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -875,6 +876,18 @@ void WebChromeClient::enableSuddenTermination()
 void WebChromeClient::disableSuddenTermination()
 {
     m_page->send(Messages::WebProcessProxy::DisableSuddenTermination());
+}
+
+void WebChromeClient::didAddHeaderLayer(GraphicsLayer* headerParent)
+{
+    if (PageBanner* banner = m_page->headerPageBanner())
+        banner->didAddParentLayer(headerParent);
+}
+
+void WebChromeClient::didAddFooterLayer(GraphicsLayer* footerParent)
+{
+    if (PageBanner* banner = m_page->footerPageBanner())
+        banner->didAddParentLayer(footerParent);
 }
 
 } // namespace WebKit

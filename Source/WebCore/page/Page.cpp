@@ -65,6 +65,7 @@
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "RenderArena.h"
+#include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -175,6 +176,8 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_displayID(0)
     , m_requestedLayoutMilestones(0)
+    , m_headerHeight(0)
+    , m_footerHeight(0)
     , m_isCountingRelevantRepaintedObjects(false)
 #ifndef NDEBUG
     , m_isPainting(false)
@@ -1277,6 +1280,40 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
 PageVisibilityState Page::visibilityState() const
 {
     return m_visibilityState;
+}
+#endif
+
+#if ENABLE(RUBBER_BANDING)
+void Page::addHeaderWithHeight(int headerHeight)
+{
+    m_headerHeight = headerHeight;
+
+    FrameView* frameView = mainFrame() ? mainFrame()->view() : 0;
+    if (!frameView)
+        return;
+
+    RenderView* renderView = frameView->renderView();
+    if (!renderView)
+        return;
+
+    frameView->setHeaderHeight(m_headerHeight);
+    renderView->compositor()->updateLayerForHeader(m_headerHeight);
+}
+
+void Page::addFooterWithHeight(int footerHeight)
+{
+    m_footerHeight = footerHeight;
+
+    FrameView* frameView = mainFrame() ? mainFrame()->view() : 0;
+    if (!frameView)
+        return;
+
+    RenderView* renderView = frameView->renderView();
+    if (!renderView)
+        return;
+
+    frameView->setFooterHeight(m_footerHeight);
+    renderView->compositor()->updateLayerForFooter(m_footerHeight);
 }
 #endif
 

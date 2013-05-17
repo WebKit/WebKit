@@ -904,28 +904,6 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
     return renderView->compositor()->updateLayerForBottomOverhangArea(wantsLayer);
 }
 
-GraphicsLayer* FrameView::setWantsLayerForHeader(bool wantsLayer) const
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return 0;
-
-    ASSERT(m_frame == m_frame->page()->mainFrame());
-
-    return renderView->compositor()->updateLayerForHeader(wantsLayer);
-}
-
-GraphicsLayer* FrameView::setWantsLayerForFooter(bool wantsLayer) const
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return 0;
-
-    ASSERT(m_frame == m_frame->page()->mainFrame());
-
-    return renderView->compositor()->updateLayerForFooter(wantsLayer);
-}
-
 #endif // ENABLE(RUBBER_BANDING)
 
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)

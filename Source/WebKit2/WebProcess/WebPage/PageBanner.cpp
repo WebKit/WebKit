@@ -27,6 +27,7 @@
 #include "PageBanner.h"
 
 #include "WebPage.h"
+#include <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 
@@ -52,6 +53,10 @@ void PageBanner::didChangeDeviceScaleFactor(float)
 bool PageBanner::mouseEvent(const WebMouseEvent&)
 {
     return false;
+}
+
+void PageBanner::didAddParentLayer(WebCore::GraphicsLayer*)
+{
 }
 #endif
 

@@ -1,3 +1,54 @@
+2013-05-17  Beth Dakin  <bdakin@apple.com>
+
+        Headers and footers will sometimes disappear and re-appear during page loads
+        https://bugs.webkit.org/show_bug.cgi?id=116336
+        -and corresponding-
+        <rdar://problem/13886753>
+
+        Reviewed by Simon Fraser.
+
+        This patch changes the WebCore-level API that WebKit uses to create a banner. 
+        Specifically this patch removes FrameView::setWantsLayerForHeader(), which created 
+        and returned a layer. Instead, WK2 will call Page::addHeaderWithHeight(). When the 
+        layer has been created, it will call back into WK2 via ChromeClient. This will 
+        allow WebCore to re-create the header/footer layers as needed whenever the 
+        FrameView/RenderLayerCompositor have been destroyed and recreated.
+
+        Remove references to old FrameView functions. Add references to new Page 
+        functions.
+        * WebCore.exp.in:
+
+        New ChromeClient functions will pass the new layers up to WK2.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didAddHeaderLayer):
+        (WebCore::ChromeClient::didAddFooterLayer):
+        (ChromeClient):
+
+        Remove setWantsLayerForHeader/Footer.
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        (FrameView):
+
+        Page now caches the header and footer height. When the FrameView/RLC have been 
+        destroyed, and the cached layer/height information on those classes has been lost, 
+        this data on Page will persist so that we can build the layers back up.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::addHeaderWithHeight):
+        (WebCore::Page::addFooterWithHeight):
+        * page/Page.h:
+        (WebCore::Page::headerHeight):
+        (WebCore::Page::footerHeight):
+
+        As soon as the root gets a backing, recreate the header and footer layers if 
+        needed.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
+        Call into ChromeClient.
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+
 2013-05-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [CSS] Minor cleanups in CSS variables handling

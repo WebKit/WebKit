@@ -409,8 +409,6 @@ public:
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
     GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
-    GraphicsLayer* setWantsLayerForHeader(bool) const;
-    GraphicsLayer* setWantsLayerForFooter(bool) const;
 #endif
 
     virtual int headerHeight() const OVERRIDE { return m_headerHeight; }

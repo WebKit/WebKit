@@ -227,6 +227,9 @@ private:
     virtual String plugInExtraStyleSheet() const OVERRIDE;
     virtual String plugInExtraScript() const OVERRIDE;
 
+    virtual void didAddHeaderLayer(WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void didAddFooterLayer(WebCore::GraphicsLayer*) OVERRIDE;
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

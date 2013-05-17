@@ -1,3 +1,36 @@
+2013-05-17  Beth Dakin  <bdakin@apple.com>
+
+        Headers and footers will sometimes disappear and re-appear during page loads
+        https://bugs.webkit.org/show_bug.cgi?id=116336
+        -and corresponding-
+        <rdar://problem/13886753>
+
+        Reviewed by Simon Fraser.
+
+        This patch changes the WebCore-level API that WebKit uses to create a banner. 
+        Specifically this patch removes FrameView::setWantsLayerForHeader(), which created 
+        and returned a layer. Instead, WK2 will call Page::addHeaderWithHeight(). When the 
+        layer has been created, it will call back into WK2 via ChromeClient. This will 
+        allow WebCore to re-create the header/footer layers as needed whenever the 
+        FrameView/RenderLayerCompositor have been destroyed and recreated.
+
+        Send the layers over to PageBanner.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didAddHeaderLayer):
+        (WebKit::WebChromeClient::didAddFooterLayer):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
+        PageBanner::addToPage() now does much less work since it can’t get the parent 
+        layer right away. The work that is used to do once it had the parent layer is now 
+        performed in didAddParentLayer()
+        * WebProcess/WebPage/PageBanner.cpp:
+        (WebKit::PageBanner::didAddParentLayer):
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        (WebKit::PageBanner::addToPage):
+        (WebKit::PageBanner::didAddParentLayer):
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         Rename WebKeyValueStorageManagerProxy to WebKeyValueStorageManager

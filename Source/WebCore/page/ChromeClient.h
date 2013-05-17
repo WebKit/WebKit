@@ -376,6 +376,9 @@ public:
     virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
+    virtual void didAddHeaderLayer(GraphicsLayer*) { }
+    virtual void didAddFooterLayer(GraphicsLayer*) { }
+
 protected:
     virtual ~ChromeClient() { }
 };

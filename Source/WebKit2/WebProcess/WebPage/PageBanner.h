@@ -35,6 +35,10 @@ OBJC_CLASS CALayer;
 #include <wtf/RetainPtr.h>
 #endif
 
+namespace WebCore {
+class GraphicsLayer;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -68,6 +72,8 @@ public:
 
     bool mouseEvent(const WebMouseEvent&);
     void didChangeDeviceScaleFactor(float scaleFactor);
+
+    void didAddParentLayer(WebCore::GraphicsLayer*);
 
 private:
 #if PLATFORM(MAC)

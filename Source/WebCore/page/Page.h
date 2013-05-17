@@ -356,6 +356,14 @@ public:
     void removeLayoutMilestones(LayoutMilestones);
     LayoutMilestones requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }
 
+#if ENABLE(RUBBER_BANDING)
+    void addHeaderWithHeight(int);
+    void addFooterWithHeight(int);
+#endif
+
+    int headerHeight() const { return m_headerHeight; }
+    int footerHeight() const { return m_footerHeight; }
+
     bool isCountingRelevantRepaintedObjects() const;
     void startCountingRelevantRepaintedObjects();
     void resetRelevantPaintedObjectCounter();
@@ -502,6 +510,9 @@ private:
     PlatformDisplayID m_displayID;
 
     LayoutMilestones m_requestedLayoutMilestones;
+
+    int m_headerHeight;
+    int m_footerHeight;
 
     HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
     Region m_topRelevantPaintedRegion;
