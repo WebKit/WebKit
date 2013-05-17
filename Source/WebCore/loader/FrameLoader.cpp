@@ -478,10 +478,10 @@ void FrameLoader::willTransitionToCommitted()
 {
     // This function is called when a frame is still fully in place (not cached, not detached), but will be replaced.
 
-    if (m_frame->editor()->hasComposition()) {
+    if (m_frame->editor().hasComposition()) {
         // The text was already present in DOM, so it's better to confirm than to cancel the composition.
-        m_frame->editor()->confirmComposition();
-        if (EditorClient* editorClient = m_frame->editor()->client())
+        m_frame->editor().confirmComposition();
+        if (EditorClient* editorClient = m_frame->editor().client())
             editorClient->respondToChangedSelection(m_frame);
     }
 }

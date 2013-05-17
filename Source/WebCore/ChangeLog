@@ -1,3 +1,10 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::willTransitionToCommitted):
+        Frame:editor() now returns a reference.
+
 2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of [ConstructorParameters] extended attributes
