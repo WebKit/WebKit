@@ -1,3 +1,16 @@
+2013-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Don't use pdevenv when building with VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=116338.
+
+        Reviewed by Adam Roben.
+
+        * Scripts/webkitdirs.pm:
+        (setupCygwinEnv): Check if we are using VS2005, and only use
+        the 'pdevenv' hack if we are. Otherwise, just build with
+        our standard project since it uses VS2010+'s native
+        parallel building features.
+
 2013-05-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         Unreviewed. Disable accelerated compositing until we figure out why it does not work

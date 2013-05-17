@@ -1634,8 +1634,10 @@ sub setupCygwinEnv()
     $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
     if (-e $vcBuildPath) {
         # Visual Studio is installed; we can use pdevenv to build.
-        # FIXME: Make pdevenv work with non-Cygwin Perl.
-        $vcBuildPath = File::Spec->catfile(sourceDir(), qw(Tools Scripts pdevenv)) if isCygwin();
+        if (visualStudioVersion() eq "8") {
+            # FIXME: Make pdevenv work with non-Cygwin Perl.
+            $vcBuildPath = File::Spec->catfile(sourceDir(), qw(Tools Scripts pdevenv)) if isCygwin();
+        }
     } else {
         # Visual Studio not found, try VC++ Express
         $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE VCExpress.exe));
