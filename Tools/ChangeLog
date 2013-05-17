@@ -1,3 +1,22 @@
+2013-05-16  Jonathan Liu  <net147@gmail.com>
+
+        Fix testing if program exists in PATH
+        https://bugs.webkit.org/show_bug.cgi?id=116216
+
+        Reviewed by Jocelyn Turcotte.
+
+        functions.prf incorrectly uses win_cmd_shell to test whether to
+        add .exe to the executable name when checking if it exists in
+        the PATH environment variable. This works correctly when
+        building using Windows Command Prompt but not under MSYS shell.
+
+        To resolve this, check the win32 platform scope instead of
+        win_cmd_shell so that it correctly adds .exe to the executable
+        name on Windows regardless of the shell used when testing if
+        it exists in PATH.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix the hard-coded names of EWS bots that run tests.
