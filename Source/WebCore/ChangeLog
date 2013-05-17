@@ -1,3 +1,13 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add DOMWindowConstructors.idl to Xcode project file
+        https://bugs.webkit.org/show_bug.cgi?id=116351
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj: Added the file, so that Xcode includes it
+        in searches.
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the declaration of Element::detachAttrNodeAtIndex erroneously added in r150072.
