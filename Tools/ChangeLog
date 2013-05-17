@@ -1,3 +1,14 @@
+2013-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        Make filter-build-webkit testable using LoadAsModule
+        Part 1 of 3: <http://webkit.org/b/116247>
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/filter-build-webkit: Change global variables that are
+        used in subroutines from 'my' to 'our' to make it possible to
+        evaluate the script in a package context in LoadAsModule.pm.
+
 2013-05-14  Sam Weinig  <sam@webkit.org>
 
         Add variants of the loading APIs that take user data and a way for the injected bundle to find out about them
