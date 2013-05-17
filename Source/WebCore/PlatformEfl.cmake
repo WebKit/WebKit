@@ -82,7 +82,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/ScrollViewEfl.cpp
     platform/efl/SharedTimerEfl.cpp
     platform/efl/SoundEfl.cpp
-    platform/efl/SystemTimeEfl.cpp
     platform/efl/TemporaryLinkStubs.cpp
     platform/efl/WidgetEfl.cpp
 

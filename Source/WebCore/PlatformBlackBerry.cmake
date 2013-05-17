@@ -123,7 +123,6 @@ list(APPEND WebCore_SOURCES
     platform/blackberry/SearchPopupMenuBlackBerry.cpp
     platform/blackberry/SharedTimerBlackBerry.cpp
     platform/blackberry/SoundBlackBerry.cpp
-    platform/blackberry/SystemTimeBlackBerry.cpp
     platform/blackberry/TemporaryLinkStubs.cpp
     platform/blackberry/WidgetBlackBerry.cpp
     platform/graphics/blackberry/FloatPointBlackBerry.cpp

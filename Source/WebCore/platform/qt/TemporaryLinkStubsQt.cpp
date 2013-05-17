@@ -59,7 +59,6 @@
 #include "PluginView.h"
 #include "RenderTheme.h"
 #include "SharedBuffer.h"
-#include "SystemTime.h"
 #include "TextBoundaries.h"
 #include "Widget.h"
 
@@ -109,15 +108,6 @@ String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&)
 {
     return String();
 }
-
-#if !defined(Q_OS_WIN)
-// defined in win/SystemTimeWin.cpp, which is compiled for the Qt/Windows port
-float userIdleTime()
-{
-    notImplemented();
-    return FLT_MAX; // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
-}
-#endif
 
 void setCookieStoragePrivateBrowsingEnabled(bool)
 {

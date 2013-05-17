@@ -2974,7 +2974,6 @@ win32-*|wince* {
     HEADERS += platform/win/SystemInfo.h
     SOURCES += \
         platform/win/SystemInfo.cpp \
-        platform/win/SystemTimeWin.cpp \
         platform/graphics/win/TransformationMatrixWin.cpp
 }
 

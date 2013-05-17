@@ -1332,9 +1332,6 @@
     <ClCompile Include="..\platform\win\SystemInfo.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\win\SystemTimeWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\win\TemporaryLinkStubs.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
@@ -8047,9 +8044,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\SuddenTermination.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\SystemTime.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Theme.h">

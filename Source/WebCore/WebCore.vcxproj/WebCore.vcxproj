@@ -4174,7 +4174,6 @@
     <ClCompile Include="..\platform\win\SharedTimerWin.cpp" />
     <ClCompile Include="..\platform\win\SoundWin.cpp" />
     <ClCompile Include="..\platform\win\SystemInfo.cpp" />
-    <ClCompile Include="..\platform\win\SystemTimeWin.cpp" />
     <ClCompile Include="..\platform\win\TemporaryLinkStubs.cpp" />
     <ClCompile Include="..\platform\win\WCDataObject.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -11595,8 +11594,6 @@
     <ClInclude Include="..\platform\Sound.h" />
     <ClInclude Include="..\platform\SSLKeyGenerator.h" />
     <ClInclude Include="..\platform\SuddenTermination.h" />
-    <ClInclude Include="..\platform\SystemTime.h" />
-    <ClInclude Include="..\platform\Theme.h" />
     <ClInclude Include="..\platform\ThemeTypes.h" />
     <ClInclude Include="..\platform\ThreadGlobalData.h" />
     <ClInclude Include="..\platform\ThreadTimers.h" />

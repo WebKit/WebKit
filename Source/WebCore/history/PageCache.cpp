@@ -48,7 +48,6 @@
 #include "Page.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
-#include "SystemTime.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>

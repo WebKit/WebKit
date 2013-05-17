@@ -29231,10 +29231,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\SystemTime.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\text\TextStyle.h"
 				>
 			</File>
@@ -29579,10 +29575,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\SystemInfo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\SystemTimeWin.cpp"
 					>
 				</File>
 				<File

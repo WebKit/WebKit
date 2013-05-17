@@ -37,7 +37,6 @@
 #include "PlatformCALayer.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
-#include "SystemTime.h"
 #include "TextStream.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
