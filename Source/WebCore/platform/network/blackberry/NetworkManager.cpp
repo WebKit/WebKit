@@ -156,6 +156,11 @@ int NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefP
     BlackBerry::Platform::NetworkRequest platformRequest;
     request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, rereadCookies);
 
+    // GURL and KURL consider valid URLs differently, for example http:// is parsed as
+    // http:/ by KURL and considered valid, while GURL considers it invalid.
+    if (!platformRequest.url().is_valid())
+        return BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl;
+
     const String& documentUrl = frame->document()->url().string();
     if (!documentUrl.isEmpty())
         platformRequest.setReferrer(documentUrl);

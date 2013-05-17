@@ -1,3 +1,27 @@
+2013-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Crash due to an assert running test editing/execCommand/indent-paragraphs.html
+        https://bugs.webkit.org/show_bug.cgi?id=114944
+
+        Reviewed by Rob Buis.
+
+        It crashes in network platform code when trying to save an
+        invalid URL in the disk cache. That test contains references to
+        empty URLs like http://. Those empty URLs, are parsed as http:/ by
+        KURL and considered valid. BlackBerry network platform uses GURL
+        which considers those URLs invalid. We needed to check that the
+        URLs are valid for our platform before starting the network
+        operation.
+
+        Fixes a crash running test
+        editing/execCommand/indent-paragraphs.html.
+
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob): Check if the request URL is
+        valid from the platform point of view right after creating the
+        platform network request and return early if the URL is invalid
+        with StatusErrorInvalidUrl error.
+
 2013-05-16  Patrick Gansterer  <paroga@webkit.org>
 
         Remove unused function safeCreateFile() from WebCore
