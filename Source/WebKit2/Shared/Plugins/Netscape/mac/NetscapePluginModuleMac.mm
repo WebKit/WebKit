@@ -395,6 +395,8 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         plugin.info.name = plugin.info.file;
     if (plugin.info.desc.isNull())
         plugin.info.desc = plugin.info.file;
+
+    plugin.info.isApplicationPlugin = false;
     
     return true;
 }

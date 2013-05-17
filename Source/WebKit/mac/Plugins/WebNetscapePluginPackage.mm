@@ -144,6 +144,8 @@ using namespace WebCore;
     if (!theName)
         theName = filename;
     pluginInfo.name = theName;
+
+    pluginInfo.isApplicationPlugin = false;
     
     [self closeResourceFile:resRef];
     

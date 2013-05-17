@@ -112,7 +112,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
     if (!frame)
         return;
     Settings* settings = frame->settings();
-    if (!settings || !frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+    if (!settings)
         return;
 
     document()->updateLayout();

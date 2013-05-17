@@ -533,7 +533,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     String frameURLString = frame->coreFrame()->loader()->documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame()->loader()->documentLoader()->responseURL().string();
 
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy))) {
+    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy))) {
         return 0;
     }
 
@@ -3781,7 +3782,8 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
     String newMIMEType;
     uint32_t pluginLoadPolicy;
 
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), response.url().string(), response.url().string(), response.url().string()), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy)))
+    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy)))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
@@ -3929,7 +3931,11 @@ bool WebPage::canShowMIMEType(const String& MIMEType) const
         return true;
 
     if (PluginData* pluginData = m_page->pluginData()) {
-        if (pluginData->supportsMimeType(MIMEType) && m_page->settings()->arePluginsEnabled())
+        if (pluginData->supportsMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+            return true;
+
+        // We can use application plugins even if plugins aren't enabled.
+        if (pluginData->supportsMimeType(MIMEType, PluginData::OnlyApplicationPlugins))
             return true;
     }
 

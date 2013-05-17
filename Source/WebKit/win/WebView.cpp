@@ -2526,11 +2526,20 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
     if (!canShow)
         return E_POINTER;
 
-    *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr) ||
-        MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr) ||
-        (m_page && m_page->pluginData() && m_page->pluginData()->supportsMimeType(mimeTypeStr)) ||
-        shouldUseEmbeddedView(mimeTypeStr);
-    
+    Frame* coreFrame = core(m_mainFrame);
+    bool allowPlugins = coreFrame && coreFrame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+
+    *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr)
+        || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr);
+
+    if (!*canShow && m_page && m_page->pluginData()) {
+        *canShow = (m_page->pluginData()->supportsMimeType(mimeTypeStr, PluginData::AllPlugins) && allowPlugins)
+            || m_page->pluginData()->supportsMimeType(mimeTypeStr, PluginData::OnlyApplicationPlugins);
+    }
+
+    if (!*canShow)
+        *canShow = shouldUseEmbeddedView(mimeTypeStr);
+
     return S_OK;
 }
 

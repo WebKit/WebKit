@@ -1,3 +1,61 @@
+2013-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugins don't load when plugins are disabled, but they should
+        https://bugs.webkit.org/show_bug.cgi?id=75790
+        <rdar://problem/11650197>
+
+        Reviewed by Anders Carlsson.
+
+        Support loading "application" plug-ins even if plug-ins are explicitly disabled.
+
+        Make PDFPlugin and SimplePDFPlugin "application" plug-ins, so they can
+        be loaded even if plug-ins are disabled.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add a 5-argument, 3-reply version of callMemberFunction.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        NPAPI plug-ins are not application plug-ins.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Encode/decode the new isApplicationPlugin field on PluginInfo.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::findPlugin):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (PluginInfoStore):
+        Give PluginInfoStore's findPlugin method and its private helper
+        methods an argument allowing them to only match application plug-ins.
+
+        (WebKit::WebPageProxy::findPlugin):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        Add an argument allowing findPlugin to restrict its search to only application plug-ins.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        Previously, this caller depended on pluginData() returning null if
+        plug-ins were disabled. Since that is no longer the case, we have to
+        check if we can use plug-ins, and otherwise ignore non-application-plug-ins.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        When going to search for a plug-in, ask subframeLoader whether or not
+        it's OK to use ordinary non-application plug-ins, and pass that information
+        on to the UIProcess when performing the search.
+
+        (WebKit::WebPage::canPluginHandleResponse): Ditto.
+        (WebKit::WebPage::canShowMIMEType):
+        Ensure that canShowMIMEType returns true if we have an application plug-in
+        that can display a particular MIME type, even if we're not allowed to load plug-ins.
+
 2013-05-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Make Ewk_Context_Menu Ewk_Object

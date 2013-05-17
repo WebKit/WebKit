@@ -799,9 +799,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     String mimeType = frame->document()->loader()->writer()->mimeType();
     PluginData* pluginData = frame->page() ? frame->page()->pluginData() : 0;
 
-    if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
-        Image::supportsType(mimeType) ||
-        (pluginData && pluginData->supportsMimeType(mimeType)))
+    if (WebCore::DOMImplementation::isTextMIMEType(mimeType)
+        || Image::supportsType(mimeType)
+        || (pluginData && pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        || (pluginData && pluginData->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins)))
         return NO;
 
     return YES;

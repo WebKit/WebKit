@@ -30,6 +30,8 @@
 
 #include "PluginModuleInfo.h"
 
+#include <WebCore/PluginData.h>
+
 namespace WebCore {
     class KURL;
 }
@@ -61,7 +63,7 @@ public:
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
-    PluginModuleInfo findPlugin(String& mimeType, const WebCore::KURL&);
+    PluginModuleInfo findPlugin(String& mimeType, const WebCore::KURL&, WebCore::PluginData::AllowedPluginTypes = WebCore::PluginData::AllPlugins);
 
     // Returns the info for the plug-in with the given bundle identifier.
     PluginModuleInfo findPluginWithBundleIdentifier(const String& bundleIdentifier);
@@ -76,8 +78,8 @@ public:
     PluginInfoStoreClient* client() const { return m_client; }
 
 private:
-    PluginModuleInfo findPluginForMIMEType(const String& mimeType) const;
-    PluginModuleInfo findPluginForExtension(const String& extension, String& mimeType) const;
+    PluginModuleInfo findPluginForMIMEType(const String& mimeType, WebCore::PluginData::AllowedPluginTypes) const;
+    PluginModuleInfo findPluginForExtension(const String& extension, String& mimeType, WebCore::PluginData::AllowedPluginTypes) const;
 
     void loadPluginsIfNecessary();
     static void loadPlugin(Vector<PluginModuleInfo>& plugins, const String& pluginPath);

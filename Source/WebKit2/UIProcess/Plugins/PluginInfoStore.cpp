@@ -121,12 +121,15 @@ Vector<PluginModuleInfo> PluginInfoStore::plugins()
     return m_plugins;
 }
 
-PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) const
+PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType, PluginData::AllowedPluginTypes allowedPluginTypes) const
 {
     ASSERT(!mimeType.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         const PluginModuleInfo& plugin = m_plugins[i];
+
+        if (allowedPluginTypes == PluginData::OnlyApplicationPlugins && !plugin.info.isApplicationPlugin)
+            continue;
         
         for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
             const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
@@ -138,16 +141,19 @@ PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) 
     return PluginModuleInfo();
 }
 
-PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType) const
+PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType, PluginData::AllowedPluginTypes allowedPluginTypes) const
 {
     ASSERT(!extension.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         const PluginModuleInfo& plugin = m_plugins[i];
-        
+
+        if (allowedPluginTypes == PluginData::OnlyApplicationPlugins && !plugin.info.isApplicationPlugin)
+            continue;
+
         for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
             const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
-            
+
             const Vector<String>& extensions = mimeClassInfo.extensions;
             
             if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
@@ -198,13 +204,13 @@ PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String&)
 
 #endif
 
-PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
+PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url, PluginData::AllowedPluginTypes allowedPluginTypes)
 {
     loadPluginsIfNecessary();
     
     // First, check if we can get the plug-in based on its MIME type.
     if (!mimeType.isNull()) {
-        PluginModuleInfo plugin = findPluginForMIMEType(mimeType);
+        PluginModuleInfo plugin = findPluginForMIMEType(mimeType, allowedPluginTypes);
         if (!plugin.path.isNull())
             return plugin;
     }
@@ -212,14 +218,14 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
     // Next, check if any plug-ins claim to support the URL extension.
     String extension = pathExtension(url).lower();
     if (!extension.isNull() && mimeType.isEmpty()) {
-        PluginModuleInfo plugin = findPluginForExtension(extension, mimeType);
+        PluginModuleInfo plugin = findPluginForExtension(extension, mimeType, allowedPluginTypes);
         if (!plugin.path.isNull())
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
         String extensionMimeType = getMIMETypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
-            PluginModuleInfo plugin = findPluginForMIMEType(extensionMimeType);
+            PluginModuleInfo plugin = findPluginForMIMEType(extensionMimeType, allowedPluginTypes);
             if (!plugin.path.isNull()) {
                 mimeType = extensionMimeType;
                 return plugin;

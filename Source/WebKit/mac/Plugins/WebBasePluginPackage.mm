@@ -263,6 +263,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         description = filename;
     pluginInfo.desc = description;
 
+    pluginInfo.isApplicationPlugin = false;
+
     return YES;
 }
 

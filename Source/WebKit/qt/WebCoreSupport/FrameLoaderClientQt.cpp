@@ -1359,9 +1359,13 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     ObjectContentType plugInType = ObjectContentNone;
     if (arePluginsEnabled && PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         plugInType = ObjectContentNetscapePlugin;
-    else if (m_frame->page() && m_frame->page()->pluginData() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
-        plugInType = ObjectContentOtherPlugin;
-        
+    else if (m_frame->page() && m_frame->page()->pluginData()) {
+        bool allowPlugins = m_frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+        if ((m_frame->page()->pluginData()->supportsMimeType(mimeType, PluginData::AllPlugins) && allowPlugins)
+            || m_frame->page()->pluginData()->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
+                plugInType = ObjectContentOtherPlugin;
+    }
+
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return shouldPreferPlugInsForImages && plugInType != ObjectContentNone ? plugInType : ObjectContentImage;
     

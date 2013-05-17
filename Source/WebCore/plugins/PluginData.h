@@ -45,6 +45,7 @@ struct PluginInfo {
     String file;
     String desc;
     Vector<MimeClassInfo> mimes;
+    bool isApplicationPlugin;
 };
 
 // FIXME: merge with PluginDatabase in the future
@@ -55,8 +56,13 @@ public:
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
     const Vector<MimeClassInfo>& mimes() const { return m_mimes; }
     const Vector<size_t>& mimePluginIndices() const { return m_mimePluginIndices; }
-    
-    bool supportsMimeType(const String& mimeType) const;
+
+    enum AllowedPluginTypes {
+        AllPlugins,
+        OnlyApplicationPlugins
+    };
+
+    bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
     String pluginNameForMimeType(const String& mimeType) const;
     String pluginFileForMimeType(const String& mimeType) const;
 

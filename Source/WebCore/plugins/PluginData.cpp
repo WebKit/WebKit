@@ -42,11 +42,12 @@ PluginData::PluginData(const Page* page)
     }
 }
 
-bool PluginData::supportsMimeType(const String& mimeType) const
+bool PluginData::supportsMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
 {
-    for (unsigned i = 0; i < m_mimes.size(); ++i)
-        if (m_mimes[i].type == mimeType)
+    for (unsigned i = 0; i < m_mimes.size(); ++i) {
+        if (m_mimes[i].type == mimeType && (allowedPluginTypes == AllPlugins || m_plugins[m_mimePluginIndices[i]].isApplicationPlugin))
             return true;
+    }
     return false;
 }
 

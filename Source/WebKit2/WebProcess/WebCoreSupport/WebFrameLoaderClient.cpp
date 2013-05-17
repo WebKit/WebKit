@@ -1425,7 +1425,9 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
         if (PluginData* pluginData = webPage->corePage()->pluginData()) {
-            if (pluginData->supportsMimeType(mimeType))
+            if (pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+                plugInSupportsMIMEType = true;
+            else if (pluginData->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
                 plugInSupportsMIMEType = true;
         }
     }
