@@ -1,3 +1,17 @@
+2013-05-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: SyntaxError evaluating "1+1; //@ sourceURL=test" in console
+        https://bugs.webkit.org/show_bug.cgi?id=116292
+
+        Add a newline after the expression so a single line comment doesn't
+        erroneously comment out the closing brace of the with block.
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/console/console-eval-comment.html
+
+        * inspector/InjectedScriptSource.js:
+
 2013-05-17  David Hyatt  <hyatt@apple.com>
 
         fast/flexbox/auto-height-with-flex.html failing only on release builds.

@@ -597,7 +597,7 @@ InjectedScript.prototype = {
         try {
             if (commandLineAPI && inspectedWindow.console) {
                 inspectedWindow.console.__commandLineAPI = commandLineAPI;
-                expression = "with ((window && window.console && window.console.__commandLineAPI) || {}) { " + expression + " }";
+                expression = "with ((window && window.console && window.console.__commandLineAPI) || {}) { " + expression + "\n}";
             }
 
             var result = evalFunction.call(object, expression);
