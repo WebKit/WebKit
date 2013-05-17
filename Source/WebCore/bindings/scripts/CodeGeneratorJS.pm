@@ -3557,7 +3557,7 @@ sub NativeToJSValue
         AddToImplIncludes("MessagePort.h", $conditional);
         AddToImplIncludes("JSMessagePort.h", $conditional);
         AddToImplIncludes("<runtime/JSArray.h>", $conditional);
-        return "jsArray(exec, $globalObject, *$value)";
+        return "$value ? jsArray(exec, $globalObject, *$value) : constructEmptyArray(exec, 0, castedThis->globalObject())";
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);

@@ -1,3 +1,26 @@
+2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove custom code for MessageEvent.ports getter
+        https://bugs.webkit.org/show_bug.cgi?id=116304
+
+        Reviewed by Kentaro Hara.
+
+        Remove Custom code for the "ports" attribute getter in MessageEvent
+        IDL interface. The JSC bindings generator already supports attributes
+        of type MessagePortArray.
+
+        No new tests, already covered by existing layout tests and bindings
+        tests.
+
+        * bindings/js/JSMessageEventCustom.cpp: Remove Custom code for ports getter.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Small tweak to correctly handle the case where impl->ports()
+        returns NULL and avoid crashing in this case.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Rebaseline due
+        to bindings generator tweak.
+        * dom/MessageEvent.idl: Remove [CustomGetter] extended attribute for 'ports' attribute
+        and switch to MessagePortArray type.
+
 2013-05-16  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Add stubs for ContextMenu and ContextMenuItem
