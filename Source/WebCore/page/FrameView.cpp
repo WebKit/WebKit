@@ -511,6 +511,21 @@ void FrameView::setMarginHeight(LayoutUnit h)
     m_margins.setHeight(h);
 }
 
+static bool frameFlatteningEnabled(Frame* frame)
+{
+    return frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
+}
+
+static bool supportsFrameFlattening(Frame* frame)
+{
+    if (!frame)
+        return false;
+
+    // Frame flattening is valid only for <frame> and <iframe>.
+    HTMLFrameOwnerElement* owner = frame->ownerElement();
+    return owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag));
+}
+
 bool FrameView::avoidScrollbarCreation() const
 {
     ASSERT(m_frame);
@@ -519,13 +534,7 @@ bool FrameView::avoidScrollbarCreation() const
     // but we also cannot turn scrollbars off as we determine
     // our flattening policy using that.
 
-    if (!m_frame->ownerElement())
-        return false;
-
-    if (!m_frame->settings() || m_frame->settings()->frameFlatteningEnabled())
-        return true;
-
-    return false;
+    return frameFlatteningEnabled(frame()) && supportsFrameFlattening(frame());
 }
 
 void FrameView::setCanHaveScrollbars(bool canHaveScrollbars)
@@ -736,7 +745,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
         Node* body = document->body();
         if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
+            if (body->hasTagName(framesetTag) && !frameFlatteningEnabled(frame())) {
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
@@ -1231,7 +1240,7 @@ void FrameView::layout(bool allowSubtree)
             Document* document = m_frame->document();
             Node* body = document->body();
             if (body && body->renderer()) {
-                if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
+                if (body->hasTagName(framesetTag) && !frameFlatteningEnabled(frame())) {
                     body->renderer()->setChildNeedsLayout(true);
                 } else if (body->hasTagName(bodyTag)) {
                     if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
@@ -3394,7 +3403,7 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
             return true;
     }
 
-    if (!m_frame->settings() || !m_frame->settings()->frameFlatteningEnabled())
+    if (!frameFlatteningEnabled(frame()))
         return false;
 
     if (m_frame->ownerElement()->hasTagName(frameTag))
