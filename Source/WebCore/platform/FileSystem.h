@@ -227,10 +227,6 @@ String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
 #endif
 
-#if PLATFORM(WIN) && USE(CF)
-bool safeCreateFile(const String&, CFDataRef);
-#endif
-
 } // namespace WebCore
 
 #endif // FileSystem_h
