@@ -47,7 +47,7 @@ protected:
     int scrollbarThickness() const;
     void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -67,12 +67,12 @@ protected:
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 
 private:
-    virtual const char* renderName() const { return "RenderTextControl"; }
-    virtual bool isTextControl() const { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderTextControl"; }
+    virtual bool isTextControl() const OVERRIDE FINAL { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-    virtual bool avoidsFloats() const { return true; }
+    virtual bool avoidsFloats() const OVERRIDE { return true; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
     
@@ -102,7 +102,7 @@ void toRenderTextControl(const RenderTextControl*);
 // We can't use RenderFlexibleBox directly, because flexboxes have a different
 // baseline definition, and then inputs of different types wouldn't line up
 // anymore.
-class RenderTextControlInnerContainer : public RenderFlexibleBox {
+class RenderTextControlInnerContainer FINAL : public RenderFlexibleBox {
 public:
     explicit RenderTextControlInnerContainer(Element* element)
         : RenderFlexibleBox(element)

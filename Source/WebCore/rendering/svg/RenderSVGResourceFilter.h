@@ -63,7 +63,7 @@ public:
 
 class GraphicsContext;
 
-class RenderSVGResourceFilter : public RenderSVGResourceContainer {
+class RenderSVGResourceFilter FINAL : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceFilter(SVGFilterElement*);
     virtual ~RenderSVGResourceFilter();

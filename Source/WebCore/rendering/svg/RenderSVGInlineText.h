@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SVGInlineTextBox;
 
-class RenderSVGInlineText : public RenderText {
+class RenderSVGInlineText FINAL : public RenderText {
 public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
 

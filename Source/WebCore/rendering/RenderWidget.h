@@ -79,21 +79,21 @@ protected:
 
     void clearWidget();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
+    virtual void layout() OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual void paintContents(PaintInfo&, const LayoutPoint&);
 
 private:
-    virtual bool isWidget() const { return true; }
+    virtual bool isWidget() const OVERRIDE FINAL { return true; }
 
-    virtual void willBeDestroyed();
-    virtual void destroy();
-    virtual void setSelectionState(SelectionState);
-    virtual void setOverlapTestResult(bool);
+    virtual void willBeDestroyed() OVERRIDE FINAL;
+    virtual void destroy() OVERRIDE FINAL;
+    virtual void setSelectionState(SelectionState) OVERRIDE FINAL;
+    virtual void setOverlapTestResult(bool) OVERRIDE FINAL;
 
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();

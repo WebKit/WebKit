@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class RenderSVGTextPath : public RenderSVGInline {
+class RenderSVGTextPath FINAL : public RenderSVGInline {
 public:
     RenderSVGTextPath(Element*);
 

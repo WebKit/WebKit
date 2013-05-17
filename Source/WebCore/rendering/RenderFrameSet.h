@@ -53,7 +53,7 @@ private:
     Vector<bool> m_allowBorder;
 };
 
-class RenderFrameSet : public RenderBox {
+class RenderFrameSet FINAL : public RenderBox {
 public:
     RenderFrameSet(HTMLFrameSetElement*);
     virtual ~RenderFrameSet();

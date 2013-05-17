@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderTable;
 class RenderTableCell;
 
-class RenderTableCol : public RenderBox {
+class RenderTableCol FINAL : public RenderBox {
 public:
     explicit RenderTableCol(Element*);
 

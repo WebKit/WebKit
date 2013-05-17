@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GridTrack;
 
-class RenderGrid : public RenderBlock {
+class RenderGrid FINAL : public RenderBlock {
 public:
     RenderGrid(Element*);
     virtual ~RenderGrid();

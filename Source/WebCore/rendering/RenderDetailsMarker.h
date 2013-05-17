@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class RenderDetailsMarker : public RenderBlock {
+class RenderDetailsMarker FINAL : public RenderBlock {
 public:
     RenderDetailsMarker(Element*);
 

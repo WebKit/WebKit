@@ -29,7 +29,7 @@ class HTMLInputElement;
 class MouseEvent;
 class SliderThumbElement;
 
-class RenderSlider : public RenderFlexibleBox {
+class RenderSlider FINAL : public RenderFlexibleBox {
 public:
     static const int defaultTrackLength;
 

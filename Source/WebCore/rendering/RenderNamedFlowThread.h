@@ -43,7 +43,7 @@ typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
 typedef ListHashSet<Node*> NamedFlowContentNodes;
 
-class RenderNamedFlowThread : public RenderFlowThread {
+class RenderNamedFlowThread FINAL : public RenderFlowThread {
 public:
     virtual ~RenderNamedFlowThread();
 

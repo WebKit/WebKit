@@ -42,7 +42,7 @@ class RenderLayerCompositor;
 class CustomFilterGlobalContext;
 #endif
 
-class RenderView : public RenderBlock {
+class RenderView FINAL : public RenderBlock {
 public:
     explicit RenderView(Document*);
     virtual ~RenderView();

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLElement;
 
-class RenderWordBreak : public RenderText {
+class RenderWordBreak FINAL : public RenderText {
 public:
     explicit RenderWordBreak(HTMLElement*);
 

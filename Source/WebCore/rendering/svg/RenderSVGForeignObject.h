@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SVGForeignObjectElement;
 
-class RenderSVGForeignObject : public RenderSVGBlock {
+class RenderSVGForeignObject FINAL : public RenderSVGBlock {
 public:
     explicit RenderSVGForeignObject(SVGForeignObjectElement*);
     virtual ~RenderSVGForeignObject();

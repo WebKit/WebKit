@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderScrollbar;
 
-class RenderScrollbarPart : public RenderBlock {
+class RenderScrollbarPart FINAL : public RenderBlock {
 public:
     static RenderScrollbarPart* createAnonymous(Document*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
     
