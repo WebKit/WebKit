@@ -1,3 +1,10 @@
+2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the declaration of Element::detachAttrNodeAtIndex erroneously added in r150072.
+
+        * dom/Element.h:
+        (Element):
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         WKKeyValueStorageManagerGetKeyValueStorageOrigins should get origins from the UI process

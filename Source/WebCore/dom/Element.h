@@ -733,7 +733,6 @@ private:
 
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
-    void detachAttrNodeAtIndex(Attr*, size_t index);
 
     void createRendererIfNeeded();
 
