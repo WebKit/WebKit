@@ -987,7 +987,6 @@
 		BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */; };
 		BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3912125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp */; };
 		BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */; };
-		BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */; };
 		BCBECDE716B6416800047A1A /* XPCServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */; };
 		BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */; };
 		BCC43ABA127B95DC00317F16 /* PlatformPopupMenuData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */; };
@@ -2490,7 +2489,6 @@
 		BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPageProxy.messages.in; sourceTree = "<group>"; };
 		BCBD3912125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyMessages.h; sourceTree = "<group>"; };
-		BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPairVector.h; sourceTree = "<group>"; };
 		BCBECDC016B5CE0D00047A1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCBECDC216B5CE2A00047A1A /* PluginService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.Development.xcconfig; sourceTree = "<group>"; };
 		BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceEntryPoint.mm; sourceTree = "<group>"; };
@@ -3303,7 +3301,6 @@
 				E1EDFDAD1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h */,
 				5272B2881406985D0096A5D0 /* StatisticsData.cpp */,
 				5272B2891406985D0096A5D0 /* StatisticsData.h */,
-				BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
@@ -5492,7 +5489,6 @@
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1A44B95C16B73F9F00B7BBD8 /* StorageManager.h in Headers */,
 				1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */,
-				BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */,
 				1A13BEB41635A9C800F19C03 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				51815BA016A622210054501F /* SyncNetworkResourceLoader.h in Headers */,

@@ -97,6 +97,8 @@
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
 		7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
+		7CFBCADF1743234F00B2BFCF /* WillLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */; };
+		7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */; };
 		81B50193140F232300D9EB58 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81B50192140F232300D9EB58 /* StringBuilder.cpp */; };
 		8A2C750E16CED9550024F352 /* ResizeWindowAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A2C750D16CED9550024F352 /* ResizeWindowAfterCrash.cpp */; };
 		8A3AF93B16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3AF93A16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp */; };
@@ -378,6 +380,8 @@
 		76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent_Bundle.cpp; sourceTree = "<group>"; };
 		76E182DE15475A8300F1FADD /* auto-submitting-form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "auto-submitting-form.html"; sourceTree = "<group>"; };
 		7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseThenTerminate.cpp; sourceTree = "<group>"; };
+		7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad.cpp; sourceTree = "<group>"; };
+		7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad_Bundle.cpp; sourceTree = "<group>"; };
 		81B50192140F232300D9EB58 /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringBuilder.cpp; path = WTF/StringBuilder.cpp; sourceTree = "<group>"; };
 		8A2C750D16CED9550024F352 /* ResizeWindowAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeWindowAfterCrash.cpp; sourceTree = "<group>"; };
 		8A3AF93A16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReloadPageAfterCrash.cpp; sourceTree = "<group>"; };
@@ -723,6 +727,8 @@
 				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
 				520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */,
 				0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */,
+				7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */,
+				7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */,
 				76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */,
 				76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */,
 				BC901E221492ADCE0074A667 /* WKConnection.cpp */,
@@ -1090,6 +1096,7 @@
 				93F1DB3114DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
 				93F1DB5514DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
 				9318778915EEC57700A9CCE3 /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
+				7CFBCADF1743234F00B2BFCF /* WillLoad.cpp in Sources */,
 				93F7E86C14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
 				BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */,
 				BC2D004912A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
@@ -1185,6 +1192,7 @@
 				93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */,
 				52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */,
 				C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */,
+				7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */,
 				BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */,
 				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
 				C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */,

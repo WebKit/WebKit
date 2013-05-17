@@ -31,12 +31,43 @@
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebData.h"
 #include "WebError.h"
+#include "WebURLRequest.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage* page, const ResourceRequest& request, APIObject* userData)
+{
+    if (!m_client.willLoadURLRequest)
+        return;
+
+    m_client.willLoadURLRequest(toAPI(page), toAPI(request), toAPI(userData), m_client.clientInfo);
+}
+
+static void releaseSharedBuffer(unsigned char*, const void* data)
+{
+    // Balanced by ref() in InjectedBundlePageLoaderClient::willLoadDataRequest().
+    static_cast<SharedBuffer*>(const_cast<void*>(data))->deref();
+}
+
+void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage* page, const ResourceRequest& request, const SharedBuffer* data, const String& MIMEType, const String& encodingName, const KURL& unreachableURL, APIObject* userData)
+{
+    if (!m_client.willLoadDataRequest)
+        return;
+
+    RefPtr<WebData> webData;
+    if (data) {
+        const_cast<SharedBuffer*>(data)->ref();
+        webData = WebData::createWithoutCopying((const unsigned char*)data->data(), data->size(), releaseSharedBuffer, data);
+    }
+
+    m_client.willLoadDataRequest(toAPI(page), toAPI(request), toAPI(webData.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.clientInfo);
+}
 
 bool InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem(WebPage* page, InjectedBundleBackForwardListItem* item, RefPtr<APIObject>& userData)
 {

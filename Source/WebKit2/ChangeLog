@@ -1,3 +1,40 @@
+2013-05-14  Sam Weinig  <sam@webkit.org>
+
+        Add variants of the loading APIs that take user data and a way for the injected bundle to find out about them
+        https://bugs.webkit.org/show_bug.cgi?id=116132
+
+        Reviewed by Anders Carlsson.
+
+        Adds "WithUserData" versions of all the load APIs and two new WKBundlePageLoaderClient functions,
+        willLoadURLRequest and willLoadDataRequest to let the bundle access them.
+
+        Adds WebKit2WillLoadTest.* API tests.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadURLRequestWithUserData):
+        (WKPageLoadFile):
+        (WKPageLoadFileWithUserData):
+        (WKPageLoadHTMLStringWithUserData):
+        (WKPageLoadAlternateHTMLStringWithUserData):
+        (WKPageLoadPlainTextStringWithUserData):
+        (WKPageLoadWebArchiveDataWithUserData):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willLoadURLRequest):
+        (WebKit::InjectedBundlePageLoaderClient::willLoadDataRequest):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (WebCore):
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Fix memory leak in WebKitBackForwardList

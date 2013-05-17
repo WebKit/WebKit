@@ -111,6 +111,8 @@ typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
 typedef void (*WKBundlePageDidLayoutCallback)(WKBundlePageRef page, WKLayoutMilestones milestones, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageFeaturesUsedInPageCallback)(WKBundlePageRef page, WKArrayRef featureStrings, const void *clientInfo);
+typedef void (*WKBundlePageWillLoadURLRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKBundlePageWillLoadDataRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKDataRef data, WKStringRef MIMEType, WKStringRef encodingName, WKURLRef unreachableURL, WKTypeRef userData, const void *clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -159,6 +161,8 @@ struct WKBundlePageLoaderClient {
 
     // Version 5
     WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
+    WKBundlePageWillLoadURLRequestCallback                                  willLoadURLRequest;
+    WKBundlePageWillLoadDataRequestCallback                                 willLoadDataRequest;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 

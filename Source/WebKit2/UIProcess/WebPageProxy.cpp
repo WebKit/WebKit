@@ -668,7 +668,7 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const KURL& url, Sandbo
     return true;
 }
 
-void WebPageProxy::loadURL(const String& url)
+void WebPageProxy::loadURL(const String& url, APIObject* userData)
 {
     setPendingAPIRequestURL(url);
 
@@ -679,11 +679,11 @@ void WebPageProxy::loadURL(const String& url)
     bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
+void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest, APIObject* userData)
 {
     setPendingAPIRequestURL(urlRequest->resourceRequest().url());
 
@@ -694,52 +694,11 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
     bool createdExtension = maybeInitializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL)
-{
-    if (!isValid())
-        reattachToWebProcess();
-
-    m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL), m_pageID);
-    m_process->responsivenessTimer()->start();
-}
-
-void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL)
-{
-    if (!isValid())
-        reattachToWebProcess();
-
-    if (m_mainFrame)
-        m_mainFrame->setUnreachableURL(unreachableURL);
-
-    m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL), m_pageID);
-    m_process->responsivenessTimer()->start();
-}
-
-void WebPageProxy::loadPlainTextString(const String& string)
-{
-    if (!isValid())
-        reattachToWebProcess();
-
-    m_process->send(Messages::WebPage::LoadPlainTextString(string), m_pageID);
-    m_process->responsivenessTimer()->start();
-}
-
-void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData)
-{
-    if (!isValid())
-        reattachToWebProcess();
-
-    m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference()), m_pageID);
-    m_process->responsivenessTimer()->start();
-}
-
-void WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString)
+void WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, APIObject* userData)
 {
     if (!isValid())
         reattachToWebProcess();
@@ -762,7 +721,48 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
-    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
+void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, APIObject* userData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    m_process->assumeReadAccessToBaseURL(baseURL);
+    m_process->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL, WebContextUserMessageEncoder(userData)), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
+void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, APIObject* userData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    if (m_mainFrame)
+        m_mainFrame->setUnreachableURL(unreachableURL);
+
+    m_process->assumeReadAccessToBaseURL(baseURL);
+    m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL, WebContextUserMessageEncoder(userData)), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
+void WebPageProxy::loadPlainTextString(const String& string, APIObject* userData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    m_process->send(Messages::WebPage::LoadPlainTextString(string, WebContextUserMessageEncoder(userData)), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
+void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData, APIObject* userData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference(), WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 

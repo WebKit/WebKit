@@ -882,53 +882,75 @@ void WebPage::sendClose()
     send(Messages::WebPageProxy::ClosePage(false));
 }
 
-void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle, CoreIPC::MessageDecoder& decoder)
 {
-    loadURLRequest(ResourceRequest(KURL(KURL(), url)), sandboxExtensionHandle);
+    loadURLRequest(ResourceRequest(KURL(KURL(), url)), sandboxExtensionHandle, decoder);
 }
 
-void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, CoreIPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
+    RefPtr<APIObject> userData;
+    InjectedBundleUserMessageDecoder userMessageDecoder(userData);
+    if (!decoder.decode(userMessageDecoder))
+        return;
+
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
+
+    // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
+    // to all the client to set up any needed state.
+    m_loaderClient.willLoadURLRequest(this, request, userData.get());
+
+    // Initate the load in WebCore.
     m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
 }
 
-void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& unreachableURL)
+void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& unreachableURL, CoreIPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
+    RefPtr<APIObject> userData;
+    InjectedBundleUserMessageDecoder userMessageDecoder(userData);
+    if (!decoder.decode(userMessageDecoder))
+        return;
+
     ResourceRequest request(baseURL);
     SubstituteData substituteData(sharedBuffer, MIMEType, encodingName, unreachableURL);
+
+    // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
+    // to all the client to set up any needed state.
+    m_loaderClient.willLoadDataRequest(this, request, substituteData.content(), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), userData.get());
+
+    // Initate the load in WebCore.
     m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
 }
 
-void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString)
+void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters()), htmlString.length() * sizeof(UChar));
     KURL baseURL = baseURLString.isEmpty() ? blankURL() : KURL(KURL(), baseURLString);
-    loadData(sharedBuffer, "text/html", "utf-16", baseURL, KURL());
+    loadData(sharedBuffer, "text/html", "utf-16", baseURL, KURL(), decoder);
 }
 
-void WebPage::loadAlternateHTMLString(const String& htmlString, const String& baseURLString, const String& unreachableURLString)
+void WebPage::loadAlternateHTMLString(const String& htmlString, const String& baseURLString, const String& unreachableURLString, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters()), htmlString.length() * sizeof(UChar));
     KURL baseURL = baseURLString.isEmpty() ? blankURL() : KURL(KURL(), baseURLString);
     KURL unreachableURL = unreachableURLString.isEmpty() ? KURL() : KURL(KURL(), unreachableURLString);
-    loadData(sharedBuffer, "text/html", "utf-16", baseURL, unreachableURL);
+    loadData(sharedBuffer, "text/html", "utf-16", baseURL, unreachableURL, decoder);
 }
 
-void WebPage::loadPlainTextString(const String& string)
+void WebPage::loadPlainTextString(const String& string, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar));
-    loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL());
+    loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL(), decoder);
 }
 
-void WebPage::loadWebArchiveData(const CoreIPC::DataReference& webArchiveData)
+void WebPage::loadWebArchiveData(const CoreIPC::DataReference& webArchiveData, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(webArchiveData.data()), webArchiveData.size() * sizeof(uint8_t));
-    loadData(sharedBuffer, "application/x-webarchive", "utf-16", blankURL(), KURL());
+    loadData(sharedBuffer, "application/x-webarchive", "utf-16", blankURL(), KURL(), decoder);
 }
 
 void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
