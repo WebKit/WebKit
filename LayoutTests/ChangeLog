@@ -1,3 +1,19 @@
+2013-05-16  Alexis Menard  <alexis@webkit.org>
+
+        Regression: Event#stopPropagation() does not halt bubbling for webkitTransitionEnd
+        https://bugs.webkit.org/show_bug.cgi?id=115656
+
+        Reviewed by Darin Adler.
+
+        Added new tests to cover the bug.
+
+        * transitions/transition-end-event-prefixed-03-expected.txt: Added.
+        * transitions/transition-end-event-prefixed-03.html: Added.
+        * transitions/transition-end-event-prefixed-02-expected.txt: Added.
+        * transitions/transition-end-event-prefixed-02.html: Added.
+        * transitions/transition-end-event-prefixed-01-expected.txt: Added.
+        * transitions/transition-end-event-prefixed-01.html: Added.
+
 2013-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add failing test expectations to http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html per bug 116259.

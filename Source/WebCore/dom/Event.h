@@ -93,6 +93,7 @@ public:
     void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
 
     const AtomicString& type() const { return m_type; }
+    void setType(const AtomicString& type) { m_type = type; }
     
     EventTarget* target() const { return m_target.get(); }
     void setTarget(PassRefPtr<EventTarget>);
