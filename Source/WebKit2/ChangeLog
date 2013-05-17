@@ -1,3 +1,21 @@
+2013-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Fix memory leak in WebKitBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=116222
+
+        Reviewed by Carlos Garcia Campos.
+
+        Due to the use of leakRef() the ImmutableArray is not being released
+        automatically. Adding a local variable in the methods to make sure that
+        the ImmutableArray is freed.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkit_back_forward_list_get_back_list_with_limit): Add local variable
+        RefPtr and pass the ImmutableArray to
+        WebKitBackForwardList::webkitBackForwardListCreateList() using
+        RefPtr::get().
+        (webkit_back_forward_list_get_forward_list_with_limit): Ditto.
+
 2013-05-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150034.
