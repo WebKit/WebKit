@@ -137,6 +137,16 @@ String pathByAppendingComponent(const String& path, const String& component)
 {
     Vector<UChar> buffer(MAX_PATH);
 
+#if OS(WINCE)
+    buffer.append(path.characters(), path.length());
+
+    UChar lastPathCharacter = path[path.length() - 1];
+    if (lastPathCharacter != L'\\' && lastPathCharacter != L'/' && component[0] != L'\\' && component[0] != L'/')
+        buffer.append(PlatformFilePathSeparator);
+
+    buffer.append(component.characters(), component.length());
+    buffer.shrinkToFit();
+#else
     if (path.length() + 1 > buffer.size())
         return String();
 
@@ -148,6 +158,7 @@ String pathByAppendingComponent(const String& path, const String& component)
         return String();
 
     buffer.resize(wcslen(buffer.data()));
+#endif
 
     return String::adopt(buffer);
 }
@@ -190,7 +201,24 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& path)
 {
+#if OS(WINCE)
+    size_t positionSlash = path.reverseFind('/');
+    size_t positionBackslash = path.reverseFind('\\');
+
+    size_t position;
+    if (positionSlash == notFound)
+        position = positionBackslash;
+    else if (positionBackslash == notFound)
+        position =  positionSlash;
+    else
+        position = std::max(positionSlash, positionBackslash);
+
+    if (position == notFound)
+        return path;
+    return path.substring(position + 1);
+#else
     return String(::PathFindFileName(String(path).charactersWithNullTermination()));
+#endif
 }
 
 String directoryName(const String& path)
