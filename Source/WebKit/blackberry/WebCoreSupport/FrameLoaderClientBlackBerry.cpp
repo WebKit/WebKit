@@ -24,6 +24,7 @@
 #include "BackForwardController.h"
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
+#include "BlobStream.h"
 #include "CredentialManager.h"
 #include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
@@ -1202,6 +1203,9 @@ void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoad
 {
     ASSERT(documentLoader);
     ResourceBuffer* buff = documentLoader->mainResourceData().get();
+    BlackBerry::Platform::String filename = response.suggestedFilename();
+    if (filename.empty())
+        filename = request.suggestedSaveName();
 
     if (!buff) {
         // If no cached, like policyDownload resource which don't go render at all, just direct to downloadStream.
@@ -1212,14 +1216,12 @@ void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoad
         // associated with a ResourceHandle. For instance, Blob objects
         // have their own ResourceHandle class which won't call startJob
         // to do the proper setup. Do it here.
-        if (!stream) {
-            int playerId = static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->playerId();
-            NetworkManager::instance()->startJob(playerId, handle, request, m_frame, false);
-            stream = NetworkManager::instance()->streamForHandle(handle);
-        }
+        if (!stream)
+            stream = new BlobStream(response, handle);
+
         ASSERT(stream);
 
-        m_webPagePrivate->m_client->downloadRequested(stream, response.suggestedFilename());
+        m_webPagePrivate->m_client->downloadRequested(stream, filename);
         return;
     }
 
@@ -1231,10 +1233,10 @@ void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoad
     STATIC_LOCAL_STRING(s_base64, ";base64,");
     url.append(s_base64);
     url.append(BlackBerry::Platform::String::fromUtf8(base64Encode(CString(buff->data(), buff->size())).utf8().data()));
-    NetworkRequest req;
-    req.setRequestUrl(url.string(), BlackBerry::Platform::String::fromAscii("GET"));
-    BlackBerry::Platform::DataStream *stream = new BlackBerry::Platform::DataStream(req);
-    m_webPagePrivate->m_client->downloadRequested(stream, response.suggestedFilename());
+    NetworkRequest netRequest;
+    netRequest.setRequestUrl(url.string());
+    BlackBerry::Platform::DataStream *stream = new BlackBerry::Platform::DataStream(netRequest);
+    m_webPagePrivate->m_client->downloadRequested(stream, filename);
     stream->streamOpen();
 }
 

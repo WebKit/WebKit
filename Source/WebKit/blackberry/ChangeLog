@@ -1,3 +1,19 @@
+2013-05-16  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Unable to download blob resource
+        https://bugs.webkit.org/show_bug.cgi?id=115888
+
+        Reviewed by Benjamin Poulain.
+
+        For blob resource (blob:http....), it's not suitable to go to NetworkStream
+        which don't handle "blob" protocol at all. since blob data already handled
+        in BlobResourceHandle, simply get the data out to download stream.
+
+        RIM bug 331086, internally reviewed by Charles Wei and Leo Yang.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload):
+
 2013-05-16  Andreas Kling  <akling@apple.com>
 
         Page::chrome() should return a reference.

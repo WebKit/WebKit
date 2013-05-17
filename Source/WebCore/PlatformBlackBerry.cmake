@@ -44,6 +44,7 @@ list(APPEND WebCore_SOURCES
     platform/network/NetworkStorageSessionStub.cpp
     platform/network/ProxyServer.cpp
     platform/network/blackberry/AutofillBackingStore.cpp
+    platform/network/blackberry/BlobStream.cpp
     platform/network/blackberry/CookieJarBlackBerry.cpp
     platform/network/blackberry/DNSBlackBerry.cpp
     platform/network/blackberry/DeferredData.cpp
