@@ -46,7 +46,7 @@ EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, PassRefPtr<Ewk
 {
     if (WKContextMenuItemGetType(item) == kWKContextMenuItemTypeSubmenu) {
         WKRetainPtr<WKArrayRef> menuItems = adoptWK(WKContextMenuCopySubmenuItems(item));
-        m_subMenu = EwkContextMenu::create(parentMenu->ewkView(), menuItems.get());
+        m_subMenu = EwkContextMenu::create(m_parentMenu->ewkView(), menuItems.get());
     }
 }
 

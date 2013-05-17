@@ -1,5 +1,19 @@
 2013-05-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
+        [EFL][WK2] Fix sub menu initialization in ewk_context_menu_item
+        https://bugs.webkit.org/show_bug.cgi?id=116321
+
+        Reviewed by Christophe Dumez.
+
+        During sub menu creation, after initializing m_parentMenu, parentMenu
+        pointer became null which may cause segfaults. This patch fixes it by
+        using m_parentMenu.
+
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (EwkContextMenuItem::EwkContextMenuItem):
+
+2013-05-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
         [EFL][WK2] Support sub menu in ewk context menus
         https://bugs.webkit.org/show_bug.cgi?id=114729
 
