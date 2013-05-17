@@ -1,3 +1,33 @@
+2013-05-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Support sub menu in ewk context menus
+        https://bugs.webkit.org/show_bug.cgi?id=114729
+
+        Reviewed by Christophe Dumez.
+
+        Added submenu support in EwkContextMenu and an API function to receive
+        Ewk_Context_Menu from submenu context menu item. A test case was added
+        for new API function.
+        EwkContextMenu is now an EwkObject allowing multiple instances of submenu
+        to be used in different submenu type context menu items.
+
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (EwkContextMenuItem::EwkContextMenuItem):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_parent_menu_get):
+        (ewk_context_menu_item_submenu_get):
+        * UIProcess/API/efl/ewk_context_menu_item.h:
+        * UIProcess/API/efl/ewk_context_menu_item_private.h:
+        (EwkContextMenuItem::create):
+        (EwkContextMenuItem::parentMenu):
+        (EwkContextMenuItem::subMenu):
+        (EwkContextMenuItem):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu::ewkView):
+        (EwkContextMenu):
+        * UIProcess/API/efl/tests/test_ewk2_context_menu.cpp:
+        (showContextMenu):
+
 2013-05-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>, Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed build fix.

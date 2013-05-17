@@ -61,6 +61,8 @@ public:
     const Eina_List* items() const { return m_contextMenuItems; }
     void contextMenuItemSelected(WKContextMenuItemRef item);
 
+    EwkView* ewkView() const { return m_viewImpl; }
+
 private:
     EwkContextMenu();
     EwkContextMenu(Eina_List* items);

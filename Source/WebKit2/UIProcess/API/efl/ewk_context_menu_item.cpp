@@ -27,6 +27,7 @@
 #include "ewk_context_menu_item.h"
 
 #include "ewk_context_menu_item_private.h"
+#include "ewk_context_menu_private.h"
 #include "ewk_private.h"
 #include <WebKit2/WKContextMenuItemTypes.h>
 #include <wtf/text/CString.h>
@@ -35,18 +36,21 @@ using namespace WebKit;
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action);
 
-EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, EwkContextMenu* parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, PassRefPtr<EwkContextMenu> parentMenu)
     : m_type(static_cast<Ewk_Context_Menu_Item_Type>(WKContextMenuItemGetType(item)))
     , m_action(getEwkActionFromWKTag((WKContextMenuItemGetTag(item))))
     , m_title(WKEinaSharedString(AdoptWK, WKContextMenuItemCopyTitle(item)))
     , m_isChecked(WKContextMenuItemGetChecked(item))
     , m_isEnabled(WKContextMenuItemGetEnabled(item))
     , m_parentMenu(parentMenu)
-    , m_subMenu(0)
 {
+    if (WKContextMenuItemGetType(item) == kWKContextMenuItemTypeSubmenu) {
+        WKRetainPtr<WKArrayRef> menuItems = adoptWK(WKContextMenuCopySubmenuItems(item));
+        m_subMenu = EwkContextMenu::create(parentMenu->ewkView(), menuItems.get());
+    }
 }
 
-EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, EwkContextMenu* subMenu, EwkContextMenu* parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu, PassRefPtr<EwkContextMenu> parentMenu)
     : m_type(type)
     , m_action(action)
     , m_title(title)
@@ -59,7 +63,7 @@ EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Cont
 
 Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled)
 {
-    return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled, 0).leakPtr();
+    return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled).leakPtr();
 }
 
 Ewk_Context_Menu_Item* ewk_context_menu_item_new_with_submenu(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
@@ -153,7 +157,14 @@ Ewk_Context_Menu* ewk_context_menu_item_parent_menu_get(const Ewk_Context_Menu_I
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    return const_cast<Ewk_Context_Menu_Item*>(item)->parentMenu();
+    return item->parentMenu();
+}
+
+Ewk_Context_Menu* ewk_context_menu_item_submenu_get(const Ewk_Context_Menu_Item* item)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+
+    return item->subMenu();
 }
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action)
