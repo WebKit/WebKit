@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -25,17 +24,20 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CONTEXT_MENUS) && USE(CROSS_PLATFORM_CONTEXT_MENUS)
+
 #include "ContextMenuItem.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-void* ContextMenuItem::platformContextMenuItem() const
+PlatformContextMenuItem ContextMenuItem::platformContextMenuItem() const
 {
     notImplemented();
     return 0;
 }
 
 }
-// vim: ts=4 sw=4 et
+#endif // ENABLE(CONTEXT_MENUS) && USE(CROSS_PLATFORM_CONTEXT_MENUS)

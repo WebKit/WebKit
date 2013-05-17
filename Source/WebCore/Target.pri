@@ -2919,8 +2919,8 @@ SOURCES += \
     platform/ContextMenu.cpp \
     platform/ContextMenuItem.cpp \
     platform/qt/ClipboardQt.cpp \
-    platform/qt/ContextMenuItemQt.cpp \
-    platform/qt/ContextMenuQt.cpp \
+    platform/ContextMenuItemNone.cpp \
+    platform/ContextMenuNone.cpp \
     platform/qt/CursorQt.cpp \
     platform/qt/DragDataQt.cpp \
     platform/qt/DragImageQt.cpp \

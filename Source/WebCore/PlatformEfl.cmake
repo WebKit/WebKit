@@ -53,8 +53,8 @@ list(APPEND WebCore_SOURCES
     platform/efl/AsyncFileSystemEfl.cpp
     platform/efl/BatteryProviderEfl.cpp
     platform/efl/ClipboardEfl.cpp
-    platform/efl/ContextMenuEfl.cpp
-    platform/efl/ContextMenuItemEfl.cpp
+    platform/ContextMenuNone.cpp
+    platform/ContextMenuItemNone.cpp
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp
     platform/efl/DragImageEfl.cpp
