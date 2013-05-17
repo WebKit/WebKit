@@ -19,137 +19,36 @@
  */
 
 #include "config.h"
-#include "ClipboardEfl.h"
+#include "Clipboard.h"
 
 #include "DataTransferItemList.h"
 #include "Editor.h"
-#include "FileList.h"
 #include "NotImplemented.h"
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return ClipboardEfl::create(policy, Clipboard::CopyAndPaste);
+    return Clipboard::createForCopyAndPaste(policy);
 }
 
-PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*)
-{
-    return 0;
-}
-
-ClipboardEfl::ClipboardEfl(ClipboardAccessPolicy policy, ClipboardType clipboardType)
-    : Clipboard(policy, clipboardType)
-{
-    notImplemented();
-}
-
-ClipboardEfl::~ClipboardEfl()
-{
-    notImplemented();
-}
-
-void ClipboardEfl::clearData(const String&)
-{
-    notImplemented();
-}
-
-void ClipboardEfl::writePlainText(const WTF::String&)
-{
-    notImplemented();
-}
-
-void ClipboardEfl::clearAllData()
-{
-    notImplemented();
-}
-
-String ClipboardEfl::getData(const String&) const
-{
-    notImplemented();
-    return String();
-}
-
-bool ClipboardEfl::setData(const String&, const String&)
-{
-    notImplemented();
-    return false;
-}
-
-ListHashSet<String> ClipboardEfl::types() const
-{
-    notImplemented();
-    return ListHashSet<String>();
-}
-
-PassRefPtr<FileList> ClipboardEfl::files() const
+DragImageRef Clipboard::createDragImage(IntPoint&) const
 {
     notImplemented();
     return 0;
 }
 
-IntPoint ClipboardEfl::dragLocation() const
+void Clipboard::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
 {
     notImplemented();
-    return IntPoint(0, 0);
-}
-
-CachedImage* ClipboardEfl::dragImage() const
-{
-    notImplemented();
-    return 0;
-}
-
-void ClipboardEfl::setDragImage(CachedImage*, const IntPoint&)
-{
-    notImplemented();
-}
-
-Node* ClipboardEfl::dragImageElement()
-{
-    notImplemented();
-    return 0;
-}
-
-void ClipboardEfl::setDragImageElement(Node*, const IntPoint&)
-{
-    notImplemented();
-}
-
-DragImageRef ClipboardEfl::createDragImage(IntPoint&) const
-{
-    notImplemented();
-    return 0;
-}
-
-void ClipboardEfl::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
-{
-    notImplemented();
-}
-
-void ClipboardEfl::writeURL(const KURL&, const String&, Frame*)
-{
-    notImplemented();
-}
-
-void ClipboardEfl::writeRange(Range*, Frame*)
-{
-    notImplemented();
-}
-
-bool ClipboardEfl::hasData()
-{
-    notImplemented();
-    return false;
 }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-PassRefPtr<DataTransferItemList> ClipboardEfl::items()
+PassRefPtr<DataTransferItemList> Clipboard::items()
 {
     notImplemented();
     return 0;
 }
 #endif
-
 
 }

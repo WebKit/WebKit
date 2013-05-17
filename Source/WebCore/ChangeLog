@@ -1,3 +1,34 @@
+2013-05-17  Darin Adler  <darin@apple.com>
+
+        [EFL] Move EFL port off legacy clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116181
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.h: Switched EFL away from "legacy" mode for Clipboard.
+
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::createDraggingClipboard): Changed to call Clipboard member function.
+
+        * platform/efl/ClipboardEfl.cpp: Deleted most of the functions.
+        (WebCore::Editor::newGeneralClipboard): Changed to call Clipboard member function.
+        (WebCore::Clipboard::createDragImage): Moved from ClipboardEfl to Clipboard.
+        (WebCore::Clipboard::declareAndWriteDragImage): Moved from ClipboardEfl to Clipboard.
+        (WebCore::Clipboard::items): Ditto.
+
+        * platform/efl/PasteboardEfl.cpp: A lot of copyright notices for a file that
+        has no code in it other than notImplemented lines! I didn't add a new one.
+        (WebCore::Pasteboard::createForCopyAndPaste): Added.
+        (WebCore::Pasteboard::createPrivate): Added.
+        (WebCore::Pasteboard::createForDragAndDrop): Added.
+        (WebCore::Pasteboard::hasData): Added.
+        (WebCore::Pasteboard::readString): Added.
+        (WebCore::Pasteboard::writeString): Added.
+        (WebCore::Pasteboard::types): Added.
+        (WebCore::Pasteboard::readFilenames): Added.
+        (WebCore::Pasteboard::setDragImage): Added.
+        (WebCore::Pasteboard::writePasteboard): Added.
+
 2013-05-17  Frédéric Wang  <fred.wang@free.fr>
 
         Bad spacing inside MathML formulas when text-indent is specified

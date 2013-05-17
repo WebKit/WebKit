@@ -24,14 +24,8 @@
 #include "Pasteboard.h"
 
 #include "DocumentFragment.h"
-#include "Frame.h"
-#include "Image.h"
-#include "KURL.h"
 #include "NotImplemented.h"
-#include "RenderImage.h"
-#include "markup.h"
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -92,6 +86,71 @@ String Pasteboard::plainText(Frame*)
 {
     notImplemented();
     return String();
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+{
+    return adoptPtr(new Pasteboard);
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
+{
+    return createForCopyAndPaste();
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+{
+    return createForCopyAndPaste();
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData&)
+{
+    return createForCopyAndPaste();
+}
+
+bool Pasteboard::hasData()
+{
+    notImplemented();
+    return false;
+}
+
+void Pasteboard::clear(const String&)
+{
+    notImplemented();
+}
+
+String Pasteboard::readString(const String&)
+{
+    notImplemented();
+    return String();
+}
+
+bool Pasteboard::writeString(const String&, const String&)
+{
+    notImplemented();
+    return false;
+}
+
+ListHashSet<String> Pasteboard::types()
+{
+    notImplemented();
+    return ListHashSet<String>();
+}
+
+Vector<String> Pasteboard::readFilenames()
+{
+    notImplemented();
+    return Vector<String>();
+}
+
+void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
+{
+    notImplemented();
+}
+
+void Pasteboard::writePasteboard(const Pasteboard&)
+{
+    notImplemented();
 }
 
 }

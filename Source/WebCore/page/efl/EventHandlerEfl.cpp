@@ -29,7 +29,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "ClipboardEfl.h"
+#include "Clipboard.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
@@ -99,7 +99,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
 #if ENABLE(DRAG_SUPPORT)
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    return ClipboardEfl::create(ClipboardWritable, Clipboard::DragAndDrop);
+    return Clipboard::createForDragAndDrop();
 }
 #endif
 
