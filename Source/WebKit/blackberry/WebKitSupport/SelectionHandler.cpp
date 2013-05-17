@@ -1303,7 +1303,7 @@ void SelectionHandler::caretPositionChanged(bool userTouchTriggeredOnTextField)
         "SelectionHandler::caretPositionChanged caret Rect %s",
         Platform::IntRect(caretLocation).toString().c_str());
 
-    bool isSingleLineInput = !m_webPage->m_inputHandler->isMultilineInputMode();
+    bool isSingleLineInput = m_caretActive && !m_webPage->m_inputHandler->isMultilineInputMode();
     WebCore::IntRect nodeBoundingBox = isSingleLineInput ? m_webPage->m_inputHandler->boundingBoxForInputField() : WebCore::IntRect();
 
     if (!nodeBoundingBox.isEmpty()) {
