@@ -1,3 +1,16 @@
+2013-05-17  David Hyatt  <hyatt@apple.com>
+
+        fast/flexbox/auto-height-with-flex.html failing only on release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=116240
+
+        Reviewed by Darin Adler.
+
+        Fix the mainAxisContentExtent method so no overflow occurs, since it
+        doesn't work right on release builds.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+
 2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add [EnabledAtRuntime] extended attribute support for global constructors
