@@ -30,7 +30,7 @@
  */
 
 [
-    NoInterfaceObject,
+    EnabledAtRuntime,
     Conditional=WEB_SOCKETS,
     ActiveDOMObject,
     Constructor(DOMString url),

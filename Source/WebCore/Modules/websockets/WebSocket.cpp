@@ -126,7 +126,7 @@ static unsigned long saturateAdd(unsigned long a, unsigned long b)
     return a + b;
 }
 
-static bool webSocketsAvailable = false;
+static bool webSocketsAvailable = true;
 
 void WebSocket::setIsAvailable(bool available)
 {

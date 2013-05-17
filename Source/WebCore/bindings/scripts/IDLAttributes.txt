@@ -52,6 +52,7 @@ DoNotCheckConstants
 DoNotCheckSecurity
 DoNotCheckSecurityOnGetter
 DoNotCheckSecurityOnSetter
+EnabledAtRuntime=*
 EnforceRange
 EventTarget
 ExtendsDOMGlobalObject

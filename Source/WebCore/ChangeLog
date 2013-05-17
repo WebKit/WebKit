@@ -1,3 +1,43 @@
+2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add [EnabledAtRuntime] extended attribute support for global constructors
+        https://bugs.webkit.org/show_bug.cgi?id=116147
+
+        Reviewed by Geoffrey Garen.
+
+        Add [EnabledAtRuntime] extended attribute support for global constructors.
+        This patch adds [EnabledAtRuntime] extended attribute to SharedWorker and
+        WebSocket IDL interfaces so that their global constructors on the global
+        Window object can now be automatically generated.
+
+        The behavior on JavaScript side is unchanged. We simply leverage
+        RuntimeEnabledFeatures class and the new [EnabledAtRuntime] IDL extended
+        attribute to generate the code for global constructors getters instead
+        of using custom code.
+
+        No new tests, no behavior change for layout tests.
+
+        * GNUmakefile.list.am:
+        * Modules/websockets/WebSocket.cpp: Enable WebSockets at runtime by default.
+        * Modules/websockets/WebSocket.idl:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore):
+        * bindings/js/JSDOMWindowWebSocketCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ToMethodName):
+        (GetRuntimeEnableFunctionName):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * page/DOMWindow.idl:
+        * workers/SharedWorker.idl:
+
 2013-05-17  Darin Adler  <darin@apple.com>
 
         [EFL] Move EFL port off legacy clipboard

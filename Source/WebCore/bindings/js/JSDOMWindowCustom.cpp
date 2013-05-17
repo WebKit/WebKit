@@ -547,15 +547,6 @@ JSValue JSDOMWindow::audio(ExecState* exec) const
 }
 #endif
 
-#if ENABLE(SHARED_WORKERS)
-JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
-{
-    if (SharedWorkerRepository::isAvailable())
-        return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
-    return jsUndefined();
-}
-#endif
-
 // Custom functions
 
 JSValue JSDOMWindow::open(ExecState* exec)

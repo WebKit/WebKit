@@ -1510,6 +1510,37 @@ sub GetSkipVTableValidationForInterface
     return $interface->extendedAttributes->{"SkipVTableValidation"};
 }
 
+# URL becomes url, but SetURL becomes setURL.
+sub ToMethodName
+{
+    my $param = shift;
+    my $ret = lcfirst($param);
+    $ret =~ s/hTML/html/ if $ret =~ /^hTML/;
+    $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
+    $ret =~ s/jS/js/ if $ret =~ /^jS/;
+    $ret =~ s/xML/xml/ if $ret =~ /^xML/;
+    $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
+    $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
+
+    # For HTML5 FileSystem API Flags attributes.
+    # (create is widely used to instantiate an object and must be avoided.)
+    $ret =~ s/^create/isCreate/ if $ret =~ /^create$/;
+    $ret =~ s/^exclusive/isExclusive/ if $ret =~ /^exclusive$/;
+
+    return $ret;
+}
+
+# Returns the RuntimeEnabledFeatures function name that is hooked up to check if a method/attribute is enabled.
+sub GetRuntimeEnableFunctionName
+{
+    my $signature = shift;
+
+    # If a parameter is given (e.g. "EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::{FeatureName}Enabled() method.
+    return "RuntimeEnabledFeatures::" . ToMethodName($signature->extendedAttributes->{"EnabledAtRuntime"}) . "Enabled" if ($signature->extendedAttributes->{"EnabledAtRuntime"} && $signature->extendedAttributes->{"EnabledAtRuntime"} ne "VALUE_IS_MISSING");
+
+    # Otherwise return a function named RuntimeEnabledFeatures::{methodName}Enabled().
+    return "RuntimeEnabledFeatures::" . ToMethodName($signature->name) . "Enabled";
+}
 
 sub GenerateImplementation
 {
@@ -1946,6 +1977,14 @@ sub GenerateImplementation
 
                 push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, PropertyName)\n");
                 push(@implContent, "{\n");
+
+                # Global constructors can be disabled at runtime.
+                if ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"} && $attribute->signature->type =~ /Constructor$/) {
+                    AddToImplIncludes("RuntimeEnabledFeatures.h");
+                    my $enable_function = GetRuntimeEnableFunctionName($attribute->signature);
+                    push(@implContent, "    if (!${enable_function}())\n");
+                    push(@implContent, "        return jsUndefined();\n");
+                }
 
                 if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                     push(@implContent, "    ${className}* castedThis = jsCast<$className*>(asObject(slotBase));\n");
