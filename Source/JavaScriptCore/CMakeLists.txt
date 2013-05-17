@@ -164,6 +164,7 @@ set(JavaScriptCore_SOURCES
 
     jit/ClosureCallStubRoutine.cpp
     jit/ExecutableAllocator.cpp
+    jit/ExecutableAllocatorFixedVMPool.cpp
     jit/HostCallReturnValue.cpp
     jit/GCAwareJITStubRoutine.cpp
     jit/JITArithmetic32_64.cpp

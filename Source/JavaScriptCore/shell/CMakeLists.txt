@@ -5,6 +5,7 @@ set(JSC_SOURCES
 set(JSC_LIBRARIES
     ${WTF_LIBRARY_NAME}
     ${JavaScriptCore_LIBRARY_NAME}
+    ${CMAKE_DL_LIBS}
 )
 
 if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
