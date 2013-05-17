@@ -216,9 +216,6 @@ webkit.org/b/84589 inspector/console/console-long-eval-crash.html [ Failure ]
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
 
-# EFL's DRT needs CONFIRM NAVIGATION messages
-webkit.org/b/87246 fast/loader/form-submission-after-beforeunload-cancel.html [ Failure ]
-
 # New test introduced in r116694 fails
 webkit.org/b/86182 fast/frames/seamless/seamless-inherited-document-style.html [ Failure ]
 

@@ -91,6 +91,12 @@ static Eina_Bool onJavaScriptConfirm(Ewk_View_Smart_Data*, Evas_Object*, const c
     return EINA_TRUE;
 }
 
+static Eina_Bool onBeforeUnloadConfirm(Ewk_View_Smart_Data*, Evas_Object*, const char* message)
+{
+    printf("CONFIRM NAVIGATION: %s\n", message);
+    return !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
+}
+
 static Eina_Bool onJavaScriptPrompt(Ewk_View_Smart_Data*, Evas_Object*, const char* message, const char* defaultValue, const char** value)
 {
     printf("PROMPT: %s, default text: %s\n", message, defaultValue);
@@ -217,6 +223,7 @@ Evas_Object* drtViewAdd(Evas* evas)
     api.add_console_message = onConsoleMessage;
     api.run_javascript_alert = onJavaScriptAlert;
     api.run_javascript_confirm = onJavaScriptConfirm;
+    api.run_before_unload_confirm = onBeforeUnloadConfirm;
     api.run_javascript_prompt = onJavaScriptPrompt;
     api.window_create = onWindowCreate;
     api.window_close = onWindowClose;

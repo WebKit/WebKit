@@ -1,3 +1,21 @@
+2013-05-16  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] inspector-protocol/page/javascriptDialogEvents.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=114781
+
+        Reviewed by Christophe Dumez.
+
+        We need to make a distinction between runBeforeUnloadConfirmPanel and confirm.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runBeforeUnloadConfirmPanel):
+        * ewk/ewk_view.cpp: Add ewk_view_run_before_unload_confirm API.
+        (_ewk_view_smart_run_before_unload_confirm):
+        (ewk_view_base_smart_set):
+        (ewk_view_run_before_unload_confirm):
+        * ewk/ewk_view.h: Add smart class member function for runBeforeUnloadConfirmPanel.
+        * ewk/ewk_view_private.h:
+
 2013-05-16  Andreas Kling  <akling@apple.com>
 
         Page::chrome() should return a reference.

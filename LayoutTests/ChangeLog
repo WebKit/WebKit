@@ -1,3 +1,14 @@
+2013-05-16  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] inspector-protocol/page/javascriptDialogEvents.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=114781
+
+        Reviewed by Christophe Dumez.
+
+        Unskip fast/loader/form-submission-after-beforeunload-cancel.html as well.
+
+        * platform/efl-wk1/TestExpectations:
+
 2013-05-16  Alexis Menard  <alexis@webkit.org>
 
         Regression: Event#stopPropagation() does not halt bubbling for webkitTransitionEnd
