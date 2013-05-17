@@ -1,3 +1,24 @@
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Move Storage member functions out of line
+        https://bugs.webkit.org/show_bug.cgi?id=116364
+
+        Reviewed by Andreas Kling.
+
+        This is preparation for sharing more code between the WebKit1 and WebKit2 storage area subclasses.
+        Also remove unnecessary null checks and make m_storageArea const.
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        (WebCore::Storage::contains):
+        * storage/Storage.h:
+        (WebCore::Storage::area):
+
 2013-05-17  Beth Dakin  <bdakin@apple.com>
 
         Headers and footers will sometimes disappear and re-appear during page loads

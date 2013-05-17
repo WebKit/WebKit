@@ -28,36 +28,37 @@
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
-#include "StorageArea.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Frame;
-    typedef int ExceptionCode;
+class Frame;
+class StorageArea;
 
-    class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
-    public:
-        static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
-        ~Storage();
+typedef int ExceptionCode;
 
-        unsigned length(ExceptionCode& ec) const { return m_storageArea->length(ec, m_frame); }
-        String key(unsigned index, ExceptionCode& ec) const { return m_storageArea->key(index, ec, m_frame); }
-        String getItem(const String& key, ExceptionCode& ec) const { return m_storageArea->getItem(key, ec, m_frame); }
-        void setItem(const String& key, const String& value, ExceptionCode& ec) { m_storageArea->setItem(key, value, ec, m_frame); }
-        void removeItem(const String& key, ExceptionCode& ec) { m_storageArea->removeItem(key, ec, m_frame); }
-        void clear(ExceptionCode& ec) { m_storageArea->clear(ec, m_frame); }
-        bool contains(const String& key, ExceptionCode& ec) const { return m_storageArea->contains(key, ec, m_frame); }
+class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
+public:
+    static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
+    ~Storage();
 
-        StorageArea* area() const { return m_storageArea.get(); }
+    unsigned length(ExceptionCode&) const;
+    String key(unsigned index, ExceptionCode&) const;
+    String getItem(const String& key, ExceptionCode&) const;
+    void setItem(const String& key, const String& value, ExceptionCode&);
+    void removeItem(const String& key, ExceptionCode&);
+    void clear(ExceptionCode&);
+    bool contains(const String& key, ExceptionCode&) const;
 
-    private:
-        Storage(Frame*, PassRefPtr<StorageArea>);
+    StorageArea * area() const { return m_storageArea.get(); }
 
-        RefPtr<StorageArea> m_storageArea;
-    };
+private:
+    Storage(Frame*, PassRefPtr<StorageArea>);
+
+    const RefPtr<StorageArea> m_storageArea;
+};
 
 } // namespace WebCore
 
