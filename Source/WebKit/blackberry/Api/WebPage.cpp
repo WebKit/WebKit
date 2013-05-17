@@ -5530,7 +5530,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     // to texture.
     // The layout can also turn of compositing altogether, so we need to be prepared
     // to handle a one shot drawing synchronization after the layout.
-    layoutIfNeeded();
+    updateLayoutAndStyleIfNeededRecursive();
 
     // If we transitioned to drawing the root layer using compositor instead of
     // backing store, doing a one shot drawing synchronization with the
