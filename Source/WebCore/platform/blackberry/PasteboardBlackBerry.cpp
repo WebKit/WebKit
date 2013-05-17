@@ -65,6 +65,12 @@ void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame, Should
 {
     WTF::String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
     WTF::String html = createMarkup(selectedRange, 0, AnnotateForInterchange);
+    DEFINE_STATIC_LOCAL(AtomicString, invokeString, ("href=\"invoke://"));
+    size_t startOfInvoke = html.find(invokeString);
+    if (startOfInvoke != notFound) {
+        size_t endOfInvoke = html.find("\"", startOfInvoke + invokeString.length()) + 1;
+        html.remove(startOfInvoke, endOfInvoke - startOfInvoke);
+    }
     WTF::String url = frame->document()->url().string();
 
     BlackBerry::Platform::Clipboard::write(text, html, url);
