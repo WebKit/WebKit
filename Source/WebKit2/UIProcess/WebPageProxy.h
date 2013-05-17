@@ -285,6 +285,7 @@ public:
     void loadURL(const String&, APIObject* userData = 0);
     void loadURLRequest(WebURLRequest*, APIObject* userData = 0);
     void loadFile(const String& fileURL, const String& resourceDirectoryURL, APIObject* userData = 0);
+    void loadData(WebData*, const String& MIMEType, const String& encoding, const String& baseURL, APIObject* userData = 0);
     void loadHTMLString(const String& htmlString, const String& baseURL, APIObject* userData = 0);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, APIObject* userData = 0);
     void loadPlainTextString(const String& string, APIObject* userData = 0);

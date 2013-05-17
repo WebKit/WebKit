@@ -725,6 +725,16 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     m_process->responsivenessTimer()->start();
 }
 
+void WebPageProxy::loadData(WebData* data, const String& MIMEType, const String& encoding, const String& baseURL, APIObject* userData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    m_process->assumeReadAccessToBaseURL(baseURL);
+    m_process->send(Messages::WebPage::LoadData(data->dataReference(), MIMEType, encoding, baseURL, WebContextUserMessageEncoder(userData)), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
 void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, APIObject* userData)
 {
     if (!isValid())

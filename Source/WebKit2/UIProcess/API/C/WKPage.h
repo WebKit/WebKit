@@ -365,6 +365,8 @@ WK_EXPORT void WKPageLoadFile(WKPageRef page, WKURLRef fileURL, WKURLRef resourc
 WK_EXPORT void WKPageLoadFileWithUserData(WKPageRef page, WKURLRef fileURL, WKURLRef resourceDirectoryURL, WKTypeRef userData);
 
 // Data Requests
+WK_EXPORT void WKPageLoadData(WKPageRef page, WKDataRef data, WKStringRef MIMEType, WKStringRef encoding, WKURLRef baseURL);
+WK_EXPORT void WKPageLoadDataWithUserData(WKPageRef page, WKDataRef data, WKStringRef MIMEType, WKStringRef encoding, WKURLRef baseURL, WKTypeRef userData);
 WK_EXPORT void WKPageLoadHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL);
 WK_EXPORT void WKPageLoadHTMLStringWithUserData(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKTypeRef userData);
 WK_EXPORT void WKPageLoadAlternateHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKURLRef unreachableURL);

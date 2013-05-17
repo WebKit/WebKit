@@ -672,7 +672,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadData(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL, CoreIPC::MessageDecoder&);
+    void loadDataImpl(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL, CoreIPC::MessageDecoder&);
 
     bool platformHasLocalDataForURL(const WebCore::KURL&);
 
@@ -680,6 +680,7 @@ private:
     void tryClose();
     void loadURL(const String&, const SandboxExtension::Handle&, CoreIPC::MessageDecoder&);
     void loadURLRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle&, CoreIPC::MessageDecoder&);
+    void loadData(const CoreIPC::DataReference&, const String& MIMEType, const String& encodingName, const String& baseURL, CoreIPC::MessageDecoder&);
     void loadHTMLString(const String& htmlString, const String& baseURL, CoreIPC::MessageDecoder&);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, CoreIPC::MessageDecoder&);
     void loadPlainTextString(const String&, CoreIPC::MessageDecoder&);

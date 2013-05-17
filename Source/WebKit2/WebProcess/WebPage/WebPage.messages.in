@@ -66,6 +66,7 @@ messages -> WebPage LegacyReceiver {
 
     LoadURL(WTF::String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
+    LoadData(CoreIPC::DataReference data, WTF::String MIMEType, WTF::String encoding, WTF::String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadHTMLString(WTF::String htmlString, WTF::String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadPlainTextString(WTF::String string, WebKit::WebContextUserMessageEncoder userData) Variadic

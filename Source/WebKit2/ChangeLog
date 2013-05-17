@@ -1,3 +1,34 @@
+2013-05-17  Sam Weinig  <sam@webkit.org>
+
+        Add WKPageLoadData and WKPageLoadDataWithUserData SPI to support loading arbitrary data blobs
+        https://bugs.webkit.org/show_bug.cgi?id=116325
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadData):
+        (WKPageLoadDataWithUserData):
+        Add new SPI.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        * UIProcess/WebPageProxy.h:
+        Pipe through to the WebProcess.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadHTMLString):
+        (WebKit::WebPage::loadAlternateHTMLString):
+        (WebKit::WebPage::loadPlainTextString):
+        (WebKit::WebPage::loadWebArchiveData):
+        Rename existing loadData function to loadDataImpl (I hate it) to avoid overload conflict
+        from IPC magic.
+
+
 2013-05-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Fix sub menu initialization in ewk_context_menu_item
