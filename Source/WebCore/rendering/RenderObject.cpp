@@ -1758,6 +1758,20 @@ void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
     setStyle(pseudoStyle);
 }
 
+inline bool RenderObject::hasImmediateNonWhitespaceTextChild() const
+{
+    for (const RenderObject* r = firstChild(); r; r = r->nextSibling()) {
+        if (r->isText() && !toRenderText(r)->isAllCollapsibleWhitespace())
+            return true;
+    }
+    return false;
+}
+
+inline bool RenderObject::shouldRepaintForStyleDifference(StyleDifference diff) const
+{
+    return diff == StyleDifferenceRepaint || (diff == StyleDifferenceRepaintIfText && hasImmediateNonWhitespaceTextChild());
+}
+
 void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style) {
@@ -1818,8 +1832,8 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
         } else if (updatedDiff == StyleDifferenceSimplifiedLayout)
             setNeedsSimplifiedNormalFlowLayout();
     }
-    
-    if (updatedDiff == StyleDifferenceRepaintLayer || updatedDiff == StyleDifferenceRepaint) {
+
+    if (updatedDiff == StyleDifferenceRepaintLayer || shouldRepaintForStyleDifference(updatedDiff)) {
         // Do a repaint with the new style now, e.g., for example if we go from
         // not having an outline to having an outline.
         repaint();
@@ -1863,7 +1877,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             }
         }
 
-        if (m_parent && (diff == StyleDifferenceRepaint || newStyle->outlineSize() < m_style->outlineSize()))
+        if (m_parent && (newStyle->outlineSize() < m_style->outlineSize() || shouldRepaintForStyleDifference(diff)))
             repaint();
         if (isFloating() && (m_style->floating() != newStyle->floating()))
             // For changes in float styles, we need to conceivably remove ourselves

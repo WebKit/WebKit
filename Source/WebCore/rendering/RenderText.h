@@ -130,7 +130,7 @@ public:
 
     void checkConsistency() const;
 
-    bool isAllCollapsibleWhitespace();
+    bool isAllCollapsibleWhitespace() const;
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
     bool knownToHaveNoOverflowAndNoFallbackFonts() const { return m_knownToHaveNoOverflowAndNoFallbackFonts; }

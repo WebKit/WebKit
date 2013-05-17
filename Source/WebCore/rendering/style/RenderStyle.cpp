@@ -675,26 +675,15 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)
         return StyleDifferenceRepaintLayer;
 
-    if (inherited->color != other->inherited->color
-        || inherited_flags._visibility != other->inherited_flags._visibility
-        || inherited_flags._text_decorations != other->inherited_flags._text_decorations
+    if (inherited_flags._visibility != other->inherited_flags._visibility
         || inherited_flags.m_printColorAdjust != other->inherited_flags.m_printColorAdjust
         || inherited_flags._insideLink != other->inherited_flags._insideLink
         || surround->border != other->surround->border
         || *m_background.get() != *other->m_background.get()
-        || visual->textDecoration != other->visual->textDecoration
         || rareInheritedData->userModify != other->rareInheritedData->userModify
         || rareInheritedData->userSelect != other->rareInheritedData->userSelect
         || rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag
         || rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit
-#if ENABLE(CSS3_TEXT)
-        || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
-        || rareNonInheritedData->m_textDecorationColor != other->rareNonInheritedData->m_textDecorationColor
-#endif // CSS3_TEXT
-        || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
-        || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
-        || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
-        || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill
         || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
         return StyleDifferenceRepaint;
         
@@ -709,7 +698,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
             return StyleDifferenceRepaint;
 
-
 #if USE(ACCELERATED_COMPOSITING)
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
         if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
@@ -720,6 +708,19 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             return StyleDifferenceRecompositeLayer;
     }
 #endif
+
+    if (inherited->color != other->inherited->color
+        || inherited_flags._text_decorations != other->inherited_flags._text_decorations
+        || visual->textDecoration != other->visual->textDecoration
+#if ENABLE(CSS3_TEXT)
+        || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
+        || rareNonInheritedData->m_textDecorationColor != other->rareNonInheritedData->m_textDecorationColor
+#endif // CSS3_TEXT
+        || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
+        || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
+        || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
+        || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill)
+        return StyleDifferenceRepaintIfText;
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.

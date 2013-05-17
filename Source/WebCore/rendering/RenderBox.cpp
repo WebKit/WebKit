@@ -276,7 +276,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 
     // Our opaqueness might have changed without triggering layout.
-    if (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintLayer) {
+    if (diff >= StyleDifferenceRepaint && diff <= StyleDifferenceRepaintLayer) {
         RenderObject* parentToInvalidate = parent();
         for (unsigned i = 0; i < backgroundObscurationTestMaxDepth && parentToInvalidate; ++i) {
             parentToInvalidate->invalidateBackgroundObscurationStatus();

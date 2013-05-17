@@ -1,3 +1,63 @@
+2013-05-16  Andreas Kling  <akling@apple.com>
+
+        Changes in text-only properties shouldn't cause repaints unless there is actually text.
+        <http://webkit.org/b/116250>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new StyleDifferenceRepaintIfText value to the repertoire of RenderStyle::diff().
+        This result means that the renderer only needs to repaint if one of its immediate children contains text.
+
+        This lets us avoid repainting the same pixels when hovering over constructs like:
+
+            <style>
+                a { text-decoration: none; }
+                a:hover { text-decoration: underline; }
+            </style>
+            <a href="http://is.gd/andersca">
+                <img src="cool-hat.jpg">
+            </a>
+
+        Since the change in text-decoration has no effect on the rendering of the <img> element,
+        we'll now be smart enough to avoid repainting it.
+
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
+            Move checking of text-only properties until the very end, and return StyleDifferenceRepaintIfText
+            in case a difference is found, giving precedence to StyleDifferenceRepaint.
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hasImmediateNonWhitespaceTextChild):
+
+            Helper to check if a RenderObject has at least one RenderText child containing more than just
+            collapsible whitespace.
+
+        (WebCore::RenderObject::shouldRepaintForStyleDifference):
+
+            Helper to check if a StyleDifference is either ...Repaint or ...RepaintIfText and the renderer
+            has an immediate text child.
+
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::setStyle):
+
+            Don't repaint for StyleDifferenceRepaintIfText unless hasImmediateNonWhitespaceTextChild().
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+
+            Tweak for new StyleDifference enum value.
+
+        * rendering/RenderText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::isAllCollapsibleWhitespace):
+
+            Made this const.
+
 2013-05-17  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
 
         Improve -webkit-text-underline-position memory usage.
