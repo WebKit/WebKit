@@ -757,9 +757,6 @@ inspector/debugger/linkifier.html
 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 
-# Needs rebaseline
-fast/sub-pixel/inline-block-with-padding.html [ Failure ]
-
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 
@@ -1265,9 +1262,6 @@ webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailu
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
-# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=104462
-webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
-
 # (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
 webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
@@ -1382,15 +1376,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
-
-# Needs rebaseline.
-webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
-webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
-webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
-webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
-webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
-webkit.org/b/94198 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
-webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
 
 webkit.org/b/108370 editing/spelling/spelling-changed-text.html [ Skip ]
 webkit.org/b/114470 editing/spelling/spelling-exactly-selected-multiple-words.html [ Skip ]

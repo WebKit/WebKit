@@ -1,3 +1,24 @@
+2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaselines; also remove some entries.
+
+        Seriously, I've had it enough. Why are people adding these entires never to rebaseline them later?
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/mac/fast/dom/HTMLImageElement/image-alt-text-expected.png:
+        * platform/mac/fast/dom/HTMLImageElement/image-alt-text-expected.txt:
+        * platform/mac/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/mac/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/mac/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/mac/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.png:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/lists/inlineBoxWrapperNullCheck-expected.png:
+        * platform/mac/fast/lists/inlineBoxWrapperNullCheck-expected.txt:
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.txt:
+
 2013-05-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: SyntaxError evaluating "1+1; //@ sourceURL=test" in console
