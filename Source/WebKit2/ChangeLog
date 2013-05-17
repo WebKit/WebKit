@@ -1,3 +1,15 @@
+2013-05-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r150034.
+        http://trac.webkit.org/changeset/150034
+        https://bugs.webkit.org/show_bug.cgi?id=116257
+
+        This work around doesn't work due to another bug NSUndoManager
+        has (Requested by rniwa on #webkit).
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+
 2013-05-16  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugins don't load when plugins are disabled, but they should
