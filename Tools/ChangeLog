@@ -1,3 +1,17 @@
+2013-05-17  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Remove chrome-channels command from the webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=116303
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/config/urls.py: Removed omahaproxy url.
+        * Scripts/webkitpy/common/net/omahaproxy.py: Removed.
+        * Scripts/webkitpy/common/net/omahaproxy_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/__init__.py: Removed chromechannels import.
+        * Scripts/webkitpy/tool/commands/chromechannels.py: Removed.
+        * Scripts/webkitpy/tool/commands/chromechannels_unittest.py: Removed.
+
 2013-05-17  David Kilzer  <ddkilzer@apple.com>
 
         filter-build-webkit: Don't filter out the location of the missing symbol when linking fails

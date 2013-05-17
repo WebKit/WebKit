@@ -51,8 +51,6 @@ direct_attachment_url = r"https?://bug-(?P<bug_id>\d+)-attachments.%s/attachment
 
 buildbot_url = "http://build.webkit.org"
 
-omahaproxy_url = "http://omahaproxy.appspot.com/"
-
 def parse_bug_id(string):
     if not string:
         return None

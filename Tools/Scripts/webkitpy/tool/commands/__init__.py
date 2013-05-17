@@ -5,7 +5,6 @@ from webkitpy.tool.commands.analyzechangelog import AnalyzeChangeLog
 from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 from webkitpy.tool.commands.bugfortest import BugForTest
 from webkitpy.tool.commands.bugsearch import BugSearch
-from webkitpy.tool.commands.chromechannels import ChromeChannels
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.earlywarningsystem import AbstractEarlyWarningSystem
 from webkitpy.tool.commands.findusers import FindUsers
