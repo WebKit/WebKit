@@ -321,10 +321,8 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // Additional constructors.
-    [CustomGetter, CustomConstructor] attribute HTMLImageElementConstructorConstructor Image; // Usable with new operator
-    [CustomGetter] attribute HTMLOptionElementConstructorConstructor Option; // Usable with new operator
-    attribute HTMLOptionElementConstructor HTMLOptionElement;
-    [CustomGetter, Conditional=VIDEO] attribute HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+    [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image; // Usable with new operator
+    [CustomGetter, Conditional=VIDEO] attribute HTMLAudioElementNamedConstructor Audio; // Usable with the new operator
     [Conditional=VIDEO] attribute HTMLAudioElementConstructor HTMLAudioElement;
     // Mozilla has a separate XMLDocument object for XML documents.
     // We just use Document for this.

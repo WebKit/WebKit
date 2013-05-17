@@ -187,6 +187,11 @@ JSValue JSTestNamedConstructor::getConstructor(ExecState* exec, JSGlobalObject* 
     return getDOMConstructor<JSTestNamedConstructorConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
+JSValue JSTestNamedConstructor::getNamedConstructor(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return getDOMConstructor<JSTestNamedConstructorNamedConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+}
+
 static inline bool isObservable(JSTestNamedConstructor* jsTestNamedConstructor)
 {
     if (jsTestNamedConstructor->hasCustomProperties())

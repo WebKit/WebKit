@@ -1,3 +1,28 @@
+2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of [CustomGetter] for global named constructors
+        https://bugs.webkit.org/show_bug.cgi?id=116116
+
+        Reviewed by Geoffrey Garen.
+
+        Improve the JSC bindings generator so that global named constructors no longer
+        require a [CustomGetter] IDL extended attribute. As a consequence, attributes
+        on the global window object can now be automatically generated for interfaces
+        that have a [NamedConstructor], namely HTMLOptionElement.
+
+        The HTMLAudioElement global constructors are still manually defined because it
+        requires custom code at the moment to check if the media player is available.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/preprocess-idls.pl:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * html/HTMLOptionElement.idl:
+        * page/DOMWindow.idl:
+
 2013-05-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: SyntaxError evaluating "1+1; //@ sourceURL=test" in console

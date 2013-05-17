@@ -851,7 +851,10 @@ sub GenerateHeader
     }
 
     # Constructor object getter
-    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if !$interface->extendedAttributes->{"OmitConstructor"};
+    unless ($interface->extendedAttributes->{"OmitConstructor"}) {
+        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{"NamedConstructor"};
+    }
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
@@ -2031,7 +2034,9 @@ sub GenerateImplementation
                     # When Constructor attribute is used by DOMWindow.idl, it's correct to pass castedThis as the global object
                     # When JSDOMWrappers have a back-pointer to the globalObject we can pass castedThis->globalObject()
                     if ($interfaceName eq "DOMWindow") {
-                        push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
+                        my $named = ($constructorType =~ /Named$/) ? "Named" : "";
+                        $constructorType =~ s/Named$//;
+                        push(@implContent, "    return JS" . $constructorType . "::get${named}Constructor(exec, castedThis);\n");
                     } else {
                        AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                        push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis->globalObject());\n");
@@ -2257,7 +2262,7 @@ sub GenerateImplementation
                                 # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
                                 # We do not generate the header file for NamedConstructor of class XXXX,
                                 # since we generate the NamedConstructor declaration into the header file of class XXXX.
-                                if ($constructorType ne "any" and $constructorType !~ /Constructor$/) {
+                                if ($constructorType ne "any" and $constructorType !~ /Named$/) {
                                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                                 }
                                 push(@implContent, "    // Shadowing a built-in constructor\n");
@@ -2406,6 +2411,11 @@ sub GenerateImplementation
         push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
+        if ($interface->extendedAttributes->{"NamedConstructor"}) {
+            push(@implContent, "JSValue ${className}::getNamedConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
+            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "}\n\n");
+        }
     }
 
     # Functions

@@ -158,7 +158,7 @@ sub GenerateConstructorAttribute
         $constructorName =~ s/\(.*//g; # Extract function name.
         $code .= "    ";
         $code .= "[" . join(', ', @extendedAttributesList) . "] " if @extendedAttributesList;
-        $code .= "attribute " . $originalInterfaceName . "ConstructorConstructor $constructorName;\n";
+        $code .= "attribute " . $originalInterfaceName . "NamedConstructor $constructorName;\n";
     }
     return $code;
 }
