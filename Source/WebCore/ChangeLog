@@ -1,3 +1,27 @@
+2013-05-17  Alexis Menard  <alexis@webkit.org>
+
+        Make sure to call release() on our smart pointers when we should.
+        https://bugs.webkit.org/show_bug.cgi?id=116307
+
+        Reviewed by Andreas Kling.
+
+        Call release() when we should call it. There is probably more occurence
+        of this problem on the codebase but this is a first bunch of fixes.
+
+        No new tests : existing ones should cover.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        (WebCore::getBorderRadiusShorthandValue):
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getCSSPropertyValuesForSidesShorthand):
+        (WebCore::CSSComputedStyleDeclaration::getCSSPropertyValuesForGridShorthand):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBorderImage):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute):
+
 2013-05-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Make PNGImageDecoder::rowAvailable auto-vectorizable
