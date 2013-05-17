@@ -371,11 +371,6 @@ public:
     void setTopOverhangImage(PassRefPtr<WebImage>);
     void setBottomOverhangImage(PassRefPtr<WebImage>);
 
-    CALayer *getHeaderLayer() const;
-    void setHeaderLayerWithHeight(CALayer *, int);
-    CALayer *getFooterLayer() const;
-    void setFooterLayerWithHeight(CALayer *, int);
-
     void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
 #endif
 
@@ -907,9 +902,6 @@ private:
     LayerHostingMode m_layerHostingMode;
 
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
-
-    RetainPtr<CALayer> m_headerLayer;
-    RetainPtr<CALayer> m_footerLayer;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 

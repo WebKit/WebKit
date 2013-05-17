@@ -822,66 +822,8 @@ void WebPage::setBottomOverhangImage(PassRefPtr<WebImage> image)
     layer->platformLayer().contents = (id)cgImage.get();
 }
 
-CALayer *WebPage::getHeaderLayer() const
-{
-    return m_headerLayer.get();
-}
-
-void WebPage::setHeaderLayerWithHeight(CALayer *layer, int height)
-{
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
-    if (!frameView)
-        return;
-
-    frameView->setHeaderHeight(height);
-
-    m_headerLayer = layer;
-    GraphicsLayer* parentLayer = frameView->setWantsLayerForHeader(m_headerLayer);
-    if (!parentLayer) {
-        m_page->removeLayoutMilestones(DidFirstFlushForHeaderLayer);
-        return;
-    }
-
-    m_page->addLayoutMilestones(DidFirstFlushForHeaderLayer);
-
-    m_headerLayer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
-    [parentLayer->platformLayer() addSublayer:m_headerLayer.get()];
-}
-
-CALayer *WebPage::getFooterLayer() const
-{
-    return m_footerLayer.get();
-}
-
-void WebPage::setFooterLayerWithHeight(CALayer *layer, int height)
-{
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
-    if (!frameView)
-        return;
-
-    frameView->setFooterHeight(height);
-
-    m_footerLayer = layer;
-    GraphicsLayer* parentLayer = frameView->setWantsLayerForFooter(m_footerLayer);
-    if (!parentLayer)
-        return;
-
-    m_footerLayer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
-    [parentLayer->platformLayer() addSublayer:m_footerLayer.get()];
-}
-
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
-{
-    if (m_headerLayer) {
-        m_headerLayer.get().contentsScale = scaleFactor;
-        [m_headerLayer.get() setNeedsDisplay];
-    }
-
-    if (m_footerLayer) {
-        m_footerLayer.get().contentsScale = scaleFactor;
-        [m_footerLayer.get() setNeedsDisplay];
-    }
-    
+{    
     if (m_headerBanner)
         m_headerBanner->didChangeDeviceScaleFactor(scaleFactor);
     if (m_footerBanner)
