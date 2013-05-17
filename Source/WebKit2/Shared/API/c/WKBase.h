@@ -41,6 +41,10 @@
 #include <WebKit2/WKBaseEfl.h>
 #endif
 
+#if defined(__APPLE__)
+#include <WebKit2/WKBaseMac.h>
+#endif
+
 /* WebKit2 shared types */
 
 typedef uint32_t WKTypeID;

@@ -28,6 +28,7 @@
 #import "WKBrowsingContextControllerPrivate.h"
 #import "WKBrowsingContextControllerInternal.h"
 
+#import "ObjCObjectGraph.h"
 #import "WKErrorCF.h"
 #import "WKFrame.h"
 #import "WKPagePrivate.h"
@@ -37,10 +38,13 @@
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
 #import "WebContext.h"
+#import "WebData.h"
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
 
 #import "WKBrowsingContextLoadDelegate.h"
+
+using namespace WebKit;
 
 static inline NSString *autoreleased(WKStringRef string)
 {
@@ -104,7 +108,7 @@ static inline NSURL *autoreleased(WKURLRef url)
 
     NSString *lowercaseScheme = [scheme lowercaseString];
     [[WKBrowsingContextController customSchemes] addObject:lowercaseScheme];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:lowercaseScheme];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SchemeForCustomProtocolRegisteredNotificationName object:lowercaseScheme];
 }
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
@@ -114,16 +118,31 @@ static inline NSURL *autoreleased(WKURLRef url)
 
     NSString *lowercaseScheme = [scheme lowercaseString];
     [[WKBrowsingContextController customSchemes] removeObject:lowercaseScheme];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:lowercaseScheme];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SchemeForCustomProtocolUnregisteredNotificationName object:lowercaseScheme];
 }
 
 - (void)loadRequest:(NSURLRequest *)request
 {
+    [self loadRequest:request userData:nil];
+}
+
+- (void)loadRequest:(NSURLRequest *)request userData:(id)userData
+{
     WKRetainPtr<WKURLRequestRef> wkRequest = adoptWK(WKURLRequestCreateWithNSURLRequest(request));
-    WKPageLoadURLRequest(self._pageRef, wkRequest.get());
+
+    RefPtr<ObjCObjectGraph> wkUserData;
+    if (userData)
+        wkUserData = ObjCObjectGraph::create(userData);
+
+    WKPageLoadURLRequestWithUserData(self._pageRef, wkRequest.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
+{
+    [self loadFileURL:URL restrictToFilesWithin:allowedDirectory userData:nil];
+}
+
+- (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory userData:(id)userData
 {
     if (![URL isFileURL] || (allowedDirectory && ![allowedDirectory isFileURL]))
         [NSException raise:NSInvalidArgumentException format:@"Attempted to load a non-file URL"];
@@ -131,10 +150,19 @@ static inline NSURL *autoreleased(WKURLRef url)
     WKRetainPtr<WKURLRef> wkURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)URL));
     WKRetainPtr<WKURLRef> wkAllowedDirectory = adoptWK(WKURLCreateWithCFURL((CFURLRef)allowedDirectory));
     
-    WKPageLoadFile(self._pageRef, wkURL.get(), wkAllowedDirectory.get());
+    RefPtr<ObjCObjectGraph> wkUserData;
+    if (userData)
+        wkUserData = ObjCObjectGraph::create(userData);
+
+    WKPageLoadFileWithUserData(self._pageRef, wkURL.get(), wkAllowedDirectory.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL
+{
+    [self loadHTMLString:HTMLString baseURL:baseURL userData:nil];
+}
+
+- (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL userData:(id)userData
 {
     WKRetainPtr<WKStringRef> wkHTMLString;
     if (HTMLString)
@@ -144,7 +172,48 @@ static inline NSURL *autoreleased(WKURLRef url)
     if (baseURL)
         wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
 
-    WKPageLoadHTMLString(self._pageRef, wkHTMLString.get(), wkBaseURL.get());
+    RefPtr<ObjCObjectGraph> wkUserData;
+    if (userData)
+        wkUserData = ObjCObjectGraph::create(userData);
+
+    WKPageLoadHTMLStringWithUserData(self._pageRef, wkHTMLString.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
+}
+
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
+{
+    [self loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL userData:nil];
+}
+
+static void releaseNSData(unsigned char*, const void* data)
+{
+    [(NSData *)data release];
+}
+
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
+{
+    RefPtr<WebData> wkData;
+    if (data) {
+        [data retain];
+        wkData = WebData::createWithoutCopying((const unsigned char*)[data bytes], [data length], releaseNSData, data);
+    }
+
+    WKRetainPtr<WKStringRef> wkMIMEType;
+    if (MIMEType)
+        wkMIMEType = adoptWK(WKStringCreateWithCFString((CFStringRef)MIMEType));
+
+    WKRetainPtr<WKStringRef> wkEncodingName;
+    if (encodingName)
+        wkEncodingName = adoptWK(WKStringCreateWithCFString((CFStringRef)encodingName));
+
+    WKRetainPtr<WKURLRef> wkBaseURL;
+    if (baseURL)
+        wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
+
+    RefPtr<ObjCObjectGraph> wkUserData;
+    if (userData)
+        wkUserData = ObjCObjectGraph::create(userData);
+
+    WKPageLoadDataWithUserData(self._pageRef, toAPI(wkData.get()), wkMIMEType.get(), wkEncodingName.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)stopLoading

@@ -1,5 +1,39 @@
 2013-05-17  Sam Weinig  <sam@webkit.org>
 
+        Expose new load-with-userData API to Objective-C
+        https://bugs.webkit.org/show_bug.cgi?id=116335
+
+        Reviewed by Anders Carlsson.
+
+        - Adds loadRequest:userData:, loadFileURL:restrictToFilesWithin:userData:, loadHTMLString:baseURL:userData:
+          loadData:MIMEType:textEncodingName:baseURL:, and loadData:MIMEType:textEncodingName:baseURL:userData.
+        - Adds a WKObjCTypeWrapperRef (which is a ObjCObjectGraph under the covers) to allow the userData to be unwrapped
+          in the injected bundles willLoadURLRequest and willLoadDataRequest C-SPI callbacks.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/mac/WKBaseMac.h: Added.
+        * Shared/API/c/mac/WKObjCTypeWrapperRef.h: Added.
+        * Shared/API/c/mac/WKObjCTypeWrapperRef.mm: Added.
+        (WKObjCTypeWrapperGetTypeID):
+        (WKObjCTypeWrapperCreate):
+        (WKObjCTypeWrapperGetObject):
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]):
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]):
+        (-[WKBrowsingContextController loadRequest:]):
+        (-[WKBrowsingContextController loadRequest:userData:]):
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]):
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:userData:]):
+        (-[WKBrowsingContextController loadHTMLString:baseURL:]):
+        (-[WKBrowsingContextController loadHTMLString:baseURL:userData:]):
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:]):
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-05-17  Sam Weinig  <sam@webkit.org>
+
         Add WKPageLoadData and WKPageLoadDataWithUserData SPI to support loading arbitrary data blobs
         https://bugs.webkit.org/show_bug.cgi?id=116325
 
