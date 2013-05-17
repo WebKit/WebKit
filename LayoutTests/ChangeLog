@@ -1,3 +1,12 @@
+2013-05-17  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [GTK] Rebaseline after r150169
+        https://bugs.webkit.org/show_bug.cgi?id=116256
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Renamed from fast/loader/willsendrequest-returns-null-for-memory-cache-load.html.
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         media/video-seek-after-end.html is flaky
