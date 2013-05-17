@@ -273,8 +273,7 @@ void Internals::resetToConsistentState(Page* page)
 #if ENABLE(PAGE_POPUP)
     delete s_pagePopupDriver;
     s_pagePopupDriver = 0;
-    if (page->chrome())
-        page->chrome().client()->resetPagePopupDriver();
+    page->chrome().client()->resetPagePopupDriver();
 #endif
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
     if (page->inspectorController())
@@ -771,7 +770,7 @@ void Internals::setEnableMockPagePopup(bool enabled, ExceptionCode& ec)
 {
 #if ENABLE(PAGE_POPUP)
     Document* document = contextDocument();
-    if (!document || !document->page() || !document->page()->chrome())
+    if (!document || !document->page())
         return;
     Page* page = document->page();
     if (!enabled) {

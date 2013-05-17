@@ -52,7 +52,7 @@ int NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const
 {
     Page* page = frame->page();
     ASSERT(page);
-    BlackBerry::Platform::NetworkStreamFactory* streamFactory = page->chrome()->platformPageClient()->networkStreamFactory();
+    BlackBerry::Platform::NetworkStreamFactory* streamFactory = page->chrome().platformPageClient()->networkStreamFactory();
     return startJob(playerId, page->groupName(), job, request, streamFactory, frame, defersLoading ? 1 : 0);
 }
 

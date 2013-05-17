@@ -62,7 +62,7 @@ SocketStreamHandle::SocketStreamHandle(const String& groupName, const KURL& url,
     int playerId = static_cast<FrameLoaderClientBlackBerry*>(page->mainFrame()->loader()->client())->playerId();
 
     // Create a platform socket stream
-    BlackBerry::Platform::NetworkStreamFactory* factory = page->chrome()->platformPageClient()->networkStreamFactory();
+    BlackBerry::Platform::NetworkStreamFactory* factory = page->chrome().platformPageClient()->networkStreamFactory();
     ASSERT(factory);
 
     // Open the socket

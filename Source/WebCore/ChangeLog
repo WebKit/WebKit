@@ -1,5 +1,22 @@
 2013-05-17  Alberto Garcia  <agarcia@igalia.com>
 
+        Fix code that expects Page::chrome() to return a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=116313
+
+        Reviewed by Darin Adler.
+
+        Page::chrome() returns a reference after r150214.
+
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+        * platform/network/blackberry/SocketStreamHandleBlackBerry.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setEnableMockPagePopup):
+
+2013-05-17  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] ImageBlackBerry: add missing BlendMode parameter
         https://bugs.webkit.org/show_bug.cgi?id=116316
 
