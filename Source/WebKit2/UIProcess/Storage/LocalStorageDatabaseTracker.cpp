@@ -70,6 +70,17 @@ void LocalStorageDatabaseTracker::deleteEmptyDatabaseWithOrigin(SecurityOrigin* 
     removeDatabaseWithOriginIdentifier(securityOrigin->databaseIdentifier());
 }
 
+Vector<RefPtr<WebCore::SecurityOrigin>> LocalStorageDatabaseTracker::origins() const
+{
+    Vector<RefPtr<SecurityOrigin>> origins;
+    origins.reserveInitialCapacity(m_origins.size());
+
+    for (HashSet<String>::const_iterator it = m_origins.begin(), end = m_origins.end(); it != end; ++it)
+        origins.uncheckedAppend(SecurityOrigin::createFromDatabaseIdentifier(*it));
+
+    return origins;
+}
+
 void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
 {
     if (m_database.isOpen())

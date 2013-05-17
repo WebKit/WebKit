@@ -53,6 +53,8 @@ public:
     void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
     void deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*);
 
+    Vector<RefPtr<WebCore::SecurityOrigin>> origins() const;
+
 private:
     explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);
 

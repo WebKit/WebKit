@@ -32,6 +32,8 @@
 #include "WebKeyValueStorageManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 const char* WebKeyValueStorageManagerProxy::supplementName()
@@ -81,14 +83,22 @@ void WebKeyValueStorageManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
+static void didGetKeyValueStorageOriginsCallback(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context)
+{
+    RefPtr<ArrayCallback> callback = adoptRef(static_cast<ArrayCallback*>(context));
+
+    Vector<RefPtr<APIObject>> webSecurityOrigins;
+    webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
+
+    for (unsigned i = 0; i < securityOrigins.size(); ++i)
+        webSecurityOrigins.uncheckedAppend(WebSecurityOrigin::create(securityOrigins[i]));
+
+    callback->performCallbackWithReturnValue(ImmutableArray::adopt(webSecurityOrigins).get());
+}
+
 void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
-    RefPtr<ArrayCallback> callback = prpCallback;
-    uint64_t callbackID = callback->callbackID();
-    m_arrayCallbacks.set(callbackID, callback.release());
-
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Should key-value storage be handled in the web process?
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::GetKeyValueStorageOrigins(callbackID));
+    context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOriginsCallback);
 }
     
 void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)

@@ -35,6 +35,7 @@
 #include "WorkQueue.h"
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
+#include <WebCore/TextEncoding.h>
 
 using namespace WebCore;
 
@@ -335,6 +336,8 @@ StorageManager::StorageManager()
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
     , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue))
 {
+    // Make sure the encoding is initialized before we start dispatching things to the queue.
+    UTF8Encoding();
 }
 
 StorageManager::~StorageManager()
@@ -376,6 +379,11 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
     m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<CoreIPC::Connection>(webProcessProxy->connection())));
+}
+
+void StorageManager::getOrigins(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
+{
+    m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
 }
 
 void StorageManager::createLocalStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
@@ -556,6 +564,18 @@ StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNa
         result.iterator->value = LocalStorageNamespace::create(this, storageNamespaceID);
 
     return result.iterator->value.get();
+}
+
+static void callCallbackFunction(void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context), Vector<RefPtr<WebCore::SecurityOrigin>>* securityOriginsPtr)
+{
+    OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(securityOriginsPtr);
+    callbackFunction(*securityOrigins, context);
+}
+
+void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
+{
+    OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(new Vector<RefPtr<WebCore::SecurityOrigin>>(m_localStorageDatabaseTracker->origins()));
+    dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.leakPtr()));
 }
 
 } // namespace WebKit

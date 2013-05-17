@@ -27,11 +27,16 @@
 #define StorageManager_h
 
 #include "Connection.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
 class WorkQueue;
+
+namespace WebCore {
+class SecurityOrigin;
+}
 
 namespace WebKit {
 
@@ -53,6 +58,10 @@ public:
 
     void processWillOpenConnection(WebProcessProxy*);
     void processWillCloseConnection(WebProcessProxy*);
+
+    // FIXME: Instead of a context + C function, this should take a WTF::Function, but we currently don't
+    // support arguments in functions.
+    void getOrigins(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context));
 
 private:
     StorageManager();
@@ -83,6 +92,8 @@ private:
 
     class LocalStorageNamespace;
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
+
+    void getOriginsInternal(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context));
 
     RefPtr<WorkQueue> m_queue;
 

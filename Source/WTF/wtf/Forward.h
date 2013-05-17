@@ -44,6 +44,7 @@ namespace WTF {
     class Encoder;
     class Float32Array;
     class Float64Array;
+    class FunctionDispatcher;
     class Int8Array;
     class Int16Array;
     class Int32Array;
@@ -77,6 +78,7 @@ using WTF::Encoder;
 using WTF::Decoder;
 using WTF::Float32Array;
 using WTF::Float64Array;
+using WTF::FunctionDispatcher;
 using WTF::Int8Array;
 using WTF::Int16Array;
 using WTF::Int32Array;
