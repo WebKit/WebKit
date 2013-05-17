@@ -1,3 +1,20 @@
+2013-05-17  Frédéric Wang  <fred.wang@free.fr>
+
+        Bad spacing inside MathML formulas when text-indent is specified
+        https://bugs.webkit.org/show_bug.cgi?id=106600
+
+        Reviewed by Martin Robinson.
+
+        When MathML is used in a HTML page that modifies the CSS text-indent,
+        large gaps appear inside the mathematical expressions. Resetting it to
+        0 on the math root (as Gecko does) fixes the issue.
+
+        Tests: mathml/presentation/text-indent.html
+               mathml/presentation/text-indent-expected.html
+
+        * css/mathml.css:
+        (math): reset text-indent to its default value.
+
 2013-05-17  Alberto Garcia  <agarcia@igalia.com>
 
         Fix code that expects Page::chrome() to return a pointer
