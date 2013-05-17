@@ -148,10 +148,13 @@ NSString *WebPluginAttributesKey = @"WebPluginAttributes";
 NSString *WebPluginContainerKey = @"WebPluginContainer";
 
 @interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener> {
-    Frame* m_frame;
+    RefPtr<Frame> _frame;
+    FramePolicyFunction _framePolicyFunction;
 }
+
 - (id)initWithWebCoreFrame:(Frame*)frame;
 - (void)invalidate;
+
 @end
 
 static inline WebDataSource *dataSource(DocumentLoader* loader)
@@ -203,7 +206,6 @@ static inline void applyAppleDictionaryApplicationQuirk(WebFrameLoaderClient* cl
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
-    , m_policyFunction(0)
 {
 }
 
@@ -751,9 +753,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 
 void WebFrameLoaderClient::cancelPolicyCheck()
 {
-    [m_policyListener.get() invalidate];
-    m_policyListener = nil;
-    m_policyFunction = 0;
+    [m_policyListener invalidate];
+    m_policyListener = nullptr;
 }
 
 void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
@@ -2013,6 +2014,7 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
 }
 
 @implementation WebFramePolicyListener
+
 + (void)initialize
 {
     JSC::initializeThreading();
@@ -2026,17 +2028,15 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     self = [self init];
     if (!self)
         return nil;
-    frame->ref();
-    m_frame = frame;
+
+    _frame = frame;
+
     return self;
 }
 
 - (void)invalidate
 {
-    if (m_frame) {
-        m_frame->deref();
-        m_frame = 0;
-    }
+    _frame = nullptr;
 }
 
 - (void)dealloc
@@ -2044,24 +2044,12 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebFramePolicyListener class], self))
         return;
 
-    if (m_frame)
-        m_frame->deref();
     [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT_MAIN_THREAD();
-    if (m_frame)
-        m_frame->deref();
-    [super finalize];
 }
 
 - (void)receivedPolicyDecision:(PolicyAction)action
 {
-    RefPtr<Frame> frame = adoptRef(m_frame);
-    m_frame = 0;
-    if (frame)
+    if (RefPtr<Frame> frame = _frame.release())
         static_cast<WebFrameLoaderClient*>(frame->loader()->client())->receivedPolicyDecison(action);
 }
 

@@ -1,5 +1,28 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        WebFramePolicyListener should keep its Frame in a RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=116322
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (-[WebFramePolicyListener initWithWebCoreFrame:]):
+        No need to ref the frame, the RefPtr does that for us.
+
+        (-[WebFramePolicyListener invalidate]):
+        Just set the frame to null.
+
+        (-[WebFramePolicyListener dealloc]):
+        Remove call to deref, that's done automatically now.
+
+        (-[WebFramePolicyListener finalize]):
+        Remove this method. (We could have kept it just for the assertion but I didn't think that was necessary).
+
+        (-[WebFramePolicyListener receivedPolicyDecision:):
+        Use release() to transfer ownership.
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Reduce number of WebFrameLoaderClient static casts in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=116320
 

@@ -237,5 +237,4 @@ private:
     RetainPtr<WebFrame> m_webFrame;
 
     RetainPtr<WebFramePolicyListener> m_policyListener;
-    WebCore::FramePolicyFunction m_policyFunction;
 };
