@@ -1,5 +1,11 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Accessing null function pointers is bad.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Make kit(Frame*) more robust
         https://bugs.webkit.org/show_bug.cgi?id=116324
 

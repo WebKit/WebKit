@@ -2037,13 +2037,11 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     if (!frame)
         return;
 
-#if !ASSERT_DISABLED
     FramePolicyFunction policyFunction = _policyFunction;
-#endif
     _policyFunction = nullptr;
 
     ASSERT(policyFunction);
-    (frame->loader()->policyChecker()->*_policyFunction)(action);
+    (frame->loader()->policyChecker()->*policyFunction)(action);
 }
 
 - (void)ignore
