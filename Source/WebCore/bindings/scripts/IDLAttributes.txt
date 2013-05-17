@@ -28,7 +28,6 @@ Clamp
 Conditional=*
 Constructor
 ConstructorConditional=*
-ConstructorParameters=*
 ConstructorRaisesException
 ConstructorTemplate=Event|TypedArray
 Custom

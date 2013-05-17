@@ -25,6 +25,7 @@
 
 [
     CustomConstructor,
+    CustomConstructor(float x, float y),
     ImplementationLacksVTable
 ] interface WebKitPoint {
     attribute float x;

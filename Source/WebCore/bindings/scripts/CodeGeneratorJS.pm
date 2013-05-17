@@ -4202,20 +4202,19 @@ sub GenerateConstructorHelperMethods
     my $generatingNamedConstructor = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
-    my $leastConstructorLength = $interface->extendedAttributes->{"ConstructorParameters"};
-    if (!defined $leastConstructorLength) {
-        if ($codeGenerator->IsConstructorTemplate($interface, "Event") || $codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
-            $leastConstructorLength = 1;
-        } elsif ($interface->extendedAttributes->{"Constructor"}) {
-            my @constructors = @{$interface->constructors};
-            $leastConstructorLength = 255;
-            foreach my $constructor (@constructors) {
-                my $constructorLength = GetFunctionLength($constructor);
-                $leastConstructorLength = $constructorLength if ($constructorLength < $leastConstructorLength);
-            }
-        } else {
-            $leastConstructorLength = 0;
+    my $leastConstructorLength = 0;
+    if ($codeGenerator->IsConstructorTemplate($interface, "Event") || $codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
+        $leastConstructorLength = 1;
+    } elsif ($interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"CustomConstructor"}) {
+        my @constructors = @{$interface->constructors};
+        my @customConstructors = @{$interface->customConstructors};
+        $leastConstructorLength = 255;
+        foreach my $constructor (@constructors, @customConstructors) {
+            my $constructorLength = GetFunctionLength($constructor);
+            $leastConstructorLength = $constructorLength if ($constructorLength < $leastConstructorLength);
         }
+    } else {
+        $leastConstructorLength = 0;
     }
 
     if ($generatingNamedConstructor) {

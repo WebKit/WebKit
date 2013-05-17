@@ -26,7 +26,6 @@
 
 [
     ConstructorTemplate=TypedArray,
-    ConstructorParameters=123,
     NumericIndexedGetter,
     CustomIndexedSetter,
     JSGenerateToNativeObject,

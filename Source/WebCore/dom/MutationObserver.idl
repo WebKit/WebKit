@@ -29,8 +29,7 @@
  */
 
 [
-    CustomConstructor,
-    ConstructorParameters=1,
+    CustomConstructor(MutationCallback callback),
     CustomIsReachable,
     ImplementationLacksVTable
 ] interface MutationObserver {

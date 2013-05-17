@@ -27,8 +27,7 @@
 
 [
     Conditional=WORKERS,
-    CustomConstructor,
-    Constructor(DOMString scriptUrl),
+    CustomConstructor(DOMString scriptUrl),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     JSGenerateToNativeObject,

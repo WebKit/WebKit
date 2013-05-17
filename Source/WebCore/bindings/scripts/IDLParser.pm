@@ -49,6 +49,7 @@ struct( domInterface => {
     attributes => '@',    # List of 'domAttribute'    
     extendedAttributes => '$', # Extended attributes
     constructors => '@', # Constructors, list of 'domFunction'
+    customConstructors => '@', # Custom constructors, list of 'domFunction'
     isException => '$', # Used for exception interfaces
     isCallback => '$', # Used for callback interfaces
     isPartial => '$', # Used for partial interfaces
@@ -382,7 +383,7 @@ sub applyTypedefs
             foreach my $attribute (@{$definition->attributes}) {
                 $self->applyTypedefsForSignature($attribute->signature);
             }
-            foreach my $function (@{$definition->functions}, @{$definition->constructors}) {
+            foreach my $function (@{$definition->functions}, @{$definition->constructors}, @{$definition->customConstructors}) {
                 $self->applyTypedefsForSignature($function->signature);
                 foreach my $signature (@{$function->parameters}) {
                     $self->applyTypedefsForSignature($signature);
@@ -1166,6 +1167,11 @@ sub parseAttributeRest
             push(@{$newDataNode->setterExceptions}, @{$getRef->{"setraises"}});
         }
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        # CustomConstructor may also be used on attributes.
+        if (defined $extendedAttributeList->{"CustomConstructors"}) {
+            delete $extendedAttributeList->{"CustomConstructors"};
+            $extendedAttributeList->{"CustomConstructor"} = "VALUE_IS_MISSING";
+        }
         $newDataNode->signature->extendedAttributes($extendedAttributeList);
         return $newDataNode;
     }
@@ -1537,6 +1543,13 @@ sub copyExtendedAttributes
             foreach my $constructor (@constructors) {
                 push(@{$extendedAttributeList->{"Constructors"}}, $constructor);
             }
+        } elsif ($key eq "CustomConstructor") {
+            push(@{$extendedAttributeList->{"CustomConstructors"}}, $attr->{$key});
+        } elsif ($key eq "CustomConstructors") {
+           my @customConstructors = @{$attr->{$key}};
+            foreach my $customConstructor (@customConstructors) {
+                push(@{$extendedAttributeList->{"CustomConstructors"}}, $customConstructor);
+            }
         } else {
             $extendedAttributeList->{$key} = $attr->{$key};
         }
@@ -1623,7 +1636,7 @@ sub parseExtendedAttributeRest
         return $attrs;
     }
 
-    if ($name eq "Constructor") {
+    if ($name eq "Constructor" || $name eq "CustomConstructor") {
         $attrs->{$name} = [];
     } else {
         $attrs->{$name} = "VALUE_IS_MISSING";
@@ -2606,6 +2619,21 @@ sub applyExtendedAttributeList
         push(@{$newDataNode->parameters}, @{$attributes{$constructorName}});
         $extendedAttributeList->{"NamedConstructor"} = $constructorName;
         push(@{$interface->constructors}, $newDataNode);
+    }
+    if (defined $extendedAttributeList->{"CustomConstructors"}) {
+        my @customConstructorParams = @{$extendedAttributeList->{"CustomConstructors"}};
+        my $index = (@customConstructorParams == 1) ? 0 : 1;
+        foreach my $param (@customConstructorParams) {
+            my $customConstructor = domFunction->new();
+            $customConstructor->signature(domSignature->new());
+            $customConstructor->signature->name("CustomConstructor");
+            $customConstructor->signature->extendedAttributes($extendedAttributeList);
+            $customConstructor->parameters($param);
+            $customConstructor->{overloadedIndex} = $index++;
+            push(@{$interface->customConstructors}, $customConstructor);
+        }
+        delete $extendedAttributeList->{"CustomConstructors"};
+        $extendedAttributeList->{"CustomConstructor"} = "VALUE_IS_MISSING";
     }
     $interface->extendedAttributes($extendedAttributeList);
 }

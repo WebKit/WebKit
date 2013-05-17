@@ -29,7 +29,6 @@
     Constructor,
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),
-    ConstructorParameters=0,
     CallWith=ScriptExecutionContext,
     SkipVTableValidation
 ] interface MediaStream {

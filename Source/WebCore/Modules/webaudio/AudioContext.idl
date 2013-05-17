@@ -28,7 +28,6 @@
     Conditional=WEB_AUDIO,
     ActiveDOMObject,
     CustomConstructor,
-    ConstructorParameters=0,
     EventTarget
 ] interface AudioContext {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
