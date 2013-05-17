@@ -63,14 +63,6 @@ bool FEBlend::setBlendMode(BlendModeType mode)
     return true;
 }
 
-static inline unsigned char fastDivideBy255(uint16_t value)
-{
-    // This is an approximate algorithm for division by 255, but it gives accurate results for 16bit values.
-    uint16_t quotient = value >> 8;
-    uint16_t remainder = value - (quotient * 255) + 1;
-    return quotient + (remainder >> 8);
-}
-
 inline unsigned char feBlendNormal(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char)
 {
     return fastDivideBy255((255 - alphaA) * colorB + colorA * 255);

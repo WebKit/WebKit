@@ -40,6 +40,7 @@
 #include "config.h"
 #include "PNGImageDecoder.h"
 
+#include "Color.h"
 #include "PlatformInstrumentation.h"
 #include "png.h"
 #include <wtf/OwnArrayPtr.h>
@@ -402,6 +403,29 @@ void PNGImageDecoder::headerAvailable()
     }
 }
 
+static inline void setPixelRGB(ImageFrame::PixelData* dest, png_bytep pixel)
+{
+    *dest = 0xFF000000U | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+}
+
+static inline void setPixelRGBA(ImageFrame::PixelData* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
+{
+    unsigned char a = pixel[3];
+    *dest = a << 24 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+    nonTrivialAlphaMask |= (255 - a);
+}
+
+static inline void setPixelPremultipliedRGBA(ImageFrame::PixelData* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
+{
+    unsigned char a = pixel[3];
+    unsigned char r = fastDivideBy255(pixel[0] * a);
+    unsigned char g = fastDivideBy255(pixel[1] * a);
+    unsigned char b = fastDivideBy255(pixel[2] * a);
+
+    *dest = a << 24 | r << 16 | g << 8 | b;
+    nonTrivialAlphaMask |= (255 - a);
+}
+
 void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
 {
     if (m_frameBufferCache.isEmpty())
@@ -501,27 +525,37 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Write the decoded row pixels to the frame buffer.
     ImageFrame::PixelData* address = buffer.getAddr(0, y);
     int width = scaledSize().width();
-    bool nonTrivialAlpha = false;
+    unsigned char nonTrivialAlphaMask = 0;
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    for (int x = 0; x < width; ++x) {
-        png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
-        unsigned alpha = hasAlpha ? pixel[3] : 255;
-        buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
-        nonTrivialAlpha |= alpha < 255;
-    }
-#else
-    ASSERT(!m_scaled);
-    png_bytep pixel = row;
-    for (int x = 0; x < width; ++x, pixel += colorChannels) {
-        unsigned alpha = hasAlpha ? pixel[3] : 255;
-        buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
-        nonTrivialAlpha |= alpha < 255;
-    }
+    if (m_scaled) {
+        for (int x = 0; x < width; ++x) {
+            png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
+            unsigned alpha = hasAlpha ? pixel[3] : 255;
+            buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+            nonTrivialAlphaMask |= (255 - alpha);
+        }
+    } else
 #endif
+    {
+        png_bytep pixel = row;
+        if (hasAlpha) {
+            if (buffer.premultiplyAlpha()) {
+                for (int x = 0; x < width; ++x, pixel += 4)
+                    setPixelPremultipliedRGBA(address++, pixel, nonTrivialAlphaMask);
+            } else {
+                for (int x = 0; x < width; ++x, pixel += 4)
+                    setPixelRGBA(address++, pixel, nonTrivialAlphaMask);
+            }
+        } else {
+            for (int x = 0; x < width; ++x, pixel += 3)
+                setPixelRGB(address++, pixel);
+        }
+    }
 
-    if (nonTrivialAlpha && !buffer.hasAlpha())
-        buffer.setHasAlpha(nonTrivialAlpha);
+
+    if (nonTrivialAlphaMask && !buffer.hasAlpha())
+        buffer.setHasAlpha(true);
 }
 
 void PNGImageDecoder::pngComplete()

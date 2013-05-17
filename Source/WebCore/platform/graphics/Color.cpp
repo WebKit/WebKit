@@ -434,9 +434,9 @@ RGBA32 premultipliedARGBFromColor(const Color& color)
     unsigned alpha = color.alpha();
     if (alpha < 255) {
         pixelColor = Color::createUnchecked(
-            (color.red() * alpha  + 254) / 255,
-            (color.green() * alpha  + 254) / 255,
-            (color.blue() * alpha  + 254) / 255,
+            fastDivideBy255(color.red() * alpha + 254),
+            fastDivideBy255(color.green() * alpha + 254),
+            fastDivideBy255(color.blue() * alpha + 254),
             alpha).rgb();
     } else
          pixelColor = color.rgb();

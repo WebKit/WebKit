@@ -202,6 +202,14 @@ inline Color blend(const Color& from, const Color& to, double progress, bool ble
                  blend(from.alpha(), to.alpha(), progress));
 }
 
+inline uint16_t fastDivideBy255(uint16_t value)
+{
+    // This is an approximate algorithm for division by 255, but it gives accurate results for 16bit values.
+    uint16_t approximation = value >> 8;
+    uint16_t remainder = value - (approximation * 255) + 1;
+    return approximation + (remainder >> 8);
+}
+
 #if USE(CG)
 CGColorRef cachedCGColor(const Color&, ColorSpace);
 #endif
