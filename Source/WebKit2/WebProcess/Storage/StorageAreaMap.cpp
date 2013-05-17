@@ -293,6 +293,11 @@ void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const St
         dispatchLocalStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
 }
 
+void StorageAreaMap::clearCache()
+{
+    resetValues();
+}
+
 void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     ASSERT(storageType() == SessionStorage);

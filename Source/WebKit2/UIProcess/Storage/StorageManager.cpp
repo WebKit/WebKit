@@ -58,6 +58,7 @@ public:
     void clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
 
     const HashMap<String, String>& items();
+    void clear();
 
 private:
     explicit StorageArea(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
@@ -87,6 +88,9 @@ public:
 
     PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
     void didDestroyStorageArea(StorageArea*);
+
+    void clearStorageAreasMatchingOrigin(SecurityOrigin*);
+    void clearAllStorageAreas();
 
 private:
     explicit LocalStorageNamespace(StorageManager*, uint64_t storageManagerID);
@@ -205,6 +209,19 @@ const HashMap<String, String>& StorageManager::StorageArea::items()
     return m_storageMap->items();
 }
 
+void StorageManager::StorageArea::clear()
+{
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+
+    if (m_localStorageDatabase) {
+        m_localStorageDatabase->close();
+        m_localStorageDatabase = nullptr;
+    }
+
+    for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it)
+        it->first->send(Messages::StorageAreaMap::ClearCache(), it->second);
+}
+
 void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded()
 {
     if (!m_localStorageNamespace)
@@ -271,6 +288,20 @@ void StorageManager::LocalStorageNamespace::didDestroyStorageArea(StorageArea* s
 
     ASSERT(m_storageManager->m_localStorageNamespaces.contains(m_storageNamespaceID));
     m_storageManager->m_localStorageNamespaces.remove(m_storageNamespaceID);
+}
+
+void StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin(SecurityOrigin* securityOrigin)
+{
+    for (auto it = m_storageAreaMap.begin(), end = m_storageAreaMap.end(); it != end; ++it) {
+        if (it->key->equal(securityOrigin))
+            it->value->clear();
+    }
+}
+
+void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
+{
+    for (auto it = m_storageAreaMap.begin(), end = m_storageAreaMap.end(); it != end; ++it)
+        it->value->clear();
 }
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
@@ -394,6 +425,16 @@ void StorageManager::getOrigins(FunctionDispatcher* callbackDispatcher, void* co
     m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
 }
 
+void StorageManager::deleteEntriesForOrigin(SecurityOrigin* securityOrigin)
+{
+    m_queue->dispatch(bind(&StorageManager::deleteEntriesForOriginInternal, this, RefPtr<SecurityOrigin>(securityOrigin)));
+}
+
+void StorageManager::deleteAllEntries()
+{
+    m_queue->dispatch(bind(&StorageManager::deleteAllEntriesInternal, this));
+}
+
 void StorageManager::createLocalStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
@@ -467,7 +508,6 @@ void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storage
     ASSERT(storageArea);
 
     values = storageArea->items();
-
     connection->send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
 }
 
@@ -585,5 +625,22 @@ void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* co
     OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(new Vector<RefPtr<WebCore::SecurityOrigin>>(m_localStorageDatabaseTracker->origins()));
     dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.leakPtr()));
 }
+
+void StorageManager::deleteEntriesForOriginInternal(SecurityOrigin* securityOrigin)
+{
+    for (auto it = m_localStorageNamespaces.begin(), end = m_localStorageNamespaces.end(); it != end; ++it)
+        it->value->clearStorageAreasMatchingOrigin(securityOrigin);
+
+    m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(securityOrigin);
+}
+
+void StorageManager::deleteAllEntriesInternal()
+{
+    for (auto it = m_localStorageNamespaces.begin(), end = m_localStorageNamespaces.end(); it != end; ++it)
+        it->value->clearAllStorageAreas();
+
+    m_localStorageDatabaseTracker->deleteAllDatabases();
+}
+
 
 } // namespace WebKit

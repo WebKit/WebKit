@@ -56,12 +56,14 @@ public:
         return adoptRef(new WebSecurityOrigin(securityOrigin));
     }
 
-    const String protocol() const { return m_securityOrigin->protocol(); }
-    const String host() const { return m_securityOrigin->host(); }
+    String protocol() const { return m_securityOrigin->protocol(); }
+    String host() const { return m_securityOrigin->host(); }
     unsigned short port() const { return m_securityOrigin->port(); }
 
-    const String databaseIdentifier() const { return m_securityOrigin->databaseIdentifier(); }
-    const String toString() const { return m_securityOrigin->toString(); }
+    String databaseIdentifier() const { return m_securityOrigin->databaseIdentifier(); }
+    String toString() const { return m_securityOrigin->toString(); }
+
+    WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
 private:
     WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)

@@ -226,7 +226,7 @@ void LocalStorageDatabase::close()
         m_database.close();
 
     if (isEmpty)
-        m_tracker->deleteEmptyDatabaseWithOrigin(m_securityOrigin.get());
+        m_tracker->deleteDatabaseWithOrigin(m_securityOrigin.get());
 }
 
 void LocalStorageDatabase::itemDidChange(const String& key, const String& value)

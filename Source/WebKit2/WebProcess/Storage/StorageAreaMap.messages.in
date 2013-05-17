@@ -27,4 +27,5 @@ messages -> StorageAreaMap {
     DidClear(uint64_t storageMapSeed)
 
     DispatchStorageEvent(uint64_t sourceStorageAreaID, WTF::String key, WTF::String oldValue, WTF::String newValue, WTF::String urlString)
+    ClearCache()
 }

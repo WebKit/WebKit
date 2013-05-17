@@ -51,7 +51,8 @@ public:
     String databasePath(WebCore::SecurityOrigin*) const;
 
     void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
-    void deleteEmptyDatabaseWithOrigin(WebCore::SecurityOrigin*);
+    void deleteDatabaseWithOrigin(WebCore::SecurityOrigin*);
+    void deleteAllDatabases();
 
     Vector<RefPtr<WebCore::SecurityOrigin>> origins() const;
 

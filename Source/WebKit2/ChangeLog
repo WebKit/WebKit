@@ -1,5 +1,70 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Use the UI process storage manager for deleting local storage data
+        https://bugs.webkit.org/show_bug.cgi?id=116358
+        <rdar://problem/13852829>
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::protocol):
+        (WebKit::WebSecurityOrigin::host):
+        (WebKit::WebSecurityOrigin::databaseIdentifier):
+        (WebKit::WebSecurityOrigin::toString):
+        Remove unneeded consts.
+
+        (WebKit::WebSecurityOrigin::securityOrigin):
+        Add getter.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::close):
+        deleteEmptyDatabaseWithOrigin has been renamed to deleteDatabaseWithOrigin.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabaseWithOrigin):
+        Rename since this is no longer used only for empty databases.
+
+        (WebKit::LocalStorageDatabaseTracker::deleteAllDatabases):
+        Loop over the tracker database and delete all database files.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::clear):
+        Clear the map, close the database and tell all event listeners to reset their caches.
+
+        (WebKit::StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin):
+        Loop over all storage areas and call clear on those matching the security origin.
+
+        (WebKit::StorageManager::LocalStorageNamespace::clearAllStorageAreas):
+        Loop over all storage areas and call clear on them.
+        
+        (WebKit::StorageManager::deleteEntriesForOrigin):
+        Dispatch deleteEntriesForOriginInternal on the work queue.
+
+        (WebKit::StorageManager::deleteAllEntries):
+        Dispatch deleteAllEntriesInternal on the work queue.
+
+        (WebKit::StorageManager::deleteEntriesForOriginInternal):
+        Call clearStorageAreasMatchingOrigin on all local storage namespaces and then delete the database.
+
+        (WebKit::StorageManager::deleteAllEntriesInternal):
+        Call clearAllStorageAreas on all local storage namespaces and then delete all databases.
+
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::deleteEntriesForOrigin):
+        Call out to the storage manager.
+
+        (WebKit::WebKeyValueStorageManagerProxy::deleteAllEntries):
+        Ditto.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::clearCache):
+        Call resetValues which will null out the storage map.
+
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        Add ClearCache message.
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Only import local storage items from the database once
         https://bugs.webkit.org/show_bug.cgi?id=116354
 

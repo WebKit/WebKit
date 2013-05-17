@@ -109,19 +109,12 @@ void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<S
 
 void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
-    SecurityOriginData securityOriginData;
-    securityOriginData.protocol = origin->protocol();
-    securityOriginData.host = origin->host();
-    securityOriginData.port = origin->port();
-
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Should key-value storage be handled in the web process?
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::DeleteEntriesForOrigin(securityOriginData));
+    context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());
 }
 
 void WebKeyValueStorageManagerProxy::deleteAllEntries()
 {
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Should key-value storage be handled in the web process?
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::DeleteAllEntries());
+    context()->storageManager().deleteAllEntries();
 }
 
 } // namespace WebKit
