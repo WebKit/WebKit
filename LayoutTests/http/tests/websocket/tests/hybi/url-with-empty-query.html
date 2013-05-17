@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE">
 <html>
 <head>
-<script src="../../../../js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test-pre.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,15 +11,16 @@ description("Make sure handshake with URL with empty query components success.")
 
 window.jsTestIsAsync = true;
 
-var url = "ws://127.0.0.1:8880/websocket/tests/hybi/echo-location?";
+var url = "ws://127.0.0.1:8880/websocket/tests/hybi/echo-path?";
 var handshake_success = false;
-var ws_location;
+var path;
+var expected_path = "/websocket/tests/hybi/echo-path?";
 
 function endTest()
 {
     clearTimeout(timeoutID);
     shouldBeTrue("handshake_success");
-    shouldBe("ws_location", "url");
+    shouldBe("path", "expected_path");
     finishJSTest();
 }
 
@@ -30,8 +31,8 @@ ws.onopen = function () {
     handshake_success = true;
 };
 ws.onmessage = function (evt) {
-    ws_location = evt.data;
-    debug("received:" + ws_location);
+    path = evt.data;
+    debug("received:" + path);
     ws.close();
 };
 ws.onclose = function () {
@@ -41,6 +42,6 @@ ws.onclose = function () {
 var timeoutID = setTimeout("endTest()", 2000);
 
 </script>
-<script src="../../../../js-test-resources/js-test-post.js"></script>
+<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

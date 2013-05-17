@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE">
 <html>
 <head>
-<script src="../../../../js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test-pre.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -13,7 +13,7 @@ window.jsTestIsAsync = true;
 
 var url = "ws://127.0.0.1:8880";
 var handshake_success = false;
-var ws_location;
+var host
 
 var ws = new WebSocket(url);
 ws.onopen = function () {
@@ -21,18 +21,18 @@ ws.onopen = function () {
     handshake_success = true;
 };
 ws.onmessage = function (evt) {
-    ws_location = evt.data;
-    debug("received:" + ws_location);
+    host = evt.data;
+    debug("received:" + host);
     ws.close();
 };
 ws.onclose = function () {
     debug("WebSocket is closed");
     shouldBeTrue("handshake_success");
-    shouldBe("ws_location", '"ws://127.0.0.1:8880/"');
+    shouldBe("host", '"127.0.0.1:8880"');
     finishJSTest();
 };
 
 </script>
-<script src="../../../../js-test-resources/js-test-post.js"></script>
+<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

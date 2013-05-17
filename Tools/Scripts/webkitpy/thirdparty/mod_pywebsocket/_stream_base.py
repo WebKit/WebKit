@@ -39,6 +39,8 @@
 # writing/reading.
 
 
+import socket
+
 from mod_pywebsocket import util
 
 
@@ -109,20 +111,34 @@ class StreamBase(object):
             ConnectionTerminatedException: when read returns empty string.
         """
 
-        bytes = self._request.connection.read(length)
-        if not bytes:
+        try:
+            read_bytes = self._request.connection.read(length)
+            if not read_bytes:
+                raise ConnectionTerminatedException(
+                    'Receiving %d byte failed. Peer (%r) closed connection' %
+                    (length, (self._request.connection.remote_addr,)))
+            return read_bytes
+        except socket.error, e:
+            # Catch a socket.error. Because it's not a child class of the
+            # IOError prior to Python 2.6, we cannot omit this except clause.
+            # Use %s rather than %r for the exception to use human friendly
+            # format.
             raise ConnectionTerminatedException(
-                'Receiving %d byte failed. Peer (%r) closed connection' %
-                (length, (self._request.connection.remote_addr,)))
-        return bytes
+                'Receiving %d byte failed. socket.error (%s) occurred' %
+                (length, e))
+        except IOError, e:
+            # Also catch an IOError because mod_python throws it.
+            raise ConnectionTerminatedException(
+                'Receiving %d byte failed. IOError (%s) occurred' %
+                (length, e))
 
-    def _write(self, bytes):
+    def _write(self, bytes_to_write):
         """Writes given bytes to connection. In case we catch any exception,
         prepends remote address to the exception message and raise again.
         """
 
         try:
-            self._request.connection.write(bytes)
+            self._request.connection.write(bytes_to_write)
         except Exception, e:
             util.prepend_message_to_exception(
                     'Failed to send message to %r: ' %
@@ -138,12 +154,12 @@ class StreamBase(object):
             ConnectionTerminatedException: when read returns empty string.
         """
 
-        bytes = []
+        read_bytes = []
         while length > 0:
-            new_bytes = self._read(length)
-            bytes.append(new_bytes)
-            length -= len(new_bytes)
-        return ''.join(bytes)
+            new_read_bytes = self._read(length)
+            read_bytes.append(new_read_bytes)
+            length -= len(new_read_bytes)
+        return ''.join(read_bytes)
 
     def _read_until(self, delim_char):
         """Reads bytes until we encounter delim_char. The result will not
@@ -153,13 +169,13 @@ class StreamBase(object):
             ConnectionTerminatedException: when read returns empty string.
         """
 
-        bytes = []
+        read_bytes = []
         while True:
             ch = self._read(1)
             if ch == delim_char:
                 break
-            bytes.append(ch)
-        return ''.join(bytes)
+            read_bytes.append(ch)
+        return ''.join(read_bytes)
 
 
 # vi:sts=4 sw=4 et

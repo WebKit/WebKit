@@ -255,6 +255,9 @@ class Dispatcher(object):
         try:
             do_extra_handshake_(request)
         except handshake.AbortedByUserException, e:
+            # Re-raise to tell the caller of this function to finish this
+            # connection without sending any error.
+            self._logger.debug('%s', util.get_stack_trace())
             raise
         except Exception, e:
             util.prepend_message_to_exception(
@@ -294,11 +297,12 @@ class Dispatcher(object):
                 request.ws_stream.close_connection()
         # Catch non-critical exceptions the handler didn't handle.
         except handshake.AbortedByUserException, e:
-            self._logger.debug('%s', e)
+            self._logger.debug('%s', util.get_stack_trace())
             raise
         except msgutil.BadOperationException, e:
             self._logger.debug('%s', e)
-            request.ws_stream.close_connection(common.STATUS_ABNORMAL_CLOSURE)
+            request.ws_stream.close_connection(
+                common.STATUS_INTERNAL_ENDPOINT_ERROR)
         except msgutil.InvalidFrameException, e:
             # InvalidFrameException must be caught before
             # ConnectionTerminatedException that catches InvalidFrameException.
@@ -314,6 +318,8 @@ class Dispatcher(object):
         except msgutil.ConnectionTerminatedException, e:
             self._logger.debug('%s', e)
         except Exception, e:
+            # Any other exceptions are forwarded to the caller of this
+            # function.
             util.prepend_message_to_exception(
                 '%s raised exception for %s: ' % (
                     _TRANSFER_DATA_HANDLER_NAME, request.ws_resource),

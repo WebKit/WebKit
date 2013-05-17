@@ -84,42 +84,29 @@ def get_default_port(is_secure):
         return common.DEFAULT_WEB_SOCKET_PORT
 
 
-def validate_subprotocol(subprotocol, hixie):
+def validate_subprotocol(subprotocol):
     """Validate a value in the Sec-WebSocket-Protocol field.
 
-    See
-    - RFC 6455: Section 4.1., 4.2.2., and 4.3.
-    - HyBi 00: Section 4.1. Opening handshake
-
-    Args:
-         hixie: if True, checks if characters in subprotocol are in range
-                between U+0020 and U+007E. It's required by HyBi 00 but not by
-                RFC 6455.
+    See the Section 4.1., 4.2.2., and 4.3. of RFC 6455.
     """
 
     if not subprotocol:
         raise HandshakeException('Invalid subprotocol name: empty')
-    if hixie:
-        # Parameter should be in the range U+0020 to U+007E.
-        for c in subprotocol:
-            if not 0x20 <= ord(c) <= 0x7e:
-                raise HandshakeException(
-                    'Illegal character in subprotocol name: %r' % c)
-    else:
-        # Parameter should be encoded HTTP token.
-        state = http_header_util.ParsingState(subprotocol)
-        token = http_header_util.consume_token(state)
-        rest = http_header_util.peek(state)
-        # If |rest| is not None, |subprotocol| is not one token or invalid. If
-        # |rest| is None, |token| must not be None because |subprotocol| is
-        # concatenation of |token| and |rest| and is not None.
-        if rest is not None:
-            raise HandshakeException('Invalid non-token string in subprotocol '
-                                     'name: %r' % rest)
+
+    # Parameter should be encoded HTTP token.
+    state = http_header_util.ParsingState(subprotocol)
+    token = http_header_util.consume_token(state)
+    rest = http_header_util.peek(state)
+    # If |rest| is not None, |subprotocol| is not one token or invalid. If
+    # |rest| is None, |token| must not be None because |subprotocol| is
+    # concatenation of |token| and |rest| and is not None.
+    if rest is not None:
+        raise HandshakeException('Invalid non-token string in subprotocol '
+                                 'name: %r' % rest)
 
 
 def parse_host_header(request):
-    fields = request.headers_in['Host'].split(':', 1)
+    fields = request.headers_in[common.HOST_HEADER].split(':', 1)
     if len(fields) == 1:
         return fields[0], get_default_port(request.is_https())
     try:
@@ -130,27 +117,6 @@ def parse_host_header(request):
 
 def format_header(name, value):
     return '%s: %s\r\n' % (name, value)
-
-
-def build_location(request):
-    """Build WebSocket location for request."""
-    location_parts = []
-    if request.is_https():
-        location_parts.append(common.WEB_SOCKET_SECURE_SCHEME)
-    else:
-        location_parts.append(common.WEB_SOCKET_SCHEME)
-    location_parts.append('://')
-    host, port = parse_host_header(request)
-    connection_port = request.connection.local_addr[1]
-    if port != connection_port:
-        raise HandshakeException('Header/connection port mismatch: %d/%d' %
-                                 (port, connection_port))
-    location_parts.append(host)
-    if (port != get_default_port(request.is_https())):
-        location_parts.append(':')
-        location_parts.append(str(port))
-    location_parts.append(request.uri)
-    return ''.join(location_parts)
 
 
 def get_mandatory_header(request, key):
@@ -178,16 +144,6 @@ def check_request_line(request):
     if request.protocol != 'HTTP/1.1':
         raise HandshakeException('Version is not HTTP/1.1: %r' %
                                  request.protocol)
-
-
-def check_header_lines(request, mandatory_headers):
-    check_request_line(request)
-
-    # The expected field names, and the meaning of their corresponding
-    # values, are as follows.
-    #  |Upgrade| and |Connection|
-    for key, expected_value in mandatory_headers:
-        validate_mandatory_header(request, key, expected_value)
 
 
 def parse_token_list(data):

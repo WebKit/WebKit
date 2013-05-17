@@ -49,6 +49,7 @@ import re
 
 from mod_pywebsocket import common
 from mod_pywebsocket.extensions import get_extension_processor
+from mod_pywebsocket.extensions import is_compression_extension
 from mod_pywebsocket.handshake._base import check_request_line
 from mod_pywebsocket.handshake._base import format_header
 from mod_pywebsocket.handshake._base import get_mandatory_header
@@ -180,43 +181,59 @@ class Handshaker(object):
                         processors.append(processor)
             self._request.ws_extension_processors = processors
 
+            # List of extra headers. The extra handshake handler may add header
+            # data as name/value pairs to this list and pywebsocket appends
+            # them to the WebSocket handshake.
+            self._request.extra_headers = []
+
             # Extra handshake handler may modify/remove processors.
             self._dispatcher.do_extra_handshake(self._request)
             processors = filter(lambda processor: processor is not None,
                                 self._request.ws_extension_processors)
 
+            # Ask each processor if there are extensions on the request which
+            # cannot co-exist. When processor decided other processors cannot
+            # co-exist with it, the processor marks them (or itself) as
+            # "inactive". The first extension processor has the right to
+            # make the final call.
+            for processor in reversed(processors):
+                if processor.is_active():
+                    processor.check_consistency_with_other_processors(
+                        processors)
+            processors = filter(lambda processor: processor.is_active(),
+                                processors)
+
             accepted_extensions = []
 
-            # We need to take care of mux extension here. Extensions that
-            # are placed before mux should be applied to logical channels.
+            # We need to take into account of mux extension here.
+            # If mux extension exists:
+            # - Remove processors of extensions for logical channel,
+            #   which are processors located before the mux processor
+            # - Pass extension requests for logical channel to mux processor
+            # - Attach the mux processor to the request. It will be referred
+            #   by dispatcher to see whether the dispatcher should use mux
+            #   handler or not.
             mux_index = -1
             for i, processor in enumerate(processors):
                 if processor.name() == common.MUX_EXTENSION:
                     mux_index = i
                     break
             if mux_index >= 0:
-                mux_processor = processors[mux_index]
-                logical_channel_processors = processors[:mux_index]
-                processors = processors[mux_index+1:]
-
-                for processor in logical_channel_processors:
-                    extension_response = processor.get_extension_response()
-                    if extension_response is None:
-                        # Rejected.
-                        continue
-                    accepted_extensions.append(extension_response)
-                # Pass a shallow copy of accepted_extensions as extensions for
-                # logical channels.
-                mux_response = mux_processor.get_extension_response(
-                    self._request, accepted_extensions[:])
-                if mux_response is not None:
-                    accepted_extensions.append(mux_response)
+                logical_channel_extensions = []
+                for processor in processors[:mux_index]:
+                    logical_channel_extensions.append(processor.request())
+                    processor.set_active(False)
+                self._request.mux_processor = processors[mux_index]
+                self._request.mux_processor.set_extensions(
+                    logical_channel_extensions)
+                processors = filter(lambda processor: processor.is_active(),
+                                    processors)
 
             stream_options = StreamOptions()
 
-            # When there is mux extension, here, |processors| contain only
-            # prosessors for extensions placed after mux.
-            for processor in processors:
+            for index, processor in enumerate(processors):
+                if not processor.is_active():
+                    continue
 
                 extension_response = processor.get_extension_response()
                 if extension_response is None:
@@ -226,6 +243,14 @@ class Handshaker(object):
                 accepted_extensions.append(extension_response)
 
                 processor.setup_stream_options(stream_options)
+
+                if not is_compression_extension(processor.name()):
+                    continue
+
+                # Inactivate all of the following compression extensions.
+                for j in xrange(index + 1, len(processors)):
+                    if is_compression_extension(processors[j].name()):
+                        processors[j].set_active(False)
 
             if len(accepted_extensions) > 0:
                 self._request.ws_extensions = accepted_extensions
@@ -242,7 +267,7 @@ class Handshaker(object):
                     raise HandshakeException(
                         'do_extra_handshake must choose one subprotocol from '
                         'ws_requested_protocols and set it to ws_protocol')
-                validate_subprotocol(self._request.ws_protocol, hixie=False)
+                validate_subprotocol(self._request.ws_protocol)
 
                 self._logger.debug(
                     'Subprotocol accepted: %r',
@@ -375,6 +400,7 @@ class Handshaker(object):
 
         response.append('HTTP/1.1 101 Switching Protocols\r\n')
 
+        # WebSocket headers
         response.append(format_header(
             common.UPGRADE_HEADER, common.WEBSOCKET_UPGRADE_TYPE))
         response.append(format_header(
@@ -390,6 +416,11 @@ class Handshaker(object):
             response.append(format_header(
                 common.SEC_WEBSOCKET_EXTENSIONS_HEADER,
                 common.format_extensions(self._request.ws_extensions)))
+
+        # Headers not specific for WebSocket
+        for name, value in self._request.extra_headers:
+            response.append(format_header(name, value))
+
         response.append('\r\n')
 
         return ''.join(response)

@@ -1,3 +1,213 @@
+2013-05-16  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
+
+        [WebSocket] Update pywebsocket to r760
+        https://bugs.webkit.org/show_bug.cgi?id=115863
+
+        Reviewed by Alexey Proskuryakov.
+
+        Version r760 supports a newer draft of message compression.
+        We need this update to finish the permessage compression patch in
+        bug 98840. This patch also fixes failing unit tests after the update.
+
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_base.py:
+        (StreamBase._read):
+        (StreamBase._read.of):
+        (StreamBase._write):
+        (StreamBase.receive_bytes):
+        (StreamBase._read_until):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hybi.py:
+        (parse_frame):
+        (StreamOptions.__init__):
+        (Stream.__init__):
+        (Stream._receive_frame_as_frame_object):
+        (Stream._get_message_from_frame):
+        (Stream._process_close_message):
+        (Stream.close_connection):
+        (Stream.get_last_received_opcode):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/common.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/dispatch.py:
+        (Dispatcher.do_extra_handshake):
+        (Dispatcher.transfer_data):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py:
+        (ExtensionProcessorInterface.__init__):
+        (ExtensionProcessorInterface.request):
+        (ExtensionProcessorInterface):
+        (ExtensionProcessorInterface.name):
+        (ExtensionProcessorInterface.check_consistency_with_other_processors):
+        (ExtensionProcessorInterface.set_active):
+        (ExtensionProcessorInterface.is_active):
+        (ExtensionProcessorInterface._get_extension_response_internal):
+        (ExtensionProcessorInterface.get_extension_response):
+        (ExtensionProcessorInterface._setup_stream_options_internal):
+        (ExtensionProcessorInterface.setup_stream_options):
+        (_log_outgoing_compression_ratio):
+        (_log_incoming_compression_ratio):
+        (_parse_window_bits):
+        (_AverageRatioCalculator):
+        (_AverageRatioCalculator.__init__):
+        (_AverageRatioCalculator.add_original_bytes):
+        (_AverageRatioCalculator.add_result_bytes):
+        (_AverageRatioCalculator.get_average_ratio):
+        (DeflateFrameExtensionProcessor):
+        (DeflateFrameExtensionProcessor.__init__):
+        (DeflateFrameExtensionProcessor._get_extension_response_internal):
+        (DeflateFrameExtensionProcessor._setup_stream_options_internal):
+        (DeflateFrameExtensionProcessor._outgoing_filter):
+        (DeflateFrameExtensionProcessor._incoming_filter):
+        (CompressionExtensionProcessorBase.for):
+        (CompressionExtensionProcessorBase.__init__):
+        (CompressionExtensionProcessorBase._get_extension_response_internal):
+        (CompressionExtensionProcessorBase._setup_stream_options_internal):
+        (PerFrameCompressExtensionProcessor):
+        (PerMessageDeflateExtensionProcessor):
+        (PerMessageDeflateExtensionProcessor.__init__):
+        (PerMessageDeflateExtensionProcessor._get_extension_response_internal):
+        (PerMessageDeflateExtensionProcessor._setup_stream_options_internal):
+        (PerMessageDeflateExtensionProcessor.set_c2s_max_window_bits):
+        (PerMessageDeflateExtensionProcessor.set_c2s_max_window_bits.adds):
+        (PerMessageDeflateExtensionProcessor.set_c2s_no_context_takeover):
+        (PerMessageDeflateExtensionProcessor.set_c2s_no_context_takeover.adds):
+        (PerMessageDeflateExtensionProcessor.set_bfinal):
+        (PerMessageDeflateExtensionProcessor.enable_outgoing_compression):
+        (PerMessageDeflateExtensionProcessor.disable_outgoing_compression):
+        (_PerMessageDeflateFramer):
+        (_PerMessageDeflateFramer.__init__):
+        (_PerMessageDeflateFramer.set_compress_outgoing_enabled):
+        (_PerMessageDeflateFramer._process_incoming_message):
+        (_PerMessageDeflateFramer._process_outgoing_message):
+        (_PerMessageDeflateFramer.setup_stream_options):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingMessageFilter):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingMessageFilter.__init__):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingMessageFilter.filter):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingMessageFilter):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingMessageFilter.__init__):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingMessageFilter.decompress_next_message):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingMessageFilter.filter):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingFrameFilter):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingFrameFilter.__init__):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingFrameFilter.set_compression_bit):
+        (_PerMessageDeflateFramer.setup_stream_options._OutgoingFrameFilter.filter):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingFrameFilter):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingFrameFilter.__init__):
+        (_PerMessageDeflateFramer.setup_stream_options._IncomingFrameFilter.filter):
+        (PerMessageCompressExtensionProcessor):
+        (PerMessageCompressExtensionProcessor._lookup_compression_processor):
+        (MuxExtensionProcessor.__init__):
+        (MuxExtensionProcessor.check_consistency_with_other_processors):
+        (MuxExtensionProcessor):
+        (MuxExtensionProcessor._get_extension_response_internal):
+        (MuxExtensionProcessor._setup_stream_options_internal):
+        (MuxExtensionProcessor.set_quota):
+        (MuxExtensionProcessor.quota):
+        (MuxExtensionProcessor.set_extensions):
+        (MuxExtensionProcessor.extensions):
+        (is_compression_extension):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/_base.py:
+        (validate_subprotocol):
+        (parse_host_header):
+        (format_header):
+        (check_request_line):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi.py:
+        (Handshaker.do_handshake):
+        (Handshaker._create_handshake_response):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi00.py:
+        (_validate_subprotocol):
+        (_check_header_lines):
+        (_build_location):
+        (Handshaker.do_handshake):
+        (Handshaker._set_subprotocol):
+        (Handshaker._set_location):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/headerparserhandler.py:
+        (_create_dispatcher):
+        (headerparserhandler):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/mux.py:
+        (_create_add_channel_response):
+        (_create_drop_channel):
+        (_create_flow_control):
+        (_create_new_channel_slot):
+        (_create_fallback_new_channel_slot):
+        (_MuxFramePayloadParser._read_number):
+        (_MuxFramePayloadParser._read_size_and_contents):
+        (_MuxFramePayloadParser._read_flow_control):
+        (_MuxFramePayloadParser._read_new_channel_slot):
+        (_LogicalConnection.__init__):
+        (_LogicalConnection.write):
+        (_LogicalConnection.on_write_data_done):
+        (_LogicalConnection):
+        (_LogicalConnection.on_writer_done):
+        (_InnerMessage):
+        (_InnerMessage.__init__):
+        (_InnerMessageBuilder):
+        (_InnerMessageBuilder.that):
+        (_InnerMessageBuilder.__init__):
+        (_InnerMessageBuilder._handle_first):
+        (_InnerMessageBuilder._process_first_fragmented_control):
+        (_InnerMessageBuilder._process_first_fragmented_message):
+        (_InnerMessageBuilder._handle_fragmented_control):
+        (_InnerMessageBuilder._reassemble_fragmented_control):
+        (_InnerMessageBuilder._handle_fragmented_message):
+        (_InnerMessageBuilder._reassemble_fragmented_message):
+        (_InnerMessageBuilder.build):
+        (_LogicalStream.__init__):
+        (_LogicalStream._create_inner_frame):
+        (_LogicalStream._write_inner_frame):
+        (_LogicalStream.replenish_send_quota):
+        (_LogicalStream.send_message):
+        (_LogicalStream._receive_frame):
+        (_LogicalStream._get_message_from_frame):
+        (_LogicalStream.stop_sending):
+        (_PhysicalConnectionWriter.__init__):
+        (_PhysicalConnectionWriter._write_data):
+        (_PhysicalConnectionWriter.run):
+        (_PhysicalConnectionWriter.stop):
+        (_Worker.run):
+        (_MuxHandshaker.__init__):
+        (_MuxHandshaker._create_stream):
+        (_MuxHandshaker._create_handshake_response):
+        (_HandshakeDeltaBase.create_headers):
+        (_MuxHandler.start):
+        (_MuxHandler.wait_until_done):
+        (_MuxHandler.notify_write_data_done):
+        (_MuxHandler._process_drop_channel):
+        (_MuxHandler._process_logical_frame):
+        (_MuxHandler.notify_reader_done):
+        (_MuxHandler):
+        (_MuxHandler.notify_writer_done):
+        (_MuxHandler.fail_physical_connection):
+        (_MuxHandler.fail_logical_channel):
+        (use_mux):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/standalone.py:
+        (_StandaloneRequest.get_uri):
+        (_StandaloneRequest.get_unparsed_uri):
+        (_StandaloneRequest):
+        (_StandaloneRequest.is_https):
+        (_import_ssl):
+        (_import_pyopenssl):
+        (_StandaloneSSLConnection.for):
+        (_StandaloneSSLConnection):
+        (_StandaloneSSLConnection.__getattribute__):
+        (_StandaloneSSLConnection.__setattr__):
+        (_StandaloneSSLConnection.makefile):
+        (_StandaloneSSLConnection.shutdown):
+        (_StandaloneSSLConnection.recv):
+        (WebSocketServer.__init__):
+        (WebSocketServer._create_sockets):
+        (WebSocketServer.handle_error):
+        (WebSocketServer.get_request):
+        (WebSocketServer.get_request.default_callback):
+        (WebSocketRequestHandler.parse_request):
+        (_build_option_parser):
+        (_main):
+        (_main.if):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py:
+        (RepeatedXorMasker.__init__):
+        (RepeatedXorMasker._mask_using_swig):
+        (RepeatedXorMasker):
+        (RepeatedXorMasker._mask_using_array):
+        (_Deflater.compress_and_finish):
+        (_RFC1979Deflater.filter):
+        (DeflateSocket.send):
+
 2013-05-16  Jonathan Liu  <net147@gmail.com>
 
         Fix testing if program exists in PATH
