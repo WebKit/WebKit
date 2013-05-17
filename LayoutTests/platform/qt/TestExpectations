@@ -2759,3 +2759,5 @@ fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Missing ]
 
 # Reference test fast/sub-pixel/float-wrap-zoom.html fails
 webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
+
+webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
