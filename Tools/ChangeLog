@@ -1,5 +1,27 @@
 2013-05-17  David Kilzer  <ddkilzer@apple.com>
 
+        filter-build-webkit: Don't filter out the location of the missing symbol when linking fails
+        Part 3 of 3: <http://webkit.org/b/116247>
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/filter-build-webkit: Change while() loop to for() loop
+        to track $previousLine, then pass $previousLine into
+        shouldIgnoreLine().
+        (shouldIgnoreLine): Add $previousLine argument. Do not skip a
+        line that begins with four spaces if the previous line is a
+        linker error message.
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl:
+        - Add "Ignored: " to test descriptions to document expected
+          behavior.
+        - Add comment blocks for various groups of tests.
+        - Expand "Build settings" tests since we're changing the code in
+          shouldIgnoreLine() that ignores those lines.
+        - Add tests for undefined symbols error message.
+        (description): Add.  Extract from global code.
+
+2013-05-17  David Kilzer  <ddkilzer@apple.com>
+
         Add tests for shouldIgnoreLine() in filter-build-webkit
         Part 2 of 3: <http://webkit.org/b/116247>
 

@@ -66,7 +66,7 @@ HTMLFOOTER
 sub printLine($$);
 sub setLogfileOption($$);
 sub setOutputFormatOption($$);
-sub shouldIgnoreLine($);
+sub shouldIgnoreLine($$);
 sub usageAndExit();
 
 # Defined in VCSUtils.
@@ -123,12 +123,12 @@ print OUTPUT_HANDLE HTML_HEADER if ($outputFormat eq "html");
 
 my $buildFinished;
 my $buildFailed = 0;
-while (my $line = <>) {
+for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line = <>) {
     print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
 
     chomp($line);
 
-    next if shouldIgnoreLine($line);
+    next if shouldIgnoreLine($previousLine, $line);
 
     if ($line =~ /^={10}/) {
         printLine($line, STYLE_SUCCESS);
@@ -211,9 +211,9 @@ sub setOutputFormatOption($$)
     $outputFormat = $value;
 }
 
-sub shouldIgnoreLine($)
+sub shouldIgnoreLine($$)
 {
-    my ($line) = @_;
+    my ($previousLine, $line) = @_;
 
     return 1 if $line =~ /^\s*$/;
     return 1 if $line =~ /^Build settings from command line:/;
@@ -228,7 +228,7 @@ sub shouldIgnoreLine($)
     return 1 if $line =~ /libtool.*has no symbols/;
     return 1 if $line =~ /^# Lower case all the values, as CSS values are case-insensitive$/;
     return 1 if $line =~ /^if sort /;
-    return 1 if $line =~ /^    /;
+    return 1 if $line =~ /^    / && $previousLine !~ /referenced from:$/;
     return 1 if $line =~ /^printf /;
     return 1 if $line =~ /^offlineasm: Nothing changed/;
     return 1 if $line =~ /^Showing first/;

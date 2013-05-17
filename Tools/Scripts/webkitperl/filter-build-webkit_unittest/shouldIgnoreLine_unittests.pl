@@ -34,15 +34,22 @@ use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(FilterBuildWebKit filter-build-webkit);
 
+sub description($);
+
 @FilterBuildWebKit::EXPORT_OK = qw(shouldIgnoreLine);
 FilterBuildWebKit->import(@FilterBuildWebKit::EXPORT_OK);
 
-is(shouldIgnoreLine(""), 1, "empty_line");
-is(shouldIgnoreLine(" "), 1, "one_space");
-is(shouldIgnoreLine("\t"), 1, "one_tab");
+#
+# Test whitespace
+#
+is(shouldIgnoreLine("", ""), 1, "Ignored: empty line");
+is(shouldIgnoreLine("", " "), 1, "Ignored: one space");
+is(shouldIgnoreLine("", "\t"), 1, "Ignored: one tab");
 
+#
+# Test input that should be ignored regardless of previous line
+#
 my @expectIgnoredLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
-Build settings from command line:
 make: Nothing to be done for `all'.
 JavaScriptCore/create_hash_table JavaScriptCore/runtime/ArrayConstructor.cpp -i > ArrayConstructor.lut.h
 Creating hashtable for JavaScriptCore/runtime/ArrayConstructor.cpp
@@ -57,13 +64,57 @@ python JavaScriptCore/KeywordLookupGenerator.py JavaScriptCore/parser/Keywords.t
 sed -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/ /Volumes/Data/Build/Release/WebCore.framework/PrivateHeaders/DOM.h > /Volumes/Data/Build/Release/WebKit.framework/Versions/A/Headers/DOM.h
 END
 
-my $lineLength = 200;
-my $ellipsis = "...";
-my $truncateLength = $lineLength - length($ellipsis);
 for my $line (@expectIgnoredLines) {
-    my $description = length($line) > $lineLength ? substr($line, 0, $truncateLength) : $line;
-    $description .= $ellipsis if length($line) != length($description);
-    is(shouldIgnoreLine($line), 1, $description);
+    is(shouldIgnoreLine("", $line), 1, description("Ignored: " . $line));
 }
 
-done_testing(3 + scalar(@expectIgnoredLines));
+#
+# Test input starting with four spaces
+#
+my @buildSettingsLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Build settings from command line:
+    ARCHS = i386 x86_64
+    OBJROOT = /Volumes/Data/Build
+    ONLY_ACTIVE_ARCH = NO
+    SHARED_PRECOMPS_DIR = /Volumes/Data/Build/PrecompiledHeaders
+    SYMROOT = /Volumes/Data/Build
+END
+
+for my $i (0..scalar(@buildSettingsLines) - 1) {
+    my $previousLine = $i ? $buildSettingsLines[$i - 1] : "";
+    my $line = $buildSettingsLines[$i];
+    is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+}
+
+#
+# Test input for undefined symbols error message
+#
+my @undefinedSymbolsLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Undefined symbols for architecture x86_64:
+  "__ZN6WebKit12WebPageProxy28exposedRectChangedTimerFiredEPN7WebCore5TimerIS0_EE", referenced from:
+      __ZN6WebKit12WebPageProxyC2EPNS_10PageClientEN3WTF10PassRefPtrINS_15WebProcessProxyEEEPNS_12WebPageGroupEy in WebPageProxy.o
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+END
+
+for my $i (0..scalar(@undefinedSymbolsLines) - 1) {
+    my $previousLine = $i ? $undefinedSymbolsLines[$i - 1] : "";
+    my $line = $undefinedSymbolsLines[$i];
+    is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+}
+
+done_testing();
+
+sub description($)
+{
+    my ($line) = @_;
+
+    my $maxLineLength = 200;
+    my $ellipsis = "...";
+    my $truncateLength = $maxLineLength - length($ellipsis);
+
+    my $description = length($line) > $maxLineLength ? substr($line, 0, $truncateLength) : $line;
+    $description .= $ellipsis if length($line) != length($description);
+
+    return $description;
+}
