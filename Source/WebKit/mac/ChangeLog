@@ -1,5 +1,19 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Move the policy function to WebFramePolicyListener
+        https://bugs.webkit.org/show_bug.cgi?id=116323
+
+        Reviewed by Darin Adler.
+
+        There's no need for the WebFrameLoaaderClient to hold on to the policy function,
+        so move it to WebFramePolicyListener. This gets rid of another WebFrameLoaderClient cast.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setUpPolicyListener):
+        Pass the policy function when creating the WebFramePolicyListener object.
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         WebFramePolicyListener should keep its Frame in a RefPtr
         https://bugs.webkit.org/show_bug.cgi?id=116322
 

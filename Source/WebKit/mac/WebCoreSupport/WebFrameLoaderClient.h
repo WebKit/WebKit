@@ -55,10 +55,8 @@ public:
 
     WebFrame* webFrame() const { return m_webFrame.get(); }
 
-    virtual void frameLoaderDestroyed() OVERRIDE;
-    void receivedPolicyDecison(WebCore::PolicyAction);
-
 private:
+    virtual void frameLoaderDestroyed() OVERRIDE;
     virtual bool hasWebView() const OVERRIDE; // mainly for assertions
 
     virtual void makeRepresentation(WebCore::DocumentLoader*) OVERRIDE;
