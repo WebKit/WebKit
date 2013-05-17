@@ -3962,10 +3962,6 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
             // because we use a pop up dialog to handle the actual selections. This prevents options from
             // being selected prior to displaying the pop up dialog. The contents of the listbox are for
             // display only.
-            //
-            // FIXME: We explicitly do not forward this event to WebCore so as to preserve symmetry with
-            // the MouseEventReleased handling (below). This has the side-effect that mousedown events
-            // are not fired for human generated mouse press events. See RIM Bug #1579.
 
             // We do focus <select>/<option> on mouse down so that a Focus event is fired and have the
             // element painted in its focus state on repaint.
@@ -3977,9 +3973,8 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
         } else
             eventHandler->handleMousePressEvent(mouseEvent);
     } else if (mouseEvent.type() == WebCore::PlatformEvent::MouseReleased) {
-        // FIXME: For <select> and <options> elements, we explicitly do not forward this event to WebCore so
-        // as to preserve symmetry with the MouseEventPressed handling (above). This has the side-effect that
-        // mouseup events are not fired on such elements for human generated mouse release events. See RIM Bug #1579.
+        // Do not send the mouse event if this is a popup field as the mouse down has been
+        // suppressed and symmetry should be maintained.
         if (!m_inputHandler->didNodeOpenPopup(node))
             eventHandler->handleMouseReleaseEvent(mouseEvent);
     }

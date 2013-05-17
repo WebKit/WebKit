@@ -1,3 +1,20 @@
+2013-05-17  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Remove stale comment for select mouse handling.
+        https://bugs.webkit.org/show_bug.cgi?id=116309
+
+        Reviewed by Rob Buis.
+
+        PR 135935.
+
+        Remove a FIXME that has been invalidated by a change
+        to our touch -> mouse model.
+
+        Internally Rubberstamped by Genevieve Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+
 2013-05-17  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] DumpRenderTreeSupport: fix build in setMockDeviceOrientation()
