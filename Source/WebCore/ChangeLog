@@ -1,3 +1,36 @@
+2013-05-16  Jer Noble  <jer.noble@apple.com>
+
+        Some media/track tests fail or assert on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=97132
+
+        Reviewed by Simon Fraser.
+
+        Rationalize the font and padding behavior of cues and cue boxes; ::cue pseudo elements cannot have padding
+        values applied via CSS (due to padding not being included in the whitelist of applicable CSS properties).
+        Also, the font values were being applied to the box at one level and the cue at another, leading to incorrect
+        layout in the snapToLines case. Padding has been removed from the cue, and the font settings are now applied
+        to the box exclusively.
+
+        Additionally, a few drive-by changes were made in TextTrackCue to the return values of displayTreeInternal() &
+        element(), which previously returned a PassRefPtr<> instead of a plain pointer.
+
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-container): Move the font size to the display selector.
+        (video::cue): Remove the display:inline and padding:2px declarations.
+        (video::-webkit-media-text-track-display): Remove the -webkit-line-content now that the ::cue has no padding.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::TextTrackCue): The background box is now a span, rather than a forced-inline div.
+        (WebCore::TextTrackCue::displayTreeInternal): Return a plain pointer.
+        (WebCore::TextTrackCue::getDisplayTree): Ditto.
+        (WebCore::TextTrackCue::setFontSize): Set the font on the box, not the cue.
+        * html/track/TextTrackCue.h:
+        (WebCore::TextTrackCue::element): Return a plain pointer.
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties): The cue element is now a span, not a div.
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::CaptionUserPreferencesMac::captionsWindowCSS): Whitespace.
+        (WebCore::CaptionUserPreferencesMac::captionsBackgroundCSS): Do not set padding on the cue.
+
 2013-05-16  Andreas Kling  <akling@apple.com>
 
         Changes in text-only properties shouldn't cause repaints unless there is actually text.

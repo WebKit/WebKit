@@ -31,8 +31,8 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "HTMLDivElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
 #include "RenderObject.h"
@@ -66,7 +66,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueWebkitPlaintext);
     
     TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(getCue());
-    RefPtr<HTMLDivElement> cueElement = cue->element();
+    RefPtr<HTMLSpanElement> cueElement = cue->element();
 
     float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {

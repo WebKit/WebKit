@@ -506,12 +506,6 @@ fast/dom/MicroData
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=97132
-media/track/track-cue-rendering-horizontal.html
-media/track/track-cue-rendering-snap-to-lines-not-set.html
-media/track/track-cue-rendering-vertical.html
-media/track/track-webvtt-tc028-unsupported-markup.html
-
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]

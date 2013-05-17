@@ -232,7 +232,7 @@ String CaptionUserPreferencesMac::captionsWindowCSS() const
     builder.append(windowStyle);
     builder.append(getPropertyNameString(CSSPropertyPadding));
     builder.append(": .4em !important;");
-    
+
     return builder.toString();
 }
 
@@ -253,20 +253,7 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
     CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    String backgroundStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
-
-    if (!opacity)
-        return backgroundStyle;
-    
-    StringBuilder builder;
-    builder.append(backgroundStyle);
-    builder.append(getPropertyNameString(CSSPropertyPadding));
-    builder.append(": 0px");
-    if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.append(" !important");
-    builder.append(';');
-    
-    return builder.toString();
+    return colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
 }
 
 Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const

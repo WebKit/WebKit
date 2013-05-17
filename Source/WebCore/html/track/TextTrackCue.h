@@ -35,7 +35,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "EventTarget.h"
-#include "HTMLDivElement.h"
 #include "HTMLElement.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,6 +42,7 @@
 namespace WebCore {
 
 class DocumentFragment;
+class HTMLSpanElement;
 class ScriptExecutionContext;
 class TextTrack;
 class TextTrackCue;
@@ -143,8 +143,8 @@ public:
     void setIsActive(bool);
 
     bool hasDisplayTree() const { return m_displayTree; }
-    PassRefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize);
-    PassRefPtr<HTMLDivElement> element() const { return m_cueBackgroundBox; }
+    TextTrackCueBox* getDisplayTree(const IntSize& videoSize);
+    HTMLSpanElement* element() const { return m_cueBackgroundBox.get(); }
 
     void updateDisplayTree(double);
     void removeDisplayTree();
@@ -208,7 +208,7 @@ protected:
     Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
 
     virtual PassRefPtr<TextTrackCueBox> createDisplayTree();
-    PassRefPtr<TextTrackCueBox> displayTreeInternal();
+    TextTrackCueBox* displayTreeInternal();
 
 private:
     void createWebVTTNodeTree();
@@ -262,7 +262,7 @@ private:
     bool m_pauseOnExit;
     bool m_snapToLines;
 
-    RefPtr<HTMLDivElement> m_cueBackgroundBox;
+    RefPtr<HTMLSpanElement> m_cueBackgroundBox;
 
     bool m_displayTreeShouldChange;
     RefPtr<TextTrackCueBox> m_displayTree;

@@ -202,7 +202,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_cueBackgroundBox(HTMLDivElement::create(toDocument(context)))
+    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, toDocument(context)))
     , m_displayTreeShouldChange(true)
     , m_displayDirection(CSSValueLtr)
 {
@@ -228,11 +228,11 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::createDisplayTree()
     return TextTrackCueBox::create(ownerDocument(), this);
 }
 
-PassRefPtr<TextTrackCueBox> TextTrackCue::displayTreeInternal()
+TextTrackCueBox* TextTrackCue::displayTreeInternal()
 {
     if (!m_displayTree)
         m_displayTree = createDisplayTree();
-    return m_displayTree;
+    return m_displayTree.get();
 }
 
 void TextTrackCue::willChange()
@@ -797,11 +797,11 @@ void TextTrackCue::updateDisplayTree(double movieTime)
     m_cueBackgroundBox->appendChild(referenceTree);
 }
 
-PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree(const IntSize& videoSize)
+TextTrackCueBox* TextTrackCue::getDisplayTree(const IntSize& videoSize)
 {
     RefPtr<TextTrackCueBox> displayTree = displayTreeInternal();
     if (!m_displayTreeShouldChange || !track()->isRendered())
-        return displayTree;
+        return displayTree.get();
 
     // 10.1 - 10.10
     calculateDisplayParameters();
@@ -838,7 +838,7 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree(const IntSize& videoSiz
 
     // 10.15. Let cue's text track cue display state have the CSS boxes in
     // boxes.
-    return displayTree;
+    return displayTree.get();
 }
 
 void TextTrackCue::removeDisplayTree()
@@ -1202,7 +1202,7 @@ void TextTrackCue::setFontSize(int fontSize, const IntSize&, bool important)
     
     LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
 
-    element()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);
+    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);
 }
 
 } // namespace WebCore
