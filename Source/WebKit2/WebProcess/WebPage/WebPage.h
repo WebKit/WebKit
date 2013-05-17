@@ -520,6 +520,9 @@ public:
     bool isSmartInsertDeleteEnabled();
     void setSmartInsertDeleteEnabled(bool);
 
+    bool isSelectTrailingWhitespaceEnabled();
+    void setSelectTrailingWhitespaceEnabled(bool);
+
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void clearSelection();
 

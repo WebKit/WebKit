@@ -2536,6 +2536,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setAsynchronousSpellCheckingEnabled(store.getBoolValueForKey(WebPreferencesKey::asynchronousSpellCheckingEnabledKey()));
 
     settings->setSmartInsertDeleteEnabled(store.getBoolValueForKey(WebPreferencesKey::smartInsertDeleteEnabledKey()));
+    settings->setSelectTrailingWhitespaceEnabled(store.getBoolValueForKey(WebPreferencesKey::selectTrailingWhitespaceEnabledKey()));
     settings->setShowsURLsInToolTips(store.getBoolValueForKey(WebPreferencesKey::showsURLsInToolTipsEnabledKey()));
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
@@ -3954,7 +3955,23 @@ bool WebPage::isSmartInsertDeleteEnabled()
 
 void WebPage::setSmartInsertDeleteEnabled(bool enabled)
 {
-    m_page->settings()->setSmartInsertDeleteEnabled(enabled);
+    if (m_page->settings()->smartInsertDeleteEnabled() != enabled) {
+        m_page->settings()->setSmartInsertDeleteEnabled(enabled);
+        setSelectTrailingWhitespaceEnabled(!enabled);
+    }
+}
+
+bool WebPage::isSelectTrailingWhitespaceEnabled()
+{
+    return m_page->settings()->selectTrailingWhitespaceEnabled();
+}
+
+void WebPage::setSelectTrailingWhitespaceEnabled(bool enabled)
+{
+    if (m_page->settings()->selectTrailingWhitespaceEnabled() != enabled) {
+        m_page->settings()->setSelectTrailingWhitespaceEnabled(enabled);
+        setSmartInsertDeleteEnabled(!enabled);
+    }
 }
 
 bool WebPage::canShowMIMEType(const String& MIMEType) const

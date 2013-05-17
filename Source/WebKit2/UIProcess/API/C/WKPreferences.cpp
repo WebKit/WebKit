@@ -1104,6 +1104,16 @@ bool WKPreferencesGetSmartInsertDeleteEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->smartInsertDeleteEnabled();
 }
 
+void WKPreferencesSetSelectTrailingWhitespaceEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setSelectTrailingWhitespaceEnabled(enabled);
+}
+
+bool WKPreferencesGetSelectTrailingWhitespaceEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->selectTrailingWhitespaceEnabled();
+}
+
 void WKPreferencesSetShowsURLsInToolTipsEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setShowsURLsInToolTipsEnabled(enabled);

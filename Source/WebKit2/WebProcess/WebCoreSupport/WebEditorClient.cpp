@@ -95,8 +95,7 @@ bool WebEditorClient::smartInsertDeleteEnabled()
  
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
 {
-    notImplemented();
-    return false;
+    return m_page->isSelectTrailingWhitespaceEnabled();
 }
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
