@@ -409,7 +409,7 @@
 #define WTF_OS_MAC ERROR "USE MAC_OS_X WITH OS NOT MAC"
 
 /* OS(UNIX) - Any Unix-like system */
-#if   OS(AIX)              \
+#if    OS(AIX)              \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
     || OS(HURD)             \
