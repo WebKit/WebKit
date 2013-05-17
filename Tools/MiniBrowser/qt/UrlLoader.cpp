@@ -28,6 +28,7 @@
 
 #include "UrlLoader.h"
 #include "private/qquickwebview_p.h"
+#include "private/qwebloadrequest_p.h"
 
 #include <QDebug>
 #include <QFile>
@@ -42,14 +43,14 @@ UrlLoader::UrlLoader(BrowserWindow* browserWindow, const QString& inputFileName,
     m_checkIfFinishedTimer.setSingleShot(true);
     connect(&m_checkIfFinishedTimer, SIGNAL(timeout()), this, SLOT(checkIfFinished()));
     // loadStarted and loadFinished on QWebPage is emitted for each frame/sub-frame
-    connect(m_browserWindow->webView(), SIGNAL(loadStarted()), this, SLOT(frameLoadStarted()));
-    connect(m_browserWindow->webView(), SIGNAL(loadSucceeded()), this, SLOT(frameLoadFinished()));
-    connect(m_browserWindow->webView(), SIGNAL(loadFailed(QDesktopWebView::ErrorType, int, const QUrl&)), this, SLOT(frameLoadFinished()));
+    connect(m_browserWindow->webView(), SIGNAL(loadingChanged(QWebLoadRequest*)), this, SLOT(loadingChanged(QWebLoadRequest*)));
+    connect(this, SIGNAL(loadStarted()), this, SLOT(frameLoadStarted()));
+    connect(this, SIGNAL(loadFinished()), this, SLOT(frameLoadFinished()));
 
     if (timeoutSeconds) {
         m_timeoutTimer.setInterval(timeoutSeconds * 1000);
         m_timeoutTimer.setSingleShot(true);
-        connect(m_browserWindow->webView(), SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
+        connect(this, SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
         connect(&m_timeoutTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
     }
     if (extraTimeSeconds) {
@@ -128,4 +129,19 @@ bool UrlLoader::getUrl(QString& qstr)
 
     qstr = m_urls[m_index++];
     return true;
+}
+
+void UrlLoader::loadingChanged(QWebLoadRequest* loadRequest)
+{
+    switch (loadRequest->status()) {
+    case QQuickWebView::LoadStartedStatus:
+        emit loadStarted();
+        break;
+    case QQuickWebView::LoadStoppedStatus:
+    case QQuickWebView::LoadSucceededStatus:
+    case QQuickWebView::LoadFailedStatus:
+    default:
+        emit loadFinished();
+        break;
+    }
 }

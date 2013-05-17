@@ -35,6 +35,8 @@
 #include <QTimer>
 #include <QVector>
 
+class QWebLoadRequest;
+
 class UrlLoader : public QObject {
     Q_OBJECT
 
@@ -48,9 +50,12 @@ private Q_SLOTS:
     void checkIfFinished();
     void frameLoadStarted();
     void frameLoadFinished();
+    void loadingChanged(QWebLoadRequest*);
 
 Q_SIGNALS:
     void pageLoadFinished();
+    void loadStarted();
+    void loadFinished();
 
 private:
     void loadUrlList(const QString& inputFileName);
