@@ -2900,23 +2900,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_inSecureInputState = isInPasswordField;
 }
 
-- (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState
-{
-    const EditorState& editorState = _data->_page->editorState();
-    if (updateSecureInputState) {
-        // This is a temporary state when editing. Flipping secure input state too quickly can expose race conditions.
-        if (!editorState.selectionIsNone)
-            [self _updateSecureInputState];
-    }
-
-    if (!editorState.hasComposition || editorState.shouldIgnoreCompositionSelectionChange)
-        return;
-
-    _data->_page->cancelComposition();
-
-    [self _notifyInputContextAboutDiscardedComposition];
-}
-
 - (void)_resetSecureInputState
 {
     if (_data->_inSecureInputState) {

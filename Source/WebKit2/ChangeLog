@@ -1,3 +1,42 @@
+2013-05-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Text input is largely broken when there are subframes loading
+        http://bugs.webkit.org/show_bug.cgi?id=59121
+        <rdar://problem/9320468>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::updateSecureInputState): Separated secure input state
+        updating into a separate function. Removed updateTextInputState, we don't need
+        to go through PageClient to implement its behavior at all.
+        (WebKit::PageClientImpl::dismissDictionaryLookupPanel): Added a FIXME.
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        Removed _updateTextInputStateIncludingSecureInputState.
+
+        * UIProcess/WebPageProxy.h: Added m_temporarilyClosedComposition, which helps
+        to figure out that WebCore decided to close a composition. The issue is that WebCore
+        would first send an EditorState with hasComposition set to false, and with
+        shouldIgnoreCompositionSelectionChange set to true, at which time we forget the
+        previous m_editorState, but can't make any decisions based on this transient state.
+        We should find a way to simplify this (maybe not send these updates with
+        shouldIgnoreCompositionSelectionChange at all?)
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_temporarilyClosedComposition.
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Removed the code to kill a composition
+        when any frame commits a load, which made no sense (along with surrounding code,
+        which will unfortunately survive longer).
+        (WebKit::WebPageProxy::editorStateChanged): Implemented state updating here,
+        we don't need to go to WKView.mm to implement this logic. Figure out when WebCore
+        discards a composition, and notify input methods about this.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Reset m_temporarilyClosedComposition.
+        Added some FIXMEs.
+
 2013-05-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WK2] Add support for selectTrailingWhitespaceEnabled setting

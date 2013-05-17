@@ -84,7 +84,6 @@ namespace WebKit {
 - (void)_updateSecureInputState;
 - (void)_resetSecureInputState;
 - (void)_notifyInputContextAboutDiscardedComposition;
-- (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
 
 - (WebKit::ColorSpaceData)_colorSpace;
 

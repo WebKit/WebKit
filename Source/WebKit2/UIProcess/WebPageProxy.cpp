@@ -245,6 +245,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_isVisible(m_pageClient->isViewVisible())
     , m_backForwardList(WebBackForwardList::create(this))
     , m_loadStateAtProcessExit(WebFrameProxy::LoadStateFinished)
+    , m_temporarilyClosedComposition(false)
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
@@ -2260,8 +2261,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
 #if PLATFORM(MAC)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
-    // FIXME (bug 59121): A load going on in one frame shouldn't affect typing in sibling frames.
-    m_pageClient->notifyInputContextAboutDiscardedComposition();
+    // FIXME: A load going on in one frame shouldn't affect text editing in other frames on the page.
     m_pageClient->resetSecureInputState();
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
@@ -3069,12 +3069,28 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
 #if PLATFORM(MAC)
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
+    bool closedComposition = !editorState.shouldIgnoreCompositionSelectionChange && !editorState.hasComposition && (m_editorState.hasComposition || m_temporarilyClosedComposition);
+    m_temporarilyClosedComposition = editorState.shouldIgnoreCompositionSelectionChange && (m_temporarilyClosedComposition || m_editorState.hasComposition) && !editorState.hasComposition;
 #endif
 
     m_editorState = editorState;
 
 #if PLATFORM(MAC)
-    m_pageClient->updateTextInputState(couldChangeSecureInputState);
+    // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
+    if (couldChangeSecureInputState && !editorState.selectionIsNone)
+        m_pageClient->updateSecureInputState();
+
+    if (editorState.shouldIgnoreCompositionSelectionChange)
+        return;
+
+    if (closedComposition)
+        m_pageClient->notifyInputContextAboutDiscardedComposition();
+    if (editorState.hasComposition) {
+        // Abandon the current inline input session if selection changed for any other reason but an input method changing the composition.
+        // FIXME: This logic should be in WebCore, no need to round-trip to UI process to cancel the composition.
+        cancelComposition();
+        m_pageClient->notifyInputContextAboutDiscardedComposition();
+    }
 #elif PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
     m_pageClient->updateTextInputState();
 #endif
@@ -3915,6 +3931,10 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_needTouchEvents = false;
     m_touchEventQueue.clear();
 #endif
+
+    // FIXME: Reset m_editorState.
+    // FIXME: Notify input methods about abandoned composition.
+    m_temporarilyClosedComposition = false;
 
 #if PLATFORM(MAC)
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);

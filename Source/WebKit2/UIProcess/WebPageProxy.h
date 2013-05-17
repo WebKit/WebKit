@@ -1131,6 +1131,7 @@ private:
     WebFrameProxy::LoadState m_loadStateAtProcessExit;
 
     EditorState m_editorState;
+    bool m_temporarilyClosedComposition; // Editor state changed from hasComposition to !hasComposition, but that was only with shouldIgnoreCompositionSelectionChange yet.
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

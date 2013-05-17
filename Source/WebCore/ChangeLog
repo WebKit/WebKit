@@ -1,3 +1,30 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Text input is largely broken when there are subframes loading
+        http://bugs.webkit.org/show_bug.cgi?id=59121
+        <rdar://problem/9320468>
+
+        Reviewed by Darin Adler.
+
+        This addresses text input being abandoned when another frame in a page is navigated.
+
+        There are still many opportunities for improvement:
+        - Track other cases where WebCore interferes may want to cancel input without
+        direct user action (e.g. deleting the whole editable element on a timer).
+        - Fix how dictionary panel and autocorrection are dismissed (they still have the
+        same issue, and get dismissed with any frame navigation).
+
+        Test: platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
+
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willTransitionToCommitted): Make sure that we
+        do not keep an inline session in a frame that's no longer active, as WebKit2 no
+        longer takes care of this case (and more of the logic should be in WebCore anyway).
+        (WebCore::FrameLoader::commitProvisionalLoad): Added a hook that gets invoked right
+        before transitioning to committed state starts. We may want to move more code here
+        eventually, e.g. from Frame::setView.
+
 2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of [CustomGetter] for global named constructors

@@ -82,7 +82,7 @@ private:
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag);
     virtual void setPromisedData(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
                                  const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer);
-    virtual void updateTextInputState(bool updateSecureInputState);
+    virtual void updateSecureInputState() OVERRIDE;
     virtual void resetSecureInputState() OVERRIDE;
     virtual void notifyInputContextAboutDiscardedComposition() OVERRIDE;
 

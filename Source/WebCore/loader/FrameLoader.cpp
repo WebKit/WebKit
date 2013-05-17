@@ -474,6 +474,18 @@ void FrameLoader::stop()
     icon()->stopLoader();
 }
 
+void FrameLoader::willTransitionToCommitted()
+{
+    // This function is called when a frame is still fully in place (not cached, not detached), but will be replaced.
+
+    if (m_frame->editor()->hasComposition()) {
+        // The text was already present in DOM, so it's better to confirm than to cancel the composition.
+        m_frame->editor()->confirmComposition();
+        if (EditorClient* editorClient = m_frame->editor()->client())
+            editorClient->respondToChangedSelection(m_frame);
+    }
+}
+
 bool FrameLoader::closeURL()
 {
     history()->saveDocumentState();
@@ -1680,6 +1692,8 @@ void FrameLoader::commitProvisionalLoad()
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->uniqueName().string().utf8().data(),
         m_frame->document() ? m_frame->document()->url().elidedString().utf8().data() : "",
         pdl ? pdl->url().elidedString().utf8().data() : "<no provisional DocumentLoader>");
+
+    willTransitionToCommitted();
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.

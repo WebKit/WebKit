@@ -367,6 +367,7 @@ private:
     void prepareForLoadStart();
     void provisionalLoadStarted();
 
+    void willTransitionToCommitted();
     bool didOpenURL();
 
     void scheduleCheckCompleted();

@@ -1,3 +1,21 @@
+2013-05-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Text input is largely broken when there are subframes loading
+        http://bugs.webkit.org/show_bug.cgi?id=59121
+        <rdar://problem/9320468>
+
+        Reviewed by Darin Adler.
+
+        The new test's result are affected by DRT and WTR deficiencies, but it still
+        verifies that a tricky crash I had during development doesn't start to happen again.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/editing/input/resources: Added.
+        * platform/mac/editing/input/resources/first-page.html: Added.
+        * platform/mac/editing/input/resources/other-page.html: Added.
+        * platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache-expected.txt: Added.
+        * platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html: Added.
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaselines; also remove some entries.

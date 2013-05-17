@@ -326,9 +326,9 @@ void PageClientImpl::setPromisedData(const String& pasteboardName, PassRefPtr<Sh
     [m_wkView _setPromisedData:image.get() withFileName:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl withArchive:archiveBuffer.get() forPasteboard:pasteboardName];
 }
 
-void PageClientImpl::updateTextInputState(bool updateSecureInputState)
+void PageClientImpl::updateSecureInputState()
 {
-    [m_wkView _updateTextInputStateIncludingSecureInputState:updateSecureInputState];
+    [m_wkView _updateSecureInputState];
 }
 
 void PageClientImpl::resetSecureInputState()
@@ -502,6 +502,7 @@ void PageClientImpl::didPerformDictionaryLookup(const AttributedString& text, co
 
 void PageClientImpl::dismissDictionaryLookupPanel()
 {
+    // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
     WKHideWordDefinitionWindow();
 }
 

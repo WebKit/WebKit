@@ -319,6 +319,9 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 # Unclear yet why this test fails.
 editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 
+# textInputController.hasMarkedText is implemented, but gives a wrong result for some reason.
+platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
