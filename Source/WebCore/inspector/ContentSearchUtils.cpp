@@ -170,14 +170,14 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLi
 
 static String scriptCommentPattern(const String& name)
 {
-    // "//@ <name>=<value>"
-    return "//@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
+    // "//# <name>=<value>" and deprecated "//@"
+    return "//[#@][\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
 }
 
 static String stylesheetCommentPattern(const String& name)
 {
-    // "/*@ <name>=<value> */"
-    return "/\\*@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/";
+    // "/*# <name>=<value> */" and deprecated "/*@"
+    return "/\\*[#@][\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/";
 }
 
 static String findMagicComment(const String& content, const String& patternString)

@@ -15,5 +15,9 @@ function keepAliveInDynamicScript() {}
 Running: testNonRelativeURL
 function relativeURLScript() {}
 //@ sourceURL=/js/nonRelativeURL.js
+
+Running: testHashSyntax
+function hashSyntax() {}
+//# sourceURL=hashSyntax.js
 Debugger was disabled.
 

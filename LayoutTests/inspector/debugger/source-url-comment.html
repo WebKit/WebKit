@@ -18,6 +18,11 @@ function doEvalWithNonRelativeURL()
     eval("function relativeURLScript() {}\n//@ sourceURL=/js/nonRelativeURL.js");
 }
 
+function doEvalWithHashSyntax()
+{
+    eval("function hashSyntax() {}\n//# sourceURL=hashSyntax.js");
+}
+
 function doDynamicScript()
 {
     var scriptElement = document.createElement("script");
@@ -108,6 +113,24 @@ function test()
 
                 InspectorTest.addResult(sourceFrame.textEditor.text());
                 forEachScriptMatchingURL("nonRelativeURL.js", checkScriptHasSourceURL);
+                next();
+            }
+        },
+
+        function testHashSyntax(next)
+        {
+            InspectorTest.showScriptSource("hashSyntax.js", didShowScriptSource);
+            InspectorTest.evaluateInPage("setTimeout(doEvalWithHashSyntax, 0)");
+
+            function didShowScriptSource(sourceFrame)
+            {
+                function checkScriptHasSourceURL(script)
+                {
+                    InspectorTest.assertTrue(script.hasSourceURL, "hasSourceURL flag is not set for eval with a non-relative URL in a sourceURL comment");
+                }
+
+                InspectorTest.addResult(sourceFrame.textEditor.text());
+                forEachScriptMatchingURL("hashSyntax.js", checkScriptHasSourceURL);
                 next();
             }
         }

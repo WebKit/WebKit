@@ -161,7 +161,7 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!lines.length)
             return;
 
-        const sourceMapRegex = /^\/\*@ sourceMappingURL=([^\s]+)\s*\*\/$/;
+        const sourceMapRegex = /^\/\*[#@] sourceMappingURL=([^\s]+)\s*\*\/$/;
         var lastLine = lines[lines.length - 1];
         var match = lastLine.match(sourceMapRegex);
         if (!match)

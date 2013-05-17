@@ -1,3 +1,18 @@
+2013-05-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Allow "//# sourceMappingURL" syntax alongside "//@"
+        https://bugs.webkit.org/show_bug.cgi?id=116290
+
+        Follow an update to the spec and support the new and old syntax.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::scriptCommentPattern):
+        (WebCore::ContentSearchUtils::stylesheetCommentPattern):
+        * inspector/front-end/SASSSourceMapping.js:
+        (WebInspector.SASSSourceMapping.prototype._loadAndProcessSourceMap):
+
 2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for MessageEvent.ports getter

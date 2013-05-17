@@ -1,3 +1,15 @@
+2013-05-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Allow "//# sourceMappingURL" syntax alongside "//@"
+        https://bugs.webkit.org/show_bug.cgi?id=116290
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector/network/resources/source-map-test-style.css:
+        * http/tests/inspector/stylesheet-source-mapping.html:
+        * inspector/debugger/source-url-comment-expected.txt:
+        * inspector/debugger/source-url-comment.html:
+
 2013-05-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         2 math sputnik test fail on 32 bit
