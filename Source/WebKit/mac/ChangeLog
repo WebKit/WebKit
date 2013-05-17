@@ -1,5 +1,18 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Make kit(Frame*) more robust
+        https://bugs.webkit.org/show_bug.cgi?id=116324
+
+        Reviewed by Darin Adler.
+
+        Check that the frame loader's client isn't the EmptyFrameLoaderClient (or a subclass thereof)
+        before casting to WebFrameLoaderClient.
+
+        * WebView/WebFrame.mm:
+        (kit):
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Move the policy function to WebFramePolicyListener
         https://bugs.webkit.org/show_bug.cgi?id=116323
 

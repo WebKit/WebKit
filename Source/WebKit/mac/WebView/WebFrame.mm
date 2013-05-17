@@ -226,7 +226,14 @@ Frame* core(WebFrame *frame)
 
 WebFrame *kit(Frame* frame)
 {
-    return frame ? static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame() : nil;
+    if (!frame)
+        return nil;
+
+    FrameLoaderClient* frameLoaderClient = frame->loader()->client();
+    if (frameLoaderClient->isEmptyFrameLoaderClient())
+        return nil;
+
+    return static_cast<WebFrameLoaderClient*>(frameLoaderClient)->webFrame();
 }
 
 Page* core(WebView *webView)
