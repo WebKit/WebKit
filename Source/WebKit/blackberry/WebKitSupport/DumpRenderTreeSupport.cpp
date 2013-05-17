@@ -140,7 +140,7 @@ void DumpRenderTreeSupport::setMockDeviceOrientation(BlackBerry::WebKit::WebPage
 {
 #if ENABLE(DEVICE_ORIENTATION)
     Page* page = corePage(webPage);
-    DeviceOrientationClientMock* mockClient = toDeviceOrientationClientMock(DeviceOrientationController::from(page)->client());
+    DeviceOrientationClientMock* mockClient = toDeviceOrientationClientMock(DeviceOrientationController::from(page)->deviceOrientationClient());
     mockClient->setOrientation(DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
 #endif
 }
