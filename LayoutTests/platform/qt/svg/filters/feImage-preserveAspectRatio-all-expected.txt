@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x400
+  RenderSVGRoot {svg} at (0,0) size 800x333
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="none"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="slice_mid"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="slice_max"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="slice_min"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="meet_mid"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="meet_max"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="meet_min"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+    RenderSVGRect {rect} at (0,0) size 800x333 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=1198.00] [height=498.00]
+    RenderSVGContainer {g} at (20,3) size 760x311
+      RenderSVGRect {rect} at (26,3) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="none"] RenderSVGResourceFilter {filter} at (40,5) size 120x240
+      RenderSVGRect {rect} at (33,16) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (20,210) size 160x80 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=325.00] [width=200.00] [height=100.00]
+        [filter="none"] RenderSVGResourceFilter {filter} at (30,315) size 240x120
+      RenderSVGRect {rect} at (33,216) size 134x68 [stroke={[type=SOLID] [color=#008000]}] [x=50.00] [y=325.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (193,3) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="meet_min"] RenderSVGResourceFilter {filter} at (290,5) size 120x240
+      RenderSVGRect {rect} at (199,16) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=300.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (273,3) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=420.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="meet_mid"] RenderSVGResourceFilter {filter} at (410,5) size 120x240
+      RenderSVGRect {rect} at (279,16) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=420.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (353,3) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=540.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="meet_max"] RenderSVGResourceFilter {filter} at (530,5) size 120x240
+      RenderSVGRect {rect} at (359,16) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=540.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (453,10) size 161x80 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=25.00] [width=200.00] [height=100.00]
+        [filter="meet_min"] RenderSVGResourceFilter {filter} at (680,15) size 240x120
+      RenderSVGRect {rect} at (466,16) size 135x68 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=25.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (453,90) size 161x80 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=145.00] [width=200.00] [height=100.00]
+        [filter="meet_mid"] RenderSVGResourceFilter {filter} at (680,135) size 240x120
+      RenderSVGRect {rect} at (466,96) size 135x68 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=145.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (453,170) size 161x80 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=265.00] [width=200.00] [height=100.00]
+        [filter="meet_max"] RenderSVGResourceFilter {filter} at (680,255) size 240x120
+      RenderSVGRect {rect} at (466,176) size 135x68 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=265.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (193,153) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=250.00] [width=100.00] [height=200.00]
+        [filter="slice_min"] RenderSVGResourceFilter {filter} at (290,230) size 120x240
+      RenderSVGRect {rect} at (199,166) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=300.00] [y=250.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (273,153) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=420.00] [y=250.00] [width=100.00] [height=200.00]
+        [filter="slice_mid"] RenderSVGResourceFilter {filter} at (410,230) size 120x240
+      RenderSVGRect {rect} at (279,166) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=420.00] [y=250.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (353,153) size 81x161 [fill={[type=SOLID] [color=#000000]}] [x=540.00] [y=250.00] [width=100.00] [height=200.00]
+        [filter="slice_max"] RenderSVGResourceFilter {filter} at (530,230) size 120x240
+      RenderSVGRect {rect} at (359,166) size 68x135 [stroke={[type=SOLID] [color=#008000]}] [x=540.00] [y=250.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (620,10) size 160x80 [fill={[type=SOLID] [color=#000000]}] [x=950.00] [y=25.00] [width=200.00] [height=100.00]
+        [filter="slice_min"] RenderSVGResourceFilter {filter} at (930,15) size 240x120
+      RenderSVGRect {rect} at (633,16) size 134x68 [stroke={[type=SOLID] [color=#008000]}] [x=950.00] [y=25.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (620,90) size 160x80 [fill={[type=SOLID] [color=#000000]}] [x=950.00] [y=145.00] [width=200.00] [height=100.00]
+        [filter="slice_mid"] RenderSVGResourceFilter {filter} at (930,135) size 240x120
+      RenderSVGRect {rect} at (633,96) size 134x68 [stroke={[type=SOLID] [color=#008000]}] [x=950.00] [y=145.00] [width=200.00] [height=100.00]
+      RenderSVGRect {rect} at (620,170) size 160x80 [fill={[type=SOLID] [color=#000000]}] [x=950.00] [y=265.00] [width=200.00] [height=100.00]
+        [filter="slice_max"] RenderSVGResourceFilter {filter} at (930,255) size 240x120
+      RenderSVGRect {rect} at (633,176) size 134x68 [stroke={[type=SOLID] [color=#008000]}] [x=950.00] [y=265.00] [width=200.00] [height=100.00]

@@ -1,3 +1,16 @@
+2013-05-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added platform specific expected after r143389.
+
+        * platform/qt/svg/as-image/image-preserveAspectRatio-all-expected.png: Added.
+        * platform/qt/svg/as-image/image-preserveAspectRatio-all-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-preserveAspectRatio-all-expected.png: Added.
+        * platform/qt/svg/filters/feImage-preserveAspectRatio-all-expected.txt: Added.
+
 2013-05-17  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [GTK] Rebaseline after r150169
