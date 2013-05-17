@@ -326,6 +326,10 @@ void WTFSetCrashHook(WTFCrashHookFunction function)
     globalHook = function;
 }
 
+void WTFInvokeCrashHook()
+{
+}
+
 void WTFCrash()
 {
     if (globalHook)

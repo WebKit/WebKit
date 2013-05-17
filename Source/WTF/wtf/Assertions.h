@@ -125,6 +125,8 @@ typedef void (*WTFCrashHookFunction)();
 WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
 WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
+// Exist for binary compatibility with older Safari. Do not use.
+WTF_EXPORT_PRIVATE void WTFInvokeCrashHook();
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,12 @@
+2013-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the symbol WTFInvokeCrashHook back for binary compatibility.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2013-05-16  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [CMAKE] Need to set WTF_LIBRARIES in wtf/CMakeLists.txt
