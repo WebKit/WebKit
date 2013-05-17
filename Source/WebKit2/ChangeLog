@@ -1,3 +1,26 @@
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Only import local storage items from the database once
+        https://bugs.webkit.org/show_bug.cgi?id=116354
+
+        Reviewed by Andreas Kling.
+
+        We import items from the database over and over, when we only want to do it once. Use a 
+        boolean flag to guard against doing it more than once. 
+        
+        Also, rename importItemsFromDatabase to openDatabaseAndImportItemsIfNeeded since it now
+        also opens the database (even if it doesn't need to import anything). This is preparation for an
+        upcoming patch where the database will be closed when it's cleared.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        (WebKit::StorageManager::StorageArea::setItem):
+        (WebKit::StorageManager::StorageArea::removeItem):
+        (WebKit::StorageManager::StorageArea::clear):
+        (WebKit::StorageManager::StorageArea::items):
+        (WebKit::StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded):
+
 2013-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13869765> Lion: Crashes in islcCanLoadInputMethodFromBundleID.

@@ -62,13 +62,14 @@ public:
 private:
     explicit StorageArea(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
 
-    void importItemsFromDatabase();
+    void openDatabaseAndImportItemsIfNeeded();
 
     void dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
     // Will be null if the storage area belongs to a session storage namespace.
     LocalStorageNamespace* m_localStorageNamespace;
     RefPtr<LocalStorageDatabase> m_localStorageDatabase;
+    bool m_didImportItemsFromDatabase;
 
     RefPtr<SecurityOrigin> m_securityOrigin;
     unsigned m_quotaInBytes;
@@ -105,12 +106,11 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(Loca
 
 StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, PassRefPtr<SecurityOrigin> securityOrigin, unsigned quotaInBytes)
     : m_localStorageNamespace(localStorageNamespace)
+    , m_didImportItemsFromDatabase(false)
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
-    if (m_localStorageNamespace)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.get());
 }
 
 StorageManager::StorageArea::~StorageArea()
@@ -148,7 +148,7 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() con
 
 void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
-    importItemsFromDatabase();
+    openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
 
@@ -167,7 +167,7 @@ void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection,
 
 void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
 {
-    importItemsFromDatabase();
+    openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
     RefPtr<StorageMap> newStorageMap = m_storageMap->removeItem(key, oldValue);
@@ -185,7 +185,7 @@ void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnecti
 
 void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
 {
-    importItemsFromDatabase();
+    openDatabaseAndImportItemsIfNeeded();
 
     if (!m_storageMap->length())
         return;
@@ -200,17 +200,25 @@ void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, u
 
 const HashMap<String, String>& StorageManager::StorageArea::items()
 {
-    importItemsFromDatabase();
+    openDatabaseAndImportItemsIfNeeded();
 
     return m_storageMap->items();
 }
 
-void StorageManager::StorageArea::importItemsFromDatabase()
+void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded()
 {
+    if (!m_localStorageNamespace)
+        return;
+
+    // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.get());
+
+    if (m_didImportItemsFromDatabase)
         return;
 
     m_localStorageDatabase->importItems(*m_storageMap);
+    m_didImportItemsFromDatabase = true;
 }
 
 void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
