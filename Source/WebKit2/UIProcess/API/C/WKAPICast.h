@@ -75,7 +75,7 @@ class WebGrammarDetail;
 class WebHitTestResult;
 class WebIconDatabase;
 class WebInspectorProxy;
-class WebKeyValueStorageManagerProxy;
+class WebKeyValueStorageManager;
 class WebMediaCacheManagerProxy;
 class WebNavigationData;
 class WebNetworkInfoManagerProxy;
@@ -119,7 +119,7 @@ WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
 WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
-WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManagerProxy)
+WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManager)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
 WK_ADD_API_MAPPING(WKNetworkInfoManagerRef, WebNetworkInfoManagerProxy)

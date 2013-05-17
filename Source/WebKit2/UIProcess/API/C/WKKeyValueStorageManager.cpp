@@ -27,13 +27,13 @@
 #include "WKKeyValueStorageManager.h"
 
 #include "WKAPICast.h"
-#include "WebKeyValueStorageManagerProxy.h"
+#include "WebKeyValueStorageManager.h"
 
 using namespace WebKit;
 
 WKTypeID WKKeyValueStorageManagerGetTypeID()
 {
-    return toAPI(WebKeyValueStorageManagerProxy::APIType);
+    return toAPI(WebKeyValueStorageManager::APIType);
 }
 
 void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback)

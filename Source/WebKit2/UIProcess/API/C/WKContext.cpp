@@ -38,7 +38,7 @@
 #include "WebApplicationCacheManagerProxy.h"
 #include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
-#include "WebKeyValueStorageManagerProxy.h"
+#include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebResourceCacheManagerProxy.h"
@@ -247,7 +247,7 @@ WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)
 
 WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef contextRef)
 {
-    return toAPI(toImpl(contextRef)->supplement<WebKeyValueStorageManagerProxy>());
+    return toAPI(toImpl(contextRef)->supplement<WebKeyValueStorageManager>());
 }
 
 WKMediaCacheManagerRef WKContextGetMediaCacheManager(WKContextRef contextRef)

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKeyValueStorageManagerProxy_h
-#define WebKeyValueStorageManagerProxy_h
+#ifndef WebKeyValueStorageManager_h
+#define WebKeyValueStorageManager_h
 
 #include "APIObject.h"
 #include "GenericCallback.h"
@@ -39,12 +39,12 @@ namespace WebKit {
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebKeyValueStorageManagerProxy : public TypedAPIObject<APIObject::TypeKeyValueStorageManager>, public WebContextSupplement {
+class WebKeyValueStorageManager : public TypedAPIObject<APIObject::TypeKeyValueStorageManager>, public WebContextSupplement {
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebKeyValueStorageManagerProxy> create(WebContext*);
-    virtual ~WebKeyValueStorageManagerProxy();
+    static PassRefPtr<WebKeyValueStorageManager> create(WebContext*);
+    virtual ~WebKeyValueStorageManager();
 
     void getKeyValueStorageOrigins(PassRefPtr<ArrayCallback>);
     void deleteEntriesForOrigin(WebSecurityOrigin*);
@@ -54,7 +54,7 @@ public:
     using APIObject::deref;
 
 private:
-    explicit WebKeyValueStorageManagerProxy(WebContext*);
+    explicit WebKeyValueStorageManager(WebContext*);
 
     // WebContextSupplement
     virtual void refWebContextSupplement() OVERRIDE;
@@ -63,4 +63,4 @@ private:
 
 } // namespace WebKit
 
-#endif // WebKeyValueStorageManagerProxy_h
+#endif // WebKeyValueStorageManager_h

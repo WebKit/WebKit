@@ -1,5 +1,21 @@
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
+        Rename WebKeyValueStorageManagerProxy to WebKeyValueStorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=116361
+
+        Reviewed by Andreas Kling.
+
+        There's nothing proxy about this class anymore!
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        * UIProcess/WebKeyValueStorageManager.cpp: Renamed from Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp.
+        * UIProcess/WebKeyValueStorageManager.h: Renamed from Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
         Remove dead local storage code
         https://bugs.webkit.org/show_bug.cgi?id=116360
 

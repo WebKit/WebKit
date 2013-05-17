@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebKeyValueStorageManagerProxy.h"
+#include "WebKeyValueStorageManager.h"
 
 #include "SecurityOriginData.h"
 #include "WebContext.h"
@@ -34,33 +34,33 @@ using namespace WebCore;
 
 namespace WebKit {
 
-const char* WebKeyValueStorageManagerProxy::supplementName()
+const char* WebKeyValueStorageManager::supplementName()
 {
-    return "WebKeyValueStorageManagerProxy";
+    return "WebKeyValueStorageManager";
 }
 
-PassRefPtr<WebKeyValueStorageManagerProxy> WebKeyValueStorageManagerProxy::create(WebContext* context)
+PassRefPtr<WebKeyValueStorageManager> WebKeyValueStorageManager::create(WebContext* context)
 {
-    return adoptRef(new WebKeyValueStorageManagerProxy(context));
+    return adoptRef(new WebKeyValueStorageManager(context));
 }
 
-WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy(WebContext* context)
+WebKeyValueStorageManager::WebKeyValueStorageManager(WebContext* context)
     : WebContextSupplement(context)
 {
 }
 
-WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy()
+WebKeyValueStorageManager::~WebKeyValueStorageManager()
 {
 }
 
 // WebContextSupplement
 
-void WebKeyValueStorageManagerProxy::refWebContextSupplement()
+void WebKeyValueStorageManager::refWebContextSupplement()
 {
     APIObject::ref();
 }
 
-void WebKeyValueStorageManagerProxy::derefWebContextSupplement()
+void WebKeyValueStorageManager::derefWebContextSupplement()
 {
     APIObject::deref();
 }
@@ -78,17 +78,17 @@ static void didGetKeyValueStorageOrigins(const Vector<RefPtr<WebCore::SecurityOr
     callback->performCallbackWithReturnValue(ImmutableArray::adopt(webSecurityOrigins).get());
 }
 
-void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
+void WebKeyValueStorageManager::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOrigins);
 }
     
-void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
+void WebKeyValueStorageManager::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
     context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());
 }
 
-void WebKeyValueStorageManagerProxy::deleteAllEntries()
+void WebKeyValueStorageManager::deleteAllEntries()
 {
     context()->storageManager().deleteAllEntries();
 }

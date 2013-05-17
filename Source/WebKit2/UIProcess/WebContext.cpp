@@ -45,7 +45,7 @@
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
 #include "WebIconDatabase.h"
-#include "WebKeyValueStorageManagerProxy.h"
+#include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPluginSiteDataManager.h"
@@ -163,7 +163,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     addSupplement<WebApplicationCacheManagerProxy>();
     addSupplement<WebCookieManagerProxy>();
     addSupplement<WebGeolocationManagerProxy>();
-    addSupplement<WebKeyValueStorageManagerProxy>();
+    addSupplement<WebKeyValueStorageManager>();
     addSupplement<WebMediaCacheManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
     addSupplement<WebResourceCacheManagerProxy>();
