@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class RenderSVGRect FINAL : public RenderSVGShape {
+class RenderSVGRect : public RenderSVGShape {
 public:
     explicit RenderSVGRect(SVGRectElement*);
     virtual ~RenderSVGRect();

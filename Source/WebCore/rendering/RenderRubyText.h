@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class RenderRubyText FINAL : public RenderBlock {
+class RenderRubyText : public RenderBlock {
 public:
     RenderRubyText(Element*);
     virtual ~RenderRubyText();

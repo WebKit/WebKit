@@ -60,7 +60,7 @@ private:
 class RenderTableCell;
 class RenderTableRow;
 
-class RenderTableSection FINAL : public RenderBox {
+class RenderTableSection : public RenderBox {
 public:
     RenderTableSection(Element*);
     virtual ~RenderTableSection();

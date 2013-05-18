@@ -43,7 +43,7 @@ public:
     AffineTransform transform;
 };
 
-class RenderSVGResourcePattern FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourcePattern : public RenderSVGResourceContainer {
 public:
     RenderSVGResourcePattern(SVGPatternElement*);
 

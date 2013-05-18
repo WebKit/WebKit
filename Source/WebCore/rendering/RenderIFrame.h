@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderView;
 
-class RenderIFrame FINAL : public RenderFrameBase {
+class RenderIFrame : public RenderFrameBase {
 public:
     explicit RenderIFrame(Element*);
 

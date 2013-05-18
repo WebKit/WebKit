@@ -1,3 +1,199 @@
+2013-05-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r150294.
+        http://trac.webkit.org/changeset/150294
+        https://bugs.webkit.org/show_bug.cgi?id=116369
+
+        Caused 31 tests to fail (Requested by rniwa on #webkit).
+
+        * WebCore.exp.in:
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/RenderApplet.h:
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::virtualContinuation):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderBoundingBox):
+        (RenderBox):
+        (WebCore::RenderBox::marginLogicalLeft):
+        (WebCore::RenderBox::marginLogicalRight):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::isBoxModelObject):
+        * rendering/RenderButton.h:
+        * rendering/RenderCombineText.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderEmbeddedObject.h:
+        (RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::isEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::virtualChildren):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderIFrame.h:
+        * rendering/RenderImage.h:
+        (RenderImage):
+        (WebCore::RenderImage::isRenderImage):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        (WebCore::RenderInline::virtualContinuation):
+        (WebCore::RenderInline::virtualChildren):
+        (WebCore::RenderInline::isRenderInline):
+        (WebCore::RenderInline::layout):
+        (WebCore::RenderInline::requiresLayer):
+        (WebCore::RenderInline::offsetWidth):
+        (WebCore::RenderInline::offsetHeight):
+        (WebCore::RenderInline::borderBoundingBox):
+        (WebCore::RenderInline::dirtyLinesFromChangedChild):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::virtualChildren):
+        (WebCore::RenderMedia::canHaveChildren):
+        (WebCore::RenderMedia::isMedia):
+        (WebCore::RenderMedia::isImage):
+        (WebCore::RenderMedia::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderMediaControlElements.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnBlock.h:
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderPart.h:
+        (RenderPart):
+        (WebCore::RenderPart::isRenderPart):
+        (WebCore::RenderPart::renderName):
+        * rendering/RenderProgress.h:
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::isRenderRegion):
+        * rendering/RenderRegionSet.h:
+        * rendering/RenderReplaced.h:
+        (RenderReplaced):
+        (WebCore::RenderReplaced::renderName):
+        * rendering/RenderReplica.h:
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderRubyText.h:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSlider.h:
+        * rendering/RenderSnapshottedPlugIn.h:
+        (RenderSnapshottedPlugIn):
+        * rendering/RenderTable.h:
+        (RenderTable):
+        (WebCore::RenderTable::renderName):
+        (WebCore::RenderTable::isTable):
+        (WebCore::RenderTable::avoidsFloats):
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        (RenderText):
+        (WebCore::RenderText::marginLeft):
+        (WebCore::RenderText::marginRight):
+        (WebCore::RenderText::styleWillChange):
+        (WebCore::RenderText::length):
+        (WebCore::RenderText::paint):
+        (WebCore::RenderText::layout):
+        * rendering/RenderTextControl.h:
+        (RenderTextControl):
+        (WebCore::RenderTextControl::renderName):
+        (WebCore::RenderTextControl::isTextControl):
+        (WebCore::RenderTextControl::avoidsFloats):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.h:
+        (RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::isTextField):
+        * rendering/RenderTextFragment.h:
+        * rendering/RenderTextTrackCue.h:
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.h:
+        (RenderWidget):
+        (WebCore::RenderWidget::isWidget):
+        * rendering/RenderWordBreak.h:
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/svg/RenderSVGBlock.h:
+        (RenderSVGBlock):
+        * rendering/svg/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGContainer::virtualChildren):
+        (WebCore::RenderSVGContainer::isSVGContainer):
+        (WebCore::RenderSVGContainer::renderName):
+        (RenderSVGContainer):
+        (WebCore::RenderSVGContainer::objectBoundingBox):
+        (WebCore::RenderSVGContainer::strokeBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::renderName):
+        (RenderSVGHiddenContainer):
+        (WebCore::RenderSVGHiddenContainer::isSVGHiddenContainer):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::renderName):
+        (WebCore::RenderSVGInline::requiresLayer):
+        (WebCore::RenderSVGInline::isSVGInline):
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::requiresLayer):
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.h:
+        (RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::isSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::toRenderSVGResourceContainer):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGResourceGradient.h:
+        (RenderSVGResourceGradient):
+        (WebCore::RenderSVGResourceGradient::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGShape::setNeedsTransformUpdate):
+        (WebCore::RenderSVGShape::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGShape::localToParentTransform):
+        (WebCore::RenderSVGShape::localTransform):
+        (WebCore::RenderSVGShape::isSVGShape):
+        (RenderSVGShape):
+        (WebCore::RenderSVGShape::objectBoundingBox):
+        (WebCore::RenderSVGShape::strokeBoundingBox):
+        * rendering/svg/RenderSVGTSpan.h:
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.h:
+
 2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of Custom code for Audio global constructor

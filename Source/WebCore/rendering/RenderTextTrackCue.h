@@ -37,7 +37,7 @@ namespace WebCore {
 
 class TextTrackCueBox;
 
-class RenderTextTrackCue FINAL : public RenderBlock {
+class RenderTextTrackCue : public RenderBlock {
 public:
     explicit RenderTextTrackCue(TextTrackCueBox*);
 

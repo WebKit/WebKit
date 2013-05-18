@@ -33,7 +33,7 @@ namespace WebCore {
 class AffineTransform;
 class RenderObject;
 
-class RenderSVGResourceMarker FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourceMarker : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceMarker(SVGMarkerElement*);
     virtual ~RenderSVGResourceMarker();

@@ -27,7 +27,7 @@
 namespace WebCore {
     
 class SVGStyledTransformableElement;
-class RenderSVGTransformableContainer FINAL : public RenderSVGContainer {
+class RenderSVGTransformableContainer : public RenderSVGContainer {
 public:
     explicit RenderSVGTransformableContainer(SVGStyledTransformableElement*);
 

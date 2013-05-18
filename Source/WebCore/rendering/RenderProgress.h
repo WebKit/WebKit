@@ -28,7 +28,7 @@ namespace WebCore {
 
 class HTMLProgressElement;
 
-class RenderProgress FINAL : public RenderBlock {
+class RenderProgress : public RenderBlock {
 public:
     explicit RenderProgress(HTMLElement*);
     virtual ~RenderProgress();

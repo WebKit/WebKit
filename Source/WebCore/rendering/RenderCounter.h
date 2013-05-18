@@ -29,7 +29,7 @@ namespace WebCore {
 
 class CounterNode;
 
-class RenderCounter FINAL : public RenderText {
+class RenderCounter : public RenderText {
 public:
     RenderCounter(Document*, const CounterContent&);
     virtual ~RenderCounter();

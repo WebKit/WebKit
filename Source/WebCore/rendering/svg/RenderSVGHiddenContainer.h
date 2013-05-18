@@ -33,20 +33,20 @@ class RenderSVGHiddenContainer : public RenderSVGContainer {
 public:
     explicit RenderSVGHiddenContainer(SVGStyledElement*);
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGHiddenContainer"; }
+    virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
 
 protected:
-    virtual void layout() OVERRIDE;
+    virtual void layout();
 
 private:
-    virtual bool isSVGHiddenContainer() const OVERRIDE FINAL { return true; }
+    virtual bool isSVGHiddenContainer() const { return true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&);
     
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const OVERRIDE FINAL { return LayoutRect(); }
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const OVERRIDE { return LayoutRect(); }
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) OVERRIDE FINAL;
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 };
 }
 

@@ -32,19 +32,19 @@ class RenderSVGBlock : public RenderBlock {
 public:
     explicit RenderSVGBlock(SVGElement*);
 
-    virtual LayoutRect visualOverflowRect() const OVERRIDE FINAL;
+    virtual LayoutRect visualOverflowRect() const;
 
 protected:
     virtual void willBeDestroyed() OVERRIDE;
 
 private:
-    virtual void setStyle(PassRefPtr<RenderStyle>) OVERRIDE FINAL;
-    virtual void updateFromStyle() OVERRIDE FINAL;
+    virtual void setStyle(PassRefPtr<RenderStyle>);
+    virtual void updateFromStyle() OVERRIDE;
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE FINAL;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE FINAL;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 };
 
 }

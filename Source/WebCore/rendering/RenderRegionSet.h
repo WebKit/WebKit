@@ -53,13 +53,13 @@ protected:
     virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE { return false; }
 
 private:
-    virtual void installFlowThread() OVERRIDE FINAL;
+    virtual void installFlowThread() OVERRIDE;
 
-    virtual void expandToEncompassFlowThreadContentsIfNeeded() OVERRIDE FINAL;
+    virtual void expandToEncompassFlowThreadContentsIfNeeded() OVERRIDE;
 
     virtual const char* renderName() const = 0;
     
-    virtual bool isRenderRegionSet() const OVERRIDE FINAL { return true; }
+    virtual bool isRenderRegionSet() const OVERRIDE { return true; }
 };
 
 } // namespace WebCore

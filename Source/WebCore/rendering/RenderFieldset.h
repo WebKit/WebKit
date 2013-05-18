@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class RenderFieldset FINAL : public RenderBlock {
+class RenderFieldset : public RenderBlock {
 public:
     explicit RenderFieldset(Element*);
 
