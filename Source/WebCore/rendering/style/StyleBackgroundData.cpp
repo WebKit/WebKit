@@ -46,4 +46,13 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
     return m_background == o.m_background && m_color == o.m_color && m_outline == o.m_outline;
 }
 
+bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& other) const
+{
+    if (m_background != other.m_background || m_color != other.m_color)
+        return false;
+    if (!m_outline.isVisible() && !other.m_outline.isVisible())
+        return true;
+    return m_outline == other.m_outline;
+}
+
 } // namespace WebCore

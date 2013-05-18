@@ -45,6 +45,8 @@ public:
         return !(*this == o);
     }
 
+    bool isEquivalentForPainting(const StyleBackgroundData&) const;
+
     const FillLayer& background() const { return m_background; }
     const Color& color() const { return m_color; }
     const OutlineValue& outline() const { return m_outline; }

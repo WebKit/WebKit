@@ -1,5 +1,21 @@
 2013-05-17  Andreas Kling  <akling@apple.com>
 
+        Ads on theverge.com cause repaints when hovered, even though content doesn't visibly change.
+        <http://webkit.org/b/116344>
+
+        Reviewed by Darin Adler.
+
+        Teach RenderStyle::diff() to ignore differences in the outline value if both styles have non-visible outlines.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::isEquivalentForPainting):
+        * rendering/style/StyleBackgroundData.h:
+        (StyleBackgroundData):
+
+2013-05-17  Andreas Kling  <akling@apple.com>
+
         Plug leak in CSSSelectorList::deleteSelectors().
         <http://webkit.org/b/116371>
         <rdar://problem/13930698>
