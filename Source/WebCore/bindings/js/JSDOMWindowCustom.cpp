@@ -533,15 +533,6 @@ JSValue JSDOMWindow::image(ExecState* exec) const
     return getDOMConstructor<JSImageConstructor>(exec, this);
 }
 
-#if ENABLE(VIDEO)
-JSValue JSDOMWindow::audio(ExecState* exec) const
-{
-    if (!MediaPlayer::isAvailable())
-        return jsUndefined();
-    return getDOMConstructor<JSHTMLAudioElementNamedConstructor>(exec, this);
-}
-#endif
-
 // Custom functions
 
 JSValue JSDOMWindow::open(ExecState* exec)

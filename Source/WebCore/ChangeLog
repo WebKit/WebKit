@@ -1,3 +1,23 @@
+2013-05-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of Custom code for Audio global constructor
+        https://bugs.webkit.org/show_bug.cgi?id=116343
+
+        Reviewed by Geoffrey Garen.
+
+        Remove custom code for Audio global constructor. It is no longer needed
+        now that the the bindings generator no longer require custom code for
+        named constructors and now that [EnabledAtRuntime] extended attribute is
+        supported for global constructors.
+
+        HTMLAudioElement global constructors are now automatically generated.
+
+        No new tests, no behavior change for layout tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * html/HTMLAudioElement.idl:
+        * page/DOMWindow.idl:
+
 2013-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13819878> Disable SharedWorker when in multiple web process model
