@@ -43,12 +43,14 @@
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "PageGroup.h"
+#include "PlatformStrategies.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "SharedWorkerRepository.h"
+#include "SharedWorkerStrategy.h"
 #include "SharedWorkerThread.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerReportingProxy.h"
@@ -349,6 +351,11 @@ DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
 {
     AtomicallyInitializedStatic(DefaultSharedWorkerRepository*, instance = new DefaultSharedWorkerRepository);
     return *instance;
+}
+
+bool DefaultSharedWorkerRepository::isAvailable()
+{
+    return platformStrategies()->sharedWorkerStrategy()->isAvailable();
 }
 
 void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)

@@ -30,6 +30,8 @@ namespace WebCore {
     
 class SharedWorkerStrategy {
 public:
+    virtual bool isAvailable() const { return true; }
+
 protected:
     virtual ~SharedWorkerStrategy()
     {

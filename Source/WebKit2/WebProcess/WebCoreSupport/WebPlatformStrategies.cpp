@@ -304,6 +304,18 @@ void WebPlatformStrategies::populatePluginCache()
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+// SharedWorkerStrategy.
+
+bool WebPlatformStrategies::isAvailable() const
+{
+    // Shared workers do not work across multiple processes, and using network process is tied to multiple secondary process model.
+#if ENABLE(NETWORK_PROCESS)
+    return WebProcess::shared().usesNetworkProcess();
+#else
+    return true;
+#endif
+}
+
 // StorageStrategy
 
 PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGroup* pageGroup)

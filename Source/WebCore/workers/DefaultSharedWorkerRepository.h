@@ -58,6 +58,9 @@ namespace WebCore {
     class DefaultSharedWorkerRepository {
         WTF_MAKE_NONCOPYABLE(DefaultSharedWorkerRepository); WTF_MAKE_FAST_ALLOCATED;
     public:
+        // Returns true if the platform supports SharedWorkers, otherwise false.
+        static bool isAvailable();
+
         // Invoked once the worker script has been loaded to fire up the worker thread.
         void workerScriptLoaded(SharedWorkerProxy&, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 

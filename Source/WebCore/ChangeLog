@@ -1,3 +1,21 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13819878> Disable SharedWorker when in multiple web process model
+        https://bugs.webkit.org/show_bug.cgi?id=116359
+
+        Reviewed by Anders Carlsson.
+
+        This feature was already RuntimeEnabled. Call through layers to get the answer from
+        a platform strategy.
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::DefaultSharedWorkerRepository::isAvailable):
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerRepository::isAvailable):
+        * workers/SharedWorkerStrategy.h:
+        (WebCore::SharedWorkerStrategy::isAvailable):
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         Move Storage member functions out of line

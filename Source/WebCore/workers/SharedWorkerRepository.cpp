@@ -38,8 +38,7 @@ namespace WebCore {
 
 bool SharedWorkerRepository::isAvailable()
 {
-    // SharedWorkers are enabled on the default WebKit platform.
-    return true;
+    return DefaultSharedWorkerRepository::instance().isAvailable();
 }
 
 void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)

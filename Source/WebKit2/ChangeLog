@@ -1,3 +1,16 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13819878> Disable SharedWorker when in multiple web process model
+        https://bugs.webkit.org/show_bug.cgi?id=116359
+
+        Reviewed by Anders Carlsson.
+
+        Implement SharedWorkerStrategy::isAvailable.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::isAvailable):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2013-05-17  Beth Dakin  <bdakin@apple.com>
 
         Headers and footers will sometimes disappear and re-appear during page loads
