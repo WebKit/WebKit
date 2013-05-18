@@ -282,7 +282,7 @@ set(WebKit2_SOURCES
     UIProcess/WebIconDatabase.cpp
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
-    UIProcess/WebKeyValueStorageManagerProxy.cpp
+    UIProcess/WebKeyValueStorageManager.cpp
 
     UIProcess/WebLoaderClient.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
@@ -467,7 +467,6 @@ set(WebKit2_SOURCES
     WebProcess/Storage/StorageAreaImpl.cpp
     WebProcess/Storage/StorageAreaMap.cpp
     WebProcess/Storage/StorageNamespaceImpl.cpp
-    WebProcess/Storage/WebKeyValueStorageManager.cpp
 
     WebProcess/WebCoreSupport/WebBatteryClient.cpp
     WebProcess/WebCoreSupport/WebChromeClient.cpp
@@ -531,7 +530,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebGeolocationManagerProxy.messages.in
     UIProcess/WebIconDatabase.messages.in
     UIProcess/WebInspectorProxy.messages.in
-    UIProcess/WebKeyValueStorageManagerProxy.messages.in
     UIProcess/WebMediaCacheManagerProxy.messages.in
     UIProcess/WebNetworkInfoManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
@@ -577,7 +575,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/ResourceCache/WebResourceCacheManager.messages.in
 
     WebProcess/Storage/StorageAreaMap.messages.in
-    WebProcess/Storage/WebKeyValueStorageManager.messages.in
 
     WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
 
