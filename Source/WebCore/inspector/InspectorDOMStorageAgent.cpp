@@ -60,20 +60,6 @@ namespace DOMStorageAgentState {
 static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
 };
 
-static bool hadException(ExceptionCode ec, ErrorString* errorString)
-{
-    switch (ec) {
-    case 0:
-        return false;
-    case SECURITY_ERR:
-        *errorString = "Security error";
-        return true;
-    default:
-        *errorString = "Unknown DOM storage error";
-        return true;
-    }
-}
-
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state)
     : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents, state)
     , m_pageAgent(pageAgent)
@@ -126,19 +112,16 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
 
     RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > > storageItems = TypeBuilder::Array<TypeBuilder::Array<String> >::create();
 
-    ExceptionCode ec = 0;
     for (unsigned i = 0; i < storageArea->length(); ++i) {
-        String name(storageArea->key(i, ec, frame));
-        if (hadException(ec, errorString))
-            return;
-        String value(storageArea->getItem(name, ec, frame));
-        if (hadException(ec, errorString))
-            return;
+        String key = storageArea->key(i);
+        String value = storageArea->item(key);
+
         RefPtr<TypeBuilder::Array<String> > entry = TypeBuilder::Array<String>::create();
-        entry->addItem(name);
+        entry->addItem(key);
         entry->addItem(value);
-        storageItems->addItem(entry);
+        storageItems->addItem(entry.release());
     }
+
     items = storageItems.release();
 }
 

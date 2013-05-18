@@ -45,12 +45,12 @@ public:
     virtual ~StorageAreaImpl();
 
     virtual unsigned length() OVERRIDE;
-    virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-    virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual String key(unsigned index) OVERRIDE;
+    virtual String item(const String& key) OVERRIDE;
     virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
     virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
     virtual void clear(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-    virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual bool contains(const String& key) OVERRIDE;
 
     virtual bool canAccessStorage(Frame* sourceFrame) OVERRIDE;
     virtual StorageType storageType() const OVERRIDE;

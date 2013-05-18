@@ -74,12 +74,28 @@ unsigned Storage::length(ExceptionCode& ec) const
 
 String Storage::key(unsigned index, ExceptionCode& ec) const
 {
-    return m_storageArea->key(index, ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+
+    if (isDisabledByPrivateBrowsing())
+        return String();
+
+    return m_storageArea->key(index);
 }
 
 String Storage::getItem(const String& key, ExceptionCode& ec) const
 {
-    return m_storageArea->getItem(key, ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+
+    if (isDisabledByPrivateBrowsing())
+        return String();
+
+    return m_storageArea->item(key);
 }
 
 void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
@@ -99,7 +115,15 @@ void Storage::clear(ExceptionCode& ec)
 
 bool Storage::contains(const String& key, ExceptionCode& ec) const
 {
-    return m_storageArea->contains(key, ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+
+    if (isDisabledByPrivateBrowsing())
+        return false;
+
+    return m_storageArea->contains(key);
 }
 
 bool Storage::isDisabledByPrivateBrowsing() const

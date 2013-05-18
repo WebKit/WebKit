@@ -1,3 +1,32 @@
+2013-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Simplify StorageArea getter functions
+        https://bugs.webkit.org/show_bug.cgi?id=116399
+
+        Reviewed by Sam Weinig.
+
+        Move the security and private browsing checks from StorageArea to Storage so we can share
+        more code between WebKit1 and WebKit2.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        Update to new StorageArea interface. The security checks are unnecessary here anyway because
+        InspectorDOMStorageAgent::findStorageArea will only return a StorageArea that can be accessed
+        by the frame's security origin.
+        
+        * storage/Storage.cpp:
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::contains):
+        * storage/StorageArea.h:
+        (StorageArea):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::key):
+        (WebCore::StorageAreaImpl::item):
+        (WebCore::StorageAreaImpl::contains):
+        * storage/StorageAreaImpl.h:
+        (StorageAreaImpl):
+
 2013-05-17  Simon Fraser  <simon.fraser@apple.com>
 
         Garbage on page background while http://canberraballoons.com.au is loading

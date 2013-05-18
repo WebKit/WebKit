@@ -64,31 +64,13 @@ unsigned StorageAreaImpl::length()
     return m_storageAreaMap->length();
 }
 
-String StorageAreaImpl::key(unsigned index, ExceptionCode& ec, Frame* sourceFrame)
+String StorageAreaImpl::key(unsigned index)
 {
-    ec = 0;
-    if (!canAccessStorage(sourceFrame)) {
-        ec = SECURITY_ERR;
-        return String();
-    }
-
-    if (disabledByPrivateBrowsingInFrame(sourceFrame))
-        return String();
-
     return m_storageAreaMap->key(index);
 }
 
-String StorageAreaImpl::getItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
+String StorageAreaImpl::item(const String& key)
 {
-    ec = 0;
-    if (!canAccessStorage(sourceFrame)) {
-        ec = SECURITY_ERR;
-        return String();
-    }
-
-    if (disabledByPrivateBrowsingInFrame(sourceFrame))
-        return String();
-
     return m_storageAreaMap->item(key);
 }
 
@@ -142,16 +124,8 @@ void StorageAreaImpl::clear(ExceptionCode& ec, Frame* sourceFrame)
     m_storageAreaMap->clear(sourceFrame, this);
 }
 
-bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
+bool StorageAreaImpl::contains(const String& key)
 {
-    ec = 0;
-    if (!canAccessStorage(sourceFrame)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
-    if (disabledByPrivateBrowsingInFrame(sourceFrame))
-        return false;
-
     return m_storageAreaMap->contains(key);
 }
 

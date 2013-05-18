@@ -47,12 +47,12 @@ private:
 
     // WebCore::StorageArea.
     virtual unsigned length() OVERRIDE;
-    virtual String key(unsigned index, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual String getItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual String key(unsigned index) OVERRIDE;
+    virtual String item(const String& key) OVERRIDE;
     virtual void setItem(const String& key, const String& value, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void removeItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void clear(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual bool contains(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual bool contains(const String& key) OVERRIDE;
     virtual bool canAccessStorage(WebCore::Frame*) OVERRIDE;
     virtual WebCore::StorageType storageType() const OVERRIDE;
     virtual size_t memoryBytesUsedByCache() OVERRIDE;
