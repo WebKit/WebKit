@@ -31,11 +31,6 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
 
-#if ENABLE(INDEXED_DATABASE)
-#include "WebKeyValueStorageManager.h"
-#include <WebCore/GroupSettings.h>
-#endif
-
 namespace WebKit {
 
 PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
@@ -60,11 +55,6 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
         addUserStyleSheet(data.userStyleSheets[i]);
     for (size_t i = 0; i < data.userScripts.size(); ++i)
         addUserScript(data.userScripts[i]);
-
-#if ENABLE(INDEXED_DATABASE)
-    WebKeyValueStorageManager* keyValueStorageManager = WebProcess::shared().supplement<WebKeyValueStorageManager>();
-    m_pageGroup->groupSettings()->setIndexedDBDatabasePath(keyValueStorageManager->indexedDBDatabaseDirectory());
-#endif
 }
 
 void WebPageGroupProxy::addUserStyleSheet(const WebCore::UserStyleSheet& userStyleSheet)
