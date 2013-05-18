@@ -2896,11 +2896,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return false;
     case CSSPropertyPage:
         return parsePage(propId, important);
-    case CSSPropertyFontStretch:
 #if ENABLE(CSS_SHADERS)
     case CSSPropertyGeometry:
         return m_inFilterRule ? parseGeometry(propId, value, important) : false;
 #endif
+    case CSSPropertyFontStretch:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextOverline:
     case CSSPropertyTextUnderline:
