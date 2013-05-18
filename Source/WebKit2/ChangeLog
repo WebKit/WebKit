@@ -1,3 +1,10 @@
+2013-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed build fix after r150305 and r150306.
+
+        * DerivedSources.pri:
+        * Target.pri:
+
 2013-05-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the GTK port after r150305 and r150306.

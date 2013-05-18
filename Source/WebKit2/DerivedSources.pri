@@ -93,8 +93,6 @@ MESSAGE_RECEIVERS = \
     WebIconDatabase.messages.in \
     WebIconDatabaseProxy.messages.in \
     WebInspectorProxy.messages.in \
-    WebKeyValueStorageManager.messages.in \
-    WebKeyValueStorageManagerProxy.messages.in \
     WebMediaCacheManager.messages.in \
     WebMediaCacheManagerProxy.messages.in \
     WebNetworkInfoManager.messages.in \
