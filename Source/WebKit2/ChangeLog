@@ -1,3 +1,9 @@
+2013-05-18  Sam Weinig  <sam@webkit.org>
+
+        Fix some builds.
+
+        * UIProcess/API/mac/WKTypeRefWrapper.mm:
+
 2013-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r150305): WebKit2 build broken with INDEXED_DATABASE enabled

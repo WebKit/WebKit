@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if defined(__LP64__) && defined(__clang__)
+
 #import "WKTypeRefWrapper.h"
 
 #import "WKRetainPtr.h"
@@ -53,3 +56,5 @@
 }
 
 @end
+
+#endif // defined(__LP64__) && defined(__clang__)
