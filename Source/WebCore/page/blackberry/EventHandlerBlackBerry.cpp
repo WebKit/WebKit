@@ -20,7 +20,6 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "ClipboardBlackBerry.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "KeyboardEvent.h"
@@ -86,12 +85,5 @@ void EventHandler::focusDocumentView()
         return;
     page->focusController()->setFocusedFrame(m_frame);
 }
-
-#if ENABLE(DRAG_SUPPORT)
-WTF::PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
-{
-    return ClipboardBlackBerry::create(ClipboardWritable);
-}
-#endif
 
 } // namespace WebCore

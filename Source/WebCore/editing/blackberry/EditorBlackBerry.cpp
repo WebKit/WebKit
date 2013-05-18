@@ -20,14 +20,13 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "ClipboardBlackBerry.h"
-#include <wtf/PassRefPtr.h>
+#include "Clipboard.h"
 
 namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return ClipboardBlackBerry::create(policy);
+    return Clipboard::createForCopyAndPaste(policy);
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,65 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         return fragment.release();
     }
     return 0;
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+{
+    return adoptPtr(new Pasteboard);
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
+{
+    return createForCopyAndPaste();
+}
+
+bool Pasteboard::hasData()
+{
+    return BlackBerry::Platform::Clipboard::hasPlainText() || BlackBerry::Platform::Clipboard::hasHTML() || BlackBerry::Platform::Clipboard::hasURL();
+}
+
+void Pasteboard::clear(const String& type)
+{
+    BlackBerry::Platform::Clipboard::clearClipboardByType(type.utf8().data());
+}
+
+String Pasteboard::readString(const String& type)
+{
+    return String::fromUTF8(BlackBerry::Platform::Clipboard::readClipboardByType(type.utf8().data()).c_str());
+}
+
+bool Pasteboard::writeString(const String& type, const String& text)
+{
+    if (type == "text/plain") {
+        BlackBerry::Platform::Clipboard::writePlainText(text);
+        return true;
+    }
+    if (type == "text/html") {
+        BlackBerry::Platform::Clipboard::writeHTML(text);
+        return true;
+    }
+    if (type == "text/url") {
+        BlackBerry::Platform::Clipboard::writeURL(text);
+        return true;
+    }
+    return false;
+}
+
+ListHashSet<String> Pasteboard::types()
+{
+    // We use hardcoded list here since there seems to be no API to get the list.
+    // FIXME: Should omit types where we have no data, using the same functions used above in Pasteboard::hasData.
+    ListHashSet<String> types;
+    types.add("text/plain");
+    types.add("text/html");
+    types.add("text/url");
+    return types;
+}
+
+Vector<String> Pasteboard::readFilenames()
+{
+    notImplemented();
+    return Vector<String>();
 }
 
 } // namespace WebCore

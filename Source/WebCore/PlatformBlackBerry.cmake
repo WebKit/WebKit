@@ -100,7 +100,6 @@ list(APPEND WebCore_SOURCES
     page/blackberry/DragControllerBlackBerry.cpp
     page/blackberry/EventHandlerBlackBerry.cpp
     page/blackberry/SettingsBlackBerry.cpp
-    platform/blackberry/ClipboardBlackBerry.cpp
     platform/blackberry/ContextMenuBlackBerry.cpp
     platform/blackberry/ContextMenuItemBlackBerry.cpp
     platform/blackberry/CursorBlackBerry.cpp
