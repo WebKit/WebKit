@@ -1,3 +1,83 @@
+2013-05-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Create a script to import W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=111513
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch attempts to re-land the 'import-w3c-tests'
+        script and accompanying modules.  The tests and code have
+        been cleaned up so that we do not log anything to stdout/stderr
+        while running the tests (thanks to outputcapture) and do not
+        write into the source tree while running the tests, and much
+        but not all of the code has been converted over to using the webkitpy
+
+        * Scripts/import-w3c-tests: Added.
+        * Scripts/webkitpy/w3c/__init__.py: Added.
+        * Scripts/webkitpy/w3c/test_converter.py: Added.
+        (W3CTestConverter):
+        (W3CTestConverter.__init__):
+        (W3CTestConverter.path_from_webkit_root):
+        (W3CTestConverter.read_webkit_prefixed_css_property_list):
+        (W3CTestConverter.convert_for_webkit):
+        (W3CTestConverter.convert_css):
+        (W3CTestConverter.convert_html):
+        (W3CTestConverter.convert_testharness_paths):
+        (W3CTestConverter.convert_prefixed_properties):
+        (W3CTestConverter.add_webkit_prefix_to_unprefixed_properties):
+        (W3CTestConverter.replace_tag):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py: Added.
+        (W3CTestConverterTest):
+        (W3CTestConverterTest.fake_dir_path):
+        (W3CTestConverterTest.test_read_prefixed_property_list):
+        (W3CTestConverterTest.test_convert_for_webkit_nothing_to_convert):
+        (test_convert_for_webkit_harness_only):
+        (test_convert_for_webkit_properties_only):
+        (test_convert_for_webkit_harness_and_properties):
+        (test_convert_test_harness_paths):
+        (test_convert_prefixed_properties):
+        (verify_conversion_happened):
+        (verify_no_conversion_happened):
+        (verify_test_harness_paths):
+        (verify_prefixed_properties):
+        (generate_test_content):
+        * Scripts/webkitpy/w3c/test_importer.py: Added.
+        (main):
+        (parse_args):
+        (validate_import_directory):
+        (TestImporter):
+        (TestImporter.__init__):
+        (TestImporter.path_from_webkit_root):
+        (TestImporter.do_import):
+        (TestImporter.load_changeset):
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        (TestImporter.setup_destination_directory):
+        (TestImporter.update_test_status):
+        (TestImporter.remove_deleted_files):
+        (TestImporter.write_import_log):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py: Added.
+        (TestImporterTest):
+        (TestImporterTest.test_import_dir_with_no_tests):
+        * Scripts/webkitpy/w3c/test_parser.py: Added.
+        (TestParser):
+        (TestParser.__init__):
+        (TestParser.load_file):
+        (TestParser.analyze_test):
+        (TestParser.reference_links_of_type):
+        (TestParser.is_jstest):
+        (TestParser.support_files):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py: Added.
+        (TestParserTest):
+        (TestParserTest.test_analyze_test_reftest_one_match):
+        (test_analyze_test_reftest_multiple_matches):
+        (test_analyze_test_reftest_match_and_mismatch):
+        (test_analyze_test_reftest_with_ref_support_Files):
+        (test_analyze_jstest):
+        (test_analyze_pixel_test_all_true):
+        (test_analyze_pixel_test_all_false):
+        (test_analyze_non_html_file):
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Leaks builders exit early frequently
