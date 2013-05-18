@@ -1525,3 +1525,5 @@ webkit.org/b/116241 inspector/storage-panel-dom-storage-update.html [ Failure ]
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
+
+webkit.org/b/116388 fast/js/post-message-numeric-property.html
