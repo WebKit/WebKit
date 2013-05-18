@@ -644,6 +644,18 @@ void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 #endif
 }
 
+void WebProcessProxy::didSaveToPageCache()
+{
+    m_context->processDidCachePage(this);
+}
+
+void WebProcessProxy::releasePageCache()
+{
+    if (canSendMessage())
+        send(Messages::WebProcess::ReleasePageCache(), 0);
+}
+
+
 void WebProcessProxy::requestTermination()
 {
     ChildProcessProxy::terminate();

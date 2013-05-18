@@ -1,3 +1,46 @@
+2013-05-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Only allow 1 WebProcess to hold a PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=116368
+        <rdar://problem/13392600>
+
+        Reviewed by Geoff Garen & Anders Carlson.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::processDidSaveToPageCache):
+        (WebKit):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+            - Added m_processWithPageCache, only allow one process to keep a PageCache.
+        (WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSaveToPageCache):
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+            - Forward didSaveToPageCache to the WebProcessProxy.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        (WebKit::WebProcessProxy::didSaveToPageCache):
+        (WebKit):
+        (WebKit::WebProcessProxy::releasePageCache):
+            - Forward releasePageCache to the WebProcess.
+            - Forward didSaveToPageCache to the WebContext.
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didSaveToPageCache):
+            - Forward didSaveToPageCache to the WebPageProxy.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::releasePageCache):
+        (WebKit):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+            - Added 'ReleasePageCache' to instruct a web process to drop any cached pages.
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         Share code between WebKit1 and WebKit2 StorageArea subclasses

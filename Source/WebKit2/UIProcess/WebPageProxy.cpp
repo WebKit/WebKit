@@ -4466,4 +4466,9 @@ void WebPageProxy::setOverridePrivateBrowsingEnabled(bool overridePrivateBrowsin
         m_process->send(Messages::WebPage::SetOverridePrivateBrowsingEnabled(overridePrivateBrowsingEnabled), m_pageID);
 }
 
+void WebPageProxy::didSaveToPageCache()
+{
+    m_process->didSaveToPageCache();
+}
+
 } // namespace WebKit

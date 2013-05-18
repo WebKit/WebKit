@@ -771,6 +771,8 @@ public:
     void connectionWillOpen(CoreIPC::Connection*);
     void connectionWillClose(CoreIPC::Connection*);
 
+    void didSaveToPageCache();
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

@@ -109,6 +109,9 @@ public:
     void pageVisibilityChanged(WebPageProxy*);
     void pagePreferencesChanged(WebPageProxy*);
 
+    void didSaveToPageCache();
+    void releasePageCache();
+
 #if PLATFORM(MAC)
     bool allPagesAreProcessSuppressible() const;
     static bool pageIsProcessSuppressible(WebPageProxy*);

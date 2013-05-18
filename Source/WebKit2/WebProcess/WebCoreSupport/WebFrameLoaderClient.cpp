@@ -1242,6 +1242,11 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
 void WebFrameLoaderClient::didSaveToPageCache()
 {
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidSaveToPageCache());
 }
 
 void WebFrameLoaderClient::didRestoreFromPageCache()

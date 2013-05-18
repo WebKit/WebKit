@@ -295,6 +295,8 @@ public:
     static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(const CoreIPC::StringReference& messageReceiverName, const CoreIPC::StringReference& messageName);
 
+    void processDidCachePage(WebProcessProxy*);
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
@@ -383,6 +385,8 @@ private:
     
     Vector<RefPtr<WebProcessProxy>> m_processes;
     bool m_haveInitialEmptyProcess;
+
+    WebProcessProxy* m_processWithPageCache;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 

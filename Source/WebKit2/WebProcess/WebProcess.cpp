@@ -1135,6 +1135,13 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
     }
 }
 
+void WebProcess::releasePageCache()
+{
+    int savedPageCacheCapacity = pageCache()->capacity();
+    pageCache()->setCapacity(0);
+    pageCache()->setCapacity(savedPageCacheCapacity);
+}
+
 #if !PLATFORM(MAC)
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
