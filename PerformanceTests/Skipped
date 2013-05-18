@@ -1,6 +1,7 @@
 # Micro benchmarks not worth running at the moment.
 DOM/TraverseChildNodes.html
 Interactive/SelectAll.html
+Interactive/CopyAll.html
 
 # Not enabled by default on some ports
 Mutation

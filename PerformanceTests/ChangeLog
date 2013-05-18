@@ -1,3 +1,25 @@
+2013-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a performance test for copying
+        https://bugs.webkit.org/show_bug.cgi?id=116394
+
+        Reviewed by Andreas Kling.
+
+        Added. We're going to skip this test by default since it's such a microbenchmark, and also because
+        it currently takes 30 minutes to run. As insane as it sounds, each copy takes rouhgly 57 seconds.
+
+        Running Interactive/CopyAll.html (1 of 1)
+        RESULT Interactive: CopyAll: Time= 57618.05 ms
+        median= 57135.0 ms, stdev= 1542.07271571 ms, min= 55095.0 ms, max= 60913.0 ms
+        RESULT Interactive: CopyAll: JSHeap= 102811.2 bytes
+        median= 103272.0 bytes, stdev= 1115.28148913 bytes, min= 100648.0 bytes, max= 103504.0 bytes
+        RESULT Interactive: CopyAll: Malloc= 446408712.0 bytes
+        median= 459156772.0 bytes, stdev= 20007346.3266 bytes, min= 415564040.0 bytes, max= 462011928.0 bytes
+        Finished: 1766.883236 s
+
+        * Interactive/CopyAll.html: Added.
+        * Skipped:
+
 2013-05-13  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Get rid of native-memory-snapshot in performance test
