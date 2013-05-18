@@ -10,4 +10,4 @@ Version: @PROJECT_VERSION@
 Requires: cairo evas ecore libsoup-2.4 ecore-input
 Libs: -L${libdir} -lewebkit @EXTRA_EWEBKIT_LINK@
 Libs.private: @LIBS_PRIVATE@
-Cflags: -I${includedir}/@WebKit_LIBRARY_NAME@-@PROJECT_VERSION_MAJOR@
+Cflags: -I${includedir}/@WebKit_OUTPUT_NAME@-@PROJECT_VERSION_MAJOR@

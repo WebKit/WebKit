@@ -36,15 +36,13 @@ add_definitions(-DWTF_USE_ICU_UNICODE=1)
 add_definitions(-DWTF_USE_CAIRO=1)
 add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 
-set(JSC_EXECUTABLE_NAME jsc)
+set(WTF_OUTPUT_NAME wtf_efl)
+set(JavaScriptCore_OUTPUT_NAME javascriptcore_efl)
+set(WebCore_OUTPUT_NAME webcore_efl)
+set(WebKit_OUTPUT_NAME ewebkit)
+set(WebKit2_OUTPUT_NAME ewebkit2)
 
-set(WTF_LIBRARY_NAME wtf_efl)
-set(JavaScriptCore_LIBRARY_NAME javascriptcore_efl)
-set(WebCore_LIBRARY_NAME webcore_efl)
-set(WebKit_LIBRARY_NAME ewebkit)
-set(WebKit2_LIBRARY_NAME ewebkit2)
-
-set(DATA_INSTALL_DIR "share/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
+set(DATA_INSTALL_DIR "share/${WebKit_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
 set(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebCore/platform/efl/DefaultTheme)
 file(MAKE_DIRECTORY ${THEME_BINARY_DIR})
 

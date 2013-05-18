@@ -5,7 +5,7 @@ if (ENABLE_INSPECTOR)
         COMMAND ${CMAKE_COMMAND} -E copy ${WEBCORE_DIR}/English.lproj/localizedStrings.js ${DATA_BUILD_DIR}/webinspector
         COMMAND ${CMAKE_COMMAND} -E copy ${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end/inspectorPageIndex.html ${DATA_BUILD_DIR}/webinspector
         COMMAND ${CMAKE_COMMAND} -E copy ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendCommands.js ${DATA_BUILD_DIR}/webinspector
-        DEPENDS ${WebCore_LIBRARY_NAME}
+        DEPENDS WebCore
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
     install(DIRECTORY "${DATA_BUILD_DIR}/webinspector"

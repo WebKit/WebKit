@@ -99,17 +99,6 @@ else ()
 endif ()
 
 # -----------------------------------------------------------------------------
-# Default target names (can be overrriden in Options${PORT}.cmake file)
-# -----------------------------------------------------------------------------
-set(JSC_EXECUTABLE_NAME JSC)
-set(WTF_LIBRARY_NAME WTF)
-set(JavaScriptCore_LIBRARY_NAME JavaScriptCore)
-set(WebCore_LIBRARY_NAME WebCore)
-set(WebKit_LIBRARY_NAME WebKit)
-set(WebKit2_LIBRARY_NAME WebKit2)
-set(WebCoreTestSupport_LIBRARY_NAME WebCoreTestSupport)
-
-# -----------------------------------------------------------------------------
 # Default library types
 # -----------------------------------------------------------------------------
 option(SHARED_CORE "build JavaScriptCore and WebCore as shared libraries")

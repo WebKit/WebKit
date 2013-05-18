@@ -24,7 +24,7 @@ add_library(gtest SHARED
 add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1)
 
 target_link_libraries(gtest
-    ${WTF_LIBRARY_NAME}
+    WTF
 )
 
 if (CMAKE_USE_PTHREADS_INIT)

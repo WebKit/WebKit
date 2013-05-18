@@ -142,13 +142,11 @@ endif ()
 
 include_directories(${CMAKE_INCLUDE_PATH})
 
-set(JSC_EXECUTABLE_NAME jsc)
-
-set(WTF_LIBRARY_NAME wtf)
-set(JavaScriptCore_LIBRARY_NAME javascriptcore)
-set(WebCore_LIBRARY_NAME webcore)
-set(WebKit_LIBRARY_NAME webkit)
-set(WebKit_DRT_LIBRARY_NAME webkit_DRT)
+set(WTF_OUTPUT_NAME wtf)
+set(JavaScriptCore_OUTPUT_NAME javascriptcore)
+set(WebCore_OUTPUT_NAME webcore)
+set(WebKit_OUTPUT_NAME webkit)
+set(WebKit_DRT_OUTPUT_NAME webkit_DRT)
 
 WEBKIT_OPTION_BEGIN()
 

@@ -181,7 +181,7 @@ list(APPEND WebKit_LIBRARIES
     ${INTL_LIBRARY}
     ${ITYPE_LIBRARY}
     ${JPEG_LIBRARY}
-    ${JavaScriptCore_LIBRARY_NAME}
+    JavaScriptCore
     ${LEVELDB_LIBRARY}
     ${MMR_LIBRARY}
     ${M_LIBRARY}
@@ -265,7 +265,7 @@ endif ()
 add_custom_target(
     inspector ALL
     command cp ${WEBCORE_DIR}/inspector/front-end/inspector.html ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html && echo '<script src="inspectorBB.js"></script>'  >> ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
-    DEPENDS ${WebCore_LIBRARY_NAME}
+    DEPENDS WebCore
     COMMENT "Web Inspector resources building..."
 )
 

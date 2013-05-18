@@ -2578,8 +2578,8 @@ set(WebCore_PLUG_INS_RESOURCES
 )
 
 set(WebCore_LIBRARIES
-    ${WTF_LIBRARY_NAME}
-    ${JavaScriptCore_LIBRARY_NAME}
+    WTF
+    JavaScriptCore
 )
 
 if (ENABLE_SQL_DATABASE AND ENABLE_WORKERS)
@@ -3178,36 +3178,46 @@ WEBKIT_WRAP_SOURCELIST(${WebCoreTestSupport_IDL_FILES} ${WebCoreTestSupport_SOUR
 add_definitions(-DBUILDING_WebCore)
 include_directories(${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_DIRECTORIES})
 
-add_library(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})
-set_target_properties(${WebCore_LIBRARY_NAME} PROPERTIES FOLDER "WebCore")
-set_target_properties(${WebCore_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+add_library(WebCore ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})
+set_target_properties(WebCore PROPERTIES FOLDER "WebCore")
+set_target_properties(WebCore PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
-add_library(${WebCoreTestSupport_LIBRARY_NAME} ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
-set_target_properties(${WebCoreTestSupport_LIBRARY_NAME} PROPERTIES FOLDER "WebCore")
+if (WebCore_OUTPUT_NAME)
+    set_target_properties(WebCore PROPERTIES OUTPUT_NAME ${WebCore_OUTPUT_NAME})
+endif ()
 
-add_dependencies(${WebCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_NAME})
-add_dependencies(${WebCoreTestSupport_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
+add_library(WebCoreTestSupport ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
+set_target_properties(WebCoreTestSupport PROPERTIES FOLDER "WebCore")
+
+if (WebCoreTestSupport_OUTPUT_NAME)
+    set_target_properties(WebCoreTestSupport PROPERTIES OUTPUT_NAME ${WebCoreTestSupport_OUTPUT_NAME})
+endif ()
+
+add_dependencies(WebCore JavaScriptCore)
+add_dependencies(WebCoreTestSupport WebCore)
 
 if (WTF_USE_LEVELDB)
-    set(LEVELDB_LIBRARY_NAME leveldb)
-    add_library(${LEVELDB_LIBRARY_NAME} STATIC ${LEVELDB_SOURCES})
-    target_link_libraries(${LEVELDB_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
-    set_target_properties(${LEVELDB_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "LEVELDB_PLATFORM_POSIX=1 OS_LINUX=1")
-    list(APPEND WebCore_LIBRARIES ${LEVELDB_LIBRARY_NAME})
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${LEVELDB_LIBRARY_NAME} IGNORECXX_WARNINGS)
+    add_library(leveldb STATIC ${LEVELDB_SOURCES})
+    target_link_libraries(leveldb ${CMAKE_THREAD_LIBS_INIT})
+    set_target_properties(leveldb PROPERTIES COMPILE_DEFINITIONS "LEVELDB_PLATFORM_POSIX=1 OS_LINUX=1")
+    list(APPEND WebCore_LIBRARIES leveldb)
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(leveldb IGNORECXX_WARNINGS)
 endif ()
 
 if (WTF_USE_3D_GRAPHICS)
-    set(ANGLESupport_LIBRARY_NAME ANGLESupport)
-    add_library(${ANGLESupport_LIBRARY_NAME} STATIC ${ANGLESupport_SOURCES})
-    set_target_properties(${ANGLESupport_LIBRARY_NAME} PROPERTIES FOLDER "WebCore")
-    list(APPEND WebCore_LIBRARIES ${ANGLESupport_LIBRARY_NAME})
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${ANGLESupport_LIBRARY_NAME} IGNORECXX_WARNINGS)
+    add_library(ANGLESupport STATIC ${ANGLESupport_SOURCES})
+    set_target_properties(ANGLESupport PROPERTIES FOLDER "WebCore")
+    list(APPEND WebCore_LIBRARIES ANGLESupport)
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(ANGLESupport IGNORECXX_WARNINGS)
 endif ()
 
-target_link_libraries(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARIES})
+target_link_libraries(WebCore ${WebCore_LIBRARIES})
+
+if (WebCore_OUTPUT_NAME)
+    set_target_properties(WebCore PROPERTIES OUTPUT_NAME ${WebCore_OUTPUT_NAME})
+endif ()
 
 if (SHARED_CORE)
-    set_target_properties(${WebCore_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
-    install(TARGETS ${WebCore_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
+    set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+    install(TARGETS WebCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()

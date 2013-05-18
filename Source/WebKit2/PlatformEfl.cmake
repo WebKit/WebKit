@@ -340,12 +340,11 @@ set(EWebKit2_HEADERS
 )
 
 install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
-install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
+install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR})
 
 if (ENABLE_PLUGIN_PROCESS)
     add_definitions(-DENABLE_PLUGIN_PROCESS=1)
 
-    set(PluginProcess_EXECUTABLE_NAME PluginProcess)
     list(APPEND PluginProcess_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
     )
@@ -357,21 +356,21 @@ if (ENABLE_PLUGIN_PROCESS)
     )
 
     set(PluginProcess_LIBRARIES
-        ${WebKit2_LIBRARY_NAME}
+        WebKit2
     )
 
-    add_executable(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
-    target_link_libraries(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
-    install(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+    add_executable(PluginProcess ${PluginProcess_SOURCES})
+    target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
+    install(TARGETS PluginProcess DESTINATION "${EXEC_INSTALL_DIR}")
 endif () # ENABLE_PLUGIN_PROCESS
 
 include_directories(${THIRDPARTY_DIR}/gtest/include)
 
 set(EWK2UnitTests_LIBRARIES
-    ${WTF_LIBRARY_NAME}
-    ${JavaScriptCore_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
-    ${WebKit2_LIBRARY_NAME}
+    WTF
+    JavaScriptCore
+    WebCore
+    WebKit2
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
@@ -392,8 +391,8 @@ add_definitions(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DTEST_LIB_DIR=\"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"
     -DGTEST_LINKED_AS_SHARED_LIBRARY=1
     -DLIBEXECDIR=\"${CMAKE_INSTALL_PREFIX}/${EXEC_INSTALL_DIR}\"
-    -DWEBPROCESSNAME=\"${WebProcess_EXECUTABLE_NAME}\"
-    -DPLUGINPROCESSNAME=\"${PluginProcess_EXECUTABLE_NAME}\"
+    -DWEBPROCESSNAME=\"WebProcess\"
+    -DPLUGINPROCESSNAME=\"PluginProcess\"
 )
 
 add_library(ewk2UnitTestUtils
@@ -445,7 +444,7 @@ if (ENABLE_API_TESTS)
     endforeach ()
 
     add_library(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
-    target_link_libraries(ewk2UnitTestInjectedBundleSample ${WebKit2_LIBRARY_NAME})
+    target_link_libraries(ewk2UnitTestInjectedBundleSample WebKit2)
 endif ()
 
 if (ENABLE_SPELLCHECK)

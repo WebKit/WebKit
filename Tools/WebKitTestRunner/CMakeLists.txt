@@ -14,10 +14,10 @@ set(WebKitTestRunner_SOURCES
 )
 
 set(WebKitTestRunner_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
-    ${WebCoreTestSupport_LIBRARY_NAME}
-    ${WebKit2_LIBRARY_NAME}
+    JavaScriptCore
+    WebCore
+    WebCoreTestSupport
+    WebKit2
 )
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
@@ -95,5 +95,5 @@ target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
 
-add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForWebKitTestRunner_NAME})
-add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingNetworkHeadersForWebKitTestRunner_NAME})
+add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
+add_dependencies(WebKit2 ${ForwardingNetworkHeadersForWebKitTestRunner_NAME})

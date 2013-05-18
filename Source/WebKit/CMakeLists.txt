@@ -76,26 +76,30 @@ if (WTF_USE_CURL)
 endif ()
 
 set(WebKit_LIBRARIES
-    ${WebCore_LIBRARY_NAME}
+    WebCore
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 add_definitions(-DBUILDING_WebKit)
 include_directories(${WebKit_INCLUDE_DIRECTORIES})
-add_library(${WebKit_LIBRARY_NAME} ${WebKit_LIBRARY_TYPE} ${WebKit_SOURCES})
-add_dependencies(${WebKit_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
-target_link_libraries(${WebKit_LIBRARY_NAME} ${WebKit_LIBRARIES})
-set_target_properties(${WebKit_LIBRARY_NAME} PROPERTIES FOLDER "WebKit")
-set_target_properties(${WebKit_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+add_library(WebKit ${WebKit_LIBRARY_TYPE} ${WebKit_SOURCES})
+add_dependencies(WebKit WebCore)
+target_link_libraries(WebKit ${WebKit_LIBRARIES})
+set_target_properties(WebKit PROPERTIES FOLDER "WebKit")
+set_target_properties(WebKit PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
 if (WebKit_LINK_FLAGS)
-    ADD_TARGET_PROPERTIES(${WebKit_LIBRARY_NAME} LINK_FLAGS "${WebKit_LINK_FLAGS}")
+    ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "${WebKit_LINK_FLAGS}")
 endif ()
 
 if (VERSION_SCRIPT)
-    ADD_TARGET_PROPERTIES(${WebKit_LIBRARY_NAME} LINK_FLAGS "${VERSION_SCRIPT}")
+    ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "${VERSION_SCRIPT}")
 endif ()
 
-set_target_properties(${WebKit_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
-install(TARGETS ${WebKit_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
+if (WebKit_OUTPUT_NAME)
+    set_target_properties(WebKit PROPERTIES OUTPUT_NAME ${WebKit_OUTPUT_NAME})
+endif ()
+
+set_target_properties(WebKit PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+install(TARGETS WebKit DESTINATION "${LIB_INSTALL_DIR}")

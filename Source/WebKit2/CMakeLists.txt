@@ -587,17 +587,15 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in
 )
 
-set(WebProcess_EXECUTABLE_NAME WebProcess)
-
 set(WebProcess_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
-    ${WebKit2_LIBRARY_NAME}
+    JavaScriptCore
+    WebCore
+    WebKit2
 )
 
 set(WebKit2_LIBRARIES
-    ${WTF_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
+    WTF
+    WebCore
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -622,20 +620,24 @@ endforeach ()
 
 add_definitions(-DBUILDING_WEBKIT)
 include_directories(${WebKit2_INCLUDE_DIRECTORIES})
-add_library(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
+add_library(WebKit2 ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
 
-add_dependencies(${WebKit2_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
-add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingHeaders_NAME})
-add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingNetworkHeaders_NAME})
-target_link_libraries(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARIES})
-set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES FOLDER "WebKit")
-set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+add_dependencies(WebKit2 WebCore)
+add_dependencies(WebKit2 ${ForwardingHeaders_NAME})
+add_dependencies(WebKit2 ${ForwardingNetworkHeaders_NAME})
+target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
+set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
+set_target_properties(WebKit2 PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
-add_executable(${WebProcess_EXECUTABLE_NAME} ${WebProcess_SOURCES})
-target_link_libraries(${WebProcess_EXECUTABLE_NAME} ${WebProcess_LIBRARIES})
-set_target_properties(${WebProcess_EXECUTABLE_NAME} PROPERTIES FOLDER "WebKit")
+if (WebKit2_OUTPUT_NAME)
+    set_target_properties(WebKit2 PROPERTIES OUTPUT_NAME ${WebKit2_OUTPUT_NAME})
+endif ()
 
-set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+add_executable(WebProcess ${WebProcess_SOURCES})
+target_link_libraries(WebProcess ${WebProcess_LIBRARIES})
+set_target_properties(WebProcess PROPERTIES FOLDER "WebKit")
 
-install(TARGETS ${WebKit2_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
-install(TARGETS ${WebProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+set_target_properties(WebKit2 PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+
+install(TARGETS WebKit2 DESTINATION "${LIB_INSTALL_DIR}")
+install(TARGETS WebProcess DESTINATION "${EXEC_INSTALL_DIR}")

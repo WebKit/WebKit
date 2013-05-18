@@ -5,9 +5,9 @@ set(EWebLauncher_SOURCES
 )
 
 set(EWebLauncher_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
-    ${WebKit_LIBRARY_NAME}
+    JavaScriptCore
+    WebCore
+    WebKit
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}

@@ -340,7 +340,7 @@ set(JavaScriptCore_LUT_FILES
 )
 
 set(JavaScriptCore_LIBRARIES
-    ${WTF_LIBRARY_NAME}
+    WTF
 )
 
 if (WTF_USE_ICU_UNICODE)
@@ -404,7 +404,7 @@ if (ENABLE_LLINT)
         ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
         ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
     )
-    target_link_libraries(LLIntOffsetsExtractor ${WTF_LIBRARY_NAME})
+    target_link_libraries(LLIntOffsetsExtractor WTF)
 
     # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
     # LLIntAssembly.h's mtime. The problem we have here is: asm.rb has some built-in optimization
@@ -537,12 +537,16 @@ add_subdirectory(shell)
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
 add_definitions(-DBUILDING_JavaScriptCore)
-add_library(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
-target_link_libraries(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARIES})
-set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES FOLDER "JavaScriptCore")
-set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
+target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
+set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
+set_target_properties(JavaScriptCore PROPERTIES LINK_INTERFACE_LIBRARIES "")
+
+if (JavaScriptCore_OUTPUT_NAME)
+    set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME ${JavaScriptCore_OUTPUT_NAME})
+endif ()
 
 if (SHARED_CORE)
-    set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
-    install(TARGETS ${JavaScriptCore_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
+    set_target_properties(JavaScriptCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+    install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()
