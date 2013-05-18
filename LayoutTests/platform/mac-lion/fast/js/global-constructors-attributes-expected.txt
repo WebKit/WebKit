@@ -898,11 +898,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Path').hasOwnProperty('get') is fa
 PASS Object.getOwnPropertyDescriptor(global, 'Path').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Path').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Path').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Performance').value is Performance
-PASS Object.getOwnPropertyDescriptor(global, 'Performance').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Performance').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Performance').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Performance').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Plugin').value is Plugin
 PASS Object.getOwnPropertyDescriptor(global, 'Plugin').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Plugin').hasOwnProperty('set') is false

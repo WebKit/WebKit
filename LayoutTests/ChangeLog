@@ -1,3 +1,11 @@
+2013-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac Lion rebaselines after r149999 and r150260.
+
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/media/track: Added.
+        * platform/mac-lion/media/track/track-cue-rendering-vertical-expected.txt: Added.
+
 2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         One more Mac rebaseline.
