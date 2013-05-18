@@ -1,3 +1,10 @@
+2013-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't run hg.
+
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest):
+
 2013-05-17  Dirk Pranke  <dpranke@chromium.org>
 
         Create a script to import W3C tests
