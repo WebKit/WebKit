@@ -342,7 +342,7 @@ Eina_Bool ewk_view_custom_encoding_set(Evas_Object* ewkView, const char* encodin
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->setCustomTextEncodingName(encoding ? encoding : String());
+    impl->setCustomTextEncodingName(encoding);
 
     return true;
 }

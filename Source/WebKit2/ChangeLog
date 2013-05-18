@@ -1,3 +1,23 @@
+2013-05-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Refactor ewk_view_custom_encoding_set/get API
+        https://bugs.webkit.org/show_bug.cgi?id=116386
+
+        Reviewed by Christophe Dumez.
+
+        Refactor the API to handle 'const char*' parameter in right way and
+        enable the unit test which was disabled in r136230 as there is no assertion now.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setCustomTextEncodingName):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::customTextEncodingName):
+        (EwkView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_custom_encoding_set):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2013-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Unreviewed speculative build fix after r150305 and r150306.

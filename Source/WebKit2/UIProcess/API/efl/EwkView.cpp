@@ -670,21 +670,14 @@ void EwkView::setThemePath(const char* theme)
     }
 }
 
-const char* EwkView::customTextEncodingName() const
+void EwkView::setCustomTextEncodingName(const char* customEncoding)
 {
-    WKRetainPtr<WKStringRef> customEncoding = adoptWK(WKPageCopyCustomTextEncodingName(wkPage()));
-    if (WKStringIsEmpty(customEncoding.get()))
-        return 0;
+    if (m_customEncoding == customEncoding)
+        return;
 
-    m_customEncoding = WKEinaSharedString(customEncoding.get());
-
-    return m_customEncoding;
-}
-
-void EwkView::setCustomTextEncodingName(const String& encoding)
-{
-    WKRetainPtr<WKStringRef> wkEncoding = adoptWK(toCopiedAPI(encoding));
-    WKPageSetCustomTextEncodingName(wkPage(), wkEncoding.get());
+    m_customEncoding = customEncoding;
+    WKRetainPtr<WKStringRef> wkCustomEncoding = adoptWK(WKStringCreateWithUTF8CString(customEncoding));
+    WKPageSetCustomTextEncodingName(wkPage(), wkCustomEncoding.get());
 }
 
 void EwkView::setUserAgent(const char* userAgent)
