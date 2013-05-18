@@ -1,3 +1,25 @@
+2013-05-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Garbage on page background while http://canberraballoons.com.au is loading
+        https://bugs.webkit.org/show_bug.cgi?id=116384
+        <rdar://problem/13930328>
+
+        Reviewed by Dan Bernstein.
+
+        This page loads a large JPEG image as the body background.
+        ImageSource::frameHasAlphaAtIndex() always claims that JPEG images
+        are opaque, but this isn't true if the frame is only partially loaded.
+        However, this would cause FillLayer::hasOpaqueImage() to report that the
+        background image is opaque, so we'd skip painting the background color.
+        Unpainted content in an opaque layer results in garbage.
+        
+        Fix by having ImageSource::frameHasAlphaAtIndex() always return true
+        for frames that are not complete. When the image load completes, we
+        recompute metadata and correctly determine that the frame is opaque.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+
 2013-05-18  Timothy Hatcher  <timothy@apple.com>
 
         Simplify EventLoop::cycle() on Mac.

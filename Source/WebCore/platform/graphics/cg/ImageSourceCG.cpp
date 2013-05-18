@@ -361,10 +361,13 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return duration;
 }
 
-bool ImageSource::frameHasAlphaAtIndex(size_t)
+bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
     if (!m_decoder)
-        return false;
+        return false; // FIXME: why doesn't this return true?
+
+    if (!frameIsCompleteAtIndex(index))
+        return true;
 
     CFStringRef imageType = CGImageSourceGetType(m_decoder);
 
