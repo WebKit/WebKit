@@ -1207,25 +1207,15 @@ selector:
         $$ = $2;
         if (!$1)
             $$ = 0;
-        else if ($$) {
-            CSSParserSelector* end = $$;
-            while (end->tagHistory())
-                end = end->tagHistory();
-            end->setRelation(CSSSelector::Descendant);
-            end->setTagHistory(parser->sinkFloatingSelector($1));
-        }
+        else if ($$)
+            $$->appendTagHistory(CSSSelector::Descendant, parser->sinkFloatingSelector($1));
     }
     | selector combinator simple_selector {
         $$ = $3;
         if (!$1)
             $$ = 0;
-        else if ($$) {
-            CSSParserSelector* end = $$;
-            while (end->tagHistory())
-                end = end->tagHistory();
-            end->setRelation($2);
-            end->setTagHistory(parser->sinkFloatingSelector($1));
-        }
+        else if ($$)
+            $$->appendTagHistory($2, parser->sinkFloatingSelector($1));
     }
     | selector error {
         $$ = 0;

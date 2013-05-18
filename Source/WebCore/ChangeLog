@@ -1,3 +1,15 @@
+2013-05-18  Andreas Kling  <akling@apple.com>
+
+        Use CSSParserSelector::appendTagHistory() from CSS grammar.
+        <http://webkit.org/b/116382>
+
+        Reviewed by Antti Koivisto.
+
+        CSSParserSelector already knows how to append another component to itself,
+        no need to duplicate that logic in the grammar.
+
+        * css/CSSGrammar.y.in:
+
 2013-05-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Replace *_LIBRARY_NAME with *_OUTPUT_NAME
