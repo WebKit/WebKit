@@ -109,6 +109,11 @@ bool StorageAreaImpl::canAccessStorage(Frame* frame)
     return frame && frame->page();
 }
 
+StorageType StorageAreaImpl::storageType() const
+{
+    return m_storageType;
+}
+
 bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
 {
     if (!frame->page()->settings()->privateBrowsingEnabled())
@@ -118,16 +123,8 @@ bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(frame->document()->securityOrigin()->protocol());
 }
 
-unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* frame)
+unsigned StorageAreaImpl::length()
 {
-    ec = 0;
-    if (!canAccessStorage(frame)) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
-    if (disabledByPrivateBrowsingInFrame(frame))
-        return 0;
-
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 

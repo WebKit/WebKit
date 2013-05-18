@@ -1,3 +1,19 @@
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Share code between WebKit1 and WebKit2 StorageArea subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=116367
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::length):
+        Remove code that's now in Storage::length.
+
+        (WebKit::StorageAreaImpl::storageType):
+        Make this a virtual member function.
+
+        * WebProcess/Storage/StorageAreaImpl.h:
+
 2013-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13819878> Disable SharedWorker when in multiple web process model

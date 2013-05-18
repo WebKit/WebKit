@@ -59,22 +59,8 @@ StorageAreaImpl::~StorageAreaImpl()
 {
 }
 
-StorageType StorageAreaImpl::storageType() const
+unsigned StorageAreaImpl::length()
 {
-    return m_storageAreaMap->storageType();
-}
-
-unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* sourceFrame)
-{
-    ec = 0;
-    if (!canAccessStorage(sourceFrame)) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
-
-    if (disabledByPrivateBrowsingInFrame(sourceFrame))
-        return 0;
-
     return m_storageAreaMap->length();
 }
 
@@ -172,6 +158,11 @@ bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* sour
 bool StorageAreaImpl::canAccessStorage(Frame* frame)
 {
     return frame && frame->page();
+}
+
+StorageType StorageAreaImpl::storageType() const
+{
+    return m_storageAreaMap->storageType();
 }
 
 size_t StorageAreaImpl::memoryBytesUsedByCache()

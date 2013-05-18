@@ -1,3 +1,42 @@
+2013-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Share code between WebKit1 and WebKit2 StorageArea subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=116367
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        Remove ec parameter.
+
+        * inspector/InspectorDOMStorageAgent.h:
+        Add forward declaration.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        Storage::StorageArea returns a reference now.
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length):
+        Check that the storage area can be accessed by the frame, and that it's not disabled by private browsing.
+        Then call down to the (now simplified) StorageArea::length().
+
+        (WebCore::Storage::isDisabledByPrivateBrowsing):
+        New helper function that's based on StorageAreaImpl::disabledByPrivateBrowsingInFrame, but reordered
+        to make it easier to follow.
+
+        * storage/Storage.h:
+        (WebCore::Storage::area):
+        Return a reference.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::storageType):
+        Add this new virtual member funciton that's needed by Storage::isDisabledByPrivateBrowsing.
+
+        (WebCore::StorageAreaImpl::length):
+        Remove unneeded code.
+
 2013-05-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150294.

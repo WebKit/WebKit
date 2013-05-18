@@ -320,8 +320,8 @@ void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, c
         if (!storage)
             continue;
 
-        StorageAreaImpl* storageArea = static_cast<StorageAreaImpl*>(storage->area());
-        if (storageArea->storageAreaID() == sourceStorageAreaID) {
+        StorageAreaImpl& storageArea = static_cast<StorageAreaImpl&>(storage->area());
+        if (storageArea.storageAreaID() == sourceStorageAreaID) {
             // This is the storage area that caused the event to be dispatched.
             continue;
         }
@@ -350,8 +350,8 @@ void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, con
             if (!storage)
                 continue;
 
-            StorageAreaImpl* storageArea = static_cast<StorageAreaImpl*>(storage->area());
-            if (storageArea->storageAreaID() == sourceStorageAreaID) {
+            StorageAreaImpl& storageArea = static_cast<StorageAreaImpl&>(storage->area());
+            if (storageArea.storageAreaID() == sourceStorageAreaID) {
                 // This is the storage area that caused the event to be dispatched.
                 continue;
             }

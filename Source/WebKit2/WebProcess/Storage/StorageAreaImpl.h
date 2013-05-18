@@ -35,19 +35,18 @@ namespace WebKit {
 
 class StorageAreaMap;
 
-class StorageAreaImpl : public WebCore::StorageArea {
+class StorageAreaImpl FINAL : public WebCore::StorageArea {
 public:
     static PassRefPtr<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
     virtual ~StorageAreaImpl();
 
     uint64_t storageAreaID() const { return m_storageAreaID; }
-    WebCore::StorageType storageType() const;
 
 private:
     StorageAreaImpl(PassRefPtr<StorageAreaMap>);
 
     // WebCore::StorageArea.
-    virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual unsigned length() OVERRIDE;
     virtual String key(unsigned index, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual String getItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void setItem(const String& key, const String& value, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
@@ -55,6 +54,7 @@ private:
     virtual void clear(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual bool contains(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual bool canAccessStorage(WebCore::Frame*) OVERRIDE;
+    virtual WebCore::StorageType storageType() const OVERRIDE;
     virtual size_t memoryBytesUsedByCache() OVERRIDE;
     virtual void incrementAccessCount() OVERRIDE;
     virtual void decrementAccessCount() OVERRIDE;

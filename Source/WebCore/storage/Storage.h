@@ -52,10 +52,12 @@ public:
     void clear(ExceptionCode&);
     bool contains(const String& key, ExceptionCode&) const;
 
-    StorageArea * area() const { return m_storageArea.get(); }
+    StorageArea& area() const { return *m_storageArea; }
 
 private:
     Storage(Frame*, PassRefPtr<StorageArea>);
+
+    bool isDisabledByPrivateBrowsing() const;
 
     const RefPtr<StorageArea> m_storageArea;
 };

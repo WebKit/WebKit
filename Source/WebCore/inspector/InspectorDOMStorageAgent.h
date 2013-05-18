@@ -44,6 +44,7 @@ class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class Page;
+class SecurityOrigin;
 class Storage;
 class StorageArea;
 

@@ -751,7 +751,7 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
     }
 
     if (m_sessionStorage) {
-        if (!m_sessionStorage->area()->canAccessStorage(m_frame)) {
+        if (!m_sessionStorage->area().canAccessStorage(m_frame)) {
             ec = SECURITY_ERR;
             return 0;
         }
@@ -787,7 +787,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     }
 
     if (m_localStorage) {
-        if (!m_localStorage->area()->canAccessStorage(m_frame)) {
+        if (!m_localStorage->area().canAccessStorage(m_frame)) {
             ec = SECURITY_ERR;
             return 0;
         }

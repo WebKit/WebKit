@@ -127,7 +127,7 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
     RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > > storageItems = TypeBuilder::Array<TypeBuilder::Array<String> >::create();
 
     ExceptionCode ec = 0;
-    for (unsigned i = 0; i < storageArea->length(ec, frame); ++i) {
+    for (unsigned i = 0; i < storageArea->length(); ++i) {
         String name(storageArea->key(i, ec, frame));
         if (hadException(ec, errorString))
             return;

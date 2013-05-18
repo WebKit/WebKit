@@ -44,8 +44,7 @@ public:
     static PassRefPtr<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
     virtual ~StorageAreaImpl();
 
-    // The HTML5 DOM Storage API (and contains)
-    virtual unsigned length(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual unsigned length() OVERRIDE;
     virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
     virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
     virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
@@ -54,6 +53,7 @@ public:
     virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
 
     virtual bool canAccessStorage(Frame* sourceFrame) OVERRIDE;
+    virtual StorageType storageType() const OVERRIDE;
 
     virtual size_t memoryBytesUsedByCache() OVERRIDE;
 
