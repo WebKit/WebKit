@@ -100,6 +100,7 @@ void InspectorDebuggerAgent::disable()
     stopListeningScriptDebugServer();
     scriptDebugServer().clearBreakpoints();
     scriptDebugServer().clearCompiledScripts();
+    scriptDebugServer().continueProgram();
     clear();
 
     if (m_listener)

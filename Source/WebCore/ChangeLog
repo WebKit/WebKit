@@ -1,3 +1,17 @@
+2013-05-17  Timothy Hatcher  <timothy@apple.com>
+
+        Force the script debug server to continue when disabling the debugger.
+
+        There might be some cases where the debugger will stay in the nested run loop
+        which cause weird issues.
+
+        Speculative fix for: https://webkit.org/b/111438
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::disable):
+
 2013-05-16  Darin Adler  <darin@apple.com>
 
         [BlackBerry] Get BlackBerry port off legacy clipboard
