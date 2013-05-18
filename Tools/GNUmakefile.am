@@ -425,6 +425,6 @@ if ENABLE_WEBKIT2
 endif
 
 if ENABLE_GTK_DOC
-all: docs-build.stamp
+noinst_DATA += docs-build.stamp
 endif
 
