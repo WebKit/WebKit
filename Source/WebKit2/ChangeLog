@@ -1,3 +1,9 @@
+2013-05-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK port after r150305 and r150306.
+
+        * GNUmakefile.list.am:
+
 2013-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13819878> Disable SharedWorker when in multiple web process model

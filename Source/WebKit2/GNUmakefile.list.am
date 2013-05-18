@@ -204,10 +204,6 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebInspectorMessages.h \
 	DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebInspectorProxyMessages.h \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerMessages.h \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebMediaCacheManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
 	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
@@ -944,8 +940,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebIconDatabaseClient.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
-	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
-	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
+	Source/WebKit2/UIProcess/WebKeyValueStorageManager.cpp \
+	Source/WebKit2/UIProcess/WebKeyValueStorageManager.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
@@ -1144,8 +1140,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Storage/StorageAreaMap.h \
 	Source/WebKit2/WebProcess/Storage/StorageNamespaceImpl.cpp \
 	Source/WebKit2/WebProcess/Storage/StorageNamespaceImpl.h \
-	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.cpp \
-	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.cpp \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.h \
 	Source/WebKit2/WebProcess/soup/WebProcessSoup.cpp \
