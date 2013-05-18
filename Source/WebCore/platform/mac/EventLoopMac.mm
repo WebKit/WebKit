@@ -30,13 +30,8 @@ namespace WebCore {
 
 void EventLoop::cycle()
 {
-    // FIXME: Should this use NSRunLoopCommonModes? Switching to NSRunLoopCommonModes causes Safari to hang in a tight loop.
-    [NSApp setWindowsNeedUpdate:YES];
-    NSTimeInterval interval = [[NSDate date] timeIntervalSinceReferenceDate];
-    interval += 0.05;
-    NSDate *untilDate = [NSDate dateWithTimeIntervalSinceReferenceDate:interval];
-    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:untilDate inMode:NSDefaultRunLoopMode dequeue:YES];
-    [NSApp sendEvent:event];
+    CFTimeInterval timeInterval = 0.05;
+    CFRunLoopRunInMode(kCFRunLoopDefaultMode, timeInterval, true);
 }
 
 } // namespace WebCore

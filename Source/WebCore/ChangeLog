@@ -1,3 +1,14 @@
+2013-05-18  Timothy Hatcher  <timothy@apple.com>
+
+        Simplify EventLoop::cycle() on Mac.
+
+        https://webkit.org/b/116392
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle): Use CFRunLoopRunInMode instead.
+
 2013-05-18  Andreas Kling  <akling@apple.com>
 
         Use CSSParserSelector::appendTagHistory() from CSS grammar.
