@@ -1,3 +1,13 @@
+2013-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13819878> Disable SharedWorker when in multiple web process model
+        https://bugs.webkit.org/show_bug.cgi?id=116359
+
+        The condition was accidentally negated, fixing.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::isAvailable):
+
 2013-05-17  Gavin Barraclough  <barraclough@apple.com>
 
         Only allow 1 WebProcess to hold a PageCache
