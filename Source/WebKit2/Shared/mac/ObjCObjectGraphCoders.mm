@@ -23,19 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ObjCObjectGraphCoders.h"
+#import "config.h"
+#import "ObjCObjectGraphCoders.h"
 
 #import "ArgumentCodersMac.h"
+#import "WKTypeRefWrapper.h"
 
 // For UIProcess side encoding/decoding
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerPrivate.h"
+#import "WebContextUserMessageCoders.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
 // For WebProcess side encoding/decoding
+#import "InjectedBundleUserMessageCoders.h"
 #import "WKBundleAPICast.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
@@ -55,6 +58,7 @@ enum WebKitNSType {
     NSDataType,
 #if defined(__LP64__) && defined(__clang__)
     WKBrowsingContextControllerType,
+    WKTypeRefWrapperType,
 #endif
     UnknownType,
 };
@@ -78,6 +82,8 @@ static WebKitNSType typeFromObject(id object)
 #if defined(__LP64__) && defined(__clang__)
     if ([object isKindOfClass:[WKBrowsingContextController class]] || [object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
         return WKBrowsingContextControllerType;
+    if ([object isKindOfClass:[WKTypeRefWrapper class]])
+        return WKTypeRefWrapperType;
 #endif
 
     return UnknownType;
@@ -282,6 +288,11 @@ public:
             encoder << toImpl(browsingContextController._pageRef)->pageID();
             break;
         }
+        case WKTypeRefWrapperType: {
+            WKTypeRefWrapper *wrapper = static_cast<WKTypeRefWrapper *>(m_root);
+            encoder << WebContextUserMessageEncoder(toImpl(wrapper.object));
+            break;
+        }
 #endif
         default:
             ASSERT_NOT_REACHED();
@@ -335,6 +346,14 @@ public:
                 coder.m_root = [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPage)];
             break;
         }
+        case WKTypeRefWrapperType: {
+            RefPtr<APIObject> object;
+            WebContextUserMessageDecoder objectDecoder(object, coder.m_process);
+            if (!decoder.decode(objectDecoder))
+                return false;
+            coder.m_root = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
+            break;
+        }
 #endif
         default:
             return false;
@@ -368,11 +387,14 @@ public:
         switch (type) {
 #if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
-
             WKWebProcessPlugInBrowserContextController *browserContextController = static_cast<WKWebProcessPlugInBrowserContextController *>(m_root);
 
             encoder << toImpl(browserContextController._bundlePageRef)->pageID();
             break;
+        }
+        case WKTypeRefWrapperType: {
+            WKTypeRefWrapper *wrapper = static_cast<WKTypeRefWrapper *>(m_root);
+            encoder << InjectedBundleUserMessageEncoder(toImpl(wrapper.object));
         }
 #endif
         default:
@@ -424,6 +446,14 @@ public:
                 coder.m_root = [NSNull null];
             else 
                 coder.m_root = [[WKWebProcessPlugInController _shared] _browserContextControllerForBundlePageRef:toAPI(webPage)];
+            break;
+        }
+        case WKTypeRefWrapperType: {
+            RefPtr<APIObject> object;
+            InjectedBundleUserMessageDecoder objectDecoder(object);
+            if (!decoder.decode(objectDecoder))
+                return false;
+            coder.m_root = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
             break;
         }
 #endif

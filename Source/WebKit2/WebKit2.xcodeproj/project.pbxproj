@@ -584,6 +584,8 @@
 		7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */; };
 		7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD5EBBB1746A83E000C1C45 /* WKBaseMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */; };
+		7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD622771739D863005BD7FF /* PluginSandboxProfile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CD622751739D863005BD7FF /* PluginSandboxProfile.mm */; };
 		7CD622781739D863005BD7FF /* PluginSandboxProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD622761739D863005BD7FF /* PluginSandboxProfile.h */; };
 		7CF47FF617275B71008ACB91 /* WKBundlePageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */; };
@@ -2060,6 +2062,8 @@
 		7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObjCTypeWrapperRef.mm; sourceTree = "<group>"; };
 		7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKObjCTypeWrapperRef.h; sourceTree = "<group>"; };
 		7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBaseMac.h; sourceTree = "<group>"; };
+		7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTypeRefWrapper.mm; sourceTree = "<group>"; };
+		7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTypeRefWrapper.h; sourceTree = "<group>"; };
 		7CD622751739D863005BD7FF /* PluginSandboxProfile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginSandboxProfile.mm; sourceTree = "<group>"; };
 		7CD622761739D863005BD7FF /* PluginSandboxProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginSandboxProfile.h; sourceTree = "<group>"; };
 		7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageBanner.cpp; sourceTree = "<group>"; };
@@ -4284,6 +4288,8 @@
 				BCBAACE5145225C90053F82F /* WKProcessGroup.h */,
 				BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */,
 				BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */,
+				7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */,
+				7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
@@ -5323,6 +5329,7 @@
 				1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
+				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
 				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,
 				BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */,
@@ -6620,6 +6627,7 @@
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
+				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */,

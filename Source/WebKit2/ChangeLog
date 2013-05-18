@@ -1,3 +1,26 @@
+2013-05-17  Sam Weinig  <sam@webkit.org>
+
+        Add a way to pass WebKit2 WKTypeRefs in Objective-C style user data messages
+        https://bugs.webkit.org/show_bug.cgi?id=116345
+
+        Reviewed by Anders Carlsson.
+
+        In order to efficiently send a WKImageRef to another process when using the
+        Objective-C WKConnection (or other user data messages), we need a way to encode
+        WKTypeRefs in the objective-c object graph. Thus was born WKTypeRefWrapper.
+
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::typeFromObject):
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::encode):
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::decode):
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::encode):
+        (WebKit::InjectedBundleObjCObjectGraphDecoderImpl::decode):
+        * UIProcess/API/mac/WKTypeRefWrapper.h: Added.
+        * UIProcess/API/mac/WKTypeRefWrapper.mm: Added.
+        (-[WKTypeRefWrapper initWithObject:]):
+        (-[WKTypeRefWrapper object]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-05-18  Anders Carlsson  <andersca@apple.com>
 
         Simplify StorageArea getter functions
