@@ -19,7 +19,7 @@
 #include "config.h"
 #include "DragClientGtk.h"
 
-#include "ClipboardGtk.h"
+#include "Clipboard.h"
 #include "ClipboardUtilitiesGtk.h"
 #include "DataObjectGtk.h"
 #include "Document.h"
@@ -30,6 +30,7 @@
 #include "GRefPtrGtk.h"
 #include "GtkVersioning.h"
 #include "NotImplemented.h"
+#include "Pasteboard.h"
 #include "PasteboardHelper.h"
 #include "RenderObject.h"
 #include "webkitwebframeprivate.h"
@@ -75,10 +76,8 @@ DragSourceAction DragClient::dragSourceActionMaskForPoint(const IntPoint&)
 
 void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
 {
-    ClipboardGtk* clipboardGtk = reinterpret_cast<ClipboardGtk*>(clipboard);
-
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
-    RefPtr<DataObjectGtk> dataObject = clipboardGtk->dataObject();
+    RefPtr<DataObjectGtk> dataObject = clipboard->pasteboard().dataObject();
     GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
     GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
 

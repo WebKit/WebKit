@@ -17,8 +17,7 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "Clipboard.h"
-#include "ClipboardGtk.h"
+#include "DataObjectGtk.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Frame.h"

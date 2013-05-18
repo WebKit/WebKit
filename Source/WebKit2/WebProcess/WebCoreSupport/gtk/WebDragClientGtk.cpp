@@ -30,9 +30,11 @@
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/ClipboardGtk.h>
+#include <WebCore/Clipboard.h>
+#include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformContextCairo.h>
 
 using namespace WebCore;
@@ -61,7 +63,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
     if (bitmap && !bitmap->createHandle(handle))
         return;
 
-    RefPtr<DataObjectGtk> dataObject = reinterpret_cast<ClipboardGtk*>(clipboard)->dataObject();
+    RefPtr<DataObjectGtk> dataObject = clipboard->pasteboard().dataObject();
     DragData dragData(dataObject.get(), clientPosition, globalPosition, clipboard->sourceOperation());
     m_page->send(Messages::WebPageProxy::StartDrag(dragData, handle));
 }

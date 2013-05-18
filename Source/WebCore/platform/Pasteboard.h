@@ -33,8 +33,8 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
-// FIXME: Why does this include need to be in this header?
-#include <PasteboardHelper.h>
+#include "DragData.h"
+typedef struct _GtkClipboard GtkClipboard;
 #endif
 
 #if PLATFORM(WIN)
@@ -92,6 +92,12 @@ public:
 
 #if PLATFORM(MAC)
     static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
+#endif
+
+#if PLATFORM(GTK)
+    static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
+    static PassOwnPtr<Pasteboard> create(GtkClipboard*);
+    PassRefPtr<DataObjectGtk> dataObject() const;
 #endif
 
     // Deprecated. Use createForCopyAndPaste instead.
@@ -154,6 +160,11 @@ public:
 private:
     Pasteboard();
 
+#if PLATFORM(GTK)
+    Pasteboard(PassRefPtr<DataObjectGtk>);
+    Pasteboard(GtkClipboard*);
+#endif
+
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     String m_pasteboardName;
     long m_changeCount;
@@ -169,6 +180,11 @@ private:
 
 #if PLATFORM(QT)
     bool m_selectionMode;
+#endif
+
+#if PLATFORM(GTK)
+    RefPtr<DataObjectGtk> m_dataObject;
+    GtkClipboard* m_gtkClipboard;
 #endif
 
 };

@@ -1,3 +1,71 @@
+2013-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GTK port off legacy clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116221
+
+        Reviewed by Martin Robinson.
+
+        Merge clipboard methods into PasteboardGtk that now wraps a
+        DataObjectGtk.
+
+        * GNUmakefile.list.am: Remove ClipboardGtk.h.
+        * dom/Clipboard.h: Remove GTK from the list of ports using legacy
+        clipboard.
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::createDraggingClipboard): Use
+        Clipboard::createForDragAndDrop().
+        * platform/Pasteboard.h:
+        (Pasteboard):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard): Use
+        Clipboard::createForCopyAndPaste().
+        (WebCore::Clipboard::createDragImage):
+        (WebCore::Clipboard::declareAndWriteDragImage):
+        * platform/gtk/ClipboardGtk.h: Removed.
+        * platform/gtk/DragDataGtk.cpp:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::create): Create a new Pasteboard for a given
+        GtkClipboard or DataObjectGtk.
+        (WebCore::Pasteboard::createForCopyAndPaste): Create a Pasteboard
+        for the GDK_SELECTION_CLIPBOARD clipboard.
+        (WebCore::Pasteboard::createPrivate): Create a Pasteboard without
+        a GtkClipboard associated.
+        (WebCore::Pasteboard::createForDragAndDrop): Create a Pasteboard
+        for drag and drop operations.
+        (WebCore::selectionClipboard): Return a static Pasteboard for the
+        GDK_SELECTION_CLIPBOARD clipboard.
+        (WebCore::primaryClipboard): Return a static Pasteboard for the
+        GDK_SELECTION_PRIMARY clipboard.
+        (WebCore::Pasteboard::generalPasteboard): Return
+        selectionClipboard() or primaryClipboard() depending on whether
+        primary selection clipboard is the active one or not.
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::~Pasteboard):
+        (WebCore::Pasteboard::dataObject): Return the wrapped DataObjectGtk.
+        (WebCore::dataObjectTypeFromHTMLClipboardType): Copied from
+        ClipboardGtk.cpp.
+        (WebCore::Pasteboard::writeString): Adapted to upate the wrapped
+        DataObjectGtk and the GtkClipboard if needed.
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        (WebCore::Pasteboard::writePlainText): Ditto.
+        (WebCore::Pasteboard::writeURL): Ditto.
+        (WebCore::Pasteboard::writeImage): Ditto.
+        (WebCore::Pasteboard::writePasteboard): Copy the wrapped
+        DataObjectGtk from the DataObjectGtk of the given Pasteboard and
+        upsate the GtkClipboard if needed.
+        (WebCore::Pasteboard::clear): Copied from ClipboardGtk.cpp.
+        (WebCore::Pasteboard::canSmartReplace): Check if current
+        GtkClipboard supports smart replace.
+        (WebCore::Pasteboard::setDragImage):
+        (WebCore::Pasteboard::documentFragment): Adapted to use the
+        wrapped DataObjectGtk reading from the current GtkClipboard if
+        present.
+        (WebCore::Pasteboard::plainText): Ditto.
+        (WebCore::Pasteboard::hasData): Copied from ClipboardGtk.cpp.
+        (WebCore::Pasteboard::types): Ditto.
+        (WebCore::Pasteboard::readString): Ditto.
+        (WebCore::Pasteboard::readFilenames): Ditto.
+
 2013-05-18  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] Parallel build fails if gtk-doc is enabled

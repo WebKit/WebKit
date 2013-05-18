@@ -21,24 +21,18 @@
 #include "Pasteboard.h"
 
 #include "CachedImage.h"
-#include "ClipboardGtk.h"
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "Frame.h"
-#include "GOwnPtrGtk.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "KURL.h"
-#include "NotImplemented.h"
-#include "TextResourceDecoder.h"
 #include "Image.h"
+#include "KURL.h"
+#include "PasteboardHelper.h"
 #include "RenderImage.h"
 #include "markup.h"
 #include <gtk/gtk.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -47,53 +41,157 @@
 
 namespace WebCore {
 
-Pasteboard* Pasteboard::generalPasteboard()
+enum ClipboardDataType {
+    ClipboardDataTypeText,
+    ClipboardDataTypeMarkup,
+    ClipboardDataTypeURIList,
+    ClipboardDataTypeURL,
+    ClipboardDataTypeImage,
+    ClipboardDataTypeUnknown
+};
+
+PassOwnPtr<Pasteboard> Pasteboard::create(GtkClipboard* gtkClipboard)
 {
-    static Pasteboard* pasteboard = new Pasteboard();
+    return adoptPtr(new Pasteboard(gtkClipboard));
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::create(PassRefPtr<DataObjectGtk> dataObject)
+{
+    return adoptPtr(new Pasteboard(dataObject));
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+{
+    return create(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
+{
+    return create(DataObjectGtk::create());
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+{
+    return create(DataObjectGtk::create());
+}
+
+PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+{
+    return create(dragData.platformData());
+}
+
+static Pasteboard* selectionClipboard()
+{
+    static Pasteboard* pasteboard = Pasteboard::create(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD)).leakPtr();
     return pasteboard;
 }
 
-Pasteboard::Pasteboard()
+static Pasteboard* primaryClipboard()
 {
+    static Pasteboard* pasteboard = Pasteboard::create(gtk_clipboard_get(GDK_SELECTION_PRIMARY)).leakPtr();
+    return pasteboard;
+}
+
+Pasteboard* Pasteboard::generalPasteboard()
+{
+    return PasteboardHelper::defaultPasteboardHelper()->usePrimarySelectionClipboard() ? primaryClipboard() : selectionClipboard();
+}
+
+Pasteboard::Pasteboard(PassRefPtr<DataObjectGtk> dataObject)
+    : m_dataObject(dataObject)
+    , m_gtkClipboard(0)
+{
+    ASSERT(m_dataObject);
+}
+
+Pasteboard::Pasteboard(GtkClipboard* gtkClipboard)
+    : m_dataObject(DataObjectGtk::forClipboard(gtkClipboard))
+    , m_gtkClipboard(gtkClipboard)
+{
+    ASSERT(m_dataObject);
+}
+
+Pasteboard::~Pasteboard()
+{
+}
+
+PassRefPtr<DataObjectGtk> Pasteboard::dataObject() const
+{
+    return m_dataObject;
+}
+
+static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawType)
+{
+    String type(rawType.stripWhiteSpace());
+
+    // Two special cases for IE compatibility
+    if (type == "Text" || type == "text")
+        return ClipboardDataTypeText;
+    if (type == "URL")
+        return ClipboardDataTypeURL;
+
+    // From the Mac port: Ignore any trailing charset - JS strings are
+    // Unicode, which encapsulates the charset issue.
+    if (type == "text/plain" || type.startsWith("text/plain;"))
+        return ClipboardDataTypeText;
+    if (type == "text/html" || type.startsWith("text/html;"))
+        return ClipboardDataTypeMarkup;
+    if (type == "Files" || type == "text/uri-list" || type.startsWith("text/uri-list;"))
+        return ClipboardDataTypeURIList;
+
+    // Not a known type, so just default to using the text portion.
+    return ClipboardDataTypeUnknown;
+}
+
+bool Pasteboard::writeString(const String& type, const String& data)
+{
+    switch (dataObjectTypeFromHTMLClipboardType(type)) {
+    case ClipboardDataTypeURIList:
+    case ClipboardDataTypeURL:
+        m_dataObject->setURIList(data);
+        return true;
+    case ClipboardDataTypeMarkup:
+        m_dataObject->setMarkup(data);
+        return true;
+    case ClipboardDataTypeText:
+        m_dataObject->setText(data);
+        return true;
+    case ClipboardDataTypeImage:
+    case ClipboardDataTypeUnknown:
+        break;
+    }
+
+    return false;
 }
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
+    m_dataObject->clearAll();
+    m_dataObject->setText(shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText());
+    m_dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
 
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    dataObject->clearAll();
-
-    dataObject->setText(shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText());
-    dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
-    helper->writeClipboardContents(clipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
-    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    dataObject->clearAll();
+    m_dataObject->clearAll();
+    m_dataObject->setText(text);
 
-    dataObject->setText(text);
-    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard,
-        (smartReplaceOption == CanSmartReplace) ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, (smartReplaceOption == CanSmartReplace) ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
 void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
 {
-    if (url.isEmpty())
-        return;
+    ASSERT(!url.isEmpty());
 
-    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
+    m_dataObject->clearAll();
+    m_dataObject->setURL(url, label);
 
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    dataObject->clearAll();
-
-    dataObject->setURL(url, label);
-    helper->writeClipboardContents(clipboard);
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
 }
 
 static KURL getURLForImageNode(Node* node)
@@ -127,53 +225,98 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
 
-    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    dataObject->clearAll();
+    m_dataObject->clearAll();
 
     KURL url = getURLForImageNode(node);
     if (!url.isEmpty()) {
-        dataObject->setURL(url, title);
+        m_dataObject->setURL(url, title);
 
-        dataObject->setMarkup(createMarkup(toElement(node), IncludeNode, 0, ResolveAllURLs));
+        m_dataObject->setMarkup(createMarkup(toElement(node), IncludeNode, 0, ResolveAllURLs));
     }
 
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
-    dataObject->setImage(pixbuf.get());
+    m_dataObject->setImage(pixbuf.get());
 
-    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard);
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
 }
 
-void Pasteboard::writeClipboard(Clipboard* clipboard)
+void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
 {
-    GtkClipboard* gtkClipboard = static_cast<ClipboardGtk*>(clipboard)->clipboard();
-    if (gtkClipboard)
-        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(gtkClipboard);
+    RefPtr<DataObjectGtk> sourceDataObject = sourcePasteboard.dataObject();
+    m_dataObject->clearAll();
+
+    if (sourceDataObject->hasText())
+        m_dataObject->setText(sourceDataObject->text());
+    if (sourceDataObject->hasMarkup())
+        m_dataObject->setMarkup(sourceDataObject->markup());
+    if (sourceDataObject->hasURL())
+        m_dataObject->setURL(sourceDataObject->url(), sourceDataObject->urlLabel());
+    if (sourceDataObject->hasURIList())
+        m_dataObject->setURIList(sourceDataObject->uriList());
+    if (sourceDataObject->hasImage())
+        m_dataObject->setImage(sourceDataObject->image());
+
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
 }
 
 void Pasteboard::clear()
 {
-    gtk_clipboard_clear(gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD));
+    // We do not clear filenames. According to the spec: "The clearData() method
+    // does not affect whether any files were included in the drag, so the types
+    // attribute's list might still not be empty after calling clearData() (it would
+    // still contain the "Files" string if any files were included in the drag)."
+    m_dataObject->clearAllExceptFilenames();
+
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
+}
+
+void Pasteboard::clear(const String& type)
+{
+    switch (dataObjectTypeFromHTMLClipboardType(type)) {
+    case ClipboardDataTypeURIList:
+    case ClipboardDataTypeURL:
+        m_dataObject->clearURIList();
+        break;
+    case ClipboardDataTypeMarkup:
+        m_dataObject->clearMarkup();
+        break;
+    case ClipboardDataTypeText:
+        m_dataObject->clearText();
+        break;
+    case ClipboardDataTypeImage:
+        m_dataObject->clearImage();
+        break;
+    case ClipboardDataTypeUnknown:
+        m_dataObject->clearAll();
+        break;
+    }
+
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
 }
 
 bool Pasteboard::canSmartReplace()
 {
-    return PasteboardHelper::defaultPasteboardHelper()->clipboardContentSupportsSmartReplace(
-        gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD));
+    return m_gtkClipboard && PasteboardHelper::defaultPasteboardHelper()->clipboardContentSupportsSmartReplace(m_gtkClipboard);
+}
+
+void Pasteboard::setDragImage(DragImageRef, const IntPoint& hotSpot)
+{
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)
 {
-    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    helper->getClipboardContents(clipboard);
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
 
     chosePlainText = false;
 
-    if (dataObject->hasMarkup()) {
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), dataObject->markup(), "", DisallowScriptingAndPluginContent);
+    if (m_dataObject->hasMarkup()) {
+        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), m_dataObject->markup(), "", DisallowScriptingAndPluginContent);
         if (fragment)
             return fragment.release();
     }
@@ -181,9 +324,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     if (!allowPlainText)
         return 0;
 
-    if (dataObject->hasText()) {
+    if (m_dataObject->hasText()) {
         chosePlainText = true;
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), dataObject->text());
+        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), m_dataObject->text());
         if (fragment)
             return fragment.release();
     }
@@ -193,12 +336,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
 String Pasteboard::plainText(Frame* frame)
 {
-    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-
-    helper->getClipboardContents(clipboard);
-    return dataObject->text();
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
+    return m_dataObject->text();
 }
 
 bool Pasteboard::isSelectionMode() const
@@ -209,6 +349,70 @@ bool Pasteboard::isSelectionMode() const
 void Pasteboard::setSelectionMode(bool selectionMode)
 {
     PasteboardHelper::defaultPasteboardHelper()->setUsePrimarySelectionClipboard(selectionMode);
+}
+
+bool Pasteboard::hasData()
+{
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
+
+    return m_dataObject->hasText() || m_dataObject->hasMarkup() || m_dataObject->hasURIList() || m_dataObject->hasImage();
+}
+
+ListHashSet<String> Pasteboard::types()
+{
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
+
+    ListHashSet<String> types;
+    if (m_dataObject->hasText()) {
+        types.add("text/plain");
+        types.add("Text");
+        types.add("text");
+    }
+
+    if (m_dataObject->hasMarkup())
+        types.add("text/html");
+
+    if (m_dataObject->hasURIList()) {
+        types.add("text/uri-list");
+        types.add("URL");
+    }
+
+    if (m_dataObject->hasFilenames())
+        types.add("Files");
+
+    return types;
+}
+
+String Pasteboard::readString(const String& type)
+{
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
+
+    switch (dataObjectTypeFromHTMLClipboardType(type)) {
+    case ClipboardDataTypeURIList:
+        return m_dataObject->uriList();
+    case ClipboardDataTypeURL:
+        return m_dataObject->url();
+    case ClipboardDataTypeMarkup:
+        return m_dataObject->markup();
+    case ClipboardDataTypeText:
+        return m_dataObject->text();
+    case ClipboardDataTypeImage:
+    case ClipboardDataTypeUnknown:
+        break;
+    }
+
+    return String();
+}
+
+Vector<String> Pasteboard::readFilenames()
+{
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
+
+    return m_dataObject->filenames();
 }
 
 }

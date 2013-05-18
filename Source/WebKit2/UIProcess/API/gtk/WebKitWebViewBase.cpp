@@ -42,7 +42,6 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include "WebViewBaseInputMethodFilter.h"
-#include <WebCore/ClipboardGtk.h>
 #include <WebCore/ClipboardUtilitiesGtk.h>
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
