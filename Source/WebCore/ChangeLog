@@ -1,3 +1,16 @@
+2013-05-17  Andreas Kling  <akling@apple.com>
+
+        Plug leak in CSSSelectorList::deleteSelectors().
+        <http://webkit.org/b/116371>
+        <rdar://problem/13930698>
+
+        Reviewed by Ryosuke Niwa.
+
+        Don't forget to destroy the very last selector in the list.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::deleteSelectors):
+
 2013-05-17  Anders Carlsson  <andersca@apple.com>
 
         Share code between WebKit1 and WebKit2 StorageArea subclasses
