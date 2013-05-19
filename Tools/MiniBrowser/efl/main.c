@@ -45,6 +45,7 @@ static const double TOOLTIP_DELAY_SECONDS = 1.0;
 static int verbose = 1;
 static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
+static char *user_agent_string = NULL;
 static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static Eina_Bool local_storage_enabled = EINA_TRUE;
@@ -136,6 +137,8 @@ static const Ecore_Getopt options = {
             ('e', "engine", "ecore-evas engine to use."),
         ECORE_GETOPT_STORE_STR
             ('s', "window-size", "window size in following format (width)x(height)."),
+        ECORE_GETOPT_STORE_STR
+            ('u', "user-agent", "user agent to set."),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('b', "legacy", "Legacy mode", EINA_FALSE),
         ECORE_GETOPT_STORE_DOUBLE
@@ -1531,6 +1534,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
     ewk_view_source_mode_set(window->ewk_view, view_mode);
+    ewk_view_user_agent_set(window->ewk_view, user_agent_string);
 
     /* Set the zoom level to default */
     window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
@@ -1620,6 +1624,7 @@ elm_main(int argc, char *argv[])
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
+        ECORE_GETOPT_VALUE_STR(user_agent_string),
         ECORE_GETOPT_VALUE_BOOL(legacy_behavior_enabled),
         ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
