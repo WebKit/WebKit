@@ -1,3 +1,10 @@
+2013-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        svg/batik tests are flakey.
+        webkit.org/b/116398
+
+        * platform/mac/TestExpectations:
+
 2013-05-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL build fix.

@@ -966,8 +966,6 @@ webkit.org/b/107487 css3/filters/custom/custom-filter-nonseparable-blend-mode-sa
 # --- Text ---
 fast/forms/text-control-intrinsic-widths.html
 platform/mac/fast/text/combining-character-sequence-fallback.html
-svg/batik/text/textOnPath.svg
-svg/batik/text/verticalTextOnPath.svg
 
 # --- Editing ---
 # Pasting replaces the three periods with an ellipsis on Lion and Mountain Lion
@@ -1229,6 +1227,10 @@ webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
 webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/paints/gradientLimit.svg [ Failure Pass ]
+webkit.org/b/85408 svg/batik/text/textOnPath.svg [ Failure Pass ]
+webkit.org/b/85408 svg/batik/text/verticalTextOnPath.svg [ Failure Pass ]
+webkit.org/b/116398 svg/batik/text/textPosition.svg [ Failure Pass ]
+webkit.org/b/116398 svg/batik/text/verticalText.svg	 [ Failure Pass ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
