@@ -53,6 +53,7 @@ namespace WebCore {
 
 #if ENABLE(CSS_FILTERS)
 class FilterEffectRenderer;
+class FilterEffectRendererHelper;
 class FilterOperations;
 class RenderLayerFilterInfo;
 #endif
@@ -934,7 +935,14 @@ private:
         PaintBehavior paintBehavior;
         bool clipToDirtyRect;
     };
-        
+
+    bool setupFontSubpixelQuantization(GraphicsContext*, bool& didQuantizeFonts);
+    bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+#if ENABLE(CSS_FILTERS)
+    PassOwnPtr<FilterEffectRendererHelper> setupFilters(GraphicsContext*, LayerPaintingInfo&, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    GraphicsContext* applyFilters(FilterEffectRendererHelper*, GraphicsContext* originalContext, LayerPaintingInfo&, LayerFragments&);
+#endif
+
     void paintLayer(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void paintLayerContentsAndReflection(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void paintLayerByApplyingTransform(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, const LayoutPoint& translationOffset = LayoutPoint());

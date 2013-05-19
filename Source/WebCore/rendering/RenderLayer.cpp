@@ -3688,6 +3688,132 @@ void RenderLayer::paintLayerContentsAndReflection(GraphicsContext* context, cons
     paintLayerContents(context, paintingInfo, localPaintFlags);
 }
 
+bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& didQuantizeFonts)
+{
+    if (context->paintingDisabled())
+        return false;
+
+    bool scrollingOnMainThread = true;
+    Frame* frame = renderer()->frame();
+#if ENABLE(THREADED_SCROLLING)
+    if (frame) {
+        if (Page* page = frame->page()) {
+            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+                scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+        }
+    }
+#endif
+
+    // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
+    // things on the scrolling thread.
+    bool contentsScrollByPainting = (renderer()->hasOverflowClip() && !usesCompositedScrolling()) || (frame && frame->ownerElement());
+    if (scrollingOnMainThread || contentsScrollByPainting) {
+        didQuantizeFonts = context->shouldSubpixelQuantizeFonts();
+        context->setShouldSubpixelQuantizeFonts(false);
+        return true;
+    }
+    return false;
+}
+
+bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+{
+    if (!renderer()->hasClipPath() || context->paintingDisabled())
+        return false;
+
+    RenderStyle* style = renderer()->style();
+
+    ASSERT(style->clipPath());
+    if (style->clipPath()->getOperationType() == ClipPathOperation::SHAPE) {
+        ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
+
+        if (!rootRelativeBoundsComputed) {
+            rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
+            rootRelativeBoundsComputed = true;
+        }
+
+        context->save();
+        context->clipPath(clipPath->path(rootRelativeBounds), clipPath->windRule());
+        return true;
+    }
+
+#if ENABLE(SVG)
+    if (style->clipPath()->getOperationType() == ClipPathOperation::REFERENCE) {
+        ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style->clipPath());
+        Document* document = renderer()->document();
+        Element* element = document ? document->getElementById(referenceClipPathOperation->fragment()) : 0;
+        if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {
+            if (!rootRelativeBoundsComputed) {
+                rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
+                rootRelativeBoundsComputed = true;
+            }
+
+            // FIXME: This should use a safer cast such as toRenderSVGResourceContainer().
+            // FIXME: Should this do a context->save() and return true so we restore the context?
+            static_cast<RenderSVGResourceClipper*>(element->renderer())->applyClippingToContext(renderer(), rootRelativeBounds, paintingInfo.paintDirtyRect, context);
+        }
+    }
+#endif
+
+    return false;
+}
+
+#if ENABLE(CSS_FILTERS)
+PassOwnPtr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+{
+    if (context->paintingDisabled())
+        return nullptr;
+
+    bool hasPaintedFilter = filterRenderer() && paintsWithFilters();
+    if (!hasPaintedFilter)
+        return nullptr;
+
+    OwnPtr<FilterEffectRendererHelper> filterPainter = adoptPtr(new FilterEffectRendererHelper(hasPaintedFilter));
+    if (!filterPainter->haveFilterEffect())
+        return nullptr;
+    
+    RenderLayerFilterInfo* filterInfo = this->filterInfo();
+    ASSERT(filterInfo);
+    LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
+    filterRepaintRect.move(offsetFromRoot.x(), offsetFromRoot.y());
+
+    if (!rootRelativeBoundsComputed) {
+        rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
+        rootRelativeBoundsComputed = true;
+    }
+
+    if (filterPainter->prepareFilterEffect(this, rootRelativeBounds, paintingInfo.paintDirtyRect, filterRepaintRect)) {
+        // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
+        filterInfo->resetDirtySourceRect();
+
+        if (!filterPainter->beginFilterEffect())
+            return nullptr;
+
+        // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
+        ASSERT(filterPainter->hasStartedFilterEffect());
+
+        paintingInfo.paintDirtyRect = filterPainter->repaintRect();
+        // If the filter needs the full source image, we need to avoid using the clip rectangles.
+        // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
+        // Note that we will still apply the clipping on the final rendering of the filter.
+        paintingInfo.clipToDirtyRect = !filterRenderer()->hasFilterThatMovesPixels();
+        return filterPainter.release();
+    }
+    return nullptr;
+}
+
+GraphicsContext* RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext* originalContext, LayerPaintingInfo& paintingInfo, LayerFragments& layerFragments)
+{
+    ASSERT(filterPainter->hasStartedFilterEffect());
+    // Apply the correct clipping (ie. overflow: hidden).
+    // FIXME: It is incorrect to just clip to the damageRect here once multiple fragments are involved.
+    ClipRect backgroundRect = layerFragments.isEmpty() ? ClipRect() : layerFragments[0].backgroundRect;
+    clipToRect(paintingInfo.rootLayer, originalContext, paintingInfo.paintDirtyRect, backgroundRect);
+    filterPainter->applyFilterEffect(originalContext);
+    restoreClip(originalContext, paintingInfo.paintDirtyRect, backgroundRect);
+    return originalContext;
+}
+#endif
+
 void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
@@ -3711,8 +3837,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
 
-    GraphicsContext* transparencyLayerContext = context;
-    
     if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer()->isRenderView() && !renderer()->isRoot())
         return;
 
@@ -3725,100 +3849,25 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     IntRect rootRelativeBounds;
     bool rootRelativeBoundsComputed = false;
 
-    bool didQuantizeFonts = true;
-    bool scrollingOnMainThread = true;
-    Frame* frame = renderer()->frame();
-#if ENABLE(THREADED_SCROLLING)
-    if (frame) {
-        if (Page* page = frame->page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
-        }
-    }
-#endif
-
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
-    bool needToAdjustSubpixelQuantization = scrollingOnMainThread || (renderer()->hasOverflowClip() && !usesCompositedScrolling()) || (frame && frame->ownerElement());
-    if (needToAdjustSubpixelQuantization) {
-        didQuantizeFonts = context->shouldSubpixelQuantizeFonts();
-        context->setShouldSubpixelQuantizeFonts(false);
-    }
+    bool didQuantizeFonts = true;
+    bool needToAdjustSubpixelQuantization = setupFontSubpixelQuantization(context, didQuantizeFonts);
 
     // Apply clip-path to context.
-    bool hasClipPath = false;
-    RenderStyle* style = renderer()->style();
-    if (renderer()->hasClipPath() && !context->paintingDisabled() && style) {
-        ASSERT(style->clipPath());
-        if (style->clipPath()->getOperationType() == ClipPathOperation::SHAPE) {
-            hasClipPath = true;
-            context->save();
-            ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
-
-            if (!rootRelativeBoundsComputed) {
-                rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
-                rootRelativeBoundsComputed = true;
-            }
-
-            context->clipPath(clipPath->path(rootRelativeBounds), clipPath->windRule());
-        }
-#if ENABLE(SVG)
-        else if (style->clipPath()->getOperationType() == ClipPathOperation::REFERENCE) {
-            ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style->clipPath());
-            Document* document = renderer()->document();
-            // FIXME: It doesn't work with forward or external SVG references (https://bugs.webkit.org/show_bug.cgi?id=90405)
-            Element* element = document ? document->getElementById(referenceClipPathOperation->fragment()) : 0;
-            if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {
-                if (!rootRelativeBoundsComputed) {
-                    rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
-                    rootRelativeBoundsComputed = true;
-                }
-
-                // FIXME: This should use a safer cast such as toRenderSVGResourceContainer().
-                static_cast<RenderSVGResourceClipper*>(element->renderer())->applyClippingToContext(renderer(), rootRelativeBounds, paintingInfo.paintDirtyRect, context);
-            }
-        }
-#endif
-    }
+    bool hasClipPath = setupClipPath(context, paintingInfo, offsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
     LayerPaintingInfo localPaintingInfo(paintingInfo);
+
+    GraphicsContext* transparencyLayerContext = context;
 #if ENABLE(CSS_FILTERS)
-    FilterEffectRendererHelper filterPainter(filterRenderer() && paintsWithFilters());
-    if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
-        RenderLayerFilterInfo* filterInfo = this->filterInfo();
-        ASSERT(filterInfo);
-        LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
-        filterRepaintRect.move(offsetFromRoot.x(), offsetFromRoot.y());
-
-        if (!rootRelativeBoundsComputed) {
-            rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
-            rootRelativeBoundsComputed = true;
+    OwnPtr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, offsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+    if (filterPainter) {
+        context = filterPainter->filterContext();
+        if (context != transparencyLayerContext && haveTransparency) {
+            // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
+            beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
         }
-
-        if (filterPainter.prepareFilterEffect(this, rootRelativeBounds, paintingInfo.paintDirtyRect, filterRepaintRect)) {
-            // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
-            filterInfo->resetDirtySourceRect();
-
-            // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
-            // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
-            // on the original context and avoid duplicating "beginFilterEffect" after each transparency layer call. Also, note that 
-            // beginTransparencyLayers will only create a single lazy transparency layer, even though it is called twice in this method.
-            context = filterPainter.beginFilterEffect(context);
-
-            // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
-            if (filterPainter.hasStartedFilterEffect()) {
-                localPaintingInfo.paintDirtyRect = filterPainter.repaintRect();
-                // If the filter needs the full source image, we need to avoid using the clip rectangles.
-                // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
-                // Note that we will still apply the clipping on the final rendering of the filter.
-                localPaintingInfo.clipToDirtyRect = !filterRenderer()->hasFilterThatMovesPixels();
-            }
-        }
-    }
-
-    if (filterPainter.hasStartedFilterEffect() && haveTransparency) {
-        // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
-        beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
     }
 #endif
 
@@ -3884,13 +3933,9 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         paintOverflowControlsForFragments(layerFragments, context, localPaintingInfo);
 
 #if ENABLE(CSS_FILTERS)
-    if (filterPainter.hasStartedFilterEffect()) {
-        // Apply the correct clipping (ie. overflow: hidden).
-        // FIXME: It is incorrect to just clip to the damageRect here once multiple fragments are involved.
-        ClipRect backgroundRect = layerFragments.isEmpty() ? ClipRect() : layerFragments[0].backgroundRect;
-        clipToRect(localPaintingInfo.rootLayer, transparencyLayerContext, localPaintingInfo.paintDirtyRect, backgroundRect);
-        context = filterPainter.applyFilterEffect();
-        restoreClip(transparencyLayerContext, localPaintingInfo.paintDirtyRect, backgroundRect);
+    if (filterPainter) {
+        context = applyFilters(filterPainter.get(), transparencyLayerContext, localPaintingInfo, layerFragments);
+        filterPainter.clear();
     }
 #endif
     

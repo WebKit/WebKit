@@ -56,26 +56,28 @@ class RenderObject;
 class FilterEffectRendererHelper {
 public:
     FilterEffectRendererHelper(bool haveFilterEffect)
-        : m_savedGraphicsContext(0)
-        , m_renderLayer(0)
+        : m_renderLayer(0)
         , m_haveFilterEffect(haveFilterEffect)
+        , m_startedFilterEffect(false)
     {
     }
     
     bool haveFilterEffect() const { return m_haveFilterEffect; }
-    bool hasStartedFilterEffect() const { return m_savedGraphicsContext; }
+    bool hasStartedFilterEffect() const { return m_startedFilterEffect; }
 
     bool prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
-    GraphicsContext* beginFilterEffect(GraphicsContext* oldContext);
-    GraphicsContext* applyFilterEffect();
+    bool beginFilterEffect();
+    void applyFilterEffect(GraphicsContext* destinationContext);
+    
+    GraphicsContext* filterContext() const;
 
     const LayoutRect& repaintRect() const { return m_repaintRect; }
 private:
-    GraphicsContext* m_savedGraphicsContext;
-    RenderLayer* m_renderLayer;
+    RenderLayer* m_renderLayer; // FIXME: this is mainly used to get the FilterEffectRenderer. FilterEffectRendererHelper should be weaned off it.
     LayoutPoint m_paintOffset;
     LayoutRect m_repaintRect;
     bool m_haveFilterEffect;
+    bool m_startedFilterEffect;
 };
 
 class FilterEffectRenderer : public Filter

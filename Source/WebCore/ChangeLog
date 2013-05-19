@@ -1,5 +1,46 @@
 2013-05-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Hoist several chunks of code at the top of RenderLayer::paintLayerContents() onto new functions
+        https://bugs.webkit.org/show_bug.cgi?id=116406
+
+        Reviewed by Andreas Kling.
+        
+        RenderLayer::paintLayerContents() was getting polluted with code related to filters,
+        clipping and font subpixel quantization, and hard to follow.
+        
+        Move three hunks of code into new functions:
+        setupFontSubpixelQuantization() now contains the code related to whether we disable
+        font subpixel quantization on the context.
+        setupClipPath() now contains code related to clipping to shapes and references.
+        setupFilters() and applyFilters() contain code related to CSS filters.
+        
+        As part of this, the interaction with FilterEffectRendererHelper was simplified.
+        It was convenient for setupFilters() to return a FilterEffectRendererHelper object
+        if successful, so we use an OwnPtr<FilterEffectRendererHelper> now. In addition,
+        the GraphicsContext swapping was moved from FilterEffectRendererHelper code into RenderLayer
+        to make it easier to follow. FilterEffectRendererHelper no longer holds on to
+        the old GraphicsContext.
+
+        No behavior change.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::filterContext):
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect):
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRendererHelper::FilterEffectRendererHelper):
+        (WebCore::FilterEffectRendererHelper::hasStartedFilterEffect):
+        (FilterEffectRendererHelper):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::applyFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayer.h:
+
+2013-05-18  Simon Fraser  <simon.fraser@apple.com>
+
         Refactor RenderStyle::diff()
         https://bugs.webkit.org/show_bug.cgi?id=116397
 
