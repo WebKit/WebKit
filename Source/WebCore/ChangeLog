@@ -1,3 +1,56 @@
+2013-05-19  Darin Adler  <darin@apple.com>
+
+        Use Element instead of Node in DragState, also redo DragState struct
+        https://bugs.webkit.org/show_bug.cgi?id=116411
+
+        Reviewed by Sam Weinig.
+
+        The drag source is an element, so use RefPtr<Element> instead of RefPtr<Node>.
+
+        Also, the entire drag state is about dragging, so no need for the word "drag" in the
+        name of its members. Also, it's a struct, so the members don't need m_ prefixes.
+
+        * page/DragController.cpp: Removed unneeded include of Node.h since it's included by
+        Element.h, which is also included.
+        (WebCore::DragController::draggableElement): Renamed from Node to Element and changed
+        the types and names of arguments accordingly. Also made this function handle a
+        startElement of 0 so callers don't need to. Also updated for changes to DragState members.
+        (WebCore::DragController::startDrag): Updated for changes to DragState members.
+        Since dragSource can only be an element, was able to get rid of isElementNode checks.
+
+        * page/DragController.h: Fixed style of forward declarations of structs. Updated for
+        change of draggableNode to draggableElement. Also removed declarations of nonexistent
+        selectionDraggingRect and doDrag functions.
+
+        * page/DragState.h: Rewrote practically this whole header. Added an include of Element
+        instead of Node since that's what we use now. Removed includes that are redundant.
+        There's no problem copying a DragState, so removed WTF_MAKE_NONCOPYABLE. There's no need
+        to allocate a DragState on the heap, so removed WTF_MAKE_FAST_ALLOCATED. The event dispatch
+        boolean is never set to a constant, so there's no need for a policy enum; it can just be
+        a boolean. Removed the "m_" prefixes from the struct members, since this is a struct with
+        public members and we don't use the prefix in those cases. Removed the word "drag" from the
+        struct member names since this entire struct is about dragging and has drag in its name.
+        Left the comments mostly intact, even though I'm not certain of their value.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): Updated for changes to DragState.
+        (WebCore::EventHandler::eventMayStartDrag):
+        Use innerElement instead of innerNode to call draggableElement instead of draggableNode.
+        (WebCore::EventHandler::updateDragAndDrop): Updated for changes to DragState.
+        (WebCore::EventHandler::cancelDragAndDrop): Ditto.
+        (WebCore::EventHandler::handleWheelEvent): Added FIXME.
+        (WebCore::EventHandler::dragHysteresisExceeded): Updated for changes to DragState.
+        (WebCore::EventHandler::freeClipboard): Updated for changes to DragState. Also re-added
+        code to release the clipboard object, which is needed here to avoid keeping it around in
+        memory until the next drag.
+        (WebCore::EventHandler::dragSourceEndedAt): Updated for changes to DragState.
+        (WebCore::EventHandler::updateDragStateAfterEditDragIfNeeded): Ditto.
+        (WebCore::EventHandler::dispatchDragSrcEvent): Ditto.
+        (WebCore::EventHandler::handleDrag): Updated for changes to DragState. Use innerElement
+        instead of innerNode to call draggableElement instead of draggableNode. No longer need to
+        null check innerElement because draggableElement does that. Removed unneeded else that was
+        setting m_dragSrc to zero since it's guaranteed to already be zero.
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove ChromeClient::webView()

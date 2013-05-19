@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,6 @@
 #include "Image.h"
 #include "ImageOrientation.h"
 #include "MoveSelectionCommand.h"
-#include "Node.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PluginDocument.h"
@@ -635,17 +634,19 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
     return true;
 }
 
-Node* DragController::draggableNode(const Frame* src, Node* startNode, const IntPoint& dragOrigin, DragState& state) const
+Element* DragController::draggableElement(const Frame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
 {
-    state.m_dragType = (src->selection()->contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
+    state.type = (sourceFrame->selection()->contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
+    if (!startElement)
+        return 0;
 
-    for (const RenderObject* renderer = startNode->renderer(); renderer; renderer = renderer->parent()) {
+    for (const RenderObject* renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
         Node* node = renderer->nonPseudoNode();
         if (!node)
             // Anonymous render blocks don't correspond to actual DOM nodes, so we skip over them
             // for the purposes of finding a draggable node.
             continue;
-        if (!(state.m_dragType & DragSourceActionSelection) && node->isTextNode() && node->canStartSelection())
+        if (!(state.type & DragSourceActionSelection) && node->isTextNode() && node->canStartSelection())
             // In this case we have a click in the unselected portion of text. If this text is
             // selectable, we want to start the selection process instead of looking for a parent
             // to try to drag.
@@ -653,29 +654,29 @@ Node* DragController::draggableNode(const Frame* src, Node* startNode, const Int
         if (node->isElementNode()) {
             EUserDrag dragMode = renderer->style()->userDrag();
             if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == DRAG_ELEMENT) {
-                state.m_dragType = static_cast<DragSourceAction>(state.m_dragType | DragSourceActionDHTML);
-                return node;
+                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionDHTML);
+                return toElement(node);
             }
             if (dragMode == DRAG_AUTO) {
                 if ((m_dragSourceAction & DragSourceActionImage)
                     && node->hasTagName(HTMLNames::imgTag)
-                    && src->settings()
-                    && src->settings()->loadsImagesAutomatically()) {
-                    state.m_dragType = static_cast<DragSourceAction>(state.m_dragType | DragSourceActionImage);
-                    return node;
+                    && sourceFrame->settings()
+                    && sourceFrame->settings()->loadsImagesAutomatically()) {
+                    state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
+                    return toElement(node);
                 }
                 if ((m_dragSourceAction & DragSourceActionLink)
                     && node->hasTagName(HTMLNames::aTag)
                     && static_cast<HTMLAnchorElement*>(node)->isLiveLink()) {
-                    state.m_dragType = static_cast<DragSourceAction>(state.m_dragType | DragSourceActionLink);
-                    return node;
+                    state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
+                    return toElement(node);
                 }
             }
         }
     }
 
     // We either have nothing to drag or we have a selection and we're not over a draggable element.
-    return (state.m_dragType & DragSourceActionSelection) ? startNode : 0;
+    return (state.type & DragSourceActionSelection) ? startElement : 0;
 }
 
 static CachedImage* getCachedImage(Element* element)
@@ -748,7 +749,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         return false;
 
     HitTestResult hitTestResult = src->eventHandler()->hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);
-    if (!state.m_dragSrc->contains(hitTestResult.innerNode()))
+    if (!state.source->contains(hitTestResult.innerNode()))
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
@@ -765,10 +766,10 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     IntPoint dragLoc(0, 0);
     IntPoint dragImageOffset(0, 0);
 
-    Clipboard* clipboard = state.m_dragClipboard.get();
-    if (state.m_dragType == DragSourceActionDHTML)
+    Clipboard* clipboard = state.clipboard.get();
+    if (state.type == DragSourceActionDHTML)
         dragImage = clipboard->createDragImage(dragImageOffset);
-    if (state.m_dragType == DragSourceActionSelection || !imageURL.isEmpty() || !linkURL.isEmpty())
+    if (state.type == DragSourceActionSelection || !imageURL.isEmpty() || !linkURL.isEmpty())
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
         // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
@@ -783,10 +784,10 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
     bool startedDrag = true; // optimism - we almost always manage to start the drag
 
-    Node* node = state.m_dragSrc.get();
+    Element* element = state.source.get();
 
-    Image* image = node->isElementNode() ? getImage(toElement(node)) : 0;
-    if (state.m_dragType == DragSourceActionSelection) {
+    Image* image = getImage(element);
+    if (state.type == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
             if (enclosingTextFormControl(src->selection()->start()))
                 clipboard->writePlainText(src->editor().selectedTextForClipboard());
@@ -804,12 +805,11 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
-    } else if (!imageURL.isEmpty() && node && node->isElementNode() && image && !image->isNull()
+    } else if (!imageURL.isEmpty() && element && image && !image->isNull()
                && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
-        Element* element = toElement(node);
         if (!clipboard->hasData()) {
             m_draggingImageURL = imageURL;
             prepareClipboardForImageDrag(src, clipboard, element, linkURL, imageURL, hitTestResult.altDisplayString());
@@ -849,12 +849,12 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
         }
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
-    } else if (state.m_dragType == DragSourceActionDHTML) {
+    } else if (state.type == DragSourceActionDHTML) {
         ASSERT(m_dragSourceAction & DragSourceActionDHTML);
         m_client->willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, clipboard);
         doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
     } else {
-        // draggableNode() determined an image or link node was draggable, but it turns out the
+        // draggableElement() determined an image or link node was draggable, but it turns out the
         // image or link had no URL, so there is nothing to drag.
         startedDrag = false;
     }

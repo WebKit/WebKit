@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,30 +29,15 @@
 
 #include "Clipboard.h"
 #include "DragActions.h"
-#include "Node.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include "Element.h"
 
 namespace WebCore {
 
-class Clipboard;
-class Node;
-
 struct DragState {
-    WTF_MAKE_NONCOPYABLE(DragState);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum EventDispatchPolicy {
-        DoNotDispatchEvents,
-        DispatchEvents,
-    };
-    DragState() { }
-    bool shouldDispatchEvents() const { return m_eventDispatchPolicy == DispatchEvents; }
-    RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
-    EventDispatchPolicy m_eventDispatchPolicy;
-    DragSourceAction m_dragType;
-    RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
+    RefPtr<Element> source; // Element that may be a drag source, for the current mouse gesture.
+    bool shouldDispatchEvents;
+    DragSourceAction type;
+    RefPtr<Clipboard> clipboard; // Used on only the source side of dragging.
 };
 
 } // namespace WebCore
