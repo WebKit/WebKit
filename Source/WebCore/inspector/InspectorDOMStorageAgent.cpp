@@ -125,15 +125,6 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
     items = storageItems.release();
 }
 
-static String toErrorString(const ExceptionCode& ec)
-{
-    if (ec) {
-        ExceptionCodeDescription description(ec);
-        return description.name;
-    }
-    return "";
-}
-
 void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key, const String& value)
 {
     Frame* frame;
@@ -143,9 +134,10 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString* errorString, const
         return;
     }
 
-    ExceptionCode exception = 0;
-    storageArea->setItem(key, value, exception, frame);
-    *errorString = toErrorString(exception);
+    bool quotaException = false;
+    storageArea->setItem(frame, key, value, quotaException);
+    if (quotaException)
+        *errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
 }
 
 void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key)
@@ -157,9 +149,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString* errorString, co
         return;
     }
 
-    ExceptionCode exception = 0;
-    storageArea->removeItem(key, exception, frame);
-    *errorString = toErrorString(exception);
+    storageArea->removeItem(frame, key);
 }
 
 String InspectorDOMStorageAgent::storageId(Storage* storage)

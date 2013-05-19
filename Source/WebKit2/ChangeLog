@@ -1,3 +1,18 @@
+2013-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Simplify the StorageArea setter functions
+        https://bugs.webkit.org/show_bug.cgi?id=116402
+
+        Reviewed by Sam Weinig.
+
+        Remove security checking code that lives in Storage now.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::setItem):
+        (WebKit::StorageAreaImpl::removeItem):
+        (WebKit::StorageAreaImpl::clear):
+        * WebProcess/Storage/StorageAreaImpl.h:
+
 2013-05-18  Sam Weinig  <sam@webkit.org>
 
         Fix some builds.

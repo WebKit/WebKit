@@ -100,17 +100,47 @@ String Storage::getItem(const String& key, ExceptionCode& ec) const
 
 void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
 {
-    m_storageArea->setItem(key, value, ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (isDisabledByPrivateBrowsing()) {
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
+
+    bool quotaException = false;
+    m_storageArea->setItem(m_frame, key, value, quotaException);
+
+    if (quotaException)
+        ec = QUOTA_EXCEEDED_ERR;
 }
 
 void Storage::removeItem(const String& key, ExceptionCode& ec)
 {
-    m_storageArea->removeItem(key, ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (isDisabledByPrivateBrowsing())
+        return;
+
+    m_storageArea->removeItem(m_frame, key);
 }
 
 void Storage::clear(ExceptionCode& ec)
 {
-    m_storageArea->clear(ec, m_frame);
+    if (!m_storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (isDisabledByPrivateBrowsing())
+        return;
+
+    m_storageArea->clear(m_frame);
 }
 
 bool Storage::contains(const String& key, ExceptionCode& ec) const

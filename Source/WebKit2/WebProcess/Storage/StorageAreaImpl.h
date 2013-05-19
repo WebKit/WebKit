@@ -49,9 +49,9 @@ private:
     virtual unsigned length() OVERRIDE;
     virtual String key(unsigned index) OVERRIDE;
     virtual String item(const String& key) OVERRIDE;
-    virtual void setItem(const String& key, const String& value, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual void removeItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual void clear(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual void setItem(WebCore::Frame* sourceFrame, const String& key, const String& value, bool& quotaException) OVERRIDE;
+    virtual void removeItem(WebCore::Frame* sourceFrame, const String& key) OVERRIDE;
+    virtual void clear(WebCore::Frame* sourceFrame) OVERRIDE;
     virtual bool contains(const String& key) OVERRIDE;
     virtual bool canAccessStorage(WebCore::Frame*) OVERRIDE;
     virtual WebCore::StorageType storageType() const OVERRIDE;
@@ -59,8 +59,6 @@ private:
     virtual void incrementAccessCount() OVERRIDE;
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;
-
-    bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
 
     uint64_t m_storageAreaID;
     RefPtr<StorageAreaMap> m_storageAreaMap;
