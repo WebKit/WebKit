@@ -918,12 +918,6 @@
     <ClCompile Include="..\loader\PolicyChecker.cpp">
       <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\Prerenderer.cpp">
-      <Filter>loader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\loader\PrerendererClient.cpp">
-      <Filter>loader</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\ProgressTracker.cpp">
       <Filter>loader</Filter>
     </ClCompile>
@@ -7644,12 +7638,6 @@
     <ClInclude Include="..\loader\PolicyChecker.h">
       <Filter>loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\Prerenderer.h">
-      <Filter>loader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\PrerendererClient.h">
-      <Filter>loader</Filter>
-    </ClInclude>
     <ClInclude Include="..\loader\ProgressTracker.h">
       <Filter>loader</Filter>
     </ClInclude>
@@ -7972,12 +7960,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\PopupMenuStyle.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\PrerenderClient.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\PrerenderHandle.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\PurgeableBuffer.h">

@@ -887,8 +887,6 @@ SOURCES += \
     loader/PolicyCallback.cpp \
     loader/PolicyChecker.cpp \
     loader/ProgressTracker.cpp \
-    loader/Prerenderer.cpp \
-    loader/PrerendererClient.cpp \
     loader/NavigationScheduler.cpp \
     loader/ResourceBuffer.cpp \
     loader/ResourceLoader.cpp \
@@ -2055,8 +2053,6 @@ HEADERS += \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
     loader/PlaceholderDocument.h \
-    loader/Prerenderer.h \
-    loader/PrerendererClient.h \
     loader/ProgressTracker.h \
     loader/ResourceBuffer.h \
     loader/ResourceLoader.h \
@@ -2397,8 +2393,6 @@ HEADERS += \
     platform/Timer.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
-    platform/PrerenderClient.h \
-    platform/PrerenderHandle.h \
     platform/LocalizedStrings.h \
     plugins/DOMMimeTypeArray.h \
     plugins/DOMMimeType.h \

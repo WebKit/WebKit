@@ -231,10 +231,6 @@
 #include "NodeRareData.h"
 #endif
 
-#if ENABLE(LINK_PRERENDER)
-#include "Prerenderer.h"
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
 #endif
@@ -517,9 +513,6 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
         m_cachedResourceLoader = CachedResourceLoader::create(0);
     m_cachedResourceLoader->setDocument(this);
 
-#if ENABLE(LINK_PRERENDER)
-    m_prerenderer = Prerenderer::create(this);
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
     m_textAutosizer = TextAutosizer::create(this);
 #endif

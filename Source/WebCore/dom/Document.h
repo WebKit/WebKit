@@ -180,10 +180,6 @@ class ScriptedAnimationController;
 class MicroDataItemList;
 #endif
 
-#if ENABLE(LINK_PRERENDER)
-class Prerenderer;
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 class TextAutosizer;
 #endif
@@ -1153,10 +1149,6 @@ public:
     IntSize initialViewportSize() const;
 #endif
 
-#if ENABLE(LINK_PRERENDER)
-    Prerenderer* prerenderer() { return m_prerenderer.get(); }
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
     TextAutosizer* textAutosizer() { return m_textAutosizer.get(); }
 #endif
@@ -1544,10 +1536,6 @@ private:
 
     Timer<Document> m_pendingTasksTimer;
     Vector<OwnPtr<Task> > m_pendingTasks;
-
-#if ENABLE(LINK_PRERENDER)
-    OwnPtr<Prerenderer> m_prerenderer;
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
     OwnPtr<TextAutosizer> m_textAutosizer;

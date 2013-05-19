@@ -1,3 +1,46 @@
+2013-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove link prerendering code
+        https://bugs.webkit.org/show_bug.cgi?id=116415
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/EventNames.h:
+        (WebCore):
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute):
+        * html/LinkRelAttribute.h:
+        (LinkRelAttribute):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::~LinkLoader):
+        (WebCore::LinkLoader::loadLink):
+        (WebCore::LinkLoader::released):
+        * loader/LinkLoader.h:
+        (WebCore):
+        (LinkLoader):
+        * loader/LinkLoaderClient.h:
+        (LinkLoaderClient):
+        * loader/Prerenderer.cpp: Removed.
+        * loader/Prerenderer.h: Removed.
+        * loader/PrerendererClient.cpp: Removed.
+        * loader/PrerendererClient.h: Removed.
+        * platform/PrerenderClient.h: Removed.
+        * platform/PrerenderHandle.h: Removed.
+
 2013-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Change the terminology used by rendering code when painting a given node and its children from "paintingRoot" to "subtreePaintRoot"

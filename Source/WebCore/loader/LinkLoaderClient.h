@@ -42,13 +42,6 @@ public:
     virtual void linkLoaded() = 0;
     virtual void linkLoadingErrored() = 0;
     // There is no notification for cancellation.
-
-#if ENABLE(LINK_PRERENDER)
-    virtual void didStartLinkPrerender() = 0;
-    virtual void didStopLinkPrerender() = 0;
-    virtual void didSendLoadForLinkPrerender() = 0;
-    virtual void didSendDOMContentLoadedForLinkPrerender() = 0;
-#endif
 };
 
 }

@@ -3273,12 +3273,8 @@
 		97F8E666151D4A4E00D2D181 /* WorkerContextNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */; };
 		9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9831AE49154225A200FE2644 /* ReferrerPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 984264EF12D5280A000D88A4 /* LinkLoaderClient.h */; };
-		9856F8CD1549E82400B04F3A /* Prerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8C91549E82400B04F3A /* Prerenderer.h */; };
-		9856F8CF1549E82400B04F3A /* PrerendererClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8CB1549E82400B04F3A /* PrerendererClient.h */; };
-		9856F8D11549E84F00B04F3A /* PrerenderHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8D01549E84F00B04F3A /* PrerenderHandle.h */; };
 		985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */; };
 		985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 985BB96C13A94058007A0B69 /* LinkRelAttribute.h */; };
-		986EA88315FFF29000985E5E /* PrerenderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 986EA88215FFF29000985E5E /* PrerenderClient.h */; };
 		98CE4326129E00BD005821DC /* LinkLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CE4325129E00BD005821DC /* LinkLoader.cpp */; };
 		98CE432A129E00E5005821DC /* LinkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 98CE4329129E00E5005821DC /* LinkLoader.h */; };
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9743,12 +9739,8 @@
 		97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextNotifications.idl; path = Modules/notifications/WorkerContextNotifications.idl; sourceTree = "<group>"; };
 		9831AE49154225A200FE2644 /* ReferrerPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferrerPolicy.h; sourceTree = "<group>"; };
 		984264EF12D5280A000D88A4 /* LinkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoaderClient.h; sourceTree = "<group>"; };
-		9856F8C91549E82400B04F3A /* Prerenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prerenderer.h; path = loader/Prerenderer.h; sourceTree = SOURCE_ROOT; };
-		9856F8CB1549E82400B04F3A /* PrerendererClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrerendererClient.h; path = loader/PrerendererClient.h; sourceTree = SOURCE_ROOT; };
-		9856F8D01549E84F00B04F3A /* PrerenderHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrerenderHandle.h; sourceTree = "<group>"; };
 		985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkRelAttribute.cpp; sourceTree = "<group>"; };
 		985BB96C13A94058007A0B69 /* LinkRelAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkRelAttribute.h; sourceTree = "<group>"; };
-		986EA88215FFF29000985E5E /* PrerenderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrerenderClient.h; sourceTree = "<group>"; };
 		98CE4325129E00BD005821DC /* LinkLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkLoader.cpp; sourceTree = "<group>"; };
 		98CE4329129E00E5005821DC /* LinkLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoader.h; sourceTree = "<group>"; };
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
@@ -13404,8 +13396,6 @@
 				1A8F6BB90DB55CDC001DB794 /* DOMApplicationCache.idl */,
 				1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */,
 				1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */,
-				9856F8C91549E82400B04F3A /* Prerenderer.h */,
-				9856F8CB1549E82400B04F3A /* PrerendererClient.h */,
 			);
 			path = appcache;
 			sourceTree = "<group>";
@@ -19387,8 +19377,6 @@
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
-				986EA88215FFF29000985E5E /* PrerenderClient.h */,
-				9856F8D01549E84F00B04F3A /* PrerenderHandle.h */,
 				0081FEFD16B0A244008AAA7A /* PublicSuffix.h */,
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
 				7E33CD00127F340D00BE8F17 /* PurgePriority.h */,
@@ -23091,10 +23079,6 @@
 				37919C240B7D188600A56998 /* PositionIterator.h in Headers */,
 				9746AF3214F4DDE6003E7A70 /* PositionOptions.h in Headers */,
 				C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */,
-				986EA88315FFF29000985E5E /* PrerenderClient.h in Headers */,
-				9856F8CD1549E82400B04F3A /* Prerenderer.h in Headers */,
-				9856F8CF1549E82400B04F3A /* PrerendererClient.h in Headers */,
-				9856F8D11549E84F00B04F3A /* PrerenderHandle.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				A8EA7EBC0A1945D000A8EF5F /* ProcessingInstruction.h in Headers */,
 				E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */,

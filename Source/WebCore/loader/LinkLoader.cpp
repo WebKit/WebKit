@@ -45,11 +45,6 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 
-#if ENABLE(LINK_PRERENDER)
-#include "PrerenderHandle.h"
-#include "Prerenderer.h"
-#endif
-
 namespace WebCore {
 
 LinkLoader::LinkLoader(LinkLoaderClient* client)
@@ -63,10 +58,6 @@ LinkLoader::~LinkLoader()
 {
     if (m_cachedLinkResource)
         m_cachedLinkResource->removeClient(this);
-#if ENABLE(LINK_PRERENDER)
-    if (m_prerenderHandle)
-        m_prerenderHandle->removeClient();
-#endif
 }
 
 void LinkLoader::linkLoadTimerFired(Timer<LinkLoader>* timer)
@@ -93,30 +84,6 @@ void LinkLoader::notifyFinished(CachedResource* resource)
     m_cachedLinkResource->removeClient(this);
     m_cachedLinkResource = 0;
 }
-
-#if ENABLE(LINK_PRERENDER)
-
-void LinkLoader::didStartPrerender()
-{
-    m_client->didStartLinkPrerender();
-}
-
-void LinkLoader::didStopPrerender()
-{
-    m_client->didStopLinkPrerender();
-}
-
-void LinkLoader::didSendLoadForPrerender()
-{
-    m_client->didSendLoadForLinkPrerender();
-}
-
-void LinkLoader::didSendDOMContentLoadedForPrerender()
-{
-    m_client->didSendDOMContentLoadedForLinkPrerender();
-}
-
-#endif
 
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& type,
                           const String& sizes, const KURL& href, Document* document)
@@ -160,26 +127,11 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
     }
 #endif
 
-#if ENABLE(LINK_PRERENDER)
-    if (relAttribute.m_isLinkPrerender) {
-        ASSERT(!m_prerenderHandle);
-        m_prerenderHandle = document->prerenderer()->render(this, href);
-    }
-#endif
     return true;
 }
 
 void LinkLoader::released()
 {
-    // Only prerenders need treatment here; other links either use the CachedResource interface, or are notionally
-    // atomic (dns prefetch).
-#if ENABLE(LINK_PRERENDER)
-    if (m_prerenderHandle) {
-        m_prerenderHandle->cancel();
-        m_prerenderHandle->removeClient();
-        m_prerenderHandle.clear();
-    }
-#endif
 }
 
 }

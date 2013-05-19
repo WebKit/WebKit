@@ -3996,8 +3996,6 @@
     <ClCompile Include="..\loader\PlaceholderDocument.cpp" />
     <ClCompile Include="..\loader\PolicyCallback.cpp" />
     <ClCompile Include="..\loader\PolicyChecker.cpp" />
-    <ClCompile Include="..\loader\Prerenderer.cpp" />
-    <ClCompile Include="..\loader\PrerendererClient.cpp" />
     <ClCompile Include="..\loader\ProgressTracker.cpp" />
     <ClCompile Include="..\loader\ResourceBuffer.cpp" />
     <ClCompile Include="..\loader\ResourceLoader.cpp" />
@@ -11443,8 +11441,6 @@
     <ClInclude Include="..\loader\PlaceholderDocument.h" />
     <ClInclude Include="..\loader\PolicyCallback.h" />
     <ClInclude Include="..\loader\PolicyChecker.h" />
-    <ClInclude Include="..\loader\Prerenderer.h" />
-    <ClInclude Include="..\loader\PrerendererClient.h" />
     <ClInclude Include="..\loader\ProgressTracker.h" />
     <ClInclude Include="..\loader\ResourceBuffer.h" />
     <ClInclude Include="..\loader\ResourceLoader.h" />
@@ -11563,8 +11559,6 @@
     <ClInclude Include="..\platform\PopupMenu.h" />
     <ClInclude Include="..\platform\PopupMenuClient.h" />
     <ClInclude Include="..\platform\PopupMenuStyle.h" />
-    <ClInclude Include="..\platform\PrerenderClient.h" />
-    <ClInclude Include="..\platform\PrerenderHandle.h" />
     <ClInclude Include="..\platform\PurgeableBuffer.h" />
     <ClInclude Include="..\platform\ReferrerPolicy.h" />
     <ClInclude Include="..\platform\RunLoop.h" />

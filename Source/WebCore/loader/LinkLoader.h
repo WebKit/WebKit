@@ -35,7 +35,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "LinkLoaderClient.h"
-#include "PrerenderClient.h"
 #include "Timer.h"
 
 #include <wtf/RefPtr.h>
@@ -46,12 +45,8 @@ class Document;
 class KURL;
 struct LinkRelAttribute;
 
-#if ENABLE(LINK_PRERENDER)
-class PrerenderHandle;
-#endif
-
-// The LinkLoader can load link rel types icon, dns-prefetch, subresource, prefetch and prerender.
-class LinkLoader : public CachedResourceClient, public PrerenderClient {
+// The LinkLoader can load link rel types icon, dns-prefetch, subresource and prefetch.
+class LinkLoader : public CachedResourceClient {
 
 public:
     explicit LinkLoader(LinkLoaderClient*);
@@ -59,14 +54,6 @@ public:
 
     // from CachedResourceClient
     virtual void notifyFinished(CachedResource*);
-    
-#if ENABLE(LINK_PRERENDER)
-    // from PrerenderClient
-    virtual void didStartPrerender() OVERRIDE;
-    virtual void didStopPrerender() OVERRIDE;
-    virtual void didSendLoadForPrerender() OVERRIDE;
-    virtual void didSendDOMContentLoadedForPrerender() OVERRIDE;
-#endif
 
     void released();
     bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const KURL&, Document*);
@@ -80,10 +67,6 @@ private:
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
     Timer<LinkLoader> m_linkLoadTimer;
     Timer<LinkLoader> m_linkLoadingErrorTimer;
-
-#if ENABLE(LINK_PRERENDER)
-    RefPtr<PrerenderHandle> m_prerenderHandle;
-#endif
 };
     
 }

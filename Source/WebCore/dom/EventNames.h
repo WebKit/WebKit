@@ -252,11 +252,6 @@ namespace WebCore {
     \
     macro(webkitdeviceproximity) \
     \
-    macro(webkitprerenderstart) \
-    macro(webkitprerenderstop) \
-    macro(webkitprerenderload) \
-    macro(webkitprerenderdomcontentloaded) \
-    \
     macro(securitypolicyviolation) \
     \
 
