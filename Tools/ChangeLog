@@ -1,3 +1,10 @@
+2013-05-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, addressing test-webkitpy failures after r150317.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (W3CTestConverter.read_webkit_prefixed_css_property_list): CssPropertyNames.in doesn't exist, but CSSPropertyNames.in does.
+
 2013-05-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Replace *_LIBRARY_NAME with *_OUTPUT_NAME

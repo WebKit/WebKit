@@ -48,7 +48,7 @@ class W3CTestConverter(object):
     def read_webkit_prefixed_css_property_list(self):
         prefixed_properties = []
 
-        contents = self._filesystem.read_text_file(self.path_from_webkit_root('Source', 'WebCore', 'css', 'CssPropertyNames.in'))
+        contents = self._filesystem.read_text_file(self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSPropertyNames.in'))
         for line in contents.splitlines():
             # Find lines starting with the -webkit- prefix.
             match = re.match('-webkit-[\w|-]*', line)
