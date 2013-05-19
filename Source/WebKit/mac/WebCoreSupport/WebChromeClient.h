@@ -36,7 +36,6 @@
 class WebChromeClient : public WebCore::ChromeClient {
 public:
     WebChromeClient(WebView*);
-    virtual void* webView() const { return static_cast<void*>(m_webView); }
     
     virtual void chromeDestroyed() OVERRIDE;
     
@@ -183,6 +182,9 @@ public:
 
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE { }
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const OVERRIDE { return false; }
+
+    WebView* webView() { return m_webView; }
+
 private:
     WebView *m_webView;
 };

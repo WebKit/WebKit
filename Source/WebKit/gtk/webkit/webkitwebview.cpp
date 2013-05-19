@@ -5537,8 +5537,11 @@ WebKitWebView* kit(WebCore::Page* corePage)
     if (!corePage)
         return 0;
 
-    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome().client());
-    return client ? static_cast<WebKitWebView*>(client->webView()) : 0;
+    WebCore::ChromeClient* chromeClient = corePage->chrome().client();
+    if (chromeClient->isEmptyChromeClient())
+        return 0;
+
+    return static_cast<WebKit::ChromeClient*>(chromeClient)->webView();
 }
 
 }

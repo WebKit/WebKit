@@ -43,7 +43,6 @@ namespace WebKit {
     class ChromeClient : public WebCore::ChromeClient {
     public:
         ChromeClient(WebKitWebView*);
-        virtual void* webView() const { return m_webView; }
         GtkAdjustmentWatcher* adjustmentWatcher() { return &m_adjustmentWatcher; }
 
         virtual void chromeDestroyed();
@@ -162,6 +161,8 @@ namespace WebKit {
         void paint(Timer<ChromeClient>*);
         void forcePaint();
         void widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize);
+
+        WebKitWebView* webView() { return m_webView; }
 
     private:
         WebKitWebView* m_webView;

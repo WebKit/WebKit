@@ -144,8 +144,6 @@ public:
     virtual bool shouldInterruptJavaScript() = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
-    virtual void* webView() const = 0;
-
     virtual IntRect windowResizerRect() const = 0;
 
     // Methods used by HostWindow.

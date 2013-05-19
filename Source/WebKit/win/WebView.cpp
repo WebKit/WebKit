@@ -199,7 +199,14 @@ static String webKitVersionString();
 
 WebView* kit(Page* page)
 {
-    return page ? static_cast<WebView*>(static_cast<WebChromeClient*>(page->chrome().client())->webView()) : 0;
+    if (!page)
+        return 0;
+    
+    ChromeClient* chromeClient = page->chrome().client();
+    if (chromeClient->isEmptyChromeClient())
+        return 0;
+    
+    return static_cast<WebChromeClient*>(chromeClient)->webView();
 }
 
 static inline AtomicString toAtomicString(BSTR bstr)

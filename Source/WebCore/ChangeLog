@@ -1,3 +1,17 @@
+2013-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove ChromeClient::webView()
+        https://bugs.webkit.org/show_bug.cgi?id=116054
+
+        Reviewed by Darin Adler.
+
+        This blatantly horrible layer violation was only used to know if a ChromeClient is an empty
+        client or not. We already have a (slightly less horrible) way to do that.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (ChromeClient):
+
 2013-05-19  Darin Adler  <darin@apple.com>
 
         Eliminate the Editor::newGeneralClipboard function

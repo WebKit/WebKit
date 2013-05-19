@@ -1,3 +1,15 @@
+2013-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove ChromeClient::webView()
+        https://bugs.webkit.org/show_bug.cgi?id=116054
+
+        Reviewed by Andreas Kling.
+
+        This blatantly horrible layer violation was only used by the Chromium port; get rid of it.
+
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
 2013-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] REGRESSION(r150060): Crash in LayerWebKitThread::updateTextureContents

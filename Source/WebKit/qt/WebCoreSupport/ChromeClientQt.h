@@ -66,7 +66,6 @@ public:
     virtual ~ChromeClientQt();
     virtual void chromeDestroyed();
 
-    virtual void* webView() const { return 0; }
     virtual void setWindowRect(const FloatRect&);
     virtual FloatRect windowRect();
 
