@@ -1763,7 +1763,15 @@ public:
 #if ENABLE(CSS_COMPOSITING)
     static BlendMode initialBlendMode() { return BlendModeNormal; }
 #endif
+
 private:
+    bool changeRequiresLayout(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+    bool changeRequiresPositionedLayoutOnly(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+    bool changeRequiresLayerRepaint(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+    bool changeRequiresRepaint(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+    bool changeRequiresRepaintIfText(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+    bool changeRequiresRecompositeLayer(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
+
     void setVisitedLinkColor(const Color&);
     void setVisitedLinkBackgroundColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBackgroundColor, v); }
     void setVisitedLinkBorderLeftColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBorderLeftColor, v); }

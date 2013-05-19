@@ -340,7 +340,7 @@ bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
         && rareInheritedData.get() == other->rareInheritedData.get();
 }
 
-static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b, const Length& width)
+static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b, const Length& width)
 {
     // If any unit types are different, then we can't guarantee
     // that this was just a movement.
@@ -367,38 +367,27 @@ static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b, const 
     return true;
 }
 
-StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
-    changedContextSensitiveProperties = ContextSensitivePropertyNone;
-
-#if ENABLE(SVG)
-    StyleDifference svgChange = StyleDifferenceEqual;
-    if (m_svgStyle != other->m_svgStyle) {
-        svgChange = m_svgStyle->diff(other->m_svgStyle.get());
-        if (svgChange == StyleDifferenceLayout)
-            return svgChange;
-    }
-#endif
-
     if (m_box->width() != other->m_box->width()
         || m_box->minWidth() != other->m_box->minWidth()
         || m_box->maxWidth() != other->m_box->maxWidth()
         || m_box->height() != other->m_box->height()
         || m_box->minHeight() != other->m_box->minHeight()
         || m_box->maxHeight() != other->m_box->maxHeight())
-        return StyleDifferenceLayout;
+        return true;
 
     if (m_box->verticalAlign() != other->m_box->verticalAlign() || noninherited_flags._vertical_align != other->noninherited_flags._vertical_align)
-        return StyleDifferenceLayout;
+        return true;
 
     if (m_box->boxSizing() != other->m_box->boxSizing())
-        return StyleDifferenceLayout;
+        return true;
 
     if (surround->margin != other->surround->margin)
-        return StyleDifferenceLayout;
+        return true;
 
     if (surround->padding != other->surround->padding)
-        return StyleDifferenceLayout;
+        return true;
 
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
         if (rareNonInheritedData->m_appearance != other->rareNonInheritedData->m_appearance 
@@ -406,41 +395,41 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareNonInheritedData->marginAfterCollapse != other->rareNonInheritedData->marginAfterCollapse
             || rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp
             || rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_regionOverflow != other->rareNonInheritedData->m_regionOverflow)
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow
             || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough
             || rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin
             || rareNonInheritedData->m_shapePadding != other->rareNonInheritedData->m_shapePadding)
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
             && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_flexibleBox.get() != other->rareNonInheritedData->m_flexibleBox.get()
             && *rareNonInheritedData->m_flexibleBox.get() != *other->rareNonInheritedData->m_flexibleBox.get())
-            return StyleDifferenceLayout;
+            return true;
         if (rareNonInheritedData->m_order != other->rareNonInheritedData->m_order
             || rareNonInheritedData->m_alignContent != other->rareNonInheritedData->m_alignContent
             || rareNonInheritedData->m_alignItems != other->rareNonInheritedData->m_alignItems
             || rareNonInheritedData->m_alignSelf != other->rareNonInheritedData->m_alignSelf
             || rareNonInheritedData->m_justifyContent != other->rareNonInheritedData->m_justifyContent)
-            return StyleDifferenceLayout;
+            return true;
 
         // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
         if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))
-            return StyleDifferenceLayout;
+            return true;
 
         if (!rareNonInheritedData->reflectionDataEquivalent(*other->rareNonInheritedData.get()))
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_multiCol.get() != other->rareNonInheritedData->m_multiCol.get()
             && *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get())
-            return StyleDifferenceLayout;
+            return true;
 
         if (rareNonInheritedData->m_transform.get() != other->rareNonInheritedData->m_transform.get()
             && *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get()) {
@@ -448,13 +437,13 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
             // Don't return; keep looking for another change
 #else
-            return StyleDifferenceLayout;
+            return true;
 #endif
         }
 
         if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
             || rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
-            return StyleDifferenceLayout;
+            return true;
 
 #if !USE(ACCELERATED_COMPOSITING)
         if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
@@ -463,19 +452,19 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
                 || rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective
                 || rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX
                 || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
-                return StyleDifferenceLayout;
+                return true;
         }
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
         if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
-            return StyleDifferenceLayout;
+            return true;
 #endif
 
 #if ENABLE(CSS_EXCLUSIONS)
         if (rareNonInheritedData->m_shapeInside != other->rareNonInheritedData->m_shapeInside)
-            return StyleDifferenceLayout;
+            return true;
 #endif
     }
 
@@ -512,18 +501,18 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap
             || rareInheritedData->m_lineAlign != other->rareInheritedData->m_lineAlign
             || rareInheritedData->listStyleImage != other->rareInheritedData->listStyleImage)
-            return StyleDifferenceLayout;
+            return true;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
-            return StyleDifferenceLayout;
+            return true;
 
         if (textStrokeWidth() != other->textStrokeWidth())
-            return StyleDifferenceLayout;
+            return true;
     }
 
 #if ENABLE(TEXT_AUTOSIZING)
     if (visual->m_textAutosizingMultiplier != other->visual->m_textAutosizingMultiplier)
-        return StyleDifferenceLayout;
+        return true;
 #endif
 
     if (inherited->line_height != other->inherited->line_height
@@ -535,7 +524,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || noninherited_flags._position != other->noninherited_flags._position
         || noninherited_flags._floating != other->noninherited_flags._floating
         || noninherited_flags._originalDisplay != other->noninherited_flags._originalDisplay)
-        return StyleDifferenceLayout;
+        return true;
 
 
     if (((int)noninherited_flags._effectiveDisplay) >= TABLE) {
@@ -543,7 +532,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || inherited_flags._empty_cells != other->inherited_flags._empty_cells
             || inherited_flags._caption_side != other->inherited_flags._caption_side
             || noninherited_flags._table_layout != other->noninherited_flags._table_layout)
-            return StyleDifferenceLayout;
+            return true;
 
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
         // does not, so these style differences can be width differences.
@@ -556,13 +545,13 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
                 || (borderLeftStyle() == BNONE && other->borderLeftStyle() == BHIDDEN)
                 || (borderRightStyle() == BHIDDEN && other->borderRightStyle() == BNONE)
                 || (borderRightStyle() == BNONE && other->borderRightStyle() == BHIDDEN)))
-            return StyleDifferenceLayout;
+            return true;
     }
 
     if (noninherited_flags._effectiveDisplay == LIST_ITEM) {
         if (inherited_flags._list_style_type != other->inherited_flags._list_style_type
             || inherited_flags._list_style_position != other->inherited_flags._list_style_position)
-            return StyleDifferenceLayout;
+            return true;
     }
 
     if (inherited_flags._text_align != other->inherited_flags._text_align
@@ -571,20 +560,20 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || inherited_flags._white_space != other->inherited_flags._white_space
         || noninherited_flags._clear != other->noninherited_flags._clear
         || noninherited_flags._unicodeBidi != other->noninherited_flags._unicodeBidi)
-        return StyleDifferenceLayout;
+        return true;
 
     // Check block flow direction.
     if (inherited_flags.m_writingMode != other->inherited_flags.m_writingMode)
-        return StyleDifferenceLayout;
+        return true;
 
     // Check text combine mode.
     if (rareNonInheritedData->m_textCombine != other->rareNonInheritedData->m_textCombine)
-        return StyleDifferenceLayout;
+        return true;
 
     // Overflow returns a layout hint.
     if (noninherited_flags._overflowX != other->noninherited_flags._overflowX
         || noninherited_flags._overflowY != other->noninherited_flags._overflowY)
-        return StyleDifferenceLayout;
+        return true;
 
     // If our border widths change, then we need to layout.  Other changes to borders
     // only necessitate a repaint.
@@ -592,16 +581,16 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || borderTopWidth() != other->borderTopWidth()
         || borderBottomWidth() != other->borderBottomWidth()
         || borderRightWidth() != other->borderRightWidth())
-        return StyleDifferenceLayout;
+        return true;
 
     // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
     const CounterDirectiveMap* mapA = rareNonInheritedData->m_counterDirectives.get();
     const CounterDirectiveMap* mapB = other->rareNonInheritedData->m_counterDirectives.get();
     if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
-        return StyleDifferenceLayout;
+        return true;
 
     if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
-        return StyleDifferenceLayout;
+        return true;
 
     if ((rareNonInheritedData->opacity == 1 && other->rareNonInheritedData->opacity < 1)
         || (rareNonInheritedData->opacity < 1 && other->rareNonInheritedData->opacity == 1)) {
@@ -610,44 +599,58 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
         // In addition we need to solve the floating object issue when layers come and go. Right now
         // a full layout is necessary to keep floating object lists sane.
-        return StyleDifferenceLayout;
+        return true;
     }
 
     const QuotesData* quotesDataA = rareInheritedData->quotes.get();
     const QuotesData* quotesDataB = other->rareInheritedData->quotes.get();
     if (!(quotesDataA == quotesDataB || (quotesDataA && quotesDataB && *quotesDataA == *quotesDataB)))
-        return StyleDifferenceLayout;
+        return true;
 
-#if ENABLE(SVG)
-    // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
-    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,
-    // but have to return StyleDifferenceLayout, that's why  this if branch comes after all branches
-    // that are relevant for SVG and might return StyleDifferenceLayout.
-    if (svgChange != StyleDifferenceEqual)
-        return svgChange;
-#endif
-
-    // Make sure these left/top/right/bottom checks stay below all layout checks and above
-    // all visible checks.
     if (position() != StaticPosition) {
         if (surround->offset != other->surround->offset) {
-             // Optimize for the case where a positioned layer is moving but not changing size.
-            if (position() == AbsolutePosition && positionedObjectMoved(surround->offset, other->surround->offset, m_box->width()))
-
-                return StyleDifferenceLayoutPositionedMovementOnly;
-
             // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
             // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
             // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
-            return StyleDifferenceLayout;
-        } else if (m_box->zIndex() != other->m_box->zIndex() || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex()
-                 || visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip)
-            return StyleDifferenceRepaintLayer;
+            if (position() != AbsolutePosition)
+                return true;
+
+            // Optimize for the case where a positioned layer is moving but not changing size.
+            if (!positionChangeIsMovementOnly(surround->offset, other->surround->offset, m_box->width()))
+                return true;
+        }
     }
     
+    return false;
+}
+
+bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle* other, unsigned&) const
+{
+    if (position() == StaticPosition)
+        return false;
+
+    if (surround->offset != other->surround->offset) {
+        // Optimize for the case where a positioned layer is moving but not changing size.
+        if (position() == AbsolutePosition && positionChangeIsMovementOnly(surround->offset, other->surround->offset, m_box->width()))
+            return true;
+    }
+    
+    return false;
+}
+
+bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+{
+    if (position() != StaticPosition) {
+        if (m_box->zIndex() != other->m_box->zIndex()
+            || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex()
+            || visual->clip != other->visual->clip
+            || visual->hasClip != other->visual->hasClip)
+            return true;
+    }
+
 #if ENABLE(CSS_COMPOSITING)
     if (rareNonInheritedData->m_effectiveBlendMode != other->rareNonInheritedData->m_effectiveBlendMode)
-        return StyleDifferenceRepaintLayer;
+        return true;
 #endif
 
     if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {
@@ -655,7 +658,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         // Don't return; keep looking for another change.
 #else
-        return StyleDifferenceRepaintLayer;
+        return true;
 #endif
     }
 
@@ -666,15 +669,20 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
         // Don't return; keep looking for another change.
 #else
-        return StyleDifferenceRepaintLayer;
+        return true;
 #endif
     }
 #endif
 
     if (rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask
         || rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)
-        return StyleDifferenceRepaintLayer;
+        return true;
 
+    return false;
+}
+
+bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) const
+{
     if (inherited_flags._visibility != other->inherited_flags._visibility
         || inherited_flags.m_printColorAdjust != other->inherited_flags.m_printColorAdjust
         || inherited_flags._insideLink != other->inherited_flags._insideLink
@@ -685,30 +693,24 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag
         || rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit
         || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
-        return StyleDifferenceRepaint;
+        return true;
         
-        // FIXME: The current spec is being reworked to remove dependencies between exclusions and affected 
-        // content. There's a proposal to use floats instead. In that case, wrap-shape should actually relayout 
-        // the parent container. For sure, I will have to revisit this code, but for now I've added this in order 
-        // to avoid having diff() == StyleDifferenceEqual where wrap-shapes actually differ.
-        // Tracking bug: https://bugs.webkit.org/show_bug.cgi?id=62991
-        if (rareNonInheritedData->m_shapeOutside != other->rareNonInheritedData->m_shapeOutside)
-            return StyleDifferenceRepaint;
+    // FIXME: The current spec is being reworked to remove dependencies between exclusions and affected 
+    // content. There's a proposal to use floats instead. In that case, wrap-shape should actually relayout 
+    // the parent container. For sure, I will have to revisit this code, but for now I've added this in order 
+    // to avoid having diff() == StyleDifferenceEqual where wrap-shapes actually differ.
+    // Tracking bug: https://bugs.webkit.org/show_bug.cgi?id=62991
+    if (rareNonInheritedData->m_shapeOutside != other->rareNonInheritedData->m_shapeOutside)
+        return true;
 
-        if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
-            return StyleDifferenceRepaint;
+    if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
+        return true;
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
-        if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
-            || rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility
-            || rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective
-            || rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX
-            || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
-            return StyleDifferenceRecompositeLayer;
-    }
-#endif
+    return false;
+}
 
+bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle* other, unsigned&) const
+{
     if (inherited->color != other->inherited->color
         || inherited_flags._text_decorations != other->inherited_flags._text_decorations
         || visual->textDecoration != other->visual->textDecoration
@@ -720,6 +722,68 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
         || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
         || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill)
+        return true;
+
+    return false;
+}
+
+bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle* other, unsigned&) const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
+        if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
+            || rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility
+            || rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective
+            || rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX
+            || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
+            return true;
+    }
+#endif
+    return false;
+}
+
+StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+{
+    changedContextSensitiveProperties = ContextSensitivePropertyNone;
+
+#if ENABLE(SVG)
+    StyleDifference svgChange = StyleDifferenceEqual;
+    if (m_svgStyle != other->m_svgStyle) {
+        svgChange = m_svgStyle->diff(other->m_svgStyle.get());
+        if (svgChange == StyleDifferenceLayout)
+            return svgChange;
+    }
+#endif
+
+    if (changeRequiresLayout(other, changedContextSensitiveProperties))
+        return StyleDifferenceLayout;
+
+#if ENABLE(SVG)
+    // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
+    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,
+    // but have to return StyleDifferenceLayout, that's why  this if branch comes after all branches
+    // that are relevant for SVG and might return StyleDifferenceLayout.
+    if (svgChange != StyleDifferenceEqual)
+        return svgChange;
+#endif
+
+    // FIXME: we need to also check for repaint changes after a PositionedMovementOnly change
+    // on a composited layer: https://bugs.webkit.org/show_bug.cgi?id=116319
+    if (changeRequiresPositionedLayoutOnly(other, changedContextSensitiveProperties))
+        return StyleDifferenceLayoutPositionedMovementOnly;
+
+    if (changeRequiresLayerRepaint(other, changedContextSensitiveProperties))
+        return StyleDifferenceRepaintLayer;
+
+    if (changeRequiresRepaint(other, changedContextSensitiveProperties))
+        return StyleDifferenceRepaint;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (changeRequiresRecompositeLayer(other, changedContextSensitiveProperties))
+        return StyleDifferenceRecompositeLayer;
+#endif
+
+    if (changeRequiresRepaintIfText(other, changedContextSensitiveProperties))
         return StyleDifferenceRepaintIfText;
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
