@@ -1,3 +1,27 @@
+2013-05-19  Darin Adler  <darin@apple.com>
+
+        Eliminate the Editor::newGeneralClipboard function
+        https://bugs.webkit.org/show_bug.cgi?id=116410
+
+        Reviewed by Andreas Kling.
+
+        This is one of the clean-ups made possible by the changes to the DOM clipboard class.
+        I had been waiting until all the platforms were moved over to it, but it turns out to be
+        easy to do this now, just with #ifdefs.
+
+        * PlatformBlackBerry.cmake: Deleted EditorBlackBerry.cpp.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent): Call Clipboard::createForCopyAndPaste directly when
+        using the new version of the Clipboard class. Also some small style cleanup nearby.
+
+        * editing/blackberry/EditorBlackBerry.cpp: Removed. The only function in this file was
+        newGeneralClipboard.
+
+        * editing/mac/EditorMac.mm: Deleted newGeneralClipboard.
+        * platform/efl/ClipboardEfl.cpp: Ditto.
+        * platform/gtk/ClipboardGtk.cpp: Ditto.
+
 2013-05-19  Martin Robinson  <mrobinson@igalia.com>
 
         GtkSelectionData length is off by one

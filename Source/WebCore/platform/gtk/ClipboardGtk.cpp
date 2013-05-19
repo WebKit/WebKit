@@ -26,12 +26,6 @@
 
 namespace WebCore {
 
-// FIXME: this should be moved to editing/gtk/EditorGtk.cpp.
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
-{
-    return Clipboard::createForCopyAndPaste(policy);
-}
-
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {
     location = m_dragLoc;

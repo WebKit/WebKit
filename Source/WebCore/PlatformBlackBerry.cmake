@@ -93,7 +93,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 
 # BlackBerry sources
 list(APPEND WebCore_SOURCES
-    editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
     html/shadow/MediaControlsBlackBerry.cpp
     page/blackberry/AccessibilityObjectBlackBerry.cpp

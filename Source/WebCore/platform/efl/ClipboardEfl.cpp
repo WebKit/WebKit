@@ -27,11 +27,6 @@
 
 namespace WebCore {
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
-{
-    return Clipboard::createForCopyAndPaste(policy);
-}
-
 DragImageRef Clipboard::createDragImage(IntPoint&) const
 {
     notImplemented();

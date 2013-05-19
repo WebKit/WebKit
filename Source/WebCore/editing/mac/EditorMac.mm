@@ -57,11 +57,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
-{
-    return Clipboard::createForCopyAndPaste(policy);
-}
-
 void Editor::showFontPanel()
 {
     [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
