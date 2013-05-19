@@ -138,7 +138,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
 
         if (continueRendering) {
-            childPaintInfo.updatePaintingRootForChildren(this);
+            childPaintInfo.updateSubtreePaintRootForChildren(this);
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 child->paint(childPaintInfo, IntPoint());
         }

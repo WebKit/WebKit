@@ -1030,7 +1030,7 @@ void RenderBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
-    childInfo.updatePaintingRootForChildren(this);
+    childInfo.updateSubtreePaintRootForChildren(this);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
         child->paint(childInfo, adjustedPaintOffset);
 }

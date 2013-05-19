@@ -101,7 +101,7 @@ void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& pai
 
     PaintInfo paintInfoForChild(paintInfo);
     paintInfoForChild.phase = newPhase;
-    paintInfoForChild.updatePaintingRootForChildren(this);
+    paintInfoForChild.updateSubtreePaintRootForChildren(this);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);

@@ -3116,7 +3116,7 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // We don't paint our own background, but we do let the kids paint their backgrounds.
         PaintInfo paintInfoForChild(paintInfo);
         paintInfoForChild.phase = newPhase;
-        paintInfoForChild.updatePaintingRootForChildren(this);
+        paintInfoForChild.updateSubtreePaintRootForChildren(this);
 
         // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
         // NSViews. Do not add any more code for this.

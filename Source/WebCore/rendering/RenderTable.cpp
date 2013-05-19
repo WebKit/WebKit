@@ -653,7 +653,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     PaintInfo info(paintInfo);
     info.phase = paintPhase;
-    info.updatePaintingRootForChildren(this);
+    info.updateSubtreePaintRootForChildren(this);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {

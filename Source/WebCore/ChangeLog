@@ -1,3 +1,56 @@
+2013-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Change the terminology used by rendering code when painting a given node and its children from "paintingRoot" to "subtreePaintRoot"
+        https://bugs.webkit.org/show_bug.cgi?id=116417
+
+        Reviewed by Sam Weinig.
+        
+        PaintInfo and RenderLayer code referred to a "paintingRoot". This is only set when
+        FrameView::setNodeToDraw() has been called and is used to restrict painting to
+        some part of the subtree, but it could easily be misinterpreted, and confused with
+        the "rootLayer" used by RenderLayer (which is usually not the layer associated with
+        the paintingRoot).
+        
+        Change the terminology from "paintingRoot" to "subtreePaintRoot" root to make the
+        purpose of this variable more obvious.
+
+        No behavior change.
+
+        * page/FrameView.cpp: Add a comment for setNodeToDraw(); in future this should
+        be called setSubtreePaintRoot() or something. Not done in this patch to avoid
+        risk; this function is exported from WebCore.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        (WebCore::PaintInfo::updateSubtreePaintRootForChildren):
+        (WebCore::PaintInfo::shouldPaintWithinRoot):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::paintMaskForFragments):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::LayerPaintingInfo::LayerPaintingInfo):
+        * rendering/RenderObject.cpp: Add a comment to recommend changing the name of
+        paintingRootRect() to refer to a subtree paint. Not done in this patch to avoid
+        risk; this function is exported from WebCore.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+
 2013-05-19  Darin Adler  <darin@apple.com>
 
         Use Element instead of Node in DragState, also redo DragState struct

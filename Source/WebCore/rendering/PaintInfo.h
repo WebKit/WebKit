@@ -54,13 +54,13 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
  */
 struct PaintInfo {
     PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
-        RenderObject* newPaintingRoot = 0, RenderRegion* region = 0, ListHashSet<RenderInline*>* newOutlineObjects = 0,
+        RenderObject* newSubtreePaintRoot = 0, RenderRegion* region = 0, ListHashSet<RenderInline*>* newOutlineObjects = 0,
         OverlapTestRequestMap* overlapTestRequests = 0, const RenderLayerModelObject* newPaintContainer = 0)
         : context(newContext)
         , rect(newRect)
         , phase(newPhase)
         , paintBehavior(newPaintBehavior)
-        , paintingRoot(newPaintingRoot)
+        , subtreePaintRoot(newSubtreePaintRoot)
         , renderRegion(region)
         , outlineObjects(newOutlineObjects)
         , overlapTestRequests(overlapTestRequests)
@@ -68,21 +68,21 @@ struct PaintInfo {
     {
     }
 
-    void updatePaintingRootForChildren(const RenderObject* renderer)
+    void updateSubtreePaintRootForChildren(const RenderObject* renderer)
     {
-        if (!paintingRoot)
+        if (!subtreePaintRoot)
             return;
 
         // If we're the painting root, kids draw normally, and see root of 0.
-        if (paintingRoot == renderer) {
-            paintingRoot = 0; 
+        if (subtreePaintRoot == renderer) {
+            subtreePaintRoot = 0; 
             return;
         }
     }
 
     bool shouldPaintWithinRoot(const RenderObject* renderer) const
     {
-        return !paintingRoot || paintingRoot == renderer;
+        return !subtreePaintRoot || subtreePaintRoot == renderer;
     }
 
     bool forceBlackText() const { return paintBehavior & PaintBehaviorForceBlackText; }
@@ -112,7 +112,7 @@ struct PaintInfo {
     IntRect rect;
     PaintPhase phase;
     PaintBehavior paintBehavior;
-    RenderObject* paintingRoot; // used to draw just one element and its visual kids
+    RenderObject* subtreePaintRoot; // used to draw just one element and its visual children
     RenderRegion* renderRegion;
     ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     OverlapTestRequestMap* overlapTestRequests;

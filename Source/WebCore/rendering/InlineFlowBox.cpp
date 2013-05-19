@@ -1141,7 +1141,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     PaintPhase paintPhase = paintInfo.phase == PaintPhaseChildOutlines ? PaintPhaseOutline : paintInfo.phase;
     PaintInfo childInfo(paintInfo);
     childInfo.phase = paintPhase;
-    childInfo.updatePaintingRootForChildren(renderer());
+    childInfo.updateSubtreePaintRootForChildren(renderer());
     
     // Paint our children.
     if (paintPhase != PaintPhaseSelfOutline) {

@@ -3581,6 +3581,7 @@ bool FrameView::isPainting() const
     return m_isPainting;
 }
 
+// FIXME: change this to use the subtreePaint terminology.
 void FrameView::setNodeToDraw(Node* node)
 {
     m_nodeToDraw = node;
