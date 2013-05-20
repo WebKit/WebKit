@@ -1,3 +1,16 @@
+2013-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] media/event-queue-crash.html ASSERTs in notifyChildInserted
+        https://bugs.webkit.org/show_bug.cgi?id=116444
+
+        Reviewed by Jer Noble.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureMediaControls): Only create media controls when the
+            element is in a Document.
+
 2013-05-20  Antoine Quint  <graouts@apple.com>
 
         [Mac] captions menu should behave more like a menu

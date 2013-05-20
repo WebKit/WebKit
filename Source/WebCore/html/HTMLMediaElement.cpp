@@ -4617,11 +4617,11 @@ void HTMLMediaElement::configureMediaControls()
 
     mediaControls()->show();
 #else
-    if (!hasMediaControls())
-        createMediaControls();
-
     if (m_player)
         m_player->setControls(controls());
+
+    if (!hasMediaControls() && inDocument())
+        createMediaControls();
 #endif
 }
 
