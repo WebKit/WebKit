@@ -86,7 +86,7 @@ private:
     void didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef);
     void didClearWindowForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
     void didCancelClientRedirectForFrame(WKBundleFrameRef);
-    void willPerformClientRedirectForFrame(WKBundleFrameRef, WKURLRef url, double delay, double date);
+    void willPerformClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef, WKURLRef, double delay, double date);
     void didSameDocumentNavigationForFrame(WKBundleFrameRef, WKSameDocumentNavigationType);
     void didFinishDocumentLoadForFrame(WKBundleFrameRef);
     void didHandleOnloadEventsForFrame(WKBundleFrameRef);

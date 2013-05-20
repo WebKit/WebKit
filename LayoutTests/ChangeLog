@@ -1,3 +1,13 @@
+2013-05-20  Alex Christensen  <achristensen@apple.com>
+
+        WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116125
+
+        Reviewed by Tim Horton.
+
+        * platform/wk2/TestExpectations:
+        Unskipped working tests.
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation to editing/selection/user-drag-element-and-user-select-none.html
