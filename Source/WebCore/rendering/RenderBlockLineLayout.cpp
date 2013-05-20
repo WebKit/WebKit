@@ -1672,8 +1672,16 @@ void RenderBlock::updateLineBoundariesForExclusions(ExclusionShapeInsideInfo* ex
 
     // The overflow should be pushed below the content box
     LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
-    if (!flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
-        setLogicalHeight(shapeContainingBlockHeight);
+    if (!exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
+        LayoutUnit newHeight = shapeContainingBlockHeight;
+
+        if (layoutState.flowThread()) {
+            // If block contents flown across multiple regions and the shape-inside was applied on the second region we can end up with negative lineTop
+            if (lineTop < 0)
+                return;
+            newHeight = logicalHeight + shapeContainingBlockHeight - lineTop - currentRegion->borderAndPaddingBefore();
+        }
+        setLogicalHeight(newHeight);
         lineOverflowsFromShapeInside = true;
     }
 }
@@ -1717,8 +1725,12 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             absoluteLogicalTop = logicalTop();
         }
         // Begin layout at the logical top of our shape inside.
-        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop() && !layoutState.flowThread())
-            setLogicalHeight(exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop);
+        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop()) {
+            LayoutUnit logicalHeight = exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop;
+            if (layoutState.flowThread())
+                logicalHeight -= exclusionShapeInsideInfo->owner()->borderAndPaddingBefore();
+            setLogicalHeight(logicalHeight);
+        }
     }
 
     bool lineOverflowsFromShapeInside = false;

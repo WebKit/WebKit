@@ -1,3 +1,23 @@
+2013-05-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Exclusions] shape-inside on regions should respect positioned shapes and overflow
+        https://bugs.webkit.org/show_bug.cgi?id=116252
+
+        Reviewed by David Hyatt.
+
+        Regions should respect shape-inside properties which have specified top offset. Since the content which overflows from the
+        shape should be pushed after the content box (for details check out r148975), I implemented  overflowthe behavior for simple
+        cases when you have only one region. I'm going to implement it for additional regions in a follow up patch.
+
+        Tests: fast/regions/shape-inside/shape-inside-on-regions-block-content-basic-overflow-shape-top-offset.html
+               fast/regions/shape-inside/shape-inside-on-regions-inline-content-basic-overflow-shape-top-offset.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateLineBoundariesForExclusions): Handle the flow thread case, push the overflowing content after the
+        content box. Respect existing shape-inside on region tests.
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Set the correct logical top position for the shape-inside in
+        the case of regions. Respect the region's margins and paddings.
+
 2013-05-20  Darin Adler  <darin@apple.com>
 
         Remove custom binding for the Clipboard clearData function
