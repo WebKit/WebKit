@@ -98,6 +98,7 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
 #if PLATFORM(MAC)
     , m_processSuppressionEnabled(false)
 #endif
+    , m_forcefulTerminationTimer(RunLoop::main(), this, &WebProcessProxy::forcefulTerminationTimerFired)
 {
     connect();
 }
@@ -201,12 +202,17 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     updateProcessSuppressionState();
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
+    if (!canTerminateChildProcess())
+        return;
+
     // Terminate the web process immediately if we have enough information to confidently do so.
     // This only works if we're using a network process. Otherwise we have to wait for the web process to clean up.
-    if (!m_suddenTerminationCounter && canTerminateChildProcess() && m_context->usesNetworkProcess())
+    if (m_context->usesNetworkProcess() && !m_suddenTerminationCounter)
         requestTermination();
-#endif
+    else {
+        const double timeBeforeForcefullyKillingWebProcessInSeconds = 10;
+        m_forcefulTerminationTimer.startOneShot(timeBeforeForcefullyKillingWebProcessInSeconds);
+    }
 }
 
 Vector<WebPageProxy*> WebProcessProxy::pages() const
@@ -655,6 +661,13 @@ void WebProcessProxy::releasePageCache()
         send(Messages::WebProcess::ReleasePageCache(), 0);
 }
 
+void WebProcessProxy::forcefulTerminationTimerFired()
+{
+#if PLATFORM(MAC)
+    WTFLogAlways("Killing runaway web process, pid=%d\n", processIdentifier());
+#endif
+    requestTermination();
+}
 
 void WebProcessProxy::requestTermination()
 {
