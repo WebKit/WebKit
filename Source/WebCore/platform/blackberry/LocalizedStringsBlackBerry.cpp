@@ -635,4 +635,36 @@ String snapshottedPlugInLabelSubtitle()
     return String();
 }
 
+String weekFormatInLDML()
+{
+    notImplemented();
+    return String();
+}
+
+#if ENABLE(VIDEO_TRACK)
+String textTrackClosedCaptionsText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackSubtitlesText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackOffText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackNoLabelText()
+{
+    notImplemented();
+    return String();
+}
+#endif
+
 } // namespace WebCore

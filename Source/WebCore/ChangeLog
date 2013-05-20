@@ -1,3 +1,20 @@
+2013-05-20  Xan Lopez  <xlopez@igalia.com>
+
+        [BlackBerry] LocalizedStringsBlackBerry: add dummy text track strings
+        https://bugs.webkit.org/show_bug.cgi?id=116300
+
+        Reviewed by Rob Buis.
+
+        These are dummy implementations necessary to make WebKit link.
+
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::weekFormatInLDML):
+        (WebCore):
+        (WebCore::textTrackClosedCaptionsText):
+        (WebCore::textTrackSubtitlesText):
+        (WebCore::textTrackOffText):
+        (WebCore::textTrackNoLabelText):
+
 2013-05-19  Darin Adler  <darin@apple.com>
 
         [Mac] Improve string use in PasteboardMac
