@@ -1,3 +1,19 @@
+2013-05-18  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
+
+        [Cairo] Canvas-shadow behavior is not being as expected
+        https://bugs.webkit.org/show_bug.cgi?id=108897
+
+        Reviewed by Martin Robinson.
+
+        Test to verify the shadow of an image drawn on canvas.
+        This test uses an image whose size is smaller than,
+        the size of the rectangle which should be filled with the image.
+
+        * fast/canvas/canvas-image-shadow-expected.txt: Added.
+        * fast/canvas/canvas-image-shadow.html: Added.
+        * fast/canvas/script-tests/canvas-image-shadow.js: Added.
+        (draw):
+
 2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Reenabled INDEXED_DATABASE after r150344

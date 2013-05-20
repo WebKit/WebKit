@@ -1,3 +1,19 @@
+2013-05-18  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
+
+        [Cairo] Canvas-shadow behavior is not being as expected
+        https://bugs.webkit.org/show_bug.cgi?id=108897
+
+        Reviewed by Martin Robinson.
+
+        ShadowBlur::endShadowLayer copies the image from shadowContext to cairoContext.
+        CairoContext-path should be empty for doing this copy. Otherwise, the 
+        original-image area will also get filled with the shadow.
+
+        Test: fast/canvas/canvas-image-shadow.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow):
+
 2013-05-20  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
 
         -webkit-text-underline-position should not be inherited

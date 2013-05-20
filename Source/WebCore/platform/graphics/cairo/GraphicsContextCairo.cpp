@@ -141,10 +141,12 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
         cairo_stroke(cairoShadowContext);
     }
 
-    shadow.endShadowLayer(context);
-
-    // ShadowBlur::endShadowLayer destroys the current path on the Cairo context. We restore it here.
+    // The original path may still be hanging around on the context and endShadowLayer
+    // will take care of properly creating a path to draw the result shadow. We remove the path
+    // temporarily and then restore it.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=108897
     cairo_new_path(cairoContext);
+    shadow.endShadowLayer(context);
     cairo_append_path(cairoContext, path.get());
 }
 
