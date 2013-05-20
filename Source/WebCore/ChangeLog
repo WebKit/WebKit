@@ -1,3 +1,19 @@
+2013-05-20  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
+
+        Add compile asserts for the size of RootInlineBox and InlineTextbox
+        https://bugs.webkit.org/show_bug.cgi?id=116337
+
+        Reviewed by Darin Adler.
+
+        Add compile asserts to ensure RootInlineBox and InlineTextbox stay small.
+
+        * rendering/InlineTextBox.cpp:
+        (SameSizeAsInlineTextBox):
+        (WebCore):
+        * rendering/RootInlineBox.cpp:
+        (SameSizeAsRootInlineBox):
+        (WebCore):
+
 2013-05-20  Xan Lopez  <xlopez@igalia.com>
 
         [BlackBerry] LocalizedStringsBlackBerry: add dummy text track strings

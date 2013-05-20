@@ -43,6 +43,13 @@ using namespace std;
 
 namespace WebCore {
     
+struct SameSizeAsRootInlineBox : public InlineFlowBox {
+    unsigned variables[5];
+    void* pointers[4];
+};
+
+COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
+
 typedef WTF::HashMap<const RootInlineBox*, EllipsisBox*> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
