@@ -1,3 +1,24 @@
+2013-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out a new KeyedEncoder class
+        https://bugs.webkit.org/show_bug.cgi?id=116456
+
+        Reviewed by Sam Weinig.
+
+        This class (and it's coming counterpart, KeyedDecoder) will be used for serializing
+        object graphs to a tree-like structure of dictionaries. It is up to individual ports to
+        serialize them further (for example, on Mac they could be serialized to CFPropertyList objects).
+        
+        This will be used for serializing session storage state but I hope that it can be used for serializing
+        back forward state in the future as our current implementation of back forward state serialization
+        is fragile and depends on our IPC layer's binary encoding(!).
+        
+        * Shared/KeyedCodingValue.h: Added.
+        * Shared/KeyedEncoder.cpp: Added.
+        * Shared/KeyedEncoder.h: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-05-19  Sam Weinig  <sam@webkit.org>
 
         Bump WKBundlePageLoaderClient version number so as not to break some clients

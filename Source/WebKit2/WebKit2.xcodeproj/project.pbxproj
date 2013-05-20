@@ -149,6 +149,9 @@
 		1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */; };
 		1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9F3112B844E2008FE984 /* PluginQuirks.h */; };
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
+		1A588B30174AAC7100ACF472 /* KeyedEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A588B2E174AAC7100ACF472 /* KeyedEncoder.cpp */; };
+		1A588B31174AAC7100ACF472 /* KeyedEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A588B2F174AAC7100ACF472 /* KeyedEncoder.h */; };
+		1A588B33174AAE0B00ACF472 /* KeyedCodingValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A588B32174AAE0B00ACF472 /* KeyedCodingValue.h */; };
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
@@ -1569,6 +1572,9 @@
 		1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1A4F976E100E7B6600637A18 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A588B2E174AAC7100ACF472 /* KeyedEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoder.cpp; sourceTree = "<group>"; };
+		1A588B2F174AAC7100ACF472 /* KeyedEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoder.h; sourceTree = "<group>"; };
+		1A588B32174AAE0B00ACF472 /* KeyedCodingValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedCodingValue.h; sourceTree = "<group>"; };
 		1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUIClient.cpp; sourceTree = "<group>"; };
 		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
@@ -3260,6 +3266,9 @@
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
+				1A588B32174AAE0B00ACF472 /* KeyedCodingValue.h */,
+				1A588B2E174AAC7100ACF472 /* KeyedEncoder.cpp */,
+				1A588B2F174AAC7100ACF472 /* KeyedEncoder.h */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				BCC8049D122F0D6B00103529 /* MutableArray.cpp */,
 				BCC8049E122F0D6B00103529 /* MutableArray.h */,
@@ -5457,6 +5466,7 @@
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				519B4FF516A9EA970066874D /* SchedulableLoader.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
+				1A588B33174AAE0B00ACF472 /* KeyedCodingValue.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
 				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
@@ -5515,6 +5525,7 @@
 				BC032D7710F4378D0058C15A /* WebContextMenuClient.h in Headers */,
 				512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */,
 				510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */,
+				1A588B31174AAC7100ACF472 /* KeyedEncoder.h in Headers */,
 				51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */,
 				51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */,
 				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
@@ -7025,6 +7036,7 @@
 				BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */,
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,
 				5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */,
+				1A588B30174AAC7100ACF472 /* KeyedEncoder.cpp in Sources */,
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
 				3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */,
