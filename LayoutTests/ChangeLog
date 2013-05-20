@@ -1,3 +1,12 @@
+2013-05-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed TestExpectation cleanup. Reordered lines
+        to match Mac version to make it easier to understand what features
+        are uniquely missing in Windows port.
+
+        * platform/win/TestExpectations: Reordering of lines, adds some
+        bug ID's to existing skipped tests.
+
 2013-05-20  Hans Muller  <hmuller@adobe.com>
 
         [Qt] REGRESSION(r149457): some fast/exclusions tests are failing
