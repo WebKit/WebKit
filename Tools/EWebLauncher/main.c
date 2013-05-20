@@ -990,17 +990,11 @@ main(int argc, char *argv[])
 
     User_Arguments userArgs;
 
-    if (!ecore_evas_init())
+    if (!ewk_init())
         return EXIT_FAILURE;
-
-    if (!edje_init()) {
-        ecore_evas_shutdown();
-        return EXIT_FAILURE;
-    }
 
     if (!ecore_file_init()) {
-        edje_shutdown();
-        ecore_evas_shutdown();
+        ewk_shutdown();
         return EXIT_FAILURE;
     }
 
@@ -1014,7 +1008,6 @@ main(int argc, char *argv[])
     if (!themePath)
         return quit(EINA_FALSE, "ERROR: could not find theme.\n");
 
-    ewk_init();
     tmp = getenv("TMPDIR");
     if (!tmp)
         tmp = "/tmp";
@@ -1042,6 +1035,7 @@ main(int argc, char *argv[])
 
     ecore_main_loop_begin();
 
+    ecore_file_shutdown();
     ewk_shutdown();
 
     return quit(EINA_TRUE, NULL);

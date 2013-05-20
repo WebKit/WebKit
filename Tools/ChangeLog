@@ -1,3 +1,16 @@
+2013-05-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] init/shutdown should be paired in EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=116427
+
+        Reviewed by Christophe Dumez.
+
+        Added ecore_file_shutdown() for cleanup of ecore_file.
+        Removed edje_init and ecore_evas_init because it was in ewk_init().
+
+        * EWebLauncher/main.c:
+        (main):
+
 2013-05-19  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Add command line option to MiniBrowser to set user agent
