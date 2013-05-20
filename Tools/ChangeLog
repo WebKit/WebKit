@@ -1,3 +1,24 @@
+2013-05-20  Dirk Pranke  <dpranke@chromium.org>
+
+        fix w3c test importer unit tests after r150324
+        https://bugs.webkit.org/show_bug.cgi?id=116459
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch fixes the unit tests to not actually call out to
+        'hg' (by using a mock executive) and also changes the real
+        directory we crawl from Source/WebCore/css to
+        Tools/Scripts/webkitpy/w3c to run much more quickly. We should
+        still change this to a mock filesystem, but that's a separate change.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (TestImporter.__init__):
+        (TestImporter.load_changeset):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg):
+        (TestImporterTest.test_import_dir_with_no_tests):
+
 2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL build fix.

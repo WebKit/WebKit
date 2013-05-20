@@ -112,7 +112,7 @@ CHANGESET_NOT_AVAILABLE = 'Not Available'
 def main(_argv, _stdout, _stderr):
     options, args = parse_args()
     import_dir = validate_import_directory(args[0])
-    test_importer = TestImporter(import_dir, options)
+    test_importer = TestImporter(Host(), import_dir, options)
     test_importer.do_import()
 
 
@@ -147,14 +147,14 @@ def validate_import_directory(import_dir):
 
 class TestImporter(object):
 
-    def __init__(self, source_directory, options):
+    def __init__(self, host, source_directory, options):
+        self.host = host
+        self.source_directory = source_directory
         self.options = options
 
-        self.host = Host()
         self.filesystem = self.host.filesystem
         self._webkit_root = __file__.split(self.filesystem.sep + 'Tools')[0]
 
-        self.source_directory = source_directory
         self.destination_directory = self.path_from_webkit_root("LayoutTests", "csswg")
 
         self.changeset = CHANGESET_NOT_AVAILABLE
@@ -171,12 +171,10 @@ class TestImporter(object):
         self.import_tests()
 
     def load_changeset(self):
-        """ Runs hg tip to get the current changeset and parses the output to get the changeset. If that doesn't workout for some reason, it just becomes 'Not Available' """
-
+        """Returns the current changeset from mercurial or "Not Available"."""
         try:
-            # Try to find the changeset using mercurial, but fail gracefully as we don't want to require it to be installed.
             self.changeset = self.host.executive.run_command(['hg', 'tip']).split('changeset:')[1]
-        except ScriptError:
+        except (OSError, ScriptError):
             self.changeset = CHANGESET_NOT_AVAILABLE
 
     def find_importable_tests(self, directory):

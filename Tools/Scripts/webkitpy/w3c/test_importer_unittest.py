@@ -32,19 +32,38 @@ import shutil
 import tempfile
 import unittest2 as unittest
 
+from webkitpy.common.host import Host
+from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.w3c.test_importer import TestImporter
 
 
-@unittest.skip
 class TestImporterTest(unittest.TestCase):
 
-    # FIXME: This test tries to run hg.
-    def test_import_dir_with_no_tests(self):
-        """ Tests do_import() with a directory that contains no tests """
+    def test_import_dir_with_no_tests_and_no_hg(self):
+        # FIXME: Use MockHosts instead.
+        host = Host()
+        host.executive = MockExecutive2(exception=OSError())
 
-        importer = TestImporter(None, optparse.Values({"overwrite": False}))
-        importer.source_directory = importer.path_from_webkit_root("Source", "WebCore", "css")
+        importer = TestImporter(host, None, optparse.Values({"overwrite": False}))
+        importer.source_directory = importer.path_from_webkit_root("Tools", "Scripts", "webkitpy", "w3c")
+        importer.destination_directory = tempfile.mkdtemp(prefix='csswg')
+
+        oc = OutputCapture()
+        oc.capture_output()
+        try:
+            importer.do_import()
+        finally:
+            oc.restore_output()
+            shutil.rmtree(importer.destination_directory, ignore_errors=True)
+
+    def test_import_dir_with_no_tests(self):
+        # FIXME: Use MockHosts instead.
+        host = Host()
+        host.executive = MockExecutive2(exception=ScriptError("abort: no repository found in '/Volumes/Source/src/wk/Tools/Scripts/webkitpy/w3c' (.hg not found)!"))
+
+        importer = TestImporter(host, None, optparse.Values({"overwrite": False}))
+        importer.source_directory = importer.path_from_webkit_root("Tools", "Scripts", "webkitpy", "w3c")
         importer.destination_directory = tempfile.mkdtemp(prefix='csswg')
 
         oc = OutputCapture()
