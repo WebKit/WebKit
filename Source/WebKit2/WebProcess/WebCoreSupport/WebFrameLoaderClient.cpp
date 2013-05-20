@@ -1230,6 +1230,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(maximumSize, maximumSize));
 
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
+    m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 
 #if USE(TILED_BACKING_STORE)
     if (shouldUseFixedLayout) {

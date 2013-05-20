@@ -81,6 +81,11 @@ WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef, WKPoint);
 
+// This only works if the SuppressesIncrementalRendering preference is set as well.
+typedef unsigned WKRenderingSuppressionToken;
+WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef) WARN_UNUSED_RETURN;
+WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef, WKRenderingSuppressionToken);
+
 #ifdef __cplusplus
 }
 #endif

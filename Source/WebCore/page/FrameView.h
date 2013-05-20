@@ -423,6 +423,9 @@ public:
     void firePaintRelatedMilestones();
     LayoutMilestones milestonesPendingPaint() const { return m_milestonesPendingPaint; }
 
+    bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
+    void setVisualUpdatesAllowedByClient(bool);
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -638,6 +641,8 @@ private:
     // the viewport given by the window or viewing area of the UA.
     IntSize m_initialViewportSize;
 #endif
+
+    bool m_visualUpdatesAllowedByClient;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

@@ -506,3 +506,13 @@ bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRe
 {
     return toImpl(pageRef)->canShowMIMEType(toWTFString(mimeTypeRef));
 }
+
+WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->extendIncrementalRenderingSuppression();
+}
+
+void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef pageRef, WKRenderingSuppressionToken token)
+{
+    toImpl(pageRef)->stopExtendingIncrementalRenderingSuppression(token);
+}

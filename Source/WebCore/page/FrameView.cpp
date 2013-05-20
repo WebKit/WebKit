@@ -202,6 +202,7 @@ FrameView::FrameView(Frame* frame)
 #if ENABLE(CSS_FILTERS)
     , m_hasSoftwareFilters(false)
 #endif
+    , m_visualUpdatesAllowedByClient(true)
 {
     init();
 
@@ -4164,6 +4165,16 @@ void FrameView::firePaintRelatedMilestones()
         if (Frame* frame = page->mainFrame())
             frame->loader()->didLayout(milestonesAchieved);
     }
+}
+
+void FrameView::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowed)
+{
+    if (m_visualUpdatesAllowedByClient == visualUpdatesAllowed)
+        return;
+
+    m_visualUpdatesAllowedByClient = visualUpdatesAllowed;
+
+    m_frame->document()->setVisualUpdatesAllowedByClient(visualUpdatesAllowed);
 }
 
 } // namespace WebCore

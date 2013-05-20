@@ -1210,6 +1210,8 @@ public:
 
     void ensurePlugInsInjectedScript(DOMWrapperWorld*);
 
+    void setVisualUpdatesAllowedByClient(bool);
+
 protected:
     Document(Frame*, const KURL&, unsigned = DefaultDocumentClass);
 

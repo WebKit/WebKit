@@ -1257,7 +1257,6 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
     case Loading:
         ASSERT(!m_visualUpdatesSuppressionTimer.isActive());
         ASSERT(m_visualUpdatesAllowed);
-        m_visualUpdatesSuppressionTimer.startOneShot(settings()->incrementalRenderingSuppressionTimeoutInSeconds());
         setVisualUpdatesAllowed(false);
         break;
     case Interactive:
@@ -1266,7 +1265,10 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
     case Complete:
         if (m_visualUpdatesSuppressionTimer.isActive()) {
             ASSERT(!m_visualUpdatesAllowed);
-            m_visualUpdatesSuppressionTimer.stop();
+
+            if (!view()->visualUpdatesAllowedByClient())
+                return;
+
             setVisualUpdatesAllowed(true);
         } else
             ASSERT(m_visualUpdatesAllowed);
@@ -1280,6 +1282,11 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         return;
 
     m_visualUpdatesAllowed = visualUpdatesAllowed;
+
+    if (visualUpdatesAllowed)
+        m_visualUpdatesSuppressionTimer.stop();
+    else
+        m_visualUpdatesSuppressionTimer.startOneShot(settings()->incrementalRenderingSuppressionTimeoutInSeconds());
 
     if (!visualUpdatesAllowed)
         return;
@@ -1308,7 +1315,19 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
 void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)
 {
     ASSERT(!m_visualUpdatesAllowed);
+
+    // If the client is extending the visual update suppression period explicitly, the
+    // watchdog should not re-enable visual updates itself, but should wait for the client.
+    if (!view()->visualUpdatesAllowedByClient())
+        return;
+
     setVisualUpdatesAllowed(true);
+}
+
+void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient)
+{
+    if (visualUpdatesAllowedByClient && m_readyState == Complete && !visualUpdatesAllowed())
+        setVisualUpdatesAllowed(true);
 }
 
 String Document::encoding() const

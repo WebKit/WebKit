@@ -656,6 +656,10 @@ public:
     bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
 #endif
 
+    unsigned extendIncrementalRenderingSuppression();
+    void stopExtendingIncrementalRenderingSuppression(unsigned token);
+    bool shouldExtendIncrementalRenderingSuppression() { return !m_activeRenderingSuppressionTokens.isEmpty(); }
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1015,6 +1019,9 @@ private:
 
     HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
     WebCore::Color m_backgroundColor;
+
+    HashSet<unsigned> m_activeRenderingSuppressionTokens;
+    unsigned m_maximumRenderingSuppressionToken;
 };
 
 } // namespace WebKit

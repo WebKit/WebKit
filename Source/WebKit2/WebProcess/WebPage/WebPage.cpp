@@ -287,6 +287,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
+    , m_maximumRenderingSuppressionToken(0)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -4181,6 +4182,25 @@ void WebPage::reportUsedFeatures()
         namedFeatures.append("SharedWorker");
 
     m_loaderClient.featuresUsedInPage(this, namedFeatures);
+}
+
+unsigned WebPage::extendIncrementalRenderingSuppression()
+{
+    unsigned token = m_maximumRenderingSuppressionToken++;
+
+    m_activeRenderingSuppressionTokens.add(token);
+    m_page->mainFrame()->view()->setVisualUpdatesAllowedByClient(false);
+
+    return token;
+}
+
+void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
+{
+    if (!m_activeRenderingSuppressionTokens.contains(token))
+        return;
+
+    m_activeRenderingSuppressionTokens.remove(token);
+    m_page->mainFrame()->view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
 }
 
 } // namespace WebKit

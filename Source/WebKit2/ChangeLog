@@ -1,3 +1,36 @@
+2013-05-20  Tim Horton  <timothy_horton@apple.com>
+
+        Clients should have a way to extend rendering suppression
+        https://bugs.webkit.org/show_bug.cgi?id=116463
+        <rdar://problem/13738496>
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageExtendIncrementalRenderingSuppression): Added.
+        (WKBundlePageStopExtendingIncrementalRenderingSuppression): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        These only have any effect if SuppressesIncrementalRendering is also enabled.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Inform the FrameView if there are any outstanding rendering suppression tokens.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::extendIncrementalRenderingSuppression):
+        Return the next available rendering suppression token.
+        Add it to the list of active tokens.
+        Inform the FrameView that we want to suppress rendering.
+
+        (WebKit::WebPage::stopExtendingIncrementalRenderingSuppression):
+        Remove the given token from the list of active tokens.
+        Un-suppress rendering if appropriate.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::shouldExtendIncrementalRenderingSuppression):
+        Return if there are any active rendering suppression tokens.
+
 2013-05-20  Andreas Kling  <akling@apple.com>
 
         PPT: Closing tab that is hung or chewing 100% CPU leaves abandoned WebProcess.

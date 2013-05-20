@@ -1,3 +1,42 @@
+2013-05-20  Tim Horton  <timothy_horton@apple.com>
+
+        Clients should have a way to extend rendering suppression
+        https://bugs.webkit.org/show_bug.cgi?id=116463
+        <rdar://problem/13738496>
+
+        Reviewed by Andy Estes.
+
+        * WebCore.exp.in:
+        Export FrameView::setVisualUpdatesAllowedByClient.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        Move rendering-suppression watchdog into setVisualUpdatesAllowed(bool).
+        setVisualUpdatesAllowed(ReadyState) should not re-enable visual updates
+        if the client is itself disabling visual updates.
+
+        (WebCore::Document::visualUpdatesSuppressionTimerFired):
+        If the watchdog fires and the client is still disabling visual
+        updates, we should not re-enable visual updates, but instead
+        wait for the client.
+
+        (WebCore::Document::setVisualUpdatesAllowedByClient):
+        Actually re-enable visual updates if we deferred the re-enabling above
+        (when the page finishes loading, but the client had them disabled).
+
+        * dom/Document.h:
+        (Document): Add setVisualUpdatesAllowedByClient.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Visual updates are allowed by default.
+        (WebCore::FrameView::setVisualUpdatesAllowedByClient):
+        Forward through to the document, but we also need to persist the state
+        here in FrameView so that it survives through navigation.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::setVisualUpdatesAllowedByClient): Added.
+        (WebCore::FrameView::visualUpdatesAllowedByClient): Added.
+        Added storage for m_visualUpdatesAllowedByClient.
+
 2013-05-20  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add CSS parsing support for image URI shape-inside and shape-outside values
