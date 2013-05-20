@@ -44,9 +44,9 @@
 #include "Image.h"
 #include "InputHandler.h"
 #include "MIMETypeRegistry.h"
-#include "NativeImageSkia.h"
 #include "NetworkManager.h"
 #include "NodeList.h"
+#include "PNGImageEncoder.h"
 #include "Page.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
@@ -57,9 +57,6 @@
 #include "Settings.h"
 #endif
 #include "SharedBuffer.h"
-#include "SkData.h"
-#include "SkImageEncoder.h"
-#include "SkStream.h"
 #include "TextEncoding.h"
 #include "TouchEventHandler.h"
 #if ENABLE(WEBDOM)
@@ -73,6 +70,7 @@
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformStringBuilder.h>
 #include <JavaScriptCore/APICast.h>
+#include <TiledImage.h>
 #include <network/DataStream.h>
 #include <network/FilterStream.h>
 #include <network/NetworkRequest.h>
@@ -1243,23 +1241,33 @@ void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(DocumentLoad
 void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
 {
     String url = m_frame->document()->url().string();
-    NativeImageSkia* bitmap = iconDatabase().synchronousNativeIconForPageURL(url, IntSize(10, 10));
-    if (!bitmap || bitmap->bitmap().empty())
+    NativeImagePtr bitmap = iconDatabase().synchronousNativeIconForPageURL(url, IntSize(10, 10));
+    if (!bitmap || bitmap->isNull())
         return;
 
-    SkAutoLockPixels locker(bitmap->bitmap());
-    SkDynamicMemoryWStream writer;
-    if (!SkImageEncoder::EncodeStream(&writer, bitmap->bitmap(), SkImageEncoder::kPNG_Type, 100)) {
-        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelInfo, "Failed to convert the icon to PNG format.");
+    int dataSize = bitmap->width() * bitmap->height();
+    Vector<unsigned> data;
+    data.reserveCapacity(dataSize);
+    if (!bitmap->readPixels(data.data(), dataSize))
         return;
+
+    // Convert BGRA to RGBA.
+    unsigned char* pixels = reinterpret_cast<unsigned char*>(data.data());
+    for (int i = 0; i < bitmap->height(); ++i) {
+        unsigned char* bgra = pixels + i * bitmap->width() * 4;
+        for (int j = 0; j < bitmap->width(); ++j, bgra += 4)
+            std::swap(bgra[0], bgra[2]);
     }
-    SkData* data = writer.copyToData();
+
+    Vector<char> pngData;
+    if (!compressRGBABigEndianToPNG(pixels, bitmap->size(), pngData))
+        return;
+
     Vector<char> out;
-    base64Encode(static_cast<const char*>(data->data()), data->size(), out);
-    out.append('\0'); // Make it null-terminated.
+    base64Encode(pngData, out);
+
     String iconUrl = iconDatabase().synchronousIconURLForPageURL(url);
     m_webPagePrivate->m_client->setFavicon(BlackBerry::Platform::String::fromAscii(out.data(), out.size()), iconUrl);
-    data->unref();
 }
 
 bool FrameLoaderClientBlackBerry::canCachePage() const

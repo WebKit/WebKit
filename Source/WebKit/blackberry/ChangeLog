@@ -1,3 +1,15 @@
+2013-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Do not use skia in FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
+        https://bugs.webkit.org/show_bug.cgi?id=116302
+
+        Reviewed by Rob Buis.
+
+        TiledImage is now the NativeImage of the BlackBerry port.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidReceiveIcon):
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code
