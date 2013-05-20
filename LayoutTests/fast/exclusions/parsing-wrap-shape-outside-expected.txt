@@ -21,6 +21,8 @@ PASS testCSSText("polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)") is "polygo
 PASS testComputedStyle("polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)") is "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)"
 PASS testCSSText("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)") is "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"
 PASS testComputedStyle("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)") is "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"
+PASS removeBaseURL(testCSSText("url('image')")) is "url(image)"
+PASS removeBaseURL(testComputedStyle("url('image')")) is "url(image)"
 PASS testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)") is "parent: auto, child: rectangle(10px, 20px, 30px, 40px)"
 PASS testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial") is "parent: rectangle(10px, 20px, 30px, 40px), child: auto"
 PASS testNotInherited("rectangle(10px, 20px, 30px, 40px)", "") is "parent: rectangle(10px, 20px, 30px, 40px), child: auto"

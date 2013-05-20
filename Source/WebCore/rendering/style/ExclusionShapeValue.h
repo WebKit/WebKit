@@ -31,6 +31,7 @@
 #define ExclusionShapeValue_h
 
 #include "BasicShapes.h"
+#include "StyleImage.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -38,9 +39,10 @@ namespace WebCore {
 class ExclusionShapeValue : public RefCounted<ExclusionShapeValue> {
 public:
     enum ExclusionShapeValueType {
-        // The AUTO value is defined by a null ExclusionShapeValue*
-        SHAPE,
-        OUTSIDE
+        // The Auto value is defined by a null ExclusionShapeValue*
+        Shape,
+        Outside,
+        Image
     };
 
     static PassRefPtr<ExclusionShapeValue> createShapeValue(PassRefPtr<BasicShape> shape)
@@ -50,18 +52,42 @@ public:
 
     static PassRefPtr<ExclusionShapeValue> createOutsideValue()
     {
-        return adoptRef(new ExclusionShapeValue(OUTSIDE));
+        return adoptRef(new ExclusionShapeValue(Outside));
+    }
+
+    static PassRefPtr<ExclusionShapeValue> createImageValue(PassRefPtr<StyleImage> image)
+    {
+        return adoptRef(new ExclusionShapeValue(image));
     }
 
     ExclusionShapeValueType type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
+    StyleImage* image() const { return m_image.get(); }
+    void setImage(PassRefPtr<StyleImage> image)
+    {
+        if (m_image != image)
+            m_image = image;
+    }
     bool operator==(const ExclusionShapeValue& other) const { return type() == other.type(); }
 
 private:
-    ExclusionShapeValue(PassRefPtr<BasicShape> shape) : m_type(SHAPE), m_shape(shape) { }
-    ExclusionShapeValue(ExclusionShapeValueType type) : m_type(type) { }
+    ExclusionShapeValue(PassRefPtr<BasicShape> shape)
+        : m_type(Shape)
+        , m_shape(shape)
+    {
+    }
+    ExclusionShapeValue(ExclusionShapeValueType type)
+        : m_type(type)
+    {
+    }
+    ExclusionShapeValue(PassRefPtr<StyleImage> image)
+        : m_type(Image)
+        , m_image(image)
+    {
+    }
     ExclusionShapeValueType m_type;
     RefPtr<BasicShape> m_shape;
+    RefPtr<StyleImage> m_image;
 };
 
 }

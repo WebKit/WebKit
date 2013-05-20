@@ -2679,14 +2679,24 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            else if (style->shapeInside()->type() == ExclusionShapeValue::OUTSIDE)
+            if (style->shapeInside()->type() == ExclusionShapeValue::Outside)
                 return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
-            ASSERT(style->shapeInside()->type() == ExclusionShapeValue::SHAPE);
+            if (style->shapeInside()->type() == ExclusionShapeValue::Image) {
+                if (style->shapeInside()->image())
+                    return style->shapeInside()->image()->cssValue();
+                return cssValuePool().createIdentifierValue(CSSValueNone);
+            }
+            ASSERT(style->shapeInside()->type() == ExclusionShapeValue::Shape);
             return valueForBasicShape(style->shapeInside()->shape());
         case CSSPropertyWebkitShapeOutside:
             if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            ASSERT(style->shapeOutside()->type() == ExclusionShapeValue::SHAPE);
+            if (style->shapeOutside()->type() == ExclusionShapeValue::Image) {
+                if (style->shapeOutside()->image())
+                    return style->shapeOutside()->image()->cssValue();
+                return cssValuePool().createIdentifierValue(CSSValueNone);
+            }
+            ASSERT(style->shapeOutside()->type() == ExclusionShapeValue::Shape);
             return valueForBasicShape(style->shapeOutside()->shape());
         case CSSPropertyWebkitWrapThrough:
             return cssValuePool().createValue(style->wrapThrough());

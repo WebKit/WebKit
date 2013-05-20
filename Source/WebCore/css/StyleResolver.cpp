@@ -4174,6 +4174,16 @@ void StyleResolver::loadPendingImages()
             }
             break;
         }
+#if ENABLE(CSS_EXCLUSIONS)
+        case CSSPropertyWebkitShapeInside:
+            if (m_state.style()->shapeInside() && m_state.style()->shapeInside()->image() && m_state.style()->shapeInside()->image()->isPendingImage())
+                m_state.style()->shapeInside()->setImage(loadPendingImage(static_cast<StylePendingImage*>(m_state.style()->shapeInside()->image())));
+            break;
+        case CSSPropertyWebkitShapeOutside:
+            if (m_state.style()->shapeOutside() && m_state.style()->shapeOutside()->image() && m_state.style()->shapeOutside()->image()->isPendingImage())
+                m_state.style()->shapeOutside()->setImage(loadPendingImage(static_cast<StylePendingImage*>(m_state.style()->shapeOutside()->image())));
+            break;
+#endif
         default:
             ASSERT_NOT_REACHED();
         }

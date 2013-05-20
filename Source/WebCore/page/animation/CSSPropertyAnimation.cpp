@@ -147,7 +147,7 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
 static inline PassRefPtr<ExclusionShapeValue> blendFunc(const AnimationBase*, ExclusionShapeValue* from, ExclusionShapeValue* to, double progress)
 {
     // FIXME Bug 102723: Shape-inside should be able to animate a value of 'outside-shape' when shape-outside is set to a BasicShape
-    if (from->type() != ExclusionShapeValue::SHAPE || to->type() != ExclusionShapeValue::SHAPE)
+    if (from->type() != ExclusionShapeValue::Shape || to->type() != ExclusionShapeValue::Shape)
         return to;
 
     const BasicShape* fromShape = from->shape();

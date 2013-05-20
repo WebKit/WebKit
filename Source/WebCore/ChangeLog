@@ -1,3 +1,33 @@
+2013-05-20  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Add CSS parsing support for image URI shape-inside and shape-outside values
+        https://bugs.webkit.org/show_bug.cgi?id=116349
+
+        Reviewed by Alexandru Chiculita.
+
+        Add support for parsing image URI values for the shape-inside and shape-outside CSS properties.
+        Extended the ExclusionShapeValue class to support tracking the property's StyleImage value.
+
+        The ExclusionShapeValue::type enums were changed from all upper case to "Intercase" by order
+        of the style bot.
+
+        The existing CSS parsing tests were extended to check URI values.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyExclusionShape::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImages):
+        * rendering/style/ExclusionShapeValue.h:
+        (WebCore::ExclusionShapeValue::createImageValue):
+        (ExclusionShapeValue):
+        (WebCore::ExclusionShapeValue::image):
+        (WebCore::ExclusionShapeValue::setImage):
+        (WebCore::ExclusionShapeValue::ExclusionShapeValue):
+
 2013-05-20  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Fix offsetLeft / offsetTop for elements inside named flow

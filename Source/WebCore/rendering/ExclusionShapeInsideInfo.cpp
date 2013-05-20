@@ -46,7 +46,7 @@ LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIter
 bool ExclusionShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
 {
     ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
-    return (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
+    return (shapeValue && shapeValue->type() == ExclusionShapeValue::Shape) ? shapeValue->shape() : 0;
 }
 
 bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)

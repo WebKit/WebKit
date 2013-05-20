@@ -46,7 +46,7 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter
         return exclusionShape;
 
     ExclusionShapeValue* shapeValue = (m_renderer->style()->*shapeGetter)();
-    BasicShape* shape = (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
+    BasicShape* shape = (shapeValue && shapeValue->type() == ExclusionShapeValue::Shape) ? shapeValue->shape() : 0;
 
     ASSERT(shape);
 

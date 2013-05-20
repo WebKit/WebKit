@@ -2961,6 +2961,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
             return parseBasicShape(propId, important);
+        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
+            parsedValue = CSSImageValue::create(completeURL(value->string));
+            m_valueList->next();
+        }
         break;
     case CSSPropertyWebkitShapeMargin:
     case CSSPropertyWebkitShapePadding:

@@ -49,6 +49,20 @@ function test(value, expected) {
     shouldBeEqualToString('testComputedStyle(' + unevaledString + ')', expected);
 }
 
+// Need to remove the base URL to avoid having local paths in the expected results.
+function removeBaseURL(src) {
+    var urlRegexp = /url\(([^\)]*)\)/g;
+    return src.replace(urlRegexp, function(match, url) {
+        return "url(" + url.substr(url.lastIndexOf("/") + 1) + ")";
+    });
+}
+
+function testLocalURL(value, expected) {
+    var unevaledString = '"' + value.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
+    shouldBeEqualToString('removeBaseURL(testCSSText(' + unevaledString + '))', expected);
+    shouldBeEqualToString('removeBaseURL(testComputedStyle(' + unevaledString + '))', expected);
+}
+
 function negative_test(value) {
     var unevaledString = '"' + value.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
     shouldBeEqualToString('testCSSText(' + unevaledString + ')', '');
@@ -69,6 +83,8 @@ test("ellipse(10px, 20px, 30px, 40px)", "ellipse(10px, 20px, 30px, 40px)");
 test("polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)");
 test("polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)");
 test("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)");
+
+testLocalURL("url(\'image\')", "url(image)");
 
 shouldBeEqualToString('testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)")', "parent: auto, child: rectangle(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
