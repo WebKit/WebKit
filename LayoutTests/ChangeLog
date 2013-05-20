@@ -1,3 +1,14 @@
+2013-05-20  Hans Muller  <hmuller@adobe.com>
+
+        [Qt] REGRESSION(r149457): some fast/exclusions tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=115511
+
+        Reviewed by Andreas Kling.
+
+        Unskipping the exclusions tests on Qt. They were fixed by https://bugs.webkit.org/show_bug.cgi?id=116115.
+
+        * platform/qt/TestExpectations:
+
 2013-05-20  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] shape-inside on regions should respect positioned shapes and overflow
