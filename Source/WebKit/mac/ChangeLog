@@ -1,3 +1,10 @@
+2013-05-20  David Kilzer  <ddkilzer@apple.com>
+
+        Synchronize FeatureDefines.xcconfig
+
+        * Configurations/FeatureDefines.xcconfig: Add a newline to the
+        end of the file.
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code

@@ -1,3 +1,10 @@
+2013-05-20  David Kilzer  <ddkilzer@apple.com>
+
+        Synchronize FeatureDefines.xcconfig
+
+        * Configurations/FeatureDefines.xcconfig: Remove
+        ENABLE_LINK_PRERENDER.  This was missed in r150356.
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code
