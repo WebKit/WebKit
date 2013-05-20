@@ -1,5 +1,17 @@
 2013-05-20  Anders Carlsson  <andersca@apple.com>
 
+        Add helper function for converting a KeyedCodingValue to a CFTypeRef
+        https://bugs.webkit.org/show_bug.cgi?id=116461
+
+        Reviewed by Tim Horton.
+
+        * Shared/cf/KeyedCodingValueCF.cpp: Added.
+        * Shared/cf/KeyedCodingValueCF.h: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-05-20  Anders Carlsson  <andersca@apple.com>
+
         Begin stubbing out a new KeyedEncoder class
         https://bugs.webkit.org/show_bug.cgi?id=116456
 
