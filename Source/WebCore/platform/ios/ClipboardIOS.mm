@@ -142,7 +142,7 @@ void ClipboardIOS::clearData(const String& type)
     }
 }
 
-void ClipboardIOS::clearAllData()
+void ClipboardIOS::clearData()
 {
     if (!canWriteData())
         return;

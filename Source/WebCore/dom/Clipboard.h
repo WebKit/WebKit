@@ -81,7 +81,7 @@ namespace WebCore {
         void setEffectAllowed(const String&);
     
         LEGACY_VIRTUAL void clearData(const String& type) LEGACY_PURE;
-        LEGACY_VIRTUAL void clearAllData() LEGACY_PURE;
+        LEGACY_VIRTUAL void clearData() LEGACY_PURE;
         LEGACY_VIRTUAL String getData(const String& type) const LEGACY_PURE;
         LEGACY_VIRTUAL bool setData(const String& type, const String& data) LEGACY_PURE;
     

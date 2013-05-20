@@ -59,7 +59,7 @@ public:
     ~ClipboardWin();
 
     void clearData(const String& type);
-    void clearAllData();
+    void clearData();
     String getData(const String& type) const;
     bool setData(const String& type, const String& data);
 

@@ -423,7 +423,7 @@ void ClipboardWin::clearData(const String& type)
 
 }
 
-void ClipboardWin::clearAllData()
+void ClipboardWin::clearData()
 {
     // FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
     ASSERT(isForDragAndDrop());

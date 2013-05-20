@@ -1,3 +1,28 @@
+2013-05-20  Darin Adler  <darin@apple.com>
+
+        Remove custom binding for the Clipboard clearData function
+        https://bugs.webkit.org/show_bug.cgi?id=116421
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/JSClipboardCustom.cpp: Removed the clearData binding.
+
+        * dom/Clipboard.idl: Removed [Custom].
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::clearData): Renamed from clearAllData.
+        * dom/Clipboard.h: Rename clearAllData to clearData so we just use
+        overloading for the one with and without a MIME type.
+        * platform/ios/ClipboardIOS.h: Rename clearAllData to clearData.
+        * platform/ios/ClipboardIOS.mm:
+        (WebCore::ClipboardIOS::clearData): Ditto.
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::clearData). Ditto.
+        * platform/qt/ClipboardQt.h: Ditto.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::clearData): Ditto.
+        * platform/win/ClipboardWin.h: Ditto.
+
 2013-05-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] media/event-queue-crash.html ASSERTs in notifyChildInserted

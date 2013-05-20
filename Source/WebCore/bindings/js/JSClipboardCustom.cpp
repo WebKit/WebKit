@@ -62,24 +62,6 @@ JSValue JSClipboard::types(ExecState* exec) const
     return constructArray(exec, 0, globalObject(), list);
 }
 
-JSValue JSClipboard::clearData(ExecState* exec)
-{
-    Clipboard* clipboard = impl();
-
-    if (!exec->argumentCount()) {
-        clipboard->clearAllData();
-        return jsUndefined();
-    }
-
-    if (exec->argumentCount() == 1) {
-        clipboard->clearData(exec->argument(0).toString(exec)->value(exec));
-        return jsUndefined();
-    }
-
-    // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
-    return throwError(exec, createSyntaxError(exec, "clearData: Invalid number of arguments"));
-}
-
 JSValue JSClipboard::setDragImage(ExecState* exec)
 {
     Clipboard* clipboard = impl();

@@ -127,7 +127,7 @@ void ClipboardQt::clearData(const String& type)
 #endif
 }
 
-void ClipboardQt::clearAllData()
+void ClipboardQt::clearData()
 {
     if (!canWriteData())
         return;

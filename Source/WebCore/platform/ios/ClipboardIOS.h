@@ -45,7 +45,7 @@ public:
     virtual ~ClipboardIOS();
 
     virtual void clearData(const String& type) OVERRIDE;
-    virtual void clearAllData() OVERRIDE;
+    virtual void clearData() OVERRIDE;
     virtual String getData(const String& type) const OVERRIDE;
     virtual bool setData(const String& type, const String& data) OVERRIDE;
 
