@@ -310,6 +310,13 @@ Bug(EFL) editing/spelling/markers.html [ Failure ]
 # EFL's text checker doesn't support the text replacement feature.
 Bug(EFL) editing/spelling/spelling-marker-description.html [ Failure ]
 
+# WK2's contextClick() returns array of objects instead of strings.
+editing/spelling/spelling-exactly-selected-multiple-words.html [ Failure ]
+editing/spelling/spelling-exactly-selected-word.html [ Failure ]
+editing/spelling/spelling-multiword-selection.html [ Failure ]
+editing/spelling/spelling-should-select-multiple-words.html [ Failure ]
+editing/spelling/spelling-subword-selection.html [ Failure ]
+
 # Fails because MutationObservers are not notified at end-of-task.
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
