@@ -1,3 +1,10 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation to editing/selection/user-drag-element-and-user-select-none.html
+        after r150354. The failure is tracked by the bug 116473.
+
+        * TestExpectations:
+
 2013-05-20  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Fix offsetLeft / offsetTop for elements inside named flow
