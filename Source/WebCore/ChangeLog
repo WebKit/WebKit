@@ -1,3 +1,26 @@
+2013-05-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Fix offsetLeft / offsetTop for elements inside named flow
+        https://bugs.webkit.org/show_bug.cgi?id=115899
+
+        Reviewed by David Hyatt.
+
+        Elements in named flows that have the body as their offsetParent, need to compute their
+        offsetLeft and offsetTop values relative to the body.
+
+        Tests: fast/regions/offsetLeft-offsetTop-in-multiple-regions.html
+               fast/regions/offsetLeft-offsetTop-in-region-absolute-sticky-fixed.html
+               fast/regions/offsetLeft-offsetTop-in-region-float-vert-rl.html
+               fast/regions/offsetLeft-offsetTop-in-region-float.html
+               fast/regions/offsetLeft-offsetTop-inlines-region-in-element.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderFlowThread.h:
+
 2013-05-20  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] shape-inside on regions should respect positioned shapes and overflow

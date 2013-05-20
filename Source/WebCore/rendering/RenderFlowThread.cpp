@@ -38,6 +38,7 @@
 #include "PODIntervalTree.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
@@ -388,6 +389,87 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(LayoutUnit offset, bool exte
         return m_regionList.last();
 
     return adapter.result();
+}
+    
+LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint)
+{
+    LayoutPoint referencePoint = startPoint;
+    
+    // FIXME: This needs to be adapted for different writing modes inside the flow thread.
+    RenderRegion* startRegion = regionAtBlockOffset(referencePoint.y());
+    if (startRegion) {
+        // Take into account the offset coordinates of the region.
+        RenderBoxModelObject* currObject = startRegion;
+        RenderBoxModelObject* currOffsetParent;
+        while ((currOffsetParent = currObject->offsetParent())) {
+            referencePoint.move(currObject->offsetLeft(), currObject->offsetTop());
+            
+            // Since we're looking for the offset relative to the body, we must also
+            // take into consideration the borders of the region's offsetParent.
+            if (currOffsetParent->isBox() && !currOffsetParent->isBody())
+                referencePoint.move(toRenderBox(currOffsetParent)->borderLeft(), toRenderBox(currOffsetParent)->borderTop());
+            
+            currObject = currOffsetParent;
+        }
+        
+        // We need to check if any of this box's containing blocks start in a different region
+        // and if so, drop the object's top position (which was computed relative to its containing block
+        // and is no longer valid) and recompute it using the region in which it flows as reference.
+        bool wasComputedRelativeToOtherRegion = false;
+        const RenderBlock* objContainingBlock = boxModelObject.containingBlock();
+        while (objContainingBlock && !objContainingBlock->isRenderNamedFlowThread()) {
+            // Check if this object is in a different region.
+            RenderRegion* parentStartRegion = 0;
+            RenderRegion* parentEndRegion = 0;
+            getRegionRangeForBox(objContainingBlock, parentStartRegion, parentEndRegion);
+            if (parentStartRegion && parentStartRegion != startRegion) {
+                wasComputedRelativeToOtherRegion = true;
+                break;
+            }
+            objContainingBlock = objContainingBlock->containingBlock();
+        }
+        
+        if (wasComputedRelativeToOtherRegion) {
+            if (boxModelObject.isBox()) {
+                // Use borderBoxRectInRegion to account for variations such as percentage margins.
+                LayoutRect borderBoxRect = toRenderBox(&boxModelObject)->borderBoxRectInRegion(startRegion, 0, RenderBox::DoNotCacheRenderBoxRegionInfo);
+                referencePoint.move(borderBoxRect.location().x(), 0);
+            }
+            
+            // Get the logical top coordinate of the current object.
+            LayoutUnit top = 0;
+            if (boxModelObject.isRenderBlock())
+                top = toRenderBlock(&boxModelObject)->offsetFromLogicalTopOfFirstPage();
+            else {
+                if (boxModelObject.containingBlock())
+                    top = boxModelObject.containingBlock()->offsetFromLogicalTopOfFirstPage();
+                
+                if (boxModelObject.isBox())
+                    top += toRenderBox(&boxModelObject)->topLeftLocation().y();
+                else if (boxModelObject.isRenderInline())
+                    top -= toRenderInline(&boxModelObject)->borderTop();
+            }
+            
+            // Get the logical top of the region this object starts in
+            // and compute the object's top, relative to the region's top.
+            LayoutUnit regionLogicalTop = startRegion->pageLogicalTopForOffset(top);
+            LayoutUnit topRelativeToRegion = top - regionLogicalTop;
+            referencePoint.setY(startRegion->offsetTop() + topRelativeToRegion);
+            
+            // Since the top has been overriden, check if the
+            // relative/sticky positioning must be reconsidered.
+            if (boxModelObject.isRelPositioned())
+                referencePoint.move(0, boxModelObject.relativePositionOffset().height());
+            else if (boxModelObject.isStickyPositioned())
+                referencePoint.move(0, boxModelObject.stickyPositionOffset().height());
+        }
+        
+        // Since we're looking for the offset relative to the body, we must also
+        // take into consideration the borders of the region.
+        referencePoint.move(startRegion->borderLeft(), startRegion->borderTop());
+    }
+    
+    return referencePoint;
 }
 
 LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset)

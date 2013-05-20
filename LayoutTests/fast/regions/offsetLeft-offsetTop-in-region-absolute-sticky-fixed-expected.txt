@@ -1,0 +1,20 @@
+Test offsetLeft and offsetTop in a named flow with absolute, sticky and fixed positioning.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS divText1.offsetParent is divMain1
+PASS divText1.offsetLeft is 10
+PASS divText1.offsetTop is 10
+PASS divText2.offsetParent is document.body
+PASS divText2.offsetLeft is 100
+PASS divText2.offsetTop is 500
+PASS divText3.offsetParent is document.body
+PASS divText3.offsetLeft is 600
+PASS divText3.offsetTop is 400
+PASS divText4.offsetParent is null
+PASS divText4.offsetLeft is 50
+PASS divText4.offsetTop is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

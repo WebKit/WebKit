@@ -95,6 +95,8 @@ public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate) const;
+    
+    LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&);
 
     LayoutUnit pageLogicalTopForOffset(LayoutUnit);
     LayoutUnit pageLogicalWidthForOffset(LayoutUnit);
