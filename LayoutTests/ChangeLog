@@ -1,3 +1,14 @@
+2013-05-20  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [GTK] Cleanup TestExpectations to pass --lint-test-files
+        https://bugs.webkit.org/show_bug.cgi?id=116419
+
+        Unreviewed GTK gardening.
+
+        Remove one of two http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html
+
+        * platform/gtk/TestExpectations:
+
 2013-05-20  Antoine Quint  <graouts@apple.com>
 
         [Mac] captions menu should behave more like a menu
