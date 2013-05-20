@@ -1,3 +1,11 @@
+2013-05-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        spelling-double-clicked-word.html passes after r150289.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         svg/batik tests are flakey.
