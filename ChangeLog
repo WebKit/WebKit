@@ -1,3 +1,15 @@
+2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Reenabled INDEXED_DATABASE after r150344
+        https://bugs.webkit.org/show_bug.cgi?id=116430
+
+        Reviewed by Gyuyoung Kim.
+
+        Reenable INDEXED_DATABASE flag for EFL port now that WebKit2
+        build was fixed in r150344.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code

@@ -1,3 +1,15 @@
+2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Reenabled INDEXED_DATABASE after r150344
+        https://bugs.webkit.org/show_bug.cgi?id=116430
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskip indexeddb layout tests for EFL port now that the functionality
+        is reenabled at compile time.
+
+        * platform/efl/TestExpectations:
+
 2013-05-20  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
 
         -webkit-text-underline-position should not be inherited
