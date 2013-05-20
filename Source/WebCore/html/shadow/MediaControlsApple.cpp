@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RenderTheme.h"
 #include "Text.h"
+#include "WheelEvent.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackCue.h"
@@ -278,7 +279,7 @@ void MediaControlsApple::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         if (m_closedCaptionsContainer && m_closedCaptionsContainer->isShowing()) {
-            m_closedCaptionsContainer->hide();
+            hideClosedCaptionTrackList();
             event->setDefaultHandled();
         }
     }
@@ -291,7 +292,7 @@ void MediaControlsApple::hide()
     MediaControls::hide();
     m_volumeSliderContainer->hide();
     if (m_closedCaptionsContainer)
-        m_closedCaptionsContainer->hide();
+        hideClosedCaptionTrackList();
 }
 
 void MediaControlsApple::makeTransparent()
@@ -299,14 +300,14 @@ void MediaControlsApple::makeTransparent()
     MediaControls::makeTransparent();
     m_volumeSliderContainer->hide();
     if (m_closedCaptionsContainer)
-        m_closedCaptionsContainer->hide();
+        hideClosedCaptionTrackList();
 }
 
 void MediaControlsApple::changedClosedCaptionsVisibility()
 {
     MediaControls::changedClosedCaptionsVisibility();
     if (m_closedCaptionsContainer && m_closedCaptionsContainer->isShowing())
-        m_closedCaptionsContainer->hide();
+        hideClosedCaptionTrackList();
 
 }
 
@@ -414,7 +415,7 @@ void MediaControlsApple::reportedError()
     if (m_toggleClosedCaptionsButton && !page->theme()->hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
         m_toggleClosedCaptionsButton->hide();
     if (m_closedCaptionsContainer)
-        m_closedCaptionsContainer->hide();
+        hideClosedCaptionTrackList();
 }
 
 void MediaControlsApple::updateStatusDisplay()
@@ -498,13 +499,49 @@ void MediaControlsApple::toggleClosedCaptionTrackList()
 
     if (m_closedCaptionsContainer) {
         if (m_closedCaptionsContainer->isShowing())
-            m_closedCaptionsContainer->hide();
+            hideClosedCaptionTrackList();
         else {
             if (m_closedCaptionsTrackList)
                 m_closedCaptionsTrackList->updateDisplay();
-            m_closedCaptionsContainer->show();
+            showClosedCaptionTrackList();
         }
     }
+}
+
+void MediaControlsApple::showClosedCaptionTrackList()
+{
+    if (!m_closedCaptionsContainer || m_closedCaptionsContainer->isShowing())
+        return;
+
+    m_closedCaptionsContainer->show();
+
+    RefPtr<EventListener> listener = eventListener();
+    m_closedCaptionsContainer->addEventListener(eventNames().mousewheelEvent, listener, true);
+    document()->addEventListener(eventNames().clickEvent, listener, true);
+}
+
+void MediaControlsApple::hideClosedCaptionTrackList()
+{
+    if (!m_closedCaptionsContainer || !m_closedCaptionsContainer->isShowing())
+        return;
+
+    m_closedCaptionsContainer->hide();
+
+    EventListener* listener = eventListener().get();
+    m_closedCaptionsContainer->removeEventListener(eventNames().mousewheelEvent, listener, true);
+    document()->removeEventListener(eventNames().clickEvent, listener, true);
+}
+
+bool MediaControlsApple::shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY)
+{
+    int scrollTop = m_closedCaptionsContainer->scrollTop();
+    // Scrolling down.
+    if (wheelDeltaY < 0 && (scrollTop + m_closedCaptionsContainer->offsetHeight()) >= m_closedCaptionsContainer->scrollHeight())
+        return true;
+    // Scrolling up.
+    if (wheelDeltaY > 0 && scrollTop <= 0)
+        return true;
+    return false;
 }
 
 void MediaControlsApple::closedCaptionTracksChanged()
@@ -515,6 +552,34 @@ void MediaControlsApple::closedCaptionTracksChanged()
         else
             m_toggleClosedCaptionsButton->hide();
     }
+}
+
+PassRefPtr<MediaControlsAppleEventListener> MediaControlsApple::eventListener()
+{
+    if (!m_eventListener)
+        m_eventListener = MediaControlsAppleEventListener::create(this);
+    return m_eventListener;
+}
+
+// --------
+
+void MediaControlsAppleEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+{
+    if (event->type() == eventNames().clickEvent && !m_mediaControls->contains(event->target()->toNode()))
+        m_mediaControls->toggleClosedCaptionTrackList();
+
+    if (event->type() == eventNames().mousewheelEvent && event->hasInterface(eventNames().interfaceForWheelEvent)) {
+        WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
+        if (m_mediaControls->shouldClosedCaptionsContainerPreventPageScrolling(wheelEvent->wheelDeltaY()))
+            event->preventDefault();
+    }
+}
+
+bool MediaControlsAppleEventListener::operator==(const EventListener& listener)
+{
+    if (const MediaControlsAppleEventListener* mediaControlsAppleEventListener = MediaControlsAppleEventListener::cast(&listener))
+        return m_mediaControls == mediaControlsAppleEventListener->m_mediaControls;
+    return false;
 }
 
 }

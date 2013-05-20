@@ -33,6 +33,32 @@
 
 namespace WebCore {
 
+class MediaControlsApple;
+
+class MediaControlsAppleEventListener : public EventListener {
+public:
+    static PassRefPtr<MediaControlsAppleEventListener> create(MediaControlsApple* mediaControls) { return adoptRef(new MediaControlsAppleEventListener(mediaControls)); }
+    static const MediaControlsAppleEventListener* cast(const EventListener* listener)
+    {
+        return listener->type() == MediaControlsAppleEventListenerType
+            ? static_cast<const MediaControlsAppleEventListener*>(listener)
+            : 0;
+    }
+
+    virtual bool operator==(const EventListener& other);
+
+private:
+    MediaControlsAppleEventListener(MediaControlsApple* mediaControls)
+        : EventListener(MediaControlsAppleEventListenerType)
+        , m_mediaControls(mediaControls)
+    {
+    }
+
+    virtual void handleEvent(ScriptExecutionContext*, Event*);
+
+    MediaControlsApple* m_mediaControls;
+};
+
 class MediaControlsApple : public MediaControls {
 public:
     static PassRefPtr<MediaControlsApple> createControls(Document*);
@@ -62,10 +88,16 @@ public:
     virtual void toggleClosedCaptionTrackList() OVERRIDE;
     virtual void closedCaptionTracksChanged() OVERRIDE;
 
+    bool shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY);
+
 private:
     MediaControlsApple(Document*);
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
+    PassRefPtr<MediaControlsAppleEventListener> eventListener();
+
+    void showClosedCaptionTrackList();
+    void hideClosedCaptionTrackList();
 
     MediaControlRewindButtonElement* m_rewindButton;
     MediaControlReturnToRealtimeButtonElement* m_returnToRealTimeButton;
@@ -81,6 +113,7 @@ private:
     MediaControlFullscreenVolumeMinButtonElement* m_fullScreenMinVolumeButton;
     MediaControlFullscreenVolumeSliderElement* m_fullScreenVolumeSlider;
     MediaControlFullscreenVolumeMaxButtonElement* m_fullScreenMaxVolumeButton;
+    RefPtr<MediaControlsAppleEventListener> m_eventListener;
 };
 
 }

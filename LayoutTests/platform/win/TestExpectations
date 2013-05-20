@@ -2559,6 +2559,7 @@ media/video-controls-captions-trackmenu-localized.html
 media/video-controls-captions-trackmenu-sorted.html
 media/video-controls-captions-trackmenu.html
 media/video-controls-captions-trackmenu-hide-on-click.html
+media/video-controls-captions-trackmenu-hide-on-click-outside.html
 media/video-controls-visible-exiting-fullscreen.html
 
 # Fails on JSC platforms due to gc timing issues

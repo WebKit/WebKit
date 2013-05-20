@@ -1,3 +1,65 @@
+2013-05-20  Antoine Quint  <graouts@apple.com>
+
+        [Mac] captions menu should behave more like a menu
+        https://bugs.webkit.org/show_bug.cgi?id=116436
+
+        Reviewed by Eric Carlson.
+
+        Let the captions menu behave more like a native Mac menu by hiding it when
+        clicking anywhere on the page and preventing the page from scrolling when
+        attempting to scroll the captions menu when it cannot scroll in the requested
+        direction.
+
+        Test: media/video-controls-captions-trackmenu-hide-on-click-outside.html
+
+        * dom/EventListener.h:
+        Add the new MediaControlsAppleEventListenerType.
+
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::defaultEventHandler):
+        (WebCore::MediaControlsApple::hide):
+        (WebCore::MediaControlsApple::makeTransparent):
+        (WebCore::MediaControlsApple::changedClosedCaptionsVisibility):
+        (WebCore::MediaControlsApple::reportedError):
+        (WebCore::MediaControlsApple::toggleClosedCaptionTrackList):
+        Use the hideClosedCaptionTrackList() and showClosedCaptionTrackList()
+        methods to hide and show the captions menu instead of calling hide()
+        and show() directly on m_closedCaptionsContainer.
+
+        (WebCore::MediaControlsApple::showClosedCaptionTrackList):
+        Show the m_closedCaptionsContainer and register a "mousewheel" event
+        listener on it as well as a "click" event listener on the entire document.
+
+        (WebCore::MediaControlsApple::hideClosedCaptionTrackList):
+        Hide the m_closedCaptionsContainer and remove the "mousewheel" event
+        listener on it as well as the "click" event listener on the entire document.
+
+        (WebCore::MediaControlsApple::shouldClosedCaptionsContainerPreventPageScrolling):
+        New private utility to determine whether the m_closedCaptionsContainer can scroll
+        in the provided scroll direction.
+
+        (WebCore::MediaControlsApple::eventListener):
+        Obtain the event listener used for "mousewheel" and "click" event handlers.
+
+        (WebCore::MediaControlsAppleEventListener::handleEvent):
+        Event handler for the "mousewheel" and "click" events. If we get a "click" event, we
+        toggle the captions menu visibility and if we get a "mousewheel" event, we call into
+        shouldClosedCaptionsContainerPreventPageScrolling() to see if we can scroll in the
+        current scroll direction, and if not prevent the event from resulting in a scroll by
+        calling preventDefault().
+
+        (WebCore::MediaControlsAppleEventListener::operator==):
+        Required for the successful subclassing of EventListener.
+
+        * html/shadow/MediaControlsApple.h:
+        (MediaControlsAppleEventListener):
+        (WebCore::MediaControlsAppleEventListener::create):
+        (WebCore::MediaControlsAppleEventListener::cast):
+        (WebCore::MediaControlsAppleEventListener::MediaControlsAppleEventListener):
+        New subclass of EventListener required to provide a custom event listener for the
+        "mousewheel" and "click" events registered in showClosedCaptionTrackList() and
+        hideClosedCaptionTrackList().
+
 2013-05-18  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
 
         [Cairo] Canvas-shadow behavior is not being as expected

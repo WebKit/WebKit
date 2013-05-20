@@ -1,3 +1,20 @@
+2013-05-20  Antoine Quint  <graouts@apple.com>
+
+        [Mac] captions menu should behave more like a menu
+        https://bugs.webkit.org/show_bug.cgi?id=116436
+
+        Reviewed by Eric Carlson.
+
+        New test that checks that the caption menu hides when clicking outside
+        of the bounds of the media element.
+
+        * media/video-controls-captions-trackmenu-hide-on-click-outside-expected.txt: Added.
+        * media/video-controls-captions-trackmenu-hide-on-click-outside.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2013-05-18  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
 
         [Cairo] Canvas-shadow behavior is not being as expected
