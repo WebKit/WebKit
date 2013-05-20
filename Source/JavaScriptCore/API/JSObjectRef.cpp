@@ -80,6 +80,10 @@ void JSClassRelease(JSClassRef jsClass)
 
 JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -95,6 +99,10 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     return toRef(JSCallbackFunction::create(exec, exec->lexicalGlobalObject(), callAsFunction, name ? name->string() : ASCIILiteral("anonymous")));
@@ -102,6 +110,10 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -116,6 +128,10 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
 
 JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -138,6 +154,10 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
 
 JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -163,6 +183,10 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
 
 JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -183,6 +207,10 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
 
 JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -202,6 +230,10 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
 
 JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -222,6 +254,10 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
 
 JSValueRef JSObjectGetPrototype(JSContextRef ctx, JSObjectRef object)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -231,6 +267,10 @@ JSValueRef JSObjectGetPrototype(JSContextRef ctx, JSObjectRef object)
 
 void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -242,6 +282,10 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -252,6 +296,10 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -268,6 +316,10 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
 void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -291,6 +343,10 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
 JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -308,6 +364,10 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 
 void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -324,6 +384,10 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
 
 bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -538,6 +602,10 @@ public:
 
 JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef object)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     JSObject* jsObject = toJS(object);
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);

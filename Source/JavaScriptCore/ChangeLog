@@ -1,3 +1,70 @@
+2013-05-20  Oliver Hunt  <oliver@apple.com>
+
+        Make C API more robust against null contexts
+        https://bugs.webkit.org/show_bug.cgi?id=116462
+
+        Reviewed by Anders Carlsson.
+
+        Handle null contexts in a non-crashy way.  It's a bug to ever call the
+        API with a null context, and the absence of a context means we can't
+        produce a meaningful result, so we still assert in debug builds.
+
+        Now where possible we detect and early return, returning null for any
+        pointer type, NaN for doubles, and false for any boolean result.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        (JSReportExtraMemoryCost):
+        * API/JSContextRef.cpp:
+        (JSContextGetGlobalObject):
+        (JSContextGetGroup):
+        (JSContextGetGlobalContext):
+        (JSContextCreateBacktrace):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCopyPropertyNames):
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsObjectOfClass):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeUndefined):
+        (JSValueMakeNull):
+        (JSValueMakeBoolean):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueMakeFromJSONString):
+        (JSValueCreateJSONString):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+
 2013-05-20  David Kilzer  <ddkilzer@apple.com>
 
         Synchronize FeatureDefines.xcconfig

@@ -44,6 +44,10 @@ using namespace JSC;
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -71,6 +75,10 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -106,6 +114,10 @@ void JSGarbageCollect(JSContextRef ctx)
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     exec->vm().heap.reportExtraMemoryCost(size);

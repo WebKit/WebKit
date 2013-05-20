@@ -64,6 +64,10 @@ static bool evernoteHackNeeded()
 
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return kJSTypeUndefined;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -85,6 +89,10 @@ static bool evernoteHackNeeded()
 
 bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -94,6 +102,10 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -103,6 +115,10 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -112,6 +128,10 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -121,6 +141,10 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsString(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -130,6 +154,10 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -139,6 +167,10 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
 
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass)
 {
+    if (!ctx || !jsClass) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -159,6 +191,10 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
 
 bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -176,6 +212,10 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
 
 bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -187,6 +227,10 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 
 bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -206,6 +250,10 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
 
 JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -214,6 +262,10 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 
 JSValueRef JSValueMakeNull(JSContextRef ctx)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -222,6 +274,10 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
 
 JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -230,6 +286,10 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
 
 JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -244,6 +304,10 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -252,6 +316,10 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     String str = string->string();
@@ -266,6 +334,10 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 
 JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsigned indent, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     JSValue value = toJS(exec, apiValue);
@@ -283,6 +355,10 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -292,6 +368,10 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 
 double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return QNaN;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -309,6 +389,10 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 
 JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -326,6 +410,10 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -343,6 +431,10 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 

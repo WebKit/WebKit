@@ -54,6 +54,10 @@ JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef context, void* privateData
 
 void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef object)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     JSObject* obj = toJS(object);
@@ -65,6 +69,10 @@ void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSO
 
 JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     return toRef(jsCast<JSObject*>(map->map().get(key)));
@@ -72,6 +80,10 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
 
 void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     map->map().remove(key);

@@ -179,6 +179,10 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -188,12 +192,20 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     return toRef(&exec->vm());
 }
 
 JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
@@ -202,6 +214,10 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
     
 JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
 {
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     ExecState* exec = toJS(ctx);
     JSLockHolder lock(exec);
     StringBuilder builder;
