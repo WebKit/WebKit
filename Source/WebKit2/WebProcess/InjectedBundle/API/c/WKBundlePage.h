@@ -161,12 +161,14 @@ struct WKBundlePageLoaderClient {
 
     // Version 5
     WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
+    
+    // Version 6
     WKBundlePageWillLoadURLRequestCallback                                  willLoadURLRequest;
     WKBundlePageWillLoadDataRequestCallback                                 willLoadDataRequest;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 5 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 6 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,
