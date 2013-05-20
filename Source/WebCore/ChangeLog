@@ -1,5 +1,32 @@
 2013-05-20  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
 
+        -webkit-text-underline-position should not be inherited
+        https://bugs.webkit.org/show_bug.cgi?id=116363
+
+        Reviewed by Dean Jackson.
+
+        Specification says text-underline-position should not be inherited.
+
+        No new tests, this updates existing tests.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Make
+        CSSPropertyWebkitTextUnderlinePosition return false.
+        * rendering/style/RenderStyle.h: Treat TextUnderlinePosition as
+        non-inherited.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==): Remove m_textUnderlinePosition.
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==): Add m_textUnderlinePosition.
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
+2013-05-20  Lamarque V. Souza  <Lamarque.Souza@basyskom.com>
+
         Add compile asserts for the size of RootInlineBox and InlineTextbox
         https://bugs.webkit.org/show_bug.cgi?id=116337
 
