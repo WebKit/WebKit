@@ -390,8 +390,11 @@ String Pasteboard::plainText(Frame* frame)
         Vector<String> pathnames;
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(pathnames, NSFilenamesPboardType, m_pasteboardName);
         StringBuilder builder;
-        for (size_t i = 0; i < pathnames.size(); i++)
-            builder.append(i ? "\n" + pathnames[i] : pathnames[i]);
+        for (size_t i = 0; i < pathnames.size(); i++) {
+            if (i)
+                builder.append('\n');
+            builder.append(pathnames[i]);
+        }
         string = builder.toString();
         return [string precomposedStringWithCanonicalMapping];
     }
@@ -554,7 +557,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             }
         }
         if ([HTMLString length] != 0 &&
-            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", DisallowScriptingAndPluginContent)))
+            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, emptyString(), DisallowScriptingAndPluginContent)))
             return fragment.release();
     }
 
@@ -567,15 +570,15 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         return fragment.release();
 
     if (types.contains(String(NSTIFFPboardType)) &&
-        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(NSTIFFPboardType, m_pasteboardName), uniqueURLWithRelativePart(@"image.tiff"), "image/tiff", "", ""))))
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(NSTIFFPboardType, m_pasteboardName), uniqueURLWithRelativePart(@"image.tiff"), ASCIILiteral("image/tiff"), emptyString(), emptyString()))))
         return fragment.release();
 
     if (types.contains(String(NSPDFPboardType)) &&
-        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(NSPDFPboardType, m_pasteboardName).get(), uniqueURLWithRelativePart(@"application.pdf"), "application/pdf", "", ""))))
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(NSPDFPboardType, m_pasteboardName).get(), uniqueURLWithRelativePart(@"application.pdf"), ASCIILiteral("application/pdf"), emptyString(), emptyString()))))
         return fragment.release();
 
     if (types.contains(String(kUTTypePNG)) &&
-        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(String(kUTTypePNG), m_pasteboardName), uniqueURLWithRelativePart(@"image.png"), "image/png", "", ""))))
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(platformStrategies()->pasteboardStrategy()->bufferForType(String(kUTTypePNG), m_pasteboardName), uniqueURLWithRelativePart(@"image.png"), ASCIILiteral("image/png"), emptyString(), emptyString()))))
         return fragment.release();
 
     if (types.contains(String(NSURLPboardType))) {
@@ -620,9 +623,9 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
     String qType = type.lower();
 
     if (qType == "text")
-        qType = "text/plain";
+        qType = ASCIILiteral("text/plain");
     if (qType == "url")
-        qType = "text/uri-list";
+        qType = ASCIILiteral("text/uri-list");
 
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
     if (qType == "text/plain" || qType.startsWith("text/plain;"))
@@ -650,8 +653,9 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
 void Pasteboard::clear(const String& type)
 {
     String cocoaType = cocoaTypeFromHTMLClipboardType(type);
-    if (!cocoaType.isEmpty())
-        platformStrategies()->pasteboardStrategy()->setStringForType("", cocoaType, m_pasteboardName);
+    if (cocoaType.isEmpty())
+        return;
+    platformStrategies()->pasteboardStrategy()->setStringForType(emptyString(), cocoaType, m_pasteboardName);
 }
 
 static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboardName, bool onlyFirstURL = false)
@@ -734,11 +738,11 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
 {
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(NSStringPboardType)) {
-        resultTypes.add("text/plain");
+        resultTypes.add(ASCIILiteral("text/plain"));
         return;
     }
     if (cocoaType == String(NSURLPboardType)) {
-        resultTypes.add("text/uri-list");
+        resultTypes.add(ASCIILiteral("text/uri-list"));
         return;
     }
     if (cocoaType == String(NSFilenamesPboardType)) {
@@ -750,8 +754,8 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
         if (!fileList.isEmpty()) {
             // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
             // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
-            resultTypes.add("text/uri-list");
-            resultTypes.add("Files");
+            resultTypes.add(ASCIILiteral("text/uri-list"));
+            resultTypes.add(ASCIILiteral("Files"));
         }
         return;
     }

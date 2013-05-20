@@ -1,3 +1,22 @@
+2013-05-19  Darin Adler  <darin@apple.com>
+
+        [Mac] Improve string use in PasteboardMac
+        https://bugs.webkit.org/show_bug.cgi?id=116418
+
+        Reviewed by Sam Weinig.
+
+        Did a Ben Poulain all over this file.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::plainText): Add the newline separately to the string builder.
+        Prepending it to the string first just does more allocations for no good reason.
+        (WebCore::Pasteboard::documentFragment): Use emptyString() instead of "" and use
+        ASCIILiteral where appropriate.
+        (WebCore::cocoaTypeFromHTMLClipboardType): More ASCIILiteral.
+        (WebCore::Pasteboard::clear): Use early return instead of a nested if here.
+        Use emptyString() instead of "".
+        (WebCore::addHTMLClipboardTypesForCocoaType): More ASCIILiteral.
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code
