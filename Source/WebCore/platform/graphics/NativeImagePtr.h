@@ -40,6 +40,14 @@ QT_END_NAMESPACE
 #include "RefPtrCairo.h"
 #elif OS(WINCE)
 #include "SharedBitmap.h"
+#elif PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+namespace Graphics {
+class TiledImage;
+}
+}
+}
 #endif
 
 namespace WebCore {
@@ -56,7 +64,7 @@ typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #elif PLATFORM(BLACKBERRY)
-typedef void* NativeImagePtr;
+typedef BlackBerry::Platform::Graphics::TiledImage* NativeImagePtr;
 #endif
 
 #if !USE(CAIRO)

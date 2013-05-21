@@ -1,5 +1,16 @@
 2013-05-21  Alberto Garcia  <agarcia@igalia.com>
 
+        Add BlackBerry definition of NativeImagePtr
+        https://bugs.webkit.org/show_bug.cgi?id=116526
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/NativeImagePtr.h:
+        (Graphics):
+        (WebCore):
+
+2013-05-21  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] FontCache::getFontDataForCharacters() returns nullptr
         https://bugs.webkit.org/show_bug.cgi?id=116529
 
