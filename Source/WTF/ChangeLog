@@ -1,3 +1,16 @@
+2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use '__typeof__' keyword to avoid problems when compiling in C++11 standard compliance
+        https://bugs.webkit.org/show_bug.cgi?id=116447
+
+        Reviewed by Darin Adler.
+
+        The 'typeof' keyword is a GNU C extension which becomes unavailable when compiling in ANSI or specific standard mode
+        (such as -std=c++11). The '__typeof__' keyword should be used instead as it's available in all modes both under GCC and Clang.
+
+        * wtf/FastMalloc.cpp:
+        (WTF): Replace the 'typeof' keyword with '__typeof__'.
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove link prerendering code
