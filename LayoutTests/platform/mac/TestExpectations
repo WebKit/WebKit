@@ -1516,3 +1516,5 @@ webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
 webkit.org/b/116388 fast/js/post-message-numeric-property.html
+
+webkit.org/b/116477 [ MountainLion ] svg/batik/text/textEffect.svg [ Pass Failure ]

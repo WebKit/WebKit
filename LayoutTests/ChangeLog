@@ -1,3 +1,12 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        svg/batik/text/textEffect.svg is flaky on Mountain Lion builders
+        https://bugs.webkit.org/show_bug.cgi?id=116477
+
+        Add a failing test expectation.
+
+        * platform/mac/TestExpectations:
+
 2013-05-20  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add CSS parsing support for image URI shape-inside and shape-outside values
