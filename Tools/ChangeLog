@@ -1,5 +1,18 @@
 2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Fix concatenations of string literals that are not C++11-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=116449
+
+        Reviewed by Martin Robinson.
+
+        Fix the problematic concatenations of string literals so they are compilable under the C++11 standard. This
+        is simply a matter of separating the string and the string literal that are being concatenated with a space.
+
+        * ImageDiff/gtk/ImageDiff.cpp:
+        (printImage):
+
+2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Pass GTEST_HAS_RTTI=0 cppflag to TestWebKitAPI programs at compilation-time
         https://bugs.webkit.org/show_bug.cgi?id=116450
 

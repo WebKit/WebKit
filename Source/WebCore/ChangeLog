@@ -1,5 +1,19 @@
 2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Fix concatenations of string literals that are not C++11-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=116449
+
+        Reviewed by Martin Robinson.
+
+        Fix the problematic concatenations of string literals so they are compilable under the C++11 standard. This
+        is simply a matter of separating the string and the string literal that are being concatenated with a space.
+
+        * platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::sharedResourcesPath):
+
+2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Support application/x-mimearchive mimetype for MHTML archives instead of message/rfc822
         https://bugs.webkit.org/show_bug.cgi?id=116442
 

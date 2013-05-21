@@ -146,7 +146,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
     webkit_print_operation_print(test->m_printOperation.get());
     test->waitUntilPrintFinished();
 
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE","G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
                                                               static_cast<GFileQueryInfoFlags>(0), 0, 0));
     g_assert(fileInfo.get());
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), >, 0);

@@ -48,9 +48,9 @@
 #define ICON_NAME_SUFFIX
 #endif
 
-#define PLAY_ICON_NAME "media-playback-start"ICON_NAME_SUFFIX
-#define PAUSE_ICON_NAME "media-playback-pause"ICON_NAME_SUFFIX
-#define EXIT_FULLSCREEN_ICON_NAME "view-restore"ICON_NAME_SUFFIX
+#define PLAY_ICON_NAME "media-playback-start" ICON_NAME_SUFFIX
+#define PAUSE_ICON_NAME "media-playback-pause" ICON_NAME_SUFFIX
+#define EXIT_FULLSCREEN_ICON_NAME "view-restore" ICON_NAME_SUFFIX
 
 namespace WebCore {
 
