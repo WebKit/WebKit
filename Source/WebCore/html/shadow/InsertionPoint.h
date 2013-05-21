@@ -50,20 +50,17 @@ public:
     enum MatchType {
         AlwaysMatches,
         NeverMatches,
-        HasToMatchSelector
     };
 
     virtual ~InsertionPoint();
 
-    bool hasDistribution() const { return !m_distribution.isEmpty(); }
-    void setDistribution(ContentDistribution& distribution) { m_distribution.swap(distribution); }
-    void clearDistribution() { m_distribution.clear(); }
+    bool hasDistribution() const { return m_hasDistribution; }
+    void setHasDistribution() { m_hasDistribution = true; }
+    void clearDistribution() { m_hasDistribution = false; }
     bool isShadowBoundary() const;
     bool isActive() const;
 
-    PassRefPtr<NodeList> getDistributedNodes() const;
-
-    virtual MatchType matchTypeFor(Node*) { return AlwaysMatches; }
+    virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
     virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
     virtual Type insertionPointType() const = 0;
 
@@ -75,14 +72,10 @@ public:
 
     bool shouldUseFallbackElements() const;
 
-    size_t indexOf(Node* node) const { return m_distribution.find(node); }
-    bool contains(const Node*) const;
-    size_t size() const { return m_distribution.size(); }
-    Node* at(size_t index)  const { return m_distribution.at(index).get(); }
-    Node* first() const { return m_distribution.isEmpty() ? 0 : m_distribution.first().get(); }
-    Node* last() const { return m_distribution.isEmpty() ? 0 : m_distribution.last().get(); }
-    Node* nextTo(const Node* node) const { return m_distribution.nextTo(node); }
-    Node* previousTo(const Node* node) const { return m_distribution.previousTo(node); }
+    Node* firstDistributed() const;
+    Node* lastDistributed() const;
+    Node* nextDistributedTo(const Node*) const;
+    Node* previousDistributedTo(const Node*) const;
 
     static const CSSSelectorList& emptySelectorList();
 
@@ -97,8 +90,8 @@ protected:
 
 private:
 
-    ContentDistribution m_distribution;
     bool m_registeredWithShadowRoot;
+    bool m_hasDistribution;
 };
 
 inline InsertionPoint* toInsertionPoint(Node* node)

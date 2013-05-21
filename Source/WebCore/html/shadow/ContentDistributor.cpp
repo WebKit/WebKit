@@ -35,45 +35,6 @@
 
 namespace WebCore {
 
-void ContentDistribution::swap(ContentDistribution& other)
-{
-    m_nodes.swap(other.m_nodes);
-    m_indices.swap(other.m_indices);
-}
-
-void ContentDistribution::append(PassRefPtr<Node> node)
-{
-    size_t size = m_nodes.size();
-    m_indices.set(node.get(), size);
-    m_nodes.append(node);
-}
-
-size_t ContentDistribution::find(const Node* node) const
-{
-    HashMap<const Node*, size_t>::const_iterator it = m_indices.find(node);
-    if (it == m_indices.end())
-        return notFound;
-
-    return it.get()->value;
-}
-
-Node* ContentDistribution::nextTo(const Node* node) const
-{
-    size_t index = find(node);
-    if (index == notFound || index + 1 == size())
-        return 0;
-    return at(index + 1).get();
-}
-
-Node* ContentDistribution::previousTo(const Node* node) const
-{
-    size_t index = find(node);
-    if (index == notFound || !index)
-        return 0;
-    return at(index - 1).get();
-}
-
-
 ScopeContentDistribution::ScopeContentDistribution()
     : m_insertionPointListIsValid(true)
 {
@@ -169,19 +130,18 @@ bool ContentDistributor::invalidate(Element* host)
 
 void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, Element* host)
 {
-    ContentDistribution distribution;
-
     for (Node* child = host->firstChild(); child; child = child->nextSibling()) {
         ASSERT(!child->isInsertionPoint());
 
         if (insertionPoint->matchTypeFor(child) != InsertionPoint::AlwaysMatches)
             continue;
 
-        distribution.append(child);
         m_nodeToInsertionPoint.add(child, insertionPoint);
     }
 
-    insertionPoint->setDistribution(distribution);
+    if (m_nodeToInsertionPoint.isEmpty())
+        return;
+    insertionPoint->setHasDistribution();
 }
 
 void ContentDistributor::ensureDistribution(ShadowRoot* shadowRoot)

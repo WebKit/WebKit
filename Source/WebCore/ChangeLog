@@ -1,3 +1,44 @@
+2013-05-21  Antti Koivisto  <antti@apple.com>
+
+        Remove ContentDistribution
+        https://bugs.webkit.org/show_bug.cgi?id=116527
+
+        Reviewed by Andreas Kling.
+
+        Resolving distribution on traversal is simpler.
+
+        * WebCore.exp.in:
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseNode):
+        (WebCore::ComposedShadowTreeWalker::traverseDistributedNodes):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint):
+        * html/HTMLDetailsElement.cpp:
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distributeSelectionsTo):
+        * html/shadow/ContentDistributor.h:
+        * html/shadow/HTMLContentElement.idl:
+        
+            Remove getDistributedNodes().
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::attach):
+        (WebCore::InsertionPoint::detach):
+        (WebCore):
+        (WebCore::InsertionPoint::firstDistributed):
+        (WebCore::InsertionPoint::lastDistributed):
+        (WebCore::InsertionPoint::nextDistributedTo):
+        (WebCore::InsertionPoint::previousDistributedTo):
+        
+            Rename for clarity.
+
+        * html/shadow/InsertionPoint.h:
+        (WebCore::InsertionPoint::hasDistribution):
+        (WebCore::InsertionPoint::setHasDistribution):
+        (WebCore::InsertionPoint::clearDistribution):
+        (WebCore::InsertionPoint::matchTypeFor):
+        (InsertionPoint):
+
 2013-05-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit2

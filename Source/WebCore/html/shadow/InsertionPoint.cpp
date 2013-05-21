@@ -44,6 +44,7 @@ using namespace HTMLNames;
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document, CreateInsertionPoint)
     , m_registeredWithShadowRoot(false)
+    , m_hasDistribution(false)
 {
 }
 
@@ -55,9 +56,9 @@ void InsertionPoint::attach()
 {
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
-    for (size_t i = 0; i < m_distribution.size(); ++i) {
-        if (!m_distribution.at(i)->attached())
-            m_distribution.at(i)->attach();
+    for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
+        if (!current->attached())
+            current->attach();
     }
 
     HTMLElement::attach();
@@ -68,8 +69,8 @@ void InsertionPoint::detach()
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
 
-    for (size_t i = 0; i < m_distribution.size(); ++i)
-        m_distribution.at(i)->detach();
+    for (Node* current = firstDistributed(); current; current = nextDistributedTo(current))
+        current->detach();
 
     HTMLElement::detach();
 }
@@ -96,19 +97,6 @@ bool InsertionPoint::isActive() const
         node = node->parentNode();
     }
     return true;
-}
-
-PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
-{
-    if (ShadowRoot* shadowRoot = containingShadowRoot())
-        ContentDistributor::ensureDistribution(shadowRoot);
-
-    Vector<RefPtr<Node> > nodes;
-
-    for (size_t i = 0; i < m_distribution.size(); ++i)
-        nodes.append(m_distribution.at(i));
-
-    return StaticNodeList::adopt(nodes);
 }
 
 bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
@@ -184,15 +172,50 @@ void InsertionPoint::setResetStyleInheritance(bool value)
     setBooleanAttribute(reset_style_inheritanceAttr, value);
 }
 
-bool InsertionPoint::contains(const Node* node) const
-{
-    return m_distribution.contains(const_cast<Node*>(node));
-}
-
 const CSSSelectorList& InsertionPoint::emptySelectorList()
 {
     DEFINE_STATIC_LOCAL(CSSSelectorList, selectorList, (CSSSelectorList()));
     return selectorList;
+}
+    
+Node* InsertionPoint::firstDistributed() const
+{
+    if (!m_hasDistribution)
+        return 0;
+    for (Node* current = shadowHost()->firstChild(); current; current = current->nextSibling()) {
+        if (matchTypeFor(current) == InsertionPoint::AlwaysMatches)
+            return current;
+    }
+    return 0;
+}
+
+Node* InsertionPoint::lastDistributed() const
+{
+    if (!m_hasDistribution)
+        return 0;
+    for (Node* current = shadowHost()->lastChild(); current; current = current->previousSibling()) {
+        if (matchTypeFor(current) == InsertionPoint::AlwaysMatches)
+            return current;
+    }
+    return 0;
+}
+
+Node* InsertionPoint::nextDistributedTo(const Node* node) const
+{
+    for (Node* current = node->nextSibling(); current; current = current->nextSibling()) {
+        if (matchTypeFor(current) == InsertionPoint::AlwaysMatches)
+            return current;
+    }
+    return 0;
+}
+
+Node* InsertionPoint::previousDistributedTo(const Node* node) const
+{
+    for (Node* current = node->previousSibling(); current; current = current->previousSibling()) {
+        if (matchTypeFor(current) == InsertionPoint::AlwaysMatches)
+            return current;
+    }
+    return 0;
 }
 
 InsertionPoint* resolveReprojection(const Node* projectedNode)
