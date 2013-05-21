@@ -126,10 +126,6 @@
 #include "ValidatedCustomFilterOperation.h"
 #endif
 
-#if PLATFORM(BLACKBERRY)
-#define DISABLE_ROUNDED_CORNER_CLIPPING
-#endif
-
 #define MIN_INTERSECT_FOR_REVEAL 32
 
 using namespace std;
@@ -3494,7 +3490,6 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext* context, const LayoutR
     m_containsDirtyOverlayScrollbars = false;
 }
 
-#ifndef DISABLE_ROUNDED_CORNER_CLIPPING
 static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLayer)
 {
     if (startLayer == endLayer)
@@ -3508,7 +3503,6 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
     
     return false;
 }
-#endif
 
 void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, const LayoutRect& paintDirtyRect, const ClipRect& clipRect,
                              BorderRadiusClippingRule rule)
@@ -3517,8 +3511,7 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
         context->save();
         context->clip(pixelSnappedIntRect(clipRect.rect()));
     }
-    
-#ifndef DISABLE_ROUNDED_CORNER_CLIPPING
+
     if (!clipRect.hasRadius())
         return;
 
@@ -3535,7 +3528,6 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
         if (layer == rootLayer)
             break;
     }
-#endif
 }
 
 void RenderLayer::restoreClip(GraphicsContext* context, const LayoutRect& paintDirtyRect, const ClipRect& clipRect)
