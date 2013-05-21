@@ -1,3 +1,16 @@
+2013-05-20  Andreas Kling  <akling@apple.com>
+
+        Avoid caret repaints if we're not showing carets anyway.
+        <http://webkit.org/b/116489>
+
+        Reviewed by Simon Fraser.
+
+        When moving the selection, check if we're inside a contenteditable element (or in caret browsing mode)
+        before repainting the caret's previous location.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::recomputeCaretRect):
+
 2013-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         position:sticky should stick for the enclosing overflow ancestor

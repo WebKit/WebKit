@@ -1394,12 +1394,13 @@ bool FrameSelection::recomputeCaretRect()
 
 #if ENABLE(TEXT_CARET)
     if (RenderView* view = m_frame->document()->renderView()) {
-        Node* node = m_selection.start().deprecatedNode();
-        if (m_previousCaretNode)
-            repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
-        m_previousCaretNode = node;
-        if (shouldRepaintCaret(view, isContentEditable()))
+        if (shouldRepaintCaret(view, isContentEditable())) {
+            Node* node = m_selection.start().deprecatedNode();
+            if (m_previousCaretNode)
+                repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
+            m_previousCaretNode = node;
             repaintCaretForLocalRect(node, newRect);
+        }
     }
 #endif
     return true;
