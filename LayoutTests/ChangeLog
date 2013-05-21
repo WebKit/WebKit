@@ -1,5 +1,16 @@
 2013-05-21  Krzysztof Czech  <k.czech@samsung.com>
 
+        [EFL] accessibility/accessibility-node-reparent.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112026
+
+        Unreviewed EFL gardening.
+
+        accessibility/accessibility-node-reparent.html passes after r150431.
+
+        * platform/efl-wk2/TestExpectations:
+
+2013-05-21  Krzysztof Czech  <k.czech@samsung.com>
+
         [EFL] accessibility/accessibility-node-memory-management.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=112025
 
