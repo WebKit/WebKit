@@ -1,5 +1,14 @@
 2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Web Inspector: inspector/styles/import-pseudoclass-crash.html intermittently hits an assertion in HTMLLinkElement::startLoadingDynamicSheet
+        https://bugs.webkit.org/show_bug.cgi?id=116582
+
+        Add a flaky crash expectation.
+
+        * platform/mac/TestExpectations:
+
+2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update Mountain Lion test expectations per bug 116477.
 
         * platform/mac/TestExpectations:
