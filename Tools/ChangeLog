@@ -1,3 +1,16 @@
+2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r150393): editing/inserting/typing-at-end-of-line.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116516
+
+        Reviewed by Alexey Proskuryakov.
+
+        Reset states in DumpRenderTree. The fix for WebKitTestRunner should be implemented in the bug 116577.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Match the ordering.
+        (resetWebViewToConsistentStateBeforeTesting): Reset text replacement states.
+
 2013-05-21  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13929704> [WK2] WebKitTestRunner always crashes on exit

@@ -544,8 +544,9 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setAutomaticDashSubstitutionEnabled:NO];
     [webView setAutomaticTextReplacementEnabled:NO];
     [webView setAutomaticSpellingCorrectionEnabled:YES];
-    [webView setDefersCallbacks:NO];
     [webView setGrammarCheckingEnabled:YES];
+
+    [webView setDefersCallbacks:NO];
     [webView setInteractiveFormValidationEnabled:YES];
     [webView setValidationMessageTimerMagnification:-1];
     
@@ -1289,6 +1290,14 @@ static void resetWebViewToConsistentStateBeforeTesting()
         // in the case that a test using the chrome input field failed, be sure to clean up for the next test
         gTestRunner->removeChromeInputField();
     }
+
+    [webView setContinuousSpellCheckingEnabled:YES];
+    [webView setAutomaticQuoteSubstitutionEnabled:NO];
+    [webView setAutomaticLinkDetectionEnabled:NO];
+    [webView setAutomaticDashSubstitutionEnabled:NO];
+    [webView setAutomaticTextReplacementEnabled:NO];
+    [webView setAutomaticSpellingCorrectionEnabled:YES];
+    [webView setGrammarCheckingEnabled:YES];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
     [WebView _resetOriginAccessWhitelists];
