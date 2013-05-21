@@ -935,6 +935,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\NeverDestroyed.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\Noncopyable.h"
 			>
 		</File>

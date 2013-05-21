@@ -65,7 +65,6 @@
 #define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_extension(has_trivial_destructor)
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_extension(cxx_strong_enums)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_extension(cxx_reference_qualified_functions)
-
 #endif
 
 #ifndef CLANG_PRAGMA
@@ -276,6 +275,12 @@
 #define FINAL
 #endif
 
+#if COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS)
+#define WTF_DELETED_FUNCTION = delete
+#else
+#define WTF_DELETED_FUNCTION
+#endif
+
 /* REFERENCED_FROM_ASM */
 
 #ifndef REFERENCED_FROM_ASM
@@ -319,5 +324,7 @@ inline void unusedParam(T& x) { (void)x; }
 #else
 #define UNUSED_LABEL(label) UNUSED_PARAM(&& label)
 #endif
+
+
 
 #endif /* WTF_Compiler_h */

@@ -28,6 +28,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -1242,7 +1243,8 @@ float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
 
 const String& emptyString()
 {
-    DEFINE_STATIC_LOCAL(String, emptyString, (StringImpl::empty()));
+    static NeverDestroyed<String> emptyString(StringImpl::empty());
+
     return emptyString;
 }
 

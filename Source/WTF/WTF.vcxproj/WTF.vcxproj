@@ -166,7 +166,7 @@
     <ClInclude Include="..\wtf\MessageQueue.h" />
     <ClInclude Include="..\wtf\MetaAllocator.h" />
     <ClInclude Include="..\wtf\MetaAllocatorHandle.h" />
-    <ClInclude Include="..\wtf\Noncopyable.h" />
+    <ClInclude Include="..\wtf\NeverDestroyed.h" />    <ClInclude Include="..\wtf\Noncopyable.h" />
     <ClInclude Include="..\wtf\NonCopyingSort.h" />
     <ClInclude Include="..\wtf\NotFound.h" />
     <ClInclude Include="..\wtf\NullPtr.h" />

@@ -89,6 +89,7 @@ wtf_sources += \
     Source/WTF/wtf/MetaAllocator.cpp \
     Source/WTF/wtf/MetaAllocator.h \
     Source/WTF/wtf/MetaAllocatorHandle.h \
+    Source/WTF/wtf/NeverDestroyed.h \
     Source/WTF/wtf/NonCopyingSort.h \
     Source/WTF/wtf/Noncopyable.h \
     Source/WTF/wtf/NotFound.h \

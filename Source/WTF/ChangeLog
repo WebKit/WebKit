@@ -1,3 +1,36 @@
+2013-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::NeverDestroyed and start using it in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=116472
+
+        Reviewed by Benjamin Poulain.
+
+        NeverDestroyed is a class template that can be used for singletons and other objects that we never
+        want to destroy. It's intended as a replacement for WTF_STATIC_LOCAL with the advantage that it doesn't
+        fragment the heap.
+
+        * GNUmakefile.list.am:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        Add NeverDestroyed.h
+
+        * wtf/Compiler.h:
+        Add a helper macro, WTF_DELETED_FUNCTION.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        Use NeverDestroyed.
+
+        * wtf/NeverDestroyed.h: Added.
+
+        * wtf/Noncopyable.h:
+        Use WTF_DELETED_FUNCTION.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::emptyString):
+        Use 
+
 2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Use '__typeof__' keyword to avoid problems when compiling in C++11 standard compliance
