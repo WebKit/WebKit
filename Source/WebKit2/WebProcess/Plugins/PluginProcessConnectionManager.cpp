@@ -63,12 +63,10 @@ void PluginProcessConnectionManager::initializeConnection(CoreIPC::Connection* c
 
 PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnection(uint64_t pluginProcessToken)
 {
-    auto it = std::find_if(m_pluginProcessConnections.begin(), m_pluginProcessConnections.end(), [=](const RefPtr<PluginProcessConnection>& connection) {
-        return connection->pluginProcessToken() == pluginProcessToken;
-    });
-
-    if (it != m_pluginProcessConnections.end())
-        return it->get();
+    for (size_t i = 0; i < m_pluginProcessConnections.size(); ++i) {
+        if (m_pluginProcessConnections[i]->pluginProcessToken() == pluginProcessToken)
+            return m_pluginProcessConnections[i].get();
+    }
 
     CoreIPC::Attachment encodedConnectionIdentifier;
     bool supportsAsynchronousInitialization;

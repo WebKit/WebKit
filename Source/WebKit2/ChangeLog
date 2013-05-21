@@ -1,5 +1,13 @@
 2013-05-21  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Stop using lambdas :(
+
+2013-05-21  Anders Carlsson  <andersca@apple.com>
+
         Provide an API to run sandboxed plug-ins outside of their sandbox
         https://bugs.webkit.org/show_bug.cgi?id=116578
 
