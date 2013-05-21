@@ -1515,5 +1515,3 @@ webkit.org/b/116388 fast/js/post-message-numeric-property.html
 
 webkit.org/b/116477 [ MountainLion ] svg/batik/text/textEffect.svg [ Pass Failure ]
 webkit.org/b/116519 [ MountainLion ] svg/batik/paints/patternRegions-positioned-objects.svg [ Pass Failure ]
-
-webkit.org/b/116567 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
