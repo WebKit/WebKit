@@ -124,19 +124,35 @@ void RenderTextTrackCue::placeBoxInDefaultPosition(LayoutUnit position, bool& sw
 
 bool RenderTextTrackCue::isOutside() const
 {
-    return !containingBlock()->absoluteBoundingBoxRect().contains(absoluteContentBox());
+    return !rectIsWithinContainer(absoluteContentBox());
 }
 
+bool RenderTextTrackCue::rectIsWithinContainer(const IntRect& rect) const
+{
+    return containingBlock()->absoluteBoundingBoxRect().contains(rect);
+}
+
+
 bool RenderTextTrackCue::isOverlapping() const
+{
+    return overlappingObject();
+}
+
+RenderObject* RenderTextTrackCue::overlappingObject() const
+{
+    return overlappingObjectForRect(absoluteBoundingBoxRect());
+}
+
+RenderObject* RenderTextTrackCue::overlappingObjectForRect(const IntRect& rect) const
 {
     for (RenderObject* box = previousSibling(); box; box = box->previousSibling()) {
         IntRect boxRect = box->absoluteBoundingBoxRect();
 
-        if (absoluteBoundingBoxRect().intersects(boxRect))
-            return true;
+        if (rect.intersects(boxRect))
+            return box;
     }
 
-    return false;
+    return 0;
 }
 
 bool RenderTextTrackCue::shouldSwitchDirection(InlineFlowBox* firstLineBox, LayoutUnit step) const
@@ -202,6 +218,76 @@ bool RenderTextTrackCue::switchDirection(bool& switched, LayoutUnit& step)
     return true;
 }
 
+void RenderTextTrackCue::moveIfNecessaryToKeepWithinContainer()
+{
+    IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
+    IntRect cueRect = absoluteBoundingBoxRect();
+
+    int topOverflow = cueRect.y() - containerRect.y();
+    int bottomOverflow = containerRect.maxY() - cueRect.maxY();
+
+    int verticalAdjustment = 0;
+    if (topOverflow < 0)
+        verticalAdjustment = -topOverflow;
+    else if (bottomOverflow < 0)
+        verticalAdjustment = bottomOverflow;
+
+    if (verticalAdjustment)
+        setY(y() + verticalAdjustment);
+
+    int leftOverflow = cueRect.x() - containerRect.x();
+    int rightOverflow = containerRect.maxX() - cueRect.maxX();
+
+    int horizontalAdjustment = 0;
+    if (leftOverflow < 0)
+        horizontalAdjustment = -leftOverflow;
+    else if (rightOverflow < 0)
+        horizontalAdjustment = rightOverflow;
+
+    if (horizontalAdjustment)
+        setX(x() + horizontalAdjustment);
+}
+
+bool RenderTextTrackCue::findNonOverlappingPosition(int& newX, int& newY) const
+{
+    newX = x();
+    newY = y();
+    IntRect srcRect = absoluteBoundingBoxRect();
+    IntRect destRect = srcRect;
+
+    // Move the box up, looking for a non-overlapping position:
+    while (RenderObject* box = overlappingObjectForRect(destRect)) {
+        if (m_cue->getWritingDirection() == TextTrackCue::Horizontal)
+            destRect.setY(box->absoluteBoundingBoxRect().y() - destRect.height());
+        else
+            destRect.setX(box->absoluteBoundingBoxRect().x() - destRect.width());
+    }
+
+    if (rectIsWithinContainer(destRect)) {
+        newX += destRect.x() - srcRect.x();
+        newY += destRect.y() - srcRect.y();
+        return true;
+    }
+
+    destRect = srcRect;
+
+    // Move the box down, looking for a non-overlapping position:
+    while (RenderObject* box = overlappingObjectForRect(destRect)) {
+        if (m_cue->getWritingDirection() == TextTrackCue::Horizontal)
+            destRect.setY(box->absoluteBoundingBoxRect().maxY());
+        else
+            destRect.setX(box->absoluteBoundingBoxRect().maxX());
+    }
+
+    if (rectIsWithinContainer(destRect)) {
+        newX += destRect.x() - srcRect.x();
+        newY += destRect.y() - srcRect.y();
+        return true;
+    }
+
+    return false;
+}
+
 void RenderTextTrackCue::repositionCueSnapToLinesSet()
 {
     InlineFlowBox* firstLineBox;
@@ -229,22 +315,8 @@ void RenderTextTrackCue::repositionCueSnapToLinesSet()
 
     // Acommodate extra top and bottom padding, border or margin.
     // Note: this is supported only for internal UA styling, not through the cue selector.
-    if (hasInlineDirectionBordersPaddingOrMargin()) {
-        IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
-        IntRect cueRect = absoluteBoundingBoxRect();
-
-        int topOverflow = cueRect.y() - containerRect.y();
-        int bottomOverflow = containerRect.y() + containerRect.height() - cueRect.y() - cueRect.height();
-
-        int adjustment = 0;
-        if (topOverflow < 0)
-            adjustment = -topOverflow;
-        else if (bottomOverflow < 0)
-            adjustment = bottomOverflow;
-
-        if (adjustment)
-            setY(y() + adjustment);
-    }
+    if (hasInlineDirectionBordersPaddingOrMargin())
+        moveIfNecessaryToKeepWithinContainer();
 }
 
 void RenderTextTrackCue::repositionGenericCue()
@@ -267,7 +339,26 @@ void RenderTextTrackCue::repositionGenericCue()
 
 void RenderTextTrackCue::repositionCueSnapToLinesNotSet()
 {
-    // FIXME: Implement overlapping detection when snap-to-lines is not set. http://wkb.ug/84296
+    // 3. If none of the boxes in boxes would overlap any of the boxes in output, and all the boxes in
+    // output are within the video's rendering area, then jump to the step labeled done positioning below.
+    if (!isOutside() && !isOverlapping())
+        return;
+
+    // 4. If there is a position to which the boxes in boxes can be moved while maintaining the relative
+    // positions of the boxes in boxes to each other such that none of the boxes in boxes would overlap
+    // any of the boxes in output, and all the boxes in output would be within the video's rendering area,
+    // then move the boxes in boxes to the closest such position to their current position, and then jump
+    // to the step labeled done positioning below. If there are multiple such positions that are equidistant
+    // from their current position, use the highest one amongst them; if there are several at that height,
+    // then use the leftmost one amongst them.
+    moveIfNecessaryToKeepWithinContainer();
+    int x = 0;
+    int y = 0;
+    if (!findNonOverlappingPosition(x, y))
+        return;
+
+    setX(x);
+    setY(y);
 }
 
 } // namespace WebCore

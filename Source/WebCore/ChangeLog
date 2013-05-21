@@ -1,3 +1,27 @@
+2013-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Implement overlap avoidance for cues with snap-to-lines flag not set
+        https://bugs.webkit.org/show_bug.cgi?id=84296
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-cue-overlap-snap-to-lines-not-set.html
+
+        Support overlap avoidance for the non-snap-to-lines part of the WebVTT spec.
+
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::isOutside): Split implementation into rectIsWithinContainer().
+        (WebCore::RenderTextTrackCue::rectIsWithinContainer): Ditto.
+        (WebCore::RenderTextTrackCue::isOverlapping): Split into overlappingObject() and overlappingObjectForRect().
+        (WebCore::RenderTextTrackCue::overlappingObject): Ditto.
+        (WebCore::RenderTextTrackCue::overlappingObjectForRect): Ditto.
+        (WebCore::RenderTextTrackCue::moveIfNecessaryToKeepWithinContainer): Added.
+        (WebCore::RenderTextTrackCue::findNonOverlappingPosition): When an overlapping object is found, move the
+            cue to just above or below that object and try again.
+        (WebCore::RenderTextTrackCue::repositionCueSnapToLinesSet): Move implementation into moveIfNecessaryToKeepWithinContainer().
+        (WebCore::RenderTextTrackCue::repositionCueSnapToLinesNotSet): Add implementanton based on above.
+        * rendering/RenderTextTrackCue.h:
+
 2013-05-21  Alberto Garcia  <agarcia@igalia.com>
 
         Remove GraphicsLayerClient::contentsVisible()

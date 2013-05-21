@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class RenderBox;
 class TextTrackCueBox;
 
 class RenderTextTrackCue : public RenderBlock {
@@ -45,11 +46,16 @@ private:
     virtual void layout() OVERRIDE;
 
     bool isOutside() const;
+    bool rectIsWithinContainer(const IntRect&) const;
     bool isOverlapping() const;
+    RenderObject* overlappingObject() const;
+    RenderObject* overlappingObjectForRect(const IntRect&) const;
     bool shouldSwitchDirection(InlineFlowBox*, LayoutUnit) const;
 
     void moveBoxesByStep(LayoutUnit);
     bool switchDirection(bool&, LayoutUnit&);
+    void moveIfNecessaryToKeepWithinContainer();
+    bool findNonOverlappingPosition(int& x, int& y) const;
 
     bool initializeLayoutParameters(InlineFlowBox*&, LayoutUnit&, LayoutUnit&);
     void placeBoxInDefaultPosition(LayoutUnit, bool&);
