@@ -1,6 +1,7 @@
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         dispatchEvent call can execute javascript and blow away endRoot from underneath
+        https://bugs.webkit.org/show_bug.cgi?id=116567
         https://bugs.webkit.org/show_bug.cgi?id=116483
 
         Reviewed by Andreas Kling.
