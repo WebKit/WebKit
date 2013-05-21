@@ -1,3 +1,15 @@
+2013-05-21  Andreas Kling  <akling@apple.com>
+
+        Robustify repaint of previous caret node when moving FrameSelection.
+        <http://webkit.org/b/116558>
+
+        Reviewed by Ryosuke Niwa.
+
+        As a follow-up to r150396, also repaint the caret rects if the previous node is contenteditable.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::recomputeCaretRect):
+
 2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix after r150469. We need to bail out here when DOM is mutated by an event listener such that
