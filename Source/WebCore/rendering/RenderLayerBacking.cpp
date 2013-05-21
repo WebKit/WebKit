@@ -2338,20 +2338,6 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
     return backingMemory;
 }
 
-#if PLATFORM(BLACKBERRY)
-bool RenderLayerBacking::contentsVisible(const GraphicsLayer*, const IntRect& localContentRect) const
-{
-    Frame* frame = renderer()->frame();
-    FrameView* view = frame ? frame->view() : 0;
-    if (!view)
-        return false;
-
-    IntRect visibleContentRect(view->visibleContentRect());
-    FloatQuad absoluteContentQuad = renderer()->localToAbsoluteQuad(FloatRect(localContentRect));
-    return absoluteContentQuad.enclosingBoundingBox().intersects(visibleContentRect);
-}
-#endif
-
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

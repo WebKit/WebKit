@@ -1,3 +1,15 @@
+2013-05-21  Alberto Garcia  <agarcia@igalia.com>
+
+        Remove GraphicsLayerClient::contentsVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=116523
+
+        Reviewed by Darin Adler.
+
+        This is dead code from the BlackBerry port.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        * rendering/RenderLayerBacking.cpp:
+
 2013-05-21  Zan Dobersek  <zdobersek@igalia.com>
 
         PLATFORM(*) macros used in Source/WebCore/loader/archive/ArchiveFactory.cpp
