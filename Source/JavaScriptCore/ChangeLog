@@ -1,3 +1,13 @@
+2013-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed speculative fix for test-bots.
+
+        Add export declaration for WTFInvokeCrashHook to avoid runtime
+        load error on test bots.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-05-21  Mark Lam  <mark.lam@apple.com>
 
         Added missing assert condition for PositiveOrZero in ARM branch32().

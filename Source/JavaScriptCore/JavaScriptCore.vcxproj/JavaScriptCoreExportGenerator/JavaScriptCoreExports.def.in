@@ -556,6 +556,7 @@ EXPORTS
     ?zeroTime@MediaTime@WTF@@SAABV12@XZ
     WTFCrash
     WTFGetBacktrace
+    WTFInvokeCrashHook
     WTFLog
     WTFLogAlways
     WTFLogVerbose
