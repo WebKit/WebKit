@@ -239,7 +239,7 @@
                       "slavenames": ["wince-1"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release", "type": "BuildAndTest", "builddir": "efl-linux-64-release",
+                      "name": "EFL Linux 64-bit Release WK1", "type": "BuildAndTestWebKit1Only", "builddir": "efl-linux-64-release-wk1",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-1"]
                     },
@@ -261,7 +261,7 @@
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS32R2 LE Release",
                                        "Qt Linux SH4 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
-                                       "EFL Linux 64-bit Release", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
+                                       "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,

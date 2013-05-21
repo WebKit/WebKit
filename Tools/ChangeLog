@@ -1,3 +1,14 @@
+2013-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change EFL Linux 64-bit Release with EFL Linux 64-bit Release WK1
+        https://bugs.webkit.org/show_bug.cgi?id=116423
+
+        Reviewed by Ryosuke Niwa.
+
+        EFL Linux 64-bit Release starts to support WK1's build and layout test from now on.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-05-20  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove remaining link-prerender code
