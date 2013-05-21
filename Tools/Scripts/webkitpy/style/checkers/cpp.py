@@ -1116,19 +1116,6 @@ def check_invalid_increment(clean_lines, line_number, error):
               'Changing pointer instead of value (or unused value of operator*).')
 
 
-def check_for_webcore_platform_layering_violation(filename, clean_lines, line_number, error):
-    """Checks for platform-specific code inside WebCore outside of the platform layer."""
-    directory = FileInfo(filename).split()[0]
-    if not match(r'Source/WebCore', directory):
-        return
-    if match(r'Source/WebCore/platform', directory):
-        return
-    line = clean_lines.elided[line_number]
-    if match(r'\s*#\s*if\s*PLATFORM\s*\(', line):
-        error(line_number, 'build/webcore_platform_layering_violation', 5,
-              'Do not add platform specific code in WebCore outside of platform.')
-
-
 class _ClassInfo(object):
     """Stores information about a class."""
 
@@ -3577,7 +3564,6 @@ def process_line(filename, file_extension,
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
-    check_for_webcore_platform_layering_violation(filename, clean_lines, line, error)
 
 
 def _process_lines(filename, file_extension, lines, error, min_confidence):
@@ -3644,7 +3630,6 @@ class CppChecker(object):
         'build/printf_format',
         'build/storage_class',
         'build/using_std',
-        'build/webcore_platform_layering_violation',
         'legal/copyright',
         'readability/braces',
         'readability/casting',

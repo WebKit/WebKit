@@ -1,3 +1,19 @@
+2013-05-21  Jessie Berlin  <jberlin@apple.com>
+
+        Revert r149635, it was too optimistic.
+
+        Rubber-stamped by Andreas Kling.
+
+        We are not at the point where we can always use more descriptive macros instead of PLATFORM()
+        #ifdefs in WebCore code outside of WebCore/platform.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_invalid_increment):
+        (process_line):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_plain_integral_bitfields):
+
 2013-05-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; fix lldb synthetic representation of WTF::Vector after r148891.
