@@ -181,6 +181,7 @@ public:
 #if PLATFORM(BLACKBERRY)
     FloatRect(const BlackBerry::Platform::FloatRect&);
     operator BlackBerry::Platform::FloatRect() const;
+    FloatRect normalized() const;
 #endif
 
 #if USE(CG)

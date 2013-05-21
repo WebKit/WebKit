@@ -1,3 +1,17 @@
+2013-05-21  Alberto Garcia  <agarcia@igalia.com>
+
+        Add FloatRect::normalized() for BlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=116531
+
+        Reviewed by Carlos Garcia Campos.
+
+        This was added to FloatRectBlackBerry.cpp in r111072 when the
+        graphics platform code was upstreamed, but this change was
+        missing.
+
+        * platform/graphics/FloatRect.h:
+        (FloatRect):
+
 2013-05-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         [GStreamer] cleanup duration query
