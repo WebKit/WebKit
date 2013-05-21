@@ -2741,6 +2741,13 @@ editing/secure-input [ Failure ]
 webkit.org/b/116560 fast/js/create-lots-of-workers.html
 webkit.org/b/116560 fast/workers
 
+# Disable crashing tests, being investigated under https://bugs.webkit.org/show_bug.cgi?id=116562
+webkit.org/b/116562 fast/js/callback-function-with-handle-event.html
+webkit.org/b/116562 fast/js/large-expressions.html
+webkit.org/b/116562 fast/js/string-replace-exception-crash.html
+webkit.org/b/116562 fast/text/custom-font-data-crash.html
+webkit.org/b/116562 loader/go-back-cached-main-resource.html
+
 # Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
 webkit.org/b/116564 css1/units/rounding.html
 webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html

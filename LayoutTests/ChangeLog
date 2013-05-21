@@ -10,6 +10,15 @@
 
 2013-05-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Disable several crashing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116562
+        
+        Unreviewed change to TestExpectations while investigating.
+
+        * platform/win/TestExpectations:
+
+2013-05-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Workers are crashing tests.
         https://bugs.webkit.org/show_bug.cgi?id=116560.
 
