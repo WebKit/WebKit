@@ -426,7 +426,7 @@ void MediaControlsApple::updateStatusDisplay()
 
 void MediaControlsApple::loadedMetadata()
 {
-    if (m_statusDisplay && m_mediaController->isLiveStream())
+    if (m_statusDisplay && !m_mediaController->isLiveStream())
         m_statusDisplay->hide();
 
     MediaControls::loadedMetadata();

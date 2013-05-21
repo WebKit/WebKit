@@ -1,5 +1,18 @@
 2013-05-21  Jer Noble  <jer.noble@apple.com>
 
+        REGRESSION(r101810): Media controls status text missing for live-stream videos.
+        https://bugs.webkit.org/show_bug.cgi?id=116547
+
+        Reviewed by Eric Carlson.
+
+        Un-reverse the logic in loadedMetadata() so that the status text isn't
+        hidden (when it should be shown) for live-stream videos.
+
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::loadedMetadata):
+
+2013-05-21  Jer Noble  <jer.noble@apple.com>
+
         Implement overlap-avoidance for in-band text track cues.
         https://bugs.webkit.org/show_bug.cgi?id=116540
 
