@@ -147,7 +147,7 @@ private:
     bool m_buffering;
     float m_playbackRate;
     bool m_errorOccured;
-    gfloat m_mediaDuration;
+    mutable gfloat m_mediaDuration;
     bool m_startedBuffering;
     Timer<MediaPlayerPrivateGStreamer> m_fillTimer;
     float m_maxTimeLoaded;

@@ -450,7 +450,8 @@ float MediaPlayerPrivateGStreamer::duration() const
 
     LOG_MEDIA_MESSAGE("Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timeLength));
 
-    return static_cast<double>(timeLength) / GST_SECOND;
+    m_mediaDuration = static_cast<double>(timeLength) / GST_SECOND;
+    return m_mediaDuration;
     // FIXME: handle 3.14.9.5 properly
 }
 
@@ -1099,17 +1100,16 @@ void MediaPlayerPrivateGStreamer::updateStates()
     case GST_STATE_CHANGE_SUCCESS:
         LOG_MEDIA_MESSAGE("State: %s, pending: %s", gst_element_state_get_name(state), gst_element_state_get_name(pending));
 
-        m_resetPipeline = state <= GST_STATE_READY;
+        if (state <= GST_STATE_READY) {
+            m_resetPipeline = true;
+            m_mediaDuration = 0;
+        } else
+            cacheDuration();
 
         // Try to figure out ready and network states.
         if (state == GST_STATE_READY) {
             m_readyState = MediaPlayer::HaveMetadata;
             m_networkState = MediaPlayer::Empty;
-            // Cache the duration without emiting the durationchange
-            // event because it's taken care of by the media element
-            // in this precise case.
-            if (!m_isEndReached)
-                cacheDuration();
         } else if ((state == GST_STATE_NULL) || (maxTimeLoaded() == duration())) {
             m_networkState = MediaPlayer::Loaded;
             m_readyState = MediaPlayer::HaveEnoughData;
@@ -1376,23 +1376,19 @@ void MediaPlayerPrivateGStreamer::didEnd()
 
 void MediaPlayerPrivateGStreamer::cacheDuration()
 {
-    // Reset cached media duration
-    m_mediaDuration = 0;
+    if (m_mediaDuration || !m_mediaDurationKnown)
+        return;
 
-    // And re-cache it if possible.
-    GstState state;
-    GstStateChangeReturn getStateResult = gst_element_get_state(m_playBin.get(), &state, 0, 0);
     float newDuration = duration();
-
-    if (state > GST_STATE_READY && getStateResult == GST_STATE_CHANGE_SUCCESS) {
-        // Don't set m_mediaDurationKnown yet if the pipeline is not
-        // stable. This allows duration() query to fail at least once
-        // before playback starts and duration becomes known.
-        m_mediaDurationKnown = !std::isinf(newDuration);
+    if (std::isinf(newDuration)) {
+        // Only pretend that duration is not available if the the query failed in a stable pipeline state.
+        GstState state;
+        if (gst_element_get_state(m_playBin.get(), &state, 0, 0) == GST_STATE_CHANGE_SUCCESS && state > GST_STATE_READY)
+            m_mediaDurationKnown = false;
+        return;
     }
 
-    if (!std::isinf(newDuration))
-        m_mediaDuration = newDuration;
+    m_mediaDuration = newDuration;
 }
 
 void MediaPlayerPrivateGStreamer::durationChanged()
