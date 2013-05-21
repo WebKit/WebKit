@@ -461,13 +461,7 @@ http/tests/security/contentTypeOptions
 # Unexpected redirection happens.
 http/tests/loading/redirect-methods.html
 
-# Should pass now but need to be checked first.
-platform/mac/fast/loader/file-url-mimetypes-2.html
-platform/mac/fast/loader/file-url-mimetypes-3.html
-platform/mac/fast/loader/file-url-mimetypes.html
-webarchive/loading/cache-expired-subresource.html
-webarchive/loading/test-loading-archive.html
-webarchive/loading/test-loading-archive-subresource-null-mimetype.html
+webkit.org/b/116125 webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Failure ]
 
 # Should pass now on ports other than EFL and GTK.
 # But it needs to be checked first.
