@@ -1,5 +1,17 @@
 2013-05-21  Krzysztof Czech  <k.czech@samsung.com>
 
+        [GTK][WK2] accessibility/label-for-control-hittest.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=106341
+
+        Reviewed by Martin Robinson.
+
+        Adds support for retrieving accessibility element at exact point.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::elementAtPoint):
+
+2013-05-21  Krzysztof Czech  <k.czech@samsung.com>
+
         [ATK] [WebKit2] AccessibilityUIElement often leaks its AtkObject
         https://bugs.webkit.org/show_bug.cgi?id=112913
 

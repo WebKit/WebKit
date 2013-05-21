@@ -316,8 +316,11 @@ int AccessibilityUIElement::childrenCount()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+        return 0;
+
+    GRefPtr<AtkObject> objectAtPoint = adoptGRef(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element.get()), x, y, ATK_XY_WINDOW));
+    return objectAtPoint ? AccessibilityUIElement::create(objectAtPoint.get()) : 0;
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
