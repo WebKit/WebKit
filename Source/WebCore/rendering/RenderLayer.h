@@ -76,6 +76,7 @@ class RenderLayerCompositor;
 #endif
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
+enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 
 enum RepaintStatus {
     NeedsNormalRepaint = 0,
@@ -570,16 +571,18 @@ public:
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRootForPainting() const;
 
+    RenderLayer* enclosingOverflowClipLayer(IncludeSelfOrNot) const;
+
 #if USE(ACCELERATED_COMPOSITING)
     // Enclosing compositing layer; if includeSelf is true, may return this.
-    RenderLayer* enclosingCompositingLayer(bool includeSelf = true) const;
-    RenderLayer* enclosingCompositingLayerForRepaint(bool includeSelf = true) const;
+    RenderLayer* enclosingCompositingLayer(IncludeSelfOrNot = IncludeSelf) const;
+    RenderLayer* enclosingCompositingLayerForRepaint(IncludeSelfOrNot = IncludeSelf) const;
     // Ancestor compositing layer, excluding this.
-    RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(false); }
+    RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(ExcludeSelf); }
 #endif
 
 #if ENABLE(CSS_FILTERS)
-    RenderLayer* enclosingFilterLayer(bool includeSelf = true) const;
+    RenderLayer* enclosingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
     RenderLayer* enclosingFilterRepaintLayer() const;
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, bool immediate);
     bool hasAncestorWithFilterOutsets() const;

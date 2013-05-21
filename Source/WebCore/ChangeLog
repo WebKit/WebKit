@@ -1,3 +1,45 @@
+2013-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        position:sticky should stick for the enclosing overflow ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=100054
+
+        Reviewed by Beth Dakin.
+        
+        Make position: -webkit-sticky be constrained by an enclosing ancestor
+        with non-visible overflow if there is one, rather than being constained
+        always by the viewport.
+
+        Test: fast/css/sticky/sticky-top-overflow.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints): Rename
+        viewportRect to constrainingRect, since it isn't just about the viewport any more.
+        Fix an issue where just adding stickyLocation to absContainerFrame.location() was
+        incorrect when the container is scrolled; we also have to take the scroll offset
+        into account, and that offset is stored in the layer tree.
+        (WebCore::RenderBoxModelObject::stickyPositionOffset):
+        Look for an enclosing layer with overflow clipping, and, if found, use it to
+        compute the sticky constraint rect.
+        * rendering/RenderLayer.h: Add a helpful IncludeSelfOrNot, and fix several member functions
+        to use it place of hard-to-read boolean arguments.
+        Add enclosingOverflowClipLayer(IncludeSelfOrNot).
+        (WebCore::RenderLayer::ancestorCompositingLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingOverflowClipLayer): New function, finds the enclosing
+        layer with overflow clip.
+        (WebCore::RenderLayer::enclosingCompositingLayer): Use IncludeSelfOrNot.
+        (WebCore::RenderLayer::enclosingCompositingLayerForRepaint): Ditto.
+        (WebCore::RenderLayer::enclosingFilterLayer): Ditto.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::repaintInCompositedAncestor): Use IncludeSelfOrNot.
+        (WebCore::isViewportConstrainedFixedOrStickyLayer): Renamed from isRootmostFixedOrStickyLayer
+        and moved up so we can use it in requiresCompositingForPosition().
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition): Only make sticky composited if
+        it's viewport-constrained.
+        (WebCore::RenderLayerCompositor::updateViewportConstraintStatus):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints): Declare StickyPositionViewportConstraints
+        one line down to just before it gets used.
+
 2013-05-20  Jeff Rogers  <jrogers@blackberry.com>
 
         Remove DISABLE_ROUNDED_CORNER_CLIPPING

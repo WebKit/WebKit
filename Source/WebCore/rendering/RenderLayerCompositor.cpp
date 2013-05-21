@@ -776,7 +776,7 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer* layer)
 // This method assumes that layout is up-to-date, unlike repaintOnCompositingChange().
 void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer* layer, const LayoutRect& rect)
 {
-    RenderLayer* compositedAncestor = layer->enclosingCompositingLayerForRepaint(false /*exclude self*/);
+    RenderLayer* compositedAncestor = layer->enclosingCompositingLayerForRepaint(ExcludeSelf);
     if (compositedAncestor) {
         ASSERT(compositedAncestor->backing());
 
@@ -2204,6 +2204,22 @@ bool RenderLayerCompositor::requiresCompositingForBlending(RenderObject* rendere
 #endif
 }
 
+static bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer* layer)
+{
+    if (layer->renderer()->isStickyPositioned())
+        return !layer->enclosingOverflowClipLayer(ExcludeSelf);
+
+    if (layer->renderer()->style()->position() != FixedPosition)
+        return false;
+
+    for (RenderLayer* stackingContainer = layer->stackingContainer(); stackingContainer; stackingContainer = stackingContainer->stackingContainer()) {
+        if (stackingContainer->isComposited() && stackingContainer->renderer()->style()->position() == FixedPosition)
+            return false;
+    }
+
+    return true;
+}
+
 bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
     // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
@@ -2228,7 +2244,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     }
 
     if (isSticky)
-        return hasCoordinatedScrolling();
+        return hasCoordinatedScrolling() && isViewportConstrainedFixedOrStickyLayer(layer);
 
     RenderObject* container = renderer->container();
     // If the renderer is not hooked up yet then we have to wait until it is.
@@ -3011,25 +3027,9 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-static bool isRootmostFixedOrStickyLayer(RenderLayer* layer)
-{
-    if (layer->renderer()->isStickyPositioned())
-        return true;
-
-    if (layer->renderer()->style()->position() != FixedPosition)
-        return false;
-
-    for (RenderLayer* stackingContainer = layer->stackingContainer(); stackingContainer; stackingContainer = stackingContainer->stackingContainer()) {
-        if (stackingContainer->isComposited() && stackingContainer->renderer()->style()->position() == FixedPosition)
-            return false;
-    }
-
-    return true;
-}
-
 void RenderLayerCompositor::updateViewportConstraintStatus(RenderLayer* layer)
 {
-    if (isRootmostFixedOrStickyLayer(layer))
+    if (isViewportConstrainedFixedOrStickyLayer(layer))
         addViewportConstrainedLayer(layer);
     else
         removeViewportConstrainedLayer(layer);
@@ -3092,14 +3092,15 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
 StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportConstraints(RenderLayer* layer) const
 {
     ASSERT(layer->isComposited());
+    // We should never get here for stickies constrained by an enclosing clipping layer.
+    ASSERT(!layer->enclosingOverflowClipLayer(ExcludeSelf));
 
     FrameView* frameView = m_renderView->frameView();
     LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
 
-    StickyPositionViewportConstraints constraints;
-
     RenderBoxModelObject* renderer = toRenderBoxModelObject(layer->renderer());
 
+    StickyPositionViewportConstraints constraints;
     renderer->computeStickyPositionConstraints(constraints, viewportRect);
 
     GraphicsLayer* graphicsLayer = layer->backing()->graphicsLayer();

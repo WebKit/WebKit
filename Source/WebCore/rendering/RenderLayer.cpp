@@ -930,6 +930,18 @@ TransformationMatrix RenderLayer::renderableTransform(PaintBehavior paintBehavio
     return *m_transform;
 }
 
+RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSelf) const
+{
+    const RenderLayer* layer = (includeSelf == IncludeSelf) ? this : parent();
+    while (layer) {
+        if (layer->renderer()->hasOverflowClip())
+            return const_cast<RenderLayer*>(layer);
+
+        layer = layer->parent();
+    }
+    return 0;
+}
+
 static bool checkContainingBlockChainForPagination(RenderLayerModelObject* renderer, RenderBox* ancestorColumnsRenderer)
 {
     RenderView* view = renderer->view();
@@ -1413,9 +1425,9 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
+RenderLayer* RenderLayer::enclosingCompositingLayer(IncludeSelfOrNot includeSelf) const
 {
-    if (includeSelf && isComposited())
+    if (includeSelf == IncludeSelf && isComposited())
         return const_cast<RenderLayer*>(this);
 
     for (const RenderLayer* curr = compositingContainer(this); curr; curr = compositingContainer(curr)) {
@@ -1426,9 +1438,9 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
     return 0;
 }
 
-RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(bool includeSelf) const
+RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(IncludeSelfOrNot includeSelf) const
 {
-    if (includeSelf && isComposited() && !backing()->paintsIntoCompositedAncestor())
+    if (includeSelf == IncludeSelf && isComposited() && !backing()->paintsIntoCompositedAncestor())
         return const_cast<RenderLayer*>(this);
 
     for (const RenderLayer* curr = compositingContainer(this); curr; curr = compositingContainer(curr)) {
@@ -1441,9 +1453,9 @@ RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(bool includeSelf) 
 #endif
 
 #if ENABLE(CSS_FILTERS)
-RenderLayer* RenderLayer::enclosingFilterLayer(bool includeSelf) const
+RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) const
 {
-    const RenderLayer* curr = includeSelf ? this : parent();
+    const RenderLayer* curr = (includeSelf == IncludeSelf) ? this : parent();
     for (; curr; curr = curr->parent()) {
         if (curr->requiresFullLayerImageForFilters())
             return const_cast<RenderLayer*>(curr);
