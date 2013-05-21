@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageFormClient.h"
 
+#include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
@@ -122,6 +123,30 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     WKTypeRef userDataToPass = 0;
     m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
+}
+
+void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const Vector<RefPtr<WebCore::Element>>& elements)
+{
+    if (!m_client.didAssociateFormControls)
+        return;
+
+    size_t size = elements.size();
+
+    Vector<RefPtr<APIObject>> elementHandles;
+    elementHandles.reserveCapacity(size);
+
+    for (size_t i = 0; i < size; ++i)
+        elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(elements[i].get()).get());
+
+    m_client.didAssociateFormControls(toAPI(page), toAPI(ImmutableArray::adopt(elementHandles).get()), m_client.clientInfo);
+}
+
+bool InjectedBundlePageFormClient::shouldNotifyOnFormChanges(WebPage* page)
+{
+    if (!m_client.shouldNotifyOnFormChanges)
+        return false;
+
+    return m_client.shouldNotifyOnFormChanges(toAPI(page), m_client.clientInfo);
 }
 
 } // namespace WebKit

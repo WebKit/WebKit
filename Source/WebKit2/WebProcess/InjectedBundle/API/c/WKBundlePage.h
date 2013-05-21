@@ -338,6 +338,8 @@ typedef bool (*WKBundlePageShouldPerformActionInTextFieldCallback)(WKBundlePageR
 typedef void (*WKBundlePageWillSubmitFormCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef* userData, const void* clientInfo);
 typedef void (*WKBundlePageWillSendSubmitEventCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, const void* clientInfo);
 typedef void (*WKBundlePageDidFocusTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+typedef bool (*WKBundlePageShouldNotifyOnFormChangesCallback)(WKBundlePageRef page, const void* clientInfo);
+typedef void (*WKBundlePageDidAssociateFormControlsCallback)(WKBundlePageRef page, WKArrayRef elementHandles, const void* clientInfo);
 
 struct WKBundlePageFormClient {
     int                                                                 version;
@@ -356,6 +358,8 @@ struct WKBundlePageFormClient {
 
     // version 2.
     WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
+    WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
+    WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
 };
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;
 
