@@ -44,21 +44,6 @@ class InsertionPoint;
 class Node;
 class ShadowRoot;
 
-class ScopeContentDistribution {
-public:
-    ScopeContentDistribution();
-
-    void registerInsertionPoint(InsertionPoint*);
-    void unregisterInsertionPoint(InsertionPoint*);
-
-    void invalidateInsertionPointList();
-    const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
-
-private:
-    bool m_insertionPointListIsValid;
-    Vector<RefPtr<InsertionPoint> > m_insertionPointList;
-};
-
 class ContentDistributor {
     WTF_MAKE_NONCOPYABLE(ContentDistributor);
 public:
@@ -72,6 +57,8 @@ public:
     ContentDistributor();
     ~ContentDistributor();
 
+    void invalidateInsertionPointList();
+    
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
     void distributeSelectionsTo(InsertionPoint*, Element* host);
@@ -82,6 +69,8 @@ public:
     static void ensureDistribution(ShadowRoot*);
 
 private:
+    const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
+
     void distribute(Element* host);
     bool invalidate(Element* host);
 
@@ -90,7 +79,9 @@ private:
     bool needsDistribution() const;
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
+    Vector<RefPtr<InsertionPoint> > m_insertionPointList;
     HashMap<const Node*, RefPtr<InsertionPoint> > m_nodeToInsertionPoint;
+    bool m_insertionPointListIsValid;
     unsigned m_validity : 2;
 };
 

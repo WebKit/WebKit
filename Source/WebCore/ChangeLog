@@ -1,3 +1,36 @@
+2013-05-21  Antti Koivisto  <antti@apple.com>
+
+        Remove ScopeContentDistribution
+        https://bugs.webkit.org/show_bug.cgi?id=116576
+
+        Reviewed by Andreas Kling.
+
+        With maximum one ShadowRoot per Element this can be smashed into ContentDistributor.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ContentDistributor):
+        (WebCore):
+        (WebCore::ContentDistributor::~ContentDistributor):
+        (WebCore::ContentDistributor::invalidateInsertionPointList):
+        (WebCore::ContentDistributor::ensureInsertionPointList):
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::invalidate):
+        * html/shadow/ContentDistributor.h:
+        (WebCore):
+        (ContentDistributor):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+        
+            Simplify insertion point list invalidation.
+
+        * html/shadow/InsertionPoint.h:
+
 2013-05-21  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] Multiple regions with shape-insides should respect positioned shapes and overflow

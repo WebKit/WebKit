@@ -39,7 +39,6 @@
 namespace WebCore {
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
-    void* pointers[1];
     unsigned countersAndFlags[1];
 };
 
@@ -195,14 +194,5 @@ void ShadowRoot::unregisterScopedHTMLStyleChild()
     --m_numberOfStyles;
     setHasScopedHTMLStyleChild(m_numberOfStyles > 0);
 }
-
-ScopeContentDistribution* ShadowRoot::ensureScopeDistribution()
-{
-    if (m_scopeDistribution)
-        return m_scopeDistribution.get();
-
-    m_scopeDistribution = adoptPtr(new ScopeContentDistribution);
-    return m_scopeDistribution.get();
-}   
 
 }

@@ -90,7 +90,6 @@ protected:
 
 private:
 
-    bool m_registeredWithShadowRoot;
     bool m_hasDistribution;
 };
 

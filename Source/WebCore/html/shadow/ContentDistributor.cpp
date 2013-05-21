@@ -35,18 +35,23 @@
 
 namespace WebCore {
 
-ScopeContentDistribution::ScopeContentDistribution()
+ContentDistributor::ContentDistributor()
     : m_insertionPointListIsValid(true)
+    , m_validity(Undetermined)
 {
 }
 
-void ScopeContentDistribution::invalidateInsertionPointList()
+ContentDistributor::~ContentDistributor()
+{
+}
+
+void ContentDistributor::invalidateInsertionPointList()
 {
     m_insertionPointListIsValid = false;
     m_insertionPointList.clear();
 }
 
-const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertionPointList(ShadowRoot* shadowRoot)
+const Vector<RefPtr<InsertionPoint> >& ContentDistributor::ensureInsertionPointList(ShadowRoot* shadowRoot)
 {
     if (m_insertionPointListIsValid)
         return m_insertionPointList;
@@ -60,25 +65,6 @@ const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertion
     }
 
     return m_insertionPointList;
-}
-
-void ScopeContentDistribution::registerInsertionPoint(InsertionPoint*)
-{
-    invalidateInsertionPointList();
-}
-
-void ScopeContentDistribution::unregisterInsertionPoint(InsertionPoint*)
-{
-    invalidateInsertionPointList();
-}
-
-ContentDistributor::ContentDistributor()
-    : m_validity(Undetermined)
-{
-}
-
-ContentDistributor::~ContentDistributor()
-{
 }
 
 InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
@@ -95,15 +81,13 @@ void ContentDistributor::distribute(Element* host)
     m_validity = Valid;
 
     if (ShadowRoot* root = host->shadowRoot()) {
-        if (ScopeContentDistribution* scope = root->scopeDistribution()) {
-            const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
-            for (size_t i = 0; i < insertionPoints.size(); ++i) {
-                InsertionPoint* point = insertionPoints[i].get();
-                if (!point->isActive())
-                    continue;
+        const Vector<RefPtr<InsertionPoint> >& insertionPoints = ensureInsertionPointList(root);
+        for (size_t i = 0; i < insertionPoints.size(); ++i) {
+            InsertionPoint* point = insertionPoints[i].get();
+            if (!point->isActive())
+                continue;
 
-                distributeSelectionsTo(point, host);
-            }
+            distributeSelectionsTo(point, host);
         }
     }
 }
@@ -114,12 +98,10 @@ bool ContentDistributor::invalidate(Element* host)
     bool needsReattach = (m_validity == Undetermined) || !m_nodeToInsertionPoint.isEmpty();
 
     if (ShadowRoot* root = host->shadowRoot()) {
-        if (ScopeContentDistribution* scope = root->scopeDistribution()) {
-            const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
-            for (size_t i = 0; i < insertionPoints.size(); ++i) {
-                needsReattach = needsReattach || true;
-                insertionPoints[i]->clearDistribution();
-            }
+        const Vector<RefPtr<InsertionPoint> >& insertionPoints = ensureInsertionPointList(root);
+        for (size_t i = 0; i < insertionPoints.size(); ++i) {
+            needsReattach = true;
+            insertionPoints[i]->clearDistribution();
         }
     }
 

@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document, CreateInsertionPoint)
-    , m_registeredWithShadowRoot(false)
     , m_hasDistribution(false)
 {
 }
@@ -119,10 +118,7 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
     if (ShadowRoot* root = containingShadowRoot()) {
         if (ElementShadow* rootOwner = root->owner()) {
             rootOwner->distributor().didShadowBoundaryChange(root->host());
-            if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
-                m_registeredWithShadowRoot = true;
-                root->ensureScopeDistribution()->registerInsertionPoint(this);
-            }
+            rootOwner->distributor().invalidateInsertionPointList();
         }
     }
 
@@ -137,17 +133,13 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
 
     // host can be null when removedFrom() is called from ElementShadow destructor.
     ElementShadow* rootOwner = root ? root->owner() : 0;
-    if (rootOwner)
+    if (rootOwner) {
         rootOwner->invalidateDistribution();
+        rootOwner->distributor().invalidateInsertionPointList();
+    }
 
     // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
     clearDistribution();
-
-    if (m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
-        ASSERT(root);
-        m_registeredWithShadowRoot = false;
-        root->ensureScopeDistribution()->unregisterInsertionPoint(this);
-    }
 
     HTMLElement::removedFrom(insertionPoint);
 }
