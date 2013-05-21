@@ -1,3 +1,16 @@
+2013-05-21  Iago Toral Quiroga  <itoral@igalia.com>
+
+        [GTK] Always use EGL to create the GL context when running on Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=115721
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/cairo/GLContext.cpp:
+        (WebCore::GLContext::createContextForWindow):
+        (WebCore::GLContext::createOffscreenContext): Always use EGL to create the GL context
+        instead of GLX when running on Wayland and make createOffScreenContext reuse the code
+        in createContextWindow.
+
 2013-05-21  Alberto Garcia  <agarcia@igalia.com>
 
         Add FloatRect::normalized() for BlackBerry
