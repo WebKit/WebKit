@@ -1,3 +1,17 @@
+2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Pass GTEST_HAS_RTTI=0 cppflag to TestWebKitAPI programs at compilation-time
+        https://bugs.webkit.org/show_bug.cgi?id=116450
+
+        Reviewed by Martin Robinson.
+
+        The -fno-rtti flag is used when compiling C++ source code throughout the project. The TestWebKitAPI
+        programs fail to compile because of this when using the C++11 standard as the GTest headers assume by
+        default that the RTTI support is available. This can be turned off by passing GTEST_HAS_RTTI=0 to the
+        TestWebKitAPI programs when compiling them.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove DriverProxy._running_drivers from webkitpy.layout_tests.port

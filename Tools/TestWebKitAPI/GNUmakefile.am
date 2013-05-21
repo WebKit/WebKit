@@ -37,6 +37,7 @@ Programs_TestWebKitAPI_TestWTF_CPPFLAGS = \
 	$(CAIRO_CFLAGS)
 
 Programs_TestWebKitAPI_TestWTF_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
 	$(global_cxxflags)
 
 Programs_TestWebKitAPI_TestWTF_LDADD = \
@@ -78,6 +79,7 @@ Programs_TestWebKitAPI_TestJavaScriptCore_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS)
 
 Programs_TestWebKitAPI_TestJavaScriptCore_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
 	$(global_cxxflags)
 
 Programs_TestWebKitAPI_TestJavaScriptCore_LDADD = \
@@ -124,6 +126,7 @@ Programs_TestWebKitAPI_TestWebCore_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebCore/include
 
 Programs_TestWebKitAPI_TestWebCore_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
 	$(global_cxxflags)
 
 Programs_TestWebKitAPI_TestWebCore_LDADD = \
@@ -175,6 +178,10 @@ Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 
+Programs_TestWebKitAPI_TestGtk_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
+	$(global_cxxflags)
+
 Programs_TestWebKitAPI_TestGtk_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
 	Libraries/libgtest.la \
@@ -205,6 +212,10 @@ Programs_TestWebKitAPI_TestWebKit2_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
+
+Programs_TestWebKitAPI_TestWebKit2_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
+	$(global_cxxflags)
 
 Programs_TestWebKitAPI_TestWebKit2_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
@@ -319,6 +330,7 @@ Libraries_libTestWebKitAPIInjectedBundle_la_CPPFLAGS = \
 	$(GTK_CFLAGS)
 
 Libraries_libTestWebKitAPIInjectedBundle_la_CXXFLAGS = \
+	-DGTEST_HAS_RTTI=0 \
 	$(global_cxxflags)
 
 Libraries_libTestWebKitAPIInjectedBundle_la_CFLAGS = \
