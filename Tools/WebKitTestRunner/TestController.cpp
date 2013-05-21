@@ -33,6 +33,7 @@
 #include <WebKit2/WKAuthenticationDecisionListener.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKCredential.h>
+#include <WebKit2/WKIconDatabase.h>
 #include <WebKit2/WKNotification.h>
 #include <WebKit2/WKNotificationManager.h>
 #include <WebKit2/WKNotificationPermissionRequest.h>
@@ -120,6 +121,8 @@ TestController::TestController(int argc, const char* argv[])
 
 TestController::~TestController()
 {
+    WKIconDatabaseClose(WKContextGetIconDatabase(m_context.get()));
+
     platformDestroy();
 }
 

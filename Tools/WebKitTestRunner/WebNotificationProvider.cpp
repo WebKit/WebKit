@@ -63,6 +63,11 @@ WebNotificationProvider::WebNotificationProvider()
 {
 }
 
+WebNotificationProvider::~WebNotificationProvider()
+{
+    WKNotificationManagerSetProvider(m_notificationManager.get(), 0);
+}
+
 WKNotificationProvider WebNotificationProvider::provider()
 {
     WKNotificationProvider notificationProvider = {

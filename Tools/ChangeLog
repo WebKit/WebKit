@@ -1,3 +1,25 @@
+2013-05-21  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13929704> [WK2] WebKitTestRunner always crashes on exit
+        https://bugs.webkit.org/show_bug.cgi?id=116568
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::~WebNotificationProvider):
+        * WebKitTestRunner/WebNotificationProvider.h:
+        When the provider is destroyed, it should no longer be registered with the manager.
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::~GeolocationProviderMock):
+        * WebKitTestRunner/GeolocationProviderMock.h:
+        I wasn't seeing a crash here, but this code has the same issue as notification
+        provider, so applying the same fix.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::~TestController):
+        Close icon database. I started seeing ASSERT(!isOpen()) in WebCore IconDatabase
+        destructor having fixed the above.
+
 2013-05-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150386 and r150397.

@@ -58,6 +58,11 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
     WKGeolocationManagerSetProvider(m_geolocationManager, &providerCallback);
 }
 
+GeolocationProviderMock::~GeolocationProviderMock()
+{
+    WKGeolocationManagerSetProvider(m_geolocationManager, 0);
+}
+
 void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
     m_position.adopt(WKGeolocationPositionCreate_b(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed));
