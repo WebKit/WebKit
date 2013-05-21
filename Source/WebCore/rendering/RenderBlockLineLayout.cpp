@@ -1673,16 +1673,33 @@ void RenderBlock::updateLineBoundariesForExclusions(ExclusionShapeInsideInfo* ex
     // The overflow should be pushed below the content box
     LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
     if (!exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
-        LayoutUnit newHeight = shapeContainingBlockHeight;
+        lineOverflowsFromShapeInside = true;
+        LayoutUnit newLogicalHeight = shapeContainingBlockHeight;
 
         if (layoutState.flowThread()) {
             // If block contents flown across multiple regions and the shape-inside was applied on the second region we can end up with negative lineTop
             if (lineTop < 0)
                 return;
-            newHeight = logicalHeight + shapeContainingBlockHeight - lineTop - currentRegion->borderAndPaddingBefore();
+
+            newLogicalHeight = logicalHeight + shapeContainingBlockHeight - lineTop - currentRegion->borderAndPaddingBefore();
+
+            RenderRegion* nextRegion = regionAtBlockOffset(newLogicalHeight);
+            ExclusionShapeInsideInfo* nextShapeInfo = 0;
+            if (nextRegion)
+                nextShapeInfo = nextRegion->exclusionShapeInsideInfo();
+
+            // The overflow flows into another region with shape-inside
+            if (currentRegion != nextRegion && nextShapeInfo) {
+                newLogicalHeight += nextShapeInfo->shapeLogicalTop() - nextRegion->borderAndPaddingBefore();
+
+                LayoutUnit offset = nextShapeInfo->shapeLogicalTop() - nextRegion->borderAndPaddingBefore();
+                nextShapeInfo->computeSegmentsForLine(offset, lineHeight);
+
+                exclusionShapeInsideInfo = nextShapeInfo;
+                lineOverflowsFromShapeInside = false;
+            }
         }
-        setLogicalHeight(newHeight);
-        lineOverflowsFromShapeInside = true;
+        setLogicalHeight(newLogicalHeight);
     }
 }
 
@@ -1693,9 +1710,8 @@ bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeIns
         return false;
 
     LayoutUnit newLogicalHeight = adjustedLogicalLineTop - absoluteLogicalTop;
-    RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight());
     if (layoutState.flowThread())
-        newLogicalHeight -= currentRegion->logicalTopForFlowThreadContent();
+        newLogicalHeight = logicalHeight();
 
     end = restartLayoutRunsAndFloatsInRange(logicalHeight(), newLogicalHeight, lastFloatFromPreviousLine, resolver, end);
     return true;

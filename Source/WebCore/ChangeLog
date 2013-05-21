@@ -1,3 +1,23 @@
+2013-05-21  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Exclusions] Multiple regions with shape-insides should respect positioned shapes and overflow
+        https://bugs.webkit.org/show_bug.cgi?id=115001
+
+        Reviewed by David Hyatt.
+
+        In r150375 I implemented the new overflow behavior for shape-inside on regions, but it covered only the simple cases
+        when you had only one region. This patch adds support for the new overflow behavior for multiple regions with multiple
+        positioned shape-insides and overflow.
+
+        Tests: fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes.html
+               fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-multiple-shapes.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateLineBoundariesForExclusions): Cover cases when content flows into the next region, update the
+        line segments for the overflow.
+        (WebCore::RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded): In flow thread case we don't want to adjust the height
+        in two places.
+
 2013-05-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r150425.
