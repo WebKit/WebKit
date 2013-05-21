@@ -1,3 +1,17 @@
+2013-05-21  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Constrain auto-height region computation in a different way
+        https://bugs.webkit.org/show_bug.cgi?id=116310
+
+        Reviewed by Alexandru Chiculita.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=74132, the region is a render block. We can use RenderBox::constrainContentBoxLogicalHeightByMinMax
+        instead of RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight to better reflect the fact that the region is not a replaced element.
+        Covered by existing regions tests, since when replaced-based the region had an intrinsic height of 0 and now, block-based, it does not have any children.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+
 2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r150393): editing/inserting/typing-at-end-of-line.html fails
