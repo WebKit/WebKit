@@ -1,3 +1,12 @@
+2013-05-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove SharedMemoryGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=116457
+
+        Reviewed by Andreas Kling.
+
+        * Platform/gtk/SharedMemoryGtk.cpp: Removed.
+
 2013-05-20  Jessie Berlin  <jberlin@apple.com>
 
         Expose a way to know when forms are added to a page or when form controls are added to a form
