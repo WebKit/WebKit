@@ -426,8 +426,10 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
         if ((node->hasTagName(styleTag) && !(toElement(node.get())->hasAttribute(scopedAttr))) || node->hasTagName(linkTag)) {
             nextNode = NodeTraversal::nextSkippingChildren(node.get());
             RefPtr<ContainerNode> rootEditableElement = node->rootEditableElement();
-            removeNode(node);
-            appendNode(node, rootEditableElement);
+            if (rootEditableElement) {
+                removeNode(node);
+                appendNode(node, rootEditableElement);
+            }
         }
         node = nextNode;
     }

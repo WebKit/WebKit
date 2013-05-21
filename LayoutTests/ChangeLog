@@ -1,5 +1,17 @@
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Null pointer deference in WebCore::AppendNodeCommand::create
+        https://bugs.webkit.org/show_bug.cgi?id=116479
+
+        Reviewed by Andreas Kling.
+
+        Add a regression test.
+
+        * editing/deleting/delete-uneditable-style-expected.txt: Added.
+        * editing/deleting/delete-uneditable-style.html: Added.
+
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r150386): [WK2] loader/go-back-cached-main-resource.html fails
         https://bugs.webkit.org/show_bug.cgi?id=116491
 

@@ -1,3 +1,21 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Null pointer deference in WebCore::AppendNodeCommand::create
+        https://bugs.webkit.org/show_bug.cgi?id=116479
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/5cb43002a44f67a60ecf5a7ed76de2d0bcf89eb2
+
+        DeleteSelection::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss() make style and link elements
+        to be the direct children of the editable root. However, these style and link elements are not necessary editable
+        and WebKit crashes when they are not.
+
+        Test: editing/deleting/delete-uneditable-style.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+
 2013-05-20  Beth Dakin  <bdakin@apple.com>
 
         Scrollbars still show sometimes even when WKPageSetSuppressScrollbarAnimations() 
