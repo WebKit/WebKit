@@ -56,7 +56,7 @@ struct PluginCreationParameters;
 
 class PluginProxy : public Plugin {
 public:
-    static PassRefPtr<PluginProxy> create(const String& pluginPath, PluginProcess::Type, bool isRestartedProcess);
+    static PassRefPtr<PluginProxy> create(uint64_t pluginProcessToken, bool isRestartedProcess);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -68,7 +68,7 @@ public:
     bool isBeingAsynchronouslyInitialized() const { return m_waitingOnAsynchronousInitialization; }
 
 private:
-    explicit PluginProxy(const String& pluginPath, PluginProcess::Type, bool isRestartedProcess);
+    explicit PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess);
 
     // Plugin
     virtual bool initialize(const Parameters&);
@@ -172,11 +172,11 @@ private:
 
     void didCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID);
     void didFailToCreatePlugin();
-    
+
     void didCreatePluginInternal(bool wantsWheelEvents, uint32_t remoteLayerClientID);
     void didFailToCreatePluginInternal();
 
-    String m_pluginPath;
+    uint64_t m_pluginProcessToken;
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;
@@ -217,7 +217,6 @@ private:
     RetainPtr<CALayer> m_pluginLayer;
 #endif
 
-    PluginProcess::Type m_processType;
     bool m_isRestartedProcess;
 };
 

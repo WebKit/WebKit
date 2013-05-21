@@ -101,7 +101,7 @@ void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDiction
 #if ENABLE(NETSCAPE_PLUGIN_API)
     map.set(pluginInformationPathKey(), WebString::create(plugin.path));
     map.set(pluginInformationDisplayNameKey(), WebString::create(plugin.info.name));
-    map.set(pluginInformationDefaultLoadPolicyKey(), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(plugin))));
+    map.set(pluginInformationDefaultLoadPolicyKey(), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::defaultLoadPolicyForPlugin(plugin))));
 
     getPlatformPluginModuleInformation(plugin, map);
 #endif

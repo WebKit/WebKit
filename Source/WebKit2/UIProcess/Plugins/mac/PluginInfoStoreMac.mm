@@ -109,7 +109,7 @@ static bool checkForPreferredPlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugi
 
 static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
 {
-    return PluginInfoStore::policyForPlugin(plugin) == PluginModuleBlocked;
+    return PluginInfoStore::defaultLoadPolicyForPlugin(plugin) == PluginModuleBlocked;
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
@@ -140,7 +140,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     return true;
 }
 
-PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const PluginModuleInfo& plugin)
+PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo& plugin)
 {
     if (WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString))
         return PluginModuleBlocked;

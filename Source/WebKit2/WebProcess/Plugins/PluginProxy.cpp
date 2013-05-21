@@ -56,13 +56,13 @@ static uint64_t generatePluginInstanceID()
     return ++uniquePluginInstanceID;
 }
 
-PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath, PluginProcess::Type processType, bool isRestartedProcess)
+PassRefPtr<PluginProxy> PluginProxy::create(uint64_t pluginProcessToken, bool isRestartedProcess)
 {
-    return adoptRef(new PluginProxy(pluginPath, processType, isRestartedProcess));
+    return adoptRef(new PluginProxy(pluginProcessToken, isRestartedProcess));
 }
 
-PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processType, bool isRestartedProcess)
-    : m_pluginPath(pluginPath)
+PluginProxy::PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess)
+    : m_pluginProcessToken(pluginProcessToken)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginBackingStoreContainsValidData(false)
     , m_isStarted(false)
@@ -70,7 +70,6 @@ PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processTy
     , m_wantsWheelEvents(false)
     , m_remoteLayerClientID(0)
     , m_waitingOnAsynchronousInitialization(false)
-    , m_processType(processType)
     , m_isRestartedProcess(isRestartedProcess)
 {
 }
@@ -87,7 +86,7 @@ void PluginProxy::pluginProcessCrashed()
 bool PluginProxy::initialize(const Parameters& parameters)
 {
     ASSERT(!m_connection);
-    m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginPath, m_processType);
+    m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginProcessToken);
     
     if (!m_connection)
         return false;

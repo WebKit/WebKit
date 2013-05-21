@@ -49,7 +49,7 @@ public:
 
     void initializeConnection(CoreIPC::Connection*);
 
-    PluginProcessConnection* getPluginProcessConnection(const String& pluginPath, PluginProcess::Type);
+    PluginProcessConnection* getPluginProcessConnection(uint64_t pluginProcessToken);
     void removePluginProcessConnection(PluginProcessConnection*);
 
     void didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
@@ -60,14 +60,14 @@ private:
     // CoreIPC::Connection::WorkQueueMessageReceiver.
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    void pluginProcessCrashed(const String& pluginPath, uint32_t opaquePluginType);
+    void pluginProcessCrashed(uint64_t pluginProcessToken);
 
     RefPtr<WorkQueue> m_queue;
 
     Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
-    Mutex m_pathsAndConnectionsMutex;
-    HashMap<std::pair<String, PluginProcess::Type>, RefPtr<CoreIPC::Connection>> m_pathsAndConnections;
+    Mutex m_tokensAndConnectionsMutex;
+    HashMap<uint64_t, RefPtr<CoreIPC::Connection>> m_tokensAndConnections;
 };
 
 }

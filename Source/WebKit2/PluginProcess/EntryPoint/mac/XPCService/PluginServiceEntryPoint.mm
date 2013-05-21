@@ -51,6 +51,10 @@ public:
             return false;
         extraInitializationData.add("plugin-path", pluginPath);
 
+        String disableSandbox = xpc_dictionary_get_string(extraDataInitializationDataObject, "disable-sandbox");
+        if (!disableSandbox.isEmpty())
+            extraInitializationData.add("disable-sandbox", disableSandbox);
+
         return true;
     }
 };

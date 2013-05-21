@@ -32,6 +32,7 @@
 #include "Connection.h"
 #include "PluginModuleInfo.h"
 #include "PluginProcess.h"
+#include "PluginProcessAttributes.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
@@ -64,12 +65,13 @@ struct RawPluginMetaData {
 
 class PluginProcessProxy : public ChildProcessProxy {
 public:
-    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
+    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
     ~PluginProcessProxy();
 
-    const PluginModuleInfo& pluginInfo() const { return m_pluginInfo; }
+    const PluginProcessAttributes& pluginProcessAttributes() const { return m_pluginProcessAttributes; }
+    uint64_t pluginProcessToken() const { return m_pluginProcessToken; }
 
-    // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
+    // Asks the plug-in process to create a new connection to a web process. The connection identifier will be
     // encoded in the given argument encoder and sent back to the connection of the given web process.
     void getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     
@@ -80,8 +82,6 @@ public:
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
     bool isValid() const { return m_connection; }
-
-    PluginProcess::Type processType() const { return m_processType; }
 
 #if PLATFORM(MAC)
     void setProcessSuppressionEnabled(bool);
@@ -98,10 +98,10 @@ public:
 #endif
 
 private:
-    PluginProcessProxy(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
+    PluginProcessProxy(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
-    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginModuleInfo&);
+    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginProcessAttributes&);
 
     void pluginProcessCrashedOrFailedToLaunch();
 
@@ -140,9 +140,9 @@ private:
 
     // The plug-in host process manager.
     PluginProcessManager* m_pluginProcessManager;
-    
-    // Information about the plug-in.
-    PluginModuleInfo m_pluginInfo;
+
+    PluginProcessAttributes m_pluginProcessAttributes;
+    uint64_t m_pluginProcessToken;
 
     // The connection to the plug-in host process.
     RefPtr<CoreIPC::Connection> m_connection;
@@ -172,8 +172,6 @@ private:
     bool m_fullscreenWindowIsShowing;
     unsigned m_preFullscreenAppPresentationOptions;
 #endif
-
-    PluginProcess::Type m_processType;
 };
 
 } // namespace WebKit

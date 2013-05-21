@@ -294,7 +294,7 @@ static void muteAudio(void)
 void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-    if (parameters.processType == TypeSnapshotProcess)
+    if (parameters.processType == PluginProcessTypeSnapshot)
         muteAudio();
 }
 
@@ -341,6 +341,9 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
+    if (parameters.extraInitializationData.get("disable-sandbox") == "1")
+        return;
+
     String sandboxProfile = pluginSandboxProfile(m_pluginBundleIdentifier);
     if (sandboxProfile.isEmpty())
         return;

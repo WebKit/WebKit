@@ -332,9 +332,9 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(PLUGIN_PROCESS)
-void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, uint32_t processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
-    PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, static_cast<PluginProcess::Type>(processType), reply);
+    PluginProcessManager::shared().getPluginProcessConnection(pluginProcessToken, reply);
 }
 
 #elif ENABLE(NETSCAPE_PLUGIN_API)

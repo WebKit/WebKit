@@ -30,6 +30,7 @@
 
 #include "PluginProcessProxy.h"
 #include "WebContext.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,12 +46,42 @@ PluginProcessManager::PluginProcessManager()
 {
 }
 
-void PluginProcessManager::getPluginProcessConnection(const PluginInfoStore& pluginInfoStore, const String& pluginPath, PluginProcess::Type processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& pluginModuleInfo, PluginProcessType pluginProcessType, PluginProcessSandboxPolicy pluginProcessSandboxPolicy)
 {
-    ASSERT(!pluginPath.isNull());
+    // See if we know this token already.
+    for (size_t i = 0; i < m_pluginProcessTokens.size(); ++i) {
+        const PluginProcessAttributes& attributes = m_pluginProcessTokens[i].first;
 
-    PluginModuleInfo plugin = pluginInfoStore.infoForPluginWithPath(pluginPath);
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, processType);
+        if (attributes.moduleInfo.path == pluginModuleInfo.path
+            && attributes.processType == pluginProcessType
+            && attributes.sandboxPolicy == pluginProcessSandboxPolicy)
+            return m_pluginProcessTokens[i].second;
+    }
+
+    uint64_t token;
+    while (true) {
+        cryptographicallyRandomValues(&token, sizeof(token));
+
+        if (m_knownTokens.isValidValue(token) && !m_knownTokens.contains(token))
+            break;
+    }
+
+    PluginProcessAttributes attributes;
+    attributes.moduleInfo = pluginModuleInfo;
+    attributes.processType = pluginProcessType;
+    attributes.sandboxPolicy = pluginProcessSandboxPolicy;
+
+    m_pluginProcessTokens.append(std::make_pair(std::move(attributes), token));
+    m_knownTokens.add(token);
+
+    return token;
+}
+
+void PluginProcessManager::getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+{
+    ASSERT(pluginProcessToken);
+
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken);
     pluginProcess->getPluginProcessConnection(reply);
 }
 
@@ -64,38 +95,35 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
 
 void PluginProcessManager::getSitesWithData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, PluginProcess::TypeRegularProcess);
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
     pluginProcess->getSitesWithData(webPluginSiteDataManager, callbackID);
 }
 
 void PluginProcessManager::clearSiteData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, PluginProcess::TypeRegularProcess);
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
     pluginProcess->clearSiteData(webPluginSiteDataManager, sites, flags, maxAgeInSeconds, callbackID);
 }
 
-PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pluginPath, PluginProcess::Type processType)
+PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t pluginProcessToken)
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
-        RefPtr<PluginProcessProxy>& pluginProcessProxy = m_pluginProcesses[i];
-        if (pluginProcessProxy->pluginInfo().path == pluginPath && pluginProcessProxy->processType() == processType)
-            return pluginProcessProxy.get();
+        if (m_pluginProcesses[i]->pluginProcessToken() == pluginProcessToken)
+            return m_pluginProcesses[i].get();
     }
 
-    return 0;
-}
+    for (size_t i = 0; i < m_pluginProcessTokens.size(); ++i) {
+        auto& attributesAndToken = m_pluginProcessTokens[i];
+        if (attributesAndToken.second == pluginProcessToken) {
+            RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, attributesAndToken.first, attributesAndToken.second);
+            PluginProcessProxy* pluginProcessPtr = pluginProcess.get();
 
-PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginModuleInfo& plugin, PluginProcess::Type processType)
-{
-    if (PluginProcessProxy* pluginProcess = pluginProcessWithPath(plugin.path, processType))
-        return pluginProcess;
+            m_pluginProcesses.append(pluginProcess.release());
+            return pluginProcessPtr;
+        }
+    }
 
-    RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, plugin, processType);
-    PluginProcessProxy* pluginProcessPtr = pluginProcess.get();
-
-    m_pluginProcesses.append(pluginProcess.release());
-
-    return pluginProcessPtr;
+    return nullptr;
 }
 
 } // namespace WebKit

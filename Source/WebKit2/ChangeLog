@@ -1,3 +1,150 @@
+2013-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Provide an API to run sandboxed plug-ins outside of their sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=116578
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        (WebKit::PluginProcessMainDelegate::getExtraInitializationData):
+        Handle "disable-sandbox".
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (WebKit::PluginServiceInitializerDelegate::getExtraInitializationData):
+        Handle "disable-sandbox".
+        
+        * PluginProcess/PluginProcess.h:
+        Move Type to PluginProcessAttributes and remove hash traits for type.
+        
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        Update for new type name.
+
+        (WebKit::PluginProcess::initializeSandbox):
+        Return early if the sandbox is disabled.
+
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::getPluginModuleInformation):
+        PluginInfoStore::policyForPlugin has been renamed to PluginInfoStore::defaultLoadPolicyForPlugin.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+        Add PluginModuleLoadUnsandboxed.
+
+        * Shared/Plugins/PluginProcessAttributes.h: Added.
+        Add new header with various plug-in process attributes.
+
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        Change type enum.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWKPluginLoadPolicy):
+        (WebKit::toPluginModuleLoadPolicy):
+        Handle the unsandboxed enum.
+
+        * UIProcess/API/C/WKPage.h:
+        Add kWKPluginLoadPolicyLoadUnsandboxed.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        Rename policyForPlugin to defaultLoadPolicyForPlugin.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::pluginProcessToken):
+        Add new helper function for getting a token given plug-in attributes.
+
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        This now takes a pluginProcessToken.
+
+        (WebKit::PluginProcessManager::getSitesWithData):
+        Make sure to call pluginProcessToken.
+
+        (WebKit::PluginProcessManager::clearSiteData):
+        Ditto.
+
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess):
+        This now takes a token.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::create):
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        Pass the PluginProcessAttributes as well as the plug-in process token.
+
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+        Pass the plug-in process attributes to platformGetLaunchOptions.
+
+        (WebKit::PluginProcessProxy::didClose):
+        Pass the token to PluginProcessCrashed.
+
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Update for type change.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::shouldBlockPlugin):
+        (WebKit::PluginInfoStore::defaultLoadPolicyForPlugin):
+        Rename policyForPlugin to defaultLoadPolicyForPlugin.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        Set the "disable-sandbox" data if needed.
+
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        (WebKit::PluginProcessProxy::openPluginPreferencePane):
+        Get the module info from m_pluginProcessAttributes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        This now returns a token.
+
+        * UIProcess/WebPageProxy.messages.in:
+        FindPlugin now returns a token instead of the path.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        Pass the token to the plug-in process manager.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        This now takes a token.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        This now takes a token.
+
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (WebKit::PluginProcessConnection::create):
+        (WebKit::PluginProcessConnection::pluginProcessToken):
+        Create this with a token instead of a path and process type.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        This now takes a token.
+
+        (WebKit::PluginProcessConnectionManager::pluginProcessCrashed):
+        Ditto.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.messages.in:
+        PluginProcessCrashed now takes a token.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::create):
+        (WebKit::PluginProxy::PluginProxy):
+        These now take tokens.
+
+        (WebKit::PluginProxy::initialize):
+        Pass the token when getting the connection.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Get the token from the UI process and pass it to the PluginProxy.
+
+        (WebKit::WebPage::canPluginHandleResponse):
+        Update now that FindPlugin returns a token.
+
 2013-05-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit2
