@@ -1,3 +1,9 @@
+2013-05-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for !USE(ACCELERATED_COMPOSITING) after r150307.
+
+        * rendering/RenderLayerCompositor.h: Added missing #if USE(ACCELERATED_COMPOSITING).
+
 2013-05-20  Antti Koivisto  <antti@apple.com>
 
         Simplify Shadow DOM distribution code
