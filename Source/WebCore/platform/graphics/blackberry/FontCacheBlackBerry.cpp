@@ -147,7 +147,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     FontCache::SimpleFontFamily family;
     FontCache::getFontFamilyForCharacters(characters, length, locale.getLanguage(), font.fontDescription(), &family);
     if (family.name.isEmpty())
-        return nullptr;
+        return 0;
 
     AtomicString atomicFamily(family.name);
     // Changes weight and/or italic of given FontDescription depends on
@@ -171,7 +171,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
 
     FontPlatformData* substitutePlatformData = getCachedFontPlatformData(description, atomicFamily, DoNotRetain);
     if (!substitutePlatformData)
-        return nullptr;
+        return 0;
     FontPlatformData platformData = FontPlatformData(*substitutePlatformData);
     platformData.setFakeBold(shouldSetFakeBold);
     platformData.setFakeItalic(shouldSetFakeItalic);

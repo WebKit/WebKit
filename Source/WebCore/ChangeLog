@@ -1,3 +1,15 @@
+2013-05-21  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] FontCache::getFontDataForCharacters() returns nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=116529
+
+        Reviewed by Andreas Kling.
+
+        This cannot be converted to a PassRefPtr and breaks the build.
+
+        * platform/graphics/blackberry/FontCacheBlackBerry.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2013-05-21  Iago Toral Quiroga  <itoral@igalia.com>
 
         [GTK] Always use EGL to create the GL context when running on Wayland
