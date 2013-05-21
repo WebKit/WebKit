@@ -100,7 +100,7 @@ public:
 
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
-    void distributeSelectionsTo(InsertionPoint*, const ContentDistribution& pool, Vector<bool>& distributed);
+    void distributeSelectionsTo(InsertionPoint*, Element* host);
 
     void invalidateDistribution(Element* host);
     void didShadowBoundaryChange(Element* host);
@@ -110,7 +110,6 @@ public:
 private:
     void distribute(Element* host);
     bool invalidate(Element* host);
-    void populate(Node*, ContentDistribution&);
 
     void setValidity(Validity validity) { m_validity = validity; }
     bool isValid() const { return m_validity == Valid; }

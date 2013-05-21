@@ -125,23 +125,6 @@ InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
     return m_nodeToInsertionPoint.get(key);
 }
 
-void ContentDistributor::populate(Node* node, ContentDistribution& pool)
-{
-    if (!isActiveInsertionPoint(node)) {
-        pool.append(node);
-        return;
-    }
-
-    InsertionPoint* insertionPoint = toInsertionPoint(node);
-    if (insertionPoint->hasDistribution()) {
-        for (size_t i = 0; i < insertionPoint->size(); ++i)
-            populate(insertionPoint->at(i), pool);
-    } else {
-        for (Node* fallbackNode = insertionPoint->firstChild(); fallbackNode; fallbackNode = fallbackNode->nextSibling())
-            pool.append(fallbackNode);
-    }
-}
-
 void ContentDistributor::distribute(Element* host)
 {
     ASSERT(needsDistribution());
@@ -149,13 +132,6 @@ void ContentDistributor::distribute(Element* host)
     ASSERT(!host->containingShadowRoot() || host->containingShadowRoot()->owner()->distributor().isValid());
 
     m_validity = Valid;
-
-    ContentDistribution pool;
-    for (Node* node = host->firstChild(); node; node = node->nextSibling())
-        populate(node, pool);
-
-    Vector<bool> distributed(pool.size());
-    distributed.fill(false);
 
     if (ShadowRoot* root = host->shadowRoot()) {
         if (ScopeContentDistribution* scope = root->scopeDistribution()) {
@@ -165,9 +141,7 @@ void ContentDistributor::distribute(Element* host)
                 if (!point->isActive())
                     continue;
 
-                distributeSelectionsTo(point, pool, distributed);
-                if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
-                    shadow->invalidateDistribution();
+                distributeSelectionsTo(point, host);
             }
         }
     }
@@ -184,15 +158,6 @@ bool ContentDistributor::invalidate(Element* host)
             for (size_t i = 0; i < insertionPoints.size(); ++i) {
                 needsReattach = needsReattach || true;
                 insertionPoints[i]->clearDistribution();
-
-                // After insertionPoint's distribution is invalidated, its reprojection should also be invalidated.
-                if (!insertionPoints[i]->isActive())
-                    continue;
-
-                if (Element* parent = insertionPoints[i]->parentElement()) {
-                    if (ElementShadow* shadow = parent->shadow())
-                        shadow->invalidateDistribution();
-                }
             }
         }
     }
@@ -202,21 +167,18 @@ bool ContentDistributor::invalidate(Element* host)
     return needsReattach;
 }
 
-void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, const ContentDistribution& pool, Vector<bool>& distributed)
+void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, Element* host)
 {
     ContentDistribution distribution;
 
-    for (size_t i = 0; i < pool.size(); ++i) {
-        if (distributed[i])
+    for (Node* child = host->firstChild(); child; child = child->nextSibling()) {
+        ASSERT(!child->isInsertionPoint());
+
+        if (insertionPoint->matchTypeFor(child) != InsertionPoint::AlwaysMatches)
             continue;
 
-        if (insertionPoint->matchTypeFor(pool.nodes().at(i).get()) != InsertionPoint::AlwaysMatches)
-            continue;
-
-        Node* child = pool.at(i).get();
         distribution.append(child);
         m_nodeToInsertionPoint.add(child, insertionPoint);
-        distributed[i] = true;
     }
 
     insertionPoint->setDistribution(distribution);

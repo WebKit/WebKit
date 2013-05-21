@@ -197,23 +197,12 @@ const CSSSelectorList& InsertionPoint::emptySelectorList()
 
 InsertionPoint* resolveReprojection(const Node* projectedNode)
 {
-    InsertionPoint* insertionPoint = 0;
-    const Node* current = projectedNode;
-
-    while (current) {
-        if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
-            if (ShadowRoot* root = current->containingShadowRoot())
-                ContentDistributor::ensureDistribution(root);
-            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
-                current = insertedTo;
-                insertionPoint = insertedTo;
-                continue;
-            }
-        }
-        break;
+    if (ElementShadow* shadow = shadowOfParentForDistribution(projectedNode)) {
+        if (ShadowRoot* root = projectedNode->containingShadowRoot())
+            ContentDistributor::ensureDistribution(root);
+        return shadow->distributor().findInsertionPointFor(projectedNode);
     }
-
-    return insertionPoint;
+    return 0;
 }
 
 } // namespace WebCore

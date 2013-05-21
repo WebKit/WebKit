@@ -1,3 +1,26 @@
+2013-05-20  Antti Koivisto  <antti@apple.com>
+
+        Simplify Shadow DOM distribution code
+        https://bugs.webkit.org/show_bug.cgi?id=116454
+
+        Reviewed by Andreas Kling.
+        
+        Remove code supporting nested insertion points and distributing to multiple insertion points.
+    
+        * html/HTMLDetailsElement.cpp:
+        (DetailsContentElement):
+        
+            Make distribution to <details> and <summary> mutually exclusive.
+
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore):
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::invalidate):
+        (WebCore::ContentDistributor::distributeSelectionsTo):
+        * html/shadow/ContentDistributor.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::resolveReprojection):
+
 2013-05-21  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Constrain auto-height region computation in a different way
