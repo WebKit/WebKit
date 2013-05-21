@@ -209,9 +209,6 @@
 		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
 		F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */; };
 		F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */; };
-		F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */; };
-		F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */; };
-		F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6B7BE9617469B7E008A3445 /* associate-form-controls.html */; };
 		F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
 		F6F49C6915545C8E0007F39D /* DOMWindowExtensionNoCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
@@ -251,7 +248,6 @@
 				C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */,
 				C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
-				F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */,
 				B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */,
@@ -515,9 +511,6 @@
 		F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback_Bundle.cpp; sourceTree = "<group>"; };
 		F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleInitializationUserDataCallbackWins.cpp; sourceTree = "<group>"; };
 		F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp; sourceTree = "<group>"; };
-		F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DidAssociateFormControls_Bundle.cpp; sourceTree = "<group>"; };
-		F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DidAssociateFormControls.cpp; sourceTree = "<group>"; };
-		F6B7BE9617469B7E008A3445 /* associate-form-controls.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "associate-form-controls.html"; sourceTree = "<group>"; };
 		F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieManager.cpp; sourceTree = "<group>"; };
 		F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache_Bundle.cpp; sourceTree = "<group>"; };
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
@@ -673,8 +666,6 @@
 				BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */,
 				BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */,
 				F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */,
-				F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */,
-				F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */,
 				BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */,
 				BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */,
 				51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */,
@@ -785,7 +776,6 @@
 			isa = PBXGroup;
 			children = (
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
-				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
@@ -1163,7 +1153,6 @@
 				37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
 				76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */,
 				A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */,
-				F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */,
 				BC3C4C7F14587AA60025FB62 /* WKBrowsingContextGroupTest.mm in Sources */,
 				BC3C4C7214575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
 				BC901E241492ADCE0074A667 /* WKConnection.cpp in Sources */,
@@ -1206,7 +1195,6 @@
 				7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */,
 				BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */,
 				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
-				F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */,
 				C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */,
 				51FCF7A11534B2A000104491 /* ShouldGoToBackForwardListItem_Bundle.cpp in Sources */,
 				BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */,

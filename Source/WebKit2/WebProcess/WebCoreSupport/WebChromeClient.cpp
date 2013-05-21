@@ -716,16 +716,6 @@ void WebChromeClient::formStateDidChange(const Node*)
     notImplemented();
 }
 
-void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>& elements)
-{
-    return m_page->injectedBundleFormClient().didAssociateFormControls(m_page, elements);
-}
-
-bool WebChromeClient::shouldNotifyOnFormChanges()
-{
-    return m_page->injectedBundleFormClient().shouldNotifyOnFormChanges(m_page);
-}
-
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
 #if PLATFORM(EFL)
