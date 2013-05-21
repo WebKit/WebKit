@@ -1,3 +1,16 @@
+2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r150393): editing/inserting/typing-at-end-of-line.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116516
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by DRT not resetting various auto correction states.
+        Do that in Internals::resetToConsistentState.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Fix concatenations of string literals that are not C++11-compliant

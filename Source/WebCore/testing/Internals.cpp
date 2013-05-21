@@ -285,6 +285,20 @@ void Internals::resetToConsistentState(Page* page)
 #endif
     if (!page->mainFrame()->editor().isContinuousSpellCheckingEnabled())
         page->mainFrame()->editor().toggleContinuousSpellChecking();
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    if (page->mainFrame()->editor().isAutomaticQuoteSubstitutionEnabled())
+        page->mainFrame()->editor().toggleAutomaticQuoteSubstitution();
+    if (page->mainFrame()->editor().isAutomaticLinkDetectionEnabled())
+        page->mainFrame()->editor().toggleAutomaticLinkDetection();
+    if (page->mainFrame()->editor().isAutomaticDashSubstitutionEnabled())
+        page->mainFrame()->editor().toggleAutomaticDashSubstitution();
+    if (page->mainFrame()->editor().isAutomaticTextReplacementEnabled())
+        page->mainFrame()->editor().toggleAutomaticTextReplacement();
+    if (!page->mainFrame()->editor().isAutomaticSpellingCorrectionEnabled())
+        page->mainFrame()->editor().toggleAutomaticSpellingCorrection();
+#endif
+
     if (page->mainFrame()->editor().isOverwriteModeEnabled())
         page->mainFrame()->editor().toggleOverwriteModeEnabled();
 }
