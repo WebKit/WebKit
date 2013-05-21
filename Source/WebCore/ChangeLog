@@ -1,3 +1,14 @@
+2013-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Support application/x-mimearchive mimetype for MHTML archives instead of message/rfc822
+        https://bugs.webkit.org/show_bug.cgi?id=116442
+
+        Reviewed by Martin Robinson.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes): Like EFL and Qt, register the application/x-mimearchive mime type as a MHTML archive type
+        and stop propagating the message/rfc822 mime type as such. This also removes a couple of PLATFORM ifdefs.
+
 2013-05-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Minor String fixes in CSS
