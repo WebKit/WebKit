@@ -1,3 +1,17 @@
+2013-05-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r150384.
+        http://trac.webkit.org/changeset/150384
+        https://bugs.webkit.org/show_bug.cgi?id=116513
+
+        Not ready for primetime. (Requested by kling on #webkit).
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2013-05-20  Martin Robinson  <mrobinson@igalia.com>
 
         Remove SharedMemoryGtk.cpp

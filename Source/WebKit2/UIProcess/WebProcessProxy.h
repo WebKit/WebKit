@@ -185,7 +185,6 @@ private:
     void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     bool canTerminateChildProcess();
-    void forcefulTerminationTimerFired();
 
     ResponsivenessTimer m_responsivenessTimer;
     
@@ -211,8 +210,6 @@ private:
     HashSet<uint64_t> m_processSuppressiblePages;
     bool m_processSuppressionEnabled;
 #endif
-
-    WebCore::RunLoop::Timer<WebProcessProxy> m_forcefulTerminationTimer;
 };
     
 } // namespace WebKit
