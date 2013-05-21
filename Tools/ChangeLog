@@ -1,3 +1,15 @@
+2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][JHBUILD] Make sure eet is built before evas
+        https://bugs.webkit.org/show_bug.cgi?id=116440
+
+        Reviewed by Gyuyoung Kim.
+
+        Mark eet as a dependency of evas since evas requires eet to enable some of its
+        functionality.
+
+        * efl/jhbuild.modules:
+
 2013-05-20  Alex Christensen  <achristensen@apple.com>
 
         WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.
