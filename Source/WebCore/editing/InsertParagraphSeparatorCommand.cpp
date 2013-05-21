@@ -336,6 +336,8 @@ void InsertParagraphSeparatorCommand::doApply()
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
             splitTextNode(textNode, insertionPosition.offsetInContainerNode());
             positionAfterSplit = firstPositionInNode(textNode.get());
+            if (!textNode->previousSibling())
+                return; // Bail out if mutation events detachd the split text node.
             insertionPosition.moveToPosition(textNode->previousSibling(), insertionPosition.offsetInContainerNode());
             visiblePos = VisiblePosition(insertionPosition);
         }
