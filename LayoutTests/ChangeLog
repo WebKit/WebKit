@@ -1,3 +1,9 @@
+2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Mountain Lion test expectations per bug 116477.
+
+        * platform/mac/TestExpectations:
+
 2013-05-21  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Exclusions] Multiple regions with shape-insides should respect positioned shapes and overflow
