@@ -331,9 +331,6 @@ my @features = (
     { option => "link-prefetch", desc => "Toggle Link Prefetch support",
       define => "ENABLE_LINK_PREFETCH", default => (isGtk() || isEfl()), value => \$linkPrefetchSupport },
 
-    { option => "link-prerender", desc => "Toggle Link Prerender support",
-      define => "ENABLE_LINK_PRERENDER", default => 0, value => \$linkPrerenderSupport },
-
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", default => !isBlackBerry(), value => \$mathmlSupport },
 

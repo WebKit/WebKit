@@ -1,3 +1,15 @@
+2013-05-20  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove remaining link-prerender code
+        https://bugs.webkit.org/show_bug.cgi?id=116429
+
+        Reviewed by Darin Adler.
+
+        Link prerendering code was removed in r150356.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.pri:
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         commit-queue should check for oops in changelog entries

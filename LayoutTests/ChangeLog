@@ -1,3 +1,25 @@
+2013-05-20  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove remaining link-prerender code
+        https://bugs.webkit.org/show_bug.cgi?id=116429
+
+        Reviewed by Darin Adler.
+
+        Remove test cases related to link-prerender.
+
+        * fast/dom/HTMLLinkElement/prerender-insert-after-stop-expected.txt: Removed.
+        * fast/dom/HTMLLinkElement/prerender-insert-after-stop.html: Removed.
+        * fast/dom/HTMLLinkElement/prerender-remove-after-stop-expected.txt: Removed.
+        * fast/dom/HTMLLinkElement/prerender-remove-after-stop.html: Removed.
+        * fast/dom/HTMLLinkElement/resources/empty.html: Removed.
+        * fast/dom/HTMLLinkElement/resources/empty2.html: Removed.
+        * fast/dom/HTMLLinkElement/resources/simple-prerender.html: Removed.
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Below tests don't come to crash anymore after r150368.
