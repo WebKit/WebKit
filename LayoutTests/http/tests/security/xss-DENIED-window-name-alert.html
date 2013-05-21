@@ -1,0 +1,9 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<iframe sandbox="allow-scripts"
+        src="data:text/html,<script>
+            window.name='alert';
+            alert(top.alert === window ? 'PASS' : 'FAIL');
+            </script>"></iframe>

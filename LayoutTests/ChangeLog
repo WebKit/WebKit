@@ -1,5 +1,19 @@
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add tests for named access checks on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=116512
+
+        Reviewed by Geoffrey Garen.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/9207625a100abe9b72333ac5dba02b38ca5f4466
+
+        * http/tests/security/xss-DENIED-window-name-alert-expected.txt: Added.
+        * http/tests/security/xss-DENIED-window-name-alert.html: Added.
+        * http/tests/security/xss-DENIED-window-name-navigator-expected.txt: Added.
+        * http/tests/security/xss-DENIED-window-name-navigator.html: Added.
+
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Null pointer deference in WebCore::AppendNodeCommand::create
         https://bugs.webkit.org/show_bug.cgi?id=116479
 
