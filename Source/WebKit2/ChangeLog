@@ -1,3 +1,30 @@
+2013-05-20  Jessie Berlin  <jberlin@apple.com>
+
+        Expose a way to know when forms are added to a page or when form controls are added to a form
+        in the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=116334
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add shouldNotifyOnFormChanges and didAssociateFormControls to the WKBundlePageFormClient.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Add the new callbacks as part of version 2 of the WKBundlePageFormClient.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didAssociateFormControls):
+        Pass the message along to the client if the client has a handler.
+        (WebKit::InjectedBundlePageFormClient::shouldNotifyOnFormChanges):
+        Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didAssociateFormControls):
+        Tell the injected bundle form client for the page.
+        (WebKit::WebChromeClient::shouldNotifyOnFormChanges):
+        Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2013-05-20  Tim Horton  <timothy_horton@apple.com>
 
         Clients should have a way to extend rendering suppression

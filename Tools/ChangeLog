@@ -1,3 +1,43 @@
+2013-05-20  Jessie Berlin  <jberlin@apple.com>
+
+        Expose a way to know when forms are added to a page or when form controls are added to a form
+        in the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=116334
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests for the new callbacks.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add DidAssociateFormControls/_Bundle.cpp and associate-form-controls.html
+
+        * TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls.cpp: Added.
+        (TestWebKitAPI::nullJavaScriptCallback):
+        A "null" callback to handle the fact that WKPageRunJavaScriptInMainFrame cannot handle null
+        being passed in for the callback.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        After receiving the message that didAssociateFormControls callback was invoked from adding
+        the form in the onload handler, tell the page to add a password field to the form, which
+        should also invoke didAssociateFormControls callback.
+        (TestWebKitAPI::setInjectedBundleClient):
+        Register to receive messages.
+        (TestWebKitAPI::TEST):
+        Load associate-form-controls.html and wait until the didAssociateFormControls callback has
+        been invoked for both adding the form and for adding a password field to the form.
+
+        * TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp: Added.
+        (TestWebKitAPI::shouldNotifyOnFormChanges):
+        Return true so the didAssociateFormControls callback is invoked.
+        (TestWebKitAPI::didAssociateFormControls):
+        Tell the UI process.
+        (TestWebKitAPI::DidAssociateFormControlsTest::DidAssociateFormControlsTest):
+        (TestWebKitAPI::DidAssociateFormControlsTest::didCreatePage):
+        Register for the shouldNotifyOnFormChanges and didAssociateFormControls callbacks.
+
+        * TestWebKitAPI/Tests/WebKit2/associate-form-controls.html: Added.
+        Add a form in response to the onload event. Add a button that will add the password field
+        for manual testing.
+
 2013-05-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][JHBUILD] Make sure eet is built before evas

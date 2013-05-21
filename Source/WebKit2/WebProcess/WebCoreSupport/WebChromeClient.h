@@ -170,6 +170,9 @@ private:
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const WebCore::Node*) OVERRIDE;
 
+    virtual void didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>&) OVERRIDE;
+    virtual bool shouldNotifyOnFormChanges() OVERRIDE;
+
     virtual bool selectItemWritingDirectionIsNatural() OVERRIDE;
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() OVERRIDE;
     virtual bool hasOpenedPopup() const OVERRIDE;
