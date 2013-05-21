@@ -1,3 +1,28 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        commit-queue should check for oops in changelog entries
+        https://bugs.webkit.org/show_bug.cgi?id=116395
+
+        Reviewed by Martin Robinson.
+
+        Make changelog validation fail when it contains oops!.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask._validate_changelog):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (CommitQueueTaskTest._run_through_task):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py:
+        (ValidateChangeLogs.options):
+        (ValidateChangeLogs._check_changelog_diff):
+        (ValidateChangeLogs._changelog_contains_oops):
+        (ValidateChangeLogs.run):
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+        (ValidateChangeLogsTest._assert_start_line_produces_output):
+        (ValidateChangeLogsTest.test_check_changelog_diff):
+        (ValidateChangeLogsTest):
+        (ValidateChangeLogsTest.test_changelog_contains_oops):
+
 2013-05-20  Jessie Berlin  <jberlin@apple.com>
 
         Expose a way to know when forms are added to a page or when form controls are added to a form

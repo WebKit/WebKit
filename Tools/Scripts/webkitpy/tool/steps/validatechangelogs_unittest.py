@@ -38,7 +38,6 @@ class ValidateChangeLogsTest(unittest.TestCase):
 
     def _assert_start_line_produces_output(self, start_line, should_fail=False, non_interactive=False):
         tool = MockTool()
-        tool._checkout.is_path_to_changelog = lambda path: True
         step = ValidateChangeLogs(tool, MockOptions(git_commit=None, non_interactive=non_interactive))
         diff_file = Mock()
         diff_file.filename = "mock/ChangeLog"
@@ -56,3 +55,15 @@ class ValidateChangeLogsTest(unittest.TestCase):
 
         self._assert_start_line_produces_output(1, non_interactive=False)
         self._assert_start_line_produces_output(8, non_interactive=True, should_fail=True)
+
+    def test_changelog_contains_oops(self):
+        tool = MockTool()
+        tool._checkout.is_path_to_changelog = lambda path: True
+        step = ValidateChangeLogs(tool, MockOptions(git_commit=None, non_interactive=True, check_oops=True))
+        diff_file = Mock()
+        diff_file.filename = "mock/ChangeLog"
+        diff_file.lines = [(1, 1, "foo"), (2, 2, "bar OOPS! bar"), (3, 3, "foo")]
+        self.assertTrue(OutputCapture().assert_outputs(self, step._changelog_contains_oops, [diff_file], expected_logs=''))
+
+        diff_file.lines = [(1, 1, "foo"), (2, 2, "bar OOPS bar"), (3, 3, "foo")]
+        self.assertFalse(OutputCapture().assert_outputs(self, step._changelog_contains_oops, [diff_file], expected_logs=''))

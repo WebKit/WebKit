@@ -124,6 +124,7 @@ class GoldenScriptError(ScriptError):
 
 class CommitQueueTaskTest(unittest.TestCase):
     def _run_through_task(self, commit_queue, expected_logs, expected_exception=None, expect_retry=False):
+        self.maxDiff = None
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(10000)
         task = CommitQueueTask(commit_queue, patch)
@@ -140,7 +141,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -160,7 +161,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -218,7 +219,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_failed: failure_message='ChangeLog did not pass validation' script_error='MOCK validate failure' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs, GoldenScriptError)
@@ -237,7 +238,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
@@ -261,7 +262,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
@@ -288,7 +289,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -322,7 +323,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -358,7 +359,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -390,7 +391,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -429,7 +430,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -472,7 +473,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -511,7 +512,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
@@ -545,7 +546,7 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
-run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'

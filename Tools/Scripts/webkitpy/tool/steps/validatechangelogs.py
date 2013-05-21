@@ -29,6 +29,7 @@
 import logging
 import sys
 
+from optparse import make_option
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.checkout.diff_parser import DiffParser
@@ -42,12 +43,11 @@ class ValidateChangeLogs(AbstractStep):
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
+            make_option("--check-oops", action="store_true", default=False, help="Check there are no OOPS left in change log"),
             Options.non_interactive,
         ]
 
     def _check_changelog_diff(self, diff_file):
-        if not self._tool.checkout().is_path_to_changelog(diff_file.filename):
-            return True
         # Each line is a tuple, the first value is the deleted line number
         # Date, reviewer, bug title, bug url, and empty lines could all be
         # identical in the most recent entries.  If the diff starts any
@@ -64,6 +64,12 @@ class ValidateChangeLogs(AbstractStep):
             return True
         return False
 
+    def _changelog_contains_oops(self, diff_file):
+        for diff_line in diff_file.lines:
+            if 'OOPS!' in diff_line[2]:
+                return True
+        return False
+
     def run(self, state):
         changed_files = self.cached_lookup(state, "changed_files")
         for filename in changed_files:
@@ -76,6 +82,11 @@ class ValidateChangeLogs(AbstractStep):
             diff = self._tool.scm().diff_for_file(filename)
             parsed_diff = DiffParser(diff.splitlines())
             for filename, diff_file in parsed_diff.files.items():
+                if not self._tool.checkout().is_path_to_changelog(diff_file.filename):
+                    continue
                 if not self._check_changelog_diff(diff_file):
                     _log.error("ChangeLog entry in %s is not at the top of the file." % diff_file.filename)
+                    sys.exit(1)
+                if self._options.check_oops and self._changelog_contains_oops(diff_file):
+                    _log.error("ChangeLog entry in %s contains OOPS!." % diff_file.filename)
                     sys.exit(1)

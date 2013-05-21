@@ -244,7 +244,7 @@ Running: webkit-patch --status-host=example.com update --port=mac
 MOCK: update_status: commit-queue Updated working directory
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=mac
+Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
@@ -328,7 +328,7 @@ Running: webkit-patch --status-host=example.com update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=%(port)s
+Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Built patch
@@ -357,7 +357,7 @@ Running: webkit-patch --status-host=example.com update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10005 --port=%(port)s
+Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10005 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
@@ -399,7 +399,7 @@ Running: webkit-patch --status-host=example.com update --port=mac
 MOCK: update_status: commit-queue Updated working directory
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=mac
+Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch

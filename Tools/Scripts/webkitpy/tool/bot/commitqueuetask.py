@@ -55,6 +55,7 @@ class CommitQueueTask(PatchAnalysisTask):
     def _validate_changelog(self):
         return self._run_command([
             "validate-changelog",
+            "--check-oops",
             "--non-interactive",
             self._patch.id(),
         ],
