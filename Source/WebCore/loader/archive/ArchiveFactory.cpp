@@ -31,7 +31,7 @@
 
 #include "MIMETypeRegistry.h"
 
-#if USE(CF) && !PLATFORM(QT) && ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
 #include "LegacyWebArchive.h"
 #endif
 #if ENABLE(MHTML)
