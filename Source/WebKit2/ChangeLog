@@ -1,3 +1,13 @@
+2013-05-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Compile everything in C++11 mode
+        https://bugs.webkit.org/show_bug.cgi?id=116452
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am: Remove the -std=c++11 flags from the various CPPFLAGS lists, the mode is now specified
+        by default for all the C++ source code in SetupCompilerFlags.m4.
+
 2013-05-21  Jessie Berlin  <jberlin@apple.com>
 
         Expose a way to know when forms are added to a page or when form controls are added to a form

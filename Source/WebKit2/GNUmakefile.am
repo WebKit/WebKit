@@ -35,7 +35,6 @@ libWebKit2Platform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	-fno-strict-aliasing \
-	-std=c++11 \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WTF \
 	-I$(srcdir)/Source/WebKit2/Platform \
@@ -69,7 +68,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS = \
 	-fno-strict-aliasing \
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
-	-std=c++11 \
 	$(global_cppflags) \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit/gtk \
@@ -441,7 +439,6 @@ Programs_WebKitWebProcess_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
@@ -552,7 +549,6 @@ libwebkit2gtkinjectedbundle_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
 	-I$(top_builddir)/DerivedSources/InjectedBundle \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(GLIB_CFLAGS)
@@ -616,7 +612,6 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	-DGTK_API_VERSION_2=1 \
 	-DENABLE_PLUGIN_PROCESS=1 \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(platform_cppflags) \
 	$(platformgtk_cppflags) \

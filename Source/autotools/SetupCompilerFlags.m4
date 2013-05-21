@@ -1,16 +1,18 @@
 # Use C99 as the language standard for C code.
 CFLAGS="$CFLAGS -std=c99"
-# Do not warn about C++11 incompatibilities.
-CXXFLAGS="$CXXFLAGS -Wno-c++11-compat"
+# Use the C++11 standard. Do not warn about C++11 incompatibilities.
+CXXFLAGS="$CXXFLAGS -std=c++11 -Wno-c++11-compat"
 
-# Clang requires suppression of unused arguments warning.
+# Clang requires suppression of unused arguments warnings.
 if test "$CC" = "clang"; then
     CFLAGS="$CFLAGS -Qunused-arguments"
 fi
-# -Wno-c++11-extensions, currently only usable with Clang, suppresses warnings of C++11 extensions in use.
+
 # libstdc++ is at the moment the only option as the C++ standard library when compiling with Clang.
+# -Wno-c++11-extensions, currently only usable with Clang, suppresses warnings of C++11 extensions in use.
+# Suppress unused arguments warnings for C++ files as well.
 if test "$CXX" = "clang++"; then
-    CXXFLAGS="$CXXFLAGS -Wno-c++11-extensions -stdlib=libstdc++ -Qunused-arguments"
+    CXXFLAGS="$CXXFLAGS -stdlib=libstdc++ -Wno-c++11-extensions -Qunused-arguments"
 fi
 
 if test "$host_cpu" = "sh4"; then
