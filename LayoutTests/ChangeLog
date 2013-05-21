@@ -1,3 +1,16 @@
+2013-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed test expectation change - skip failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116564
+
+        1. Skip a number of failing tests, and investigate the sources of the
+        problems.  Progress will be tracked on the above bug.
+        2. Correct a typo I made in r150382
+        3. Remove skip entries from https://webkit.org/b/113908; these were
+        replaced with new tests added in https://webkit.org/b/113946.
+
+        * platform/win/TestExpectations:
+
 2013-05-21  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Remove percentages from offsetLeft/offsetTop tests to avoid sub-pixel errors

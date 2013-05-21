@@ -45,7 +45,7 @@ css3/filters/effect-sepia-hw.html
 # Custom filters not yet supported on Windows
 css3/filters/custom
 
-# Remove from list afters enabling CANVAS_PATH
+# Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-currentPath.html
 fast/canvas/canvas-path-constructors.html
 
@@ -2728,13 +2728,6 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 # dumpCreateView method not implemented on Windows
 fast/loader/url-selected-user-gesture.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=113908
-css3/filters/composited-layer-bounds-after-sw-blur-animation.html
-css3/filters/composited-layer-bounds-with-composited-blur.html
-css3/filters/composited-layer-child-bounds-after-composited-to-sw-shadow-change.html
-css3/filters/composited-layer-promotion-after-outset-overlap-change-using-composited-shadow.html
-css3/filters/composited-layer-promotion-after-outset-overlap-change-using-sw-shadow.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=113946
 compositing/contents-opaque/control-layer.html
 compositing/filters/sw-layer-overlaps-hw-shadow.html
@@ -2743,3 +2736,20 @@ compositing/filters/sw-shadow-overlaps-hw-shadow.html
 
 # No concept of secure text input
 editing/secure-input [ Failure ]
+
+# Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
+webkit.org/b/116564 css1/units/rounding.html
+webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html
+webkit.org/b/116564 editing/style/block-style-005.html
+webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml
+webkit.org/b/116564 fast/dom/Window/window-onFocus.html
+webkit.org/b/116564 fast/events/clientXY-in-zoom-and-scroll.html
+webkit.org/b/116564 fast/events/remove-target-with-shadow-in-drag.html
+webkit.org/b/116564 fast/js/global-constructors-attributes.html
+webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html
+webkit.org/b/116564 fast/text/text-combine-different-fonts.html
+webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html
+webkit.org/b/116564 media/click-volume-bar-not-pausing.html
+webkit.org/b/116564 media/track/track-css-user-override.html
+webkit.org/b/116564 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
+webkit.org/b/116564 transitions/svg-text-shadow-transition.html
