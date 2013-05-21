@@ -100,12 +100,6 @@ webkit.org/b/63706 http/tests/security/drag-over-remote-content-iframe.html [ Fa
 webkit.org/b/63706 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
 
-# WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
-Bug(GTK) editing/selection/doubleclick-beside-cr-span.html [ Failure ]
-Bug(GTK) editing/selection/doubleclick-whitespace.html [ Failure ]
-Bug(GTK) editing/selection/doubleclick-whitespace-crash.html [ Failure ]
-Bug(GTK) editing/selection/doubleclick-whitespace-img-crash.html [ Failure ]
-
 # WebKit2 needs layoutTestController.addMockSpeechInputResult
 Bug(GTK) fast/speech/input-onspeechchange-event.html [ Failure ]
 Bug(GTK) fast/speech/input-ontextinput-event.html [ Failure ]

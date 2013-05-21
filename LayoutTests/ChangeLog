@@ -1,3 +1,13 @@
+2013-05-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] Unflag tests related to layoutTestController.setSmartInsertDeleteEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=116433
+
+        Unreviewed gardening.
+
+        * platform/gtk-wk2/TestExpectations: Unflag tests as they are passing
+        since r150289.
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] [WK2] storage/websql/open-database-creation-callback-isolated-world.html, statement-error-callback-isolated-world.html,
