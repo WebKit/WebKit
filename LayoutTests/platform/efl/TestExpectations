@@ -815,8 +815,6 @@ webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 
 # Crashing IndexedDB tests
-webkit.org/b/112578 storage/indexeddb/transaction-coordination-across-databases.html [ Crash ]
-webkit.org/b/107194 storage/indexeddb/pending-activity.html [ Crash ]
 webkit.org/b/107194 [ Release ] storage/indexeddb/cursor-advance.html [ Crash ]
 
 # Flaky IndexedDB tests

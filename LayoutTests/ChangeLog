@@ -1,3 +1,14 @@
+2013-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Below tests don't come to crash anymore after r150368.
+        But, pending-activity.html still comes to crash on wk2.
+
+        storage/indexeddb/pending-activity.html
+        storage/indexeddb/transaction-coordination-across-databases.html
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add tests for named access checks on DOMWindow
