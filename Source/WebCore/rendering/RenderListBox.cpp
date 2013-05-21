@@ -845,6 +845,14 @@ bool RenderListBox::scrollbarsCanBeActive() const
     return view->frameView()->scrollbarsCanBeActive();
 }
 
+bool RenderListBox::scrollbarAnimationsAreSuppressed() const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return false;
+    return view->frameView()->scrollbarAnimationsAreSuppressed();
+}
+
 ScrollableArea* RenderListBox::enclosingScrollableArea() const
 {
     // FIXME: Return a RenderLayer that's scrollable.

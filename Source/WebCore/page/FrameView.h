@@ -419,6 +419,8 @@ public:
     virtual void willStartLiveResize() OVERRIDE;
     virtual void willEndLiveResize() OVERRIDE;
 
+    virtual bool scrollbarAnimationsAreSuppressed() const OVERRIDE;
+
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestones();
     LayoutMilestones milestonesPendingPaint() const { return m_milestonesPendingPaint; }

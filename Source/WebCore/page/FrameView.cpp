@@ -907,6 +907,14 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
 
 #endif // ENABLE(RUBBER_BANDING)
 
+bool FrameView::scrollbarAnimationsAreSuppressed() const
+{
+    Page* page = frame() ? frame()->page() : 0;
+    if (!page)
+        return true;
+    return page->shouldSuppressScrollbarAnimations();
+}
+
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
 {
     RenderView* renderView = this->renderView();

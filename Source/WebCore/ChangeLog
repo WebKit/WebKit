@@ -1,3 +1,38 @@
+2013-05-20  Beth Dakin  <bdakin@apple.com>
+
+        Scrollbars still show sometimes even when WKPageSetSuppressScrollbarAnimations() 
+        is set
+        https://bugs.webkit.org/show_bug.cgi?id=116493
+        -and corresponding-
+        <rdar://problem/13912871>
+
+        Reviewed by Dean Jackson.
+
+        We need to be more aggressive with our approach since AppKit may still ask the 
+        scrollbars to paint here.
+
+        scrollbarAnimationsAreSuppressed() will allow us to find out if the setting has 
+        been set.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollbarAnimationsAreSuppressed):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollbarAnimationsAreSuppressed):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollbarAnimationsAreSuppressed):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollbarAnimationsAreSuppressed):
+        * rendering/RenderListBox.h:
+
+        Don’t allow animations if scrollbars are suppressed.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+
+        Call cancelAnimations() to prevent a just-started animation from continuing.
+        (WebCore::ScrollAnimatorMac::finishCurrentScrollAnimations):
+
 2013-05-20  Andreas Kling  <akling@apple.com>
 
         Avoid caret repaints if we're not showing carets anyway.

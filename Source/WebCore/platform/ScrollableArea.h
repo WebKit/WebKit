@@ -82,6 +82,7 @@ public:
     void contentAreaDidHide() const;
 
     void finishCurrentScrollAnimations() const;
+    virtual bool scrollbarAnimationsAreSuppressed() const { return false; }
 
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation);
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation);

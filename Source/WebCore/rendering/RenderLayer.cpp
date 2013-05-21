@@ -1395,6 +1395,14 @@ IntRect RenderLayer::scrollableAreaBoundingBox() const
     return renderer()->absoluteBoundingBoxRect();
 }
 
+bool RenderLayer::scrollbarAnimationsAreSuppressed() const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return false;
+    return view->frameView()->scrollbarsCanBeActive();
+}
+
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
