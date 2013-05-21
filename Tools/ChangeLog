@@ -1,3 +1,13 @@
+2013-05-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=116372
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Do not build WebKitTestRunner yet for WebKitGTK+.
+        * MiniBrowser/gtk/CMakeLists.txt: Added.
+
 2013-05-21  Jessie Berlin  <jberlin@apple.com>
 
         Revert r149635, it was too optimistic.

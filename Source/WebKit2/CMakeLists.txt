@@ -1,4 +1,5 @@
 set(WebKit2_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBKIT2_DIR}"
     "${WEBKIT2_DIR}/Platform"
     "${WEBKIT2_DIR}/Platform/CoreIPC"
@@ -95,6 +96,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/svg"
+    "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/properties"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
@@ -119,6 +121,13 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
 )
+
+if (WTF_USE_3D_GRAPHICS)
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
+        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
+    )
+endif ()
 
 set(WebKit2_SOURCES
     Platform/Logging.cpp
@@ -245,7 +254,6 @@ set(WebKit2_SOURCES
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
 
-    UIProcess/PageViewportController.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
@@ -623,8 +631,7 @@ include_directories(${WebKit2_INCLUDE_DIRECTORIES})
 add_library(WebKit2 ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
 
 add_dependencies(WebKit2 WebCore)
-add_dependencies(WebKit2 ${ForwardingHeaders_NAME})
-add_dependencies(WebKit2 ${ForwardingNetworkHeaders_NAME})
+add_dependencies(WebKit2 WEBKIT2_EXTRA_DEPENDENCIES)
 target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
 set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
 set_target_properties(WebKit2 PROPERTIES LINK_INTERFACE_LIBRARIES "")

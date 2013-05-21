@@ -1,3 +1,19 @@
+2013-05-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=116372
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Add common directories to the common include list and remove UIProcess/PageViewportController.cpp
+        from the source list since it should only be compiled for WebKitEFL. Instead of taking explicit forwarding-header
+        dependencies accept a list of "tacked-on" dependencies for WebKit2. This allows GTK+ to specify its extra fake
+        installed header step.
+        * PlatformEfl.cmake: Remove common include directories and add UIProcess/PageViewportController.cpp to the source
+        list. Fix up forwarding header dependencies now.
+        * PlatformGTK.cmake: Added.
+        * config.h: First check whether this is a CMake build and then fall back to the autotools header.
+
 2013-05-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Compile everything in C++11 mode

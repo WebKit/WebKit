@@ -1,3 +1,15 @@
+2013-05-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=116372
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/FindWebP.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake: Turn on WebKit2 and the plugin process and also look
+        for WebP. These missing symbols were hidden up until now. ENABLE_TEXTURE_MAPPER was
+        also incorrect specified.
+
 2013-05-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Compile everything in C++11 mode

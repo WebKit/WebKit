@@ -24,12 +24,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#if defined (BUILDING_GTK__)
-#include "autotoolsconfig.h"
-#endif /* defined (BUILDING_GTK__) */
-
-#if defined (BUILDING_WITH_CMAKE)
+#if defined(BUILDING_WITH_CMAKE)
 #include "cmakeconfig.h"
+#elif defined(BUILDING_GTK__)
+#include "autotoolsconfig.h"
 #endif
 
 #include <runtime/JSExportMacros.h>

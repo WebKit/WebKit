@@ -41,6 +41,7 @@ list(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/DefaultUndoController.cpp
+    UIProcess/PageViewportController.cpp
 
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
@@ -177,12 +178,10 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
 )
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
-    "${WEBCORE_DIR}/svg/graphics"
     "${WEBKIT2_DIR}/Shared/API/c/efl"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
@@ -221,13 +220,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
     ${WTF_DIR}
 )
-
-if (WTF_USE_3D_GRAPHICS)
-    list(APPEND WebKit2_INCLUDE_DIRECTORIES
-        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
-        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
-    )
-endif ()
 
 list(APPEND WebKit2_LIBRARIES
     ${CAIRO_LIBRARIES}
@@ -295,12 +287,15 @@ add_custom_target(forwarding-headerEfl
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include CoordinatedGraphics
 )
-set(ForwardingHeaders_NAME forwarding-headerEfl)
 
 add_custom_target(forwarding-headerSoup
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
 )
-set(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
+
+set(WEBKIT2_EXTRA_DEPENDENCIES
+     forwarding-headerEfl
+     forwarding-headerSoup
+)
 
 configure_file(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
 set(EWebKit2_HEADERS

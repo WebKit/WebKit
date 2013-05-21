@@ -5,6 +5,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/cairo"
+    "${WEBCORE_DIR}/platform/graphics/egl"
+    "${WEBCORE_DIR}/platform/graphics/glx"
     "${WEBCORE_DIR}/platform/graphics/gtk"
     "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
@@ -114,6 +116,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/DrawingBufferCairo.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
+    platform/graphics/cairo/GLContext.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContext3DCairo.cpp
     platform/graphics/cairo/GraphicsContext3DPrivate.cpp
@@ -130,6 +133,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/TileCairo.cpp
     platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
+
+    platform/graphics/egl/GLContextEGL.cpp
+
+    platform/graphics/glx/GLContextGLX.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/FullscreenVideoControllerGtk.cpp
@@ -247,6 +254,7 @@ list(APPEND WebCore_LIBRARIES
     ${LIBSOUP_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
+    ${WEBP_LIBRARIES}
     ${XT_LIBRARIES}
     ${X11_X11_LIB}
     ${X11_Xcomposite_LIB}
@@ -269,6 +277,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
     ${HARFBUZZ_INCLUDE_DIRS}
+    ${WEBP_INCLUDE_DIRS}
     ${XT_INCLUDE_DIRS}
 )
 

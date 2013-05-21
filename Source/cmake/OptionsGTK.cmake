@@ -71,9 +71,9 @@ set(WEBKIT_MAJOR_VERSION ${PROJECT_VERSION_MAJOR})
 
 set(ENABLE_WEBCORE ON)
 set(ENABLE_INSPECTOR ON)
-set(ENABLE_PLUGIN_PROCESS OFF)
+set(ENABLE_PLUGIN_PROCESS ON)
 set(ENABLE_WEBKIT OFF)
-set(ENABLE_WEBKIT2 OFF)
+set(ENABLE_WEBKIT2 ON)
 
 set(WTF_USE_ICU_UNICODE 1)
 set(WTF_USE_SOUP 1)
@@ -118,6 +118,7 @@ find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(Xt REQUIRED)
 find_package(ATK REQUIRED)
+find_package(WebP REQUIRED)
 find_package(GStreamer 1.0.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
 # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
@@ -142,7 +143,7 @@ endif ()
 
 if (${OPENGL_FOUND} AND (${GLX_FOUND} OR ${EGL_FOUND}))
     set(ENABLE_WEBGL 1)
-    set(WTF_USE_TEXTURE_MAPPER 1)
+    set(ENABLE_TEXTURE_MAPPER 1)
     set(WTF_USE_3D_GRAPHICS 1)
 
     add_definitions(-DWTF_USE_OPENGL=1)
