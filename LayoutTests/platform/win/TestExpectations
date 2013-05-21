@@ -2737,6 +2737,10 @@ compositing/filters/sw-shadow-overlaps-hw-shadow.html
 # No concept of secure text input
 editing/secure-input [ Failure ]
 
+# Worker-specific crashes
+webkit.org/b/116560 fast/js/create-lots-of-workers.html
+webkit.org/b/116560 fast/workers
+
 # Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
 webkit.org/b/116564 css1/units/rounding.html
 webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html

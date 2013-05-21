@@ -1,5 +1,14 @@
 2013-05-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Workers are crashing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116560.
+
+        Unreviewed change to TestExpectations while investigating.
+
+        * platform/win/TestExpectations: Disable worker tests under Windows.
+
+2013-05-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed test expectation change - skip failing tests.
         https://bugs.webkit.org/show_bug.cgi?id=116564
 
