@@ -68,7 +68,6 @@ class RenderLayer;
 class RenderObject;
 class ScrollView;
 class TransformationMatrix;
-class PagePopupBlackBerry;
 template<typename T> class Timer;
 }
 
@@ -80,6 +79,8 @@ class BackingStoreClient;
 class DumpRenderTreeClient;
 class InPageSearchManager;
 class InputHandler;
+class PagePopupBlackBerry;
+class PagePopupBlackBerryClient;
 class SelectionHandler;
 class TouchEventHandler;
 class WebCookieJar;
@@ -412,7 +413,9 @@ public:
 
     BackingStoreClient* backingStoreClient() const;
 
-    void setParentPopup(WebCore::PagePopupBlackBerry* webPopup);
+    bool openPagePopup(PagePopupBlackBerryClient*, const WebCore::IntRect& originBoundsInRootView);
+    void closePagePopup();
+    bool hasOpenedPopup() const;
 
     // Clean up any document related data we might be holding.
     void clearDocumentData(const WebCore::Document*);
@@ -635,7 +638,7 @@ public:
     WebCore::Timer<WebPagePrivate> m_deferredTasksTimer;
 
     // The popup that opened in this webpage
-    WebCore::PagePopupBlackBerry* m_selectPopup;
+    PagePopupBlackBerry* m_selectPopup;
 
     RefPtr<WebCore::AutofillManager> m_autofillManager;
 

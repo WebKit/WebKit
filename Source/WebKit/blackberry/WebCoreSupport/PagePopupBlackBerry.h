@@ -20,53 +20,46 @@
 #define PagePopupBlackBerry_h
 
 #include "IntRect.h"
-#include "PagePopup.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class Frame;
+}
 
 namespace BlackBerry {
 namespace WebKit {
 class WebPage;
 class WebPagePrivate;
-}
-}
+class PagePopupBlackBerryClient;
 
-namespace WebCore {
-class Frame;
-class Page;
-class PagePopupClient;
-class PlatformMouseEvent;
-
-class PagePopupBlackBerry : public PagePopup {
+class PagePopupBlackBerry {
 public:
-    PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate*, PagePopupClient*, const IntRect&);
+    PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate*, PagePopupBlackBerryClient*);
     ~PagePopupBlackBerry();
 
-    bool sendCreatePopupWebViewRequest();
     bool init(BlackBerry::WebKit::WebPage*);
     void closePopup();
-    void setRect();
 
     class SharedClientPointer : public RefCounted<SharedClientPointer> {
     public:
-        explicit SharedClientPointer(PagePopupClient* client) : m_client(client) { }
+        explicit SharedClientPointer(PagePopupBlackBerryClient* client) : m_client(client) { }
         void clear() { m_client = 0; }
-        PagePopupClient* get() const { return m_client; }
+        PagePopupBlackBerryClient* get() const { return m_client; }
     private:
-        PagePopupClient* m_client;
+        PagePopupBlackBerryClient* m_client;
     };
 
 private:
     void generateHTML(BlackBerry::WebKit::WebPage*);
-    void installDOMFunction(Frame*);
+    void installDOMFunction(WebCore::Frame*);
 
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
-    OwnPtr<PagePopupClient> m_client;
+    OwnPtr<PagePopupBlackBerryClient> m_client;
     RefPtr<SharedClientPointer> m_sharedClientPointer;
-    IntRect m_rect;
 };
 
+}
 }
 
 #endif // PagePopupBlackBerry_h

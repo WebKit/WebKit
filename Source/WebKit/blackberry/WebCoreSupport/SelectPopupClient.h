@@ -20,10 +20,14 @@
 #define SelectPopupClient_h
 
 #include "IntSize.h"
-#include "PagePopupClient.h"
+#include "PagePopupBlackBerryClient.h"
 #include "ScopePointer.h"
 #include "Timer.h"
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class HTMLSelectElement;
+}
 
 namespace BlackBerry {
 namespace Platform {
@@ -31,40 +35,25 @@ class String;
 }
 
 namespace WebKit {
-class WebPagePrivate;
-}
-}
 
-namespace WebCore {
-class DocumentWriter;
-class HTMLSelectElement;
-class PagePopup;
-
-class SelectPopupClient : public PagePopupClient {
+class SelectPopupClient : public PagePopupBlackBerryClient {
 public:
-    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
+    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLSelectElement*);
     ~SelectPopupClient();
 
-    void update(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
+    virtual void setValueAndClosePopup(int, const String&);
+    virtual void didClosePopup();
 
+private:
     void generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds);
     void notifySelectionChange(WebCore::Timer<SelectPopupClient> *);
 
-    void writeDocument(DocumentWriter&);
-    virtual IntSize contentSize();
-    virtual String htmlSource();
-    virtual Locale& locale();
-    virtual void setValueAndClosePopup(int, const String&);
-    virtual void setValue(const String&);
-    virtual void closePopup();
-    virtual void didClosePopup();
-
     bool m_multiple;
     unsigned m_size;
-    String m_source;
-    BlackBerry::WebKit::WebPagePrivate* m_webPage;
-    RefPtr<HTMLSelectElement> m_element;
+    RefPtr<WebCore::HTMLSelectElement> m_element;
     WebCore::Timer<SelectPopupClient> m_notifyChangeTimer;
 };
-} // namespace WebCore
+
+}
+}
 #endif

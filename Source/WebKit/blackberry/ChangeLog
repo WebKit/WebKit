@@ -1,3 +1,75 @@
+2013-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Make PagePopup implementation independent from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=116448
+
+        Reviewed by Anders Carlsson.
+
+        Add our own implementation of PagePopupClient and make all the
+        pickers inherit from it. Unused methods have been removed and
+        common implementation have been moved from the pickers to the
+        parent class.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate): Destroy the
+        popup if there's one active.
+        (BlackBerry::WebKit::WebPagePrivate::setVisible): Call
+        closePagePopup() directly.
+        (BlackBerry::WebKit::WebPagePrivate::openPagePopup): Create a new
+        PagePopupBlackBerry for the given client.
+        (BlackBerry::WebKit::WebPagePrivate::closePagePopup): Close the
+        active popup if there's one.
+        (BlackBerry::WebKit::WebPagePrivate::hasOpenedPopup): Return
+        whether there's an active popup.
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::chromeDestroyed): Remove
+        closePagePopup() call since this is now handled by
+        WebPagePrivate.
+        (WebCore::ChromeClientBlackBerry::hasOpenedPopup): Call
+        WebPagePrivate::hasOpenedPopup().
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (BlackBerry::WebKit::ColorPickerClient::ColorPickerClient):
+        (BlackBerry::WebKit::ColorPickerClient::didClosePopup):
+        * WebCoreSupport/ColorPickerClient.h:
+        (ColorPickerClient):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (BlackBerry::WebKit::DatePickerClient::DatePickerClient):
+        (BlackBerry::WebKit::DatePickerClient::didClosePopup):
+        * WebCoreSupport/DatePickerClient.h:
+        (DatePickerClient):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (BlackBerry::WebKit::PagePopupBlackBerry::PagePopupBlackBerry):
+        (BlackBerry::WebKit::PagePopupBlackBerry::closePopup):
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+        (BlackBerry::WebKit::PagePopupBlackBerry::SharedClientPointer::SharedClientPointer):
+        (BlackBerry::WebKit::PagePopupBlackBerry::SharedClientPointer::get):
+        (SharedClientPointer):
+        * WebCoreSupport/PagePopupBlackBerryClient.cpp: Added.
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::PagePopupBlackBerryClient):
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::closePopup):
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::didClosePopup):
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::contentSize):
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::writeDocument):
+        * WebCoreSupport/PagePopupBlackBerryClient.h: Added.
+        (PagePopupBlackBerryClient):
+        (BlackBerry::WebKit::PagePopupBlackBerryClient::~PagePopupBlackBerryClient):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (BlackBerry::WebKit::SelectPopupClient::SelectPopupClient):
+        (BlackBerry::WebKit::SelectPopupClient::didClosePopup):
+        * WebCoreSupport/SelectPopupClient.h:
+        (SelectPopupClient):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openDatePopup): Do not call
+        closePagePopup() since this is already done by openPagePopup() and
+        use openPagePopup() from WebPagePrivate directly.
+        (BlackBerry::WebKit::InputHandler::openColorPopup): Ditto.
+        (BlackBerry::WebKit::InputHandler::openSelectPopup): Ditto.
+
 2013-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Do not use skia in FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()

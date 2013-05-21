@@ -19,9 +19,13 @@
 #ifndef DatePickerClient_h
 #define DatePickerClient_h
 
-#include "PagePopupClient.h"
+#include "PagePopupBlackBerryClient.h"
 #include <BlackBerryPlatformInputEvents.h>
 #include <unicode/udat.h>
+
+namespace WebCore {
+class HTMLInputElement;
+}
 
 namespace BlackBerry {
 namespace Platform {
@@ -30,36 +34,23 @@ class String;
 
 namespace WebKit {
 class WebPagePrivate;
-}
-}
 
-namespace WebCore {
-class DocumentWriter;
-class HTMLInputElement;
-
-class DatePickerClient : public PagePopupClient {
+class DatePickerClient : public PagePopupBlackBerryClient {
 public:
-    DatePickerClient(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate*, HTMLInputElement*);
+    DatePickerClient(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLInputElement*);
     ~DatePickerClient();
 
-    void generateHTML(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step);
-
-    void writeDocument(DocumentWriter&);
-    virtual IntSize contentSize();
-    virtual String htmlSource();
-    virtual Locale& locale();
     void setValueAndClosePopup(int, const String&);
-    void setValue(const String&);
     void didClosePopup();
-    void closePopup();
 
 private:
+    void generateHTML(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step);
     static const String generateDateLabels(UDateFormatSymbolType);
 
     BlackBerry::Platform::BlackBerryInputType m_type;
-    String m_source;
-    BlackBerry::WebKit::WebPagePrivate* m_webPage;
-    RefPtr<HTMLInputElement> m_element;
+    RefPtr<WebCore::HTMLInputElement> m_element;
 };
-} // namespace WebCore
+
+}
+}
 #endif

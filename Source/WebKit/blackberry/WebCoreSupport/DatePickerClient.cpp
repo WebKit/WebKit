@@ -19,17 +19,10 @@
 #include "config.h"
 #include "DatePickerClient.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Document.h"
-#include "DocumentWriter.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PagePopup.h"
 #include "PopupPicker.h"
-#include "RenderObject.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformString.h>
@@ -38,15 +31,17 @@
 #include <unicode/dtfmtsym.h>
 #include <wtf/text/StringBuilder.h>
 
+using namespace WebCore;
 using namespace icu;
 
-namespace WebCore {
+namespace BlackBerry {
+namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
-DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
-    : m_type(type)
-    , m_webPage(webPage)
+DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, WebCore::HTMLInputElement* element)
+    : PagePopupBlackBerryClient(webPage)
+    , m_type(type)
     , m_element(element)
 {
     generateHTML(type, value, min, max, step);
@@ -138,28 +133,6 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     m_source = source.toString();
 }
 
-void DatePickerClient::closePopup()
-{
-    ASSERT(m_webPage);
-    m_webPage->m_page->chrome().client()->closePagePopup(0);
-}
-
-IntSize DatePickerClient::contentSize()
-{
-    // Fixme: will generate content size dynamically
-    return IntSize(320, 256);
-}
-
-String DatePickerClient::htmlSource()
-{
-    return m_source;
-}
-
-Locale& DatePickerClient::locale()
-{
-    return m_element->document()->getCachedLocale();
-}
-
 void DatePickerClient::setValueAndClosePopup(int, const String& value)
 {
     // Return -1 if user cancel the selection.
@@ -173,20 +146,10 @@ void DatePickerClient::setValueAndClosePopup(int, const String& value)
     closePopup();
 }
 
-void DatePickerClient::setValue(const String&)
-{
-    notImplemented();
-}
-
 void DatePickerClient::didClosePopup()
 {
-    m_webPage = 0;
+    PagePopupBlackBerryClient::didClosePopup();
     m_element = 0;
-}
-
-void DatePickerClient::writeDocument(DocumentWriter& writer)
-{
-    writer.addData(m_source.utf8().data(), m_source.utf8().length());
 }
 
 // UDAT_foo are for labels that are meant to be formatted as part of a date.
@@ -238,5 +201,7 @@ const String DatePickerClient::generateDateLabels(UDateFormatSymbolType symbolTy
     }
     printedLabels.appendLiteral("]");
     return printedLabels.toString();
+}
+
 }
 }

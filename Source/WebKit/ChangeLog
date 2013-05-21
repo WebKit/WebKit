@@ -1,3 +1,14 @@
+2013-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Make PagePopup implementation independent from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=116448
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformBlackBerry.cmake: Add
+        blackberry/WebCoreSupport/PagePopupBlackBerryClient.cpp to
+        compilation.
+
 2013-05-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Replace *_LIBRARY_NAME with *_OUTPUT_NAME

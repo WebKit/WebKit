@@ -19,8 +19,12 @@
 #ifndef ColorPickerClient_h
 #define ColorPickerClient_h
 
-#include "PagePopupClient.h"
+#include "PagePopupBlackBerryClient.h"
 #include <BlackBerryPlatformInputEvents.h>
+
+namespace WebCore {
+class HTMLInputElement;
+}
 
 namespace BlackBerry {
 namespace Platform {
@@ -28,32 +32,20 @@ class String;
 }
 
 namespace WebKit {
-class WebPagePrivate;
-}
-}
 
-namespace WebCore {
-class DocumentWriter;
-class HTMLInputElement;
-
-class ColorPickerClient : public PagePopupClient {
+class ColorPickerClient : public PagePopupBlackBerryClient {
 public:
-    ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate*, HTMLInputElement*);
+    ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLInputElement*);
 
-    void generateHTML(const BlackBerry::Platform::String& value);
-    void writeDocument(DocumentWriter&);
-    IntSize contentSize();
-    String htmlSource() const;
-    virtual Locale& locale();
     void setValueAndClosePopup(int, const String&);
-    void setValue(const String&);
-    void closePopup();
     void didClosePopup();
 
 private:
-    String m_source;
-    BlackBerry::WebKit::WebPagePrivate* m_webPage;
-    RefPtr<HTMLInputElement> m_element;
+    void generateHTML(const BlackBerry::Platform::String& value);
+
+    RefPtr<WebCore::HTMLInputElement> m_element;
 };
-} // namespace WebCore
+
+}
+}
 #endif

@@ -17,18 +17,10 @@
  */
 
 #include "config.h"
-
 #include "SelectPopupClient.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "Document.h"
-#include "DocumentWriter.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PagePopup.h"
 #include "PopupPicker.h"
 #include "RenderObject.h"
 #include "WebPage_p.h"
@@ -40,15 +32,18 @@
 
 #define CELL_HEIGHT 30
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace BlackBerry {
+namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
 SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLSelectElement* element)
-    : m_multiple(multiple)
+    : PagePopupBlackBerryClient(webPage)
+    , m_multiple(multiple)
     , m_size(size)
-    , m_webPage(webPage)
     , m_element(element)
     , m_notifyChangeTimer(this, &SelectPopupClient::notifySelectionChange)
 {
@@ -57,15 +52,6 @@ SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<B
 
 SelectPopupClient::~SelectPopupClient()
 {
-}
-
-void SelectPopupClient::update(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
-    const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement* element)
-{
-    m_multiple = multiple;
-    m_size = size;
-    m_element = element;
-    generateHTML(multiple, size, labels, enableds, itemType, selecteds);
 }
 
 void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
@@ -148,28 +134,6 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     m_source = source.toString();
 }
 
-void SelectPopupClient::closePopup()
-{
-    ASSERT(m_webPage);
-    m_webPage->m_page->chrome().client()->closePagePopup(0);
-}
-
-IntSize SelectPopupClient::contentSize()
-{
-    // Fixme: will generate content size dynamically
-    return IntSize(320, 256);
-}
-
-String SelectPopupClient::htmlSource()
-{
-    return m_source;
-}
-
-Locale& SelectPopupClient::locale()
-{
-    return m_element->document()->getCachedLocale();
-}
-
 void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 {
     ASSERT(m_element);
@@ -209,20 +173,10 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
     m_notifyChangeTimer.startOneShot(0);
 }
 
-void SelectPopupClient::setValue(const String&)
-{
-    notImplemented();
-}
-
 void SelectPopupClient::didClosePopup()
 {
-    m_webPage = 0;
+    PagePopupBlackBerryClient::didClosePopup();
     m_element = 0;
-}
-
-void SelectPopupClient::writeDocument(DocumentWriter& writer)
-{
-    writer.addData(m_source.utf8().data(), m_source.utf8().length());
 }
 
 void SelectPopupClient::notifySelectionChange(WebCore::Timer<SelectPopupClient>*)
@@ -233,4 +187,4 @@ void SelectPopupClient::notifySelectionChange(WebCore::Timer<SelectPopupClient>*
 }
 
 }
-
+}

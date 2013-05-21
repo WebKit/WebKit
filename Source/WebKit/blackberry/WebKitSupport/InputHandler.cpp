@@ -1212,15 +1212,13 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
         // Date input have button appearance, we hide caret when they get clicked.
         element->document()->frame()->selection()->setCaretVisible(false);
 
-        // Check if popup already exists, close it if does.
-        m_webPage->m_page->chrome().client()->closePagePopup(0);
         WTF::String value = element->value();
         WTF::String min = element->getAttribute(HTMLNames::minAttr).string();
         WTF::String max = element->getAttribute(HTMLNames::maxAttr).string();
         double step = element->getAttribute(HTMLNames::stepAttr).toDouble();
 
         DatePickerClient* client = new DatePickerClient(type, value, min, max, step,  m_webPage, element);
-        return m_webPage->m_page->chrome().client()->openPagePopup(client,  WebCore::IntRect());
+        return m_webPage->openPagePopup(client,  WebCore::IntRect());
         }
     default: // Other types not supported
         return false;
@@ -1238,11 +1236,8 @@ bool InputHandler::openColorPopup(HTMLInputElement* element)
     m_currentFocusElement = element;
     m_currentFocusElementType = TextPopup;
 
-    // Check if popup already exists, close it if does.
-    m_webPage->m_page->chrome().client()->closePagePopup(0);
-
     ColorPickerClient* client = new ColorPickerClient(element->value(), m_webPage, element);
-    return m_webPage->m_page->chrome().client()->openPagePopup(client,  WebCore::IntRect());
+    return m_webPage->openPagePopup(client, WebCore::IntRect());
 }
 
 void InputHandler::setInputValue(const WTF::String& value)
@@ -1971,9 +1966,6 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     ScopeArray<BlackBerry::Platform::String> labels;
     labels.reset(new BlackBerry::Platform::String[size]);
 
-    // Check if popup already exists, close it if does.
-    m_webPage->m_page->chrome().client()->closePagePopup(0);
-
     bool* enableds = 0;
     int* itemTypes = 0;
     bool* selecteds = 0;
@@ -2006,7 +1998,7 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     SelectPopupClient* selectClient = new SelectPopupClient(multiple, size, labels, enableds, itemTypes, selecteds, m_webPage, select);
     WebCore::IntRect elementRectInRootView = select->document()->view()->contentsToRootView(enclosingIntRect(select->getRect()));
     // Fail to create HTML popup, use the old path
-    if (!m_webPage->m_page->chrome().client()->openPagePopup(selectClient, elementRectInRootView))
+    if (!m_webPage->openPagePopup(selectClient, elementRectInRootView))
         m_webPage->m_client->openPopupList(multiple, size, labels, enableds, itemTypes, selecteds);
     delete[] enableds;
     delete[] itemTypes;

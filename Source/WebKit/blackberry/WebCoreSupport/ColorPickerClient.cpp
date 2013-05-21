@@ -19,16 +19,8 @@
 #include "config.h"
 #include "ColorPickerClient.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "Document.h"
-#include "DocumentWriter.h"
 #include "HTMLInputElement.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PagePopup.h"
 #include "PopupPicker.h"
-#include "RenderObject.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformString.h>
@@ -36,12 +28,15 @@
 #include <LocalizeResource.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace BlackBerry {
+namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
-ColorPickerClient::ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
-    : m_webPage(webPage)
+ColorPickerClient::ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate* webPage, WebCore::HTMLInputElement* element)
+    : PagePopupBlackBerryClient(webPage)
     , m_element(element)
 {
     generateHTML(value);
@@ -84,28 +79,6 @@ void ColorPickerClient::generateHTML(const BlackBerry::Platform::String& value)
     m_source = source.toString();
 }
 
-void ColorPickerClient::closePopup()
-{
-    ASSERT(m_webPage);
-    m_webPage->m_page->chrome().client()->closePagePopup(0);
-}
-
-IntSize ColorPickerClient::contentSize()
-{
-    // FIXME: will generate content size dynamically
-    return IntSize(320, 256);
-}
-
-String ColorPickerClient::htmlSource() const
-{
-    return m_source;
-}
-
-Locale& ColorPickerClient::locale()
-{
-    return m_element->document()->getCachedLocale();
-}
-
 void ColorPickerClient::setValueAndClosePopup(int, const String& value)
 {
     ASSERT(m_element);
@@ -116,20 +89,11 @@ void ColorPickerClient::setValueAndClosePopup(int, const String& value)
     closePopup();
 }
 
-void ColorPickerClient::setValue(const String&)
-{
-    notImplemented();
-}
-
 void ColorPickerClient::didClosePopup()
 {
-    m_webPage = 0;
+    PagePopupBlackBerryClient::didClosePopup();
     m_element = 0;
 }
 
-void ColorPickerClient::writeDocument(DocumentWriter& writer)
-{
-    CString sourceString = m_source.utf8();
-    writer.addData(sourceString.data(), sourceString.length());
 }
 }

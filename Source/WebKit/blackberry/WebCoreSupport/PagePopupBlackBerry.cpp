@@ -16,20 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include "config.h"
-
 #include "PagePopupBlackBerry.h"
 
 #include "DocumentLoader.h"
+#include "DocumentWriter.h"
 #include "EmptyClients.h"
 #include "FrameView.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
 #include "JSObject.h"
 #include "JSRetainPtr.h"
-#include "Page.h"
-#include "PageGroup.h"
-#include "PagePopupClient.h"
-#include "PlatformMouseEvent.h"
+#include "KURL.h"
+#include "PagePopupBlackBerryClient.h"
 #include "Settings.h"
 #include "WebPage.h"
 #include "WebPage_p.h"
@@ -41,26 +39,21 @@
 
 #define PADDING 80
 
-using namespace BlackBerry::Platform::Graphics;
-using namespace BlackBerry::WebKit;
-namespace WebCore {
+using namespace WebCore;
 
-PagePopupBlackBerry::PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPage, PagePopupClient* client, const IntRect& rect)
+namespace BlackBerry {
+namespace WebKit {
+
+PagePopupBlackBerry::PagePopupBlackBerry(WebPagePrivate* webPage, PagePopupBlackBerryClient* client)
     : m_webPagePrivate(webPage)
     , m_client(adoptPtr(client))
     , m_sharedClientPointer(adoptRef(new PagePopupBlackBerry::SharedClientPointer(client)))
 {
-    m_rect = IntRect(rect.x(), rect.y(), client->contentSize().width(), client->contentSize().height());
 }
 
 PagePopupBlackBerry::~PagePopupBlackBerry()
 {
     ASSERT(!m_sharedClientPointer->get());
-}
-
-bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
-{
-    return m_webPagePrivate->client()->createPopupWebView(m_rect);
 }
 
 bool PagePopupBlackBerry::init(WebPage* webpage)
@@ -187,9 +180,7 @@ void PagePopupBlackBerry::closePopup()
     m_sharedClientPointer->clear();
 
     m_client->didClosePopup();
-    m_webPagePrivate->client()->closePopupWebView();
-    m_webPagePrivate->m_webPage->popupClosed();
 }
 
 }
-
+}

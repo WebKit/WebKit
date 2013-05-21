@@ -101,6 +101,7 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "PagePopupBlackBerry.h"
+#include "PagePopupBlackBerryClient.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -463,6 +464,8 @@ WebPagePrivate::~WebPagePrivate()
     stopRefreshAnimationClient();
     cancelCallOnMainThread(handleServiceScriptedAnimationsOnMainThread, this);
 #endif
+
+    closePagePopup();
 
     delete m_webSettings;
     m_webSettings = 0;
@@ -3149,8 +3152,7 @@ void WebPagePrivate::setVisible(bool visible)
             if (!m_page->scriptedAnimationsSuspended())
                 m_page->suspendScriptedAnimations();
 
-            if (m_webPage->hasOpenedPopup())
-                m_page->chrome().client()->closePagePopup(0);
+            closePagePopup();
         }
 
         m_visible = visible;
@@ -6066,26 +6068,35 @@ void WebPage::removeCompositingThreadOverlay(WebOverlay* overlay)
 #endif
 }
 
-void WebPage::popupOpened(PagePopupBlackBerry* webPopup)
+bool WebPagePrivate::openPagePopup(PagePopupBlackBerryClient* popupClient, const WebCore::IntRect& originBoundsInRootView)
 {
-    ASSERT(!d->m_selectPopup);
-    d->m_selectPopup = webPopup;
+    closePagePopup();
+    m_selectPopup = new PagePopupBlackBerry(this, popupClient);
+
+    WebCore::IntRect popupRect = m_page->chrome().client()->rootViewToScreen(originBoundsInRootView);
+    popupRect.setSize(popupClient->contentSize());
+    if (!m_client->createPopupWebView(popupRect)) {
+        closePagePopup();
+        return false;
+    }
+
+    return true;
 }
 
-void WebPage::popupClosed()
+void WebPagePrivate::closePagePopup()
 {
-    ASSERT(d->m_selectPopup);
-    d->m_selectPopup = 0;
+    if (!m_selectPopup)
+        return;
+
+    m_selectPopup->closePopup();
+    m_client->closePopupWebView();
+    delete m_selectPopup;
+    m_selectPopup = 0;
 }
 
-bool WebPage::hasOpenedPopup() const
+bool WebPagePrivate::hasOpenedPopup() const
 {
-    return d->m_selectPopup;
-}
-
-PagePopupBlackBerry* WebPage::popup()
-{
-    return d->m_selectPopup;
+    return m_selectPopup;
 }
 
 void WebPagePrivate::setInspectorOverlayClient(InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)

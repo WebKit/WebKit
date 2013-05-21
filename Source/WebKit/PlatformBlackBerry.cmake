@@ -102,6 +102,7 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/NetworkInfoClientBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationClientBlackBerry.cpp
     blackberry/WebCoreSupport/PagePopupBlackBerry.cpp
+    blackberry/WebCoreSupport/PagePopupBlackBerryClient.cpp
     blackberry/WebCoreSupport/PlatformStrategiesBlackBerry.cpp
     blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
     blackberry/WebCoreSupport/SelectPopupClient.cpp
