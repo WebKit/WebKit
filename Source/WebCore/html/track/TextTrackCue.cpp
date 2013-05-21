@@ -1195,6 +1195,12 @@ bool TextTrackCue::isEqual(const TextTrackCue& cue, CueMatchRules match) const
     
     return true;
 }
+
+bool TextTrackCue::isOrderedBefore(const TextTrackCue* other) const
+{
+    return startTime() < other->startTime() || (startTime() == other->startTime() && endTime() > other->endTime());
+}
+
 void TextTrackCue::setFontSize(int fontSize, const IntSize&, bool important)
 {
     if (!hasDisplayTree() || !fontSize)

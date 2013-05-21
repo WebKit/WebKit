@@ -1,3 +1,41 @@
+2013-05-21  Jer Noble  <jer.noble@apple.com>
+
+        Implement overlap-avoidance for in-band text track cues.
+        https://bugs.webkit.org/show_bug.cgi?id=116540
+
+        Reviewed by Eric Carlson.
+
+        In-band (or Generic) cues need special casing for certain features
+        present in in-band tracks, like paint-on and roll-up modes. To avoid
+        the problem of overlap avoidance forcing a caption meant to appear
+        below a cue to appear above it when a larger font size is selected,
+        impose an additional sort ordering for "generic cues". Instead of
+        cues being ordered by the order they appear in the track, "generic
+        cues" further sorted by their position within the video area, such
+        that cues at the bottom of the video area appear first, and later
+        cues are pushed up to avoid them, preserving the desired apparent
+        ordering.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::compareCueInterval): Added; wrapper around
+            TextTrackCue::isOrderedBefore.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+            After creating the list of current cues, sort them.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::isOrderedBefore): Added; implementation moved
+            from TextTrackCueList::add().
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::isOrderedBefore): Added override;
+            impose additional oredring on generic cues.
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::add): Moved ordering test into
+            isOrderedBefore().
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::repositionGenericCue):
+            Call repositionCueSnapToLinesNotSet() after positioning the cue.
+
 2013-05-20  Jer Noble  <jer.noble@apple.com>
 
         Implement overlap avoidance for cues with snap-to-lines flag not set

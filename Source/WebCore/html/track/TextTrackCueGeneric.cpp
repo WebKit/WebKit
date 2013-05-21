@@ -172,6 +172,21 @@ bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatc
 
     return TextTrackCue::isEqual(cue, match);
 }
+
+bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
+{
+    if (TextTrackCue::isOrderedBefore(that))
+        return true;
+
+    if (that->cueType() == WebVTT && startTime() == that->startTime() && endTime() == that->endTime()) {
+        // Further order generic cues by their calculated line value.
+        std::pair<double, double> thisPosition = getPositionCoordinates();
+        std::pair<double, double> thatPosition = that->getPositionCoordinates();
+        return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
+    }
+
+    return false;
+}
     
 } // namespace WebCore
 

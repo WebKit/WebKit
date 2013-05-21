@@ -151,6 +151,7 @@ public:
     void markFutureAndPastNodes(ContainerNode*, double, double);
 
     int calculateComputedLinePosition();
+    std::pair<double, double> getPositionCoordinates() const;
 
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -184,6 +185,8 @@ public:
     };
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
 
+    virtual bool isOrderedBefore(const TextTrackCue*) const;
+
     enum CueType {
         Generic,
         WebVTT
@@ -214,7 +217,6 @@ private:
     void createWebVTTNodeTree();
     void copyWebVTTNodeToDOMTree(ContainerNode* WebVTTNode, ContainerNode* root);
 
-    std::pair<double, double> getPositionCoordinates() const;
     void parseSettings(const String&);
 
     void determineTextDirection();

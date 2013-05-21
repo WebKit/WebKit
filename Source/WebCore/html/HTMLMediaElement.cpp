@@ -1116,6 +1116,11 @@ static bool eventTimeCueCompare(const std::pair<double, TextTrackCue*>& a,
     return a.second->cueIndex() - b.second->cueIndex() < 0;
 }
 
+static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
+{
+    return one.data()->isOrderedBefore(two.data());
+};
+
 
 void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
 {
@@ -1138,8 +1143,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
 
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
-    if (m_readyState != HAVE_NOTHING && m_player)
+    if (m_readyState != HAVE_NOTHING && m_player) {
         currentCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
+        std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
+    }
 
     CueList previousCues;
     CueList missedCues;

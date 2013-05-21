@@ -321,20 +321,16 @@ void RenderTextTrackCue::repositionCueSnapToLinesSet()
 
 void RenderTextTrackCue::repositionGenericCue()
 {
-    TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(m_cue);
-    if (!cue->useDefaultPosition())
-        return;
-
     ASSERT(firstChild());
-
+    ASSERT(m_cue->cueType() == TextTrackCue::WebVTT);
     InlineFlowBox* firstLineBox = toRenderInline(firstChild())->firstLineBox();
-    if (!firstLineBox)
-        return;
-
-    LayoutUnit parentWidth = containingBlock()->logicalWidth();
-    LayoutUnit width = firstLineBox->width();
-    LayoutUnit right = (parentWidth / 2) - (width / 2);
-    setX(right);
+    if (static_cast<TextTrackCueGeneric*>(m_cue)->useDefaultPosition() && firstLineBox) {
+        LayoutUnit parentWidth = containingBlock()->logicalWidth();
+        LayoutUnit width = firstLineBox->width();
+        LayoutUnit right = (parentWidth / 2) - (width / 2);
+        setX(right);
+    }
+    repositionCueSnapToLinesNotSet();
 }
 
 void RenderTextTrackCue::repositionCueSnapToLinesNotSet()

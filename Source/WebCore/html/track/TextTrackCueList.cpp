@@ -101,7 +101,7 @@ bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t
     }
 
     size_t index = (start + end) / 2;
-    if (cue->startTime() < m_list[index]->startTime() || (cue->startTime() == m_list[index]->startTime() && cue->endTime() > m_list[index]->endTime()))
+    if (cue->isOrderedBefore(m_list[index].get()))
         return add(cue.release(), start, index);
 
     return add(cue.release(), index + 1, end);

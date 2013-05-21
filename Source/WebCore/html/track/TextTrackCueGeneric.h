@@ -78,6 +78,8 @@ public:
     virtual TextTrackCue::CueType cueType() const OVERRIDE { return TextTrackCue::Generic; }
 
 private:
+    virtual bool isOrderedBefore(const TextTrackCue*) const OVERRIDE;
+
     TextTrackCueGeneric(ScriptExecutionContext*, double start, double end, const String&);
     
     Color m_foregroundColor;
