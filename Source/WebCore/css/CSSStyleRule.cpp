@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,7 +70,7 @@ String CSSStyleRule::generateSelectorText() const
     StringBuilder builder;
     for (const CSSSelector* selector = m_styleRule->selectorList().first(); selector; selector = CSSSelectorList::next(selector)) {
         if (selector != m_styleRule->selectorList().first())
-            builder.append(", ");
+            builder.appendLiteral(", ");
         builder.append(selector->selectorText());
     }
     return builder.toString();

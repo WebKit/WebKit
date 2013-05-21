@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,9 +73,9 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
     String percentageString;
     if (equalIgnoringCase(key, "from"))
-        percentageString = "0%";
+        percentageString = ASCIILiteral("0%");
     else if (equalIgnoringCase(key, "to"))
-        percentageString = "100%";
+        percentageString = ASCIILiteral("100%");
     else
         percentageString = key;
     
@@ -153,17 +153,17 @@ WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::findRule(const String& s)
 String WebKitCSSKeyframesRule::cssText() const
 {
     StringBuilder result;
-    result.append("@-webkit-keyframes ");
+    result.appendLiteral("@-webkit-keyframes ");
     result.append(name());
-    result.append(" { \n");
+    result.appendLiteral(" { \n");
 
     unsigned size = length();
     for (unsigned i = 0; i < size; ++i) {
-        result.append("  ");
+        result.appendLiteral("  ");
         result.append(m_keyframesRule->keyframes()[i]->cssText());
-        result.append("\n");
+        result.append('\n');
     }
-    result.append("}");
+    result.append('}');
     return result.toString();
 }
 

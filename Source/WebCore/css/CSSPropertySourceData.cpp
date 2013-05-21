@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -88,9 +89,7 @@ CSSPropertySourceData::CSSPropertySourceData()
 
 String CSSPropertySourceData::toString() const
 {
-    DEFINE_STATIC_LOCAL(String, emptyValue, (ASCIILiteral("e")));
-    DEFINE_STATIC_LOCAL(String, importantSuffix, (ASCIILiteral(" !important")));
-    if (!name && value == emptyValue)
+    if (!name && value == "e")
         return String();
 
     StringBuilder result;
@@ -98,7 +97,7 @@ String CSSPropertySourceData::toString() const
     result.appendLiteral(": ");
     result.append(value);
     if (important)
-        result.append(importantSuffix);
+        result.appendLiteral(" !important");
     result.append(';');
     return result.toString();
 }

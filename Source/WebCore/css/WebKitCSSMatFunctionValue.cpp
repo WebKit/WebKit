@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,11 +51,11 @@ String WebKitCSSMatFunctionValue::customCssText() const
 {
     StringBuilder builder;
     if (length() == 4)
-        builder.append("mat2(");
+        builder.appendLiteral("mat2(");
     else if (length() == 9)
-        builder.append("mat3(");
+        builder.appendLiteral("mat3(");
     else if (length() == 16)
-        builder.append("mat4(");
+        builder.appendLiteral("mat4(");
     else {
         ASSERT_NOT_REACHED();
         return String();

@@ -237,13 +237,13 @@ String MediaQueryExp::serialize() const
         return m_serializationCache;
 
     StringBuilder result;
-    result.append("(");
+    result.append('(');
     result.append(m_mediaFeature.lower());
     if (m_value) {
-        result.append(": ");
+        result.appendLiteral(": ");
         result.append(m_value->cssText());
     }
-    result.append(")");
+    result.append(')');
 
     const_cast<MediaQueryExp*>(this)->m_serializationCache = result.toString();
     return m_serializationCache;

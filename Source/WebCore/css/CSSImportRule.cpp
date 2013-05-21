@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,9 +63,9 @@ MediaList* CSSImportRule::media() const
 String CSSImportRule::cssText() const
 {
     StringBuilder result;
-    result.append("@import url(\"");
+    result.appendLiteral("@import url(\"");
     result.append(m_importRule->href());
-    result.append("\")");
+    result.appendLiteral("\")");
 
     if (m_importRule->mediaQueries()) {
         String mediaText = m_importRule->mediaQueries()->mediaText();

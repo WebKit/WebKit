@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,7 +99,7 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
 
 String CSSImageValue::customCssText() const
 {
-    return "url(" + quoteCSSURLIfNeeded(m_url) + ")";
+    return "url(" + quoteCSSURLIfNeeded(m_url) + ')';
 }
 
 PassRefPtr<CSSValue> CSSImageValue::cloneForCSSOM() const

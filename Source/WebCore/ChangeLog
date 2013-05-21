@@ -1,3 +1,50 @@
+2013-05-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Minor String fixes in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=116291
+
+        Reviewed by Darin Adler.
+
+        Some trival changes to make up for a bad day :)
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::customCssText):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::customCssText):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::cssText):
+        * css/CSSInheritedValue.cpp:
+        (WebCore::CSSInheritedValue::customCssText):
+        * css/CSSInitialValue.cpp:
+        (WebCore::CSSInitialValue::customCssText):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::customCssText):
+        * css/CSSPropertySourceData.cpp:
+        (WebCore::CSSPropertySourceData::toString):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::generateSelectorText):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::type):
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::customCssText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::customCssText):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCssText):
+        (WebCore::CSSValueList::customSerializeResolvingVariables):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::serialize):
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::customCssText):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::findKeyframeIndex):
+        (WebCore::WebKitCSSKeyframesRule::cssText):
+        * css/WebKitCSSMatFunctionValue.cpp:
+        (WebCore::WebKitCSSMatFunctionValue::customCssText):
+        * css/WebKitCSSMixFunctionValue.cpp:
+        (WebCore::WebKitCSSMixFunctionValue::customCssText):
+
 2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Null pointer deference in WebCore::AppendNodeCommand::create
