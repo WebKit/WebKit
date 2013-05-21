@@ -1,3 +1,10 @@
+2013-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * wtf/NeverDestroyed.h:
+        (NeverDestroyed):
+
 2013-05-20  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::NeverDestroyed and start using it in WTF

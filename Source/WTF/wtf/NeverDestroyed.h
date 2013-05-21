@@ -72,7 +72,7 @@ public:
 private:
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     NeverDestroyed(NeverDestroyed&&) WTF_DELETED_FUNCTION;
-    NeverDestroyed& operator=(NeverDestroyed&&) = WTF_DELETED_FUNCTION;
+    NeverDestroyed& operator=(NeverDestroyed&&) WTF_DELETED_FUNCTION;
 #endif
 
     typedef typename WTF::RemoveConst<T>::Type *PointerType;
