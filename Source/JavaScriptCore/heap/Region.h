@@ -34,6 +34,8 @@
 
 #define HEAP_MEMORY_ID reinterpret_cast<void*>(static_cast<intptr_t>(-3))
 
+#define ENABLE_SUPER_REGION 0
+
 #ifndef ENABLE_SUPER_REGION
 #if USE(JSVALUE64)
 #define ENABLE_SUPER_REGION 1
