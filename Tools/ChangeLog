@@ -1,3 +1,29 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove DriverProxy._running_drivers from webkitpy.layout_tests.port
+        https://bugs.webkit.org/show_bug.cgi?id=116492
+
+        Reviewed by Dirk Pranke.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/1af2f0be5a1746784ff114952f29f7b8fa9895f3.
+
+        The DriverProxy class had the concept of keeping a pool of started DRTs around (indexed by command line)
+        so that we didn't necessarily need to restart DRT when the command line for a test changed (e.g., when
+        starting to run tests in a virtual suite). However, the pool was per-worker (so not shared across the machine)
+        and we didn't cap the number of processes started, so we would end up with a whole bunch of DRTs (3x-4x
+        the number of workers started). If anything, this seemed to make the tests slightly slower and probably added
+        to memory pressure on the machine.
+
+        This change removes the pool code; now we'll simply restart DRT when the command line changes. With this change,
+        we can actually fold the restarting code into Driver itself (and get rid of DriverProxy), but I'll leave that
+        for a subsequent patch just to make things easier to follow.
+
+        * Scripts/webkitpy/port/driver.py:
+        (DriverProxy.__init__):
+        (DriverProxy.run_test):
+        (DriverProxy.has_crashed):
+        (DriverProxy.stop):
+
 2013-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change EFL Linux 64-bit Release with EFL Linux 64-bit Release WK1
