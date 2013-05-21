@@ -274,8 +274,6 @@ webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure 
 # https://bugs.webkit.org/show_bug.cgi?id=114074
 webkit.org/b/114074 fast/loader/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
-webkit.org/b/116491 loader/go-back-cached-main-resource.html [ Failure ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -462,6 +460,14 @@ http/tests/security/contentTypeOptions
 
 # Unexpected redirection happens.
 http/tests/loading/redirect-methods.html
+
+# Should pass now but need to be checked first.
+platform/mac/fast/loader/file-url-mimetypes-2.html
+platform/mac/fast/loader/file-url-mimetypes-3.html
+platform/mac/fast/loader/file-url-mimetypes.html
+webarchive/loading/cache-expired-subresource.html
+webarchive/loading/test-loading-archive.html
+webarchive/loading/test-loading-archive-subresource-null-mimetype.html
 
 # Should pass now on ports other than EFL and GTK.
 # But it needs to be checked first.

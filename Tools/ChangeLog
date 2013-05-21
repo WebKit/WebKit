@@ -1,3 +1,24 @@
+2013-05-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r150386 and r150397.
+        http://trac.webkit.org/changeset/150386
+        http://trac.webkit.org/changeset/150397
+        https://bugs.webkit.org/show_bug.cgi?id=116572
+
+        Broke a test; Alex is going to try again later. (Requested by
+        thorton on #webkit).
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::pathSuitableForTestResult):
+        (WTR::dumpRequestDescriptionSuitableForTestResult):
+        (WTR::dumpResponseDescriptionSuitableForTestResult):
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame):
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+
 2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a python unittest after r149419. We need to support Python 2.6 on Windows.
