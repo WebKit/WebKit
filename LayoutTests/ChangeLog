@@ -1,3 +1,14 @@
+2013-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Reenable storage tests
+        https://bugs.webkit.org/show_bug.cgi?id=116559 
+
+        Unreviewed update to TestExpectations:
+        1. Storage features are present on Windows, so test them.
+        2. Disable (for now) the four websql tests that fail.
+
+        * platform/win/TestExpectations:
+
 2013-05-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; rebaseline and re-enable media/track/track-cue-rendering-snap-to-lines-not-set.html
