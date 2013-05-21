@@ -192,4 +192,20 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
     return 0;
 }
 
+PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
+{
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    void* root = WKAccessibilityRootObject(page);
+
+    return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
+}
+
+PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+{
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    void* root = WKAccessibilityFocusedObject(page);
+
+    return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
+}
+
 } // namespace WTR

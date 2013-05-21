@@ -51,7 +51,8 @@ typedef struct objc_object* PlatformUIElement;
 typedef COMPtr<IAccessible> PlatformUIElement;
 #elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
 #include <atk/atk.h>
-typedef AtkObject* PlatformUIElement;
+#include <wtf/gobject/GRefPtr.h>
+typedef GRefPtr<AtkObject> PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
 #endif

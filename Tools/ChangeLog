@@ -1,3 +1,65 @@
+2013-05-21  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] [WebKit2] AccessibilityUIElement often leaks its AtkObject
+        https://bugs.webkit.org/show_bug.cgi?id=112913
+
+        Reviewed by Martin Robinson.
+
+        AccessibilityUIElement is often created by passing new reference to AtkObject (transfer full).
+        AccessibilityUIElement::~AccessibilityUIElement does not decrement the reference of the element,
+        so the leak appears.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::rootElement):
+        (WTR):
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::checkElementState):
+        (WTR::indexRangeInTable):
+        (WTR::alterCurrentValue):
+        (WTR::AccessibilityUIElement::getChildren):
+        (WTR::AccessibilityUIElement::getChildrenWithRange):
+        (WTR::AccessibilityUIElement::childrenCount):
+        (WTR::AccessibilityUIElement::indexOfChild):
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::parentElement):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::intValue):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isFocused):
+        (WTR::AccessibilityUIElement::isSelected):
+        (WTR::AccessibilityUIElement::isExpanded):
+        (WTR::AccessibilityUIElement::isChecked):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::increment):
+        (WTR::AccessibilityUIElement::decrement):
+        (WTR::AccessibilityUIElement::press):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::isFocusable):
+        (WTR::AccessibilityUIElement::isSelectable):
+        (WTR::AccessibilityUIElement::isMultiSelectable):
+        (WTR::AccessibilityUIElement::isVisible):
+
 2013-05-20  Lucas Forschler  <lforschler@apple.com>
 
     Rollout 150398.
