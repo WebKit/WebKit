@@ -1,3 +1,13 @@
+2013-05-21  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; fix lldb synthetic representation of WTF::Vector after r148891.
+
+        * lldb/lldb_webkit.py:
+        (WTFVectorProvider.num_children):
+        (WTFVectorProvider.get_child_index):
+        (WTFVectorProvider.get_child_at_index):
+        (WTFVectorProvider.update):
+
 2013-05-21  Jessie Berlin  <jberlin@apple.com>
 
         Expose a way to know when forms are added to a page or when form controls are added to a form

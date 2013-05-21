@@ -165,13 +165,15 @@ class WTFVectorProvider:
         self.update()
 
     def num_children(self):
-        return self.size + 2
+        return self.size + 3
 
     def get_child_index(self, name):
         if name == "m_size":
             return self.size
-        elif name == "m_buffer":
+        elif name == "m_capacity":
             return self.size + 1
+        elif name == "m_buffer":
+            return self.size + 2
         else:
             return int(name.lstrip('[').rstrip(']'))
 
@@ -179,7 +181,9 @@ class WTFVectorProvider:
         if index == self.size:
             return self.valobj.GetChildMemberWithName("m_size")
         elif index == self.size + 1:
-            return self.vector_buffer
+            return self.valobj.GetChildMemberWithName("m_capacity")
+        elif index == self.size + 2:
+            return self.buffer
         elif index < self.size:
             offset = index * self.data_size
             child = self.buffer.CreateChildAtOffset('[' + str(index) + ']', offset, self.data_type)
@@ -188,10 +192,9 @@ class WTFVectorProvider:
             return None
 
     def update(self):
-        self.vector_buffer = self.valobj.GetChildMemberWithName('m_buffer')
-        self.buffer = self.vector_buffer.GetChildMemberWithName('m_buffer')
+        self.buffer = self.valobj.GetChildMemberWithName('m_buffer')
         self.size = self.valobj.GetChildMemberWithName('m_size').GetValueAsUnsigned(0)
-        self.capacity = self.vector_buffer.GetChildMemberWithName('m_capacity').GetValueAsUnsigned(0)
+        self.capacity = self.buffer.GetChildMemberWithName('m_capacity').GetValueAsUnsigned(0)
         self.data_type = self.buffer.GetType().GetPointeeType()
         self.data_size = self.data_type.GetByteSize()
 
