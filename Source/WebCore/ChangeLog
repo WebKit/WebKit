@@ -1,3 +1,17 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        dispatchEvent call can execute javascript and blow away endRoot from underneath
+        https://bugs.webkit.org/show_bug.cgi?id=116483
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/798cba0af9b2aff21e475e2e08ea3ca5e97dfc2c.
+
+        Test: editing/undo/undo-after-event-edited.html
+
+        * editing/Editor.cpp:
+        (WebCore::dispatchEditableContentChangedEvents):
+
 2013-05-21  Antti Koivisto  <antti@apple.com>
 
         Remove ContentDistribution
