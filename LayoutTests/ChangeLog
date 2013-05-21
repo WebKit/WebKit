@@ -1,3 +1,16 @@
+2013-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test that inserting a character inside a URL doesn't move caret per auto correction
+        https://bugs.webkit.org/show_bug.cgi?id=116458
+
+        Reviewed by Darin Adler.
+
+        Add a test. This is broken on Safari 6 but fixed on ToT.
+
+        * editing/inserting/inserting-slash-inside-url-with-smart-link-expected.txt: Added.
+        * editing/inserting/inserting-slash-inside-url-with-smart-link.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2013-05-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] Unflag tests related to layoutTestController.setSmartInsertDeleteEnabled

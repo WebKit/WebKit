@@ -220,6 +220,7 @@ webkit.org/b/98940 fast/events/drag-dataTransferItemList-file-handling.html [ Sk
 
 # setAutomaticLinkDetectionEnabled is not yet implemented.
 webkit.org/b/99069 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
+webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Failure ]
 
 # Custom MIME type support in DataTransfer is not yet implemented.
 webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Failure ]

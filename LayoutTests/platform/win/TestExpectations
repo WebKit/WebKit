@@ -688,6 +688,7 @@ http/tests/xmlhttprequest/upload-onprogress-event.html
 
 # LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 editing/inserting/typing-space-to-trigger-smart-link.html
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html
 
 ################################################################################
 ######################### Start list of r41995 failures ########################
