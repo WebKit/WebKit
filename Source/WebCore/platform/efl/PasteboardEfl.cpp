@@ -98,6 +98,7 @@ PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
     return createForCopyAndPaste();
 }
 
+#if ENABLE(DRAG_SUPPORT)
 PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     return createForCopyAndPaste();
@@ -107,6 +108,7 @@ PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData&)
 {
     return createForCopyAndPaste();
 }
+#endif
 
 bool Pasteboard::hasData()
 {
@@ -143,10 +145,12 @@ Vector<String> Pasteboard::readFilenames()
     return Vector<String>();
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 {
     notImplemented();
 }
+#endif
 
 void Pasteboard::writePasteboard(const Pasteboard&)
 {
