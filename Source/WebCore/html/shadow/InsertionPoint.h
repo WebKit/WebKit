@@ -31,7 +31,6 @@
 #ifndef InsertionPoint_h
 #define InsertionPoint_h
 
-#include "CSSSelectorList.h"
 #include "ContentDistributor.h"
 #include "ElementShadow.h"
 #include "HTMLElement.h"
@@ -44,7 +43,8 @@ namespace WebCore {
 class InsertionPoint : public HTMLElement {
 public:
     enum Type {
-        ContentInsertionPoint
+        InternalType,
+        HTMLContentElementType
     };
 
     enum MatchType {
@@ -61,8 +61,7 @@ public:
     bool isActive() const;
 
     virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
-    virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
-    virtual Type insertionPointType() const = 0;
+    virtual Type insertionPointType() const { return InternalType; }
 
     bool resetStyleInheritance() const;
     void setResetStyleInheritance(bool);
@@ -76,8 +75,6 @@ public:
     Node* lastDistributed() const;
     Node* nextDistributedTo(const Node*) const;
     Node* previousDistributedTo(const Node*) const;
-
-    static const CSSSelectorList& emptySelectorList();
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);

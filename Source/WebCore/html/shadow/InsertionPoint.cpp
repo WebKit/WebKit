@@ -163,12 +163,6 @@ void InsertionPoint::setResetStyleInheritance(bool value)
 {
     setBooleanAttribute(reset_style_inheritanceAttr, value);
 }
-
-const CSSSelectorList& InsertionPoint::emptySelectorList()
-{
-    DEFINE_STATIC_LOCAL(CSSSelectorList, selectorList, (CSSSelectorList()));
-    return selectorList;
-}
     
 Node* InsertionPoint::firstDistributed() const
 {

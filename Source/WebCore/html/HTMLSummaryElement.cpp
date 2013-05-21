@@ -37,13 +37,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class SummaryContentElement : public HTMLContentElement {
+class SummaryContentElement : public InsertionPoint {
 public:
     static PassRefPtr<SummaryContentElement> create(Document*);
 
 private:
     SummaryContentElement(Document* document)
-        : HTMLContentElement(HTMLNames::webkitShadowContentTag, document)
+        : InsertionPoint(HTMLNames::webkitShadowContentTag, document)
     {
     }
 };
