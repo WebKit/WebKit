@@ -71,7 +71,7 @@ class AbstractCommitLogCommand(Command):
     # FIXME: This should move to scm.py
     def _recent_commit_messages(self):
         git_log = self._tool.executive.run_command(['git', 'log', '--date=iso', '--since="%s months ago"' % self.max_commit_age])
-        messages = re.split(r"^commit \w{40}$", git_log, flags=re.MULTILINE)[1:]  # Ignore the first message which will be empty.
+        messages = re.compile(r"^commit \w{40}$", re.MULTILINE).split(git_log)[1:]  # Ignore the first message which will be empty.
         for message in messages:
             # Unindent all the lines
             (message, _) = self._leading_indent_regexp.subn("", message)

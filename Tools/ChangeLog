@@ -1,3 +1,10 @@
+2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a python unittest after r149419. We need to support Python 2.6 on Windows.
+
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (AbstractCommitLogCommand._recent_commit_messages):
+
 2013-05-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit2
