@@ -791,6 +791,8 @@ webkit.org/b/108942 editing/selection/select-out-of-editable.html [ Skip ]
 
 webkit.org/b/115261 editing/selection/selection-in-iframe-removed-crash.html [ Skip ]
 
+webkit.org/b/116613 editing/selection/contains-node-crash.html [ Skip ]
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #
@@ -1905,6 +1907,8 @@ webkit.org/b/112914 fast/media/w3c/test_media_queries.html [ Skip ]
 webkit.org/b/114611 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Skip ]
 
 webkit.org/b/113931 fast/forms/select/popup-closes-on-blur.html [ Skip ]
+
+webkit.org/b/116608 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests

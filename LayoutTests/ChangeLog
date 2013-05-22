@@ -1,3 +1,9 @@
+2013-05-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing tests after r150065 and r150498.
+
+        * platform/qt/TestExpectations:
+
 2013-05-22  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Remove platform-specific differences from offsetLeft/offsetTop tests
