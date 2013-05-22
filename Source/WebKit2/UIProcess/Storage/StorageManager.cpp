@@ -473,9 +473,13 @@ void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, ui
 
     ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
     SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
+    if (!sessionStorageNamespace) {
+        // We're getting an incoming message from the web process that's for session storage for a web page
+        // that has already been closed, just ignore it.
+        return;
+    }
 
-    // FIXME: These should be message checks.
-    ASSERT(sessionStorageNamespace);
+    // FIXME: This should be a message check.
     ASSERT(connection == sessionStorageNamespace->allowedConnection());
 
     RefPtr<StorageArea> storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
@@ -503,9 +507,10 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
 void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
-
-    // FIXME: This should be a message check.
-    ASSERT(storageArea);
+    if (!storageArea) {
+        // This is a session storage area for a page that has already been closed. Ignore it.
+        return;
+    }
 
     values = storageArea->items();
     connection->send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
@@ -514,9 +519,10 @@ void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storage
 void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
-
-    // FIXME: This should be a message check.
-    ASSERT(storageArea);
+    if (!storageArea) {
+        // This is a session storage area for a page that has already been closed. Ignore it.
+        return;
+    }
 
     bool quotaError;
     storageArea->setItem(connection, sourceStorageAreaID, key, value, urlString, quotaError);
@@ -526,9 +532,10 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMa
 void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
-
-    // FIXME: This should be a message check.
-    ASSERT(storageArea);
+    if (!storageArea) {
+        // This is a session storage area for a page that has already been closed. Ignore it.
+        return;
+    }
 
     storageArea->removeItem(connection, sourceStorageAreaID, key, urlString);
     connection->send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageMapID);
@@ -537,9 +544,10 @@ void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storag
 void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
-
-    // FIXME: This should be a message check.
-    ASSERT(storageArea);
+    if (!storageArea) {
+        // This is a session storage area for a page that has already been closed. Ignore it.
+        return;
+    }
 
     storageArea->clear(connection, sourceStorageAreaID, urlString);
     connection->send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageMapID);
@@ -555,7 +563,6 @@ void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNames
 void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID)
 {
     ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
-
     m_sessionStorageNamespaces.remove(storageNamespaceID);
 }
 
