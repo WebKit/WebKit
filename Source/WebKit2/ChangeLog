@@ -1,3 +1,20 @@
+2013-05-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Change Ewk_Context_Menu_Item's parent menu to raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=116549
+
+        Reviewed by Christophe Dumez.
+
+        A context menu item should have only a pointer to parent menu instead
+        of owning parent menu.
+
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (EwkContextMenuItem::EwkContextMenuItem):
+        * UIProcess/API/efl/ewk_context_menu_item_private.h:
+        (EwkContextMenuItem::create):
+        (EwkContextMenuItem::parentMenu):
+        (EwkContextMenuItem):
+
 2013-05-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed buildfix after r150484.

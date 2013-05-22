@@ -36,7 +36,7 @@ using namespace WebKit;
 
 static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag action);
 
-EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, PassRefPtr<EwkContextMenu> parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, EwkContextMenu* parentMenu)
     : m_type(static_cast<Ewk_Context_Menu_Item_Type>(WKContextMenuItemGetType(item)))
     , m_action(getEwkActionFromWKTag((WKContextMenuItemGetTag(item))))
     , m_title(WKEinaSharedString(AdoptWK, WKContextMenuItemCopyTitle(item)))
@@ -50,7 +50,7 @@ EwkContextMenuItem::EwkContextMenuItem(WKContextMenuItemRef item, PassRefPtr<Ewk
     }
 }
 
-EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu, PassRefPtr<EwkContextMenu> parentMenu)
+EwkContextMenuItem::EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu, EwkContextMenu* parentMenu)
     : m_type(type)
     , m_action(action)
     , m_title(title)
