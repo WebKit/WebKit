@@ -1,3 +1,15 @@
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac test expectation cleanups. Unskip a bunch of tests and rebaseline them as needed.
+
+        * accessibility/aria-menubar-menuitems-expected.txt: Added.
+        * fast/replaced/border-radius-clip-expected.png:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/replaced/border-radius-clip-expected.txt:
+        * platform/mac/http/tests/multipart/policy-ignore-crash-expected.txt: Copied from LayoutTests/http/tests/multipart/policy-ignore-crash-expected.txt.
+        * platform/mac/media/video-volume-slider-expected.png: Added.
+        * platform/mac/media/video-volume-slider-expected.txt: Added.
+
 2013-05-22  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] property parsing tests should be revised

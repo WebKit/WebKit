@@ -2,52 +2,41 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-# https://bugs.webkit.org/show_bug.cgi?id=89812
-fast/parser/parser-yield-timing.html [ Pass Failure ]
+webkit.org/b/89812 fast/parser/parser-yield-timing.html [ Pass Failure ]
 
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
-fast/events/mouseout-on-window.html
+fast/events/mouseout-on-window.html [ Failure ]
 
-# Different behavior expectatations on mac: https://bugs.webkit.org/show_bug.cgi?id=102987
-fast/events/context-nodrag.html
+# Different behavior expectatations on mac
+webkit.org/b/102987 fast/events/context-nodrag.html [ Failure ]
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
-fast/events/attempt-scroll-with-no-scrollbars.html
+fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=21916 Pixel test doesn't repaint entire view so result is corrupted by previous test
-tables/mozilla_expected_failures/bugs/bug178855.xml
-
-# https://bugs.webkit.org/show_bug.cgi?id=21913 Repaint pixel test failure
-fast/repaint/body-background-image.html
+# Pixel test doesn't repaint entire view so result is corrupted by previous test
+webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
 fast/notifications
 
 # Skipped while Eric Carlson works on a fix.
-# https://bugs.webkit.org/show_bug.cgi?id=28221
-media/audio-delete-while-step-button-clicked.html
-
-# This test requires media controls has a volume slider.
-media/video-volume-slider.html
+webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
 
 webkit.org/b/108223 fast/forms/range/slider-delete-while-dragging-thumb.html [ Crash Pass ]
 
 webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
 
 # This test requires generation of progress events during loading
-# https://bugs.webkit.org/show_bug.cgi?id=100984
-media/progress-events-generated-correctly.html
+webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# Accessibility tests without results
-accessibility/document-attributes.html
-accessibility/aria-menubar-menuitems.html
+webkit.org/b/116636 accessibility/document-attributes.html [ Failure ]
 
 # Accessibility tests with missing AccessibilityController functionality.
-accessibility/selection-states.html
+webkit.org/b/116637 accessibility/selection-states.html [ Failure ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
@@ -73,10 +62,9 @@ fast/events/touch
 fast/events/mouseover-button.html
 
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
-platform/mac/accessibility/change-notification-on-scroll.html
+# platform/mac/accessibility/change-notification-on-scroll.html
 
-# See https://bugs.webkit.org/show_bug.cgi?id=34287
-http/tests/media/video-cookie.html
+webkit.org/b/34287 http/tests/media/video-cookie.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
@@ -105,10 +93,6 @@ fast/autoresize
 
 # Uses layoutTestController.titleTextDirection, which is Chromium-only
 fast/dom/title-directionality-removeChild.html
-
-# Test is flaky and thus not useful until fixed.
-# https://bugs.webkit.org/show_bug.cgi?id=36642
-fast/replaced/border-radius-clip.html
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 fast/overflow/scrollbar-restored-and-then-locked.html
@@ -163,14 +147,10 @@ http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/prefetch-purpose.html
 
 # Filenames aren't filtered out from edit drags yet, see https://bugs.webkit.org/show_bug.cgi?id=38826
-editing/pasteboard/file-drag-to-editable.html
+editing/pasteboard/file-drag-to-editable.html [ Failure ]
 
 # EventSender::dumpFilenameBeingDragged not implemented.
-# https://bugs.webkit.org/show_bug.cgi?id=61827
-fast/events/drag-image-filename.html
-
-# Hits an assert in FrameLoader.cpp. https://bugs.webkit.org/show_bug.cgi?id=31387
-http/tests/multipart/policy-ignore-crash.php
+webkit.org/b/61827 fast/events/drag-image-filename.html
 
 # Datalist is not yet enabled.
 fast/forms/datalist
@@ -178,10 +158,9 @@ fast/forms/datalist
 # Color input is not yet enabled.
 fast/forms/color
 
-# Times out only in non-wk2 Mac, possibly because of platform-specific behaviour
+# Times out only in non-wk2 Mac, possibly because of platform-specific behavior
 # interfering with how the test is executed.
-# https://bugs.webkit.org/show_bug.cgi?id=113220
-fast/forms/select/popup-closes-on-blur.html [ Timeout Pass ]
+webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Timeout Pass ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=29359
@@ -236,17 +215,14 @@ http/tests/w3c/webperf
 fast/performance/
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-# https://bugs.webkit.org/show_bug.cgi?id=85558
-http/tests/security/contentSecurityPolicy/1.1
+webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 
 # Still working out flakiness issues with the perf tests.
-# https://bugs.webkit.org/show_bug.cgi?id=44199
-perf/
+webkit.org/b/44199 perf/
 
 # This test appears to be flakey on all platforms, especially
 # Mac-Leopard after r63862.  Skipping for now.
-# https://bugs.webkit.org/show_bug.cgi?id=42821
-animations/play-state.html
+webkit.org/b/42821 animations/play-state.html
 
 webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
@@ -258,17 +234,13 @@ inspector/editor/text-editor-word-jumps.html [ Skip ]
 inspector/editor/text-editor-home-button.html [ Skip ]
 inspector/editor/text-editor-smart-braces.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=71120
-inspector/debugger/selected-call-frame-after-formatting-source.html
+webkit.org/b/71120 inspector/debugger/selected-call-frame-after-formatting-source.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
 inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/step-through-event-listeners.html
 inspector/debugger/xhr-breakpoints.html
-
-# Test is flaky and thus not useful until fixed.
-webkit.org/b/113589 inspector/debugger/debugger-scripts-reload.html [ Pass Failure ]
 
 # JSC doesn't support heap profiling
 # https://bugs.webkit.org/show_bug.cgi?id=50485
@@ -289,25 +261,12 @@ webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvase
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
 
-# Skipping newly added tests while I'm finding out what is wrong.
-# https://bugs.webkit.org/show_bug.cgi?id=59706
-http/tests/inspector/resource-tree/resource-tree-document-url.html
-http/tests/inspector/resource-tree/resource-tree-frame-add.html
-http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
-http/tests/inspector/resource-tree/resource-tree-reload.html
+webkit.org/b/40300 inspector/debugger/live-edit.html [ Failure ]
+webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html [ Failure ]
+webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html
+webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=40300
-inspector/debugger/live-edit.html
-inspector/debugger/live-edit-breakpoints.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=89652
-inspector/debugger/debugger-compile-and-run.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=53003
-http/tests/inspector/compiler-source-mapping-debug.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=96942
-http/tests/inspector/network/network-xhr-replay.html
+webkit.org/b/96942 http/tests/inspector/network/network-xhr-replay.html
 
 webkit.org/b/109546 inspector/script-execution-state-change-notification.html [ Skip ]
 webkit.org/b/112502 inspector/elements/highlight-node-scaled.html [ Pass Failure ]
