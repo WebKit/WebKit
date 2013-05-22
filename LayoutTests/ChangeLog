@@ -1,3 +1,70 @@
+2013-05-22  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] property parsing tests should be revised
+        https://bugs.webkit.org/show_bug.cgi?id=116446
+
+        Reviewed by Alexandru Chiculita.
+
+        This is just a cleanup of the existing parsing tests. None of the tests have effectively
+        changed. The cleaned-up version should be simpler, more regular, and shorter:
+        - Moved all of parsing tests into a fast/exclusions/parsing subdirectory.
+        - Remove the obsolete "wrap-" prefix from file names.
+        - Eiminated excessive and needless stringification in many of the test functions.
+        - Moved common code into parsing-test-utils.js and refactored redundant code.
+
+        * fast/exclusions/parsing-wrap-shape-inside-expected.txt: Removed.
+        * fast/exclusions/parsing-wrap-shape-inside.html: Removed.
+        * fast/exclusions/parsing-wrap-shape-lengths-expected.txt: Removed.
+        * fast/exclusions/parsing-wrap-shape-lengths.html: Removed.
+        * fast/exclusions/parsing-wrap-shape-outside-expected.txt: Removed.
+        * fast/exclusions/parsing-wrap-shape-outside.html: Removed.
+        * fast/exclusions/parsing/parsing-shape-inside-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-shape-inside.html: Added.
+        * fast/exclusions/parsing/parsing-shape-lengths-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-shape-lengths.html: Added.
+        * fast/exclusions/parsing/parsing-shape-margin-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-shape-margin.html: Added.
+        * fast/exclusions/parsing/parsing-shape-outside-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-shape-outside.html: Added.
+        * fast/exclusions/parsing/parsing-shape-padding-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-shape-padding.html: Added.
+        * fast/exclusions/parsing/parsing-wrap-flow-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-wrap-flow.html: Added.
+        * fast/exclusions/parsing/parsing-wrap-through-expected.txt: Added.
+        * fast/exclusions/parsing/parsing-wrap-through.html: Added.
+        * fast/exclusions/parsing/script-tests/parsing-shape-inside.js: Added.
+        (string_appeared_here):
+        * fast/exclusions/parsing/script-tests/parsing-shape-lengths.js: Added.
+        (getStyleValue):
+        (testStyleValue):
+        (testComputedStyleValue):
+        (testInvalidValue):
+        * fast/exclusions/parsing/script-tests/parsing-shape-margin.js: Added.
+        (testShapeSpecifiedProperty):
+        * fast/exclusions/parsing/script-tests/parsing-shape-outside.js: Added.
+        (testShapePropertyParsingFailure):
+        * fast/exclusions/parsing/script-tests/parsing-shape-padding.js: Added.
+        (testShapeSpecifiedProperty):
+        * fast/exclusions/parsing/script-tests/parsing-test-utils.js: Added.
+        (getCSSText):
+        (getComputedStyleValue):
+        (getParentAndChildComputedStyles):
+        (getParentAndChildComputedStylesString):
+        (getChildComputedStyle):
+        (testShapeSpecifiedProperty):
+        (testShapeComputedProperty):
+        (testNotInheritedShapeChildProperty):
+        * fast/exclusions/parsing/script-tests/parsing-wrap-flow.js: Added.
+        * fast/exclusions/parsing/script-tests/parsing-wrap-through.js: Added.
+        * fast/exclusions/shape-margin-parsing-expected.txt: Removed.
+        * fast/exclusions/shape-margin-parsing.html: Removed.
+        * fast/exclusions/shape-padding-parsing-expected.txt: Removed.
+        * fast/exclusions/shape-padding-parsing.html: Removed.
+        * fast/exclusions/wrap-flow-parsing-expected.txt: Removed.
+        * fast/exclusions/wrap-flow-parsing.html: Removed.
+        * fast/exclusions/wrap-through-parsing-expected.txt: Removed.
+        * fast/exclusions/wrap-through-parsing.html: Removed.
+
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: ASSERTION FAILED: obj->isRenderInline() || obj == this, Bad cast in WebCore::RenderBlock::createLineBoxes
