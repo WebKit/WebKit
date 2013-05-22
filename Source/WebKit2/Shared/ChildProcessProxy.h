@@ -68,6 +68,7 @@ public:
 
 protected:
     void clearConnection();
+    void abortProcessLaunchIfNeeded();
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) OVERRIDE;

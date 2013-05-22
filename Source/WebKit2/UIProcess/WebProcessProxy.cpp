@@ -91,7 +91,6 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
     : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
-    , m_suddenTerminationCounter(0)
 #if ENABLE(CUSTOM_PROTOCOLS)
     , m_customProtocolManagerProxy(this)
 #endif
@@ -201,12 +200,11 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     updateProcessSuppressionState();
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
-    // Terminate the web process immediately if we have enough information to confidently do so.
-    // This only works if we're using a network process. Otherwise we have to wait for the web process to clean up.
-    if (!m_suddenTerminationCounter && canTerminateChildProcess() && m_context->usesNetworkProcess())
-        requestTermination();
-#endif
+    // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
+    if (canTerminateChildProcess()) {
+        abortProcessLaunchIfNeeded();
+        disconnect();
+    }
 }
 
 Vector<WebPageProxy*> WebProcessProxy::pages() const
@@ -673,7 +671,6 @@ void WebProcessProxy::enableSuddenTermination()
         return;
 
     WebCore::enableSuddenTermination();
-    m_suddenTerminationCounter--;
 }
 
 void WebProcessProxy::disableSuddenTermination()
@@ -682,7 +679,6 @@ void WebProcessProxy::disableSuddenTermination()
         return;
 
     WebCore::disableSuddenTermination();
-    m_suddenTerminationCounter++;
 }
 
 } // namespace WebKit

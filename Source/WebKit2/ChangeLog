@@ -1,3 +1,36 @@
+2013-05-21  Andreas Kling  <akling@apple.com>
+
+        PPT: Closing tab that is hung or chewing 100% CPU leaves abandoned WebProcess.
+        <http://webkit.org/b/116464>
+        <rdar://problem/10103795>
+
+        Reviewed by Anders Carlsson.
+
+        Simplify the web process sacrifice ritual. Instead of murderizing the process when its last tab closes,
+        just shut down the CoreIPC connection from the UI process. The web process, upon noticing this,
+        will start a 10 second watchdog timer, and if it hasn't shut down by the time it fires, well, it'll shut down.
+
+        (WebKit::WebProcessProxy::removeWebPage):
+
+            When the last page is removed from a WebProcessProxy, disconnect the process so that it'll die off
+            eventually, even if the WebPage::Close message never gets properly handled.
+
+        * Shared/ChildProcessProxy.h:
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::abortProcessLaunchIfNeeded):
+
+            Added a helper to abort any in-progress launch of a new web process. Otherwise we'll have a race
+            where the exiting web process may get re-used for a new tab.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::enableSuddenTermination):
+        (WebKit::WebProcessProxy::disableSuddenTermination):
+
+            Remove WebProcessProxy's sudden termination counter. The web process will do what it needs in
+            response to the WebPage::Close message. We still forward these calls to NSProcessInfo on Mac though.
+
 2013-05-21  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

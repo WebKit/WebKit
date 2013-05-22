@@ -143,6 +143,15 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection
     m_pendingMessages.clear();
 }
 
+void ChildProcessProxy::abortProcessLaunchIfNeeded()
+{
+    if (!isLaunching())
+        return;
+
+    m_processLauncher->invalidate();
+    m_processLauncher = 0;
+}
+
 void ChildProcessProxy::clearConnection()
 {
     if (!m_connection)
