@@ -1,3 +1,35 @@
+2013-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Should be able to make tiled WKViews clip to the view's exposed rect without using autolayout
+        https://bugs.webkit.org/show_bug.cgi?id=116625
+        <rdar://problem/13962816>
+
+        Reviewed by Anders Carlsson.
+
+        The two modes are not dependent; it should be possible to enable
+        clips-to-exposed-rect without using autolayout. This enables apps to
+        make very large tiled WKViews that don't create tiles for the whole
+        area of the view (and also disables scrolling, since that is currently
+        incompatible with clipping to the exposed rect).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+        (-[WKView _updateWindowAndViewFrames]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView enableFrameSizeUpdates]):
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]):
+        Rename _expandsToFitContentViaAutoLayout to _clipsToVisibleRect for accuracy.
+
+        (-[WKView setMinimumWidthForAutoLayout:]):
+        Factor clips-to-sisible-rect toggle out into setShouldClipToVisibleRect.
+
+        (-[WKView shouldClipToVisibleRect]):
+        (-[WKView setShouldClipToVisibleRect:]):
+        Allow setting clips-to-visible-rect without autolayout.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        Add shouldClipToVisibleRect property.
+
 2013-05-22  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unused private browsing override support

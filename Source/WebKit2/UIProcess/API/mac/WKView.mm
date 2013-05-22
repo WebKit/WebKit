@@ -235,7 +235,7 @@ struct WKViewInterpretKeyEventsParameters {
     WKContentAnchor _contentAnchor;
     
     NSSize _intrinsicContentSize;
-    BOOL _expandsToFitContentViaAutoLayout;
+    BOOL _clipsToVisibleRect;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     BOOL _isWindowOccluded;
@@ -426,7 +426,7 @@ struct WKViewInterpretKeyEventsParameters {
     [super setFrameSize:size];
 
     if (frameSizeUpdatesEnabled) {
-        if (_data->_expandsToFitContentViaAutoLayout)
+        if (_data->_clipsToVisibleRect)
             _data->_page->viewExposedRectChanged([self visibleRect]);
         [self _setDrawingAreaSize:size];
     }
@@ -438,7 +438,7 @@ struct WKViewInterpretKeyEventsParameters {
     NSPoint accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
     
     _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
-    if (_data->_expandsToFitContentViaAutoLayout)
+    if (_data->_clipsToVisibleRect)
         _data->_page->viewExposedRectChanged([self visibleRect]);
 }
 
@@ -3066,7 +3066,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
-    _data->_expandsToFitContentViaAutoLayout = NO;
+    _data->_clipsToVisibleRect = NO;
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
@@ -3171,7 +3171,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     
     if (!(--_data->_frameSizeUpdatesDisabledCount)) {
-        if (_data->_expandsToFitContentViaAutoLayout)
+        if (_data->_clipsToVisibleRect)
             _data->_page->viewExposedRectChanged([self visibleRect]);
         [self _setDrawingAreaSize:[self frame].size];
     }
@@ -3229,13 +3229,24 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     BOOL expandsToFit = minimumLayoutWidth > 0;
 
-    _data->_expandsToFitContentViaAutoLayout = expandsToFit;
     _data->_page->setMinimumLayoutWidth(minimumLayoutWidth);
 
-    if (expandsToFit)
+    [self setShouldClipToVisibleRect:expandsToFit];
+}
+
+- (BOOL)shouldClipToVisibleRect
+{
+    return _data->_clipsToVisibleRect;
+}
+
+- (void)setShouldClipToVisibleRect:(BOOL)clipsToVisibleRect
+{
+    _data->_clipsToVisibleRect = clipsToVisibleRect;
+
+    if (clipsToVisibleRect)
         _data->_page->viewExposedRectChanged([self visibleRect]);
 
-    _data->_page->setMainFrameIsScrollable(!expandsToFit);
+    _data->_page->setMainFrameIsScrollable(!clipsToVisibleRect);
 }
 
 - (NSColor *)underlayColor
@@ -3353,7 +3364,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 // frame according to the current contentAnchor.
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
 {
-    if (_data->_expandsToFitContentViaAutoLayout)
+    if (_data->_clipsToVisibleRect)
         _data->_page->viewExposedRectChanged([self visibleRect]);
     [self _setDrawingAreaSize:size];
 
