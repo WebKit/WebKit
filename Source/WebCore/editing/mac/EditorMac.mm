@@ -207,7 +207,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     }
 
     int decoration = style->textDecorationsInEffect();
-    if (decoration & LINE_THROUGH)
+    if (decoration & TextDecorationLineThrough)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
 
     int superscriptInt = 0;
@@ -231,7 +231,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (superscriptInt)
         [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
 
-    if (decoration & UNDERLINE)
+    if (decoration & TextDecorationUnderline)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 
     if (nodeToRemove)

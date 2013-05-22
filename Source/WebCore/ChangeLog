@@ -1,3 +1,57 @@
+2013-05-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css] Update ETextDecorations enum to TextDecorations
+        https://bugs.webkit.org/show_bug.cgi?id=116581
+
+        Reviewed by Andreas Kling.
+
+        Currently, ETextDecorations enum uses a C-like coding style for its
+        enumeration values, as well as a 'E' prefix that surely had some meaning
+        in the past, but not nowadays.
+
+        No behavior changes, covered by existing tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasPlainText):
+        (WebCore::AccessibilityRenderObject::hasUnderline):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributeStringSetStyle):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TextDecoration):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyTextDecoration::applyValue):
+        (WebCore::ApplyPropertyTextDecoration::createHandler):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::operator|):
+        (WebCore::operator|=):
+        * rendering/style/StyleVisualData.h:
+        (StyleVisualData):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::positionOffsetForDecoration):
+        (WebCore::thicknessForDecoration):
+        (WebCore::findRenderObjectDefininingTextDecoration):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        * rendering/svg/SVGInlineTextBox.h:
+
 2013-05-22  Lori Anderson  <lori@rkymtnhi.com>
 
         [GStreamer] Allow multiple log levels in media player

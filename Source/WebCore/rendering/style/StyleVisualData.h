@@ -52,7 +52,7 @@ public:
 
     LengthBox clip;
     bool hasClip : 1;
-    unsigned textDecoration : ETextDecorationBits; // Text decorations defined *only* by this element.
+    unsigned textDecoration : TextDecorationBits; // Text decorations defined *only* by this element.
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingMultiplier;

@@ -339,12 +339,12 @@ enum ETextTransform {
     CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
 };
 
-static const size_t ETextDecorationBits = 4;
-enum ETextDecoration {
-    TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
+static const size_t TextDecorationBits = 4;
+enum TextDecoration {
+    TextDecorationNone = 0x0, TextDecorationUnderline = 0x1, TextDecorationOverline = 0x2, TextDecorationLineThrough = 0x4, TextDecorationBlink = 0x8
 };
-inline ETextDecoration operator|(ETextDecoration a, ETextDecoration b) { return ETextDecoration(int(a) | int(b)); }
-inline ETextDecoration& operator|=(ETextDecoration& a, ETextDecoration b) { return a = a | b; }
+inline TextDecoration operator| (TextDecoration a, TextDecoration b) { return TextDecoration(int(a) | int(b)); }
+inline TextDecoration& operator|= (TextDecoration& a, TextDecoration b) { return a = a | b; }
 
 enum TextDecorationStyle {
     TextDecorationStyleSolid,

@@ -1504,13 +1504,13 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     AXAttributeStringSetFont(attrString, style->font().primaryFont()->getGSFont(), range);
                 
     int decor = style->textDecorationsInEffect();
-    if ((decor & (UNDERLINE | LINE_THROUGH)) != 0) {
+    if ((decor & (TextDecorationUnderline | TextDecorationLineThrough)) != 0) {
         // find colors using quirk mode approach (strict mode would use current
         // color for all but the root line box, which would use getTextDecorationColors)
         Color underline, overline, linethrough;
         renderer->getTextDecorationColors(decor, underline, overline, linethrough);
         
-        if (decor & UNDERLINE)
+        if (decor & TextDecorationUnderline)
             AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, [NSNumber numberWithBool:YES], range);
     }
 }

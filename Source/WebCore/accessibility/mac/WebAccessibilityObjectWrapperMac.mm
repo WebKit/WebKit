@@ -672,28 +672,28 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     
     // set underline and strikethrough
     int decor = style->textDecorationsInEffect();
-    if ((decor & UNDERLINE) == 0) {
+    if ((decor & TextDecorationUnderline) == 0) {
         [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
     }
     
-    if ((decor & LINE_THROUGH) == 0) {
+    if ((decor & TextDecorationLineThrough) == 0) {
         [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
     }
     
-    if ((decor & (UNDERLINE | LINE_THROUGH)) != 0) {
+    if ((decor & (TextDecorationUnderline | TextDecorationLineThrough)) != 0) {
         // find colors using quirk mode approach (strict mode would use current
         // color for all but the root line box, which would use getTextDecorationColors)
         Color underline, overline, linethrough;
         renderer->getTextDecorationColors(decor, underline, overline, linethrough);
         
-        if ((decor & UNDERLINE) != 0) {
+        if ((decor & TextDecorationUnderline) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, [NSNumber numberWithBool:YES], range);
             AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, nsColor(underline), range);
         }
         
-        if ((decor & LINE_THROUGH) != 0) {
+        if ((decor & TextDecorationLineThrough) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
             AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, nsColor(linethrough), range);
         }

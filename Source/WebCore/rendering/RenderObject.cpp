@@ -2814,7 +2814,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 {
     RenderObject* curr = this;
     RenderStyle* styleToUse = 0;
-    ETextDecoration currDecs = TDNONE;
+    TextDecoration currDecs = TextDecorationNone;
     Color resultColor;
     do {
         styleToUse = curr->style(firstlineStyle);
@@ -2822,16 +2822,16 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         resultColor = decorationColor(styleToUse);
         // Parameter 'decorations' is cast as an int to enable the bitwise operations below.
         if (currDecs) {
-            if (currDecs & UNDERLINE) {
-                decorations &= ~UNDERLINE;
+            if (currDecs & TextDecorationUnderline) {
+                decorations &= ~TextDecorationUnderline;
                 underline = resultColor;
             }
-            if (currDecs & OVERLINE) {
-                decorations &= ~OVERLINE;
+            if (currDecs & TextDecorationOverline) {
+                decorations &= ~TextDecorationOverline;
                 overline = resultColor;
             }
-            if (currDecs & LINE_THROUGH) {
-                decorations &= ~LINE_THROUGH;
+            if (currDecs & TextDecorationLineThrough) {
+                decorations &= ~TextDecorationLineThrough;
                 linethrough = resultColor;
             }
         }
@@ -2847,11 +2847,11 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     if (decorations && curr) {
         styleToUse = curr->style(firstlineStyle);
         resultColor = decorationColor(styleToUse);
-        if (decorations & UNDERLINE)
+        if (decorations & TextDecorationUnderline)
             underline = resultColor;
-        if (decorations & OVERLINE)
+        if (decorations & TextDecorationOverline)
             overline = resultColor;
-        if (decorations & LINE_THROUGH)
+        if (decorations & TextDecorationLineThrough)
             linethrough = resultColor;
     }
 }

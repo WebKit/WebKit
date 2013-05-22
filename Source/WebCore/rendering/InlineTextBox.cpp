@@ -779,8 +779,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // Paint decorations
-    ETextDecoration textDecorations = styleToUse->textDecorationsInEffect();
-    if (textDecorations != TDNONE && paintInfo.phase != PaintPhaseSelection) {
+    TextDecoration textDecorations = styleToUse->textDecorationsInEffect();
+    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
         updateGraphicsContext(context, textFillColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
         if (combinedText)
             context->concatCTM(rotation(boxRect, Clockwise));
@@ -1119,7 +1119,7 @@ static void strokeWavyTextDecoration(GraphicsContext* context, FloatPoint& p1, F
 }
 #endif // CSS3_TEXT
 
-void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& boxOrigin, ETextDecoration deco, TextDecorationStyle decorationStyle, const ShadowData* shadow)
+void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& boxOrigin, TextDecoration deco, TextDecorationStyle decorationStyle, const ShadowData* shadow)
 {
     // FIXME: We should improve this rule and not always just assume 1.
     const float textDecorationThickness = 1.f;
@@ -1146,7 +1146,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     bool isPrinting = textRenderer()->document()->printing();
     context->setStrokeThickness(textDecorationThickness);
 
-    bool linesAreOpaque = !isPrinting && (!(deco & UNDERLINE) || underline.alpha() == 255) && (!(deco & OVERLINE) || overline.alpha() == 255) && (!(deco & LINE_THROUGH) || linethrough.alpha() == 255);
+    bool linesAreOpaque = !isPrinting && (!(deco & TextDecorationUnderline) || underline.alpha() == 255) && (!(deco & TextDecorationOverline) || overline.alpha() == 255) && (!(deco & TextDecorationLineThrough) || linethrough.alpha() == 255);
 
     RenderStyle* styleToUse = renderer()->style(isFirstLineStyle());
     int baseline = styleToUse->fontMetrics().ascent();
@@ -1194,7 +1194,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
         float doubleOffset = textDecorationThickness + 1.f;
 #endif // CSS3_TEXT
         context->setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
-        if (deco & UNDERLINE) {
+        if (deco & TextDecorationUnderline) {
             context->setStrokeColor(underline, colorSpace);
 #if ENABLE(CSS3_TEXT)
             TextUnderlinePosition underlinePosition = styleToUse->textUnderlinePosition();
@@ -1218,7 +1218,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1), width, isPrinting);
 #endif // CSS3_TEXT
         }
-        if (deco & OVERLINE) {
+        if (deco & TextDecorationOverline) {
             context->setStrokeColor(overline, colorSpace);
 #if ENABLE(CSS3_TEXT)
             switch (decorationStyle) {
@@ -1237,7 +1237,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             }
 #endif // CSS3_TEXT
         }
-        if (deco & LINE_THROUGH) {
+        if (deco & TextDecorationLineThrough) {
             context->setStrokeColor(linethrough, colorSpace);
 #if ENABLE(CSS3_TEXT)
             switch (decorationStyle) {

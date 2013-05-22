@@ -2411,23 +2411,23 @@ template<> inline CSSPrimitiveValue::operator TextJustify() const
 }
 #endif // CSS3_TEXT
 
-template<> inline CSSPrimitiveValue::operator ETextDecoration() const
+template<> inline CSSPrimitiveValue::operator TextDecoration() const
 {
     switch (m_value.ident) {
     case CSSValueNone:
-        return TDNONE;
+        return TextDecorationNone;
     case CSSValueUnderline:
-        return UNDERLINE;
+        return TextDecorationUnderline;
     case CSSValueOverline:
-        return OVERLINE;
+        return TextDecorationOverline;
     case CSSValueLineThrough:
-        return LINE_THROUGH;
+        return TextDecorationLineThrough;
     case CSSValueBlink:
-        return BLINK;
+        return TextDecorationBlink;
     }
 
     ASSERT_NOT_REACHED();
-    return TDNONE;
+    return TextDecorationNone;
 }
 
 #if ENABLE(CSS3_TEXT)

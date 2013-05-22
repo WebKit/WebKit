@@ -1335,11 +1335,11 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
 {
     // Blink value is ignored.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    if (textDecoration & UNDERLINE)
+    if (textDecoration & TextDecorationUnderline)
         list->append(cssValuePool().createIdentifierValue(CSSValueUnderline));
-    if (textDecoration & OVERLINE)
+    if (textDecoration & TextDecorationOverline)
         list->append(cssValuePool().createIdentifierValue(CSSValueOverline));
-    if (textDecoration & LINE_THROUGH)
+    if (textDecoration & TextDecorationLineThrough)
         list->append(cssValuePool().createIdentifierValue(CSSValueLineThrough));
 
     if (!list->length())

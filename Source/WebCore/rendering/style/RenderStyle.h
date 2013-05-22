@@ -189,7 +189,7 @@ protected:
         unsigned _visibility : 2; // EVisibility
         unsigned _text_align : 4; // ETextAlign
         unsigned _text_transform : 2; // ETextTransform
-        unsigned _text_decorations : ETextDecorationBits;
+        unsigned _text_decorations : TextDecorationBits;
         unsigned _cursor_style : 6; // ECursor
 #if ENABLE(CURSOR_VISIBILITY)
         unsigned m_cursorVisibility : 1; // CursorVisibility
@@ -574,8 +574,8 @@ public:
 #endif
     ETextAlign textAlign() const { return static_cast<ETextAlign>(inherited_flags._text_align); }
     ETextTransform textTransform() const { return static_cast<ETextTransform>(inherited_flags._text_transform); }
-    ETextDecoration textDecorationsInEffect() const { return static_cast<ETextDecoration>(inherited_flags._text_decorations); }
-    ETextDecoration textDecoration() const { return static_cast<ETextDecoration>(visual->textDecoration); }
+    TextDecoration textDecorationsInEffect() const { return static_cast<TextDecoration>(inherited_flags._text_decorations); }
+    TextDecoration textDecoration() const { return static_cast<TextDecoration>(visual->textDecoration); }
 #if ENABLE(CSS3_TEXT)
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(rareNonInheritedData->m_textDecorationStyle); }
     TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(rareInheritedData->m_textAlignLast); }
@@ -1143,9 +1143,9 @@ public:
 #endif
     void setTextAlign(ETextAlign v) { inherited_flags._text_align = v; }
     void setTextTransform(ETextTransform v) { inherited_flags._text_transform = v; }
-    void addToTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations |= v; }
-    void setTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations = v; }
-    void setTextDecoration(ETextDecoration v) { SET_VAR(visual, textDecoration, v); }
+    void addToTextDecorationsInEffect(TextDecoration v) { inherited_flags._text_decorations |= v; }
+    void setTextDecorationsInEffect(TextDecoration v) { inherited_flags._text_decorations = v; }
+    void setTextDecoration(TextDecoration v) { SET_VAR(visual, textDecoration, v); }
 #if ENABLE(CSS3_TEXT)
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(rareNonInheritedData, m_textDecorationStyle, v); }
     void setTextAlignLast(TextAlignLast v) { SET_VAR(rareInheritedData, m_textAlignLast, v); }
@@ -1628,7 +1628,7 @@ public:
     static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0, Percent); }
     static ETextAlign initialTextAlign() { return TASTART; }
-    static ETextDecoration initialTextDecoration() { return TDNONE; }
+    static TextDecoration initialTextDecoration() { return TextDecorationNone; }
 #if ENABLE(CSS3_TEXT)
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyleSolid; }
     static TextAlignLast initialTextAlignLast() { return TextAlignLastAuto; }
