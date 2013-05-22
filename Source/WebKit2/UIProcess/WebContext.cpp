@@ -373,6 +373,11 @@ void WebContext::ensureNetworkProcess()
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
+    // FIXME: We don't account for private browsing mode being enabled due to a persistent preference in any of active page groups.
+    // This means that clients must re-enable private browsing mode through API on each launch, not relying on preferences.
+    // If the client does not re-enable private browsing on next launch, NetworkProcess will crash.
+    parameters.privateBrowsingEnabled = m_privateBrowsingEnterCount;
+
     parameters.cacheModel = m_cacheModel;
 
     // Add any platform specific parameters

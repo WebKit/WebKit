@@ -1,3 +1,41 @@
+2013-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Crashes in NetworkProcess due to incorrect private browsing session tracking
+        https://bugs.webkit.org/show_bug.cgi?id=116628
+
+        Reviewed by Brady Eidson.
+
+        The current API for private browsing makes it extremely difficult to track sessions.
+        Private browsing is enabled via WKPreferences, but the session is shared, so it
+        has to be maintained while there is any chance that any page group anywhere still
+        needs it.
+
+        This patch fixes some of the issues, but ultimately, I think that we'll just need
+        to deprecate and replace the API.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: (WebKit::storageSession):
+        There are valid scenarios where privateBrowsingEnabled is true, but there is no
+        private browsing session. Handle that without crashing, although this unfortunately
+        means that it will be harder to spot logic errors when using a wrong session.
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL): Removed an obsolete FIXME.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.h: Changed privateBrowsingSession()
+        to return a pointer, as no caller could know when it was safe to call it.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::storageSession): Handle the case where private
+        browsing session is unexpectedly missing without crashing.
+        (WebKit::RemoteNetworkingContext::privateBrowsingSession): Changed to return a pointer.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::ensureNetworkProcess):
+        Actually initialize privateBrowsingEnabled creation parameter. It would be very
+        difficult to figure out 100% reliably whether NetworkProcess needs a private browsing
+        session with the current API, but for existing clients, looking at
+        m_privateBrowsingEnterCount is good enough. Certainly better than not initializing.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled): Added a FIXME.
+
 2013-05-22  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Should be able to make tiled WKViews clip to the view's exposed rect without using autolayout
