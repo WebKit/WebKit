@@ -293,7 +293,7 @@ String InspectorFrontendHost::loadResourceSynchronously(const String& url)
     ResourceError error;
     ResourceResponse response;
     m_frontendPage->mainFrame()->loader()->loadResourceSynchronously(request, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
-    return String(data.data(), data.size());
+    return String::fromUTF8(data.data(), data.size());
 }
 
 bool InspectorFrontendHost::supportsFileSystems()

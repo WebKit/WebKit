@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    var asciiText = InspectorFrontendHost.loadResourceSynchronously("data:text/plain;,ASCII - Test");
+    InspectorTest.addResult("'" + asciiText + "' (" + asciiText.length + ")");
+    var utf8Text = InspectorFrontendHost.loadResourceSynchronously("data:text/plain;," + encodeURIComponent("UTF8 - \u0422\u0435\u0441\u0442"));
+    InspectorTest.addResult("'" + utf8Text + "' (" + utf8Text.length + ")");
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that InspectorFrontendHost.loadResourceSynchronously() correctly loads non-ASCII resources.</p>
+</body>
+</html>
