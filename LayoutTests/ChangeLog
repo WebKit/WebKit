@@ -1,3 +1,21 @@
+2013-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        New Flickr doesn't get fast scrolling but should
+        https://bugs.webkit.org/show_bug.cgi?id=116514
+
+        Reviewed by Darin Adler.
+        
+        slow-scrolling-hidden-background-toggle.html actually tests this patch. The other
+        two tests were added because there appear to be no tests for basic internals.mainThreadScrollingReasons()
+        functionality.
+
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-background-toggle-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-background-toggle.html: Added.
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-hidden-background-toggle-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-hidden-background-toggle.html: Added.
+        * platform/mac-wk2/tiled-drawing/slow-scrolling.html: Added.
+
 2013-05-22  Robert Hogan  <robert@webkit.org>
 
         Need to Remove Anonymous Wrappers When All Children Become Inline

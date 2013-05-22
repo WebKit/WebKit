@@ -121,6 +121,28 @@ struct SameSizeAsRenderObject {
 
 COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
 
+// On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
+// when scrolling a page with a fixed background image. As an optimization, assuming there are
+// no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
+// ignore the CSS property "background-attachment: fixed".
+static bool shouldRepaintFixedBackgroundsOnScroll(FrameView* frameView)
+{
+#if !ENABLE(FAST_MOBILE_SCROLLING) && !PLATFORM(QT)
+    UNUSED_PARAM(frameView);
+#endif
+
+    bool repaintFixedBackgroundsOnScroll = true;
+#if ENABLE(FAST_MOBILE_SCROLLING)
+#if PLATFORM(QT)
+    if (frameView->delegatesScrolling())
+        repaintFixedBackgroundsOnScroll = false;
+#else
+    repaintFixedBackgroundsOnScroll = false;
+#endif
+#endif
+    return repaintFixedBackgroundsOnScroll;
+}
+
 bool RenderObject::s_affectsParentBlock = false;
 bool RenderObject::s_noLongerAffectsParentBlock = false;
 
@@ -1936,25 +1958,15 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         s_noLongerAffectsParentBlock = false;
     }
 
-    if (view()->frameView()) {
-        bool shouldBlitOnFixedBackgroundImage = false;
-#if ENABLE(FAST_MOBILE_SCROLLING)
-        // On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
-        // when scrolling a page with a fixed background image. As an optimization, assuming there are
-        // no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
-        // ignore the CSS property "background-attachment: fixed".
-#if PLATFORM(QT)
-        if (view()->frameView()->delegatesScrolling())
-#endif
-            shouldBlitOnFixedBackgroundImage = true;
-#endif
+    if (FrameView* frameView = view()->frameView()) {
+        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
 
-        bool newStyleSlowScroll = newStyle && !shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage();
-        bool oldStyleSlowScroll = m_style && !shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage();
+        bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
+        bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
 
 #if USE(ACCELERATED_COMPOSITING)
         bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document()->documentElement()->renderer()));
-        if (drawsRootBackground && !shouldBlitOnFixedBackgroundImage) {
+        if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
             if (view()->compositor()->supportsFixedRootBackgroundCompositing()) {
                 if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
                     newStyleSlowScroll = false;
@@ -1966,9 +1978,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 #endif
         if (oldStyleSlowScroll != newStyleSlowScroll) {
             if (oldStyleSlowScroll)
-                view()->frameView()->removeSlowRepaintObject();
+                frameView->removeSlowRepaintObject();
+
             if (newStyleSlowScroll)
-                view()->frameView()->addSlowRepaintObject();
+                frameView->addSlowRepaintObject();
         }
     }
 }
@@ -2510,6 +2523,12 @@ void RenderObject::insertedIntoTree()
 void RenderObject::willBeRemovedFromTree()
 {
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
+
+    if (FrameView* frameView = view()->frameView()) {
+        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
+        if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
+            frameView->removeSlowRepaintObject();
+    }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
     RenderLayer* layer = 0;

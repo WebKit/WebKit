@@ -1,3 +1,30 @@
+2013-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        New Flickr doesn't get fast scrolling but should
+        https://bugs.webkit.org/show_bug.cgi?id=116514
+
+        Reviewed by Darin Adler.
+        
+        RenderObject increments and decrements a counter of slow repaint objects on
+        FrameView when it sees style changes related to background-attachment:fixed.
+        However, it omitted to decrement the count when a renderer with a fixed background
+        was destroyed.
+        
+        This caused Flickr to never fall into fast scrolling mode, since it toggled
+        display:none on an element with a fixed background during loading, then removed
+        the fixed background.
+        
+        Did some minor cleanup of #ENABLE(FAST_MOBILE_SCROLLING) crap.
+
+        Tests: platform/mac-wk2/tiled-drawing/slow-scrolling-background-toggle.html
+               platform/mac-wk2/tiled-drawing/slow-scrolling-hidden-background-toggle.html
+               platform/mac-wk2/tiled-drawing/slow-scrolling.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::shouldRepaintFixedBackgroundsOnScroll):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::willBeRemovedFromTree):
+
 2013-05-22  Robert Hogan  <robert@webkit.org>
 
         Need to Remove Anonymous Wrappers When All Children Become Inline
