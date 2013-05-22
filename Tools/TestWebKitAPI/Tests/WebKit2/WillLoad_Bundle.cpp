@@ -70,7 +70,7 @@ private:
         WKBundlePageLoaderClient pageLoaderClient;
         memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
         
-        pageLoaderClient.version = 5;
+        pageLoaderClient.version = 6;
         pageLoaderClient.clientInfo = this;
         pageLoaderClient.willLoadURLRequest = willLoadURLRequest;
         pageLoaderClient.willLoadDataRequest = willLoadDataRequest;
