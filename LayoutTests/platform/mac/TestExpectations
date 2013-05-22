@@ -276,12 +276,7 @@ webkit.org/b/112499 http/tests/notifications/window-show-on-click.html [ Pass Fa
 webkit.org/b/112499 http/tests/notifications/legacy/window-show-on-click.html [ Pass Failure ]
 
 # Safari doesn't allow to customize outermost scrollbars.
-# https://bugs.webkit.org/show_bug.cgi?id=43960
-scrollbars/custom-scrollbar-with-incomplete-style.html
-
-# Crash due to r66850.
-# https://bugs.webkit.org/show_bug.cgi?id=45575
-fast/files/workers
+webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 
 # viewport meta tag support
 fast/viewport

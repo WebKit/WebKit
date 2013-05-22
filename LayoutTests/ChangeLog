@@ -1,5 +1,16 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION: fast/files/workers tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=45575
+
+        Unskip the test since they no longer crash. Also rebaseline two tests as needed.
+
+        * fast/files/workers/worker-read-blob-async-expected.txt:
+        * fast/files/workers/worker-read-blob-sync-expected.txt:
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac test expectation cleanups. Unskip a bunch of tests and rebaseline them as needed.
 
         * accessibility/aria-menubar-menuitems-expected.txt: Added.
