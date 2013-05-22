@@ -2597,6 +2597,14 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     bool markDescendantsWithFloats = false;
     if (logicalTopEstimate != oldLogicalTop && !child->avoidsFloats() && childRenderBlock && childRenderBlock->containsFloats())
         markDescendantsWithFloats = true;
+#if ENABLE(SUBPIXEL_LAYOUT)
+    else if (UNLIKELY(logicalTopEstimate.mightBeSaturated()))
+        // logicalTopEstimate, returned by estimateLogicalTopPosition, might be saturated for
+        // very large elements. If it does the comparison with oldLogicalTop might yield a
+        // false negative as adding and removing margins, borders etc from a saturated number
+        // might yield incorrect results. If this is the case always mark for layout.
+        markDescendantsWithFloats = true;
+#endif
     else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.

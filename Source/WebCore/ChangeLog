@@ -1,3 +1,28 @@
+2013-05-22  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Heap-use-after-free in WebCore::RenderLayerModelObject::hasSelfPaintingLayer
+        https://bugs.webkit.org/show_bug.cgi?id=116626
+
+        Reviewed by David Hyatt.
+
+        This is a port of a Blink bug fix by Emil Eklund.
+
+        Account for saturated estimated position in RenderBlock::layoutBlockChild.
+
+        If the estimated top position is saturated the comparison with oldLogicalTop
+        might yield a false negative as adding and removing margins, borders etc from
+        a saturated number might yield incorrect results. If this is the case always
+        mark for layout.
+
+        Minimal test case impractical. See bug for raw fuzzer test case.
+
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::mightBeSaturated): Add helper method for checking whether
+            a number might be saturated.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild): Check if logicalTopEstimate is likely
+            to be saturated and if so mark for layout.
+
 2013-05-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove CSSPropertySourceData emptyCSSPropertySourceData
