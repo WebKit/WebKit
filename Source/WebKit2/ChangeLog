@@ -1,3 +1,10 @@
+2013-05-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r150484.
+
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+
 2013-05-21  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r150491): WebKit2.CloseThenTerminate asserting below WebContext::disconnectProcess().
