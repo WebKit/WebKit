@@ -2732,7 +2732,8 @@ void FrameView::performPostLayoutTasks()
         }
     }
 
-    m_frame->loader()->didLayout(milestonesAchieved);
+    if (milestonesAchieved)
+        m_frame->loader()->didLayout(milestonesAchieved);
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
         m_frame->document()->fontloader()->didLayout();

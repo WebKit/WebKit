@@ -1,3 +1,14 @@
+2013-05-22  Beth Dakin  <bdakin@apple.com>
+
+        The LayoutMilestones didLayout callback sometimes fires with a milestone value of 0
+        https://bugs.webkit.org/show_bug.cgi?id=116623
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we have actually achieved some milestones before calling didLayout().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2013-05-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Reimplement atk_text_get_text_*_offset for CHAR boundary
