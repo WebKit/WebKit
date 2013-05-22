@@ -831,7 +831,7 @@ void Editor::outdent()
     applyCommand(IndentOutdentCommand::create(m_frame->document(), IndentOutdentCommand::Outdent));
 }
 
-static void dispatchEditableContentChangedEvents(RefPtr<Element> prpStartRoot, PassRefPtr<Element> prpEndRoot)
+static void dispatchEditableContentChangedEvents(PassRefPtr<Element> prpStartRoot, PassRefPtr<Element> prpEndRoot)
 {
     RefPtr<Element> startRoot = prpStartRoot;
     RefPtr<Element> endRoot = prpEndRoot;
