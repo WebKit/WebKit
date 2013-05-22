@@ -1,5 +1,11 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a missing result after r150551.
+
+        * http/tests/inspector/network/network-size-chunked-expected.txt: Added.
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac test expectation corrections after r150545.
 
         * platform/mac-lion/http/tests/multipart/policy-ignore-crash-expected.txt: Added.
