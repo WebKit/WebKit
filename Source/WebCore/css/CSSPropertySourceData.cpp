@@ -30,11 +30,6 @@
  */
 
 #include "config.h"
-
-#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC
-#define CSSPROPERTYSOURCEDATA_HIDE_GLOBALS 1
-#endif
-
 #include "CSSPropertySourceData.h"
 
 #include <wtf/StaticConstructors.h>
@@ -105,19 +100,6 @@ String CSSPropertySourceData::toString() const
 unsigned CSSPropertySourceData::hash() const
 {
     return StringHash::hash(name) + 3 * StringHash::hash(value) + 7 * important + 13 * parsedOk + 31;
-}
-
-// Global init routines
-DEFINE_GLOBAL(CSSPropertySourceData, emptyCSSPropertySourceData, "", "e", false, false)
-
-// static
-void CSSPropertySourceData::init()
-{
-    static bool initialized;
-    if (!initialized) {
-        new ((void *) &emptyCSSPropertySourceData) CSSPropertySourceData("", "e", false, false, SourceRange(0, 0));
-        initialized = true;
-    }
 }
 
 } // namespace WebCore

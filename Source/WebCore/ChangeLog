@@ -1,3 +1,18 @@
+2013-05-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove CSSPropertySourceData emptyCSSPropertySourceData
+        https://bugs.webkit.org/show_bug.cgi?id=116517
+
+        Reviewed by Darin Adler.
+
+        This was added for chromium and does not seem to be used
+        anywhere anymore.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        * css/CSSPropertySourceData.cpp:
+        * css/CSSPropertySourceData.h:
+
 2013-05-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix for !ENABLE(FULLSCREEN_API) platforms.

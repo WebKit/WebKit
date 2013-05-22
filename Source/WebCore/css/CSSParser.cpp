@@ -350,7 +350,6 @@ CSSParser::CSSParser(const CSSParserContext& context)
     cssyydebug = 1;
 #endif
     m_tokenStart.ptr8 = 0;
-    CSSPropertySourceData::init();
 }
 
 CSSParser::~CSSParser()

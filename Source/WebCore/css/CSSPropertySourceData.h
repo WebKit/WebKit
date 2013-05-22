@@ -52,8 +52,6 @@ struct SourceRange {
 };
 
 struct CSSPropertySourceData {
-    static void init();
-
     CSSPropertySourceData(const String& name, const String& value, bool important, bool parsedOk, const SourceRange& range);
     CSSPropertySourceData(const CSSPropertySourceData& other);
     CSSPropertySourceData();
@@ -67,10 +65,6 @@ struct CSSPropertySourceData {
     bool parsedOk;
     SourceRange range;
 };
-
-#ifndef CSSPROPERTYSOURCEDATA_HIDE_GLOBALS
-extern const CSSPropertySourceData emptyCSSPropertySourceData;
-#endif
 
 struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
     static PassRefPtr<CSSStyleSourceData> create()
