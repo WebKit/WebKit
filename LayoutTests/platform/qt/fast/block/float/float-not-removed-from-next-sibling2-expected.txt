@@ -14,9 +14,8 @@ layer at (8,8) size 20x0
   RenderBlock (relative positioned) {DIV} at (0,0) size 20x0
     RenderBlock (floating) {DIV} at (0,0) size 20x100
       RenderImage {IMG} at (0,0) size 20x100 [bgcolor=#C0C0C0]
-    RenderBlock (anonymous) at (0,0) size 20x0
-      RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+    RenderInline {A} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 20x100
   RenderBlock (positioned) {DIV} at (0,0) size 20x100
     RenderBlock (anonymous) at (0,0) size 20x0

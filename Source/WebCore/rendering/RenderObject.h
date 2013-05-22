@@ -247,6 +247,7 @@ public:
     // again.  We have to make sure the render tree updates as needed to accommodate the new
     // normal flow object.
     void handleDynamicFloatPositionChange();
+    void removeAnonymousWrappersForInlinesIfNecessary();
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
@@ -1169,6 +1170,7 @@ private:
 private:
     // Store state between styleWillChange and styleDidChange
     static bool s_affectsParentBlock;
+    static bool s_noLongerAffectsParentBlock;
 };
 
 inline bool RenderObject::documentBeingDestroyed() const

@@ -1,3 +1,25 @@
+2013-05-22  Robert Hogan  <robert@webkit.org>
+
+        Need to Remove Anonymous Wrappers When All Children Become Inline
+        https://bugs.webkit.org/show_bug.cgi?id=115687
+
+        Reviewed by David Hyatt.
+
+        Remove a simple subset of anonymous wrappers, i.e. anonymous blocks without continuations,
+        when a block becoming float or positioned removes the need for them.
+
+        Test: fast/block/remove-anonymous-wrappers-when-element-changes-to-float-or-positioned.html
+
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderObject.cpp:
+        (WebCore):
+        (WebCore::RenderObject::removeAnonymousWrappersFromLineIfNecessary):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2013-05-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css] Update ETextDecorations enum to TextDecorations

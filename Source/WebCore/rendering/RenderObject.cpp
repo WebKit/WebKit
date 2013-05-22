@@ -122,6 +122,7 @@ struct SameSizeAsRenderObject {
 COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
 
 bool RenderObject::s_affectsParentBlock = false;
+bool RenderObject::s_noLongerAffectsParentBlock = false;
 
 RenderObjectAncestorLineboxDirtySet* RenderObject::s_ancestorLineboxDirtySet = 0;
 
@@ -1676,6 +1677,30 @@ void RenderObject::handleDynamicFloatPositionChange()
     }
 }
 
+void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
+{
+    // We have changed to floated or out-of-flow positioning so maybe all our parent's
+    // children can be inline now. Bail if there are any block children left on the line,
+    // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
+    // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
+    // if we find a continuation.
+    RenderObject* curr = parent()->firstChild();
+    while (curr && ((curr->isAnonymousBlock() && !toRenderBlock(curr)->isAnonymousBlockContinuation()) || curr->style()->isFloating() || curr->style()->hasOutOfFlowPosition()))
+        curr = curr->nextSibling();
+
+    if (curr)
+        return;
+
+    curr = parent()->firstChild();
+    RenderBlock* parentBlock = toRenderBlock(parent());
+    while (curr) {
+        RenderObject* next = curr->nextSibling();
+        if (curr->isAnonymousBlock())
+            parentBlock->collapseAnonymousBoxChild(parentBlock, toRenderBlock(curr));
+        curr = next;
+    }
+}
+
 void RenderObject::setAnimatableStyle(PassRefPtr<RenderStyle> style)
 {
     if (!isText() && style)
@@ -1893,6 +1918,9 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             && (!newStyle->isFloating() && !newStyle->hasOutOfFlowPosition())
             && parent() && (parent()->isBlockFlow() || parent()->isRenderInline());
 
+        s_noLongerAffectsParentBlock = ((!isFloating() && newStyle->isFloating()) || (!isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition()))
+            && parent() && parent()->isRenderBlock();
+
         // reset style flags
         if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
             setFloating(false);
@@ -1903,8 +1931,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         setHasOverflowClip(false);
         setHasTransform(false);
         setHasReflection(false);
-    } else
+    } else {
         s_affectsParentBlock = false;
+        s_noLongerAffectsParentBlock = false;
+    }
 
     if (view()->frameView()) {
         bool shouldBlitOnFixedBackgroundImage = false;
@@ -1959,6 +1989,8 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
 
+    if (s_noLongerAffectsParentBlock)
+        removeAnonymousWrappersForInlinesIfNecessary();
 #if ENABLE(SVG)
     SVGRenderSupport::styleChanged(this);
 #endif
