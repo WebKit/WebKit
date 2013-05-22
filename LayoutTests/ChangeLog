@@ -1,3 +1,14 @@
+2013-05-22  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/label-for-control-hittest.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112029
+
+        Unreviewed EFL gardening.
+
+        accessibility/label-for-control-hittest.html passes after r150439.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-05-21  Mihai Tica  <mitica@adobe.com>
 
         Updating element background blending to conform to the changes in the spec.
