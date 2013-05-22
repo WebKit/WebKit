@@ -1,5 +1,12 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac test expectation corrections after r150545.
+
+        * platform/mac-lion/http/tests/multipart/policy-ignore-crash-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         More Mac test expectation cleanups.
 
         * http/tests/inspector/network/network-size-sync-expected.txt:
