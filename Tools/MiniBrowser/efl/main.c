@@ -109,7 +109,10 @@ typedef struct _Browser_Window {
     } search;
     int current_zoom_level; 
     Tooltip_Information tooltip;
-    Evas_Object *context_popup;
+    struct {
+        Evas_Object *elm_menu;
+        Ewk_Context_Menu *ewk_menu;
+    } context_menu;
 } Browser_Window;
 
 typedef struct _File_Selector_Data {
@@ -260,11 +263,27 @@ on_mouse_out(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     window_tooltip_update(window);
 }
 
+static void
+on_window_resize(void *user_data, Evas *e, Evas_Object *elm_window, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    if (!window) {
+        info("ERROR: window is NULL.");
+        return;
+    }
+
+    if (window->context_menu.ewk_menu)
+        ewk_context_menu_hide(window->context_menu.ewk_menu);
+}
+
 static void window_free(Browser_Window *window)
 {
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in);
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out);
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move);
+
+    evas_object_event_callback_del(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize);
 
     evas_object_del(window->ewk_view);
     /* The elm_win will take care of freeing its children */
@@ -1110,49 +1129,56 @@ on_window_close(Ewk_View_Smart_Data *smartData)
 }
 
 static void
-context_popup_populate(Browser_Window *window, Ewk_Context_Menu *ewk_menu);
-
-static void
-context_popup_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
+context_menu_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
     if (!data) {
-        info("ERROR: context popup callback data is NULL.");
+        info("ERROR: context menu callback data is NULL.");
         return;
     }
 
     Ewk_Context_Menu_Item *ewk_item = (Ewk_Context_Menu_Item *)data;
-    info("Selected context popup item: %s.", ewk_context_menu_item_title_get(ewk_item));
+    info("Selected context menu item: %s.", ewk_context_menu_item_title_get(ewk_item));
     ewk_context_menu_item_select(ewk_context_menu_item_parent_menu_get(ewk_item), ewk_item);
     ewk_context_menu_hide(ewk_context_menu_item_parent_menu_get(ewk_item));
 }
 
 static void
-context_popup_populate(Browser_Window *window, Ewk_Context_Menu *ewk_menu)
+context_menu_populate(Evas_Object* context_menu, Ewk_Context_Menu *ewk_menu, Elm_Object_Item *parent_item)
 {
+    if (!context_menu || !ewk_menu) {
+        info("ERROR: necessary objects are NULL.");
+        return;
+    }
+
     const Eina_List *list = ewk_context_menu_items_get(ewk_menu);
     const Eina_List *l;
     void *data;
 
     Ewk_Context_Menu_Item *ewk_item;
-    Elm_Object_Item *elm_popup_item;
+    Elm_Object_Item *elm_menu_item;
     Evas_Object *elm_check_item;
 
     EINA_LIST_FOREACH(list, l, data) {
         ewk_item = (Ewk_Context_Menu_Item *)data;
         switch (ewk_context_menu_item_type_get(ewk_item)) {
         case EWK_ACTION_TYPE:
-            elm_popup_item = elm_ctxpopup_item_append(window->context_popup, ewk_context_menu_item_title_get(ewk_item), NULL, context_popup_item_selected_cb, ewk_item);
+            elm_menu_item = elm_menu_item_add(context_menu, parent_item, NULL, ewk_context_menu_item_title_get(ewk_item), context_menu_item_selected_cb, ewk_item);
             break;
         case EWK_CHECKABLE_ACTION_TYPE:
-            elm_check_item = elm_check_add(window->context_popup);
-            elm_popup_item = elm_ctxpopup_item_append(window->context_popup, ewk_context_menu_item_title_get(ewk_item), NULL, context_popup_item_selected_cb, ewk_item);
-            elm_object_item_content_set(elm_popup_item, elm_check_item);
+            elm_check_item = elm_check_add(context_menu);
+            elm_menu_item = elm_menu_item_add(context_menu, parent_item, NULL, ewk_context_menu_item_title_get(ewk_item), context_menu_item_selected_cb, ewk_item);
+            elm_object_item_content_set(elm_menu_item, elm_check_item);
             elm_check_state_set(elm_check_item, ewk_context_menu_item_checked_get(ewk_item));
+            break;
+        case EWK_SUBMENU_TYPE:
+            elm_menu_item = elm_menu_item_add(context_menu, parent_item, NULL, ewk_context_menu_item_title_get(ewk_item), NULL, ewk_item);
+            if (elm_menu_item)
+                context_menu_populate(context_menu, ewk_context_menu_item_submenu_get(ewk_item), elm_menu_item);
             break;
         default:
             continue;
         }
-        elm_object_item_disabled_set(elm_popup_item, !ewk_context_menu_item_enabled_get(ewk_item));
+        elm_object_item_disabled_set(elm_menu_item, !ewk_context_menu_item_enabled_get(ewk_item));
     }
 }
 
@@ -1166,18 +1192,25 @@ on_context_menu_show(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Co
         return EINA_FALSE;
     }
 
-    window->context_popup = elm_ctxpopup_add(window->elm_window);
+    window->context_menu.elm_menu = elm_menu_add(window->elm_window);
 
-    if (!window->context_popup) {
-        info("ERROR: could not create context popup widget.");
+    if (!window->context_menu.elm_menu) {
+        info("ERROR: could not create menu widget.");
         return EINA_FALSE;
     }
 
-    context_popup_populate(window, menu);
+    window->context_menu.ewk_menu = menu;
 
-    info("Showing context popup at (%d, %d).", x, y);
-    evas_object_move(window->context_popup, x, y);
-    evas_object_show(window->context_popup);
+    context_menu_populate(window->context_menu.elm_menu, menu, NULL);
+
+    Evas_Coord ewk_x, ewk_y;
+    evas_object_geometry_get(window->ewk_view, &ewk_x, &ewk_y, NULL, NULL);
+    x += ewk_x;
+    y += ewk_y;
+
+    info("Showing context menu at (%d, %d).", x, y);
+    elm_menu_move(window->context_menu.elm_menu, x, y);
+    evas_object_show(window->context_menu.elm_menu);
 
     return EINA_TRUE;
 }
@@ -1187,14 +1220,15 @@ on_context_menu_hide(Ewk_View_Smart_Data *sd)
 {
     Browser_Window *window = window_find_with_ewk_view(sd->self);
 
-    if (!window || !window->context_popup) {
+    if (!window || !window->context_menu.elm_menu) {
         info("ERROR: necessary objects are NULL.");
         return EINA_FALSE;
     }
 
-    elm_ctxpopup_dismiss(window->context_popup);
-    evas_object_del(window->context_popup);
-    window->context_popup = NULL;
+    elm_menu_close(window->context_menu.elm_menu);
+    evas_object_del(window->context_menu.elm_menu);
+    window->context_menu.elm_menu = NULL;
+    window->context_menu.ewk_menu = NULL;
 
     return EINA_TRUE;
 }
@@ -1586,6 +1620,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move, window);
+    evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize, window);
 
     return window;
 }
