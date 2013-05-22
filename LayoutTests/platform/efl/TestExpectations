@@ -681,7 +681,6 @@ webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transiti
 
 # Flaky websocket tests.
 Bug(EFL) http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Failure Pass ]
-Bug(EFL) http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Failure Pass ]
 
 # Flaky inspector tests
 webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
