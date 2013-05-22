@@ -89,8 +89,6 @@ struct WebPageCreationParameters {
     float mediaVolume;
     bool mayStartMediaWhenInWindow;
 
-    bool overridePrivateBrowsingEnabled;
-
     float minimumLayoutWidth;
 
 #if PLATFORM(MAC)

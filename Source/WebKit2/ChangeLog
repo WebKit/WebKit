@@ -1,3 +1,30 @@
+2013-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove unused private browsing override support
+        <rdar://problem/11969491>
+
+        Rubber-stamped by Sam Weinig.
+
+        Private browsing override is unused, and it complicates tracking of private
+        browsing sessions in UI process (in fact, it doesn't plug into this tracking at all,
+        so we would just assert if we used the API).
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-05-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Change Ewk_Context_Menu_Item's parent menu to raw pointer

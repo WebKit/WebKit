@@ -872,16 +872,6 @@ void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)
 }
 
 
-void WKPageSetOverridePrivateBrowsingEnabled(WKPageRef pageRef, bool enabled)
-{
-    toImpl(pageRef)->setOverridePrivateBrowsingEnabled(enabled);
-}
-
-bool WKPageGetOverridePrivateBrowsingEnabled(WKPageRef pageRef)
-{
-    return toImpl(pageRef)->overridePrivateBrowsingEnabled();
-}
-
 void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item)
 {
 #if ENABLE(CONTEXT_MENUS)

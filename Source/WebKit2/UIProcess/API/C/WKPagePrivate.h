@@ -100,9 +100,6 @@ WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
 WK_EXPORT void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function);
 
-WK_EXPORT void WKPageSetOverridePrivateBrowsingEnabled(WKPageRef page, bool enabled);
-WK_EXPORT bool WKPageGetOverridePrivateBrowsingEnabled(WKPageRef page);
-    
 #ifdef __cplusplus
 }
 #endif

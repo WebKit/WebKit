@@ -303,7 +303,6 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_rubberBandsAtBottom(false)
     , m_rubberBandsAtTop(false)
     , m_mainFrameInViewSourceMode(false)
-    , m_overridePrivateBrowsingEnabled(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
@@ -3990,7 +3989,6 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
-    parameters.overridePrivateBrowsingEnabled = m_overridePrivateBrowsingEnabled;
     parameters.minimumLayoutWidth = m_minimumLayoutWidth;
 
 #if PLATFORM(MAC)
@@ -4470,17 +4468,6 @@ void WebPageProxy::setMainFrameInViewSourceMode(bool mainFrameInViewSourceMode)
 
     if (isValid())
         m_process->send(Messages::WebPage::SetMainFrameInViewSourceMode(mainFrameInViewSourceMode), m_pageID);
-}
-
-void WebPageProxy::setOverridePrivateBrowsingEnabled(bool overridePrivateBrowsingEnabled)
-{
-    if (m_overridePrivateBrowsingEnabled == overridePrivateBrowsingEnabled)
-        return;
-    
-    m_overridePrivateBrowsingEnabled = overridePrivateBrowsingEnabled;
-    
-    if (isValid())
-        m_process->send(Messages::WebPage::SetOverridePrivateBrowsingEnabled(overridePrivateBrowsingEnabled), m_pageID);
 }
 
 void WebPageProxy::didSaveToPageCache()
