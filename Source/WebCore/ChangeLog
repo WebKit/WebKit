@@ -1,3 +1,21 @@
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: ASSERTION FAILED: obj->isRenderInline() || obj == this, Bad cast in WebCore::RenderBlock::createLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=110622
+
+        Reviewed by David Hyatt.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/998ad358eed702b873dd54697b3fa3f952e0feb7
+
+        Inserting an element before the fullscreened element could crash if it caused a containing inline to be split,
+        since the splitting logic doesn't expect the fullscreened element to be wrapped in a RenderFullScreen. This patch changes
+        inline splitting to be aware of RenderFullScreen.
+
+        Test: fullscreen/full-screen-inline-split-crash.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+
 2013-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issues with focus rings on search fields
