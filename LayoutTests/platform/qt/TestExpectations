@@ -1481,8 +1481,6 @@ fast/dom/inline-event-attributes-release.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-# Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
-fast/multicol/single-line.html
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html
 fast/css/color-correction-on-background-image.html
@@ -2469,16 +2467,6 @@ webkit.org/b/86441 fast/borders/border-antialiasing.html [ Skip ]
 # Paletted PNG with ICC color profiles not working.
 webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html
 
-# Need rebaselining after 99870
-webkit.org/b/99870 svg/custom/js-late-pattern-creation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-skew-transformed.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-with-transformation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-scaling.svg [ Pass ImageOnlyFailure Missing ]
-
-# Needs a rebaseline after WK108429 lands.
-webkit.org/b/108429 svg/custom/text-ctm.svg [ Pass Failure ]
-
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 
@@ -2492,10 +2480,6 @@ webkit.org/b/91379 http/tests/security/contentSecurityPolicy/object-src-none-all
 
 # This has always failed on Qt - exposed by bug 89826
 webkit.org/b/94004 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
-
-# May need rebaseline
-webkit.org/b/23166 fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]
-webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
@@ -2552,9 +2536,6 @@ webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
 
 # New, but failing test
 webkit.org/b/101035 fast/images/exif-orientation-image-document.html
-
-# Fails after test refactoring, maybe rebaseline needed
-webkit.org/b/98523 fast/images/repaint-subrect-grid.html
 
 # [Qt] New css3/filters/effect-reference-ordering-hw.html crashes
 webkit.org/b/101925 css3/filters/effect-reference-ordering-hw.html
@@ -2650,16 +2631,8 @@ webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 # [Qt] newly added svg/as-background-image/svg-transformed-background.html fails
 webkit.org/b/110442 svg/as-background-image/svg-transformed-background.html [ Skip ]
 
-# Need rebaseline
-webkit.org/b/110654 css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/110654 svg/custom/foreign-object-skew.svg [ Failure ]
-webkit.org/b/110654 tables/mozilla/bugs/bug92647-2.html [ Failure ]
-# New test
-webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
-
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
-
 
 # Border-fit should happen at layout time rather than paint time
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Skip ]
