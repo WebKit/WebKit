@@ -2524,10 +2524,12 @@ void RenderObject::willBeRemovedFromTree()
 {
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
 
-    if (FrameView* frameView = view()->frameView()) {
-        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
-        if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
-            frameView->removeSlowRepaintObject();
+    if (!isText()) {
+        if (FrameView* frameView = view()->frameView()) {
+            bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
+            if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
+                frameView->removeSlowRepaintObject();
+        }
     }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.

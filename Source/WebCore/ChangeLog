@@ -1,3 +1,22 @@
+2013-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertion in the getComputedStyle-background-shorthand.html test
+        https://bugs.webkit.org/show_bug.cgi?id=116639
+
+        Reviewed by Ryosuke Niwa.
+
+        getComputedStyle-background-shorthand.html was asserting under the newly added
+        code in willBeRemovedFromTree(). The assertion was caused by too many calls to
+        FrameView::removeSlowRepaintObject(), which happened because we called it for
+        RenderTexts, which share style with their parent renderer.
+        
+        RenderText overrides styleWillChange() to do nothing, so we never
+        call add/removeSlowRepaintObject() for them. Thus we should also skip this
+        work in willBeRemovedFromTree() for RenderTexts.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeRemovedFromTree):
+
 2013-05-22  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Heap-use-after-free in WebCore::RenderLayerModelObject::hasSelfPaintingLayer
