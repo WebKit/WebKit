@@ -1,3 +1,13 @@
+2013-05-22  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] valueForCustomFilterTransformParameter should check that renderer is a RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=116464
+
+        Reviewed by Alexandru Chiculita.
+
+        * css3/filters/custom/custom-filter-crash-inline-computed-style-expected.txt: Added.
+        * css3/filters/custom/custom-filter-crash-inline-computed-style.html: Added.
+
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a missing result after r150551.

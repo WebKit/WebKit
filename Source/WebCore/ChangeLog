@@ -1,3 +1,18 @@
+2013-05-22  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] valueForCustomFilterTransformParameter should check that renderer is a RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=116464
+
+        Reviewed by Alexandru Chiculita.
+
+        If the renderer is not a RenderBox, we just use a zero size to compute the transform,
+        like in CSSComputedStyleDeclaration::computedTransform.
+
+        Test: css3/filters/custom/custom-filter-crash-inline-computed-style.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForCustomFilterTransformParameter):
+
 2013-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix assertion in the getComputedStyle-background-shorthand.html test

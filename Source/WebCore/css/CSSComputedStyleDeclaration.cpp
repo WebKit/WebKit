@@ -865,7 +865,10 @@ static PassRefPtr<CSSValue> valueForCustomFilterNumberParameter(const CustomFilt
 
 static PassRefPtr<CSSValue> valueForCustomFilterTransformParameter(const RenderObject* renderer, const RenderStyle* style, const CustomFilterTransformParameter* transformParameter)
 {
-    IntSize size = renderer ? pixelSnappedIntRect(toRenderBox(renderer)->borderBoxRect()).size() : IntSize();
+    IntSize size;
+    if (renderer && renderer->isBox())
+        size = pixelSnappedIntRect(toRenderBox(renderer)->borderBoxRect()).size();
+
     TransformationMatrix transform;
     transformParameter->applyTransform(transform, size);
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
