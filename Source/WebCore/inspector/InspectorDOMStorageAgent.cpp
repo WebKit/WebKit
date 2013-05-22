@@ -198,21 +198,21 @@ PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString* e
     if (!success) {
         if (errorString)
             *errorString = "Invalid storageId format";
+        targetFrame = 0;
         return 0;
     }
 
-    Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
-    if (!frame) {
+    targetFrame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
+    if (!targetFrame) {
         if (errorString)
             *errorString = "Frame not found for the given security origin";
         return 0;
     }
-    targetFrame = frame;
 
     Page* page = m_pageAgent->page();
     if (isLocalStorage)
-        return page->group().localStorage()->storageArea(frame->document()->securityOrigin());
-    return page->sessionStorage()->storageArea(frame->document()->securityOrigin());
+        return page->group().localStorage()->storageArea(targetFrame->document()->securityOrigin());
+    return page->sessionStorage()->storageArea(targetFrame->document()->securityOrigin());
 }
 
 } // namespace WebCore

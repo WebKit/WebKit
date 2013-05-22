@@ -1,3 +1,16 @@
+2013-05-22  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        WebCore fails to compile with -Werror=maybe-uninitialized on GCC 4.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=116340
+
+        Reviewed by Christophe Dumez.
+
+        No new tests, just a simple build fix.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem): Init frame variable.
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem): Init frame variable.
+
 2013-05-22  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Have IDL interface names match their global constructor
