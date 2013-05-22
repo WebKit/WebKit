@@ -29,12 +29,12 @@
  */
  
 [
-    NoInterfaceObject,
     Conditional=MEDIA_SOURCE,
     ActiveDOMObject,
     EventTarget,
     Constructor,
-    CallWith=ScriptExecutionContext
+    CallWith=ScriptExecutionContext,
+    InterfaceName=WebKitMediaSource
 ] interface MediaSource {
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;

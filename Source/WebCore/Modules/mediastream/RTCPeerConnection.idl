@@ -29,13 +29,13 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
     Constructor(Dictionary rtcIceServers, optional Dictionary mediaConstraints),
     ConstructorRaisesException,
     CallWith=ScriptExecutionContext,
-    EventTarget
+    EventTarget,
+    InterfaceName=webkitRTCPeerConnection
 ] interface RTCPeerConnection {
     void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints)
         raises(DOMException);

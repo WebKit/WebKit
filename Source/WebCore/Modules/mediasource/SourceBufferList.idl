@@ -29,11 +29,11 @@
  */
  
 [
-    NoInterfaceObject,
     Conditional=MEDIA_SOURCE,
     IndexedGetter,
     EventTarget,
-    CallWith=ScriptExecutionContext
+    CallWith=ScriptExecutionContext,
+    InterfaceName=WebKitSourceBufferList
 ] interface SourceBufferList {
     readonly attribute unsigned long length;
     SourceBuffer item(unsigned long index);

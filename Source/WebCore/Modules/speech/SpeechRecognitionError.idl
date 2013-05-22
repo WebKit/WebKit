@@ -24,9 +24,9 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=SCRIPTED_SPEECH,
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    InterfaceName=webkitSpeechRecognitionError
 ] interface SpeechRecognitionError : Event {
     [InitializedByEventConstructor] readonly attribute DOMString error;
     [InitializedByEventConstructor] readonly attribute DOMString message;

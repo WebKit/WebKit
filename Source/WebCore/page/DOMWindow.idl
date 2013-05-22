@@ -337,21 +337,7 @@
     [Conditional=INDEXED_DATABASE] attribute IDBTransactionConstructor webkitIDBTransaction;
 
     // Constructors whose name does not match the interface name.
-    // FIXME: Remove these once [ImplementedAs] is used and once constructor names match interface names.
-    [Conditional=SHADOW_DOM] attribute ShadowRootConstructor WebKitShadowRoot;
-    [Conditional=MEDIA_SOURCE] attribute MediaSourceConstructor WebKitMediaSource;
-    [Conditional=MEDIA_SOURCE] attribute SourceBufferConstructor WebKitSourceBuffer;
-    [Conditional=MEDIA_SOURCE] attribute SourceBufferListConstructor WebKitSourceBufferList;
     [Conditional=WEB_AUDIO, CustomGetter] attribute AudioContextConstructor webkitAudioContext;
-    [Conditional=WEB_AUDIO] attribute OfflineAudioContextConstructor webkitOfflineAudioContext;
-    [Conditional=WEB_AUDIO] attribute PannerNodeConstructor webkitAudioPannerNode;
-    [Conditional=MEDIA_STREAM] attribute MediaStreamConstructor webkitMediaStream;
-    [Conditional=MEDIA_STREAM] attribute RTCPeerConnectionConstructor webkitRTCPeerConnection;
-    [Conditional=SCRIPTED_SPEECH] attribute SpeechGrammarConstructor webkitSpeechGrammar;
-    [Conditional=SCRIPTED_SPEECH] attribute SpeechGrammarListConstructor webkitSpeechGrammarList;
-    [Conditional=SCRIPTED_SPEECH] attribute SpeechRecognitionConstructor webkitSpeechRecognition;
-    [Conditional=SCRIPTED_SPEECH] attribute SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
-    [Conditional=SCRIPTED_SPEECH] attribute SpeechRecognitionEventConstructor webkitSpeechRecognitionEvent;
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 };

@@ -24,9 +24,9 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=SCRIPTED_SPEECH,
     ConstructorTemplate=Event,
+    InterfaceName=webkitSpeechRecognitionEvent
 ] interface SpeechRecognitionEvent : Event {
     [InitializedByEventConstructor] readonly attribute unsigned long resultIndex;
     [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList results;

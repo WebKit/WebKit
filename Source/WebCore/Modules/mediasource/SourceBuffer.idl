@@ -29,8 +29,8 @@
  */
  
 [
-    NoInterfaceObject,
-    Conditional=MEDIA_SOURCE
+    Conditional=MEDIA_SOURCE,
+    InterfaceName=WebKitSourceBuffer
 ] interface SourceBuffer {
 
     // Returns the time ranges buffered.

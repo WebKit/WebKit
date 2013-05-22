@@ -23,9 +23,9 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    InterfaceName=webkitAudioPannerNode
 ] interface PannerNode : AudioNode {
     // Panning model
     const unsigned short EQUALPOWER = 0;

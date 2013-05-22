@@ -1,3 +1,36 @@
+2013-05-22  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Have IDL interface names match their global constructor
+        https://bugs.webkit.org/show_bug.cgi?id=116520
+
+        Reviewed by Kentaro Hara.
+
+        Have IDL interface names match their global constructor name on DOMWindow.idl
+        using [InterfaceName] extended attribute. This affects in particular webkit
+        prefixed constructors. This is mandated by Web IDL specification:
+        http://dev.w3.org/2006/webapi/WebIDL/#es-interfaces
+
+        As a consequence, we can now get rid of [NoInterfaceObject] extended attribute
+        for those interfaces and have their global constructors automatically generated
+        by the bindings generator.
+
+        No new tests, no behavior change for layout tests.
+
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/speech/SpeechGrammar.idl:
+        * Modules/speech/SpeechGrammarList.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/speech/SpeechRecognitionError.idl:
+        * Modules/speech/SpeechRecognitionEvent.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * dom/ShadowRoot.idl:
+        * page/DOMWindow.idl:
+
 2013-05-21  Mihai Tica  <mitica@adobe.com>
         
         Update the background blending implementation to match the changes done

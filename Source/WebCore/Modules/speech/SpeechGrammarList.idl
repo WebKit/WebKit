@@ -24,11 +24,11 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=SCRIPTED_SPEECH,
     IndexedGetter,
     Constructor,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    InterfaceName=webkitSpeechGrammarList
 ] interface SpeechGrammarList {
     readonly attribute unsigned long length;
     SpeechGrammar item([IsIndex] unsigned long index);

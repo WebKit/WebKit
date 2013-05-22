@@ -23,14 +23,14 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     EventTarget,
     Constructor,
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),
     CallWith=ScriptExecutionContext,
-    SkipVTableValidation
+    SkipVTableValidation,
+    InterfaceName=webkitMediaStream
 ] interface MediaStream {
     // DEPRECATED
     readonly attribute DOMString label;
