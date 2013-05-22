@@ -443,7 +443,7 @@ void DOMSelection::deleteFromDocument()
     setBaseAndExtent(selectedRange->startContainer(ASSERT_NO_EXCEPTION), selectedRange->startOffset(), selectedRange->startContainer(), selectedRange->startOffset(), ASSERT_NO_EXCEPTION);
 }
 
-bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
+bool DOMSelection::containsNode(Node* n, bool allowPartial) const
 {
     if (!m_frame)
         return false;
@@ -453,12 +453,13 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
     if (!n || m_frame->document() != n->document() || selection->isNone())
         return false;
 
-    ContainerNode* parentNode = n->parentNode();
-    unsigned nodeIndex = n->nodeIndex();
+    RefPtr<Node> node = n;
     RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
 
-    if (!parentNode)
+    ContainerNode* parentNode = node->parentNode();
+    if (!parentNode || !parentNode->inDocument())
         return false;
+    unsigned nodeIndex = node->nodeIndex();
 
     ExceptionCode ec = 0;
     bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(), selectedRange->startOffset(), ec) >= 0 && !ec
@@ -473,7 +474,7 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
     if (nodeFullyUnselected)
         return false;
 
-    return allowPartial || n->isTextNode();
+    return allowPartial || node->isTextNode();
 }
 
 void DOMSelection::selectAllChildren(Node* n, ExceptionCode& ec)

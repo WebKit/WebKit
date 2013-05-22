@@ -84,7 +84,7 @@ namespace WebCore {
         void removeAllRanges();
         void addRange(Range*);
         void deleteFromDocument();
-        bool containsNode(const Node*, bool partlyContained) const;
+        bool containsNode(Node*, bool partlyContained) const;
         void selectAllChildren(Node*, ExceptionCode&);
 
         String toString();
