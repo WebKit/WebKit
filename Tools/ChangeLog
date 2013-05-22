@@ -1,3 +1,10 @@
+2013-05-22  Alex Christensen  <achristensen@apple.com>
+
+        Unreviewed.  Added myself to contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        Added myself.
+
 2013-05-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Add sub menus to MiniBrowser
