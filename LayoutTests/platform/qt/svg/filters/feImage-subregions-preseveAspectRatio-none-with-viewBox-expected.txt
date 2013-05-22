@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x500
+  RenderSVGRoot {svg} at (4,95) size 342x246
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGRect {rect} at (0,100) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGResourceFilter {filter} [id="filter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+    RenderSVGContainer {g} at (5,95) size 241x245 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}]
+      RenderSVGRect {rect} at (5,95) size 241x120 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+        [filter="filter1"] RenderSVGResourceFilter {filter} at (-40,-20) size 480x240
+      RenderSVGContainer {g} at (5,220) size 241x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,250.00)}]
+        RenderSVGRect {rect} at (5,220) size 241x120 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+          [filter="filter2"] RenderSVGResourceFilter {filter} at (-40,-20) size 480x240
+    RenderSVGContainer {g} at (105,95) size 240x245 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,10.00)}]
+      RenderSVGRect {rect} at (105,95) size 240x120 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+        [filter="filter3"] RenderSVGResourceFilter {filter} at (-40,-20) size 480x240
+      RenderSVGContainer {g} at (105,220) size 240x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,250.00)}]
+        RenderSVGRect {rect} at (105,220) size 240x120 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+          [filter="filter4"] RenderSVGResourceFilter {filter} at (-40,-20) size 480x240
+    RenderSVGRect {rect} at (24,104) size 52x52 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=10.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (4,219) size 52x52 [stroke={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=240.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (124,104) size 222x112 [stroke={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=10.00] [width=440.00] [height=220.00]
+    RenderSVGRect {rect} at (104,219) size 242x122 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=240.00] [width=480.00] [height=240.00]

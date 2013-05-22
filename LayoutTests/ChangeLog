@@ -1,3 +1,75 @@
+2013-05-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Unskipping some tests.
+        https://bugs.webkit.org/show_bug.cgi?id=105437
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.txt: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png: Added.
+        * platform/qt/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-animated-transform-on-target-rect-expected.png: Copied from LayoutTests/platform/qt/svg/filters/feImage-multiple-targets-id-change-expected.png.
+        * platform/qt/svg/filters/feImage-animated-transform-on-target-rect-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/qt/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/qt/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/qt/svg/filters/feImage-late-indirect-update-expected.png:
+        * platform/qt/svg/filters/feImage-late-indirect-update-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-multiple-targets-id-change-expected.png:
+        * platform/qt/svg/filters/feImage-multiple-targets-id-change-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-position-expected.png:
+        * platform/qt/svg/filters/feImage-position-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-preserveAspectratio-expected.png:
+        * platform/qt/svg/filters/feImage-preserveAspectratio-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-reference-invalidation-expected.png:
+        * platform/qt/svg/filters/feImage-reference-invalidation-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-subregions-expected.png:
+        * platform/qt/svg/filters/feImage-subregions-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/qt/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/qt/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-add-to-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-add-to-document-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-attribute-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-changes-id-expected.png:
+        * platform/qt/svg/filters/feImage-target-changes-id-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-id-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-id-change-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-inline-style-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-inline-style-change-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-property-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-property-change-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-reappend-to-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-reappend-to-document-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-remove-from-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-remove-from-document-expected.txt: Added.
+        * platform/qt/svg/filters/feImage-target-style-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-style-change-expected.txt: Added.
+
 2013-05-22  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/label-for-control-hittest.html is failing
