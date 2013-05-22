@@ -1,3 +1,18 @@
+2013-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix issues with focus rings on search fields
+        https://bugs.webkit.org/show_bug.cgi?id=116591
+
+        Reviewed by Darin Adler.
+        
+        In WebKit1, focus rings didn't render correctly on some OSes until
+        some other control drew a focus ring, which changes internal AppKit state
+        on the focused view. Fix by overriding an internal AppKit method to always
+        disable AppKit's "automatic" focus ring drawing.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _automaticFocusRingDisabled]):
+
 2013-05-20  David Kilzer  <ddkilzer@apple.com>
 
         Synchronize FeatureDefines.xcconfig

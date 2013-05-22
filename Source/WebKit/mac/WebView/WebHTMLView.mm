@@ -4947,6 +4947,15 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return haveWebCoreFrame;
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+- (BOOL)_automaticFocusRingDisabled
+{
+    // The default state for _automaticFocusRingDisabled is NO, which prevents focus rings
+    // from being painted for search fields. Calling NSSetFocusRingStyle has the side effect
+    // of changing this to YES, so just return YES all the time. <rdar://problem/13780122>,
+    return YES;
+}
+#endif
 
 - (void)_updateControlTints
 {

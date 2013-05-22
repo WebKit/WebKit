@@ -79,9 +79,13 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // smaller than the layer bounds (e.g. tiled layers)
     FloatRect clipBounds = CGContextGetClipBoundingBox(context);
 
+    FloatRect focusRingClipRect = clipBounds;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
     // Set the focus ring clip rect which needs to be in base coordinates.
     AffineTransform transform = CGContextGetCTM(context);
-    ThemeMac::setFocusRingClipRect(transform.mapRect(clipBounds));
+    focusRingClipRect = transform.mapRect(clipBounds);
+#endif
+    ThemeMac::setFocusRingClipRect(focusRingClipRect);
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     const float wastedSpaceThreshold = 0.75f;

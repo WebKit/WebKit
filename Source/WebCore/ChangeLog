@@ -1,5 +1,22 @@
 2013-05-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix issues with focus rings on search fields
+        https://bugs.webkit.org/show_bug.cgi?id=116591
+
+        Reviewed by Darin Adler.
+        
+        On a future OS, the rect returned by _focusRingVisibleRect should
+        be in the coordinate system of the that NSView, not the base
+        coordinate system, so fix the code that sets and reads the global
+        focusRingClipRect variable accordingly.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreFlippedView _focusRingVisibleRect]):
+
+2013-05-22  Simon Fraser  <simon.fraser@apple.com>
+
         New Flickr doesn't get fast scrolling but should
         https://bugs.webkit.org/show_bug.cgi?id=116514
 
