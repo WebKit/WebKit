@@ -348,6 +348,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     RenderInline* cloneInline = clone();
     cloneInline->setContinuation(oldCont);
 
+#if ENABLE(FULLSCREEN_API)
     // If we're splitting the inline containing the fullscreened element,
     // |beforeChild| may be the renderer for the fullscreened element. However,
     // that renderer is wrapped in a RenderFullScreen, so |this| is not its
@@ -356,6 +357,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     const Element* fullScreenElement = document()->webkitCurrentFullScreenElement();
     if (fullScreenElement && beforeChild && beforeChild->node() == fullScreenElement)
         beforeChild = document()->fullScreenRenderer();
+#endif
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.

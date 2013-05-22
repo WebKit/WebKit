@@ -1,3 +1,12 @@
+2013-05-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix for !ENABLE(FULLSCREEN_API) platforms.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * rendering/RenderInline.cpp: Missing #if guard added.
+        (WebCore::RenderInline::splitInlines):
+
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo in 150469.
