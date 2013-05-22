@@ -1,3 +1,14 @@
+2013-05-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break after r150484
+
+        Unreviewed, fix build break on EFL, GTK.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::defaultLoadPolicyForPlugin):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+
 2013-05-21  Andreas Kling  <akling@apple.com>
 
         PPT: Closing tab that is hung or chewing 100% CPU leaves abandoned WebProcess.

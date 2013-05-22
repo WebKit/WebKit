@@ -181,7 +181,7 @@ static inline String pathExtension(const KURL& url)
 }
 
 #if !PLATFORM(MAC)
-PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const PluginModuleInfo&)
+PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo&)
 {
     return PluginModuleLoadNormally;
 }
