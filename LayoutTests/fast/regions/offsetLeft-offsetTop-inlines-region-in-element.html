@@ -25,7 +25,7 @@
 			height: 370px;
 			position: relative;
 			left: 147px;
-			top: 242px;
+			top: 260px;
 			margin-left: 25px;
 		}
 
@@ -128,42 +128,12 @@
 	</style>
 
 	<script src="../js/resources/js-test-pre.js"></script>
-
-	<script type="text/javascript">
-		function writeOffsetInfo(selector) {
-			var divItems = document.querySelectorAll(selector);
-				
-			for (var i=0; i<divItems.length; i++) {
-				var divItem = divItems[i];
-				var existingHTML = divItem.innerHTML;
-				var newHTML = existingHTML.replace("#offTop#", divItem.offsetTop);
-				newHTML = newHTML.replace("#offLeft#", divItem.offsetLeft);
-				if (divItem.offsetParent)
-					newHTML = newHTML.replace("#offParent#", divItem.offsetParent.tagName + "(" + divItem.offsetParent.id + ")");
-				else
-					newHTML = newHTML.replace("#offParent#", "null");
-				divItem.innerHTML = newHTML;
-			}
-		}
-		function myOnLoad() {
-			writeOffsetInfo("#divText");
-			writeOffsetInfo(".inlineElements");
-
-			var regInfo = document.getElementById("regionInfo");
-			var parent = document.getElementById("region").offsetParent;
-			if (parent)
-				regInfo.innerHTML = regInfo.innerHTML.replace("#offParent#", parent.id);
-			else regInfo.innerHTML = regInfo.innerHTML.replace("#offParent#", "null");
-		}
-	</script>
 </head>
 
-<body id="body" onload = "myOnLoad();">
-	<div id="divMain"><span id="regionInfo" style="color: #CC0000">Region's offsetParent: #offParent#</span>
-		<div id="divText">This is <b>divText</b> (flowed into a single region, relative):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b><br/>
-			<span class="inlineElements" style="color: #000099;">Inline element in divText:<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></span>
-		</div>
-		<span class="inlineElements" id="inlineElement" style="color: #000099; position: relative; top: 30px; left: 40px;">Inline element in divMain:<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></span>
+<body id="body">
+	<div id="divMain">
+		<div id="divText"><b>divText</b><br/></div>
+		<span class="inlineElements" id="inlineElement" style="color: #000099; position: relative; top: 30px; left: 40px;">Inline element in divMain</span>
 	</div>
 
 	<div id="regionParent"><span style="float: right; margin: 10px; color: blue;">This is regionParent</span>

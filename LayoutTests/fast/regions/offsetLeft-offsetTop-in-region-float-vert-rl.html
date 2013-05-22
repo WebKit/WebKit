@@ -31,17 +31,20 @@
 			border: 1px solid green;
 			color: green;
 			font-size: 14px;
+			padding: 5px;
 		}
 
 		#divText1 {
-			height: 250px;
+			width: 60px;
+			height: 240px;
 			margin: 10px;
 			padding-left: 5px;
 			float: right;
 		}
 
 		#divText2 {
-			height: 200px;
+			width: 60px;
+			height: 190px;
 			float: left;
 			margin: 10px;
 		}
@@ -51,7 +54,7 @@
 			border: 1px solid red;
 			position: absolute;
 			top: 78px;
-			left: 611px;
+			left: 608px;
 			height: 400px;
 			width: 190px;
 		}
@@ -60,7 +63,7 @@
 			-webkit-flow-from: flow2;
 			border: 1px solid red;
 			position: absolute;
-			left: 336px;
+			left: 338px;
 			top: 182px;
 			width: 150px;
 			height: 400px;
@@ -138,39 +141,18 @@
 	</style>
 
 	<script src="../js/resources/js-test-pre.js"></script>
-
-	<script type="text/javascript">
-		function writeOffsetInfo(selector) {
-			var divItems = document.querySelectorAll(selector);
-				
-			for (var i=0; i<divItems.length; i++) {
-				var divItem = divItems[i];
-				var existingHTML = divItem.innerHTML;
-				var newHTML = existingHTML.replace("#offTop#", divItem.offsetTop);
-				newHTML = newHTML.replace("#offLeft#", divItem.offsetLeft);
-				if (divItem.offsetParent)
-					newHTML = newHTML.replace("#offParent#", divItem.offsetParent.tagName + "(" + divItem.offsetParent.id + ")");
-				else
-					newHTML = newHTML.replace("#offParent#", "null");
-				divItem.innerHTML = newHTML;
-			}
-		}
-		function myOnLoad() {
-			writeOffsetInfo(".divText");
-		}
-	</script>
 </head>
 
-<body id="body" onload = "myOnLoad();">
+<body id="body">
 	
 	<div id="divMain1">
-		<div class="divText" id="divText1">This is <b>divText1</b> (float right):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
+		<div class="divText" id="divText1"><b>divText1</b></div>
 		<span class="mySpan" style="color: blue;">This text should flow around the green div. This text should flow around the green div. This text should flow around the green div. This text should flow around the green div. This text should flow around the green div.</span>
 	</div>
 	
 	<div id="divMain2">
-		<div class="divText" id="divText2">This is <b>divText2</b> (float left):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
-		<span class="mySpan" style="color: blue;">This text should flow around the green div. This text should flow around the green div. This text should flow around the green div. This text should flow around the green div. This text should flow around the green div.</span>
+		<div class="divText" id="divText2"><b>divText2</b></div>
+		<span class="mySpan" style="color: blue;">This text should flow around the green div. This text should flow around the green div. This text should flow around the green div. This text should flow around the green div.</span>
 	</div>
 
 	<div class="region" id="region1"></div>

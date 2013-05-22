@@ -38,6 +38,7 @@
 
 		#divText1 {
 			width: 200px;
+			height: 150px;
 			position: relative;
 			left: 30px;
 			top: 10px;
@@ -61,34 +62,32 @@
 			width: 192px;
 			height: 105px;
 			position: relative;
-			top: 30px;
+			top: 115px;
 			color: #777700;
 			border-color: #777700;
 		}
 
+		#absoluteSpan {
+			position: absolute;
+		}
+
 		#span {
 			position: relative;
-			top: 31px;
+			top: 115px;
+			left: 25;
 			color: black;
 			font-size: 12px;
 			margin-left: 4px;
-			border: 2px solid black;
+			padding: 1px;
+			border: 1px solid black;
 		}
 
 		#image {
 			border: 1px dashed red;
 			width: 15px;
 			position: relative;
-			top: 35px;
-			margin-left: 104px;
-		}
-
-		#imageText {
-			font-size: 12px;
-			color: red;
-			position: absolute;
-			top: 452px;
-			left: 145px;
+			top: 123px;
+			margin-left: 54px;
 		}
 
 		#dummy1 {
@@ -210,43 +209,20 @@
 	</style>
 
 	<script src="../js/resources/js-test-pre.js"></script>
-
-	<script type="text/javascript">
-		function writeOffsetInfo(selector) {
-			var divItems = document.querySelectorAll(selector);
-				
-			for (var i=0; i<divItems.length; i++) {
-				var divItem = divItems[i];
-				var existingHTML = divItem.innerHTML;
-				var newHTML = existingHTML.replace("#offTop#", divItem.offsetTop);
-				newHTML = newHTML.replace("#offLeft#", divItem.offsetLeft);
-				if (divItem.offsetParent)
-					newHTML = newHTML.replace("#offParent#", divItem.offsetParent.tagName + "(" + divItem.offsetParent.id + ")");
-				else
-					newHTML = newHTML.replace("#offParent#", "null");
-				divItem.innerHTML = newHTML;
-			}
-		}
-		function myOnLoad() {
-			writeOffsetInfo(".divText");
-			writeOffsetInfo("#divText2_3");
-		}
-	</script>
 </head>
 
-<body id="body" onload = "myOnLoad();">
+<body id="body">
 	<div id="divMain1">
-		<div class="divText" id="divText1">This is <b>divText1</b> (flowed into a single region, relative):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
+		<div class="divText" id="divText1"><b>divText1</b></div>
 	</div>
 
 	<div id="divMain2">
 		<div class="dummy" id="dummy1">dummy</div>
-		<div class="divText" id="divText2_1"><span class="offsetInfo">This is <b>divText2_1</b> (flowed into the 1st region, static):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></span></div>
-		<div class="divText" id="divText2_2">This is <b>divText2_2</b> (flowed into the 2nd region, static):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b>
-			<div class="divText" id="divText2_3">This is <b>divText2_3</b> (flowed into the 2nd region, <i>pushed to next region by relative top</i>):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
-			<span id="span">This is span (flowed into the 3rd region)</span>
+		<div class="divText" id="divText2_1"><span><b>divText2_1</b></span></div>
+		<div class="divText" id="divText2_2"><span id="absoluteSpan"><b>divText2_2</b></span>
+			<div class="divText" id="divText2_3"><b>divText2_3</b></div>
 			<img id="image" src="resources/transparent.png"></input>
-			<span id="imageText">This is image</span>
+			<span id="span">span</span>
 		</div>		
 	</div>
 
@@ -293,15 +269,15 @@
 		shouldBe("divText2_3.offsetTop", "500");
 
 		shouldBe("span.offsetParent", "document.body");
-		shouldBe("span.offsetLeft", "600");
+		shouldBe("span.offsetLeft", "700");
 		shouldBe("span.offsetTop", "610");
 
 		shouldBe("image.offsetParent", "document.body");
-		shouldBe("image.offsetLeft", "700");
+		shouldBe("image.offsetLeft", "650");
 		shouldBe("image.offsetTop", "630");
 
 		if (window.testRunner) {
-			var allGraphicElements = document.querySelectorAll(".region1, .region2, .divText, .grid, .vgrid, .dummy, #span");
+			var allGraphicElements = document.querySelectorAll(".region1, .region2, .divText, .grid, .vgrid, .dummy, #span, #image");
 			for (var i=0; i<allGraphicElements.length; i++)
 				allGraphicElements[i].style.display = "none";
 		}

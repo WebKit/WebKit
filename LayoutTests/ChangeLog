@@ -1,3 +1,15 @@
+2013-05-22  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Remove platform-specific differences from offsetLeft/offsetTop tests
+        https://bugs.webkit.org/show_bug.cgi?id=116607
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/offsetLeft-offsetTop-in-multiple-regions-expected.txt:
+        * fast/regions/offsetLeft-offsetTop-in-multiple-regions.html:
+        * fast/regions/offsetLeft-offsetTop-in-region-float-vert-rl.html:
+        * fast/regions/offsetLeft-offsetTop-inlines-region-in-element.html:
+
 2013-05-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening, updating expected files after r150508.
