@@ -156,6 +156,8 @@ static const Ecore_Getopt options = {
             ('F', "full-screen", "start in full-screen.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('t', "text-checking", "text spell checking enabled", EINA_TRUE),
+        ECORE_GETOPT_STORE_DEF_STR
+            ('p', "policy-cookies", "Cookies policy:\n  always - always accept,\n  never - never accept,\n  no-third-party - don't accept third-party cookies.", "no-third-party"),
         ECORE_GETOPT_VERSION
             ('V', "version"),
         ECORE_GETOPT_COPYRIGHT
@@ -1588,6 +1590,18 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     return window;
 }
 
+static Ewk_Cookie_Accept_Policy
+parse_cookies_policy(const char *input_string)
+{
+    if (!strcmp(input_string, "always")) 
+        return EWK_COOKIE_ACCEPT_POLICY_ALWAYS;
+    if (!strcmp(input_string, "never"))
+        return EWK_COOKIE_ACCEPT_POLICY_NEVER;
+    if (strcmp(input_string, "no-third-party"))
+        info("Unrecognized type for cookies policy: %s.", input_string);
+    return EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY;
+}
+
 static void
 parse_window_size(const char *input_string, int *width, int *height)
 {
@@ -1620,6 +1634,7 @@ elm_main(int argc, char *argv[])
     unsigned char quitOption = 0;
     Browser_Window *window;
     char *window_size_string = NULL;
+    char *cookies_policy_string = NULL;
 
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
@@ -1633,6 +1648,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_BOOL(local_storage_enabled),
         ECORE_GETOPT_VALUE_BOOL(fullscreen_enabled),
         ECORE_GETOPT_VALUE_BOOL(spell_checking_enabled),
+        ECORE_GETOPT_VALUE_STR(cookies_policy_string),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -1665,6 +1681,9 @@ elm_main(int argc, char *argv[])
     // Enable favicon database.
     Ewk_Context *context = ewk_context_default_get();
     ewk_context_favicon_database_directory_set(context, NULL);
+
+    if (cookies_policy_string)
+        ewk_cookie_manager_accept_policy_set(ewk_context_cookie_manager_get(context), parse_cookies_policy(cookies_policy_string));
 
     if (window_size_string)
         parse_window_size(window_size_string, &window_width, &window_height);

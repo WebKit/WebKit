@@ -1,3 +1,17 @@
+2013-05-22  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add command line option to MiniBrowser to set cookies policy.
+        https://bugs.webkit.org/show_bug.cgi?id=115028
+
+        Reviewed by Christophe Dumez.
+
+        Add command line option to MiniBrowser EFL to set cookies policy:
+        -p parameter with value from (always, never, no-third-party) respectively (EWK_COOKIE_ACCEPT_POLICY_ALWAYS,
+        EWK_COOKIE_ACCEPT_POLICY_NEVER, EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY).
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2013-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r150369): WebKit2WillLoadTest tests are failing
