@@ -1,3 +1,12 @@
+2013-05-21  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13915556> Sluggish scrolling in web content
+
+        Reviewed by Gavin Barraclough.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled): When process suppression is disabled, low latency is important.
+
 2013-05-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break after r150484

@@ -69,7 +69,7 @@ void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
         [[NSProcessInfo processInfo] endActivity:m_processSuppressionAssertion.get()];
         m_processSuppressionAssertion.clear();
     } else {
-        NSActivityOptions options = NSActivityUserInitiatedAllowingIdleSystemSleep & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
+        NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
         m_processSuppressionAssertion = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"Process Suppression Disabled"];
     }
 #else
