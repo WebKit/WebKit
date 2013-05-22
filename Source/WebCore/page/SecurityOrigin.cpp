@@ -381,7 +381,7 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     return true;
 }
 
-bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
+bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAllowFromThirdParty shouldAllowFromThirdParty) const
 {
     if (isUnique())
         return false;
@@ -395,6 +395,9 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
 
     if (topOrigin->m_storageBlockingPolicy == BlockAllStorage)
         return false;
+
+    if (shouldAllowFromThirdParty == AlwaysAllowFromThirdParty)
+        return true;
 
     if ((m_storageBlockingPolicy == BlockThirdPartyStorage || topOrigin->m_storageBlockingPolicy == BlockThirdPartyStorage) && topOrigin->isThirdParty(this))
         return false;
