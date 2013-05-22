@@ -92,7 +92,8 @@ fast/media/media-query-list-07.html [ Failure ]
 fast/autoresize
 
 # Uses layoutTestController.titleTextDirection, which is Chromium-only
-fast/dom/title-directionality-removeChild.html
+webkit.org/b/58845 fast/dom/title-directionality-removeChild.html
+webkit.org/b/58845 fast/dom/title-directionality.html
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 fast/overflow/scrollbar-restored-and-then-locked.html
@@ -282,8 +283,7 @@ webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 fast/viewport
 
 # needs enhanced eventSender.contextMenu() return value
-# see also https://bugs.webkit.org/show_bug.cgi?id=45021
-media/context-menu-actions.html
+webkit.org/b/45021 media/context-menu-actions.html [ Failure ]
 
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
@@ -299,13 +299,10 @@ http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 fast/dom/MutationObserver/filesystem-callback-delivery.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.
-plugins/iframe-shims.html
+webkit.org/b/46223 plugins/iframe-shims.html
 
-# This new test runs differently on the buildbot than it doesn on user
-# machines.  I'll ask jnd to fix it once he's back from vacation.
-plugins/plugin-initiate-popup-window.html
+webkit.org/b/116640 plugins/plugin-initiate-popup-window.html
 
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
@@ -316,18 +313,16 @@ fast/images/webp-color-profile-lossy.html
 http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 
-# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation http://webkit.org/b/48929
-plugins/evaluate-js-after-removing-plugin-element.html
+# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation
+webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html
 
-# Very flaky: https://bugs.webkit.org/show_bug.cgi?id=49182
-animations/stop-animation-on-suspend.html
+webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # Non-premultiplied-alpha currently broken on mac.
-# https://bugs.webkit.org/show_bug.cgi?id=55509
-compositing/webgl/webgl-nonpremultiplied-blend.html
+webkit.org/b/55509 compositing/webgl/webgl-nonpremultiplied-blend.html
 
 webkit.org/b/114321 compositing/plugins/invalidate_rect.html [ Failure Pass ]
 
@@ -342,26 +337,18 @@ fast/events/drag-dataTransferItemList.html
 fast/events/drag-dataTransferItemList-file-handling.html
 
 # Replacement text for misspelling is not given from NSSpellChecker.
-# https://bugs.webkit.org/show_bug.cgi?id=77934
-editing/spelling/spelling-marker-description.html
+webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Failure ]
 
 # Custom MIME type support in DataTransfer is not yet implemented.
 editing/pasteboard/clipboard-customData.html
 fast/events/drag-customData.html
 
 # Need to implement WebGeolocationRequest::cancelPermissionRequest on mac.
-# https://bugs.webkit.org/show_bug.cgi?id=55944
-fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+webkit.org/b/55944 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=103435
-fast/backgrounds/background-opaque-images-over-color.html
+webkit.org/b/103435 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=56685
-webarchive/test-link-rel-icon.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=56691
-http/tests/inspector/network/network-size-chunked.html
-http/tests/inspector/network/network-size-sync.html
+webkit.org/b/56685 webarchive/test-link-rel-icon.html [ Failure ]
 
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
@@ -379,10 +366,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
-# Expose title direction in WebKit API
-# https://bugs.webkit.org/show_bug.cgi?id=58845
-fast/dom/title-directionality.html
-
 # Timing out for unknown reasons.  Passes on Chromium, QT and GTK+.
 # https://bugs.webkit.org/show_bug.cgi?id=58924
 plugins/mouse-click-iframe-to-plugin.html
@@ -394,16 +377,11 @@ http/tests/navigation/response204.html
 # console long eval test is timeout 60616
 inspector/console/console-long-eval-crash.html
 
-# Fails after r87328:
-# https://bugs.webkit.org/show_bug.cgi?id=61487
-http/tests/media/video-cross-site.html
+webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
-# REGRESSION (r89305-r89312): webarchive/loading/mainresource-null-mimetype-crash.html failing on Leopard/SnowLeopard release
-# https://bugs.webkit.org/show_bug.cgi?id=63169
-webarchive/loading/mainresource-null-mimetype-crash.html
+# Styled scope element is not yet enabled.
+webkit.org/b/49142 fast/css/style-scoped
 
-# <style scoped> is not yet enabled. http://webkit.org/b/49142
-fast/css/style-scoped
 # CSS Regions tests for region styling and scoped styles
 fast/regions/style-scoped-in-flow-override-container-style.html
 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html
@@ -429,8 +407,8 @@ fast/xsl/xslt-xhtml-template.xml
 fast/xpath/xpath-template-element.html
 fast/xsl/xslt-processor-template.html
 
-# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
-http/tests/security/isolatedWorld/cross-origin-xhr.html
+# JSC does not support setIsolatedWorldSecurityOrigin
+webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=63282 layerTreeAsText doesn't work for iframes
 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
@@ -440,9 +418,6 @@ compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
 compositing/rtl/rtl-iframe-fixed-overflow.html
 compositing/rtl/rtl-iframe-fixed.html
 compositing/rtl/rtl-iframe-relative.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82554
-compositing/rtl/rtl-fixed-overflow-scrolled.html
 
 # For now, Web Audio tests are disabled
 # https://bugs.webkit.org/show_bug.cgi?id=86914
@@ -499,11 +474,9 @@ css3/font-feature-settings-rendering.html
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=67716
-media/media-controls-invalid-url.html
+webkit.org/b/67716 media/media-controls-invalid-url.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=68278
-http/tests/history/back-with-fragment-change.php
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
@@ -521,31 +494,15 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 pointer-lock/
 http/tests/pointer-lock/
 
-# https://bugs.webkit.org/show_bug.cgi?id=82763
-fast/forms/textarea-placeholder-set-attribute.html
-fast/forms/placeholder-set-attribute.html
-fast/forms/search-placeholder-value-changed.html
+webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html
 
-# Timeout.
-fast/dom/Window/open-window-min-size.html
+webkit.org/b/102257 fast/dom/Window/open-window-min-size.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=73148
-fast/canvas/webgl/webgl-texture-binding-preserved.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=73974
-fast/canvas/webgl/canvas-2d-webgl-texture.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=74384
 # Skipped as this is not a expected behaviour on mac.
-fast/forms/select/menulist-onchange-fired-with-key-up-down.html
+webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=73304
 # Tiemout. Needs ChromeClient::hasOpenedPopup() impelementation?
-fast/forms/select/menulist-popup-crash.html
-
-# Frame::findString does nothing on pages that prevent selection
-# https://bugs.webkit.org/show_bug.cgi?id=40361
-editing/text-iterator/findString-selection-disabled.html
+webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=75184
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
