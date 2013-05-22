@@ -45,6 +45,7 @@
 #include "RenderText.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
+#include "VisibleUnits.h"
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
@@ -574,8 +575,47 @@ enum GetTextRelativePosition {
     GetTextPositionAfter
 };
 
+static gchar* webkitAccessibleTextGetChar(AtkText* text, gint offset, GetTextRelativePosition textPosition, gint* startOffset, gint* endOffset)
+{
+    AccessibilityObject* coreObject = core(text);
+    if (!coreObject || !coreObject->isAccessibilityRenderObject())
+        return g_strdup("");
+
+    int actualOffset = offset;
+    if (textPosition == GetTextPositionBefore)
+        actualOffset--;
+    else if (textPosition == GetTextPositionAfter)
+        actualOffset++;
+
+    GOwnPtr<char> textData(webkitAccessibleTextGetText(text, 0, -1));
+    int textLength = g_utf8_strlen(textData.get(), -1);
+
+    *startOffset = std::max(0, actualOffset);
+    *startOffset = std::min(*startOffset, textLength);
+
+    *endOffset = std::max(0, actualOffset + 1);
+    *endOffset = std::min(*endOffset, textLength);
+
+    if (*startOffset == *endOffset)
+        return g_strdup("");
+
+    // Make sure we return the line break if we are at the visual end of a line.
+    VisiblePosition visiblePosition = coreObject->visiblePositionForIndex(actualOffset);
+    if (isEndOfLine(visiblePosition))
+        return g_strdup("\n");
+
+    return g_utf8_substring(textData.get(), *startOffset, *endOffset);
+}
+
 static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, gint* startOffset, gint* endOffset)
 {
+    // Make sure we always return valid valid values for offsets.
+    *startOffset = 0;
+    *endOffset = 0;
+
+    if (boundaryType == ATK_TEXT_BOUNDARY_CHAR)
+        return webkitAccessibleTextGetChar(text, offset, textPosition, startOffset, endOffset);
+
 #if PLATFORM(GTK)
     // FIXME: Get rid of the code below once every single get_text_*_offset
     // function has been properly implemented without using Pango/Cairo.
@@ -599,13 +639,6 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
 
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), offsetType, boundaryType, offset, startOffset, endOffset);
 #endif
-
-    UNUSED_PARAM(text);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(boundaryType);
-    UNUSED_PARAM(textPosition);
-    UNUSED_PARAM(startOffset);
-    UNUSED_PARAM(endOffset);
 
     notImplemented();
     return 0;
