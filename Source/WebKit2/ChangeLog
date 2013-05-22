@@ -1,3 +1,16 @@
+2013-05-21  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r150491): WebKit2.CloseThenTerminate asserting below WebContext::disconnectProcess().
+        <http://webkit.org/b/116588>
+
+        Reviewed by Sam Weinig.
+
+        Do an early return from WebProcessProxy::requestTermination() if there is no child process
+        connection to terminate.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+
 2013-05-21  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13915556> Sluggish scrolling in web content

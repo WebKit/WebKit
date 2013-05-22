@@ -656,6 +656,9 @@ void WebProcessProxy::releasePageCache()
 
 void WebProcessProxy::requestTermination()
 {
+    if (!isValid())
+        return;
+
     ChildProcessProxy::terminate();
 
     if (webConnection())
