@@ -76,7 +76,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/MacroAssemblerARMv7.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerCodeRef.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerMIPS.h \
-	Source/JavaScriptCore/assembler/MacroAssemblerSH4.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerSH4.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \

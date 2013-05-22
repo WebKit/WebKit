@@ -564,7 +564,6 @@
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */; };
 		86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A7135E5E1C00963012 /* SH4Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86AE6C4D136A11E400963012 /* DFGFPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE6C4B136A11E400963012 /* DFGFPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1467,7 +1466,6 @@
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
 		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
-		86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerSH4.cpp; sourceTree = "<group>"; };
 		86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerSH4.h; sourceTree = "<group>"; };
 		86AE64A7135E5E1C00963012 /* SH4Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SH4Assembler.h; sourceTree = "<group>"; };
 		86AE6C4B136A11E400963012 /* DFGFPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFPRInfo.h; path = dfg/DFGFPRInfo.h; sourceTree = "<group>"; };
@@ -2866,7 +2864,6 @@
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
-				86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */,
 				86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
@@ -3998,7 +3995,6 @@
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
 				0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */,
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
-				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
 				142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */,
 				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,

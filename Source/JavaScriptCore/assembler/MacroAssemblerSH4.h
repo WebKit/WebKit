@@ -2220,9 +2220,20 @@ private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
 
-    static void linkCall(void*, Call, FunctionPtr);
-    static void repatchCall(CodeLocationCall, CodeLocationLabel);
-    static void repatchCall(CodeLocationCall, FunctionPtr);
+    static void linkCall(void* code, Call call, FunctionPtr function)
+    {
+        SH4Assembler::linkCall(code, call.m_label, function.value());
+    }
+
+    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
+    {
+        SH4Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
+    {
+        SH4Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
 };
 
 } // namespace JSC
