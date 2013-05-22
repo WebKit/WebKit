@@ -149,6 +149,15 @@ webkit.org/b/108643 printing/quirks-percentage-height-body.html [ Skip ]
 webkit.org/b/108643 printing/quirks-percentage-height.html [ Skip ]
 webkit.org/b/108643 printing/standards-percentage-heights.html [ Skip ]
 
+# [Qt][WK2] Newly enabled printing tests are failing after r150046
+webkit.org/b/116617 printing/compositing-layer-printing.html
+webkit.org/b/116617 printing/iframe-print.html
+webkit.org/b/116617 printing/media-queries-print.html
+webkit.org/b/116617 printing/page-rule-in-media-query.html
+webkit.org/b/116617 printing/setPrinting.html
+webkit.org/b/116617 printing/simultaneous-position-float-change.html
+webkit.org/b/116617 printing/width-overflow.html
+
 # [Qt][Wk2] REGRESSION(r141039): It made compositing/layer-creation/fixed-position-no-content.html fails on Qt.
 webkit.org/b/108646 compositing/layer-creation/fixed-position-no-content.html [ Skip ]
 
