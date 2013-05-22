@@ -1,3 +1,15 @@
+2013-05-21  Mark Salisbury  <mark.salisbury@hp.com>
+
+        [Windows, curl] WebDownloadCurl.cpp should not include SystemTime.h
+        https://bugs.webkit.org/show_bug.cgi?id=116584
+
+        Reviewed by Brent Fulgham.
+
+        SystemTime header and implementation are no longer used and were removed
+        recently - http://trac.webkit.org/changeset/150216.
+
+        * WebDownloadCurl.cpp:
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove ChromeClient::webView()
