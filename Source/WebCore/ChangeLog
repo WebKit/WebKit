@@ -1,3 +1,20 @@
+2013-05-22  Lori Anderson  <lori@rkymtnhi.com>
+
+        [GStreamer] Allow multiple log levels in media player
+        https://bugs.webkit.org/show_bug.cgi?id=116618
+
+        Reviewed by Philippe Normand.
+
+        No new tests, just changing logging.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2013-05-22  Beth Dakin  <bdakin@apple.com>
 
         The LayoutMilestones didLayout callback sometimes fires with a milestone value of 0

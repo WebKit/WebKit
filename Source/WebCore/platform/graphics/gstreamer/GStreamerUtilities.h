@@ -20,6 +20,14 @@
     GST_DEBUG(__VA_ARGS__); \
     LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
 
+#define ERROR_MEDIA_MESSAGE(...) do { \
+    GST_ERROR(__VA_ARGS__); \
+    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
+
+#define INFO_MEDIA_MESSAGE(...) do { \
+    GST_INFO(__VA_ARGS__); \
+    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
+
 namespace WebCore {
 bool initializeGStreamer();
 }

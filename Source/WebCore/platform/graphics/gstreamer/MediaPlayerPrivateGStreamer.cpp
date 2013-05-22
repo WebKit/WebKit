@@ -298,7 +298,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
     m_url = KURL(KURL(), cleanUrl);
     g_object_set(m_playBin.get(), "uri", cleanUrl.utf8().data(), NULL);
 
-    LOG_MEDIA_MESSAGE("Load %s", cleanUrl.utf8().data());
+    INFO_MEDIA_MESSAGE("Load %s", cleanUrl.utf8().data());
 
     if (m_preload == MediaPlayer::None) {
         LOG_MEDIA_MESSAGE("Delaying load.");
@@ -417,7 +417,7 @@ void MediaPlayerPrivateGStreamer::pause()
         return;
 
     if (changePipelineState(GST_STATE_PAUSED))
-        LOG_MEDIA_MESSAGE("Pause");
+        INFO_MEDIA_MESSAGE("Pause");
 }
 
 float MediaPlayerPrivateGStreamer::duration() const
@@ -485,7 +485,7 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     if (m_errorOccured)
         return;
 
-    LOG_MEDIA_MESSAGE("[Seek] seek attempt to %f secs", time);
+    INFO_MEDIA_MESSAGE("[Seek] seek attempt to %f secs", time);
 
     // Avoid useless seeking.
     if (time == currentTime())
@@ -495,7 +495,7 @@ void MediaPlayerPrivateGStreamer::seek(float time)
         return;
 
     GstClockTime clockTime = toGstClockTime(time);
-    LOG_MEDIA_MESSAGE("[Seek] seeking to %" GST_TIME_FORMAT " (%f)", GST_TIME_ARGS(clockTime), time);
+    INFO_MEDIA_MESSAGE("[Seek] seeking to %" GST_TIME_FORMAT " (%f)", GST_TIME_ARGS(clockTime), time);
 
     if (m_seeking) {
         if (m_seekIsPending) {
@@ -619,7 +619,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
     gint64 start, end;
     bool mute = false;
 
-    LOG_MEDIA_MESSAGE("Set Rate to %f", rate);
+    INFO_MEDIA_MESSAGE("Set Rate to %f", rate);
     if (rate > 0) {
         // Mute the sound if the playback rate is too extreme and
         // audio pitch is not adjusted.
@@ -638,12 +638,12 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
             end = currentPosition;
     }
 
-    LOG_MEDIA_MESSAGE("Need to mute audio: %d", (int) mute);
+    INFO_MEDIA_MESSAGE("Need to mute audio?: %d", (int) mute);
 
     if (!gst_element_seek(m_playBin.get(), rate, GST_FORMAT_TIME, flags,
                           GST_SEEK_TYPE_SET, start,
                           GST_SEEK_TYPE_SET, end))
-        LOG_MEDIA_MESSAGE("Set rate to %f failed", rate);
+        ERROR_MEDIA_MESSAGE("Set rate to %f failed", rate);
     else
         g_object_set(m_playBin.get(), "mute", mute, NULL);
 }
@@ -727,7 +727,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         if (m_missingPlugins)
             break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
-        LOG_MEDIA_MESSAGE("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
+        ERROR_MEDIA_MESSAGE("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_playBin.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video.error");
 
@@ -743,7 +743,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             // this case the HTMLMediaElement will emit a stalled
             // event.
             if (err->code == GST_STREAM_ERROR_TYPE_NOT_FOUND) {
-                LOG_MEDIA_MESSAGE("Decode error, let the Media element emit a stalled event.");
+                ERROR_MEDIA_MESSAGE("Decode error, let the Media element emit a stalled event.");
                 break;
             }
             error = MediaPlayer::DecodeError;
@@ -793,7 +793,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_element_get_state(m_playBin.get(), &currentState, NULL, 250);
         if (requestedState < currentState) {
             GOwnPtr<gchar> elementName(gst_element_get_name(GST_ELEMENT(message)));
-            LOG_MEDIA_MESSAGE("Element %s requested state change to %s", elementName.get(),
+            INFO_MEDIA_MESSAGE("Element %s requested state change to %s", elementName.get(),
                 gst_element_state_get_name(requestedState));
             m_requestedState = requestedState;
             changePipelineState(requestedState);
@@ -961,7 +961,7 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 #else
     if (gst_element_query_duration(m_source.get(), &fmt, &length)) {
 #endif
-        LOG_MEDIA_MESSAGE("totalBytes %" G_GINT64_FORMAT, length);
+        INFO_MEDIA_MESSAGE("totalBytes %" G_GINT64_FORMAT, length);
         m_totalBytes = static_cast<unsigned>(length);
         m_isStreaming = !length;
         return m_totalBytes;
@@ -1011,7 +1011,7 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 
     gst_iterator_free(iter);
 
-    LOG_MEDIA_MESSAGE("totalBytes %" G_GINT64_FORMAT, length);
+    INFO_MEDIA_MESSAGE("totalBytes %" G_GINT64_FORMAT, length);
     m_totalBytes = static_cast<unsigned>(length);
     m_isStreaming = !length;
     return m_totalBytes;
@@ -1313,7 +1313,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
-            LOG_MEDIA_MESSAGE("New media url: %s", newUrl.string().utf8().data());
+            INFO_MEDIA_MESSAGE("New media url: %s", newUrl.string().utf8().data());
 
             // Reset player states.
             m_networkState = MediaPlayer::Loading;
@@ -1335,7 +1335,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
                 return true;
             }
         } else
-            LOG_MEDIA_MESSAGE("Not allowed to load new media location: %s", newUrl.string().utf8().data());
+            INFO_MEDIA_MESSAGE("Not allowed to load new media location: %s", newUrl.string().utf8().data());
     }
     m_mediaLocationCurrentIndex--;
     return false;
