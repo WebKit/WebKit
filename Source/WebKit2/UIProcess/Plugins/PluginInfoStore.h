@@ -71,7 +71,7 @@ public:
     // Returns the info for the plug-in with the given path.
     PluginModuleInfo infoForPluginWithPath(const String& pluginPath) const;
 
-    static PluginModuleLoadPolicy policyForPlugin(const PluginModuleInfo&);
+    static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
     static bool reactivateInactivePlugin(const PluginModuleInfo&);
 
     void setClient(PluginInfoStoreClient* client) { m_client = client; }

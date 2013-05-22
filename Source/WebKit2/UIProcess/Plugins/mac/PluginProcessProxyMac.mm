@@ -134,11 +134,15 @@ static bool shouldUseXPC()
 }
 #endif
 
-void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
+void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
-    launchOptions.architecture = pluginInfo.pluginArchitecture;
-    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
-    launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
+    launchOptions.architecture = pluginProcessAttributes.moduleInfo.pluginArchitecture;
+    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginProcessAttributes.moduleInfo);
+    launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
+
+    // FIXME: Don't allow this if the UI process is sandboxed.
+    if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed)
+        launchOptions.extraInitializationData.add("disable-sandbox", "1");
 
 #if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
@@ -148,7 +152,7 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {
     // For now only Flash is known to behave with asynchronous plug-in initialization.
-    parameters.supportsAsynchronousPluginInitialization = m_pluginInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
+    parameters.supportsAsynchronousPluginInitialization = m_pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
@@ -331,12 +335,12 @@ void PluginProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEna
 
 void PluginProcessProxy::openPluginPreferencePane()
 {
-    if (!m_pluginInfo.preferencePanePath)
+    if (!m_pluginProcessAttributes.moduleInfo.preferencePanePath)
         return;
 
-    NSURL *preferenceURL = [NSURL fileURLWithPath:m_pluginInfo.preferencePanePath];
+    NSURL *preferenceURL = [NSURL fileURLWithPath:m_pluginProcessAttributes.moduleInfo.preferencePanePath];
     if (!preferenceURL) {
-        LOG_ERROR("Creating URL for preference pane path \"%@\" failed.", (NSString *)m_pluginInfo.preferencePanePath);
+        LOG_ERROR("Creating URL for preference pane path \"%@\" failed.", (NSString *)m_pluginProcessAttributes.moduleInfo.preferencePanePath);
         return;
     }
 
@@ -351,7 +355,7 @@ void PluginProcessProxy::openPluginPreferencePane()
 
     OSStatus error = LSOpenFromURLSpec(&prefSpec, 0);
     if (error != noErr)
-        LOG_ERROR("LSOpenFromURLSpec to open \"%@\" failed with error %d.", (NSString *)m_pluginInfo.preferencePanePath, error);
+        LOG_ERROR("LSOpenFromURLSpec to open \"%@\" failed with error %d.", (NSString *)m_pluginProcessAttributes.moduleInfo.preferencePanePath, error);
 }
 
 } // namespace WebKit

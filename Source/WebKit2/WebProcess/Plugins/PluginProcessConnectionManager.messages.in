@@ -23,7 +23,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProcessConnectionManager {
-    PluginProcessCrashed(WTF::String pluginPath, uint32_t processType)
+    PluginProcessCrashed(uint64_t pluginProcessToken)
 }
 
 #endif

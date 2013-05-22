@@ -87,6 +87,10 @@ public:
             return false;
         extraInitializationData.add("plugin-path", pluginPath);
 
+        String disableSandbox = m_commandLine["disable-sandbox"];
+        if (!disableSandbox.isEmpty())
+            extraInitializationData.add("disable-sandbox", disableSandbox);
+
         return true;
     }
 

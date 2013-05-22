@@ -44,6 +44,7 @@
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
 #include "PluginInformation.h"
+#include "PluginProcessManager.h"
 #include "PrintInfo.h"
 #include "SessionState.h"
 #include "TextChecker.h"
@@ -1398,7 +1399,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, const bool allowOnlyApplicationPlugins, String& pluginPath, String& newMimeType, uint32_t& pluginLoadPolicy)
+void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMimeType, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK_URL(urlString);
 
@@ -1407,10 +1408,12 @@ void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, c
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString), allowedPluginTypes);
-    if (!plugin.path)
+    if (!plugin.path) {
+        pluginProcessToken = 0;
         return;
+    }
 
-    pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
+    pluginLoadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
 
 #if PLATFORM(MAC)
     RefPtr<ImmutableDictionary> pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
@@ -1420,11 +1423,25 @@ void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, c
     UNUSED_PARAM(pageURLString);
 #endif
 
-    if (pluginLoadPolicy != PluginModuleLoadNormally)
-        return;
+    PluginProcessSandboxPolicy pluginProcessSandboxPolicy;
+    switch (pluginLoadPolicy) {
+    case PluginModuleLoadNormally:
+        pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
+        break;
+    case PluginModuleLoadUnsandboxed:
+        pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
+        break;
 
-    pluginPath = plugin.path;
+    case PluginModuleBlocked:
+    case PluginModuleInactive:
+        pluginProcessToken = 0;
+        return;
+    }
+
+    pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
+    pluginProcessToken = PluginProcessManager::shared().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy);
 }
+
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(GESTURE_EVENTS)

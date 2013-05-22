@@ -38,6 +38,9 @@ enum PluginModuleLoadPolicy {
     // The plug-in module should be loaded normally.
     PluginModuleLoadNormally,
 
+    // The plug-in module should be loaded normally. If the plug-in has a sandbox, it will be disabled.
+    PluginModuleLoadUnsandboxed,
+
     // The plug-in should be blocked from being instantiated.
     // Note that the plug-in will still be seen by e.g. navigator.plugins
     PluginModuleBlocked,
