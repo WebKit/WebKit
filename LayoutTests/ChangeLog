@@ -1,3 +1,25 @@
+2013-05-21  Mihai Tica  <mitica@adobe.com>
+
+        Updating element background blending to conform to the changes in the spec.
+        This implies that the background layers won't longer blend with the content
+        behind the element.
+        Removing the background color tests, as background color blending is no longer
+        a valid use case, also modified the current background image tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116212
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/effect-background-blend-mode-color-expected.txt: Removed.
+        * css3/compositing/effect-background-blend-mode-color.html: Removed.
+        * css3/compositing/effect-background-blend-mode-color2-expected.txt: Removed.
+        * css3/compositing/effect-background-blend-mode-color2.html: Removed.
+        * css3/compositing/effect-background-blend-mode-stacking-expected.png: Removed.
+        * css3/compositing/effect-background-blend-mode-stacking.html:
+        * platform/mac/css3/compositing/effect-background-blend-mode-color-expected.png: Removed.
+        * platform/mac/css3/compositing/effect-background-blend-mode-color2-expected.png: Removed.
+        * platform/mac/css3/compositing/effect-background-blend-mode-expected.png:
+        * platform/mac/css3/compositing/effect-background-blend-mode-stacking-expected.png:
+
 2013-05-21  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Cleanup TestExpectations to pass --lint-test-files

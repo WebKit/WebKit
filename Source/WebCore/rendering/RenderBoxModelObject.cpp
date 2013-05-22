@@ -812,15 +812,15 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
             RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
             if (border.isRenderable())
-                context->fillRoundedRect(border, bgColor, style()->colorSpace(), bgLayer->blendMode());
+                context->fillRoundedRect(border, bgColor, style()->colorSpace());
             else {
                 context->save();
                 clipRoundedInnerRect(context, rect, border);
-                context->fillRect(border.rect(), bgColor, style()->colorSpace(), context->compositeOperation(), bgLayer->blendMode());
+                context->fillRect(border.rect(), bgColor, style()->colorSpace());
                 context->restore();
             }
         } else
-            context->fillRect(pixelSnappedIntRect(rect), bgColor, style()->colorSpace(), context->compositeOperation(), bgLayer->blendMode());
+            context->fillRect(pixelSnappedIntRect(rect), bgColor, style()->colorSpace());
 
         return;
     }
@@ -965,10 +965,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 if (bgColor.alpha())
                     baseColor = baseColor.blend(bgColor);
 
-                context->fillRect(backgroundRect, baseColor, style()->colorSpace(), CompositeCopy, bgLayer->blendMode());
+                context->fillRect(backgroundRect, baseColor, style()->colorSpace(), CompositeCopy);
             } else if (bgColor.alpha()) {
                 CompositeOperator operation = shouldClearBackground ? CompositeCopy : context->compositeOperation();
-                context->fillRect(backgroundRect, bgColor, style()->colorSpace(), operation, bgLayer->blendMode());
+                context->fillRect(backgroundRect, bgColor, style()->colorSpace(), operation);
             } else if (shouldClearBackground)
                 context->clearRect(backgroundRect);
         }
