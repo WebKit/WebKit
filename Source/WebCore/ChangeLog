@@ -1,3 +1,46 @@
+2013-05-22  Antoine Quint  <graouts@apple.com>
+
+        [Mac] Captions menu isn't internationalized, doesn't use rtl layout for rtl languages
+        https://bugs.webkit.org/show_bug.cgi?id=116605
+
+        Reviewed by Eric Carlson.
+
+        Ensure that rtl languages are properly recognized by the captions menu such that text
+        layout and alignment is natural.
+
+        * css/mediaControls.css:
+        (::-webkit-media-controls):
+        Remove the forced "direction: ltr" property which was forcing all layout to be
+        left-to-right.
+
+        * css/mediaControlsQuickTime.css:
+        (video::-webkit-media-controls-closed-captions-track-list):
+        Remove the forced "text-align: left" property which was forcing all caption
+        titles to be left-aligned.
+
+        (video::-webkit-media-controls-closed-captions-track-list h3):
+        Use "-webkit-margin-start" instead of "padding-left" to position the heading
+        such that it adds the margin on the left for ltr languages and on the right
+        for rtl languages.
+
+        (video::-webkit-media-controls-closed-captions-track-list li):
+        Set "position: relative" such that the ::before pseudo-class can use "position: absolute"
+        to position itself relative to the caption title rather than the list element.
+
+        (video::-webkit-media-controls-closed-captions-track-list li.selected::before):
+        (video::-webkit-media-controls-closed-captions-track-list li.selected:hover::before):
+        Make the checkmarks a ::before pseudo-class rather than a background-image such that
+        we may control its positioning using the internationlization-friendly "-webkit-margin-start"
+        property.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsContainerElement::create):
+        Set the "dir" attribute to "auto" such that rtl languages are correctly handled. This
+        means that the first string displayed within the captions container, currently the
+        "Subtitles" <h3> element, defines the direction for the whole container. It is therefore
+        crucial that this string is properly localized in rtl languages as falling back to
+        english would mean the entire caption container is using ltr.
+
 2013-05-22  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         WebCore fails to compile with -Werror=maybe-uninitialized on GCC 4.8.0

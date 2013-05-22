@@ -265,7 +265,6 @@ video::-webkit-media-controls-closed-captions-container {
 
 video::-webkit-media-controls-closed-captions-track-list {
     display: block;
-    text-align: left;
     font-family: "Helvetica Bold", Helvetica;
     font-size: 10pt;
     -webkit-user-select: none;
@@ -275,7 +274,7 @@ video::-webkit-media-controls-closed-captions-track-list h3 {
     margin: 0;
     color: #757575;
     text-shadow: 0 1px 0 black;
-    padding-left: 23px;
+    -webkit-margin-start: 23px;
     padding-top: 4px;
     font-weight: bold;
     font-size: 10pt;
@@ -289,6 +288,7 @@ video::-webkit-media-controls-closed-captions-track-list ul {
 }
 
 video::-webkit-media-controls-closed-captions-track-list li {
+    position: relative;
     color: white;
     background-image: none;
     text-shadow: 0 1px 0 black;
@@ -311,16 +311,18 @@ video::-webkit-media-controls-closed-captions-track-list li:hover {
     border-bottom: 1px solid #0336e5;
 }
 
-video::-webkit-media-controls-closed-captions-track-list li.selected {
+video::-webkit-media-controls-closed-captions-track-list li.selected::before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0.25em;
+    width: 1.1em;
+    height: 1.1em;
+    -webkit-margin-start: -20px;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="#a3a3a3" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
     background-repeat: no-repeat;
-    background-position: 17px 0.25em;
-    background-size: 1.1em 1.1em;
 }
 
-video::-webkit-media-controls-closed-captions-track-list li.selected:hover {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>'), -webkit-gradient(linear, left top, left bottom, color-stop(0, #4f70f6), color-stop(1, #1a44f3));
-    background-repeat: no-repeat, repeat;
-    background-position: 17px 0.25em, top left;
-    background-size: 1.1em 1.1em, 100% 100%;
+video::-webkit-media-controls-closed-captions-track-list li.selected:hover::before {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
 }

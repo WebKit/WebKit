@@ -739,6 +739,7 @@ MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerE
 PassRefPtr<MediaControlClosedCaptionsContainerElement> MediaControlClosedCaptionsContainerElement::create(Document* document)
 {
     RefPtr<MediaControlClosedCaptionsContainerElement> element = adoptRef(new MediaControlClosedCaptionsContainerElement(document));
+    element->setAttribute(dirAttr, "auto");
     element->hide();
     return element.release();
 }
