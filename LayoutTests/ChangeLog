@@ -1,3 +1,20 @@
+2013-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Make Math.imul tests run quicker, and fix some other bugs.
+
+        Rubber stampted by Oliver Hunt.
+        
+        Also make tests not call print().
+
+        * fast/js/regress/script-tests/cell-argument.js:
+        * fast/js/regress/script-tests/imul-double-only.js:
+        (f):
+        * fast/js/regress/script-tests/imul-int-only.js:
+        (f):
+        * fast/js/regress/script-tests/imul-mixed.js:
+        (f):
+        * fast/js/regress/script-tests/object-closure-call.js:
+
 2013-05-23  Mihai Maerean  <mmaerean@adobe.com>
 
         assertion failed: !node || node->isElementNode() in WebCore::RenderBlock::clone

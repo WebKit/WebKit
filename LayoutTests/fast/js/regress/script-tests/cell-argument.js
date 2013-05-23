@@ -10,5 +10,6 @@ var result = 0;
 for (var i = 0; i < 1000; ++i)
     result += foo(o);
 
-print(result);
+if (result != 210000000)
+    throw "Error: bad result: " + result;
 

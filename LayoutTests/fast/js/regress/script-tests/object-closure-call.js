@@ -12,4 +12,5 @@ for (var i = 0; i < 10000; ++i) {
         result += o.foo();
 }
 
-print(result);
+if (result != 4999500000)
+    throw "Error: bad result: " + result;
