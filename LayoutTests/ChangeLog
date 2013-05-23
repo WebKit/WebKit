@@ -1,5 +1,11 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add back two Lion test expectations after r150558 and r150559.
+
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make the test expectation for the bug 116649 specific to WK2
         as the test is passing on WK1.
 
