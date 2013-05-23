@@ -619,7 +619,7 @@ webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 http/tests/security/video-cross-origin-readback.html
 
 # media/audio-repaint.html sometimes fails on Lion Debug (Tests)
-webkit.org/b/84357 [ Debug ] media/audio-repaint.html [ Pass Failure ]
+webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
@@ -1337,3 +1337,5 @@ webkit.org/b/116477 [ MountainLion ] svg/batik/text/textDecoration.svg [ Pass Fa
 webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
 
 webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
+
+webkit.org/b/116649 http/tests/security/cross-frame-access-put.html [ Failure ]

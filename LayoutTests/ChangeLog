@@ -1,3 +1,13 @@
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mark media/audio-repaint.html as always failing on Mac.
+
+        Also add back a failing test expectation to compositing/rtl/rtl-fixed-overflow-scrolled.html on Mac WK2.
+
+        Also add failing test expectation for the bug 116649.
+
+        * platform/mac/TestExpectations:
+
 2013-05-22  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Use uninitialized register in "JIT::emit_op_neq_null" and "emit_op_eq_null"

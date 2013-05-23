@@ -280,6 +280,8 @@ webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.h
 
 webkit.org/b/81604 media/video-loop.html [ Failure ]
 
+webkit.org/b/82554 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
