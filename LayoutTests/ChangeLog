@@ -1,3 +1,14 @@
+2013-05-23  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions][Mac] [WK2] Layout Test fast/regions/fixed-pos-elem-in-region.html is flaky on Debug builders
+        https://bugs.webkit.org/show_bug.cgi?id=114571
+
+        Tests seems to be passing now, removed from TestExpectations.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from FileReaderSync and WorkerLocation
