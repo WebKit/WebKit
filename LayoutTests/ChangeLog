@@ -1,5 +1,11 @@
 2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add back failing test expectations for the bugs 88672 and 89528 after r150558 and r150559 on Lion.
+
+        * platform/mac/TestExpectations:
+
+2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         fast/workers/storage/use-same-database-in-page-and-workers.html times out on the lion bots
         https://bugs.webkit.org/show_bug.cgi?id=81618
 

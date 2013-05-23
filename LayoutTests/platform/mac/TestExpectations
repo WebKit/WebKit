@@ -653,8 +653,11 @@ webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5
 # Times out without keyboard interaction
 webkit.org/b/87748 fast/forms/select/optgroup-clicking.html
 
+webkit.org/b/88672 [ Lion ] svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
+
 webkit.org/b/89680 [ Lion ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Failure ]
 
+webkit.org/b/89528 [ Lion ] svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
 webkit.org/b/89528 svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 
 # Implement textInputController.setComposition()
