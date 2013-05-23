@@ -1,3 +1,12 @@
+2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/workers/storage/use-same-database-in-page-and-workers.html times out on the lion bots
+        https://bugs.webkit.org/show_bug.cgi?id=81618
+
+        Add back the flaky test failure on Mac.
+
+        * platform/mac/TestExpectations:
+
 2013-05-18  Robert Hogan  <robert@webkit.org>
 
         The ellipsis in a text overflow should not avoid floats
