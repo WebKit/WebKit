@@ -1,3 +1,18 @@
+2013-05-23  Mihai Maerean  <mmaerean@adobe.com>
+
+        assertion failed: !node || node->isElementNode() in WebCore::RenderBlock::clone
+        https://bugs.webkit.org/show_bug.cgi?id=116614
+
+        Reviewed by David Hyatt.
+
+        Add a test for flow threads so they don't end up being cloned in region based multi columns with columns:1 where
+        the only child has column-span:all.
+
+        Test: fast/multicol/newmulticol/direct-child-column-span-all.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+
 2013-05-23  Anders Carlsson  <andersca@apple.com>
 
         Crash in convertMainResourceLoadToDownload when downloading file by option-return

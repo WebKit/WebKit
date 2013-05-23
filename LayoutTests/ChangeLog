@@ -1,3 +1,13 @@
+2013-05-23  Mihai Maerean  <mmaerean@adobe.com>
+
+        assertion failed: !node || node->isElementNode() in WebCore::RenderBlock::clone
+        https://bugs.webkit.org/show_bug.cgi?id=116614
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/direct-child-column-span-all-expected.txt: Added.
+        * fast/multicol/newmulticol/direct-child-column-span-all.html: Added.
+
 2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove a stale test expectation.

@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<style type="text/css">
+			#article1 { -webkit-columns: 1; }
+			#p1 { -webkit-column-span: all; }
+		</style>
+
+		<script type="text/javascript">
+		    if(window.testRunner)
+		    	window.testRunner.dumpAsText();
+		    if(window.internals)
+		    	internals.settings.setRegionBasedColumnsEnabled(true);
+		</script>
+	</head>
+	<body>
+		<div id="article1">
+		    <p id="p1">PASS</p>
+		</div>
+		test passes if it doesn't crash or assert.
+	</body>
+</html>

@@ -870,7 +870,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             // We are placing a column-span element inside a block.
             RenderBlock* newBox = createAnonymousColumnSpanBlock();
         
-            if (columnsBlockAncestor != this) {
+            if (columnsBlockAncestor != this && !isRenderFlowThread()) {
                 // We are nested inside a multi-column element and are being split by the span. We have to break up
                 // our block into continuations.
                 RenderBoxModelObject* oldContinuation = continuation();
