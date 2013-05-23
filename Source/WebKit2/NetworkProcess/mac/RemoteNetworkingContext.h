@@ -42,7 +42,7 @@ public:
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
-    static WebCore::NetworkStorageSession& privateBrowsingSession(); // Can only be called when the session exists.
+    static WebCore::NetworkStorageSession* privateBrowsingSession();
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const OVERRIDE;
 

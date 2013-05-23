@@ -78,17 +78,20 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
     if (m_privateBrowsingEnabled) {
-        ASSERT(privateBrowsingStorageSession());
-        return *privateBrowsingStorageSession();
+        NetworkStorageSession* privateSession = privateBrowsingStorageSession().get();
+        if (privateSession)
+            return *privateSession;
+        // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
+        // FIXME: Find a way to track private browsing sessions more rigorously.
+        LOG_ERROR("Private browsing was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
     }
 
     return NetworkStorageSession::defaultStorageSession();
 }
 
-NetworkStorageSession& RemoteNetworkingContext::privateBrowsingSession()
+NetworkStorageSession* RemoteNetworkingContext::privateBrowsingSession()
 {
-    ASSERT(privateBrowsingStorageSession());
-    return *privateBrowsingStorageSession();
+    return privateBrowsingStorageSession().get();
 }
 
 RetainPtr<CFDataRef> RemoteNetworkingContext::sourceApplicationAuditData() const
