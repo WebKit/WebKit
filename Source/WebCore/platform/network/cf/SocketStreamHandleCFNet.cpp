@@ -66,7 +66,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
     ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
 
     KURL httpsURL(KURL(), "https://" + m_url.host());
-    m_httpsURL = adoptCF(httpsURL.createCFURL());
+    m_httpsURL = httpsURL.createCFURL();
 
     createStreams();
     ASSERT(!m_readStream == !m_writeStream);

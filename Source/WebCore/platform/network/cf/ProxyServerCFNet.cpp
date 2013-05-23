@@ -125,7 +125,7 @@ static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL&
     if (!proxySettings)
         return;
 
-    RetainPtr<CFURLRef> cfURL = adoptCF(url.createCFURL());
+    RetainPtr<CFURLRef> cfURL = url.createCFURL();
     RetainPtr<CFArrayRef> proxiesForURL = adoptCF(CFNetworkCopyProxiesForURL(cfURL.get(), proxySettings.get()));
     if (!proxiesForURL)
         return;

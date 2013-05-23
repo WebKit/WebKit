@@ -50,7 +50,7 @@ static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(CFS
 CFURLResponseRef ResourceResponse::cfURLResponse() const
 {
     if (!m_cfResponse && !m_isNull) {
-        RetainPtr<CFURLRef> url = adoptCF(m_url.createCFURL());
+        RetainPtr<CFURLRef> url = m_url.createCFURL();
 
         // FIXME: This creates a very incomplete CFURLResponse, which does not even have a status code.
 

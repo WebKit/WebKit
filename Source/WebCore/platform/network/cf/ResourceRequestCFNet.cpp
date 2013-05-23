@@ -130,8 +130,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 {
     CFMutableURLRequestRef cfRequest;
 
-    RetainPtr<CFURLRef> url = adoptCF(ResourceRequest::url().createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookies = adoptCF(ResourceRequest::firstPartyForCookies().createCFURL());
+    RetainPtr<CFURLRef> url = ResourceRequest::url().createCFURL();
+    RetainPtr<CFURLRef> firstPartyForCookies = ResourceRequest::firstPartyForCookies().createCFURL();
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
@@ -190,8 +190,8 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 {
     CFMutableURLRequestRef cfRequest;
 
-    RetainPtr<CFURLRef> url = adoptCF(ResourceRequest::url().createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookies = adoptCF(ResourceRequest::firstPartyForCookies().createCFURL());
+    RetainPtr<CFURLRef> url = ResourceRequest::url().createCFURL();
+    RetainPtr<CFURLRef> firstPartyForCookies = ResourceRequest::firstPartyForCookies().createCFURL();
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());

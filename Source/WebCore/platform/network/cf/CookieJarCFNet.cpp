@@ -99,8 +99,8 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
     if (value.isEmpty())
         return;
 
-    RetainPtr<CFURLRef> urlCF = adoptCF(url.createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookiesCF = adoptCF(firstParty.createCFURL());
+    RetainPtr<CFURLRef> urlCF = url.createCFURL();
+    RetainPtr<CFURLRef> firstPartyForCookiesCF = firstParty.createCFURL();
 
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
@@ -119,7 +119,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
 
 String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KURL& url)
 {
-    RetainPtr<CFURLRef> urlCF = adoptCF(url.createCFURL());
+    RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
     bool secure = url.protocolIs("https");
     RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), urlCF.get(), secure));
@@ -129,7 +129,7 @@ String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KU
 
 String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url)
 {
-    RetainPtr<CFURLRef> urlCF = adoptCF(url.createCFURL());
+    RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
     bool secure = url.protocolIs("https");
     RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), urlCF.get(), secure));
@@ -147,7 +147,7 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
 {
     rawCookies.clear();
 
-    RetainPtr<CFURLRef> urlCF = adoptCF(url.createCFURL());
+    RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
     bool sendSecureCookies = url.protocolIs("https");
     RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), urlCF.get(), sendSecureCookies));
@@ -178,7 +178,7 @@ void deleteCookie(const NetworkStorageSession& session, const KURL& url, const S
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
 
-    RetainPtr<CFURLRef> urlCF = adoptCF(url.createCFURL());
+    RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
     bool sendSecureCookies = url.protocolIs("https");
     RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookiesForURL(cookieStorage.get(), urlCF.get(), sendSecureCookies));

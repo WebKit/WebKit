@@ -34,7 +34,7 @@ using namespace WTF;
 namespace WebCore {
 
 typedef Vector<char, 512> CharBuffer;
-extern CFURLRef createCFURLFromBuffer(const CharBuffer& buffer);
+extern RetainPtr<CFURLRef> createCFURLFromBuffer(const CharBuffer& buffer);
 
 KURL::KURL(NSURL *url)
 {
@@ -53,18 +53,20 @@ KURL::KURL(NSURL *url)
 
 KURL::operator NSURL *() const
 {
-    return HardAutorelease(createCFURL());
+    return HardAutorelease(createCFURL().leakRef());
 }
 
 // We use the toll-free bridge between NSURL and CFURL to
 // create a CFURLRef supporting both empty and null values.
-CFURLRef KURL::createCFURL() const
+RetainPtr<CFURLRef> KURL::createCFURL() const
 {
     if (isNull())
         return 0;
 
-    if (isEmpty())
-        return reinterpret_cast<CFURLRef>([[NSURL alloc] initWithString:@""]);
+    if (isEmpty()) {
+        RetainPtr<NSURL> emptyNSURL = adoptNS([[NSURL alloc] initWithString:@""]);
+        return reinterpret_cast<CFURLRef>(emptyNSURL.get());
+    }
 
     CharBuffer buffer;
     copyToBuffer(buffer);

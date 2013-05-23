@@ -982,7 +982,7 @@ void AVFWrapper::createAssetForURL(const String& url)
 {
     ASSERT(!avAsset());
 
-    RetainPtr<CFURLRef> urlRef = adoptCF(KURL(ParsedURLString, url).createCFURL());
+    RetainPtr<CFURLRef> urlRef = KURL(ParsedURLString, url).createCFURL();
 
     AVCFURLAssetRef assetRef = AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), 0, m_notificationQueue);
     m_avAsset = adoptCF(assetRef);

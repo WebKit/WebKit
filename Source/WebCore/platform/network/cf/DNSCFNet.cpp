@@ -55,11 +55,11 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
     if (!proxySettings)
         return false;
 
-    static CFURLRef httpCFURL = KURL(ParsedURLString, "http://example.com/").createCFURL();
-    static CFURLRef httpsCFURL = KURL(ParsedURLString, "https://example.com/").createCFURL();
+    RetainPtr<CFURLRef> httpCFURL = KURL(ParsedURLString, "http://example.com/").createCFURL();
+    RetainPtr<CFURLRef> httpsCFURL = KURL(ParsedURLString, "https://example.com/").createCFURL();
 
-    RetainPtr<CFArrayRef> httpProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpCFURL, proxySettings.get()));
-    RetainPtr<CFArrayRef> httpsProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpsCFURL, proxySettings.get()));
+    RetainPtr<CFArrayRef> httpProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpCFURL.get(), proxySettings.get()));
+    RetainPtr<CFArrayRef> httpsProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpsCFURL.get(), proxySettings.get()));
 
     CFIndex httpProxyCount = CFArrayGetCount(httpProxyArray.get());
     CFIndex httpsProxyCount = CFArrayGetCount(httpsProxyArray.get());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -167,7 +168,7 @@ public:
 
 #if USE(CF)
     KURL(CFURLRef);
-    CFURLRef createCFURL() const;
+    RetainPtr<CFURLRef> createCFURL() const;
 #endif
 
 #if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
