@@ -1,3 +1,18 @@
+2013-05-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Back, Forward and Stop should be hidden in context menu
+        https://bugs.webkit.org/show_bug.cgi?id=116615
+
+        Reviewed by Christophe Dumez.
+
+        Context menu items: Back, Forward, Stop, Reload, should be shown only when
+        they are able to perform action.
+
+        No new tests - no new functionality.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
 2013-05-22  Dean Jackson  <dino@apple.com>
 
         Rolling out r150555. It borked about 30 media tests.
