@@ -896,6 +896,8 @@ void DocumentLoader::detachFromFrame()
     // It never makes sense to have a document loader that is detached from its
     // frame have any loads active, so go ahead and kill all the loads.
     stopLoading();
+    if (m_mainResource && m_mainResource->hasClient(this))
+        m_mainResource->removeClient(this);
 
     m_applicationCacheHost->setDOMApplicationCache(0);
     InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);
@@ -1413,10 +1415,10 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 
 void DocumentLoader::clearMainResource()
 {
-    if (m_mainResource) {
+    if (m_mainResource && m_mainResource->hasClient(this))
         m_mainResource->removeClient(this);
-        m_mainResource = 0;
-    }
+
+    m_mainResource = 0;
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)

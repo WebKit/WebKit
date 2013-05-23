@@ -1,3 +1,24 @@
+2013-05-23  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We need to clear main resource when detaching DocumentLoader from the frame.
+        https://bugs.webkit.org/show_bug.cgi?id=116680
+
+        Normally, when we detach the documentLoader in DocumentLoader::detachFromFrame, main resource is also cleared
+        in stopLoading().  There is possibility that main resource not being cleared, and this could cause crash later
+        since docLoader could still receive resource callbacks.  To avoid that, we can remove docLoader from main resource's
+        client set in detachFromFrame.
+
+        Reviewed by Brady Eidson.
+
+        No new tests, this doesn't happen on OS X.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::clearMainResource):
+        * loader/cache/CachedResource.h: make hasClient accessible publicly.
+        (WebCore::CachedResource::hasClient):
+        (CachedResource):
+
 2013-05-23  Mihai Maerean  <mmaerean@adobe.com>
 
         assertion failed: !node || node->isElementNode() in WebCore::RenderBlock::clone

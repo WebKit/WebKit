@@ -122,6 +122,7 @@ public:
     void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty() || !m_clientsAwaitingCallback.isEmpty(); }
+    bool hasClient(CachedResourceClient* client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
     bool deleteIfPossible();
 
     enum PreloadResult {
@@ -275,8 +276,6 @@ protected:
         Timer<CachedResourceCallback> m_callbackTimer;
     };
     HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback> > m_clientsAwaitingCallback;
-
-    bool hasClient(CachedResourceClient* client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
 
     ResourceRequest m_resourceRequest;
     String m_accept;
