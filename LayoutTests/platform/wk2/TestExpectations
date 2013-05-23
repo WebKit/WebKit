@@ -270,10 +270,6 @@ plugins/npruntime/embed-property-iframe-equality.html
 
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
-# [WebKit2] WKTR's output for dumpResourceLoadCallbacks is inconsistent with DRT
-# https://bugs.webkit.org/show_bug.cgi?id=114074
-webkit.org/b/114074 fast/loader/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
