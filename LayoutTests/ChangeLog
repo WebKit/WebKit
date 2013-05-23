@@ -1,5 +1,14 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Updated the bug associated with the failure of media/context-menu-actions.html
+        from the bug 45021 to the bug 116651 since the former is the bug for which this test was added.
+
+        Also skip this test it has been timing out intermittently.
+
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update Mac test expectation for the bug 82980.
         The test is consistently timing out instead of being flaky now.
 

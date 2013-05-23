@@ -284,7 +284,7 @@ webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 fast/viewport
 
 # needs enhanced eventSender.contextMenu() return value
-webkit.org/b/45021 media/context-menu-actions.html [ Failure ]
+webkit.org/b/116651 media/context-menu-actions.html
 
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
