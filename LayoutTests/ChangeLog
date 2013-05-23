@@ -1,3 +1,15 @@
+2013-05-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        media/W3C/video/networkState/networkState_during_progress.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=76280
+
+        Unreviewed gardening.
+
+        Change expectation to the correct output and mark as flaky.
+
+        * TestExpectations:
+        * media/W3C/video/networkState/networkState_during_progress-expected.txt:
+
 2013-05-23  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
