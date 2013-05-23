@@ -29,7 +29,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=BLOB,
     Constructor,
     JSNoStaticTables

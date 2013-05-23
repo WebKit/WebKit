@@ -1,5 +1,22 @@
 2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Remove [NoInterfaceObject] from FileReaderSync and WorkerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=116660
+
+        Reviewed by Kentaro Hara.
+
+        Remove [NoInterfaceObject] from FileReaderSync and WorkerLocation to match their
+        respective specifications:
+        - http://dev.w3.org/2006/webapi/FileAPI/#FileReaderSync
+        - http://dev.w3.org/html5/workers/#workerlocation
+
+        No new tests, covered by existing tests.
+
+        * fileapi/FileReaderSync.idl:
+        * workers/WorkerLocation.idl:
+
+2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Remove special case for MessagePortArray from bindings generator
         https://bugs.webkit.org/show_bug.cgi?id=116653
 

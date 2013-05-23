@@ -348,6 +348,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'FileReader').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'FileReader').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FileReader').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'FileReader').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'FileReaderSync').value is FileReaderSync
+PASS Object.getOwnPropertyDescriptor(global, 'FileReaderSync').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileReaderSync').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileReaderSync').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileReaderSync').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Float32Array').value is Float32Array
 PASS Object.getOwnPropertyDescriptor(global, 'Float32Array').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Float32Array').hasOwnProperty('set') is false
@@ -1938,6 +1943,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Worker').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WorkerLocation').value is WorkerLocation
+PASS Object.getOwnPropertyDescriptor(global, 'WorkerLocation').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WorkerLocation').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WorkerLocation').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WorkerLocation').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').value is XMLDocument
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').hasOwnProperty('set') is false

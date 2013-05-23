@@ -1,3 +1,23 @@
+2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from FileReaderSync and WorkerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=116660
+
+        Reviewed by Kentaro Hara.
+
+        Rebaseline a couple of test cases now that FileReaderSync and WorkerLocation
+        attributes are exposed on the global Window object.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/constructor-length-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-23  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
