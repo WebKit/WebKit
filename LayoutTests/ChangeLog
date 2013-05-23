@@ -1,3 +1,12 @@
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Even more Mac test expectation updates.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * plugins/mouse-events-expected.txt:
+
 2013-05-22  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] valueForCustomFilterTransformParameter should check that renderer is a RenderBox

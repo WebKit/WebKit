@@ -676,12 +676,6 @@ fast/forms/input-search-press-escape-key.html
 editing/input/reveal-edit-on-input-vertically.html
 editing/input/reveal-contenteditable-on-input-vertically.html
 
-# Media tests that time out unexpectedly
-# https://bugs.webkit.org/show_bug.cgi?id=81604
-media/video-colorspace-yuv420.html
-media/video-colorspace-yuv422.html
-media/video-loop.html
-
 # Times out unexpectedly.
 # https://bugs.webkit.org/show_bug.cgi?id=81609
 fast/loader/window-properties-restored-from-page-cache.html

@@ -518,198 +518,136 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
 
 # Fails because MutationObservers are not notified at end-of-task
-# https://bugs.webkit.org/show_bug.cgi?id=78290
-fast/dom/MutationObserver/end-of-task-delivery.html
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=72010
 # Needs PageClients::vibrationClient() implementation.
-fast/dom/navigator-vibration.html
+webkit.org/b/72010 fast/dom/navigator-vibration.html
 
 # Touch adjustment not enabled
-# https://bugs.webkit.org/show_bug.cgi?id=78801
-touchadjustment
+webkit.org/b/78801 touchadjustment
 
 # canvas/philip/tests/2d.line.cap.round.html fails on Mac Lion WK1
-# https://bugs.webkit.org/show_bug.cgi?id=81289
 # <rdar://problem/11059777>
-canvas/philip/tests/2d.line.cap.round.html
-canvas/philip/tests/2d.shadow.canvas.transparent.2.html
-canvas/philip/tests/2d.shadow.image.transparent.2.html
+webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
+webkit.org/b/81289 canvas/philip/tests/2d.shadow.canvas.transparent.2.html [ Failure ]
+webkit.org/b/81289 canvas/philip/tests/2d.shadow.image.transparent.2.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=62698
 # Needs BatteryClient implementation.
-batterystatus/
+webkit.org/b/62698 batterystatus/
 
-#Network Information is not supported yet. http://webkit.org/b/73528
-networkinformation
+#Network Information is not supported yet.
+webkit.org/b/73528 networkinformation
 
 # Proximity Events is not supported.
 proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=81410
-scrollbars/scrollbar-middleclick-nopaste.html
+webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=81599
 # These canvas tests are flaky (fail on bots, not locally, or vice versa)
-fast/canvas/canvas-createPattern-fillRect-shadow.html
-fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
-fast/canvas/canvas-fillRect-gradient-shadow.html
-fast/canvas/set-colors.html
-canvas/philip/tests/2d.path.arc.scale.1.html
-
-# Media tests that time out unexpectedly
-# https://bugs.webkit.org/show_bug.cgi?id=81604
-media/audio-garbage-collect.html
-
-# parser test that times out waiting for notifyDone
-# http://bugs.webkit.org/show_bug.cgi?id=81618
-fast/workers/storage/use-same-database-in-page-and-workers.html
-
-# Not possible to set UA string for media requests with all Mac media engines.
-http/tests/media/video-useragent.html
+webkit.org/b/81599 fast/canvas/canvas-createPattern-fillRect-shadow.html [ Pass Failure ]
+webkit.org/b/81599 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
+webkit.org/b/81599 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
+webkit.org/b/81599 fast/canvas/set-colors.html [ Pass Failure ]
+webkit.org/b/81599 canvas/philip/tests/2d.path.arc.scale.1.html [ Pass Failure ]
 
 # Has failed since its introduction in r105826. Skipped everywhere but chromium.
-fast/events/dropzone-005.html
+webkit.org/b/61630 fast/events/dropzone-005.html
 
-# Spelling tests that are flakey. https://bugs.webkit.org/show_bug.cgi?id=82555
-editing/spelling/spellcheck-async-mutation.html
+# Spelling tests that are flakey.
+webkit.org/b/82555 editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82665
-http/tests/webarchive/test-css-url-encoding-shift-jis.html
-http/tests/webarchive/test-css-url-encoding-utf-8.html
-http/tests/webarchive/test-css-url-encoding.html
-webarchive/test-css-url-resources-in-stylesheets.html
-webarchive/test-css-url-resources-inline-styles.html
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Failure ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Failure ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Failure ]
+webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
+webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82668
-plugins/mouse-events.html
-plugins/mouse-move-over-plugin-in-frame.html
+webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82671
-http/tests/inspector/console-cross-origin-iframe-logging.html
-http/tests/inspector/inspect-element.html
-http/tests/inspector/resource-har-conversion.html
+webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82672
-http/tests/xmlhttprequest/range-test.html
+webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82747
-fast/events/scroll-div-with-prevent-default-in-subframe.html
+webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82762
-fast/animation/request-animation-frame-during-modal.html
+webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82805
-fast/canvas/webgl/framebuffer-object-attachment.html
-fast/canvas/webgl/object-deletion-behaviour.html
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82817
-storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+# We don't implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
+# FIXME: Delete this test.
+webkit.org/b/82886 inspector/styles/override-screen-size.html
+webkit.org/b/82932 inspector/profiler/cpu-profiler-profiling.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82923
-# https://bugs.webkit.org/show_bug.cgi?id=82886
-inspector/styles/override-screen-size.html
+webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
+webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Pass Failure ]
+webkit.org/b/82972 plugins/mouse-events-fixedpos.html [ Pass Failure ]
+webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82932
-inspector/profiler/cpu-profiler-profiling.html
+webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82943
-inspector/debugger/copy-stack-trace.html
-inspector/debugger/callstack-placards-discarded.html
+webkit.org/b/82978 inspector/styles/svg-style.xhtml [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82972
-plugins/keyboard-events.html
-plugins/layout-in-beforeload-listener-affects-plugin-loading.html
-plugins/mouse-events-fixedpos.html
-plugins/multiple-plugins.html
+webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
+webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82976
-media/W3C/video/networkState/networkState_during_progress.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82978
-inspector/styles/svg-style.xhtml
-
-# https://bugs.webkit.org/show_bug.cgi?id=82979
-fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
-canvas/philip/tests/2d.text.draw.align.center.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82980
-http/tests/navigation/back-twice-without-commit.html
+webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass Failure ]
 
 webkit.org/b/112617 [ Debug ] http/tests/navigation/navigation-redirect-schedule-crash.html [ Crash Pass ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82981
-http/tests/misc/favicon-loads-with-icon-loading-override.html
+webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82982
-fast/dom/jsDevicePixelRatio.html
+webkit.org/b/82982 fast/dom/jsDevicePixelRatio.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=83618
-fast/dom/inline-event-attributes-release.html
+webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=84102
-fast/profiler/stop-profiling-after-setTimeout.html
-fast/profiler/dead-time.html
+webkit.org/b/84102 fast/profiler/stop-profiling-after-setTimeout.html [ Pass Failure ]
+webkit.org/b/84102 fast/profiler/dead-time.html [ Pass Failure ]
 
-# [Mac] inspector/debugger/linkifier.html is flakey
-# https://bugs.webkit.org/show_bug.cgi?id=85319
-inspector/debugger/linkifier.html
+webkit.org/b/85319 inspector/debugger/linkifier.html [ Pass Failure ]
 
 # Failing subpixel reference tests
-# https://bugs.webkit.org/show_bug.cgi?id=85532
-fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
-fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
+webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
+webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 
 # media/audio-repaint.html sometimes fails on Lion Debug (Tests)
-# https://bugs.webkit.org/show_bug.cgi?id=84357
-media/audio-repaint.html
+webkit.org/b/84357 [ Debug ] media/audio-repaint.html [ Pass Failure ]
 
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=85522
-http/tests/security/sandboxed-iframe-form-top.html
+webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=85523
-fullscreen/full-screen-iframe-legacy.html
+webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=85525
-media/video-played-reset.html
+webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=85969
-http/tests/loading/post-in-iframe-with-back-navigation.html
+webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html
 
-# Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
-inspector/extensions/extensions-eval-content-script.html
-inspector/extensions/extensions-audits-content-script.html
+# Inspector only supports evaluation in content script world with v8
+webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html
+webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=86480
-plugins/npruntime/delete-plugin-within-setProperty.html
-plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
-plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=87347
-fast/frames/flattening/iframe-tiny.html
+webkit.org/b/87347 fast/frames/flattening/iframe-tiny.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=87541
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
+webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
+webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
 
 # Times out without keyboard interaction
-# https://bugs.webkit.org/show_bug.cgi?id=87748
-fast/forms/select/optgroup-clicking.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=88672
-svg/filters/color-space-conversion.svg
+webkit.org/b/87748 fast/forms/select/optgroup-clicking.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=89528
 svg/filters/container-with-filters.svg
@@ -1405,7 +1343,6 @@ webkit.org/b/115292 editing/selection/vertical-rl-ltr-extend-line-forward-p.html
 webkit.org/b/115292 fast/text/international/hindi-spacing.html
 webkit.org/b/115292 fast/text/international/vertical-text-glyph-test.html
 webkit.org/b/115292 fast/text/orientation-sideways.html
-webkit.org/b/115292 fast/text/vertical-no-sideways.html
 webkit.org/b/115292 fast/writing-mode/Kusa-Makura-background-canvas.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-lr.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html

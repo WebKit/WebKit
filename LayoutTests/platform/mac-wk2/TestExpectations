@@ -278,6 +278,8 @@ webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-worl
 webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
 
+webkit.org/b/81604 media/video-loop.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
