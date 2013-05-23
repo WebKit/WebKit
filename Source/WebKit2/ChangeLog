@@ -1,3 +1,11 @@
+2013-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13849260> Sandbox violations reading .CFUserTextEncoding
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Allow this.
+
 2013-05-23  Gavin Barraclough  <barraclough@apple.com>
 
         Move posix_spawn onto a zero delay timer

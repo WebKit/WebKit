@@ -81,6 +81,7 @@
        (home-literal "/Library/Preferences/com.apple.coremedia.plist")
        (home-literal "/Library/Preferences/com.apple.speech.voice.prefs.plist")
        (home-regex #"/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
+       (home-literal "/.CFUserTextEncoding")
 
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
        (home-subpath "/Library/Fonts")
