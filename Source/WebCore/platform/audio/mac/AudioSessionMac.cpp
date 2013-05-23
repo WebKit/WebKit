@@ -157,7 +157,7 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     UNUSED_PARAM(result);
 #else
     if (result)
-        LOG(Media, "AudioSession::setPreferredBufferSize(%zu) - failed with error %d", bufferSize, result);
+        LOG(Media, "AudioSession::setPreferredBufferSize(%zu) - failed with error %d", bufferSize, static_cast<int>(result));
     else
         LOG(Media, "AudioSession::setPreferredBufferSize(%zu)", bufferSize);
 #endif

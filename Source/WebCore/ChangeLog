@@ -1,3 +1,10 @@
+2013-05-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; cast OSStatus to an int before passing it to printf.
+
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::setPreferredBufferSize):
+
 2013-05-22  Dean Jackson  <dino@apple.com>
 
         Don't snapshot plugins that can't be snapshotted
