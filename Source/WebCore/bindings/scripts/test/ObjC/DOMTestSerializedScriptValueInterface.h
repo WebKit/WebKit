@@ -28,14 +28,12 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
-@class DOMMessagePortArray;
 @class NSString;
 
 @interface DOMTestSerializedScriptValueInterface : DOMObject
 @property(retain) NSString *value;
 @property(readonly, retain) NSString *readonlyValue;
 @property(retain) NSString *cachedValue;
-@property(readonly, retain) DOMMessagePortArray *ports;
 @property(readonly, retain) NSString *cachedReadonlyValue;
 @end
 

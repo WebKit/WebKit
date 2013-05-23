@@ -179,7 +179,7 @@ JSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, JSValue slotB
     JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
-    JSValue result = impl->ports() ? jsArray(exec, castedThis->globalObject(), *impl->ports()) : constructEmptyArray(exec, 0, castedThis->globalObject());
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl->ports());
     return result;
 }
 

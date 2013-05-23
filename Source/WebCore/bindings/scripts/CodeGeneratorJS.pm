@@ -3585,6 +3585,7 @@ sub NativeToJSValue
             AddToImplIncludes("${arrayOrSequenceType}.h", $conditional);
         }
         AddToImplIncludes("<runtime/JSArray.h>", $conditional);
+
         return "jsArray(exec, $thisValue->globalObject(), $value)";
     }
 
@@ -3602,11 +3603,6 @@ sub NativeToJSValue
     } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "$value ? $value->deserialize(exec, castedThis->globalObject(), 0) : jsNull()";
-    } elsif ($type eq "MessagePortArray") {
-        AddToImplIncludes("MessagePort.h", $conditional);
-        AddToImplIncludes("JSMessagePort.h", $conditional);
-        AddToImplIncludes("<runtime/JSArray.h>", $conditional);
-        return "$value ? jsArray(exec, $globalObject, *$value) : constructEmptyArray(exec, 0, castedThis->globalObject())";
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);

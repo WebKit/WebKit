@@ -24,10 +24,8 @@
 
 #include "WebDOMTestSerializedScriptValueInterface.h"
 
-#include "MessagePortArray.h"
 #include "SerializedScriptValue.h"
 #include "TestSerializedScriptValueInterface.h"
-#include "WebDOMMessagePortArray.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -115,14 +113,6 @@ void WebDOMTestSerializedScriptValueInterface::setCachedValue(const WebDOMString
         return;
 
     impl()->setCachedValue(WebCore::SerializedScriptValue::create(WTF::String(newCachedValue)));
-}
-
-WebDOMMessagePortArray WebDOMTestSerializedScriptValueInterface::ports() const
-{
-    if (!impl())
-        return WebDOMMessagePortArray();
-
-    return toWebKit(WTF::getPtr(impl()->ports()));
 }
 
 WebDOMString WebDOMTestSerializedScriptValueInterface::cachedReadonlyValue() const

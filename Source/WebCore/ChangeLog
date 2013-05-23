@@ -1,3 +1,38 @@
+2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove special case for MessagePortArray from bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=116653
+
+        Reviewed by Kentaro Hara.
+
+        Use MessagePort[] instead of MessagePortArray type in the IDL as MessagePortArray
+        is not defined on IDL side. This allows us to remove the special case for
+        MessagePortArray from the bindings generator.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Remove special case for MessagePortArray.
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.h:
+        (WebDOMTestSerializedScriptValueInterface):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (webkit_dom_test_serialized_script_value_interface_get_property):
+        (webkit_dom_test_serialized_script_value_interface_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfacePorts):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.mm:
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl: Replace MessagePortArray
+        by MessagePort[].
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::ports): The method should return a Vector, not a Vector*
+        as the array on JavaScript side is not nullable.
+        * dom/MessageEvent.idl: Replace MessagePortArray by MessagePort[].
+
 2013-05-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Back, Forward and Stop should be hidden in context menu
