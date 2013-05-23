@@ -1,5 +1,12 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update Mac test expectation for the bug 82980.
+        The test is consistently timing out instead of being flaky now.
+
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add back two Lion test expectations after r150558 and r150559.
 
         * platform/mac/TestExpectations:
