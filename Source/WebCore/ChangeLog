@@ -1,5 +1,17 @@
 2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed, rolling out r150586.
+        http://trac.webkit.org/changeset/150586
+        https://bugs.webkit.org/show_bug.cgi?id=116660
+
+        Those constructors should be exposed on the WorkerContext, not
+        the DOMWindow
+
+        * fileapi/FileReaderSync.idl:
+        * workers/WorkerLocation.idl:
+
+2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Remove [NoInterfaceObject] from FileReaderSync and WorkerLocation
         https://bugs.webkit.org/show_bug.cgi?id=116660
 

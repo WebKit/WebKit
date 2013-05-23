@@ -1,3 +1,22 @@
+2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed, rolling out r150586.
+        http://trac.webkit.org/changeset/150586
+        https://bugs.webkit.org/show_bug.cgi?id=116660
+
+        Those constructors should be exposed on the WorkerContext, not
+        the DOMWindow
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/constructor-length-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-23  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions][Mac] [WK2] Layout Test fast/regions/fixed-pos-elem-in-region.html is flaky on Debug builders
