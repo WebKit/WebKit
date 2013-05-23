@@ -1,3 +1,14 @@
+2013-05-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Implement correct detection of stack size
+        https://bugs.webkit.org/show_bug.cgi?id=116661
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/StackBounds.cpp:
+        (WTF):
+        (WTF::StackBounds::initialize):
+
 2013-05-22  Dean Jackson  <dino@apple.com>
 
         Rolling out r150555. It borked about 30 media tests.
