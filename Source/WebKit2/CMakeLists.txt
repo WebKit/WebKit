@@ -631,7 +631,7 @@ include_directories(${WebKit2_INCLUDE_DIRECTORIES})
 add_library(WebKit2 ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
 
 add_dependencies(WebKit2 WebCore)
-add_dependencies(WebKit2 WEBKIT2_EXTRA_DEPENDENCIES)
+add_dependencies(WebKit2 ${WEBKIT2_EXTRA_DEPENDENCIES})
 target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
 set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
 set_target_properties(WebKit2 PROPERTIES LINK_INTERFACE_LIBRARIES "")
