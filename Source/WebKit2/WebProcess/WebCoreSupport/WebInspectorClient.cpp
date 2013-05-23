@@ -106,6 +106,14 @@ bool WebInspectorClient::sendMessageToFrontend(const String& message)
     return false;
 }
 
+bool WebInspectorClient::supportsFrameInstrumentation()
+{
+#if USE(COORDINATED_GRAPHICS)
+    return true;
+#endif
+    return false;
+}
+
 void WebInspectorClient::pageOverlayDestroyed(PageOverlay*)
 {
 }

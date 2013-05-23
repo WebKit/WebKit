@@ -63,6 +63,8 @@ private:
 
     virtual bool sendMessageToFrontend(const String&) OVERRIDE;
 
+    virtual bool supportsFrameInstrumentation();
+
     // PageOverlay::Client
     virtual void pageOverlayDestroyed(PageOverlay*) OVERRIDE;
     virtual void willMoveToWebPage(PageOverlay*, WebPage*) OVERRIDE;

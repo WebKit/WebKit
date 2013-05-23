@@ -41,6 +41,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsSurface.h>
+#include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
@@ -430,6 +431,10 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
 
 void CoordinatedLayerTreeHost::syncDisplayState()
 {
+#if ENABLE(INSPECTOR)
+    m_webPage->corePage()->inspectorController()->didBeginFrame();
+#endif
+
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
     m_lastAnimationServiceTime = WTF::monotonicallyIncreasingTime();
