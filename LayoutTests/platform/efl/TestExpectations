@@ -1024,7 +1024,7 @@ webkit.org/b/84338 editing/pasteboard/preserve-line-break-at-end-of-pasted-conte
 # EFL port needs Pasteboard implementation, needs baselines.
 webkit.org/b/84338 editing/execCommand/find-after-replace.html [ Failure Missing ]
 webkit.org/b/84338 editing/execCommand/paste-1.html [ Failure Missing ]
-webkit.org/b/84338 editing/execCommand/paste-2.html [ Failure Missing ]
+webkit.org/b/84338 editing/pasteboard/paste-2.html [ Failure Missing ]
 webkit.org/b/84338 editing/pasteboard/3976872.html [ Missing ]
 webkit.org/b/84338 editing/pasteboard/4076267-2.html [ Missing ]
 webkit.org/b/84338 editing/pasteboard/4076267-3.html [ Missing ]
@@ -1272,8 +1272,8 @@ webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
-webkit.org/b/84835 editing/execCommand/4128080-2.html [ Failure ]
-webkit.org/b/84835 editing/execCommand/copy-without-selection.html [ Failure ]
+webkit.org/b/84835 editing/pasteboard/copy-inside-h1-preserves-h1.html [ Failure ]
+webkit.org/b/84835 editing/pasteboard/copy-without-selection.html [ Failure ]
 webkit.org/b/84835 editing/execCommand/findString-diacriticals.html [ Failure ]
 
 # DRT doesn't check for isPrinting().
