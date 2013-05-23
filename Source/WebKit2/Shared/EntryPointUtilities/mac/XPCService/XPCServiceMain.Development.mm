@@ -33,6 +33,60 @@
 
 namespace WebKit {
 
+struct ReexecInfo {
+    bool executableHeap;
+    char** environment;
+    cpu_type_t cpuType;
+};
+
+static NO_RETURN void reexec(ReexecInfo *info)
+{
+    posix_spawnattr_t attr;
+    posix_spawnattr_init(&attr);
+
+    short flags = 0;
+
+    // We just want to set the process state, not actually launch a new process,
+    // so we are going to use the darwin extension to posix_spawn POSIX_SPAWN_SETEXEC
+    // to act like a more full featured exec.
+    flags |= POSIX_SPAWN_SETEXEC;
+
+    sigset_t signalMaskSet;
+    sigemptyset(&signalMaskSet);
+    posix_spawnattr_setsigmask(&attr, &signalMaskSet);
+    flags |= POSIX_SPAWN_SETSIGMASK;
+
+    static const int allowExecutableHeapFlag = 0x2000;
+    if (info->executableHeap)
+        flags |= allowExecutableHeapFlag;
+
+    posix_spawnattr_setflags(&attr, flags);
+
+    size_t outCount = 0;
+    posix_spawnattr_setbinpref_np(&attr, 1, &info->cpuType, &outCount);
+
+    char path[4 * PATH_MAX];
+    uint32_t pathLength = sizeof(path);
+    _NSGetExecutablePath(path, &pathLength);
+
+    char** argv = *_NSGetArgv();
+    const char* programName = argv[0];
+    const char* args[] = { programName, 0 };
+
+    pid_t processIdentifier = 0;
+    posix_spawn(&processIdentifier, path, 0, &attr, const_cast<char**>(args), info->environment);
+
+    posix_spawnattr_destroy(&attr);
+
+    NSLog(@"Unable to re-exec for path: %s", path);
+    exit(EXIT_FAILURE);
+}
+
+static NO_RETURN void reexecCallBack(CFRunLoopTimerRef timer, void *info)
+{
+    reexec(static_cast<ReexecInfo *>(info));
+}
+
 static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
@@ -47,54 +101,22 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "re-exec")) {
-                posix_spawnattr_t attr;
-                posix_spawnattr_init(&attr);
+                ReexecInfo *info = static_cast<ReexecInfo *>(malloc(sizeof(ReexecInfo)));
 
-                short flags = 0;
-
-                // We just want to set the process state, not actually launch a new process,
-                // so we are going to use the darwin extension to posix_spawn POSIX_SPAWN_SETEXEC
-                // to act like a more full featured exec.
-                flags |= POSIX_SPAWN_SETEXEC;
-
-                sigset_t signalMaskSet;
-                sigemptyset(&signalMaskSet);
-                posix_spawnattr_setsigmask(&attr, &signalMaskSet);
-                flags |= POSIX_SPAWN_SETSIGMASK;
-
-                static const int allowExecutableHeapFlag = 0x2000;
-                if (xpc_dictionary_get_bool(event, "executable-heap"))
-                    flags |= allowExecutableHeapFlag;
-
-                posix_spawnattr_setflags(&attr, flags);
-
-                cpu_type_t cpuTypes[] = { (cpu_type_t)xpc_dictionary_get_uint64(event, "architecture") };
-                size_t outCount = 0;
-                posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
-
-                char path[4 * PATH_MAX];
-                uint32_t pathLength = sizeof(path);
-                _NSGetExecutablePath(path, &pathLength);
-
-                char** argv = *_NSGetArgv();
-                const char* programName = argv[0];
-                const char* args[] = { programName, 0 };
+                info->executableHeap = xpc_dictionary_get_bool(event, "executable-heap");
+                info->cpuType = (cpu_type_t)xpc_dictionary_get_uint64(event, "architecture");
 
                 xpc_object_t environmentArray = xpc_dictionary_get_value(event, "environment");
                 size_t numberOfEnvironmentVariables = xpc_array_get_count(environmentArray);
-
-                const char** environment = (const char**)malloc(numberOfEnvironmentVariables * sizeof(char*) + 1);
+                char** environment = static_cast<char **>(malloc(numberOfEnvironmentVariables * sizeof(char*) + 1));
                 for (size_t i = 0; i < numberOfEnvironmentVariables; ++i)
-                    environment[i] = xpc_array_get_string(environmentArray, i);
+                    environment[i] = strdup(xpc_array_get_string(environmentArray, i));
                 environment[numberOfEnvironmentVariables] = 0;
+                info->environment = environment;
 
-                pid_t processIdentifier = 0;
-                posix_spawn(&processIdentifier, path, 0, &attr, const_cast<char**>(args), const_cast<char**>(environment));
-
-                posix_spawnattr_destroy(&attr);
-
-                NSLog(@"Unable to re-exec for path: %s", path);
-                exit(EXIT_FAILURE);
+                CFRunLoopTimerContext context = { 0, info, NULL, NULL, NULL };
+                CFRunLoopTimerRef timer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0, reexecCallBack, &context);
+                CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes);
             }
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {

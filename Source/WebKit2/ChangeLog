@@ -1,3 +1,22 @@
+2013-05-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Move posix_spawn onto a zero delay timer
+        https://bugs.webkit.org/show_bug.cgi?id=116682
+
+        Reviewed by Anders Carlson.
+
+        <rdar://problem/13973468>
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (ReexecInfo):
+            - struct to hold info from the XPC message.
+        (WebKit::reexec):
+            - moved call to posix_spawn out to this helper.
+        (WebKit::reexecCallBack):
+            - calls reexec.
+        (WebKit::XPCServiceEventHandler):
+            - removed call to posix_spawn; schedule a call to reexecCallBack.
+
 2013-05-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix generating-forwarding-headers rule after r150460
