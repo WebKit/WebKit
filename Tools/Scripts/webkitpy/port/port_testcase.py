@@ -115,9 +115,6 @@ class PortTestCase(unittest.TestCase):
         self.assertTrue('--foo=bar' in cmd_line)
         self.assertTrue('--foo=baz' in cmd_line)
 
-    def test_uses_apache(self):
-        self.assertTrue(self.make_port()._uses_apache())
-
     def assert_servers_are_down(self, host, ports):
         for port in ports:
             try:

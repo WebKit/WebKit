@@ -1,3 +1,16 @@
+2013-05-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove meaningless "test_uses_apache" from Python test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=38756
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_driver_cmd_line): Remove the meaningless
+        "test_uses_apache" test case from the Python test infrastructure.
+        It was hard-coded to true, even though not all ports use
+        Apache.
+
 2013-05-23  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Update new-run-webkit-tests for Windows port.
