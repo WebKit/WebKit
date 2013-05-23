@@ -649,55 +649,23 @@ webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5
 # Times out without keyboard interaction
 webkit.org/b/87748 fast/forms/select/optgroup-clicking.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=89528
-svg/filters/container-with-filters.svg
-svg/filters/feSpecularLight-premultiplied.svg
+webkit.org/b/89528 svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=89680
-fast/canvas/canvas-imageSmoothingEnabled-repaint.html
+# Implement textInputController.setComposition()
+webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=89845
-fast/forms/input-set-composition-scroll.html
+webkit.org/b/90707 inspector/timeline/timeline-receive-response-event.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=90706
-inspector/timeline/timeline-frames.html
+webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=90707
-inspector/timeline/timeline-receive-response-event.html
+webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=90708
-fullscreen/exit-full-screen-iframe.html
+compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=90709
-http/tests/inspector/console-cd-completions.html
-http/tests/inspector/console-cd.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90711
-fast/canvas/webgl/gl-vertexattribpointer.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90722
-inspector/profiler/heap-snapshot-comparison-show-next.html
-inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html
-inspector/profiler/heap-snapshot-comparison-sorting.html
-inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90723
-inspector/debugger/set-breakpoint.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90724
-compositing/iframes/iframe-size-from-zero.html
-
-compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=90725
-media/media-blocked-by-beforeload.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=91505
-platform/mac/plugins/root-object-premature-delete-crash.html
+webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
 
 # This test depends on subpixel layout.
-# https://bugs.webkit.org/show_bug.cgi?id=92352
-css3/flexbox/flex-rounding.html
+webkit.org/b/92352 css3/flexbox/flex-rounding.html
 
 # ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
 fast/forms/date-multiple-fields

@@ -1,5 +1,11 @@
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove even more stale Mac test expectations. These tests are passing now!
+
+        * platform/mac/TestExpectations:
+
+2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Even more Mac test expectation updates.
 
         * platform/mac-wk2/TestExpectations:
