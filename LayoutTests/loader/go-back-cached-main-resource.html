@@ -22,6 +22,8 @@
             firstPageVisits++;
             if (firstPageVisits < 3)
                 target.postMessage('navigate-other-page', '*');
+            if (firstPageVisits == 3)
+                window.testRunner.notifyDone();
             return;
         }
 
@@ -32,12 +34,6 @@
                 break;
             case 2:
                 target.postMessage('navigate-back', '*');
-                // Wait a bit for resource load callbacks
-                setTimeout(function () {
-                    target.close();
-                    if (window.testRunner)
-                        window.testRunner.notifyDone();
-                    }, 200);
                 break;
             }
             return;
