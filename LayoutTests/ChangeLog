@@ -2,6 +2,13 @@
 
         [Qt] Unreviewed gardening.
 
+        * platform/qt-5.0-wk1/TestExpectations: Remove a test failure that skipped in qt.
+        * platform/qt/TestExpectations: Unskip now passing test.
+
+2013-05-23  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
         * platform/qt-5.0-wk2/TestExpectations: Unskip after rebaseline.
         * platform/qt/TestExpectations: Skip flaky test.
         * platform/qt/plugins/mouse-events-expected.txt: Rebaselining after r150558.
