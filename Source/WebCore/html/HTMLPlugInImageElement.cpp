@@ -475,7 +475,6 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
         HTMLPlugInImageElement* plugInToRestart = similarPlugins[i].get();
         if (plugInToRestart->displayState() <= HTMLPlugInElement::DisplayingSnapshot) {
             LOG(Plugins, "%p Plug-in looks similar to a restarted plug-in. Restart.", plugInToRestart);
-            plugInToRestart->setDisplayState(Playing);
             plugInToRestart->restartSnapshottedPlugIn();
         }
         plugInToRestart->m_snapshotDecision = NeverSnapshot;
@@ -493,6 +492,8 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, 
 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
     restartSnapshottedPlugIn();
+    if (forwardEvent)
+        setDisplayState(HTMLPlugInElement::RestartingWithPendingMouseClick);
     restartSimilarPlugIns();
 }
 

@@ -112,9 +112,12 @@ messages -> PluginControllerProxy LegacyReceiver {
     SetLayerHostingMode(uint32_t layerHostingMode)
 #endif
 
+    # Does the plugin support snapshotting?
+    SupportsSnapshotting() -> (bool isSupported)
+
     # Return a snapshot of the plugin.
     Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle)
-    
+
     # Sent when storage blocking policy changes
     StorageBlockingStateChanged(bool storageBlockingEnabled)
 

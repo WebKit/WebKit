@@ -100,6 +100,7 @@ protected:
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates);
     virtual void updateControlTints(WebCore::GraphicsContext*);
+    virtual bool supportsSnapshotting() const { return false; }
     virtual PassRefPtr<ShareableBitmap> snapshot();
 #if PLATFORM(MAC)
     virtual PlatformLayer* pluginLayer();

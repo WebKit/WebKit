@@ -1,3 +1,23 @@
+2013-05-22  Dean Jackson  <dino@apple.com>
+
+        Don't snapshot plugins that can't be snapshotted
+        https://bugs.webkit.org/show_bug.cgi?id=116490
+
+        Reviewed by Tim Horton.
+
+        Some plugins, such as QuickTime, don't support snapshotting. We're
+        planning on another way to capture snapshots, but in the meantime make
+        sure that they don't fail to initialise because they were told to
+        not use accelerated rendering.
+
+        * WebCore.exp.in: Export restartSnapshottedPlugin so that it can be used from WK2.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::restartSimilarPlugIns): Don't set the play state before restarting.
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot): Make sure we indicated that this snapshotted plugin was clicked.
+        * html/HTMLPlugInImageElement.h: Move restartSnapshottedPlugin from protected to public.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): Don't set play state here. Let the restart functions do it.
+
 2013-05-22  Jer Noble  <jer.noble@apple.com>
 
         Mac: Set the default audio buffer size to a large value for <video> elements.

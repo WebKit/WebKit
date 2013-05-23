@@ -1,3 +1,39 @@
+2013-05-22  Dean Jackson  <dino@apple.com>
+
+        Don't snapshot plugins that can't be snapshotted
+        https://bugs.webkit.org/show_bug.cgi?id=116490
+
+        Reviewed by Tim Horton.
+
+        Some plugins, such as QuickTime, don't support snapshotting. We're
+        planning on another way to capture snapshots, but in the meantime make
+        sure that they don't fail to initialise because they were told to
+        not use accelerated rendering.
+
+        Expose a new message on the plugins so that they can tell the PluginView
+        if they support snapshotting or not.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::supportsSnapshotting): New method.
+        * PluginProcess/PluginControllerProxy.h: Ditto.
+        * PluginProcess/PluginControllerProxy.messages.in: Message signature.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Add supportsSnapshotting.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Ditto.
+        * WebProcess/Plugins/Plugin.h: Ditto - pure virtual here.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::supportsSnapshotting): Send the message to the plugin process and return the results.
+        * WebProcess/Plugins/PluginProxy.h:
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin): If the snapshotting plugin has a layer, make
+            sure to add it to the tree.
+        (WebKit::PluginView::isAcceleratedCompositingEnabled): Snapshotting plugins can use
+            accelerated compositing, just like normal plugins.
+        (WebKit::PluginView::pluginSnapshotTimerFired): If the plugin doesn't allow snapshotting,
+            immediately restart it.
+
 2013-05-22  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when closing a page that's trying to access session storage

@@ -229,6 +229,18 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     }
 }
 
+bool PluginProxy::supportsSnapshotting() const
+{
+    if (m_waitingOnAsynchronousInitialization)
+        return false;
+
+    bool isSupported = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::SupportsSnapshotting(), Messages::PluginControllerProxy::SupportsSnapshotting::Reply(isSupported), m_pluginInstanceID))
+        return false;
+
+    return isSupported;
+}
+
 PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
 {
     ShareableBitmap::Handle snapshotStoreHandle;
