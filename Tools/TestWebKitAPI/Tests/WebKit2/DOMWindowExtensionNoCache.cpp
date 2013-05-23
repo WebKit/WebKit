@@ -78,7 +78,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
       finished = true;
 }
 
-TEST(WebKit2, DOMWindowExtensionNoCache)
+TEST(WebKit2, DISABLED_DOMWindowExtensionNoCache)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionNoCachePageGroup")));
 
