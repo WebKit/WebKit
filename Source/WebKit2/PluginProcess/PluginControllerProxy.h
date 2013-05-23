@@ -142,6 +142,7 @@ private:
     void isEditingCommandEnabled(const String&, bool&);
     void handlesPageScaleFactor(bool&);
     void paintEntirePlugin();
+    void supportsSnapshotting(bool&);
     void snapshot(ShareableBitmap::Handle& backingStoreHandle);
     void setFocus(bool);
     void didUpdate();

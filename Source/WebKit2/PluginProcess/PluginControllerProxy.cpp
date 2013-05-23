@@ -545,6 +545,11 @@ void PluginControllerProxy::paintEntirePlugin()
     paint();
 }
 
+void PluginControllerProxy::supportsSnapshotting(bool& isSupported)
+{
+    isSupported = m_plugin->supportsSnapshotting();
+}
+
 void PluginControllerProxy::snapshot(ShareableBitmap::Handle& backingStoreHandle)
 {
     ASSERT(m_plugin);

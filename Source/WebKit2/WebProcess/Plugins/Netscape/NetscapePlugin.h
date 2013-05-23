@@ -245,7 +245,7 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
 
-    bool supportsSnapshotting() const;
+    virtual bool supportsSnapshotting() const;
 
     // Convert the given point from plug-in coordinates to root view coordinates.
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const OVERRIDE;

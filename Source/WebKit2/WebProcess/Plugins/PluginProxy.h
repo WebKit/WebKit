@@ -76,6 +76,7 @@ private:
 
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    virtual bool supportsSnapshotting() const;
     virtual PassRefPtr<ShareableBitmap> snapshot();
 #if PLATFORM(MAC)
     virtual PlatformLayer* pluginLayer();

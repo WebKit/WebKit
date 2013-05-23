@@ -77,6 +77,7 @@ public:
     void userDidClickSnapshot(PassRefPtr<MouseEvent>, bool forwardEvent);
     void checkSnapshotStatus();
     Image* snapshotImage() const { return m_snapshotImage.get(); }
+    void restartSnapshottedPlugIn();
 
     // Plug-in URL might not be the same as url() with overriding parameters.
     void subframeLoaderWillCreatePlugIn(const KURL& plugInURL);
@@ -121,7 +122,6 @@ protected:
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
-    void restartSnapshottedPlugIn();
     virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
 
 private:

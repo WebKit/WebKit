@@ -575,17 +575,19 @@ void PluginView::didInitializePlugin()
 
 #if PLATFORM(MAC)
     if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting) {
+        if (m_plugin->pluginLayer() && frame()) {
+            frame()->view()->enterCompositingMode();
+            m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+        }
         if (frame() && !frame()->settings()->maximumPlugInSnapshotAttempts()) {
             m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
             return;
         }
         m_pluginSnapshotTimer.restart();
     } else {
-        if (m_plugin->pluginLayer()) {
-            if (frame()) {
-                frame()->view()->enterCompositingMode();
-                m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
-            }
+        if (m_plugin->pluginLayer() && frame()) {
+            frame()->view()->enterCompositingMode();
+            m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
         }
         if (m_pluginElement->displayState() == HTMLPlugInElement::RestartingWithPendingMouseClick)
             m_pluginElement->dispatchPendingMouseClick();
@@ -1383,8 +1385,6 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
-        return false;
     return settings->acceleratedCompositingEnabled();
 }
 
@@ -1633,6 +1633,11 @@ static bool isAlmostSolidColor(BitmapImage* bitmap)
 void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
 {
     ASSERT(m_plugin);
+
+    if (m_pluginElement->isPlugInImageElement() && !m_plugin->supportsSnapshotting()) {
+        toHTMLPlugInImageElement(m_pluginElement.get())->restartSnapshottedPlugIn();
+        return;
+    }
 
     // Snapshot might be 0 if plugin size is 0x0.
     RefPtr<ShareableBitmap> snapshot = m_plugin->snapshot();
