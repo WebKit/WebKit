@@ -1307,8 +1307,7 @@ void FrameLoaderClientBlackBerry::provisionalLoadStarted()
 // We don't need to provide the error message string, that will be handled in BrowserErrorPage according to the error code.
 ResourceError FrameLoaderClientBlackBerry::cannotShowURLError(const ResourceRequest& request)
 {
-    // FIXME: Why are we not passing the domain to the ResourceError? See PR #119789.
-    return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
+    return ResourceError("WebKitErrorDomain", WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
 void FrameLoaderClientBlackBerry::didRestoreFromPageCache()

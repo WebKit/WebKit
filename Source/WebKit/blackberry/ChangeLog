@@ -1,3 +1,19 @@
+2013-05-23  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Properly fill the ResourceError in FrameLoaderClientBlackBerry::cannotShowURLError
+        https://bugs.webkit.org/show_bug.cgi?id=116603
+
+        Reviewed by Xan Lopez.
+
+        PR 119789
+        Internally reviewed by Yong Li.
+
+        Provide a domain value for this ResourceError instance. Note that
+        this does not change behavior.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::didRestoreFromPageCache):
+
 2013-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Make PagePopup implementation independent from WebCore
