@@ -61,7 +61,7 @@ def run(options):
             raise 'Specifying port requires also a root.'
         host = Host()
         # FIXME: Make this work with other ports as well.
-        port_obj = host.port_factory.get(port_name='chromium', options=options)
+        port_obj = host.port_factory.get(port_name='win', options=options)
         httpd = http_server.Lighttpd(port_obj,
                                      tempfile.gettempdir(),
                                      port=options.port,

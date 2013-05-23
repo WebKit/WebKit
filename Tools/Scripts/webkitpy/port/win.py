@@ -42,7 +42,7 @@ _log = logging.getLogger(__name__)
 class WinPort(ApplePort):
     port_name = "win"
 
-    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win-win7"]
+    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
     ARCHITECTURES = ['x86']
 
@@ -98,3 +98,16 @@ class WinPort(ApplePort):
         if not match_object:
             return None
         return match_object.group('features_string').split(' ')
+
+    # Note: These are based on the stock Cygwin locations for these files.
+    def _uses_apache(self):
+        return False
+
+    def _path_to_lighttpd(self):
+        return "/usr/sbin/lighttpd"
+
+    def _path_to_lighttpd_modules(self):
+        return "/usr/lib/lighttpd"
+
+    def _path_to_lighttpd_php(self):
+        return "/usr/bin/php-cgi"

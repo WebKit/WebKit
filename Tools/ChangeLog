@@ -1,3 +1,19 @@
+2013-05-23  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Update new-run-webkit-tests for Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=38756
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/new-run-webkit-httpd:
+        (run): Switch from 'chromium' to 'win'
+        * Scripts/webkitpy/port/win.py:
+        (WinPort): Add support methods for lighttpd server.
+        (WinPort._uses_apache):
+        (WinPort._path_to_lighttpd):
+        (WinPort._path_to_lighttpd_modules):
+        (WinPort._path_to_lighttpd_php):
+
 2013-05-23  Patrick Gansterer  <paroga@webkit.org>
 
         Make default bug links in buildbot clickable
