@@ -57,7 +57,6 @@
 #endif
 
 using namespace WebKit;
-using namespace WebCore;
 
 static inline EwkView* toEwkViewChecked(const Evas_Object* evasObject)
 {
@@ -497,18 +496,18 @@ Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
 #endif
 }
 
-// Ewk_Pagination_Mode should be matched up orders with WebCore::Pagination::Mode.
-COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_UNPAGINATED, WebCore::Pagination::Unpaginated);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_LEFT_TO_RIGHT, WebCore::Pagination::LeftToRightPaginated);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_RIGHT_TO_LEFT, WebCore::Pagination::RightToLeftPaginated);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_TOP_TO_BOTTOM, WebCore::Pagination::TopToBottomPaginated);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_BOTTOM_TO_TOP, WebCore::Pagination::BottomToTopPaginated);
+// Ewk_Pagination_Mode should be matched up orders with WKPaginationMode.
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_UNPAGINATED, kWKPaginationModeUnpaginated);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_LEFT_TO_RIGHT, kWKPaginationModeLeftToRight);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_RIGHT_TO_LEFT, kWKPaginationModeRightToLeft);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_TOP_TO_BOTTOM, kWKPaginationModeTopToBottom);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_BOTTOM_TO_TOP, kWKPaginationModeBottomToTop);
 
 Eina_Bool ewk_view_pagination_mode_set(Evas_Object* ewkView, Ewk_Pagination_Mode mode)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
-    // FIXME: move to exported C WKPage API when it appears.
-    toImpl(impl->wkPage())->setPaginationMode(static_cast<WebCore::Pagination::Mode>(mode));
+
+    WKPageSetPaginationMode(impl->wkPage(), static_cast<WKPaginationMode>(mode));
 
     return true;
 }
@@ -516,8 +515,8 @@ Eina_Bool ewk_view_pagination_mode_set(Evas_Object* ewkView, Ewk_Pagination_Mode
 Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, EWK_PAGINATION_MODE_INVALID);
-    // FIXME: move to exported C WKPage API when it appears.
-    return static_cast<Ewk_Pagination_Mode>(toImpl(impl->wkPage())->paginationMode());
+    
+    return static_cast<Ewk_Pagination_Mode>(WKPageGetPaginationMode(impl->wkPage()));
 }
 
 Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)

@@ -1,3 +1,19 @@
+2013-05-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Use WK2 C API in ewk_view_pagination_mode_set|get
+        https://bugs.webkit.org/show_bug.cgi?id=116657
+
+        Reviewed by Christophe Dumez.
+
+        WKPageGet|SetPaginationMode APIs is present in WK2 C APIs. So, we need to use them for
+        ewk_view_pagination_mode_set|get.
+
+        Besides we don't need to use WebCore namespace anymore.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_pagination_mode_set):
+        (ewk_view_pagination_mode_get):
+
 2013-05-23  Roland Takacs  <rtakacs@inf.u-szeged.hu>
 
         Support frame instrumentation for coordinated graphics
