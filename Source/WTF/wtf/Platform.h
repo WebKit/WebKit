@@ -65,6 +65,11 @@
 #define WTF_CPU_ALPHA 1
 #endif
 
+/* CPU(HPPA) - HP PA-RISC */
+#if defined(__hppa__) || defined(__hppa64__)
+#define WTF_CPU_HPPA 1
+#endif
+
 /* CPU(IA64) - Itanium / IA-64 */
 #if defined(__ia64__)
 #define WTF_CPU_IA64 1

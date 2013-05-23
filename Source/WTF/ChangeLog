@@ -1,3 +1,19 @@
+2013-05-23 Patrick Gansterer <paroga@webkit.org>
+
+        Use correct stack size on Solaris and OpenBSD
+        https://bugs.webkit.org/show_bug.cgi?id=114978
+
+        Reviewed by Oliver Hunt.
+
+        Original patch by David Hill <david@wmol.com>.
+
+        Use stack_t.ss_size for getting the size of the stack.
+
+        * wtf/Platform.h:
+        * wtf/StackBounds.cpp:
+        (WTF):
+        (WTF::StackBounds::initialize):
+
 2013-05-23  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Implement correct detection of stack size

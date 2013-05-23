@@ -55,24 +55,6 @@
 
 namespace WTF {
 
-// Bug 26276 - Need a mechanism to determine stack extent
-//
-// These platforms should now be working correctly:
-//     DARWIN, QNX, UNIX, WINDOWS
-// These platforms are not:
-//     SOLARIS, OPENBSD
-//
-// FIXME: remove this! - this code unsafely guesses at stack sizes!
-#if OS(SOLARIS) || OS(OPENBSD)
-// Based on the current limit used by the JSC parser, guess the stack size.
-static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
-// This method assumes the stack is growing downwards.
-static void* estimateStackBound(void* origin)
-{
-    return static_cast<char*>(origin) - estimatedStackSize;
-}
-#endif
-
 #if OS(DARWIN)
 
 void StackBounds::initialize()
@@ -124,7 +106,7 @@ void StackBounds::initialize()
     stack_t s;
     thr_stksegment(&s);
     m_origin = s.ss_sp;
-    m_bound = estimateStackBound(m_origin);
+    m_bound = static_cast<char*>(m_origin) - s.ss_size;
 }
 
 #elif OS(OPENBSD)
@@ -135,7 +117,11 @@ void StackBounds::initialize()
     stack_t stack;
     pthread_stackseg_np(thread, &stack);
     m_origin = stack.ss_sp;
-    m_bound = estimateStackBound(m_origin);
+#if CPU(HPPA)
+    m_bound = static_cast<char*>(m_origin) + stack.ss_size;
+#else
+    m_bound = static_cast<char*>(m_origin) - stack.ss_size;
+#endif
 }
 
 #elif OS(UNIX)
