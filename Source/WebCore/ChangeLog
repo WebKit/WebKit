@@ -1,3 +1,20 @@
+2013-05-18  Robert Hogan  <robert@webkit.org>
+
+        The ellipsis in a text overflow should not avoid floats
+        https://bugs.webkit.org/show_bug.cgi?id=115746
+
+        Reviewed by David Hyatt.
+
+        When placing an ellipsis for text overflow we shouldn't avoid any floats on the line.
+        That is to say, if there is a float in the box we overflow we should let our no-wrap text,
+        including the ellipsis, render inside the float just as we would if overflow was hidden but
+        a text-overflow rendering had not been specified.
+
+        Test: fast/css/text-overflow-ellipsis-behind-floats.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+
 2013-05-23  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed, rolling out r150586.

@@ -1,3 +1,19 @@
+2013-05-18  Robert Hogan  <robert@webkit.org>
+
+        The ellipsis in a text overflow should not avoid floats
+        https://bugs.webkit.org/show_bug.cgi?id=115746
+
+        Reviewed by David Hyatt.
+
+        * fast/css/text-overflow-ellipsis-behind-floats-expected.html: Added.
+        * fast/css/text-overflow-ellipsis-behind-floats.html: Added.
+        * fast/css/text-overflow-ellipsis-full-truncate-rtl-expected.html:
+        * fast/css/text-overflow-ellipsis-full-truncate-rtl.html:
+          Change this test to expect the text to cross into the floating input element
+          and render the ellipsis at the left extreme of the element. The previous expected
+          rendering relied on the incorrect premise that an overflow ellipsis should avoid
+          floated elements.
+
 2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Lion] [WK2] compositing/overflow/overflow-compositing-descendant.html
