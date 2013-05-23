@@ -605,6 +605,7 @@ webkit.org/b/98525 plugins/embed-inside-object.html
 webkit.org/b/98525 plugins/evaluate-js-after-removing-plugin-element.html
 webkit.org/b/98525 plugins/keyboard-events.html
 webkit.org/b/98525 plugins/mouse-events-fixedpos.html
+webkit.org/b/98525 plugins/mouse-events.html
 webkit.org/b/98525 plugins/npruntime/browser-object-identity.html
 webkit.org/b/98525 plugins/npruntime/embed-property-equality.html
 webkit.org/b/98525 plugins/refcount-leaks.html
@@ -766,3 +767,11 @@ editing/spelling/spellcheck-async.html
 editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-marker-description.html
+
+# [Qt][WK2] REGRESSION(r148594): fast/events/mouseout-on-window.html fails with enabled sub-pixel layout
+webkit.org/b/42194 fast/events/mouseout-on-window.html [ Skip ]
+
+# [Qt][WK2] fast/events/touch/frame-hover-update.html fails
+webkit.org/b/116668 fast/events/touch/frame-hover-update.html [ Skip ]
+
+webkit.org/b/16649 http/tests/security/cross-frame-access-put.html [ Skip ]
