@@ -1,3 +1,11 @@
+2013-05-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation of CodeBlock.h
+
+        Rubber stampted by Mark Hahnenberg.
+
+        * bytecode/CodeBlock.h:
+
 2013-05-22  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Remove MacroAssemblerSH4.cpp file.
