@@ -1,3 +1,15 @@
+2013-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Crash in convertMainResourceLoadToDownload when downloading file by option-return
+        https://bugs.webkit.org/show_bug.cgi?id=116451
+
+        Reviewed by Andreas Kling.
+
+        If the main resource loader is null, create a new download instead since there's no existing loader to convert.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+
 2013-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issues with focus rings on search fields

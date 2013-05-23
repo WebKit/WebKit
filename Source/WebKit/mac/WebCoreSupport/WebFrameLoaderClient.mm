@@ -278,11 +278,19 @@ void WebFrameLoaderClient::detachedFromParent3()
 
 void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
+    WebView *webView = getWebView(m_webFrame.get());
+
+    if (!documentLoader->mainResourceLoader()) {
+        // The resource has already been cached, start a new download.
+        WebDownload *webDownload = [[WebDownload alloc] initWithRequest:request.nsURLRequest(UpdateHTTPBody) delegate:[webView downloadDelegate]];
+        [webDownload autorelease];
+        return;
+    }
+
     ResourceHandle* handle = documentLoader->mainResourceLoader()->handle();
 
 #if USE(CFNETWORK)
     ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
-    WebView *webView = getWebView(m_webFrame.get());
     CFURLConnectionRef connection = handle->connection();
     [WebDownload _downloadWithLoadingCFURLConnection:connection
                                                                      request:request.cfURLRequest(UpdateHTTPBody)
@@ -294,7 +302,6 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
     handle->releaseConnectionForDownload();
     CFRelease(connection);
 #else
-    WebView *webView = getWebView(m_webFrame.get());
     [WebDownload _downloadWithLoadingConnection:handle->connection()
                                                                 request:request.nsURLRequest(UpdateHTTPBody)
                                                                response:response.nsURLResponse()
