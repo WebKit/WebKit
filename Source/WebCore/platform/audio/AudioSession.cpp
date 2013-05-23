@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AudioSession.h"
 
-#if USE(AUDIO_SESSION)
-
 #include "AudioSessionListener.h"
 #include "NotImplemented.h"
 
@@ -61,12 +59,12 @@ void AudioSession::endedAudioInterruption()
         (*i)->endedAudioInterruption();
 }
 
-#if !PLATFORM(IOS) && !PLATFORM(MAC)
+#if !PLATFORM(IOS)
 class AudioSessionPrivate {
 };
 
 AudioSession::AudioSession()
-    : m_private(nullptr)
+    : m_private(0)
 {
     notImplemented();
 }
@@ -114,18 +112,16 @@ void AudioSession::setActive(bool)
     notImplemented();
 }
 
-size_t AudioSession::preferredBufferSize() const
+float AudioSession::preferredBufferDuration() const
 {
     notImplemented();
     return 0;
 }
 
-void AudioSession::setPreferredBufferSize(size_t)
+void AudioSession::setPreferredBufferDuration(float)
 {
     notImplemented();
 }
 #endif // !PLATFORM(IOS)
 
 }
-
-#endif // USE(AUDIO_SESSION)

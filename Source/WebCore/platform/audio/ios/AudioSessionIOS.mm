@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AudioSession.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(IOS)
+#if PLATFORM(IOS)
 
 #import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -201,19 +201,18 @@ void AudioSession::setActive(bool active)
     ASSERT(!error);
 }
 
-size_t AudioSession::preferredBufferSize() const
+float AudioSession::preferredBufferDuration() const
 {
-    return [[AVAudioSession sharedInstance] preferredIOBufferDuration] * sampleRate();
+    return [[AVAudioSession sharedInstance] preferredIOBufferDuration];
 }
 
-void AudioSession::setPreferredBufferSize(size_t bufferSize)
+void AudioSession::setPreferredBufferDuration(float duration)
 {
     NSError *error = nil;
-    float duration = bufferSize / sampleRate();
     [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:duration error:&error];
     ASSERT(!error);
 }
 
 }
 
-#endif // USE(AUDIO_SESSION) && PLATFORM(IOS)
+#endif // PLATFORM(IOS)

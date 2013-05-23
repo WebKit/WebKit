@@ -26,12 +26,10 @@
 #ifndef AudioSessionListener_h
 #define AudioSessionListener_h
 
-#if USE(AUDIO_SESSION)
-
 namespace WebCore {
 
 class AudioSessionListener {
-    WTF_MAKE_NONCOPYABLE(AudioSessionListener);
+    WTF_MAKE_NONCOPYABLE(AudioSessionListener)
 public:
     virtual void beganAudioInterruption() = 0;
     virtual void endedAudioInterruption() = 0;
@@ -41,7 +39,5 @@ protected:
 };
 
 }
-
-#endif // USE(AUDIO_SESSION)
 
 #endif // AudioSessionListener_h

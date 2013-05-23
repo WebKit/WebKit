@@ -49,9 +49,6 @@
 
 namespace WebCore {
 
-#if USE(AUDIO_SESSION)
-class AudioSessionManagerToken;
-#endif
 #if ENABLE(WEB_AUDIO)
 class AudioSourceProvider;
 class MediaElementAudioSourceNode;
@@ -767,10 +764,6 @@ private:
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
-#endif
-
-#if USE(AUDIO_SESSION)
-    OwnPtr<AudioSessionManagerToken> m_audioSessionManagerToken;
 #endif
 };
 

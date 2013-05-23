@@ -136,10 +136,6 @@
 #include "PlatformTextTrack.h"
 #endif
 
-#if USE(AUDIO_SESSION)
-#include "AudioSessionManager.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -319,9 +315,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #endif
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
-#endif
-#if USE(AUDIO_SESSION)
-    , m_audioSessionManagerToken(AudioSessionManagerToken::create(tagName == videoTag ? AudioSessionManager::Video : AudioSessionManager::Audio))
 #endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
