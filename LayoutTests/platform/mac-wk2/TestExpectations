@@ -282,6 +282,8 @@ webkit.org/b/82554 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 
 webkit.org/b/116649 http/tests/security/cross-frame-access-put.html [ Failure ]
 
+webkit.org/b/116684 [ Lion ] compositing/overflow/overflow-compositing-descendant.html [ Timeout Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

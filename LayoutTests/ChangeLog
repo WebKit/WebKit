@@ -1,3 +1,14 @@
+2013-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Lion] [WK2] compositing/overflow/overflow-compositing-descendant.html
+        https://bugs.webkit.org/show_bug.cgi?id=116684
+
+        Add a timeout/failure test expectation. Also update the expected result since the first frame
+        of the video must be shown in this test.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+
 2013-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Fix loader/go-back-cached-main-resource.html test
