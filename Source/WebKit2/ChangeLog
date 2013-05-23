@@ -1,3 +1,21 @@
+2013-05-23  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Remote Web Inspector sometimes won't serve any content
+        https://bugs.webkit.org/show_bug.cgi?id=116225
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added an option to use environment variable to set up path to
+        inspector server files. Implementation is similar to InspectorClientGtk
+        implementation.
+
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::inspectorServerFilesPath):
+        (WebKit):
+
 2013-05-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Use WK2 C API in ewk_view_pagination_mode_set|get

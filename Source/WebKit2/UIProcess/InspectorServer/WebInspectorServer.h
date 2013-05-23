@@ -67,6 +67,10 @@ private:
 
     void closeConnection(WebInspectorProxy*, WebSocketServerConnection*);
 
+#if PLATFORM(GTK)
+    String inspectorServerFilesPath();
+    String m_inspectorServerFilesPath;
+#endif
     unsigned m_nextAvailablePageId;
     ClientMap m_clientMap;
     HashMap<unsigned, WebSocketServerConnection*> m_connectionMap;
