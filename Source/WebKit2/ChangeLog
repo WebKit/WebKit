@@ -1,5 +1,18 @@
 2013-05-23  Anders Carlsson  <andersca@apple.com>
 
+        Don't run all plug-ins unsandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=116690
+        <rdar://problem/13975569>
+
+        Reviewed by Jessie Berlin.
+
+        Remove debugging code.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+
+2013-05-23  Anders Carlsson  <andersca@apple.com>
+
         Crash in convertMainResourceLoadToDownload when downloading file by option-return
         https://bugs.webkit.org/show_bug.cgi?id=116451
 

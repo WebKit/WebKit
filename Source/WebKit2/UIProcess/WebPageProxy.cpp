@@ -1437,7 +1437,6 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
         return;
     }
 
-    pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
     pluginProcessToken = PluginProcessManager::shared().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy);
 }
 
