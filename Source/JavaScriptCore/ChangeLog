@@ -1,3 +1,16 @@
+2013-05-22  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Use uninitialized register in "JIT::emit_op_neq_null" and "emit_op_eq_null"
+        https://bugs.webkit.org/show_bug.cgi?id=116593
+
+        Reviewed by Filip Pizlo.
+
+        Generated instructions using uninitialized register. It's caused by a mistake of r126494.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+
 2013-05-22  Filip Pizlo  <fpizlo@apple.com>
 
         Fix indentation of CodeBlock.h

@@ -784,8 +784,8 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
 
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    Jump isMasqueradesAsUndefined = branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    Jump isMasqueradesAsUndefined = branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
     move(TrustedImm32(0), regT1);
     Jump wasNotMasqueradesAsUndefined = jump();
 
@@ -815,8 +815,8 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
 
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    Jump isMasqueradesAsUndefined = branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    Jump isMasqueradesAsUndefined = branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
     move(TrustedImm32(1), regT1);
     Jump wasNotMasqueradesAsUndefined = jump();
 
