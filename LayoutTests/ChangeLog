@@ -1,3 +1,11 @@
+2013-05-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip 3 more tests which has problem related to ecore library.
+
+        * platform/efl/TestExpectations:
+
 2013-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove even more stale Mac test expectations. These tests are passing now!
