@@ -1,3 +1,19 @@
+2013-05-23  Ed Baker  <edbaker@blackberry.com>
+
+        [BlackBerry] The web context does not contain any link properties if the context node is an image enclosed by a link node
+        https://bugs.webkit.org/show_bug.cgi?id=116627
+
+        Reviewed by Xan Lopez.
+
+        PR #341084
+
+        If the context node has an image tag and an enclosing link node was detected then add the link properties to the context.
+
+        Internally Reviewed by Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2013-05-23  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Validate form data before doing direct submission.
