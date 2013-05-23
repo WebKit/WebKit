@@ -539,7 +539,7 @@ public:
 
     // Override ScriptExecutionContext methods to do additional work
     virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
-    virtual void resumeActiveDOMObjects() OVERRIDE;
+    virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
 
     RenderArena* renderArena() { return m_renderArena.get(); }
 
@@ -1141,7 +1141,7 @@ public:
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
     void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
-    void resumeScheduledTasks();
+    void resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension);
 
     IntSize viewportSize() const;
 

@@ -981,7 +981,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
         return;
 
     if (document()) {
-        document()->resumeActiveDOMObjects();
+        document()->resumeActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
         animation()->resumeAnimationsForDocument(document());
         document()->resumeScriptedAnimationControllerCallbacks();
     }

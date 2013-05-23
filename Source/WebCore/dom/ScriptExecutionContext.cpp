@@ -193,8 +193,11 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     m_reasonForSuspendingActiveDOMObjects = why;
 }
 
-void ScriptExecutionContext::resumeActiveDOMObjects()
+void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
+    if (m_reasonForSuspendingActiveDOMObjects != why)
+        return;
+
     m_activeDOMObjectsAreSuspended = false;
     // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;

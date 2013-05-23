@@ -1,3 +1,35 @@
+2013-05-20  Jeffrey Pfau  <jpfau@apple.com>
+
+        Active DOM object resumption should match reason for suspending
+        https://bugs.webkit.org/show_bug.cgi?id=116476
+
+        Add a reason to the arguments for resuming active DOM object and
+        scheduled tasks and ensure that it matches the suspend reason before
+        actually resuming the objects.
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, no change in functionality.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused): Add matching resume reason
+        * dom/Document.cpp:
+        (WebCore::Document::resumeActiveDOMObjects): Check for matching resume reason
+        (WebCore::Document::resumeScheduledTasks): Check for matching resume reason
+        * dom/Document.h:
+        (Document):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects): Check for matching resume reason
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::reasonForSuspendingActiveDOMObjects): Expose suspend reason to subclasses
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Add matching resume reason
+        * page/Frame.cpp:
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations): Add matching resume reason
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer): Add matching resume reason
+
 2013-05-22  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; cast OSStatus to an int before passing it to printf.

@@ -65,7 +65,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             page->setDefersLoading(false);
 
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                frame->document()->resumeScheduledTasks();
+                frame->document()->resumeScheduledTasks(ActiveDOMObject::WillDeferLoading);
         }
     }
 }

@@ -2152,9 +2152,9 @@ void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
     ScriptExecutionContext::suspendActiveDOMObjects(why);
 }
 
-void Document::resumeActiveDOMObjects()
+void Document::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
-    ScriptExecutionContext::resumeActiveDOMObjects();
+    ScriptExecutionContext::resumeActiveDOMObjects(why);
 }
 
 void Document::clearAXObjectCache()
@@ -4867,8 +4867,11 @@ void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason
     m_scheduledTasksAreSuspended = true;
 }
 
-void Document::resumeScheduledTasks()
+void Document::resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 {
+    if (reasonForSuspendingActiveDOMObjects() != reason)
+        return;
+
     ASSERT(m_scheduledTasksAreSuspended);
 
     if (m_parser)
@@ -4876,7 +4879,7 @@ void Document::resumeScheduledTasks()
     if (!m_pendingTasks.isEmpty())
         m_pendingTasksTimer.startOneShot(0);
     scriptRunner()->resume();
-    resumeActiveDOMObjects();
+    resumeActiveDOMObjects(reason);
     resumeScriptedAnimationControllerCallbacks();
     
     m_scheduledTasksAreSuspended = false;

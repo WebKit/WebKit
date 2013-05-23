@@ -111,7 +111,7 @@ void CachedFrameBase::restore()
 
     frame->animation()->resumeAnimationsForDocument(m_document.get());
     frame->eventHandler()->setMousePressNode(m_mousePressNode.get());
-    m_document->resumeActiveDOMObjects();
+    m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_document->resumeScriptedAnimationControllerCallbacks();
 
     // It is necessary to update any platform script objects after restoring the
