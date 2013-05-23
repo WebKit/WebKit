@@ -1,3 +1,19 @@
+2013-05-23  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Validate form data before doing direct submission.
+        https://bugs.webkit.org/show_bug.cgi?id=116674
+
+        Reviewed by Xan Lopez.
+
+        PR 314202.
+
+        Check validation of the input form before triggering direct submission.
+
+        Internally Reviewed by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::submitForm):
+
 2013-05-23  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Properly fill the ResourceError in FrameLoaderClientBlackBerry::cannotShowURLError
