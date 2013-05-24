@@ -4276,9 +4276,6 @@ webcore_sources += \
 	Source/WebCore/page/PageGroup.h \
 	Source/WebCore/page/PageGroupLoadDeferrer.cpp \
 	Source/WebCore/page/PageGroupLoadDeferrer.h \
-	Source/WebCore/page/PagePopup.h \
-	Source/WebCore/page/PagePopupClient.h \
-	Source/WebCore/page/PagePopupDriver.h \
 	Source/WebCore/page/PageSerializer.cpp \
 	Source/WebCore/page/PageSerializer.h \
 	Source/WebCore/page/PageVisibilityState.cpp \

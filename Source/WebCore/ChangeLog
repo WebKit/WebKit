@@ -1,3 +1,38 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove PagePopup code
+        https://bugs.webkit.org/show_bug.cgi?id=116732
+
+        Reviewed by Andreas Kling.
+
+        Remove all page popup code.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContextFeatures.cpp:
+        * dom/ContextFeatures.h:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/DOMWindowPagePopup.cpp: Removed.
+        * page/DOMWindowPagePopup.h: Removed.
+        * page/DOMWindowPagePopup.idl: Removed.
+        * page/PagePopup.h: Removed.
+        * page/PagePopupClient.cpp: Removed.
+        * page/PagePopupClient.h: Removed.
+        * page/PagePopupController.cpp: Removed.
+        * page/PagePopupController.h: Removed.
+        * page/PagePopupController.idl: Removed.
+        * page/PagePopupDriver.h: Removed.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore):
+        * testing/Internals.h:
+        (WebCore):
+        (Internals):
+        * testing/Internals.idl:
+        * testing/MockPagePopupDriver.cpp: Removed.
+        * testing/MockPagePopupDriver.h: Removed.
+
 2013-05-24  Jer Noble  <jer.noble@apple.com>
 
         Mac: Set the default audio buffer size to a large value for <video> elements.

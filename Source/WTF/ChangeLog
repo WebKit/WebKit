@@ -1,3 +1,14 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove PagePopup code
+        https://bugs.webkit.org/show_bug.cgi?id=116732
+
+        Reviewed by Andreas Kling.
+
+        Remove ENABLE_PAGE_POPUP.
+
+        * wtf/FeatureDefines.h:
+
 2013-05-25  Jer Noble  <jer.noble@apple.com>
 
         Mac: Set the default audio buffer size to a large value for <video> elements.

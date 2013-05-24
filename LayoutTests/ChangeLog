@@ -1,3 +1,18 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove PagePopup code
+        https://bugs.webkit.org/show_bug.cgi?id=116732
+
+        Reviewed by Andreas Kling.
+
+        Remove tests that relied on the mock page popup driver.
+
+        * fast/forms/date/no-page-popup-controller-expected.txt: Removed.
+        * fast/forms/date/no-page-popup-controller.html: Removed.
+        * fast/forms/resources/picker-common.js: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-open-picker-key-bindings-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-open-picker-key-bindings.html: Removed.
+
 2013-05-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Improve loader/go-back-cached-main-resource.html test

@@ -72,7 +72,6 @@
 #include "Language.h"
 #include "MallocStatistics.h"
 #include "MemoryCache.h"
-#include "MockPagePopupDriver.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PrintContext.h"
@@ -116,10 +115,6 @@
 #include "DeviceProximityController.h"
 #endif
 
-#if ENABLE(PAGE_POPUP)
-#include "PagePopupController.h"
-#endif
-
 #if ENABLE(TOUCH_ADJUSTMENT)
 #include "WebKitPoint.h"
 #endif
@@ -150,10 +145,6 @@
 #endif
 
 namespace WebCore {
-
-#if ENABLE(PAGE_POPUP)
-static MockPagePopupDriver* s_pagePopupDriver = 0;
-#endif
 
 using namespace HTMLNames;
 
@@ -270,11 +261,6 @@ void Internals::resetToConsistentState(Page* page)
     TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
-#if ENABLE(PAGE_POPUP)
-    delete s_pagePopupDriver;
-    s_pagePopupDriver = 0;
-    page->chrome().client()->resetPagePopupDriver();
-#endif
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
     if (page->inspectorController())
         page->inspectorController()->setProfilerEnabled(false);
@@ -766,33 +752,6 @@ void Internals::enableMockSpeechSynthesizer()
 }
 #endif
     
-void Internals::setEnableMockPagePopup(bool enabled, ExceptionCode& ec)
-{
-#if ENABLE(PAGE_POPUP)
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    Page* page = document->page();
-    if (!enabled) {
-        page->chrome().client()->resetPagePopupDriver();
-        return;
-    }
-    if (!s_pagePopupDriver)
-        s_pagePopupDriver = MockPagePopupDriver::create(page->mainFrame()).leakPtr();
-    page->chrome().client()->setPagePopupDriver(s_pagePopupDriver);
-#else
-    UNUSED_PARAM(enabled);
-    UNUSED_PARAM(ec);
-#endif
-}
-
-#if ENABLE(PAGE_POPUP)
-PassRefPtr<PagePopupController> Internals::pagePopupController()
-{
-    return s_pagePopupDriver ? s_pagePopupDriver->pagePopupController() : 0;
-}
-#endif
-
 PassRefPtr<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
 {
     Document* document = contextDocument();

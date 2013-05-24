@@ -1,3 +1,13 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove PagePopup code
+        https://bugs.webkit.org/show_bug.cgi?id=116732
+
+        Reviewed by Andreas Kling.
+
+        * Source/cmakeconfig.h.cmake:
+        Remove ENABLE_PAGE_POPUP.
+
 2013-05-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit2

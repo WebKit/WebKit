@@ -644,10 +644,6 @@
 #define ENABLE_ORIENTATION_EVENTS 0
 #endif
 
-#if !defined(ENABLE_PAGE_POPUP)
-#define ENABLE_PAGE_POPUP 0
-#endif
-
 #if !defined(ENABLE_PAGE_VISIBILITY_API)
 #define ENABLE_PAGE_VISIBILITY_API 0
 #endif

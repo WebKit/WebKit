@@ -117,12 +117,6 @@ public:
     virtual bool hasOpenedPopup() const OVERRIDE { return false; }
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const OVERRIDE;
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const OVERRIDE;
-#if ENABLE(PAGE_POPUP)
-    virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect&) OVERRIDE { return 0; }
-    virtual void closePagePopup(PagePopup*) OVERRIDE { }
-    virtual void setPagePopupDriver(PagePopupDriver*) OVERRIDE { }
-    virtual void resetPagePopupDriver() OVERRIDE { }
-#endif
 
     virtual void setStatusbarText(const String&) { }
 
