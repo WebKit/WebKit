@@ -1,3 +1,34 @@
+2013-05-24  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Update qt-5.0-wk2 expected pictures after r150506.
+
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/filters/feImage-animated-transform-on-target-rect-expected.png:
+        * platform/qt-5.0-wk2/svg/filters/feImage-late-indirect-update-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-reference-invalidation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-add-to-document-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-attribute-change-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-changes-id-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-id-change-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-inline-style-change-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-property-change-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-reappend-to-document-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-remove-from-document-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-target-style-change-expected.png: Added.
+
 2013-05-24  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing tests.
