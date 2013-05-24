@@ -1,3 +1,11 @@
+2013-05-23  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Modify WebCore for AppleWin 2010 production build.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
 2013-05-23  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         We need to clear main resource when detaching DocumentLoader from the frame.
