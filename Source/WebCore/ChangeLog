@@ -1,3 +1,19 @@
+2013-05-24  Alberto Garcia  <agarcia@igalia.com>
+
+        Path: upstream the missing bits from the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=116658
+
+        Reviewed by Xan Lopez.
+
+        PathBlackBerry was upstreamed a while ago (r144612) but a few bits
+        were missing from the cross-platform code.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addPathForRoundedRect):
+        * platform/graphics/Path.h:
+        (Graphics):
+        (Path):
+
 2013-05-24  Noam Rosenthal  <noam@webkit.org>
 
         WebProcess is crashing on http://achicu.github.io/css-presentation when direct pattern compositing is enabled

@@ -150,7 +150,7 @@ void Path::addPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeft
         return;
     }
 
-#if USE(CG)
+#if USE(CG) || PLATFORM(BLACKBERRY)
     platformAddPathForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 #else
     addBeziersForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
