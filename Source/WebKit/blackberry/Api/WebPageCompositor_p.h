@@ -58,11 +58,7 @@ public:
     // Public API
     void setChildWindowPlacement(WebPageCompositor::ChildWindowPlacement placement) { m_childWindowPlacement = placement; }
     void prepareFrame(double animationTime);
-    void render(const WebCore::IntRect& targetRect,
-        const WebCore::IntRect& clipRect,
-        const WebCore::TransformationMatrix&,
-        const WebCore::FloatRect& documentContents,
-        const WebCore::FloatRect& viewport);
+    void render(const WebCore::IntRect& targetRect, const WebCore::IntRect& clipRect, const WebCore::TransformationMatrix&, const WebCore::FloatRect& documentSrcRect);
 
     Platform::Graphics::GLES2Context* context() const { return m_context; }
     void setContext(Platform::Graphics::GLES2Context*);

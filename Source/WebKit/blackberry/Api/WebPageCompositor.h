@@ -54,8 +54,7 @@ public:
         const Platform::IntRect& targetRect,
         const Platform::IntRect& clipRect,
         const Platform::TransformationMatrix&,
-        const Platform::FloatRect& documentContents,
-        const Platform::FloatRect& viewport);
+        const Platform::FloatRect& documentSrcRect);
 
     void cleanup(Platform::Graphics::GLES2Context*);
 

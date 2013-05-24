@@ -1,3 +1,21 @@
+2013-05-23  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Compositor API change: Don't pass the unused "viewport" parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=116545
+        Internal PR 189775
+
+        Reviewed by Rob Buis.
+
+        Also change the name of the "documentContents" parameter
+        to the more descriptive "documentSrcRect".
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositor::render):
+        * Api/WebPageCompositor.h:
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+
 2013-05-23  Ed Baker  <edbaker@blackberry.com>
 
         [BlackBerry] The web context does not contain any link properties if the context node is an image enclosed by a link node

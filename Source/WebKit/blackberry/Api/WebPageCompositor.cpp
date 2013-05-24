@@ -144,7 +144,7 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
         m_layerRenderer->prepareFrame(animationTime, m_compositingThreadOverlayLayer.get());
 }
 
-void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& documentContents, const FloatRect& /*viewport*/)
+void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& documentSrcRect)
 {
     // m_layerRenderer should have been created in prepareFrame
     if (!m_layerRenderer)
@@ -157,13 +157,13 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
     if (!m_webPage || m_webPage->compositor() != this)
         return;
 
-    m_layerRenderer->setViewport(targetRect, clipRect, documentContents, m_layoutRect, m_documentRect.size());
+    m_layerRenderer->setViewport(targetRect, clipRect, documentSrcRect, m_layoutRect, m_documentRect.size());
 
     TransformationMatrix transform(transformIn);
     transform.translate(-m_documentRect.x(), -m_documentRect.y());
 
     if (!drawsRootLayer())
-        m_webPage->m_backingStore->d->compositeContents(m_layerRenderer.get(), transform, documentContents, !m_backgroundColor.hasAlpha());
+        m_webPage->m_backingStore->d->compositeContents(m_layerRenderer.get(), transform, documentSrcRect, !m_backgroundColor.hasAlpha());
 
     compositeLayers(transform);
 }
@@ -344,10 +344,10 @@ void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context* context, 
     d->prepareFrame(animationTime);
 }
 
-void WebPageCompositor::render(Platform::Graphics::GLES2Context* context, const Platform::IntRect& targetRect, const Platform::IntRect& clipRect, const Platform::TransformationMatrix& transform, const Platform::FloatRect& documentContents, const Platform::FloatRect& viewport)
+void WebPageCompositor::render(Platform::Graphics::GLES2Context* context, const Platform::IntRect& targetRect, const Platform::IntRect& clipRect, const Platform::TransformationMatrix& transform, const Platform::FloatRect& documentSrcRect)
 {
     d->setContext(context);
-    d->render(targetRect, clipRect, TransformationMatrix(reinterpret_cast<const TransformationMatrix&>(transform)), documentContents, viewport);
+    d->render(targetRect, clipRect, TransformationMatrix(reinterpret_cast<const TransformationMatrix&>(transform)), documentSrcRect);
 }
 
 void WebPageCompositor::cleanup(Platform::Graphics::GLES2Context*)
@@ -397,7 +397,6 @@ void WebPageCompositor::render(Platform::Graphics::GLES2Context*,
     const Platform::IntRect&,
     const Platform::IntRect&,
     const Platform::TransformationMatrix&,
-    const Platform::FloatRect&,
     const Platform::FloatRect&)
 {
 }
