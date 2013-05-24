@@ -1,5 +1,40 @@
 2013-05-23  Anders Carlsson  <andersca@apple.com>
 
+        Shim Flash plug-in to allow its updater to run
+        https://bugs.webkit.org/show_bug.cgi?id=116692
+        <rdar://problem/13938510>
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::replacedNSConcreteTask_launch):
+        (WebKit::initializeCocoaOverrides):
+        Patch -[NSConcreteTask launch] to call PluginProcess::launchProcess.
+
+        (WebKit::PluginProcess::launchProcess):
+        Send a LaunchProcess message to the UI process.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        Remove PluginProcessProxy::didReceiveMessage.
+
+        (PluginProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        Add LaunchProcess message and remove LegacyReceiver attribute.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::isFlashUpdater):
+        Helper function to determine whether the process is the flash updater.
+
+        (WebKit::shouldLaunchProcess):
+        Return whether we should launch this process.
+
+        (WebKit::PluginProcessProxy::launchProcess):
+        Determine if we should launch this process and then do so.
+
+2013-05-23  Anders Carlsson  <andersca@apple.com>
+
         Don't run all plug-ins unsandboxed
         https://bugs.webkit.org/show_bug.cgi?id=116690
         <rdar://problem/13975569>
