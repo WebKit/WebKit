@@ -1,3 +1,23 @@
+2013-05-23  Xiaobo Wang  <xiaobwang@blackberry.com>
+
+        [BlackBerry] Need to suspend/resume RootLayerCommit when the application becomes inactive/active
+        https://bugs.webkit.org/show_bug.cgi?id=115245
+
+        Reviewed by Rob Buis.
+
+        PR 330917.
+        Internally reviewed by Arvid Nilsson.
+
+        1. Suspend/resumeRootLayerCommit when notified app activation state
+        change.
+        2. Schedule root layer commit in resumeRootLayerCommit() to explicitly
+        start root layer commit timer, so that there's a commit even if
+        BackingStore got disabled/removed.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyAppActivationStateChange):
+        (BlackBerry::WebKit::WebPagePrivate::resumeRootLayerCommit):
+
 2013-05-23  Andy Chen  <andchen@blackberry.com>
 
         [BlackBerry] Need to forward the opener frame url to client when creating a new window

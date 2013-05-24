@@ -5024,6 +5024,13 @@ void WebPagePrivate::notifyAppActivationStateChange(ActivationStateType activati
 {
     m_activationState = activationState;
 
+#if USE(ACCELERATED_COMPOSITING)
+    if (activationState == ActivationActive)
+        resumeRootLayerCommit();
+    else
+        suspendRootLayerCommit();
+#endif
+
 #if ENABLE(PAGE_VISIBILITY_API)
     setPageVisibilityState();
 #endif
@@ -5673,6 +5680,9 @@ void WebPagePrivate::resumeRootLayerCommit()
 
     m_suspendRootLayerCommit = false;
     m_needsCommit = true;
+    // PR 330917, explicitly start root layer commit timer, so that there's a commit
+    // even if BackingStore got disabled/removed.
+    scheduleRootLayerCommit();
 }
 
 bool WebPagePrivate::needsOneShotDrawingSynchronization()
