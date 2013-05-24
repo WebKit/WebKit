@@ -385,8 +385,19 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     [m_rootLayer.get() setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
 
-    if (m_webPage->windowIsVisible())
+    if (m_webPage->windowIsVisible()) {
         m_webPage->corePage()->resumeScriptedAnimations();
+
+        Frame* frame = m_webPage->corePage()->mainFrame();
+        if (!frame)
+            return;
+
+        FrameView* frameView = frame->view();
+        if (!frameView)
+            return;
+
+        frameView->resumeAnimatingImages();
+    }
 }
 
 void TiledCoreAnimationDrawingArea::setExposedRect(const FloatRect& exposedRect)

@@ -1,3 +1,20 @@
+2013-05-24  Tim Horton  <timothy_horton@apple.com>
+
+        Animated GIFs don't repaint after TiledCoreAnimationDrawingArea un-suspends painting
+        https://bugs.webkit.org/show_bug.cgi?id=116744
+        <rdar://problem/13973514>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in: Export FrameView::resumeAnimatingImages.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setIsInWindow):
+        (WebCore::FrameView::resumeAnimatingImages):
+        Factor the code to restart animated images out of frameView::setIsInWindow.
+
+        * page/FrameView.h:
+        (FrameView):
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Move history property list writer to WebKit

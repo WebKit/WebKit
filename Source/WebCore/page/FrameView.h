@@ -430,6 +430,8 @@ public:
     bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
     void setVisualUpdatesAllowedByClient(bool);
 
+    void resumeAnimatingImages();
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
