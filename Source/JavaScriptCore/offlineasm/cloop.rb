@@ -63,7 +63,7 @@ class SpecialRegister < NoChildren
     end
 end
 
-C_LOOP_SCRATCH_FPR = SpecialRegister.new("d8")
+C_LOOP_SCRATCH_FPR = SpecialRegister.new("d6")
 
 class RegisterID
     def clDump
