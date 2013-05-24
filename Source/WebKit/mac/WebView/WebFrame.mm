@@ -104,7 +104,6 @@
 #import <runtime/JSCJSValue.h>
 #import <wtf/CurrentTime.h>
 
-using namespace std;
 using namespace WebCore;
 using namespace HTMLNames;
 

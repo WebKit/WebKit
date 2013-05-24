@@ -1,5 +1,57 @@
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
+        Remove using namespace std from Mac WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=116747
+
+        Reviewed by Sam Weinig.
+
+        Use explicit std:: qualifiers instead.
+
+        * History/BinaryPropertyList.cpp:
+        (IntegerArray::deletedValueSize):
+        (BinaryPropertyListPlan::invalidObjectReference):
+        (bytesNeeded):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate orderedLastVisitedDays]):
+        (WebHistoryWriter::WebHistoryWriter):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::idForObject):
+        (WebKit::NetscapePluginInstanceProxy::wheelEvent):
+        (WebKit::NetscapePluginInstanceProxy::print):
+        (WebKit::NetscapePluginInstanceProxy::snapshot):
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        (WebKit::ProxyInstance::supportsInvokeDefaultMethod):
+        (WebKit::ProxyInstance::supportsConstruct):
+        (WebKit::ProxyInstance::getPropertyNames):
+        (WebKit::ProxyInstance::methodNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+        (WebKit::ProxyInstance::fieldValue):
+        (WebKit::ProxyInstance::setFieldValue):
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage supportsExtension:]):
+        (-[WebBasePluginPackage MIMETypeForExtension:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+        * Plugins/WebNetscapePluginView.mm:
+        (PluginTimer::start):
+        (-[WebNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _adjustedBottomOfPageWithTop:bottom:limit:]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _placePopupWindow:]):
+
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
         Move history property list writer to WebKit
         https://bugs.webkit.org/show_bug.cgi?id=116746
 

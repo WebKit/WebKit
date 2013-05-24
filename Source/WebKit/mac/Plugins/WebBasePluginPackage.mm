@@ -60,7 +60,6 @@
 - (NSArray *)_web_lowercaseStrings;
 @end;
 
-using namespace std;
 using namespace WebCore;
 
 @implementation WebBasePluginPackage
@@ -310,7 +309,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
         const Vector<String>& extensions = pluginInfo.mimes[i].extensions;
 
-        if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
+        if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end())
             return YES;
     }
 
@@ -337,7 +336,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         const MimeClassInfo& mimeClassInfo = pluginInfo.mimes[i];
         const Vector<String>& extensions = mimeClassInfo.extensions;
 
-        if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
+        if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end())
             return mimeClassInfo.type;
     }
 

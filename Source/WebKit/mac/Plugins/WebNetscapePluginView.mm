@@ -91,7 +91,6 @@ static const int WKNVSilverlightFullscreenPerformanceIssueFixed = 7288546; /* TR
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace std;
 
 static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 {
@@ -136,7 +135,7 @@ public:
         double timeInterval = m_interval / 1000.0;
         
         if (throttle)
-            timeInterval = max(timeInterval, ThrottledTimerInterval);
+            timeInterval = std::max(timeInterval, ThrottledTimerInterval);
         
         if (m_repeat)
             startRepeating(timeInterval);
@@ -1851,7 +1850,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 NSString *contentLength = [header objectForKey:@"Content-Length"];
 
                 if (contentLength != nil)
-                    dataLength = min<unsigned>([contentLength intValue], dataLength);
+                    dataLength = std::min<unsigned>([contentLength intValue], dataLength);
                 [header removeObjectForKey:@"Content-Length"];
 
                 if ([header count] > 0) {

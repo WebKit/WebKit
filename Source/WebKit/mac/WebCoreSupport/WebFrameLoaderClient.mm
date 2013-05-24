@@ -140,7 +140,6 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
-using namespace std;
 
 // For backwards compatibility with older WebKit plug-ins.
 NSString *WebPluginBaseURLKey = @"WebPluginBaseURL";

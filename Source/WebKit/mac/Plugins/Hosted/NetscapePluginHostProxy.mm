@@ -45,7 +45,6 @@ extern "C" {
 #import "WebKitPluginClientServer.h"
 }
 
-using namespace std;
 using namespace JSC;
 using namespace WebCore;
 

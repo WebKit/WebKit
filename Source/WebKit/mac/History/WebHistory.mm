@@ -37,7 +37,6 @@
 #import <WebCore/PageGroup.h>
 
 using namespace WebCore;
-using namespace std;
 
 typedef int64_t WebHistoryDateKey;
 typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray> > DateToEntriesMap;
@@ -444,7 +443,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         for (DateToEntriesMap::const_iterator it = _entriesByDate->begin(); it != end; ++it)
             daysAsTimeIntervals.append(it->key);
 
-        sort(daysAsTimeIntervals.begin(), daysAsTimeIntervals.end());
+        std::sort(daysAsTimeIntervals.begin(), daysAsTimeIntervals.end());
         size_t count = daysAsTimeIntervals.size();
         _orderedLastVisitedDays = [[NSMutableArray alloc] initWithCapacity:count];
         for (int i = count - 1; i >= 0; i--) {
@@ -900,7 +899,7 @@ WebHistoryWriter::WebHistoryWriter(DateToEntriesMap* entriesByDate)
     DateToEntriesMap::const_iterator end = m_entriesByDate->end();
     for (DateToEntriesMap::const_iterator it = m_entriesByDate->begin(); it != end; ++it)
         m_dateKeys.append(it->key);
-    sort(m_dateKeys.begin(), m_dateKeys.end());
+    std::sort(m_dateKeys.begin(), m_dateKeys.end());
 }
 
 void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)

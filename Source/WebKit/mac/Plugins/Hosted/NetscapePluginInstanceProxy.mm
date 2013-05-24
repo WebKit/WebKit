@@ -73,7 +73,6 @@ extern "C" {
 
 using namespace JSC;
 using namespace JSC::Bindings;
-using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -152,7 +151,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(VM& vm, JSObje
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
 
     m_idToJSObjectMap.set(objectID, Strong<JSObject>(vm, object));
-    m_jsObjectToIDMap.set(object, make_pair(objectID, 1));
+    m_jsObjectToIDMap.set(object, std::make_pair(objectID, 1));
 
     return objectID;
 }
@@ -483,7 +482,7 @@ bool NetscapePluginInstanceProxy::wheelEvent(NSView *pluginView, NSEvent *event)
                                   pluginPoint.x, pluginPoint.y, [event buttonNumber], 
                                   [event deltaX], [event deltaY], [event deltaZ]);
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get() || !reply->m_result)
         return false;
     
@@ -495,7 +494,7 @@ void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, un
     uint32_t requestID = nextRequestID();
     _WKPHPluginInstancePrint(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     if (!reply.get() || !reply->m_returnValue)
         return;
 
@@ -518,7 +517,7 @@ void NetscapePluginInstanceProxy::snapshot(CGContextRef context, unsigned width,
     uint32_t requestID = nextRequestID();
     _WKPHPluginInstanceSnapshot(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     if (!reply.get() || !reply->m_returnValue)
         return;
 
@@ -596,7 +595,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
                     NSString *contentLength = [header objectForKey:@"Content-Length"];
 
                     if (contentLength)
-                        dataLength = min(static_cast<unsigned>([contentLength intValue]), dataLength);
+                        dataLength = std::min(static_cast<unsigned>([contentLength intValue]), dataLength);
                     [header removeObjectForKey:@"Content-Length"];
 
                     if ([header count] > 0)
@@ -1423,7 +1422,7 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
     if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID, requestID) != KERN_SUCCESS)
         return 0;
 
-    auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>(requestID);
+    std::auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>(requestID);
     if (!reply.get())
         return 0;
 

@@ -44,7 +44,6 @@ extern "C" {
 #import "WebKitPluginHost.h"
 }
 
-using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -268,7 +267,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     }
 
-    auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
     if (!reply.get() || reply->m_resultCode != KERN_SUCCESS) {
         instance->cleanup();
         return 0;

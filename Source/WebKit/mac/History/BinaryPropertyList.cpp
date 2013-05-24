@@ -30,8 +30,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
-using namespace std;
-
 static const size_t headerSize = 8;
 static const size_t trailerSize = 32;
 
@@ -62,7 +60,7 @@ public:
     size_t size() const { ASSERT(!isDeletedValue()); return m_size; }
 
 private:
-    static size_t deletedValueSize() { return numeric_limits<size_t>::max(); }
+    static size_t deletedValueSize() { return std::numeric_limits<size_t>::max(); }
 
     friend bool operator==(const IntegerArray&, const IntegerArray&);
 
@@ -138,7 +136,7 @@ private:
     void writeStringObject(const String&);
     void writeStringObject(const char*);
 
-    static ObjectReference invalidObjectReference() { return numeric_limits<ObjectReference>::max(); }
+    static ObjectReference invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
 
     typedef HashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
 
@@ -414,7 +412,7 @@ static int bytesNeeded(size_t count)
 {
     ASSERT(count);
     int bytesNeeded = 1;
-    for (size_t mask = numeric_limits<size_t>::max() << 8; count & mask; mask <<= 8)
+    for (size_t mask = std::numeric_limits<size_t>::max() << 8; count & mask; mask <<= 8)
         ++bytesNeeded;
     return bytesNeeded;
 }

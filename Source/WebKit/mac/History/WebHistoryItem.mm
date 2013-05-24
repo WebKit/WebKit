@@ -73,7 +73,6 @@ static NSString *weeklyVisitCountKey = @"W"; // short key to save space
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
 
 using namespace WebCore;
-using namespace std;
 
 typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
 
@@ -375,9 +374,9 @@ WebHistoryItem *kit(HistoryItem* item)
 
         // Daily and weekly counts < 0 are errors in the data read from disk, so reset to 0.
         for (size_t i = 0; i < coreDailyCounts.size(); ++i)
-            coreDailyCounts[i] = max([[dailyCounts _webkit_numberAtIndex:i] intValue], 0);
+            coreDailyCounts[i] = std::max([[dailyCounts _webkit_numberAtIndex:i] intValue], 0);
         for (size_t i = 0; i < coreWeeklyCounts.size(); ++i)
-            coreWeeklyCounts[i] = max([[weeklyCounts _webkit_numberAtIndex:i] intValue], 0);
+            coreWeeklyCounts[i] = std::max([[weeklyCounts _webkit_numberAtIndex:i] intValue], 0);
     
         core(_private)->adoptVisitCounts(coreDailyCounts, coreWeeklyCounts);
     }

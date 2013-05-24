@@ -43,7 +43,6 @@ extern "C" {
 
 using namespace JSC;
 using namespace JSC::Bindings;
-using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -163,7 +162,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
         return jsUndefined();
     }
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 
     if (m_instanceProxy) {
@@ -242,7 +241,7 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
                                             m_objectID) != KERN_SUCCESS)
         return false;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (reply.get() && reply->m_result)
         return true;
         
@@ -266,7 +265,7 @@ bool ProxyInstance::supportsConstruct() const
                                         m_objectID) != KERN_SUCCESS)
         return false;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (reply.get() && reply->m_result)
         return true;
         
@@ -320,7 +319,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     if (_WKPHNPObjectEnumerate(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID) != KERN_SUCCESS)
         return;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
     if (!reply.get() || !reply->m_returnValue)
         return;
@@ -367,7 +366,7 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
                                m_objectID, methodName) != KERN_SUCCESS)
         return 0;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get())
         return 0;
 
@@ -404,7 +403,7 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
                                  m_objectID, identifier) != KERN_SUCCESS)
         return 0;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get())
         return 0;
     
@@ -431,7 +430,7 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
                                  m_objectID, serverIdentifier) != KERN_SUCCESS)
         return jsUndefined();
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
@@ -461,7 +460,7 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
     if (kr != KERN_SUCCESS)
         return;
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 }
 
