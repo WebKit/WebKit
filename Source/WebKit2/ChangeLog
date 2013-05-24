@@ -1,3 +1,18 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Intermittent crash when typing in Address Bar
+        https://bugs.webkit.org/show_bug.cgi?id=116728
+        <rdar://problem/13976781>
+
+        Reviewed by Sam Weinig.
+
+        If a web process connection has been removed from the storage manager because we disconnected it
+        since there were no more active pages associated with the web process, we'll fail to find it here
+        so just return early instead of crashing.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::destroyStorageMap):
+
 2013-05-24  Andreas Kling  <akling@apple.com>
 
         Typing in Safari's unified field causes unnecessary web content repaints.

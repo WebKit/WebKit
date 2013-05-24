@@ -496,9 +496,10 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
     ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
 
     HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::iterator it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
-
-    // FIXME: This should be a message check.
-    ASSERT(it != m_storageAreasByConnection.end());
+    if (it == m_storageAreasByConnection.end()) {
+        // The connection has been removed because the last page was closed.
+        return;
+    }
 
     it->value->removeListener(connection, storageMapID);
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
