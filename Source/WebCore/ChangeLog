@@ -1,3 +1,32 @@
+2013-05-24  Xiaobo Wang  <xiaobwang@blackberry.com>
+
+        [BlackBerry] DRT - crashed on GraphicsContext3D::makeContextCurrent
+        https://bugs.webkit.org/show_bug.cgi?id=116654
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 331552.
+        Internally reviewed and amended by Arvid Nilsson.
+
+        No new tests, this patch is to fix DRT crashes in fast/canvas/webgl.
+        The instance of GraphicsContext3D has already been destroyed but
+        WebGLLayerWebKitThread is not aware of that. This is because compositor
+        layer of the WebGL graphics context was referenced outside the context.
+        So when destructing GraphicsContext3D the compositing layer was not
+        destructed.
+        Fix by setting m_webGLContext to 0 when destructing GrapthicsContext3D
+        after releasing the compositor layer, so that it won't be de-referenced
+        again later.
+
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/blackberry/WebGLLayerWebKitThread.cpp:
+        (WebCore::WebGLLayerWebKitThread::~WebGLLayerWebKitThread):
+        (WebCore::WebGLLayerWebKitThread::webGLContextDestroyed):
+        (WebCore):
+        * platform/graphics/blackberry/WebGLLayerWebKitThread.h:
+        (WebGLLayerWebKitThread):
+
 2013-05-24  Andreas Kling  <akling@apple.com>
 
         Typing in Safari's unified field causes unnecessary web content repaints.

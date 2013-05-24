@@ -127,7 +127,7 @@ GraphicsContext3D::~GraphicsContext3D()
         ::glDeleteFramebuffers(1, &m_fbo);
     }
 
-    m_compositingLayer = 0; // Must release compositing layer before destroying the context.
+    static_cast<WebGLLayerWebKitThread *>(m_compositingLayer.get())->webGLContextDestroyed(); // Must release compositing layer before destroying the context.
     BlackBerry::Platform::Graphics::destroyWebGLContext(m_context);
 }
 

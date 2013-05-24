@@ -37,6 +37,7 @@ public:
     virtual ~WebGLLayerWebKitThread();
 
     void setWebGLContext(GraphicsContext3D* context) { m_webGLContext = context; }
+    void webGLContextDestroyed();
 
 protected:
     virtual void updateTextureContentsIfNeeded();
