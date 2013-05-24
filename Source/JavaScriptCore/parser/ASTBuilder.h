@@ -148,7 +148,7 @@ public:
     ExpressionNode* createLogicalNot(const JSTokenLocation& location, ExpressionNode* expr)
     {
         if (expr->isNumber())
-            return createBoolean(location, !static_cast<NumberNode*>(expr)->value());
+            return createBoolean(location, isZeroOrUnordered(static_cast<NumberNode*>(expr)->value()));
 
         return new (m_vm) LogicalNotNode(location, expr);
     }

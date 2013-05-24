@@ -798,7 +798,7 @@ inline TriState JSValue::pureToBoolean() const
     if (isInt32())
         return asInt32() ? TrueTriState : FalseTriState;
     if (isDouble())
-        return (asDouble() > 0.0 || asDouble() < 0.0) ? TrueTriState : FalseTriState; // false for NaN
+        return isNotZeroAndOrdered(asDouble()) ? TrueTriState : FalseTriState; // false for NaN
     if (isCell())
         return asCell()->pureToBoolean();
     return isTrue() ? TrueTriState : FalseTriState;

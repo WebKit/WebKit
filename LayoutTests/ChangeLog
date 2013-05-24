@@ -1,3 +1,15 @@
+2013-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        We broke !(0/0)
+        https://bugs.webkit.org/show_bug.cgi?id=116736
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/constant-fold-not-nan.html: Added.
+        * fast/js/constant-fold-not-nan-expected.txt: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/constant-fold-not-nan.js: Added.
+
 2013-05-24  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION (r150215): broke a test case in inspector/console/console-css-warnings.html

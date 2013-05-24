@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -344,6 +344,16 @@ template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
     //   (unsigned)ceil(value * 1.5));
     // This form is not prone to internal overflow.
     return value + (value >> 1) + (value & 1);
+}
+
+template<typename T> inline bool isNotZeroAndOrdered(T value)
+{
+    return value > 0.0 || value < 0.0;
+}
+
+template<typename T> inline bool isZeroOrUnordered(T value)
+{
+    return !isNotZeroAndOrdered(value);
 }
 
 #ifndef UINT64_C

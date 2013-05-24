@@ -1,3 +1,15 @@
+2013-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        We broke !(0/0)
+        https://bugs.webkit.org/show_bug.cgi?id=116736
+
+        Reviewed by Gavin Barraclough.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createLogicalNot):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::pureToBoolean):
+
 2013-05-24  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Optimize LLINT generated code and fix few bugs in baseline JIT.

@@ -54,6 +54,7 @@ fast/js/const-without-initializer
 fast/js/constant-count
 fast/js/constant-encoding
 fast/js/constant-folding
+fast/js/constant-fold-not-nan
 fast/js/continue-break-multiple-labels
 fast/js/convert-nan-to-bool
 fast/js/cyclic-prototypes

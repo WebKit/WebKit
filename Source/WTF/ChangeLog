@@ -1,3 +1,14 @@
+2013-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        We broke !(0/0)
+        https://bugs.webkit.org/show_bug.cgi?id=116736
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/MathExtras.h:
+        (isNotZeroAndOrdered):
+        (isZeroOrUnordered):
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove PagePopup code
