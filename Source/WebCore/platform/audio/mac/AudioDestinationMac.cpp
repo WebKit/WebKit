@@ -33,6 +33,7 @@
 #include "AudioDestinationMac.h"
 
 #include "AudioIOCallback.h"
+#include "AudioSessionManager.h"
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "VectorMath.h"
@@ -63,23 +64,7 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback,
 float AudioDestination::hardwareSampleRate()
 {
     // Determine the default output device's sample-rate.
-    AudioDeviceID deviceID = kAudioDeviceUnknown;
-    UInt32 infoSize = sizeof(deviceID);
-
-    AudioObjectPropertyAddress defaultOutputDeviceAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    OSStatus result = AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceAddress, 0, 0, &infoSize, (void*)&deviceID);
-    if (result)
-        return 0; // error
-
-    Float64 nominalSampleRate;
-    infoSize = sizeof(Float64);
-
-    AudioObjectPropertyAddress nominalSampleRateAddress = { kAudioDevicePropertyNominalSampleRate, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    result = AudioObjectGetPropertyData(deviceID, &nominalSampleRateAddress, 0, 0, &infoSize, (void*)&nominalSampleRate);
-    if (result)
-        return 0; // error
-
-    return narrowPrecisionToFloat(nominalSampleRate);
+    return AudioSession::sharedSession().sampleRate();
 }
 
 unsigned long AudioDestination::maxChannelCount()
@@ -97,6 +82,7 @@ AudioDestinationMac::AudioDestinationMac(AudioIOCallback& callback, float sample
     , m_renderBus(AudioBus::create(2, kBufferSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
+    , m_audioSessionManagerToken(AudioSessionManagerToken::create(AudioSessionManager::WebAudio))
 {
     // Open and initialize DefaultOutputUnit
     AudioComponent comp;
@@ -147,11 +133,6 @@ void AudioDestinationMac::configure()
     streamFormat.mBytesPerFrame = sizeof(AudioSampleType);
 
     result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
-    ASSERT(!result);
-
-    // Set the buffer frame size.
-    UInt32 bufferSize = kBufferSize;
-    result = AudioUnitSetProperty(m_outputUnit, kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Output, 0, (void*)&bufferSize, sizeof(bufferSize));
     ASSERT(!result);
 }
 

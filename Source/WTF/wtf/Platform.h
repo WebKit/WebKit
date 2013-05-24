@@ -1023,4 +1023,8 @@
 #define WTF_USE_MARKER_REMOVAL_UPON_EDITING 1
 #endif /* #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070) */
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define WTF_USE_AUDIO_SESSION 1
+#endif
+
 #endif /* WTF_Platform_h */

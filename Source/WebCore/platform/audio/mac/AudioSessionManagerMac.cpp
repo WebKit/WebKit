@@ -23,63 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSession_h
-#define AudioSession_h
+#include "config.h"
+#include "AudioSessionManager.h"
 
-#if USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+#include "Logging.h"
 
-namespace WebCore {
+using namespace WebCore;
 
-class AudioSessionListener;
-class AudioSessionPrivate;
+static const size_t kWebAudioBufferSize = 128;
+static const size_t kLowPowerVideoBufferSize = 4096;
 
-class AudioSession {
-    WTF_MAKE_NONCOPYABLE(AudioSession);
-public:
-    static AudioSession& sharedSession();
+void AudioSessionManager::updateSessionState()
+{
+    // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
+    // causes media LayoutTests to fail on 10.8.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    LOG(Media, "AudioSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", m_typeCount.count(Video), m_typeCount.count(Audio), m_typeCount.count(WebAudio));
 
-    enum CategoryType {
-        None,
-        AmbientSound,
-        SoloAmbientSound,
-        MediaPlayback,
-        RecordAudio,
-        PlayAndRecord,
-        AudioProcessing,
-    };
-    void setCategory(CategoryType);
-    CategoryType category() const;
-
-    void setCategoryOverride(CategoryType);
-    CategoryType categoryOverride() const;
-
-    void addListener(AudioSessionListener*);
-    void removeListener(AudioSessionListener*);
-
-    float sampleRate() const;
-    size_t numberOfOutputChannels() const;
-
-    void setActive(bool);
-
-    size_t preferredBufferSize() const;
-    void setPreferredBufferSize(size_t);
-
-    void beganAudioInterruption();
-    void endedAudioInterruption();
-
-private:
-    AudioSession();
-    ~AudioSession();
-
-    OwnPtr<AudioSessionPrivate> m_private;
-    HashSet<AudioSessionListener*> m_listeners;
-};
-
+    if (has(WebAudio))
+        AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
+    else if (has(Video) || has(Audio))
+        AudioSession::sharedSession().setPreferredBufferSize(kLowPowerVideoBufferSize);
+#endif
 }
 
-#endif // USE(AUDIO_SESSION)
-
-#endif // AudioSession_h
+#endif // USE(AUDIO_SESSION) && PLATFORM(MAC)

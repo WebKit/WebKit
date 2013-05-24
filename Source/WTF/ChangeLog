@@ -1,3 +1,12 @@
+2013-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Mac: Set the default audio buffer size to a large value for <video> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=116342
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Platform.h: Add a WTF_USE_AUDIO_SESSION setting.
+
 2013-05-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Rolling back r150600 as it breaks the VS2010 builds.

@@ -188,7 +188,7 @@ void AudioDestinationIOS::configure()
     result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);
 
-    AudioSession::sharedSession().setPreferredBufferDuration(narrowPrecisionToFloat(kPreferredBufferSize / m_sampleRate));
+    AudioSession::sharedSession().setPreferredBufferSize(kPreferredBufferSize);
 }
 
 void AudioDestinationIOS::start()

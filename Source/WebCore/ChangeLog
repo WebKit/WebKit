@@ -1,3 +1,81 @@
+2013-05-24  Jer Noble  <jer.noble@apple.com>
+
+        Mac: Set the default audio buffer size to a large value for <video> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=116342
+
+        Reviewed by Eric Carlson.
+        Roll-in rubber stamped by Eric Carlson.
+
+        To enable power savings by waking up the audio hardware less often, set the
+        requested buffer frame size to a large value, such as 4096. Since this results
+        in approximately 100ms worth of buffer, set the buffer size to a much lower
+        value when playing WebAudio, which is much more sensitive to latency than video
+        or audio elements.
+
+        Introduce a new class, AudioSessionManager, as well as a helper class,
+        AudioSessionManagerToken. Audio elements, video elements, and WebAudio destination
+        nodes will create and retain a token, and release the token in their destructor.
+        This allows the AudioSessionManager to track how many of what type of audio-
+        generating objects are in existence.
+
+        This requires implementing AudioSession for Mac platforms. Move the implementation
+        for retrieving the hardware sample rate and setting the buffer duration into
+        AudioSessionMac from AudioDestinationMac, to be shared with AudioSessionManagerMac.
+
+        Change the AudioSession method preferredBufferLength() into preferredBufferSize(),
+        as the callers really want to specify a buffer size, not a buffer duration. On iOS,
+        where the available API requires a duration, perform the conversion from duration to
+        size on behalf of the caller.
+
+        However, since the original version of this patch caused media test
+        failures on the Mac ML and Lion bots, only enable the buffer size
+        change for OS X > ML.
+
+        * html/HTMLMediaElement.h:  Add a AudioSessionManagerToken member.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize the token.
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::preferredBufferSize): Renamed from preferredBufferLength.
+        (WebCore::AudioSession::setPreferredBufferSize): Renamed from setPreferredBufferLength.
+        * platform/audio/AudioSession.h:
+        * platform/audio/AudioSessionManager.cpp:
+        (AudioSessionManagerToken::create): Simple factory method.
+        (AudioSessionManagerToken::AudioSessionManagerToken): Call AudioSessionManager::incrementCount().
+        (AudioSessionManagerToken::~AudioSessionManagerToken): Call AudioSessionManager::decrementCount().
+        (AudioSessionManager::sharedManager): Simple singleton method.
+        (AudioSessionManager::AudioSessionManager): Simple constructor.
+        (AudioSessionManager::has): Return whether the type is present.
+        (AudioSessionManager::incrementCount): Increment, then call updateSessionState()
+        (AudioSessionManager::decrementCount): Decrement, then call updateSessionState()
+        (AudioSessionManager::updateSessionState): Stub, does nothing.
+        * platform/audio/AudioSessionManager.h:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::configure): Call setPreferredBufferSize() instead of setPreferredBufferLength()
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::preferredBufferSize): Renamed from preferredBufferLength.
+        (WebCore::AudioSession::setPreferredBufferSize): Renamed from setPreferredBufferLength
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestination::hardwareSampleRate): Call AudioSession::sampleRate().
+        (WebCore::AudioDestinationMac::AudioDestinationMac): Create the AudioSessionManagerToken.
+        (WebCore::AudioDestinationMac::configure): Do not set the buffer size (this is done in AudioSessionManagerMac).
+        * platform/audio/mac/AudioDestinationMac.h:
+        * platform/audio/mac/AudioSessionMac.cpp: Added.
+        (WebCore::defaultDevice): Added, returns the default audio device.
+        (WebCore::AudioSession::AudioSession): Simple constructor.
+        (WebCore::AudioSession::~AudioSession): Simple destructor.
+        (WebCore::AudioSession::category): Stub, unimplemented.
+        (WebCore::AudioSession::setCategory): Ditto.
+        (WebCore::AudioSession::categoryOverride): Ditto.
+        (WebCore::AudioSession::setCategoryOverride): Ditto.
+        (WebCore::AudioSession::numberOfOutputChannels): Ditto.
+        (WebCore::AudioSession::setActive): Ditto.
+        (WebCore::AudioSession::sampleRate): Use the HAL to return the default audio device sample rate.
+        (WebCore::AudioSession::preferredBufferSize): Return the current HAL setting.
+        (WebCore::AudioSession::setPreferredBufferSize): Set the buffer size.
+        * platform/audio/mac/AudioSessionManagerMac.cpp:
+        (AudioSessionManager::updateSessionState): Set the buffer size depending on what audio outputs are present.
+        * WebCore.xcodeproj/project.pbxproj: Add the new files to the project.
+
 2013-05-24  Alberto Garcia  <agarcia@igalia.com>
 
         Path: upstream the missing bits from the BlackBerry port
