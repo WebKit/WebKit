@@ -1,3 +1,24 @@
+2013-05-24  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Respect tabindex when using form controls.
+        https://bugs.webkit.org/show_bug.cgi?id=116676
+
+        Reviewed by Xan Lopez.
+
+        PR 337419.
+
+        Update form control navigation tracking to take tabindex
+        order into account when calculating next and previous nodes.
+
+        The order to follow is tab index 1 - N, followed by all items
+        without a tab index or tab index 0 in rendering order to match
+        with standard desktop behavior.
+
+        Internally Reviewed by Genevieve Mak and Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+
 2013-05-24  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Remove SKIA leftovers from WebPage.cpp
