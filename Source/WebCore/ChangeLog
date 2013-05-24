@@ -1,3 +1,11 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2013-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Animated GIFs don't repaint after TiledCoreAnimationDrawingArea un-suspends painting
