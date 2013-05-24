@@ -1,3 +1,12 @@
+2013-05-23  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Build fails to link.
+        https://bugs.webkit.org/show_bug.cgi?id=116671
+
+        Reviewed by Brent Fulgham.
+
+        * page/FrameView.h: Added guard for ACCELERATED_COMPOSITING.
+
 2013-05-23  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Modify WebCore for AppleWin 2010 production build.

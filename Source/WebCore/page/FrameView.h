@@ -419,7 +419,9 @@ public:
     virtual void willStartLiveResize() OVERRIDE;
     virtual void willEndLiveResize() OVERRIDE;
 
+#if USE(ACCELERATED_COMPOSITING)
     virtual bool scrollbarAnimationsAreSuppressed() const OVERRIDE;
+#endif
 
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestones();
