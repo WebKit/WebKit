@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
 #include "HistoryPropertyList.h"
 
-#include "HistoryItem.h"
+#include <WebCore/HistoryItem.h>
 #include <wtf/StringExtras.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 static const int currentFileVersion = 1;
 
@@ -153,4 +152,3 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
     stream.writeDictionaryEnd(itemDictionaryStart);
 }
 
-}

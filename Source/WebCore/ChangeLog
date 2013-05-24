@@ -1,3 +1,15 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Move history property list writer to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=116746
+
+        Reviewed by Tim Horton.
+
+        Remove files from the Xcode project and remove symbols that now live in WebKit.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Global constructors exposed in worker environment have wrong attributes

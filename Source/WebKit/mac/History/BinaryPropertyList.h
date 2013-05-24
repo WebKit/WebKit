@@ -31,8 +31,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
 // Writes a limited subset of binary property lists.
 // Covers only what's needed for writing browser history as of this writing.
 class BinaryPropertyListObjectStream {
@@ -104,6 +102,4 @@ private:
     friend class BinaryPropertyListSerializer;
 };
 
-}
-
-#endif
+#endif // BinaryPropertyList_h

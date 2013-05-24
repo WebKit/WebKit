@@ -31,8 +31,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
 class HistoryItem;
+}
 
 class HistoryPropertyListWriter : public BinaryPropertyListWriter {
 public:
@@ -41,7 +41,7 @@ public:
 protected:
     HistoryPropertyListWriter();
 
-    void writeHistoryItem(BinaryPropertyListObjectStream&, HistoryItem*);
+    void writeHistoryItem(BinaryPropertyListObjectStream&, WebCore::HistoryItem*);
 
 private:
     virtual void writeHistoryItems(BinaryPropertyListObjectStream&) = 0;
@@ -64,6 +64,4 @@ private:
     size_t m_bufferSize;
 };
 
-}
-
-#endif
+#endif // HistoryPropertyList_h

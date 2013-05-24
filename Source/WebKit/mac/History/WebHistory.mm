@@ -28,12 +28,12 @@
 
 #import "WebHistoryInternal.h"
 
+#import "HistoryPropertyList.h"
 #import "WebHistoryItemInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
 #import "WebTypesInternal.h"
 #import <WebCore/HistoryItem.h>
-#import <WebCore/HistoryPropertyList.h>
 #import <WebCore/PageGroup.h>
 
 using namespace WebCore;

@@ -1,3 +1,18 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Move history property list writer to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=116746
+
+        Reviewed by Tim Horton.
+
+        Move WebCore history files to WebKit since they're only used by WebKit now.
+
+        * History/BinaryPropertyList.cpp: Renamed from Source/WebCore/platform/cf/BinaryPropertyList.cpp.
+        * History/BinaryPropertyList.h: Renamed from Source/WebCore/platform/cf/BinaryPropertyList.h.
+        * History/HistoryPropertyList.cpp: Renamed from Source/WebCore/history/cf/HistoryPropertyList.cpp.
+        * History/HistoryPropertyList.h: Renamed from Source/WebCore/history/cf/HistoryPropertyList.h.
+        * History/WebHistory.mm:
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for webkitAudioContext global constructor getter

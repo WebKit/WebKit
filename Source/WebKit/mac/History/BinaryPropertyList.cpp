@@ -23,17 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
 #include "BinaryPropertyList.h"
 
+#include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
-#include <limits>
 
 using namespace std;
-
-namespace WebCore {
 
 static const size_t headerSize = 8;
 static const size_t trailerSize = 32;
@@ -749,23 +746,23 @@ void BinaryPropertyListSerializer::appendObjectReference(ObjectReference referen
 {
     switch (m_objectReferenceSize) {
 #ifdef __LP64__
-        case 8:
-            appendByte(reference >> 56);
-        case 7:
-            appendByte(reference >> 48);
-        case 6:
-            appendByte(reference >> 40);
-        case 5:
-            appendByte(reference >> 32);
+    case 8:
+        appendByte(reference >> 56);
+    case 7:
+        appendByte(reference >> 48);
+    case 6:
+        appendByte(reference >> 40);
+    case 5:
+        appendByte(reference >> 32);
 #endif
-        case 4:
-            appendByte(reference >> 24);
-        case 3:
-            appendByte(reference >> 16);
-        case 2:
-            appendByte(reference >> 8);
-        case 1:
-            appendByte(reference);
+    case 4:
+        appendByte(reference >> 24);
+    case 3:
+        appendByte(reference >> 16);
+    case 2:
+        appendByte(reference >> 8);
+    case 1:
+        appendByte(reference);
     }
 }
 
@@ -778,23 +775,23 @@ void BinaryPropertyListSerializer::startObject()
     UInt8* offsetTableEntry = m_buffer + m_offsetTableStart + reference * m_offsetSize + m_offsetSize;
     switch (m_offsetSize) {
 #ifdef __LP64__
-        case 8:
-            offsetTableEntry[-8] = offset >> 56;
-        case 7:
-            offsetTableEntry[-7] = offset >> 48;
-        case 6:
-            offsetTableEntry[-6] = offset >> 40;
-        case 5:
-            offsetTableEntry[-5] = offset >> 32;
+    case 8:
+        offsetTableEntry[-8] = offset >> 56;
+    case 7:
+        offsetTableEntry[-7] = offset >> 48;
+    case 6:
+        offsetTableEntry[-6] = offset >> 40;
+    case 5:
+        offsetTableEntry[-5] = offset >> 32;
 #endif
-        case 4:
-            offsetTableEntry[-4] = offset >> 24;
-        case 3:
-            offsetTableEntry[-3] = offset >> 16;
-        case 2:
-            offsetTableEntry[-2] = offset >> 8;
-        case 1:
-            offsetTableEntry[-1] = offset;
+    case 4:
+        offsetTableEntry[-4] = offset >> 24;
+    case 3:
+        offsetTableEntry[-3] = offset >> 16;
+    case 2:
+        offsetTableEntry[-2] = offset >> 8;
+    case 1:
+        offsetTableEntry[-1] = offset;
     }
 }
 
@@ -802,23 +799,23 @@ void BinaryPropertyListSerializer::addAggregateObjectReference(ObjectReference r
 {
     switch (m_objectReferenceSize) {
 #ifdef __LP64__
-        case 8:
-            *--m_currentAggregateBufferByte = reference >> 56;
-        case 7:
-            *--m_currentAggregateBufferByte = reference >> 48;
-        case 6:
-            *--m_currentAggregateBufferByte = reference >> 40;
-        case 5:
-            *--m_currentAggregateBufferByte = reference >> 32;
+    case 8:
+        *--m_currentAggregateBufferByte = reference >> 56;
+    case 7:
+        *--m_currentAggregateBufferByte = reference >> 48;
+    case 6:
+        *--m_currentAggregateBufferByte = reference >> 40;
+    case 5:
+        *--m_currentAggregateBufferByte = reference >> 32;
 #endif
-        case 4:
-            *--m_currentAggregateBufferByte = reference >> 24;
-        case 3:
-            *--m_currentAggregateBufferByte = reference >> 16;
-        case 2:
-            *--m_currentAggregateBufferByte = reference >> 8;
-        case 1:
-            *--m_currentAggregateBufferByte = reference;
+    case 4:
+        *--m_currentAggregateBufferByte = reference >> 24;
+    case 3:
+        *--m_currentAggregateBufferByte = reference >> 16;
+    case 2:
+        *--m_currentAggregateBufferByte = reference >> 8;
+    case 1:
+        *--m_currentAggregateBufferByte = reference;
     }
     ASSERT(m_currentByte <= m_currentAggregateBufferByte);
 }
@@ -826,6 +823,4 @@ void BinaryPropertyListSerializer::addAggregateObjectReference(ObjectReference r
 void BinaryPropertyListWriter::writePropertyList()
 {
     BinaryPropertyListSerializer serializer(*this);
-}
-
 }

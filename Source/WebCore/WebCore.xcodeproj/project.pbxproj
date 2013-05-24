@@ -2847,8 +2847,6 @@
 		935FBC4509BA00B900E230B1 /* EventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBC4409BA00B900E230B1 /* EventListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9363B62A0F8E8FE000803810 /* HistoryPropertyList.cpp */; };
-		9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9363B62B0F8E8FE000803810 /* HistoryPropertyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */; };
 		9377ABA015DEFEEF0031FD04 /* Pagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 9377AB9F15DEFEEF0031FD04 /* Pagination.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */; };
@@ -2856,8 +2854,6 @@
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47709A11ACC001FDB34 /* WidgetMac.mm */; };
-		938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938192020F87E1E600D5352A /* BinaryPropertyList.cpp */; };
-		938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 938192040F87E1EC00D5352A /* BinaryPropertyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382AAB10D8C386100F357A6 /* NodeWithIndex.h */; };
 		9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382DF5710A8D5C900925652 /* ColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */; };
@@ -9272,8 +9268,6 @@
 		935FBC4409BA00B900E230B1 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
 		9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectionDirection.h; sourceTree = "<group>"; };
-		9363B62A0F8E8FE000803810 /* HistoryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryPropertyList.cpp; sourceTree = "<group>"; };
-		9363B62B0F8E8FE000803810 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textAreaResizeCorner@2x.png"; sourceTree = "<group>"; };
 		9377AB9F15DEFEEF0031FD04 /* Pagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pagination.h; sourceTree = "<group>"; };
@@ -9282,8 +9276,6 @@
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
 		9380F47209A11AB4001FDB34 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		9380F47709A11ACC001FDB34 /* WidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetMac.mm; sourceTree = "<group>"; };
-		938192020F87E1E600D5352A /* BinaryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryPropertyList.cpp; sourceTree = "<group>"; };
-		938192040F87E1EC00D5352A /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
 		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElementWrapperFactory.h; sourceTree = "<group>"; };
@@ -13407,8 +13399,6 @@
 		1AE42F670AA4B8CB00C8612D /* cf */ = {
 			isa = PBXGroup;
 			children = (
-				938192020F87E1E600D5352A /* BinaryPropertyList.cpp */,
-				938192040F87E1EC00D5352A /* BinaryPropertyList.h */,
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */,
 				29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */,
@@ -14329,7 +14319,6 @@
 		51741D080B07257000ED442C /* history */ = {
 			isa = PBXGroup;
 			children = (
-				9363B6290F8E8FE000803810 /* cf */,
 				5160F4920B0AA71500C1D2AF /* mac */,
 				BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */,
 				BCA8C81C11E3D36900812FB7 /* BackForwardController.h */,
@@ -15671,15 +15660,6 @@
 				9332AB8C1653A97900D827EC /* NEONHelpers.h */,
 			);
 			path = filters;
-			sourceTree = "<group>";
-		};
-		9363B6290F8E8FE000803810 /* cf */ = {
-			isa = PBXGroup;
-			children = (
-				9363B62A0F8E8FE000803810 /* HistoryPropertyList.cpp */,
-				9363B62B0F8E8FE000803810 /* HistoryPropertyList.h */,
-			);
-			path = cf;
 			sourceTree = "<group>";
 		};
 		93A1EAA20A5634D8006960A0 /* mac */ = {
@@ -21044,7 +21024,6 @@
 				B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				A8C402931348B2220063F1E5 /* BidiRunList.h in Headers */,
-				938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */,
 				973AA3FA15D0891B00E38A85 /* BindingSecurity.h in Headers */,
 				973AA3F515D088F000E38A85 /* BindingState.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* BindingVisitors.h in Headers */,
@@ -21954,7 +21933,6 @@
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
-				9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */,
 				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
@@ -24499,7 +24477,6 @@
 				85031B3C0A44EFC700F992E0 /* BeforeUnloadEvent.cpp in Sources */,
 				B2C3DA230D006C1D00EF6F26 /* BidiContext.cpp in Sources */,
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
-				938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */,
 				973AA3F915D0891B00E38A85 /* BindingSecurity.cpp in Sources */,
 				973AA3F415D088F000E38A85 /* BindingState.cpp in Sources */,
 				FD31608C12B026F700C1A359 /* Biquad.cpp in Sources */,
@@ -25136,7 +25113,6 @@
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,
 				5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */,
-				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
 				4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */,
 				2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */,
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
