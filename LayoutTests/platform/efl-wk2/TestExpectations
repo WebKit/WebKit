@@ -33,19 +33,6 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
-editing/spelling/design-mode-spellcheck-off.html [ Pass ]
-editing/spelling/spellcheck-api-crash.html [ Pass ]
-editing/spelling/spellcheck-attribute.html [ Pass ]
-editing/spelling/spellcheck-input-search-crash.html [ Pass ]
-editing/spelling/spelling-attribute-at-child.html [ Pass ]
-editing/spelling/spelling-attribute-change.html [ Pass ]
-editing/spelling/spelling-backspace-between-lines.html [ Pass ]
-editing/spelling/spelling-double-clicked-word.html [ Pass ]
-editing/spelling/spelling-exactly-selected-word.html [ Pass ]
-editing/spelling/spelling-hasspellingmarker.html [ Pass ]
-editing/spelling/spelling-linebreak.html [ Pass ]
-editing/spelling/spelling-with-punctuation-selection.html [ Pass ]
-editing/spelling/spelling-with-whitespace-selection.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -298,6 +285,7 @@ webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 
 # Needs grammar checking
+Bug(EFL) editing/spelling/grammar.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-markers.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-markers-hidpi.html [ Failure ]
@@ -309,7 +297,6 @@ Bug(EFL) editing/spelling/spelling-marker-description.html [ Failure ]
 
 # WK2's contextClick() returns array of objects instead of strings.
 editing/spelling/spelling-exactly-selected-multiple-words.html [ Failure ]
-editing/spelling/spelling-exactly-selected-word.html [ Failure ]
 editing/spelling/spelling-multiword-selection.html [ Failure ]
 editing/spelling/spelling-should-select-multiple-words.html [ Failure ]
 editing/spelling/spelling-subword-selection.html [ Failure ]

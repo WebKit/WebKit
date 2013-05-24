@@ -1,3 +1,22 @@
+2013-05-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2] Spelling tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=116718
+
+        Unreviewed gardening.
+
+        The most spelling tests are skipped for wk2 platforms and they have deprecated comments.
+        Move the tests from global wk2/TestExpectations to the ports' TestExpectations as
+        the core spellchecking implementation is delivered for wk2.
+        This change will allow to run spelling tests easier and using [ Pass ] keyword
+        in TestExpectations won't be needed.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove PagePopup code

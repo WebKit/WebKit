@@ -768,6 +768,25 @@ editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-marker-description.html
 
+# Spellcheck tests don't seem to work.
+editing/spelling/spelling-backspace-between-lines.html
+editing/spelling/design-mode-spellcheck-off.html
+editing/spelling/spellcheck-attribute.html
+editing/spelling/spelling-attribute-at-child.html
+editing/spelling/spelling-attribute-change.html
+editing/spelling/spelling-double-clicked-word.html
+editing/spelling/spelling-exactly-selected-multiple-words.html
+editing/spelling/spelling-exactly-selected-word.html
+editing/spelling/spelling-hasspellingmarker.html
+editing/spelling/spelling-linebreak.html
+editing/spelling/spelling-multiword-selection.html
+editing/spelling/spelling-should-select-multiple-words.html
+editing/spelling/spelling-subword-selection.html
+editing/spelling/spelling-with-punctuation-selection.html
+editing/spelling/spelling-with-whitespace-selection.html
+editing/spelling/spellcheck-input-search-crash.html
+editing/spelling/grammar.html
+
 # [Qt][WK2] REGRESSION(r148594): fast/events/mouseout-on-window.html fails with enabled sub-pixel layout
 webkit.org/b/42194 fast/events/mouseout-on-window.html [ Skip ]
 

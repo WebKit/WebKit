@@ -114,7 +114,6 @@ fast/loader/recursive-before-unload-crash.html
 editing/input/setting-input-value-cancel-ime-composition.html
 svg/text/caret-in-svg-text.xhtml
 editing/inserting/caret-position.html
-editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
@@ -308,30 +307,6 @@ plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
 
-# WebKitTestRunner needs internals.hasSpellingMarker
-editing/spelling/design-mode-spellcheck-off.html
-editing/spelling/spellcheck-attribute.html
-editing/spelling/spelling-attribute-at-child.html
-editing/spelling/spelling-attribute-change.html
-editing/spelling/spelling-double-clicked-word.html
-editing/spelling/spelling-exactly-selected-multiple-words.html
-editing/spelling/spelling-exactly-selected-word.html
-editing/spelling/spelling-hasspellingmarker.html
-editing/spelling/spelling-linebreak.html
-editing/spelling/spelling-multiword-selection.html
-editing/spelling/spelling-should-select-multiple-words.html
-editing/spelling/spelling-subword-selection.html
-editing/spelling/spelling-with-punctuation-selection.html
-editing/spelling/spelling-with-whitespace-selection.html
-platform/mac/editing/spelling/delete-into-misspelled-word.html
-platform/mac/editing/spelling/editing-multiple-words-with-markers.html
-platform/mac/editing/spelling/editing-word-with-marker-1.html
-platform/mac/editing/spelling/editing-word-with-marker-2.html
-platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
-
-# WebKitTestRunner needs layoutTestController.hasGrammarMarker
-editing/spelling/grammar.html
-
 # WebKitTestRunner needs layoutTestController.dumpUserGestureInFrameLoadCallbacks
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
@@ -410,7 +385,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 # https://bugs.webkit.org/show_bug.cgi?id=86881
 editing/selection/context-menu-text-selection.html
 editing/selection/5354455-2.html
-editing/spelling/spellcheck-input-search-crash.html
 fast/events/context-nodrag.html
 
 # WKTR does not support overriding WebKitUsesPageCachePreferenceKey.
