@@ -1,3 +1,17 @@
+2013-05-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION (r150215): broke a test case in inspector/console/console-css-warnings.html
+        https://bugs.webkit.org/show_bug.cgi?id=116731
+
+        Reviewed by Ryosuke Niwa.
+
+        The mentioned revision removed a layering violation added just to
+        support some IE7 hack. That was removed but the test case
+        supporting it was left untouched, remove it.
+
+        * inspector/console/console-css-warnings-expected.txt:
+        * inspector/console/console-css-warnings.html:
+
 2013-05-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2] Spelling tests gardening
