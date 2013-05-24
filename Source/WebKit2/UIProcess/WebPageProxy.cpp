@@ -1422,7 +1422,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
     UNUSED_PARAM(pageURLString);
 #endif
 
-    PluginProcessSandboxPolicy pluginProcessSandboxPolicy;
+    PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
     switch (pluginLoadPolicy) {
     case PluginModuleLoadNormally:
         pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;

@@ -1,3 +1,13 @@
+2013-05-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [WK2][EFL][QT] Build break after r150610
+        https://bugs.webkit.org/show_bug.cgi?id=116699
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin): Initialized pluginProcessSandboxPolicy.
+
 2013-05-23  Anders Carlsson  <andersca@apple.com>
 
         Shim Flash plug-in to allow its updater to run
