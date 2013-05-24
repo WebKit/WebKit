@@ -469,10 +469,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
 
     updateScrollableAreaSet();
 
-    RenderView* renderView = this->renderView();
-
 #if USE(ACCELERATED_COMPOSITING)
-    if (renderView) {
+    if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor()->frameViewDidChangeSize();
     }
