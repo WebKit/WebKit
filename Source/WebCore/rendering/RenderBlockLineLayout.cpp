@@ -348,12 +348,10 @@ static inline LayoutUnit borderPaddingMarginEnd(RenderInline* child)
     return child->marginEnd() + child->paddingEnd() + child->borderEnd();
 }
 
-static bool shouldAddBorderPaddingMargin(RenderObject* child, bool &checkSide)
+static inline bool shouldAddBorderPaddingMargin(RenderObject* child)
 {
-    if (!child || (child->isText() && !toRenderText(child)->textLength()))
-        return true;
-    checkSide = false;
-    return checkSide;
+    // When deciding whether we're at the edge of an inline, adjacent collapsed whitespace is the same as no sibling at all.
+    return !child || (child->isText() && !toRenderText(child)->textLength());
 }
 
 static RenderObject* previousInFlowSibling(RenderObject* child)
@@ -364,7 +362,7 @@ static RenderObject* previousInFlowSibling(RenderObject* child)
     return child;
 }
 
-static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
+static LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = true, bool checkEndEdge = true)
 {
     unsigned lineDepth = 1;
     LayoutUnit extraWidth = 0;
@@ -372,11 +370,13 @@ static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, boo
     while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
         RenderInline* parentAsRenderInline = toRenderInline(parent);
         if (!isEmptyInline(parentAsRenderInline)) {
-            if (start && shouldAddBorderPaddingMargin(previousInFlowSibling(child), start))
+            checkStartEdge = checkStartEdge && shouldAddBorderPaddingMargin(previousInFlowSibling(child));
+            if (checkStartEdge)
                 extraWidth += borderPaddingMarginStart(parentAsRenderInline);
-            if (end && shouldAddBorderPaddingMargin(child->nextSibling(), end))
+            checkEndEdge = checkEndEdge && shouldAddBorderPaddingMargin(child->nextSibling());
+            if (checkEndEdge)
                 extraWidth += borderPaddingMarginEnd(parentAsRenderInline);
-            if (!start && !end)
+            if (!checkStartEdge && !checkEndEdge)
                 return extraWidth;
         }
         child = parent;
