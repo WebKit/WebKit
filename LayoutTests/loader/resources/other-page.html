@@ -1,29 +1,33 @@
 <html>
 <head>
     <script>
-    function registerListeners() {
+    function didShowPage() {
         // Notify opener.
         opener.postMessage('other-page', '*');
 
-        // Our opener will tell us to perform various loads.
-        window.addEventListener('message', function(event) {
+        // We register the listeners in the initial load (this is not needed
+        // when the page is restored from cache).
+        if (!event.persisted) {
+            // Our opener will tell us to perform various loads.
+            window.addEventListener('message', function(event) {
 
-            // Navigate first resource.
-            if (event.data === 'navigate-first-page') {
-                window.location = 'first-page.html';
-                return;
-            }
+                // Navigate first resource.
+                if (event.data === 'navigate-first-page') {
+                    window.location = 'first-page.html';
+                    return;
+                }
 
-            // Navigate back.
-            if (event.data === 'navigate-back') {
-                window.history.back();
-                return;
-            }
+                // Navigate back.
+                if (event.data === 'navigate-back') {
+                    window.history.back();
+                    return;
+                }
 
-        }, false);
+            }, false);
+        }
     }
     </script>
 </head>
-<body onpageshow="registerListeners();">
+<body onpageshow="didShowPage();">
 </body>
 </html>

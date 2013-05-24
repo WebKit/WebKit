@@ -1,3 +1,20 @@
+2013-05-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Improve loader/go-back-cached-main-resource.html test
+        https://bugs.webkit.org/show_bug.cgi?id=116709
+
+        Reviewed by Alexey Proskuryakov.
+
+        It is only needed to register the listeners on the initial load as they
+        are already present when restoring from page cache. Modified the test to
+        use event.persisted property to know if we are handling the first load
+        in order to register the listeners only once.
+
+        * loader/resources/first-page.html: Rename registerListeners() function
+        to a more accurate name didShowPage() and use event.persisted to
+        register the listeners only in the first load.
+        * loader/resources/other-page.html: Ditto.
+
 2013-05-24  Noam Rosenthal  <noam@webkit.org>
 
         WebProcess is crashing on http://achicu.github.io/css-presentation when direct pattern compositing is enabled
