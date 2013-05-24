@@ -1,3 +1,13 @@
+2013-05-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Update prepareConsistentTestingEnvironment to use a non-deprecated API.
+        https://bugs.webkit.org/show_bug.cgi?id=116710
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (prepareConsistentTestingEnvironment): Use beginActivityWithOptions instead of beginSuspensionOfSystemBehaviors.
+
 2013-05-23  Lauro Neto  <lauro.neto@openbossa.org>
 
         Add missing dependencies to deps script.

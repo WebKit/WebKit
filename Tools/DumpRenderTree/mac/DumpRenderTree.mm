@@ -860,8 +860,8 @@ static void prepareConsistentTestingEnvironment()
     makeLargeMallocFailSilently();
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    static id assertion = [[[NSProcessInfo processInfo] beginSuspensionOfSystemBehaviors:NSSystemBehaviorCommonBehaviors
-        reason:@"DumpRenderTree should not be subject to process suppression"] retain];
+    NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
+    static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"DumpRenderTree should not be subject to process suppression"] retain];
     ASSERT_UNUSED(assertion, assertion);
 #endif
 }
