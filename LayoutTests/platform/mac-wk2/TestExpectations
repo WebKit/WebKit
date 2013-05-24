@@ -284,6 +284,9 @@ webkit.org/b/116649 http/tests/security/cross-frame-access-put.html [ Failure ]
 
 webkit.org/b/116684 [ Lion ] compositing/overflow/overflow-compositing-descendant.html [ Timeout Failure ]
 
+# Only fails on WK1
+webkit.org/b/82805 [ Lion Debug ] fast/canvas/webgl/object-deletion-behaviour.html [ Pass ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

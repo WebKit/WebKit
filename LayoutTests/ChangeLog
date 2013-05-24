@@ -1,3 +1,11 @@
+2013-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add back a failing test expectation on fast/canvas/webgl/object-deletion-behaviour.html
+        after r150558 on Lion Debug WK1.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-05-23  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Rebaseline after r150593
