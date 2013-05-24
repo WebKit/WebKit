@@ -232,9 +232,9 @@ public:
     {
         RegisterID scr = claimScratch();
         move(imm, scr);
-        if  (src != dest)
+        if (src != dest)
             move(src, dest);
-        mul32(scr,  dest);
+        mul32(scr, dest);
         releaseScratch(scr);
     }
 
@@ -1137,7 +1137,7 @@ public:
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
     {
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(src.m_ptr), scr);
+        load32(src.m_ptr, scr);
         convertInt32ToDouble(scr, dest);
         releaseScratch(scr);
     }
@@ -1661,7 +1661,7 @@ public:
     {
         RegisterID scr = claimScratch();
 
-        move(TrustedImm32(reinterpret_cast<uint32_t>(left.m_ptr)), scr);
+        load32(left.m_ptr, scr);
         m_assembler.cmplRegReg(right, scr, SH4Condition(cond));
         releaseScratch(scr);
 
@@ -2192,7 +2192,7 @@ public:
 
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
     {
-        SH4Assembler::revertJump(instructionStart.dataLocation(), reinterpret_cast<uintptr_t>(initialValue) & 0xffff);
+        SH4Assembler::revertJump(instructionStart.dataLocation(), initialValue);
     }
 
     static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)

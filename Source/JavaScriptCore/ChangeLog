@@ -1,3 +1,20 @@
+2013-05-24  Julien Brianceau  <jbrianceau@nds.com>
+
+        [sh4] Optimize LLINT generated code and fix few bugs in baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=116716
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::mul32): Cosmetic changes.
+        (JSC::MacroAssemblerSH4::convertInt32ToDouble): Absolute address was not dereferenced.
+        (JSC::MacroAssemblerSH4::branch32): Absolute address was not dereferenced.
+        (JSC::MacroAssemblerSH4::revertJumpReplacementToBranchPtrWithPatch): Use all 32 bits of pointer for revertJump call.
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::revertJump): Use changePCrelativeAddress to patch the whole pointer.
+        (JSC::SH4Assembler::linkJump): Cosmetic change.
+        * offlineasm/sh4.rb: Optimize LLINT generated code.
+
 2013-05-23  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         CLoop llint backend should not use the d8 register as scratch register

@@ -318,13 +318,25 @@ def sh4LowerDoubleSpecials(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "bdnequn", "bdgtequn", "bdltun", "bdltequn", "bdgtun"
-                # Handle floating point unordered opcodes.
+            when "bdltun", "bdgtun"
+                # Handle specific floating point unordered opcodes.
                 tmp1 = Tmp.new(codeOrigin, :gpr)
                 tmp2 = Tmp.new(codeOrigin, :gpr)
                 newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], node.operands[2], tmp1, tmp2])
                 newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], node.operands[2], tmp1, tmp2])
                 newList << Instruction.new(codeOrigin, node.opcode[0..-3], node.operands)
+            when "bdnequn", "bdgtequn", "bdltequn"
+                newList << Instruction.new(codeOrigin, node.opcode[0..-3], node.operands)
+            when "bdneq", "bdgteq", "bdlteq"
+                # Handle specific floating point ordered opcodes.
+                tmp1 = Tmp.new(codeOrigin, :gpr)
+                tmp2 = Tmp.new(codeOrigin, :gpr)
+                outlabel = LocalLabel.unique("out_#{node.opcode}")
+                outref = LocalLabelReference.new(codeOrigin, outlabel)
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], outref, tmp1, tmp2])
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], outref, tmp1, tmp2])
+                newList << Instruction.new(codeOrigin, node.opcode, node.operands)
+                newList << outlabel
             else
                 newList << node
             end
@@ -429,22 +441,46 @@ def sh4Operands(operands)
     operands.map{|v| v.sh4Operand}.join(", ")
 end
 
-def emitSH4LoadConstant(constant, operand)
-    if constant == 0x40000000
+def emitSH4Load32(constant, dest)
+    outlabel = LocalLabel.unique("load32out")
+    constlabel = LocalLabel.unique("load32const")
+    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}, #{dest.sh4Operand}"
+    $asm.puts "bra #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
+    $asm.puts "nop"
+    $asm.puts ".balign 4"
+    constlabel.lower("SH4")
+    $asm.puts ".long #{constant}"
+    outlabel.lower("SH4")
+end
+
+def emitSH4Load32AndJump(constant, scratch)
+    constlabel = LocalLabel.unique("load32const")
+    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}, #{scratch.sh4Operand}"
+    $asm.puts "jmp @#{scratch.sh4Operand}"
+    $asm.puts "nop"
+    $asm.puts ".balign 4"
+    constlabel.lower("SH4")
+    $asm.puts ".long #{constant}"
+end
+
+def emitSH4LoadImm(operands)
+    if operands[0].value == 0x40000000
         # FirstConstantRegisterIndex const is often used (0x40000000).
         # It's more efficient to "build" the value with 3 opcodes without branch.
-        $asm.puts "mov #64, #{operand.sh4Operand}"
-        $asm.puts "shll16 #{operand.sh4Operand}"
-        $asm.puts "shll8 #{operand.sh4Operand}"
-    else
+        $asm.puts "mov #64, #{operands[1].sh4Operand}"
+        $asm.puts "shll16 #{operands[1].sh4Operand}"
+        $asm.puts "shll8 #{operands[1].sh4Operand}"
+    elsif (-128..127).include? operands[0].value
+        $asm.puts "mov #{sh4Operands(operands)}"
+    elsif (-32768..32767).include? operands[0].value
         constlabel = LocalLabel.unique("loadconstant")
-        $asm.puts ".balign 4"
-        $asm.puts "mov.l @(8, PC), #{operand.sh4Operand}"
+        $asm.puts "mov.w @(6, PC), #{operands[1].sh4Operand}"
         $asm.puts "bra #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}"
         $asm.puts "nop"
-        $asm.puts "nop"
-        $asm.puts ".long #{constant}"
+        $asm.puts ".word #{operands[0].value}"
         constlabel.lower("SH4")
+    else
+        emitSH4Load32(operands[0].value, operands[1])
     end
 end
 
@@ -480,12 +516,7 @@ def emitSH4BranchIfT(label, neg)
         $asm.puts "bra #{label.asmLabel}"
         $asm.puts "nop"
     else
-        $asm.puts ".balign 4"
-        $asm.puts "mov.l @(8, PC), #{SH4_TMP_GPRS[0].sh4Operand}"
-        $asm.puts "jmp @#{SH4_TMP_GPRS[0].sh4Operand}"
-        $asm.puts "nop"
-        $asm.puts "nop"
-        $asm.puts ".long #{label.asmLabel}"
+        emitSH4Load32AndJump(label.asmLabel, SH4_TMP_GPRS[0])
     end
     outlabel.lower("SH4")
 end
@@ -519,43 +550,43 @@ def emitSH4BranchIfNaN(operands)
     scrmask = operands[2]
     scrint = operands[3]
 
-    # If we don't have "E = Emax + 1", it's not a NaN.
     notNaNlabel = LocalLabel.unique("notnan")
+    notNaNref = LocalLabelReference.new(codeOrigin, notNaNlabel)
+    constlabel1 = LocalLabel.unique("notnanConst1")
+    constlabel2 = LocalLabel.unique("notnanConst2")
+
+    # If we don't have "E = Emax + 1", it's not a NaN.
     $asm.puts "fcnvds #{dblop.sh4Operand}, fpul"
     $asm.puts "sts fpul, #{scrint.sh4Operand}"
-    emitSH4LoadConstant(0x7f800000, scrmask)
+    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel1).asmLabel}, #{scrmask.sh4Operand}"
     $asm.puts "and #{sh4Operands([scrmask, scrint])}"
     $asm.puts "cmp/eq #{sh4Operands([scrmask, scrint])}"
-    $asm.puts "bf #{LocalLabelReference.new(codeOrigin, notNaNlabel).asmLabel}"
+    $asm.puts "bf #{notNaNref.asmLabel}"
 
     # If we have "E = Emax + 1" and "f != 0", then it's a NaN.
     $asm.puts "sts fpul, #{scrint.sh4Operand}"
-    emitSH4LoadConstant(0x003fffff, scrmask)
+    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel2).asmLabel}, #{scrmask.sh4Operand}"
     $asm.puts "tst #{sh4Operands([scrmask, scrint])}"
-    $asm.puts "bf #{labelop.asmLabel}"
+    $asm.puts "bt #{notNaNref.asmLabel}"
+    $asm.puts "bra #{labelop.asmLabel}"
+    $asm.puts "nop"
+
+    $asm.puts ".balign 4"
+    constlabel1.lower("SH4")
+    $asm.puts ".long 0x7f800000"
+    constlabel2.lower("SH4")
+    $asm.puts ".long 0x003fffff"
 
     notNaNlabel.lower("SH4")
 end
 
 def emitSH4DoubleCondBranch(cmpOpcode, neg, operands)
     if cmpOpcode == "lt"
-        if !neg
-            outlabel = LocalLabel.unique("dcbout")
-            $asm.puts "fcmp/gt #{sh4Operands([operands[1], operands[0]])}"
-            $asm.puts "bt #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
-            $asm.puts "fcmp/eq #{sh4Operands([operands[1], operands[0]])}"
-            $asm.puts "bf #{operands[2].asmLabel}"
-            outlabel.lower("SH4")
-        else
-            $asm.puts "fcmp/gt #{sh4Operands([operands[1], operands[0]])}"
-            $asm.puts "bt #{operands[2].asmLabel}"
-            $asm.puts "fcmp/eq #{sh4Operands([operands[1], operands[0]])}"
-            $asm.puts "bt #{operands[2].asmLabel}"
-        end
+        $asm.puts "fcmp/gt #{sh4Operands([operands[0], operands[1]])}"
     else
         $asm.puts "fcmp/#{cmpOpcode} #{sh4Operands([operands[1], operands[0]])}"
-        emitSH4BranchIfT(operands[2], neg)
     end
+    emitSH4BranchIfT(operands[2], neg)
 end
 
 class Instruction
@@ -728,12 +759,7 @@ class Instruction
                 raise "Unhandled parameters for opcode #{opcode} at #{codeOriginString}"
             end
         when "jmpf"
-            $asm.puts ".balign 4"
-            $asm.puts "mov.l @(8, PC), #{operands[0].sh4Operand}"
-            $asm.puts "jmp @#{operands[0].sh4Operand}"
-            $asm.puts "nop"
-            $asm.puts "nop"
-            $asm.puts ".long #{operands[1].asmLabel}"
+            emitSH4Load32AndJump(operands[1].asmLabel, operands[0])
         when "ret"
             $asm.puts "rts"
             $asm.puts "nop"
@@ -746,10 +772,10 @@ class Instruction
         when "loadi", "loadis", "loadp", "storei", "storep"
             $asm.puts "mov.l #{sh4Operands(operands)}"
         when "move"
-            if operands[0].is_a? Immediate and (operands[0].value < -128 or operands[0].value > 127)
-                emitSH4LoadConstant(operands[0].value, operands[1])
-            elsif operands[0].is_a? LabelReference
-                emitSH4LoadConstant(operands[0].asmLabel, operands[1])
+            if operands[0].is_a? LabelReference
+                emitSH4Load32(operands[0].asmLabel, operands[1])
+            elsif operands[0].is_a? Immediate
+                emitSH4LoadImm(operands)
             else
                 $asm.puts "mov #{sh4Operands(operands)}"
             end

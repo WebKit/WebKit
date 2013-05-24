@@ -1528,18 +1528,11 @@ public:
         cacheFlush(instruction, sizeof(SH4Word) * nbinst);
     }
 
-    static void revertJump(void* instructionStart, SH4Word imm)
+    static void revertJump(void* instructionStart, void *immptr)
     {
         SH4Word *insn = reinterpret_cast<SH4Word*>(instructionStart);
-        SH4Word disp;
-
         ASSERT((insn[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
-
-        disp = insn[0] & 0x00ff;
-        insn += 2 + (disp << 1); // PC += 4 + (disp*4)
-        insn = (SH4Word *) ((unsigned) insn & (~3));
-        insn[0] = imm;
-        cacheFlush(insn, sizeof(SH4Word));
+        changePCrelativeAddress(insn[0] & 0x00ff, insn, reinterpret_cast<uint32_t>(immptr));
     }
 
     void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type = JumpFar)
@@ -1593,7 +1586,7 @@ public:
         }
 
         instruction = *instructionPtr;
-        if ((instruction  & 0xf000) == 0xe000) {
+        if ((instruction & 0xf000) == 0xe000) {
             uint32_t* addr = getLdrImmAddressOnPool(instructionPtr, m_buffer.poolAddress());
             *addr = offsetBits - 2;
             printInstr(*instructionPtr, from.m_offset + 2);
