@@ -1,5 +1,25 @@
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Global constructors exposed in worker environment have wrong attributes
+        https://bugs.webkit.org/show_bug.cgi?id=116708
+
+        Reviewed by Geoffrey Garen.
+
+        Fix JSC bindings generator so that Global constructors exposed in worker environment
+        have the following attributes:
+        { [[Writable]]: true, [[Enumerable]]: false, [[Configurable]]: true }
+
+        This is now consistent with global constructors on DOMWindow and with the Web IDL
+        specification:
+        http://dev.w3.org/2006/webapi/WebIDL/#es-interfaces
+
+        Test: fast/js/global-constructors-attributes-worker.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributesHashTable):
+
+2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Remove custom code for webkitAudioContext global constructor getter
         https://bugs.webkit.org/show_bug.cgi?id=116530
 

@@ -2073,11 +2073,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'XSLTProcessor').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'XSLTProcessor').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XSLTProcessor').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'XSLTProcessor').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'constructor').value is constructor
-PASS Object.getOwnPropertyDescriptor(global, 'constructor').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'constructor').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'constructor').enumerable is false
-FAIL Object.getOwnPropertyDescriptor(global, 'constructor').configurable should be true. Was false.
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').value is webkitAudioPannerNode
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').hasOwnProperty('set') is false

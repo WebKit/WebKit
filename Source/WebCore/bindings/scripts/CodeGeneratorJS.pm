@@ -1202,9 +1202,9 @@ sub GenerateAttributesHashTable($$)
         my @specials = ();
         # As per Web IDL specification, constructor properties on the ECMAScript global object should be
         # configurable and should not be enumerable.
-        my $is_domwindow_constructor = ($interface->name eq "DOMWindow" && $attribute->signature->type =~ /Constructor$/);
-        push(@specials, "DontDelete") unless ($attribute->signature->extendedAttributes->{"Deletable"} || $is_domwindow_constructor);
-        push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_domwindow_constructor);
+        my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
+        push(@specials, "DontDelete") unless ($attribute->signature->extendedAttributes->{"Deletable"} || $is_global_constructor);
+        push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_global_constructor);
         push(@specials, "ReadOnly") if IsReadonly($attribute);
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);

@@ -1,4 +1,5 @@
-description("Test to ensure that global constructors have the right attributes");
+if (this.importScripts)
+    importScripts('../resources/js-test-pre.js');
 
 function descriptorShouldBe(object, property, expected) {
     var test = "Object.getOwnPropertyDescriptor(" + object + ", '" + eval(property) + "')";
@@ -26,7 +27,7 @@ function classNameForObject(object)
     return result.split(" ")[1].split("]")[0];
 }
 
-function constructorPropertiesOnWindow(globalObject)
+function constructorPropertiesOnGlobalObject(globalObject)
 {
     var constructorNames = [];
     var propertyNames = Object.getOwnPropertyNames(global);
@@ -35,7 +36,7 @@ function constructorPropertiesOnWindow(globalObject)
         if (value == null)
             continue;
         var type = classNameForObject(value);
-        if (!type.match("Constructor$"))
+        if (!type.match("Constructor$") || propertyNames[i] == "constructor")
             continue;
         constructorNames.push(propertyNames[i]);
     }
@@ -43,10 +44,13 @@ function constructorPropertiesOnWindow(globalObject)
 }
 
 var global = this;
-var constructorNames = constructorPropertiesOnWindow(global);
+var constructorNames = constructorPropertiesOnGlobalObject(global);
 
 var constructorName;
 for (var i = 0; i < constructorNames.length; i++) {
     constructorName = constructorNames[i];
     descriptorShouldBe("global", "constructorName", {writable: true, enumerable: false, configurable: true, value: constructorName});
 }
+
+if (isWorker())
+  finishJSTest();

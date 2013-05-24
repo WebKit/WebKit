@@ -1,3 +1,25 @@
+2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Global constructors exposed in worker environment have wrong attributes
+        https://bugs.webkit.org/show_bug.cgi?id=116708
+
+        Reviewed by Geoffrey Garen.
+
+        Add fast/js/global-constructors-attributes-worker.html test case to check the
+        global constructors attributers in the worker environment.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * fast/js/global-constructors-attributes-worker-expected.txt: Added.
+        * fast/js/global-constructors-attributes-worker.html: Added.
+        * fast/js/global-constructors-attributes.html:
+        * fast/js/script-tests/global-constructors-attributes.js: Make sure script usable
+        in a Worker and stop reporting the "constructor" property as a global constructor.
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-worker-expected.txt: Added.
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         We broke !(0/0)
