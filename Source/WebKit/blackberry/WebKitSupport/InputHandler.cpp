@@ -1798,7 +1798,7 @@ bool InputHandler::isNavigationKey(unsigned character) const
 bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEvent, bool changeIsPartOfComposition)
 {
     InputLog(Platform::LogLevelInfo,
-        "InputHandler::handleKeyboardInput received character='%lc', type=%d",
+        "InputHandler::handleKeyboardInput received character='%c', type=%d",
         keyboardEvent.character(), keyboardEvent.type());
 
     // Clearing the m_shouldNotifyWebView state on any KeyboardEvent.

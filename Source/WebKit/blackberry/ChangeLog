@@ -1,5 +1,17 @@
 2013-05-24  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Fix bad type warning in InputHandler log.
+        https://bugs.webkit.org/show_bug.cgi?id=116720
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix warning in inputLog string.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+
+2013-05-24  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Respect tabindex when using form controls.
         https://bugs.webkit.org/show_bug.cgi?id=116676
 
