@@ -38,7 +38,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/HistoryPropertyList.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
@@ -48,46 +47,6 @@
 
 using namespace WebCore;
 using namespace std;
-
-CFStringRef DatesArrayKey = CFSTR("WebHistoryDates");
-CFStringRef FileVersionKey = CFSTR("WebHistoryFileVersion");
-
-#define currentFileVersion 1
-
-class WebHistoryWriter : public HistoryPropertyListWriter {
-public:
-    WebHistoryWriter(const WebHistory::DateToEntriesMap&);
-
-private:
-    virtual void writeHistoryItems(BinaryPropertyListObjectStream&);
-
-    const WebHistory::DateToEntriesMap& m_entriesByDate;
-    Vector<WebHistory::DateKey> m_dateKeys;
-};
-
-WebHistoryWriter::WebHistoryWriter(const WebHistory::DateToEntriesMap& entriesByDate)
-    : m_entriesByDate(entriesByDate)
-{
-    copyKeysToVector(m_entriesByDate, m_dateKeys);
-    sort(m_dateKeys.begin(), m_dateKeys.end());
-}
-
-void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)
-{
-    for (int dateIndex = m_dateKeys.size() - 1; dateIndex >= 0; --dateIndex) {
-        // get the entries for that date
-        CFArrayRef entries = m_entriesByDate.get(m_dateKeys[dateIndex]).get();
-        CFIndex entriesCount = CFArrayGetCount(entries);
-        for (CFIndex j = entriesCount - 1; j >= 0; --j) {
-            IWebHistoryItem* item = (IWebHistoryItem*) CFArrayGetValueAtIndex(entries, j);
-            COMPtr<WebHistoryItem> webItem(Query, item);
-            if (!webItem)
-                continue;
-
-            writeHistoryItem(stream, webItem->historyItem());
-        }
-    }
-}
 
 static bool areEqualOrClose(double d1, double d2)
 {
@@ -234,179 +193,16 @@ HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::loadFromURL( 
-    /* [in] */ BSTR url,
-    /* [out] */ IWebError** error,
-    /* [retval][out] */ BOOL* succeeded)
+HRESULT STDMETHODCALLTYPE WebHistory::unused1()
 {
-    HRESULT hr = S_OK;
-    RetainPtr<CFMutableArrayRef> discardedItems = adoptCF(
-        CFArrayCreateMutable(0, 0, &MarshallingHelpers::kIUnknownArrayCallBacks));
-
-    RetainPtr<CFURLRef> urlRef = adoptCF(MarshallingHelpers::BSTRToCFURLRef(url));
-
-    hr = loadHistoryGutsFromURL(urlRef.get(), discardedItems.get(), error);
-    if (FAILED(hr))
-        goto exit;
-
-    hr = postNotification(kWebHistoryLoadedNotification);
-    if (FAILED(hr))
-        goto exit;
-
-    if (CFArrayGetCount(discardedItems.get()) > 0) {
-        COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromArray(getNotificationString(kWebHistoryItemsDiscardedWhileLoadingNotification), discardedItems.get());
-        hr = postNotification(kWebHistoryItemsDiscardedWhileLoadingNotification, userInfo.get());
-        if (FAILED(hr))
-            goto exit;
-    }
-
-exit:
-    if (succeeded)
-        *succeeded = SUCCEEDED(hr);
-    return hr;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-static CFDictionaryRef createHistoryListFromStream(CFReadStreamRef stream, CFPropertyListFormat format)
+HRESULT STDMETHODCALLTYPE WebHistory::unused2()
 {
-    return (CFDictionaryRef)CFPropertyListCreateFromStream(0, stream, 0, kCFPropertyListImmutable, &format, 0);
-}
-
-HRESULT WebHistory::loadHistoryGutsFromURL(CFURLRef url, CFMutableArrayRef discardedItems, IWebError** /*error*/) //FIXME
-{
-    CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0;
-    HRESULT hr = S_OK;
-    int numberOfItemsLoaded = 0;
-
-    RetainPtr<CFReadStreamRef> stream = adoptCF(CFReadStreamCreateWithFile(0, url));
-    if (!stream) 
-        return E_FAIL;
-
-    if (!CFReadStreamOpen(stream.get())) 
-        return E_FAIL;
-
-    RetainPtr<CFDictionaryRef> historyList = adoptCF(createHistoryListFromStream(stream.get(), format));
-    CFReadStreamClose(stream.get());
-
-    if (!historyList) 
-        return E_FAIL;
-
-    CFNumberRef fileVersionObject = (CFNumberRef)CFDictionaryGetValue(historyList.get(), FileVersionKey);
-    int fileVersion;
-    if (!CFNumberGetValue(fileVersionObject, kCFNumberIntType, &fileVersion)) 
-        return E_FAIL;
-
-    if (fileVersion > currentFileVersion) 
-        return E_FAIL;
-    
-    CFArrayRef datesArray = (CFArrayRef)CFDictionaryGetValue(historyList.get(), DatesArrayKey);
-
-    int itemCountLimit;
-    hr = historyItemLimit(&itemCountLimit);
-    if (FAILED(hr))
-        return hr;
-
-    CFAbsoluteTime limitDate;
-    hr = ageLimitDate(&limitDate);
-    if (FAILED(hr))
-        return hr;
-
-    bool ageLimitPassed = false;
-    bool itemLimitPassed = false;
-
-    CFIndex itemCount = CFArrayGetCount(datesArray);
-    for (CFIndex i = 0; i < itemCount; ++i) {
-        CFDictionaryRef itemAsDictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(datesArray, i);
-        COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
-        hr = item->initFromDictionaryRepresentation((void*)itemAsDictionary);
-        if (FAILED(hr))
-            return hr;
-
-        // item without URL is useless; data on disk must have been bad; ignore
-        BOOL hasURL;
-        hr = item->hasURLString(&hasURL);
-        if (FAILED(hr))
-            return hr;
-        
-        if (hasURL) {
-            // Test against date limit. Since the items are ordered newest to oldest, we can stop comparing
-            // once we've found the first item that's too old.
-            if (!ageLimitPassed) {
-                DATE lastVisitedTime;
-                hr = item->lastVisitedTimeInterval(&lastVisitedTime);
-                if (FAILED(hr))
-                    return hr;
-                if (timeToDate(MarshallingHelpers::DATEToCFAbsoluteTime(lastVisitedTime)) <= limitDate)
-                    ageLimitPassed = true;
-            }
-            if (ageLimitPassed || itemLimitPassed)
-                CFArrayAppendValue(discardedItems, item.get());
-            else {
-                bool added;
-                addItem(item.get(), true, &added); // ref is added inside addItem
-                if (added)
-                    ++numberOfItemsLoaded;
-                if (numberOfItemsLoaded == itemCountLimit)
-                    itemLimitPassed = true;
-            }
-        }
-    }
-    return hr;
-}
-
-HRESULT STDMETHODCALLTYPE WebHistory::saveToURL( 
-    /* [in] */ BSTR url,
-    /* [out] */ IWebError** error,
-    /* [retval][out] */ BOOL* succeeded)
-{
-    HRESULT hr = S_OK;
-    RetainPtr<CFURLRef> urlRef = adoptCF(MarshallingHelpers::BSTRToCFURLRef(url));
-
-    hr = saveHistoryGuts(urlRef.get(), error);
-
-    if (succeeded)
-        *succeeded = SUCCEEDED(hr);
-    if (SUCCEEDED(hr))
-        hr = postNotification(kWebHistorySavedNotification);
-
-    return hr;
-}
-
-HRESULT WebHistory::saveHistoryGuts(CFURLRef url, IWebError** error)
-{
-    HRESULT hr = S_OK;
-
-    // FIXME: Correctly report error when new API is ready.
-    if (error)
-        *error = 0;
-
-    RetainPtr<CFDataRef> data = this->data();
-
-    if (!data.get())
-        return E_FAIL;
-
-    RetainPtr<CFWriteStreamRef> stream = adoptCF(CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
-    if (!stream) 
-        return E_FAIL;
-
-    if (!CFWriteStreamOpen(stream.get())) 
-        return E_FAIL;
-
-    const UInt8* dataPtr = CFDataGetBytePtr(data.get());
-    CFIndex length = CFDataGetLength(data.get());
-
-    while (length) {
-        CFIndex bytesWritten = CFWriteStreamWrite(stream.get(), dataPtr, length);
-        if (bytesWritten <= 0) {
-            hr = E_FAIL;
-            break;
-        }
-        dataPtr += bytesWritten;
-        length -= bytesWritten;
-    }
-
-    CFWriteStreamClose(stream.get());
-
-    return hr;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::addItems( 
@@ -552,21 +348,6 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
         items[i]->AddRef();
 
     return S_OK;
-}
-
-HRESULT WebHistory::data(IStream** stream)
-{
-    if (!stream)
-        return E_POINTER;
-
-    *stream = 0;
-
-    RetainPtr<CFDataRef> historyData = data();
-    if (!historyData)
-        return S_OK;
-
-    COMPtr<MemoryStream> result = MemoryStream::createInstance(SharedBuffer::wrapCFData(historyData.get()));
-    return result.copyRefTo(stream);
 }
 
 HRESULT WebHistory::setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnabled)
@@ -1002,14 +783,4 @@ static void addVisitedLinkToPageGroup(const void* key, const void*, void* contex
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
 {
     CFDictionaryApplyFunction(m_entriesByURL.get(), addVisitedLinkToPageGroup, &group);
-}
-
-RetainPtr<CFDataRef> WebHistory::data() const
-{
-    if (m_entriesByDate.isEmpty())
-        return 0;
-
-    WebHistoryWriter writer(m_entriesByDate);
-    writer.writePropertyList();
-    return writer.releaseData();
 }

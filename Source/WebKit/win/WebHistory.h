@@ -62,15 +62,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory( 
         /* [in] */ IWebHistory* history);
     
-    virtual HRESULT STDMETHODCALLTYPE loadFromURL( 
-        /* [in] */ BSTR url,
-        /* [out] */ IWebError** error,
-        /* [retval][out] */ BOOL* succeeded);
-    
-    virtual HRESULT STDMETHODCALLTYPE saveToURL( 
-        /* [in] */ BSTR url,
-        /* [out] */ IWebError** error,
-        /* [retval][out] */ BOOL* succeeded);
+    virtual HRESULT STDMETHODCALLTYPE unused1() OVERRIDE;
+    virtual HRESULT STDMETHODCALLTYPE unused2() OVERRIDE;
     
     virtual HRESULT STDMETHODCALLTYPE addItems( 
         /* [in] */ int itemCount,
@@ -113,8 +106,6 @@ public:
         /* [out][in] */ int* count,
         /* [retval][out] */ IWebHistoryItem** items);
 
-    virtual HRESULT STDMETHODCALLTYPE data(IStream**);
-
     virtual HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnable);
     virtual HRESULT STDMETHODCALLTYPE removeAllVisitedLinks();
 
@@ -140,8 +131,6 @@ private:
         kWebHistorySavedNotification = 5
     };
 
-    HRESULT loadHistoryGutsFromURL(CFURLRef url, CFMutableArrayRef discardedItems, IWebError** error);
-    HRESULT saveHistoryGuts(CFURLRef url, IWebError** error);
     HRESULT postNotification(NotificationType notifyType, IPropertyBag* userInfo = 0);
     HRESULT removeItem(IWebHistoryItem* entry);
     HRESULT addItem(IWebHistoryItem* entry, bool discardDuplicate, bool* added);
@@ -154,7 +143,6 @@ private:
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
     HRESULT itemForURLString(CFStringRef urlString, IWebHistoryItem** item) const;
-    RetainPtr<CFDataRef> data() const;
 
     ULONG m_refCount;
     RetainPtr<CFMutableDictionaryRef> m_entriesByURL;

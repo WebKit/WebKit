@@ -1,3 +1,26 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused code to read/write history
+        https://bugs.webkit.org/show_bug.cgi?id=116738
+
+        Reviewed by Brent Fulgham.
+
+        * Interfaces/IWebHistory.idl:
+        Replace loadFromURL and saveToURL with unused1/unused2.
+
+        * Interfaces/IWebHistoryPrivate.idl:
+        Replace data with unused1.
+
+        * WebHistory.cpp:
+        Remove history loading/saving code.
+
+        (WebHistory::unused1):
+        (WebHistory::unused2):
+        Add implementations.
+
+        * WebHistory.h:
+        (WebHistory):
+
 2013-05-21  Mark Salisbury  <mark.salisbury@hp.com>
 
         [Windows, curl] WebDownloadCurl.cpp should not include SystemTime.h
