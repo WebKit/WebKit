@@ -1,3 +1,9 @@
+2013-05-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Rolling back r150600 as it breaks the VS2010 builds.
+
+        * wtf/StackBounds.cpp: Rollback.
+
 2013-05-23 Patrick Gansterer <paroga@webkit.org>
 
         Use correct stack size on Solaris and OpenBSD
