@@ -942,7 +942,7 @@ bool FrameLoaderClientBlackBerry::shouldStopLoadingForHistoryItem(HistoryItem*) 
 
 Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& navigation)
 {
-    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, navigation.url().string(), BlackBerry::Platform::String::emptyString(), ScriptController::processingUserGesture());
+    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, navigation.url().string(), BlackBerry::Platform::String::emptyString(), m_frame->document()->url().string(), ScriptController::processingUserGesture());
     if (!webPage)
         return 0;
 

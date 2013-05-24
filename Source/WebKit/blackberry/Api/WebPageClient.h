@@ -171,7 +171,7 @@ public:
     virtual void openPopupList(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, const bool* enableds, const int* itemType, const bool* selecteds) = 0;
     virtual bool chooseFilenames(bool allowMultiple, const SharedArray<BlackBerry::Platform::String>& acceptTypes, const SharedArray<BlackBerry::Platform::String>& initialFiles, const BlackBerry::Platform::String& capture, SharedArray<BlackBerry::Platform::String>& chosenFiles) = 0;
 
-    virtual WebPage* createWindow(int x, int y, int width, int height, unsigned flags, const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& windowName, bool userGesture) = 0;
+    virtual WebPage* createWindow(int x, int y, int width, int height, unsigned flags, const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& windowName, const BlackBerry::Platform::String& openerFrameUrl, bool userGesture) = 0;
 
     virtual void scheduleCloseWindow() = 0;
 

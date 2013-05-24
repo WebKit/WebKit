@@ -256,7 +256,7 @@ Page* ChromeClientBlackBerry::createWindow(Frame* frame, const FrameLoadRequest&
     if (features.dialog)
         flags |= WebPageClient::FlagWindowIsDialog;
 
-    WebPage* webPage = m_webPagePrivate->m_client->createWindow(x, y, width, height, flags, url.string(), request.frameName(), ScriptController::processingUserGesture());
+    WebPage* webPage = m_webPagePrivate->m_client->createWindow(x, y, width, height, flags, url.string(), request.frameName(), frame->document()->url().string(), ScriptController::processingUserGesture());
     if (!webPage)
         return 0;
 
