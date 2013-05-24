@@ -1,3 +1,13 @@
+2013-05-24  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Remove SKIA leftovers from WebPage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=116656
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2013-05-23  Xiaobo Wang  <xiaobwang@blackberry.com>
 
         [BlackBerry] Need to suspend/resume RootLayerCommit when the application becomes inactive/active

@@ -185,11 +185,6 @@
 #include <memalloc.h>
 #endif
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include "GrContext.h"
-#include "SharedGraphicsContext3D.h"
-#endif
-
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "PlatformScreen.h"
 #endif
@@ -1064,16 +1059,6 @@ void WebPagePrivate::setLoadState(LoadState state)
         break;
     case Committed:
         {
-#if ENABLE(ACCELERATED_2D_CANVAS)
-            if (m_page->settings()->canvasUsesAcceleratedDrawing()) {
-                // Free GPU resources as we're on a new page.
-                // This will help us to free memory pressure.
-                SharedGraphicsContext3D::get()->makeContextCurrent();
-                GrContext* grContext = Platform::Graphics::getGrContext();
-                grContext->freeGpuResources();
-            }
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
             releaseLayerResources();
 #endif
