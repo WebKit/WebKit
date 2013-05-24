@@ -1,3 +1,14 @@
+2013-05-23  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Add missing dependencies to deps script.
+
+        [GTK] Missing packages in install-dependencies script.
+        https://bugs.webkit.org/show_bug.cgi?id=116632
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies:
+
 2013-05-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed change for NRWT support.

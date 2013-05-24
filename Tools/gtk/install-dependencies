@@ -103,11 +103,13 @@ function installDependenciesWithApt {
         xtrans-dev \
         libxfont-dev \
         libpciaccess-dev \
+        x11proto-bigreqs-dev \
         x11proto-gl-dev \
         x11proto-input-dev \
         x11proto-video-dev \
         x11proto-scrnsaver-dev \
         x11proto-resource-dev \
+        x11proto-xcmisc-dev \
         x11proto-xf86dri-dev \
         libxkbfile-dev
 }
