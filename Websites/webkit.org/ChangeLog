@@ -1,3 +1,13 @@
+2013-05-24  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Make team.html have each contributor's area of expertise
+        https://bugs.webkit.org/show_bug.cgi?id=116737
+
+        Reviewed by Benjamin Poulain.
+
+        * team.html:
+        Update to use the new expertise field in contributors.json.
+
 2013-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         Release SunSpider 1.0

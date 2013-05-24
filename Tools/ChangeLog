@@ -1,3 +1,17 @@
+2013-05-24  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Make team.html have each contributor's area of expertise
+        https://bugs.webkit.org/show_bug.cgi?id=116737
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        Add expertise to each contributor, taken from http://trac.webkit.org/wiki/WebKit%20Team
+        
+        Changed formatting of the file because the lines are getting way to
+        long, and I generated this, so it's easier if the formatting of the
+        file is regular.
+
 2013-05-24  Simon Pena  <simon.pena@samsung.com>
 
         Update WTF::Vector pretty printers
