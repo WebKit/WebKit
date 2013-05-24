@@ -1,3 +1,18 @@
+2013-05-24  Thomas Deniau  <deniau@apple.com>
+
+        Add more lines to the context during Dictionary lookups
+        https://bugs.webkit.org/show_bug.cgi?id=115256
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        Instead of using the current paragraph as the context (which stops at
+        line breaks), get a few lines before and after the point, so that the
+        context contains at least four lines in each direction.
+        This way the Dictionary will be able to look up things that extend past
+        the current line.
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Intermittent crash when typing in Address Bar

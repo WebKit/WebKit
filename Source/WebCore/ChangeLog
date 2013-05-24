@@ -1,3 +1,18 @@
+2013-05-24  Thomas Deniau  <deniau@apple.com>
+
+        Add more lines to the context during Dictionary lookups
+        https://bugs.webkit.org/show_bug.cgi?id=115256
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests - no new functionality.
+
+        * WebCore.exp.in: Export a few methods in VisibleUnits needed to be able
+        to call previousLinePosition(), nextLinePosition(), startOfLine() and
+        endOfLine() in WebPageMac.mm when determining the context while looking
+        up a dictionary definition. These symbols used to be exported for iOS
+        only, export them on the desktop too.
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove PagePopup code
