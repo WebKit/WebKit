@@ -56,6 +56,8 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
+
+    bool launchProcess(const String& launchPath, const Vector<String>& arguments);
 #endif
 
 private:

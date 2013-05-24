@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginProcessProxy LegacyReceiver {
+messages -> PluginProcessProxy {
     DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier, bool supportsAsynchronousPluginInitialization)
 
     DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
@@ -34,6 +34,9 @@ messages -> PluginProcessProxy LegacyReceiver {
     
     # Open the plug-ins preference pane (as specified in the plug-in's Info.plist file).
     OpenPluginPreferencePane()
+
+    # Returns true if the UI process launched the process.
+    LaunchProcess(WTF::String launchPath, Vector<WTF::String> arguments) -> (bool result)
 #endif
 }
 

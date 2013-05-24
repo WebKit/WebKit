@@ -29,6 +29,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#import "ArgumentCoders.h"
 #import "NetscapePlugin.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessProxyMessages.h"
@@ -249,8 +250,30 @@ static void initializeShim()
 }
 #endif
 
+static IMP NSConcreteTask_launch;
+
+static void replacedNSConcreteTask_launch(NSTask *self, SEL _cmd)
+{
+    String launchPath = self.launchPath;
+
+    Vector<String> arguments;
+    arguments.reserveInitialCapacity(self.arguments.count);
+    for (NSString *argument in self.arguments)
+        arguments.uncheckedAppend(argument);
+
+    if (PluginProcess::shared().launchProcess(launchPath, arguments))
+        return;
+
+    NSConcreteTask_launch(self, _cmd);
+}
+
 static void initializeCocoaOverrides()
 {
+    // Override -[NSConcreteTask launch:]
+    Method launchMethod = class_getInstanceMethod(objc_getClass("NSConcreteTask"), @selector(launch));
+
+    NSConcreteTask_launch = method_setImplementation(launchMethod, reinterpret_cast<IMP>(replacedNSConcreteTask_launch));
+
     // Override -[NSApplication runModalForWindow:]
     Method runModalForWindowMethod = class_getInstanceMethod(objc_getClass("NSApplication"), @selector(runModalForWindow:));
     NSApplication_RunModalForWindow = method_setImplementation(runModalForWindowMethod, reinterpret_cast<IMP>(replacedRunModalForWindow));
@@ -281,6 +304,15 @@ void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)
 void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
 {
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
+}
+
+bool PluginProcess::launchProcess(const String& launchPath, const Vector<String>& arguments)
+{
+    bool result;
+    if (!parentProcessConnection()->sendSync(Messages::PluginProcessProxy::LaunchProcess(launchPath, arguments), Messages::PluginProcessProxy::LaunchProcess::Reply(result), 0))
+        return false;
+
+    return result;
 }
 
 static void muteAudio(void)

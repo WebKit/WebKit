@@ -358,6 +358,44 @@ void PluginProcessProxy::openPluginPreferencePane()
         LOG_ERROR("LSOpenFromURLSpec to open \"%@\" failed with error %d.", (NSString *)m_pluginProcessAttributes.moduleInfo.preferencePanePath, error);
 }
 
+static bool isFlashUpdater(const String& launchPath, const Vector<String>& arguments)
+{
+    if (launchPath != "/Applications/Utilities/Adobe Flash Player Install Manager.app/Contents/MacOS/Adobe Flash Player Install Manager")
+        return false;
+
+    if (arguments.size() != 1)
+        return false;
+
+    if (arguments[0] != "-update")
+        return false;
+
+    return true;
+}
+
+static bool shouldLaunchProcess(const PluginProcessAttributes& pluginProcessAttributes, const String& launchPath, const Vector<String>& arguments)
+{
+    if (pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin")
+        return isFlashUpdater(launchPath, arguments);
+
+    return false;
+}
+
+void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<String>& arguments, bool& result)
+{
+    if (!shouldLaunchProcess(m_pluginProcessAttributes, launchPath, arguments)) {
+        result = false;
+        return;
+    }
+
+    result = true;
+
+    RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
+    for (size_t i = 0; i < arguments.size(); ++i)
+        [argumentsArray addObject:(NSString *)arguments[i]];
+
+    [NSTask launchedTaskWithLaunchPath:launchPath arguments:argumentsArray.get()];
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)
