@@ -1,5 +1,13 @@
 2013-05-23  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed change for NRWT support.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes): Added a default implementation
+        that limits NRWT to a single instance.
+
+2013-05-23  Brent Fulgham  <bfulgham@apple.com>
+
         Remove meaningless "test_uses_apache" from Python test cases.
         https://bugs.webkit.org/show_bug.cgi?id=38756
 

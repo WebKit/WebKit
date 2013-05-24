@@ -111,3 +111,7 @@ class WinPort(ApplePort):
 
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
+
+    # Remove this implementation when we are confident that DumpRenderTree on Windows works properly in parallel.
+    def default_child_processes(self):
+        return 1
