@@ -661,7 +661,7 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
     else if (equals(key, "WebKitCSSRegionsEnabled"))
         DumpRenderTreeSupportEfl::setCSSRegionsEnabled(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitWebAudioEnabled"))
-        ewk_view_setting_web_audio_set(browser->mainView(), toBool(value));
+        DumpRenderTreeSupportEfl::setWebAudioEnabled(toBool(value));
     else if (equals(key, "WebKitDisplayImagesKey"))
         ewk_view_setting_auto_load_images_set(browser->mainView(), toBool(value));
     else

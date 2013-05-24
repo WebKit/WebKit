@@ -335,9 +335,5 @@
     [Conditional=INDEXED_DATABASE] attribute IDBObjectStoreConstructor webkitIDBObjectStore;
     [Conditional=INDEXED_DATABASE] attribute IDBRequestConstructor webkitIDBRequest;
     [Conditional=INDEXED_DATABASE] attribute IDBTransactionConstructor webkitIDBTransaction;
-
-    // Constructors whose name does not match the interface name.
-    [Conditional=WEB_AUDIO, CustomGetter] attribute AudioContextConstructor webkitAudioContext;
-
 #endif // defined(LANGUAGE_JAVASCRIPT)
 };

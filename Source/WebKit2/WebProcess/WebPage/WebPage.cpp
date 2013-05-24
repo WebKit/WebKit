@@ -2489,7 +2489,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    settings->setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
+    RuntimeEnabledFeatures::setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
 #endif
 
     settings->setApplicationChromeMode(store.getBoolValueForKey(WebPreferencesKey::applicationChromeModeKey()));

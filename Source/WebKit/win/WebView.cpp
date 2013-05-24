@@ -4909,7 +4909,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setShowRepaintCounter(enabled);
 
 #if ENABLE(WEB_AUDIO)
-    settings->setWebAudioEnabled(true);
+    RuntimeEnabledFeatures::setWebAudioEnabled(true);
 #endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(WEBGL)

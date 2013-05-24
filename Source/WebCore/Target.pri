@@ -113,7 +113,6 @@ SOURCES += \
      bindings/js/JSDOMWindowBase.cpp \
      bindings/js/JSDOMWindowCustom.cpp \
      bindings/js/JSDOMWindowShell.cpp \
-     bindings/js/JSDOMWindowWebAudioCustom.cpp \
      bindings/js/JSDOMWrapper.cpp \
      bindings/js/JSDataViewCustom.cpp \
      bindings/js/JSDeviceMotionEventCustom.cpp \
@@ -3480,7 +3479,6 @@ enable?(WEB_AUDIO) {
         bindings/js/JSAudioBufferSourceNodeCustom.cpp \
         bindings/js/JSAudioContextCustom.cpp \
         bindings/js/JSBiquadFilterNodeCustom.cpp \
-        bindings/js/JSDOMWindowWebAudioCustom.cpp \
         bindings/js/JSOscillatorNodeCustom.cpp \
         bindings/js/JSPannerNodeCustom.cpp \
         Modules/webaudio/AsyncAudioDecoder.cpp \

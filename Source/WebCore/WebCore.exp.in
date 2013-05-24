@@ -2675,6 +2675,10 @@ __ZN7WebCore22RuntimeEnabledFeatures37isAuthorShadowDOMForAnyElementEnabledE
 __ZN7WebCore4toJSEPN3JSC9ExecStateEPNS_17JSDOMGlobalObjectEPNS_10ShadowRootE
 #endif
 
+#if ENABLE(WEB_AUDIO)
+__ZN7WebCore22RuntimeEnabledFeatures17isWebAudioEnabledE
+#endif
+
 #if ENABLE(DIALOG_ELEMENT)
 __ZN7WebCore22RuntimeEnabledFeatures22isDialogElementEnabledE
 #endif

@@ -324,6 +324,15 @@ void DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(bool enabled)
 #endif
 }
 
+void DumpRenderTreeSupportEfl::setWebAudioEnabled(bool enabled)
+{
+#if ENABLE(WEB_AUDIO)
+    WebCore::RuntimeEnabledFeatures::setWebAudioEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, false);

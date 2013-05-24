@@ -5337,9 +5337,6 @@
     <ClCompile Include="..\bindings\js\JSDOMWindowShell.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSDOMWindowWebAudioCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSDOMWrapper.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>

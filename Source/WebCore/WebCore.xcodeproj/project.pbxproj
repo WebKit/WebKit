@@ -3489,7 +3489,6 @@
 		A7F5D94F1384F02D00A29A87 /* NodeRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */; };
 		A7F5D9501384F02D00A29A87 /* NodeRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */; };
 		A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */; };
-		A80A9423149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A9422149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp */; };
 		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9984,7 +9983,6 @@
 		A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMShadowRoot.h; sourceTree = "<group>"; };
 		A7F73EDA169AD7AA00CBAA4B /* DOMShadowRoot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMShadowRoot.mm; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
-		A80A9422149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWebAudioCustom.cpp; sourceTree = "<group>"; };
 		A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivateCG.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
@@ -18869,7 +18867,6 @@
 				14E0BC55136148A8002AD12E /* JSDOMTokenListCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
-				A80A9422149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
@@ -25500,7 +25497,6 @@
 				BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */,
 				BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */,
 				BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */,
-				A80A9423149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp in Sources */,
 				CDDE691F171DFAD000A44D89 /* JSAudioBufferCustom.cpp in Sources */,
 				FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */,
 				65DF31F909D1CC60000BE325 /* JSElement.cpp in Sources */,

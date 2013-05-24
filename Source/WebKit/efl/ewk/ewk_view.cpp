@@ -342,9 +342,6 @@ struct _Ewk_View_Private_Data {
         bool offlineAppCache : 1;
         bool pageCache : 1;
         bool enableXSSAuditor : 1;
-#if ENABLE(WEB_AUDIO)
-        bool webAudio : 1;
-#endif
         bool webGLEnabled : 1;
         bool tabsToLinks : 1;
         struct {
@@ -844,7 +841,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setUsesPageCache(true);
     priv->pageSettings->setUsesEncodingDetector(false);
 #if ENABLE(WEB_AUDIO)
-    priv->pageSettings->setWebAudioEnabled(false);
+    WebCore::RuntimeEnabledFeatures::setWebAudioEnabled(false);
 #endif
     priv->pageSettings->setWebGLEnabled(true);
     priv->pageSettings->setXSSAuditorEnabled(true);
@@ -920,9 +917,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.tabsToLinks = true;
 
     priv->settings.userAgent = ewk_settings_default_user_agent_get();
-#if ENABLE(WEB_AUDIO)
-    priv->settings.webAudio = priv->pageSettings->webAudioEnabled();
-#endif
 
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
@@ -4680,35 +4674,6 @@ void ewk_view_mark_for_sync(Evas_Object* ewkView)
     evas_object_image_pixels_dirty_set(priv->compositingObject.get(), true);
 }
 #endif
-
-Eina_Bool ewk_view_setting_web_audio_get(const Evas_Object* ewkView)
-{
-#if ENABLE(WEB_AUDIO)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    return priv->settings.webAudio;
-#else
-    UNUSED_PARAM(ewkView);
-    return false;
-#endif
-}
-
-Eina_Bool ewk_view_setting_web_audio_set(Evas_Object* ewkView, Eina_Bool enable)
-{
-#if ENABLE(WEB_AUDIO)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    if (priv->settings.webAudio != enable) {
-        priv->pageSettings->setWebAudioEnabled(enable);
-        priv->settings.webAudio = enable;
-    }
-    return true;
-#else
-    UNUSED_PARAM(ewkView);
-    UNUSED_PARAM(enable);
-    return false;
-#endif
-}
 
 void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
 {

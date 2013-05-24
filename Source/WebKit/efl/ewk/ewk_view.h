@@ -2685,27 +2685,6 @@ EAPI Eina_Bool ewk_view_setting_should_display_text_descriptions_get(const Evas_
 EAPI void ewk_view_setting_should_display_text_descriptions_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Queries if the web audio feature of HTML5 is enabled.
- *
- * @param o view object to query if the web audio feature is enabled
- *
- * @return @c EINA_TRUE if web audio is enabled,
- *         @c EINA_FALSE if not or on failure
- */
-EAPI Eina_Bool    ewk_view_setting_web_audio_get(const Evas_Object *o);
-
-/**
- * Enables/disables the web audio feature of HTML5.
- *
- * @param o view object to set the web audio
- * @param enable @c EINA_TRUE to enable the web audio feature,
- *        @c EINA_FALSE to disable
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_web_audio_set(Evas_Object *o, Eina_Bool enable);
-
-/**
  * Show the inspector to debug a web page.
  *
  * The following signals are emiited.

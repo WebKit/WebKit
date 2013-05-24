@@ -24,11 +24,12 @@
  */
 
 [
-    NoInterfaceObject,
+    EnabledAtRuntime,
     Conditional=WEB_AUDIO,
     ActiveDOMObject,
     CustomConstructor,
-    EventTarget
+    EventTarget,
+    InterfaceName=webkitAudioContext
 ] interface AudioContext {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;

@@ -1,3 +1,19 @@
+2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove custom code for webkitAudioContext global constructor getter
+        https://bugs.webkit.org/show_bug.cgi?id=116530
+
+        Reviewed by Geoffrey Garen.
+
+        Update EFL's DumpRenderTree to use DumpRenderTreeSupport to toggle
+        WebAudio feature instead of public ewk_view API since that API was
+        removed.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::overridePreference):
+
 2013-05-24  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Make team.html have each contributor's area of expertise

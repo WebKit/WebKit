@@ -145,7 +145,7 @@ public:
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    static void setWebkitAudioContextEnabled(bool isEnabled) { isWebAudioEnabled = isEnabled; }
+    static void setWebAudioEnabled(bool isEnabled) { isWebAudioEnabled = isEnabled; }
     static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
     static bool webkitOfflineAudioContextEnabled() { return isWebAudioEnabled; }
 #endif

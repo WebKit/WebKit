@@ -1495,7 +1495,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
-    settings->setWebAudioEnabled([preferences webAudioEnabled]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
@@ -1507,6 +1506,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
     RuntimeEnabledFeatures::setCSSRegionsEnabled([preferences cssRegionsEnabled]);
     RuntimeEnabledFeatures::setCSSCompositingEnabled([preferences cssCompositingEnabled]);
+#if ENABLE(WEB_AUDIO)
+    RuntimeEnabledFeatures::setWebAudioEnabled([preferences webAudioEnabled]);
+#endif
 #if ENABLE(IFRAME_SEAMLESS)
     RuntimeEnabledFeatures::setSeamlessIFramesEnabled([preferences seamlessIFramesEnabled]);
 #endif

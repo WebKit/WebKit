@@ -81,6 +81,7 @@ public:
     static void setCSSGridLayoutEnabled(const Evas_Object* ewkView, bool enabled);
     static void setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled);
     static void setSeamlessIFramesEnabled(bool);
+    static void setWebAudioEnabled(bool);
 
     static void forceLayout(Evas_Object* ewkFrame);
     static void setTracksRepaints(Evas_Object* ewkFrame, bool enabled);
