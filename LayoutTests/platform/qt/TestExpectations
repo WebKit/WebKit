@@ -1911,6 +1911,8 @@ webkit.org/b/114611 fast/repaint/background-shorthand-with-gradient-and-height-c
 
 webkit.org/b/113931 fast/forms/select/popup-closes-on-blur.html [ Skip ]
 
+webkit.org/b/116711 fast/frames/detach-frame-during-focus.html [ Skip ]
+
 webkit.org/b/116608 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ Skip ]
 
 # ============================================================================= #
@@ -2675,5 +2677,7 @@ fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Missing ]
 
 # Reference test fast/sub-pixel/float-wrap-zoom.html fails
 webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
+
+webkit.org/b/116649 http/tests/security/cross-frame-access-put.html [ Skip ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]

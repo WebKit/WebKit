@@ -773,5 +773,3 @@ webkit.org/b/42194 fast/events/mouseout-on-window.html [ Skip ]
 
 # [Qt][WK2] fast/events/touch/frame-hover-update.html fails
 webkit.org/b/116668 fast/events/touch/frame-hover-update.html [ Skip ]
-
-webkit.org/b/16649 http/tests/security/cross-frame-access-put.html [ Skip ]

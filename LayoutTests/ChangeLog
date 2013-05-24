@@ -1,3 +1,10 @@
+2013-05-24  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations: Move http/tests/security/cross-frame-access-put.html to qt/TestExpectations.
+        * platform/qt/TestExpectations: Skip fast/frames/detach-frame-during-focus.html after r146523.
+
 2013-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add back a failing test expectation on fast/canvas/webgl/object-deletion-behaviour.html
