@@ -872,6 +872,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
 void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect)
 {
+    if (!m_owningLayer->hasVisibleContent())
+        return;
+
     updateDirectlyCompositedBackgroundImage(isSimpleContainer, didUpdateContentsRect);
     updateDirectlyCompositedBackgroundColor(isSimpleContainer, didUpdateContentsRect);
 }
@@ -1458,6 +1461,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     IntRect destRect = backgroundBox();
     IntPoint phase;
     IntSize tileSize;
+
     RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
     toRenderBox(renderer())->getGeometryForBackgroundImage(destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
@@ -1523,7 +1527,7 @@ bool RenderLayerBacking::paintsChildren() const
 {
     if (m_owningLayer->hasVisibleContent() && m_owningLayer->hasNonEmptyChildRenderers())
         return true;
-        
+
     if (hasVisibleNonCompositingDescendantLayers())
         return true;
 
@@ -1675,7 +1679,7 @@ bool RenderLayerBacking::containsPaintedContent() const
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     RenderObject* renderObject = renderer();
-    
+
     if (!renderObject->isImage() || m_owningLayer->hasBoxDecorationsOrBackground() || renderObject->hasClip())
         return false;
 

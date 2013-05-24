@@ -1,3 +1,27 @@
+2013-05-24  Noam Rosenthal  <noam@webkit.org>
+
+        WebProcess is crashing on http://achicu.github.io/css-presentation when direct pattern compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=115135
+
+        Reviewed by Antti Koivisto.
+
+        Issue is invoked when there is a visibility:hidden layer with a non-compositable
+        background image (e.g. a radial gradient).
+        The layer is treated as a no-contents layer because of its visibility, however
+        updateDirectlyCompositedBackgroundImage() later mistakenly treats it as a layer
+        with direct background-image compositing.
+
+        Fixed by returning early from updating directly composited contents for layers
+        with hidden contents.
+
+        Test: compositing/patterns/direct-pattern-compositing-hidden-radial-gradient.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedContents):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        (WebCore::RenderLayerBacking::paintsChildren):
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
 2013-05-24  Robert Hogan  <robert@webkit.org>
 
         Refactor shouldAddBorderPaddingMargin()
