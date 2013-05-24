@@ -1400,7 +1400,7 @@ bool RenderLayer::scrollbarAnimationsAreSuppressed() const
     RenderView* view = renderer()->view();
     if (!view)
         return false;
-    return view->frameView()->scrollbarsCanBeActive();
+    return view->frameView()->scrollbarAnimationsAreSuppressed();
 }
 
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const

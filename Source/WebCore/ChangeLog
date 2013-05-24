@@ -1,3 +1,16 @@
+2013-05-23  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=116702
+        REGRESSION (r150399): Scrollbar missing for all overflow scroll
+        -and corresponding-
+        <rdar://problem/13963712>
+
+        Reviewed by Simon Fraser.
+
+        This was a silly copy-paste error.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollbarAnimationsAreSuppressed):
+
 2013-05-23  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Build fails to link.
