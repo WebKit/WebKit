@@ -1,3 +1,25 @@
+2013-05-24  Andreas Kling  <akling@apple.com>
+
+        Typing in Safari's unified field causes unnecessary web content repaints.
+        <http://webkit.org/b/116703>
+
+        Reviewed by Andy Estes.
+
+        Break out an alternate version of Page::markAllMatchesForText() that only counts the number of times
+        a string occurs in the page, but doesn't try to mark the occurrences.
+        This allows Safari to count matches for the 'Find "foo" on This Page' functionality in the unified
+        location bar without causing tile repaints.
+
+        * WebCore.exp.in:
+        * page/Page.h:
+        * page/Page.cpp:
+        (WebCore::Page::findMatchesForText):
+        (WebCore::Page::markAllMatchesForText):
+        (WebCore::Page::countFindMatches):
+
+            Renamed markAllMatchesForText() to findMatchesForText() and gave it a boolean parameter to control whether
+            matches should be marked or not. countFindMatches() is the new helper that doesn't mark.
+
 2013-05-23  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=116702

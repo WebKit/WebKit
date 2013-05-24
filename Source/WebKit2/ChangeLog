@@ -1,3 +1,16 @@
+2013-05-24  Andreas Kling  <akling@apple.com>
+
+        Typing in Safari's unified field causes unnecessary web content repaints.
+        <http://webkit.org/b/116703>
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::countStringMatches):
+
+            Call WebCore::Page::countMatchesForText() instead of markAllMatchesForText(). If the search string
+            is found inside the page content, the renderer containing that text will no longer be repainted.
+
 2013-05-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [WK2][EFL][QT] Build break after r150610

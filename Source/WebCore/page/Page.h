@@ -232,9 +232,9 @@ public:
 
     PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
 
-    unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned);
-    // FIXME: Switch callers over to the FindOptions version and retire this one.
-    unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
+    unsigned countFindMatches(const String&, FindOptions, unsigned maxMatchCount);
+    unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned maxMatchCount);
+
     void unmarkAllTextMatches();
 
     // find all the Ranges for the matching text.
@@ -410,6 +410,8 @@ private:
 #else
     void checkSubframeCountConsistency() const;
 #endif
+
+    unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, bool shouldHighlight, bool markMatches);
 
     MediaCanStartListener* takeAnyMediaCanStartListener();
 

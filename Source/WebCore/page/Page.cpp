@@ -644,26 +644,32 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     return 0;
 }
 
-unsigned int Page::markAllMatchesForText(const String& target, TextCaseSensitivity caseSensitivity, bool shouldHighlight, unsigned limit)
-{
-    return markAllMatchesForText(target, caseSensitivity == TextCaseInsensitive ? CaseInsensitive : 0, shouldHighlight, limit);
-}
-
-unsigned int Page::markAllMatchesForText(const String& target, FindOptions options, bool shouldHighlight, unsigned limit)
+unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, bool shouldHighlight, bool markMatches)
 {
     if (target.isEmpty() || !mainFrame())
         return 0;
 
-    unsigned matches = 0;
+    unsigned matchCount = 0;
 
     Frame* frame = mainFrame();
     do {
-        frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        matches += frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matches) : 0, true, 0);
+        if (markMatches)
+            frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        matchCount += frame->editor().countMatchesForText(target, 0, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, markMatches, 0);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 
-    return matches;
+    return matchCount;
+}
+
+unsigned Page::markAllMatchesForText(const String& target, FindOptions options, bool shouldHighlight, unsigned maxMatchCount)
+{
+    return findMatchesForText(target, options, shouldHighlight, maxMatchCount, /*markMatches*/ true);
+}
+
+unsigned Page::countFindMatches(const String& target, FindOptions options, unsigned maxMatchCount)
+{
+    return findMatchesForText(target, options, /*shouldHighlight*/ false, maxMatchCount, /*markMatches*/ false);
 }
 
 void Page::unmarkAllTextMatches()
