@@ -1,3 +1,19 @@
+2013-05-24  Simon Pena  <simon.pena@samsung.com>
+
+        Update WTF::Vector pretty printers
+        https://bugs.webkit.org/show_bug.cgi?id=116719
+
+        Reviewed by Anders Carlsson.
+
+        After r148891, WTF::Vector pretty printers were left outdated, as
+        the WTF::Vector was made to extend a VectorBuffer, instead of keeping
+        one as a member. This patch updates the pretty printers so they work
+        again. 
+
+        * gdb/webkit.py:
+        (WTFVectorPrinter.children):
+        (WTFVectorPrinter.to_string):
+
 2013-05-24  Steve Falkenburg  <sfalken@apple.com>
 
         Update prepareConsistentTestingEnvironment to use a non-deprecated API.
