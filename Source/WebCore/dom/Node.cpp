@@ -885,11 +885,6 @@ bool Node::isFocusable() const
     return true;
 }
 
-bool Node::isKeyboardFocusable(KeyboardEvent*) const
-{
-    return isFocusable() && tabIndex() >= 0;
-}
-
 bool Node::isMouseFocusable() const
 {
     return isFocusable();

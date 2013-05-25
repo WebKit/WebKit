@@ -1,5 +1,46 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::isKeyboardFocusable() to Element.
+        <http://webkit.org/b/116761>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can be keyboard-focusable. Move the base isKeyboardFocusable() implementation to Element
+        and sprinkle OVERRIDE on subclass overrides.
+        FocusController gets some temporary type checks that will go away as that code moves to dealing in
+        Elements instead of Node.
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::Element::isKeyboardFocusable):
+
+            Move isKeyboardFocusable() from Node to Element.
+
+        * page/FocusController.cpp:
+        (WebCore::isNonFocusableShadowHost):
+        (WebCore::isFocusableShadowHost):
+        (WebCore::shouldVisit):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+
+            Check that the inspected Node is an Element before querying isKeyboardFocusable().
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.h:
+        * svg/SVGAElement.h:
+        * svg/SVGStyledElement.h:
+
+            Sprinkle OVERRIDE.
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Begin moving "focus" state logic from Node to Element.
         <http://webkit.org/b/116760>
 

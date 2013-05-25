@@ -137,13 +137,13 @@ static inline bool hasCustomFocusLogic(Node* node)
 static inline bool isNonFocusableShadowHost(Node* node, KeyboardEvent* event)
 {
     ASSERT(node);
-    return !node->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
+    return node->isElementNode() && !toElement(node)->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
 }
 
 static inline bool isFocusableShadowHost(Node* node, KeyboardEvent* event)
 {
     ASSERT(node);
-    return node->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
+    return node->isElementNode() && toElement(node)->isKeyboardFocusable(event) && isShadowHost(node) && !hasCustomFocusLogic(node);
 }
 
 static inline int adjustedTabIndex(Node* node, KeyboardEvent* event)
@@ -155,7 +155,7 @@ static inline int adjustedTabIndex(Node* node, KeyboardEvent* event)
 static inline bool shouldVisit(Node* node, KeyboardEvent* event)
 {
     ASSERT(node);
-    return node->isKeyboardFocusable(event) || isNonFocusableShadowHost(node, event);
+    return (node->isElementNode() && toElement(node)->isKeyboardFocusable(event)) || isNonFocusableShadowHost(node, event);
 }
 
 FocusController::FocusController(Page* page)
@@ -320,10 +320,12 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         // FIXME: May need a way to focus a document here.
         return false;
 
-    if (node->isFrameOwnerElement() && (!node->isPluginElement() || !node->isKeyboardFocusable(event))) {
+    Element* element = toElement(node.get());
+
+    if (element->isFrameOwnerElement() && (!element->isPluginElement() || !element->isKeyboardFocusable(event))) {
         // We focus frames rather than frame owners.
         // FIXME: We should not focus frames that have no scrollbars, as focusing them isn't useful to the user.
-        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(node.get());
+        HTMLFrameOwnerElement* owner = toFrameOwnerElement(element);
         if (!owner->contentFrame())
             return false;
 

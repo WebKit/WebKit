@@ -58,7 +58,7 @@ private:
     
     virtual bool supportsFocus() const;
     virtual bool isMouseFocusable() const;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isFocusable() const;
     virtual bool isURLAttribute(const Attribute&) const;
 

@@ -105,7 +105,7 @@ private:
     virtual void reset();
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool isMouseFocusable() const;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
 
     virtual void accessKeyAction(bool sendMouseEvents);

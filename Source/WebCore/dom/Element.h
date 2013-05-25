@@ -432,6 +432,8 @@ public:
     virtual void setHovered(bool flag = true);
     virtual void setFocus(bool flag);
 
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)

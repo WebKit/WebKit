@@ -105,7 +105,7 @@ private:
 
     virtual bool supportsFocus() const OVERRIDE;
 
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isPluginElement() const;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
