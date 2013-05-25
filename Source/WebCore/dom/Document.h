@@ -491,8 +491,7 @@ public:
 
     void evaluateMediaQueryList();
 
-    // Never returns 0.
-    FormController* formController();
+    FormController& formController();
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
 

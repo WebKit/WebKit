@@ -87,7 +87,7 @@ PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName
 
 HTMLFormElement::~HTMLFormElement()
 {
-    document()->formController()->willDeleteForm(this);
+    document()->formController().willDeleteForm(this);
     if (!shouldAutocomplete())
         document()->unregisterForPageCacheSuspensionCallbacks(this);
 
@@ -676,7 +676,7 @@ bool HTMLFormElement::shouldAutocomplete() const
 void HTMLFormElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
-    document()->formController()->restoreControlStateIn(*this);
+    document()->formController().restoreControlStateIn(*this);
 }
 
 void HTMLFormElement::copyNonAttributePropertiesFromElement(const Element& source)

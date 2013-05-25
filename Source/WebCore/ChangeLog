@@ -1,3 +1,29 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        Document::formController() should return a reference.
+        <http://webkit.org/b/116758>
+
+        Reviewed by Antti Koivisto.
+
+        The formController() is created on demand, so return a reference instead.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::formController):
+        (WebCore::Document::setStateForNewFormElements):
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::~HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewDocument):
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::finishParsingChildren):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        (WebCore::HTMLInputElement::checkedRadioButtons):
+
 2013-05-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Reducing CSS code duplication in declaration list error recovery

@@ -174,7 +174,7 @@ HTMLInputElement::~HTMLInputElement()
     // setForm(0) may register this to a document-level radio button group.
     // We should unregister it to avoid accessing a deleted object.
     if (isRadioButton())
-        document()->formController()->checkedRadioButtons().removeButton(this);
+        document()->formController().checkedRadioButtons().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
         document()->didRemoveEventTargetNode(this);
@@ -1536,7 +1536,7 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
         if (needsSuspensionCallback)
             oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
         if (isRadioButton())
-            oldDocument->formController()->checkedRadioButtons().removeButton(this);
+            oldDocument->formController().checkedRadioButtons().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
         if (m_hasTouchEventHandler)
             oldDocument->didRemoveEventTargetNode(this);
@@ -1850,7 +1850,7 @@ CheckedRadioButtons* HTMLInputElement::checkedRadioButtons() const
     if (HTMLFormElement* formElement = form())
         return &formElement->checkedRadioButtons();
     if (inDocument())
-        return &document()->formController()->checkedRadioButtons();
+        return &document()->formController().checkedRadioButtons();
     return 0;
 }
 
