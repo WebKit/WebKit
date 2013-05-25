@@ -1,3 +1,17 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        REGRESSION: WebProcess is terminated when all Safari windows are closed.
+        <rdar://problem/13990901>
+        <http://webkit.org/b/116766>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When closing the last page, only disconnect the web process if we're using a network process.
+        Otherwise there might be session state in the web process getting lost.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+
 2013-05-25  Santosh Mahto  <santosh.ma@samsung.com>
 
         WebFrameProxy::didFailLoad clears frame title for no apparent reason

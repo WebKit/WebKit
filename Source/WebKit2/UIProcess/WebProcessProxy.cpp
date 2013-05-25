@@ -201,7 +201,8 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 #endif
 
     // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
-    if (canTerminateChildProcess()) {
+    // We only allow this when using a network process, as otherwise the WebProcess needs to preserve its session state.
+    if (m_context->usesNetworkProcess() && canTerminateChildProcess()) {
         abortProcessLaunchIfNeeded();
         disconnect();
     }
