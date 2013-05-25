@@ -3051,7 +3051,7 @@ void TCMalloc_Central_FreeList::InsertRange(HardenedSLL start, HardenedSLL end, 
   ReleaseListToSpans(start);
 }
 
-void TCMalloc_Central_FreeList::RemoveRange(HardenedSLL* start, HardenedSLL* end, int *N) {
+ALWAYS_INLINE void TCMalloc_Central_FreeList::RemoveRange(HardenedSLL* start, HardenedSLL* end, int *N) {
   int num = *N;
   ASSERT(num > 0);
 
@@ -3089,7 +3089,7 @@ void TCMalloc_Central_FreeList::RemoveRange(HardenedSLL* start, HardenedSLL* end
 }
 
 
-HardenedSLL TCMalloc_Central_FreeList::FetchFromSpansSafe() {
+ALWAYS_INLINE HardenedSLL TCMalloc_Central_FreeList::FetchFromSpansSafe() {
   HardenedSLL t = FetchFromSpans();
   if (!t) {
     Populate();

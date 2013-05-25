@@ -1,3 +1,16 @@
+2013-05-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Inline TCMalloc_Central_FreeList's RemoveRange and FetchFromSpansSafe
+        https://bugs.webkit.org/show_bug.cgi?id=116700
+
+        Reviewed by Darin Adler.
+
+        The two functions only have one call site each.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_Central_FreeList::RemoveRange):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpansSafe):
+
 2013-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         We broke !(0/0)
