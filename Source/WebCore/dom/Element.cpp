@@ -70,6 +70,7 @@
 #include "PointerLockController.h"
 #include "PseudoElement.h"
 #include "RenderRegion.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectorQuery.h"
@@ -399,6 +400,30 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
     if (const Attribute* attribute = getAttributeItem(name))
         return attribute->value();
     return nullAtom;
+}
+
+bool Element::isUserActionElementHovered() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isHovered(this);
+}
+
+void Element::setHovered(bool flag)
+{
+    if (flag == hovered())
+        return;
+
+    if (Document* document = this->document())
+        document->userActionElements().setHovered(this, flag);
+
+    if (!renderer())
+        return;
+
+    if (renderer()->style()->affectedByHover() || childrenAffectedByHover())
+        setNeedsStyleRecalc();
+
+    if (renderer()->style()->hasAppearance())
+        renderer()->theme()->stateChanged(renderer(), HoverState);
 }
 
 void Element::scrollIntoView(bool alignToTop) 
@@ -1326,6 +1351,10 @@ void Element::detach()
         detachChildrenIfNeeded();
         shadow->detach();
     }
+
+    if (hovered())
+        document()->hoveredNodeDetached(this);
+
     ContainerNode::detach();
 }
 

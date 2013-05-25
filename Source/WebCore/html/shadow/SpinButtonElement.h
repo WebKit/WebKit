@@ -81,7 +81,7 @@ private:
     void startRepeatingTimer();
     void stopRepeatingTimer();
     void repeatingTimerFired(Timer<SpinButtonElement>*);
-    virtual void setHovered(bool = true);
+    virtual void setHovered(bool = true) OVERRIDE;
     bool shouldRespondToMouseEvents();
     virtual bool isMouseFocusable() const { return false; }
 

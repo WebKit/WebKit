@@ -5969,7 +5969,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     size_t removeCount = nodesToRemoveFromChain.size();
     for (size_t i = 0; i < removeCount; ++i) {
-        nodesToRemoveFromChain[i]->setHovered(false);
+        if (nodesToRemoveFromChain[i]->isElementNode())
+            toElement(nodesToRemoveFromChain[i].get())->setHovered(false);
         if (event && (hasCapturingMouseLeaveListener || nodesToRemoveFromChain[i]->hasEventListeners(eventNames().mouseleaveEvent)))
             nodesToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoverNode);
     }
@@ -5983,7 +5984,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             sawCommonAncestor = true;
         if (!sawCommonAncestor) {
             // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.
-            nodesToAddToChain[i]->setHovered(true);
+            if (nodesToAddToChain[i]->isElementNode())
+                toElement(nodesToAddToChain[i].get())->setHovered(true);
             if (event && (hasCapturingMouseEnterListener || nodesToAddToChain[i]->hasEventListeners(eventNames().mouseenterEvent)))
                 nodesToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoverNode.get());
         }

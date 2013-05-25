@@ -672,7 +672,7 @@ bool AccessibilityNodeObject::isHovered() const
     if (!node)
         return false;
 
-    return node->hovered();
+    return node->isElementNode() && toElement(node)->hovered();
 }
 
 bool AccessibilityNodeObject::isMultiSelectable() const

@@ -1,3 +1,48 @@
+2013-05-24  Andreas Kling  <akling@apple.com>
+
+        Move "hover" state logic from Node to Element.
+        <http://webkit.org/b/116757>
+
+        Reviewed by Antti Koivisto.
+
+        Resolve a 7 year old FIXME by merging the "hover" state logic from Node and ContainerNode
+        and moving it all to Element instead.
+
+        * dom/Node.cpp:
+        (WebCore::Node::detach):
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+
+            Move Document::hoveredNodeDetached() call from Node::detach() to Element::detach().
+
+        (WebCore::Element::isUserActionElementHovered):
+        (WebCore::Element::setHovered):
+        * dom/Element.h:
+        (WebCore::Element::hovered):
+
+            Moved here from Node/ContainerNode.
+
+        * dom/UserActionElementSet.h:
+        (WebCore::UserActionElementSet::setHovered):
+        (WebCore::UserActionElementSet::setFlags):
+
+            Make setHovered() take an Element* instead of a Node*. I'd like to do this will all
+            of these methods eventually, so added a setFlags() helper with the tighter type.
+
+        * html/HTMLLabelElement.h:
+        * html/shadow/SpinButtonElement.h:
+
+            Sprinkle OVERRIDE on setHovered() overrides.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isHovered):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isHovered):
+
+            Check if the inspected Node is an element before asking if it's hovered.
+
 2013-05-25  Andreas Kling  <akling@apple.com>
 
         Document::formController() should return a reference.

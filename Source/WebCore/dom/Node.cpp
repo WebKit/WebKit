@@ -1107,8 +1107,6 @@ void Node::detach()
 
     Document* doc = document();
     if (isUserActionElement()) {
-        if (hovered())
-            doc->hoveredNodeDetached(this);
         if (inActiveChain())
             doc->activeChainNodeDetached(this);
         doc->userActionElements().didDetach(this);
@@ -2751,12 +2749,6 @@ void Node::setActive(bool flag, bool)
         document->userActionElements().setActive(this, flag);
 }
 
-void Node::setHovered(bool flag)
-{
-    if (Document* document = this->document())
-        document->userActionElements().setHovered(this, flag);
-}
-
 bool Node::isUserActionElementActive() const
 {
     ASSERT(isUserActionElement());
@@ -2767,12 +2759,6 @@ bool Node::isUserActionElementInActiveChain() const
 {
     ASSERT(isUserActionElement());
     return document()->userActionElements().isInActiveChain(this);
-}
-
-bool Node::isUserActionElementHovered() const
-{
-    ASSERT(isUserActionElement());
-    return document()->userActionElements().isHovered(this);
 }
 
 bool Node::isUserActionElementFocused() const

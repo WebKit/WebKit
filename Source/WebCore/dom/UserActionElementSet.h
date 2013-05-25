@@ -49,7 +49,7 @@ public:
     void setFocused(Node* node, bool enable) { setFlags(node, enable, IsFocusedFlag); }
     void setActive(Node* node, bool enable) { setFlags(node, enable, IsActiveFlag); }
     void setInActiveChain(Node* node, bool enable) { setFlags(node, enable, InActiveChainFlag); }
-    void setHovered(Node* node, bool enable) { setFlags(node, enable, IsHoveredFlag); }
+    void setHovered(Element* element, bool enable) { setFlags(element, enable, IsHoveredFlag); }
 
     UserActionElementSet();
     ~UserActionElementSet();
@@ -70,6 +70,7 @@ private:
     void clearFlags(Node*, unsigned);
     bool hasFlags(const Node*, unsigned flags) const;
 
+    void setFlags(Element* element, bool enable, unsigned flags) { enable ? setFlags(element, flags) : clearFlags(element, flags); }
     void setFlags(Element*, unsigned);
     void clearFlags(Element*, unsigned);
     bool hasFlags(const Element*, unsigned flags) const;

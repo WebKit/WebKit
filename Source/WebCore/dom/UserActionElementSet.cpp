@@ -72,7 +72,7 @@ void UserActionElementSet::clearFlags(Node* node, unsigned flags)
     return clearFlags(toElement(node), flags);
 }
 
-inline bool UserActionElementSet::hasFlags(const Element* element, unsigned flags) const
+bool UserActionElementSet::hasFlags(const Element* element, unsigned flags) const
 {
     ASSERT(element->isUserActionElement());
     ElementFlagMap::const_iterator found = m_elements.find(const_cast<Element*>(element));
@@ -81,7 +81,7 @@ inline bool UserActionElementSet::hasFlags(const Element* element, unsigned flag
     return found->value & flags;
 }
 
-inline void UserActionElementSet::clearFlags(Element* element, unsigned flags)
+void UserActionElementSet::clearFlags(Element* element, unsigned flags)
 {
     if (!element->isUserActionElement()) {
         ASSERT(m_elements.end() == m_elements.find(element));
@@ -104,7 +104,7 @@ inline void UserActionElementSet::clearFlags(Element* element, unsigned flags)
     found->value = updated;
 }
 
-inline void UserActionElementSet::setFlags(Element* element, unsigned flags)
+void UserActionElementSet::setFlags(Element* element, unsigned flags)
 {
     ElementFlagMap::iterator result = m_elements.find(element);
     if (result != m_elements.end()) {

@@ -831,10 +831,10 @@ bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
 bool RenderTheme::isHovered(const RenderObject* o) const
 {
     Node* node = o->node();
-    if (!node)
+    if (!node || !node->isElementNode())
         return false;
-    if (!node->isElementNode() || !toElement(node)->isSpinButtonElement())
-        return node->hovered();
+    if (!toElement(node)->isSpinButtonElement())
+        return toElement(node)->hovered();
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->hovered() && element->upDownState() != SpinButtonElement::Indeterminate;
 }

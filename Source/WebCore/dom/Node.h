@@ -360,7 +360,6 @@ public:
 
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }
     bool inActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
-    bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
 
     bool attached() const { return getFlag(IsAttachedFlag); }
@@ -401,7 +400,6 @@ public:
 
     virtual void setFocus(bool flag);
     virtual void setActive(bool flag = true, bool pause = false);
-    virtual void setHovered(bool flag = true);
 
     virtual short tabIndex() const;
 
@@ -791,7 +789,6 @@ private:
 
     bool isUserActionElementActive() const;
     bool isUserActionElementInActiveChain() const;
-    bool isUserActionElementHovered() const;
     bool isUserActionElementFocused() const;
 
     void setStyleChange(StyleChangeType);

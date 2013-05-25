@@ -1029,22 +1029,6 @@ void ContainerNode::setActive(bool down, bool pause)
     }
 }
 
-void ContainerNode::setHovered(bool over)
-{
-    if (over == hovered()) return;
-
-    Node::setHovered(over);
-
-    // note that we need to recalc the style
-    // FIXME: Move to Element
-    if (renderer()) {
-        if (renderStyle()->affectedByHover() || (isElementNode() && toElement(this)->childrenAffectedByHover()))
-            setNeedsStyleRecalc();
-        if (renderer() && renderer()->style()->hasAppearance())
-            renderer()->theme()->stateChanged(renderer(), HoverState);
-    }
-}
-
 unsigned ContainerNode::childNodeCount() const
 {
     unsigned count = 0;
