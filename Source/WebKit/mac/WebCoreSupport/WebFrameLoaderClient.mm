@@ -514,6 +514,8 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 
 void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
+    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader()->provisionalDocumentLoader()->url().string();
+
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didReceiveServerRedirectForProvisionalLoadForFrameFunc)
@@ -540,6 +542,8 @@ void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const KURL& url, do
 
 void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 {
+    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string();
+
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didChangeLocationWithinPageForFrameFunc)
@@ -548,6 +552,8 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 {
+    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string();
+
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didPushStateWithinPageForFrameFunc)
@@ -556,6 +562,8 @@ void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 
 void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 {
+    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string();
+
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didReplaceStateWithinPageForFrameFunc)
@@ -564,6 +572,8 @@ void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 
 void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
 {
+    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string();
+
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didPopStateWithinPageForFrameFunc)
@@ -589,7 +599,10 @@ void WebFrameLoaderClient::dispatchDidReceiveIcon()
 
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
-    WebView *webView = getWebView(m_webFrame.get());   
+    ASSERT(!m_webFrame->_private->provisionalURL);
+    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader()->provisionalDocumentLoader()->url().string();
+
+    WebView *webView = getWebView(m_webFrame.get());
     [webView _didStartProvisionalLoadForFrame:m_webFrame.get()];
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -619,6 +632,9 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didCommitLoadForFrame:m_webFrame.get()];
 
+    m_webFrame->_private->url = m_webFrame->_private->provisionalURL;
+    m_webFrame->_private->provisionalURL = nullptr;
+
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didCommitLoadForFrameFunc)
         CallFrameLoadDelegate(implementations->didCommitLoadForFrameFunc, webView, @selector(webView:didCommitLoadForFrame:), m_webFrame.get());
@@ -626,7 +642,9 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
-    WebView *webView = getWebView(m_webFrame.get());   
+    m_webFrame->_private->provisionalURL = nullptr;
+
+    WebView *webView = getWebView(m_webFrame.get());
     [webView _didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -638,7 +656,9 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
 void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
-    WebView *webView = getWebView(m_webFrame.get());   
+    ASSERT(!m_webFrame->_private->provisionalURL);
+
+    WebView *webView = getWebView(m_webFrame.get());
     [webView _didFailLoadWithError:error forFrame:m_webFrame.get()];
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -658,7 +678,9 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
 {
-    WebView *webView = getWebView(m_webFrame.get());   
+    ASSERT(!m_webFrame->_private->provisionalURL);
+
+    WebView *webView = getWebView(m_webFrame.get());
     [webView _didFinishLoadForFrame:m_webFrame.get()];
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -921,7 +943,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
         if (implementations) {
             if (implementations->clientRedirectFunc) {
                 CallHistoryDelegate(implementations->clientRedirectFunc, view, @selector(webView:didPerformClientRedirectFromURL:toURL:inFrame:), 
-                    loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_webFrame.get());
+                    m_webFrame->_private->url.get(), loader->clientRedirectDestinationForHistory(), m_webFrame.get());
             }
         } else if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])
             core(item)->addRedirectURL(loader->clientRedirectDestinationForHistory());

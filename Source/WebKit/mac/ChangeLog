@@ -1,3 +1,32 @@
+2013-05-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/13924889> -webView:didPerformClientRedirectFromURL:toURL:inFrame: should be given the redirecting URL as the “from” URL
+        https://bugs.webkit.org/show_bug.cgi?id=116733
+
+        Reviewed by Adele Peterson.
+
+        By the time the history controller calls updateGlobalHistoryRedirectLinks(), the document
+        loader already reflects the destination URL. In order to be able to provide the immediate
+        source URL to the delegate, we make WebFrame track a URL and provisional URL, updating them
+        in response to FrameLoader callbacks in exactly the same way WebFrameProxy maintains its
+        m_url and m_provisionalURL member variables.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad): Update
+        provisionalURL.
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage): Update url.
+        (WebFrameLoaderClient::dispatchDidPushStateWithinPage): Ditto.
+        (WebFrameLoaderClient::dispatchDidReplaceStateWithinPage): Ditto.
+        (WebFrameLoaderClient::dispatchDidPopStateWithinPage): Ditto.
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad): Update provisionalURL.
+        (WebFrameLoaderClient::dispatchDidCommitLoad): Update URL and provisionalURL.
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad): Clear provisionalURL.
+        (WebFrameLoaderClient::dispatchDidFailLoad): Added an assertion.
+        (WebFrameLoaderClient::dispatchDidFinishLoad): Ditto.
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks): Pass the last committed URL as the
+        source, rather than clientRedirectSourceForHistory().
+        * WebView/WebFrameInternal.h: Added url and provisionalURL ivars to WebFramePrivate.
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove using namespace std from Mac WebKit1

@@ -82,6 +82,8 @@ WebView *getWebView(WebFrame *webFrame);
     id internalLoadDelegate;
     BOOL shouldCreateRenderers;
     BOOL includedInWebKitStatistics;
+    RetainPtr<NSString> url;
+    RetainPtr<NSString> provisionalURL;
 }
 @end
 
