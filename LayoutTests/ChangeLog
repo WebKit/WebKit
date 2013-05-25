@@ -1,3 +1,16 @@
+2013-05-25  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Direct pattern compositing breaks when no-repeat is set on a large layer
+        https://bugs.webkit.org/show_bug.cgi?id=116140
+
+        Added a ref-test to make sure that direct pattern compositing works well with no-repeat
+        in a particular geometry.
+
+        Reviewed by Antti Koivisto.
+
+        * compositing/patterns/direct-pattern-compositing-contain-no-repeat-expected.html: Added.
+        * compositing/patterns/direct-pattern-compositing-contain-no-repeat.html: Added.
+
 2013-05-24  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed change to get Windows bots green.  Disable a number

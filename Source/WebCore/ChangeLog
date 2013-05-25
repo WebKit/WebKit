@@ -1,3 +1,20 @@
+2013-05-25  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Direct pattern compositing breaks when no-repeat is set on a large layer
+        https://bugs.webkit.org/show_bug.cgi?id=116140
+
+        Reviewed by Antti Koivisto.
+
+        In some cases the directly composited background color logic overrides the layer's
+        contentsRect, which results in wrong rendering of tiled images.
+        This patch makes sure that the background image is applied after the solid color,
+        which ensures the correct contentsRect.
+
+        Test: compositing/patterns/direct-pattern-compositing-contain-no-repeat.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedContents):
+
 2013-05-24  Andreas Kling  <akling@apple.com>
 
         Move "hover" state logic from Node to Element.

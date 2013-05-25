@@ -875,8 +875,10 @@ void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer
     if (!m_owningLayer->hasVisibleContent())
         return;
 
-    updateDirectlyCompositedBackgroundImage(isSimpleContainer, didUpdateContentsRect);
+    // The order of operations here matters, since the last valid type of contents needs
+    // to also update the contentsRect.
     updateDirectlyCompositedBackgroundColor(isSimpleContainer, didUpdateContentsRect);
+    updateDirectlyCompositedBackgroundImage(isSimpleContainer, didUpdateContentsRect);
 }
 
 void RenderLayerBacking::registerScrollingLayers()
