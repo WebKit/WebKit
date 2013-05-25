@@ -1,5 +1,14 @@
 2013-05-24  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix. Don't use new NRWT logic needed
+        by Windows yet. Activate (and fix test) when we cut over.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        (Driver._start):
+
+2013-05-24  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Expose database storage and cache locations via preferences.
         https://bugs.webkit.org/show_bug.cgi?id=116729
 
