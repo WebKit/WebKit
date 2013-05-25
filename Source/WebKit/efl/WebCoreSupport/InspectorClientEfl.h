@@ -42,7 +42,6 @@
 
 namespace WebCore {
 class InspectorFrontendClientEfl;
-class Page;
 
 class InspectorClientEfl : public InspectorClient, public InspectorFrontendChannel {
 public:
