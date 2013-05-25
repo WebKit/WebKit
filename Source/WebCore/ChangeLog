@@ -1,3 +1,10 @@
+2013-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r150664.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+
 2013-05-24  Sergio Villar Senin  <svillar@igalia.com>
 
         Fixing invalid block recovery in some declaration list.
