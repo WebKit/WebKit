@@ -47,6 +47,8 @@
 
 using namespace WebCore;
 
+static CFStringRef WebDatabaseDirectoryDefaultsKey = CFSTR("WebDatabaseDirectory");
+
 static inline bool isEqual(LPCWSTR s1, LPCWSTR s2)
 {
     return !wcscmp(s1, s2);
@@ -405,14 +407,24 @@ void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const
     notifyCenter->postNotificationName(databaseDidModifyOriginName, securityOrigin.get(), userInfoBag.get());
 }
 
+static WTF::String databasesDirectory()
+{
+#if USE(CF)
+    RetainPtr<CFPropertyListRef> directoryPref = adoptCF(CFPreferencesCopyAppValue(WebDatabaseDirectoryDefaultsKey, kCFPreferencesCurrentApplication));
+    if (directoryPref && (CFStringGetTypeID() == CFGetTypeID(directoryPref.get())))
+        return static_cast<CFStringRef>(directoryPref.get());
+#endif
+
+    return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
+}
+
 void WebKitInitializeWebDatabasesIfNecessary()
 {
     static bool initialized = false;
     if (initialized)
         return;
 
-    WTF::String databasesDirectory = WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
-    WebCore::DatabaseManager::manager().initialize(databasesDirectory);
+    WebCore::DatabaseManager::manager().initialize(databasesDirectory());
 
     initialized = true;
 }

@@ -1,3 +1,28 @@
+2013-05-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Expose database storage and cache locations via preferences.
+        https://bugs.webkit.org/show_bug.cgi?id=116729
+
+        Reviewed by Tim Horton.
+
+        Update DumpRenderTree to use CFPreferences to control where WebKit
+        stores its local databases, URL caches, etc.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (libraryPathForDumpRenderTree): Added.
+        (dllLauncherEntryPoint): Set up DRT-specific cache locations.
+        * Scripts/webkitpy/port/base.py:
+        (Port._driver_tempdir): Added (to allow port-specific overload).
+        (Port._driver_tempdir_for_environment): Ditto
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver): Use new overload to set
+        environment variable.
+        (Driver._start): Use new overload for temp directory location.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._driver_tempdir_for_environment): New overload to supply
+        Windows path to DumpRenderTree environment (while still using
+        cygwin paths for internal operations.
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for webkitAudioContext global constructor getter

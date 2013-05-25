@@ -284,7 +284,7 @@ class Driver(object):
         environment['DYLD_LIBRARY_PATH'] = self._port._build_path()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
-        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+        environment['DUMPRENDERTREE_TEMP'] = str(self._port._driver_tempdir_for_environment())
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         if 'WEBKITOUTPUTDIR' in os.environ:
             environment['WEBKITOUTPUTDIR'] = os.environ['WEBKITOUTPUTDIR']
@@ -294,7 +294,7 @@ class Driver(object):
 
     def _start(self, pixel_tests, per_test_args):
         self.stop()
-        self._driver_tempdir = self._port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
+        self._driver_tempdir = self._port._driver_tempdir()
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         environment = self._setup_environ_for_driver(environment)

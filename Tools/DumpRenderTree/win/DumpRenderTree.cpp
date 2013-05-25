@@ -54,15 +54,13 @@
 #include <wtf/Vector.h>
 #include <windows.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/FileSystem.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
 
 #if USE(CFNETWORK)
-#include <CFNetwork/CFURLCachePriv.h>
-#endif
-
-#if USE(CFNETWORK)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <CFNetwork/CFURLCachePriv.h>
 #endif
 
 using namespace std;
@@ -74,7 +72,12 @@ const LPWSTR TestPluginDir = L"TestNetscapePlugin";
 #endif
 
 static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
+static LPCWSTR dumpRenderTreeTemp = L"DUMPRENDERTREE_TEMP";
 #define USE_MAC_FONTS
+
+static CFStringRef WebDatabaseDirectoryDefaultsKey = CFSTR("WebDatabaseDirectory");
+static CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
+static CFStringRef WebStorageDirectoryDefaultsKey = CFSTR("WebKitLocalStorageDatabasePathPreferenceKey");
 
 const LPCWSTR kDumpRenderTreeClassName = L"DumpRenderTreeWindow";
 
@@ -190,6 +193,22 @@ static string toUTF8(const wchar_t* wideString, size_t length)
 
     return string(utf8Vector.data(), utf8Vector.size() - 1);
 }
+
+#if USE(CF)
+static String libraryPathForDumpRenderTree()
+{
+    DWORD size = ::GetEnvironmentVariable(dumpRenderTreeTemp, 0, 0);
+    Vector<TCHAR> buffer(size);
+    if (::GetEnvironmentVariable(dumpRenderTreeTemp, buffer.data(), buffer.size())) {
+        wstring path = buffer.data();
+        if (!path.empty() && (path[path.length() - 1] != L'\\'))
+            path.append(L"\\");
+        return String (path.data(), path.length());
+    }
+
+    return WebCore::localUserSpecificStorageDirectory();
+}
+#endif
 
 string toUTF8(BSTR bstr)
 {
@@ -1274,6 +1293,14 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
         printf("SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDRenderingAvailable ? "3DRendering" : "");
         return 0;
     }
+
+#if USE(CF)
+    // Set up these values before creating the WebView so that the various initializations will see these preferred values.
+    String path = libraryPathForDumpRenderTree();
+    CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, WebCore::pathByAppendingComponent(path, "Databases").createCFString().get(), kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, WebCore::pathByAppendingComponent(path, "LocalStorage").createCFString().get(), kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, WebCore::pathByAppendingComponent(path, "LocalCache").createCFString().get(), kCFPreferencesCurrentApplication);
+#endif
 
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)

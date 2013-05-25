@@ -1,3 +1,13 @@
+2013-05-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Expose database storage and cache locations via preferences.
+        https://bugs.webkit.org/show_bug.cgi?id=116729
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Export
+        three symbols needed to implement the feature.
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Move history property list writer to WebKit

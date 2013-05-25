@@ -178,6 +178,9 @@ EXPORTS
         ?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
+#if USE(CF)
+        ?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ
+#endif
         ?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deprecatedShadowAncestorNode@Node@WebCore@@QBEPAV12@XZ
@@ -222,6 +225,7 @@ EXPORTS
         ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z
         ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
+        ?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@ABV23@0@Z
         ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
         ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
         ?disconnectFrontend@InspectorController@WebCore@@QAEXXZ
@@ -237,6 +241,7 @@ EXPORTS
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?length@StaticNodeList@WebCore@@UBEIXZ
+        ?localUserSpecificStorageDirectory@WebCore@@YA?AVString@WTF@@XZ
         ?namedItem@StaticNodeList@WebCore@@UBEPAVNode@2@ABVAtomicString@WTF@@@Z
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ

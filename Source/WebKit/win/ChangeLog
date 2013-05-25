@@ -1,3 +1,24 @@
+2013-05-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Expose database storage and cache locations via preferences.
+        https://bugs.webkit.org/show_bug.cgi?id=116729
+
+        Reviewed by Tim Horton.
+
+        * WebDatabaseManager.cpp: Update to check preferences for the
+        desired location of the database store.
+        (databasesDirectory): Added.
+        (WebKitInitializeWebDatabasesIfNecessary): Use new databasesDirectory
+        method to determine what system path to use for file storage.
+        * WebKit.vcproj/WebKitExports.def.in: Export three symbols
+        needed to implement the feature.
+        * WebView.cpp: Update to check preferences for the desired location
+        of the various caches used by WebKit.
+        (WebView::setCacheModel): Update to check preferences for URL cache
+        storage.
+        (WebKitSetApplicationCachePathIfNecessary): Update to check
+        preferences for ccache storage.
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for webkitAudioContext global constructor getter
