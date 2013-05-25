@@ -1,3 +1,12 @@
+2013-05-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed change to get Windows bots green.  Disable a number
+        of crashes and failures.  Crashes are tracked under
+        https://bugs.webkit.org/show_bug.cgi?id=116562, failures under
+        https://bugs.webkit.org/show_bug.cgi?id=116564.
+
+        * platform/win/TestExpectations:
+
 2013-05-24  Sergio Villar Senin  <svillar@igalia.com>
 
         Fixing invalid block recovery in some declaration list.

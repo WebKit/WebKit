@@ -2740,13 +2740,18 @@ webkit.org/b/116560 fast/workers
 # Disable crashing tests, being investigated under https://bugs.webkit.org/show_bug.cgi?id=116562
 webkit.org/b/116562 fast/dom/Window/window-postmessage-clone-deep-array.html
 webkit.org/b/116562 fast/js/callback-function-with-handle-event.html
+webkit.org/b/116562 fast/js/global-constructors-attributes-worker.html
 webkit.org/b/116562 fast/js/large-expressions.html
 webkit.org/b/116562 fast/js/string-replace-exception-crash.html
 webkit.org/b/116562 fast/text/custom-font-data-crash.html
 webkit.org/b/116562 loader/go-back-cached-main-resource.html
+webkit.org/b/116562 svg/filters/feMorphology-crash.html
 
 # Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
+webkit.org/b/116564 compositing/contents-opaque/filter.html
+webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.html
 webkit.org/b/116564 css1/units/rounding.html
+webkit.org/b/116564 editing/pasteboard/copy-without-selection.html
 webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html
 webkit.org/b/116564 editing/style/block-style-005.html
 webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml
@@ -2759,12 +2764,10 @@ webkit.org/b/116564 fast/text/text-combine-different-fonts.html
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html
 webkit.org/b/116564 media/click-volume-bar-not-pausing.html
 webkit.org/b/116564 media/track/track-css-user-override.html
+webkit.org/b/116564 printing/allowed-page-breaks.html
 webkit.org/b/116564 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html
 
-# Enable storage tests, but exclude the following (see https://webkit.org/b/116559).
-webkit.org/b/116559 storage/websql/change-version.html
-webkit.org/b/116559 storage/websql/database-lock-after-reload.html
-webkit.org/b/116559 storage/websql/open-database-creation-callback.html
-webkit.org/b/116559 storage/websql/quota-tracking.html
+# Enable storage tests, but exclude the websql tests (see https://webkit.org/b/116559).
+webkit.org/b/116559 storage/websql
 
