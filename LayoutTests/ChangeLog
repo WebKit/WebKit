@@ -1,3 +1,12 @@
+2013-05-25  Dan Bernstein  <mitz@apple.com>
+
+        Updated expected results after r150688.
+
+        Reviewed by Andreas Kling.
+
+        * http/tests/globalhistory/history-delegate-basic-refresh-redirect-expected.txt: Now shows
+        the URL that performed the client redirect, as expected.
+
 2013-05-25  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Direct pattern compositing breaks when no-repeat is set on a large layer
