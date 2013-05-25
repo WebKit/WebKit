@@ -162,7 +162,6 @@ void WebFrameProxy::didFailLoad()
     ASSERT(m_loadState == LoadStateCommitted);
     ASSERT(m_provisionalURL.isEmpty());
     m_loadState = LoadStateFinished;
-    m_title = String();
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const String& url)

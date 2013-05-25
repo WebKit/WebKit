@@ -1,3 +1,13 @@
+2013-05-25  Santosh Mahto  <santosh.ma@samsung.com>
+
+        WebFrameProxy::didFailLoad clears frame title for no apparent reason
+        https://bugs.webkit.org/show_bug.cgi?id=116655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didFailLoad):
+
 2013-05-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [Qt][GTK] Build fix after r150669
