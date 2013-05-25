@@ -1532,19 +1532,11 @@ declaration_list:
     | decl_list {
         $$ = $1;
     }
-    | errors invalid_block_list error {
+    | errors decl_list_recovery {
         parser->syntaxError($1, CSSParser::PropertyDeclarationError);
         $$ = false;
     }
-    | errors {
-        parser->syntaxError($1, CSSParser::PropertyDeclarationError);
-        $$ = false;
-    }
-    | decl_list errors {
-        parser->syntaxError($2, CSSParser::PropertyDeclarationError);
-        $$ = $1;
-    }
-    | decl_list errors invalid_block_list error {
+    | decl_list errors decl_list_recovery {
         parser->syntaxError($2, CSSParser::PropertyDeclarationError);
         $$ = $1;
     }
@@ -1563,13 +1555,9 @@ decl_list:
         parser->syntaxError($2);
         $$ = false;
     }
-    | errors ';' maybe_space {
+    | errors decl_list_recovery ';' maybe_space {
         parser->syntaxError($1, CSSParser::PropertyDeclarationError);
         parser->markPropertyStart();
-        $$ = false;
-    }
-    | errors invalid_block_list error ';' maybe_space {
-        parser->syntaxError($1, CSSParser::PropertyDeclarationError);
         $$ = false;
     }
     | decl_list declaration ';' maybe_space {
@@ -1578,16 +1566,16 @@ decl_list:
         if ($2)
             $$ = $2;
     }
-    | decl_list errors ';' maybe_space {
+    | decl_list errors decl_list_recovery ';' maybe_space {
         parser->syntaxError($2, CSSParser::PropertyDeclarationError);
         parser->markPropertyStart();
         $$ = $1;
     }
-    | decl_list errors invalid_block_list error ';' maybe_space {
-        parser->syntaxError($2, CSSParser::PropertyDeclarationError);
-        parser->markPropertyStart();
-        $$ = $1;
-    }
+    ;
+
+decl_list_recovery:
+    invalid_block_list error
+    | /* empty */
     ;
 
 declaration:

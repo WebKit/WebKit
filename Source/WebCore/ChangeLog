@@ -1,3 +1,19 @@
+2013-05-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reducing CSS code duplication in declaration list error recovery
+        https://bugs.webkit.org/show_bug.cgi?id=115157
+
+        Reviewed by Andreas Kling.
+
+        From Blink r148974 by <serya@chromium.org>
+
+        Refactor "invalid_block_list error | /* empty */" in a new
+        decl_list_recovery rule that allows to remove 4 redundant rules.
+
+        No new test required as we're just refactoring code, no new behaviour.
+
+        * css/CSSGrammar.y.in:
+
 2013-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r150664.
