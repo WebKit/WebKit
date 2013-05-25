@@ -1,3 +1,16 @@
+2013-05-25  Filip Pizlo  <fpizlo@apple.com>
+
+        We broke (-2^31/-1)|0 in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=116767
+
+        Reviewed by Andreas Kling.
+        
+        The bug is that we were assuming that in the -2^31 case, we already had -2^31
+        in the result register. This was a wrong assumption.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForX86):
+
 2013-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         We broke !(0/0)
