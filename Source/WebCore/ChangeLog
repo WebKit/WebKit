@@ -1,3 +1,17 @@
+
+2013-05-24  Beth Dakin  <bdakin@apple.com>
+
+        DidFirstFlushForHeaderLayer can be called too soon on pages that redirect
+        https://bugs.webkit.org/show_bug.cgi?id=116749
+        -and corresponding-
+        <rdar://problem/13886753>
+
+        Reviewed by Simon Fraser.
+
+        Only start m_paintRelatedMilestonesTimer if we have actually painted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
