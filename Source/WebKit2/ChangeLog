@@ -1,3 +1,26 @@
+2013-05-24  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Build fix after r150669
+        https://bugs.webkit.org/show_bug.cgi?id=116750
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * WebProcess/Battery/WebBatteryManager.cpp:
+        (WebKit::WebBatteryManager::registerWebPage):
+        (WebKit::WebBatteryManager::unregisterWebPage):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.cpp:
+        (WebKit::WebNetworkInfoManager::registerWebPage):
+        (WebKit::WebNetworkInfoManager::unregisterWebPage):
+        (WebKit::WebNetworkInfoManager::bandwidth):
+        (WebKit::WebNetworkInfoManager::metered):
+        * WebProcess/WebCoreSupport/WebVibrationClient.cpp:
+        (WebKit::WebVibrationClient::vibrate):
+        (WebKit::WebVibrationClient::cancelVibration):
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::didReceiveURIRequestData):
+        (WebKit::WebSoupRequestManager::send):
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         MessageSender shouldn't be a class template

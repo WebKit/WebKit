@@ -149,7 +149,7 @@ void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReferenc
         // to stop reading data from the user input stream. If UI process already sent all the data we simply
         // finish silently.
         if (!webkitSoupRequestInputStreamFinished(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get())))
-            m_process->connection()->send(Messages::WebSoupRequestManagerProxy::DidFailToLoadURIRequest(requestID), 0);
+            m_process->parentProcessConnection()->send(Messages::WebSoupRequestManagerProxy::DidFailToLoadURIRequest(requestID), 0);
         m_requestMap.remove(requestID);
 
         return;
@@ -186,7 +186,7 @@ void WebSoupRequestManager::send(GSimpleAsyncResult* result, GCancellable* cance
     m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(result, request.get(), cancellable)));
 
     uint64_t initiatingPageID = WebCore::ResourceHandle::getSoupRequestInitiatingPageID(soupRequest);
-    m_process->connection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiatingPageID);
+    m_process->parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiatingPageID);
 }
 
 GInputStream* WebSoupRequestManager::finish(GSimpleAsyncResult* result)

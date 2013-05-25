@@ -62,7 +62,7 @@ void WebNetworkInfoManager::registerWebPage(WebPage* page)
     m_pageSet.add(page);
 
     if (wasEmpty)
-        m_process->connection()->send(Messages::WebNetworkInfoManagerProxy::StartUpdating(), 0);
+        m_process->parentProcessConnection()->send(Messages::WebNetworkInfoManagerProxy::StartUpdating(), 0);
 }
 
 void WebNetworkInfoManager::unregisterWebPage(WebPage* page)
@@ -70,21 +70,21 @@ void WebNetworkInfoManager::unregisterWebPage(WebPage* page)
     m_pageSet.remove(page);
 
     if (m_pageSet.isEmpty())
-        m_process->connection()->send(Messages::WebNetworkInfoManagerProxy::StopUpdating(), 0);
+        m_process->parentProcessConnection()->send(Messages::WebNetworkInfoManagerProxy::StopUpdating(), 0);
 }
 
 double WebNetworkInfoManager::bandwidth(WebPage* page) const
 {
     // The spec indicates that we should return "infinity" if the bandwidth is unknown.
     double bandwidth = std::numeric_limits<double>::infinity();
-    m_process->connection()->sendSync(Messages::WebNetworkInfoManagerProxy::GetBandwidth(), Messages::WebNetworkInfoManagerProxy::GetBandwidth::Reply(bandwidth), page->pageID());
+    m_process->parentProcessConnection()->sendSync(Messages::WebNetworkInfoManagerProxy::GetBandwidth(), Messages::WebNetworkInfoManagerProxy::GetBandwidth::Reply(bandwidth), page->pageID());
     return bandwidth;
 }
 
 bool WebNetworkInfoManager::metered(WebPage* page) const
 {
     bool metered = false;
-    m_process->connection()->sendSync(Messages::WebNetworkInfoManagerProxy::IsMetered(), Messages::WebNetworkInfoManagerProxy::IsMetered::Reply(metered), page->pageID());
+    m_process->parentProcessConnection()->sendSync(Messages::WebNetworkInfoManagerProxy::IsMetered(), Messages::WebNetworkInfoManagerProxy::IsMetered::Reply(metered), page->pageID());
     return metered;
 }
 
