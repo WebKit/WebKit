@@ -427,7 +427,10 @@ public:
     virtual const AtomicString& shadowPseudoId() const;
 
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
+    bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
+
     virtual void setHovered(bool flag = true);
+    virtual void setFocus(bool flag);
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
@@ -657,6 +660,7 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
+    bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;
 
     void updatePseudoElement(PseudoId, StyleChange = NoChange);

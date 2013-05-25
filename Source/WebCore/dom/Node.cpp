@@ -2737,12 +2737,6 @@ size_t Node::numberOfScopedHTMLStyleChildren() const
     return count;
 }
 
-void Node::setFocus(bool flag)
-{
-    if (Document* document = this->document())
-        document->userActionElements().setFocused(this, flag);
-}
-
 void Node::setActive(bool flag, bool)
 {
     if (Document* document = this->document())
@@ -2759,12 +2753,6 @@ bool Node::isUserActionElementInActiveChain() const
 {
     ASSERT(isUserActionElement());
     return document()->userActionElements().isInActiveChain(this);
-}
-
-bool Node::isUserActionElementFocused() const
-{
-    ASSERT(isUserActionElement());
-    return document()->userActionElements().isFocused(this);
 }
 
 } // namespace WebCore

@@ -968,17 +968,6 @@ LayoutRect ContainerNode::boundingBox() const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
-void ContainerNode::setFocus(bool received)
-{
-    if (focused() == received)
-        return;
-
-    Node::setFocus(received);
-
-    // note that we need to recalc the style
-    setNeedsStyleRecalc();
-}
-
 void ContainerNode::setActive(bool down, bool pause)
 {
     if (down == active()) return;

@@ -1,3 +1,33 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        Begin moving "focus" state logic from Node to Element.
+        <http://webkit.org/b/116760>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can be focused, so merge the "focus" state logic from Node and ContainerNode
+        and move it into Element. There's a lot more iceberg under this tip, but we'll be starting
+        with setFocus(bool) and focused().
+
+        * dom/Node.h:
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::isUserActionElementFocused):
+        (WebCore::Element::setFocus):
+        * dom/Element.h:
+        (WebCore::Element::focused):
+        * dom/Node.cpp:
+
+            Move focused() and setFocus(bool) from Node/ContainerNode to Element.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+
+            Check if the inspected Node is an Element before asking if it's focused.
+
 2013-05-25  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Direct pattern compositing breaks when no-repeat is set on a large layer

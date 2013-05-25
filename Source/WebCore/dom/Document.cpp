@@ -3341,7 +3341,8 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
         if (oldFocusedNode->active())
             oldFocusedNode->setActive(false);
 
-        oldFocusedNode->setFocus(false);
+        if (oldFocusedNode->isElementNode())
+            toElement(oldFocusedNode.get())->setFocus(false);
 
         // Dispatch a change event for text fields or textareas that have been edited
         if (oldFocusedNode->isElementNode()) {
@@ -3419,7 +3420,9 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
         }
-        m_focusedNode->setFocus(true);
+
+        if (m_focusedNode->isElementNode())
+            toElement(m_focusedNode.get())->setFocus(true);
 
         if (m_focusedNode->isRootEditableElement())
             frame()->editor().didBeginEditing();

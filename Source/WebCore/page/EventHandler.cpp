@@ -2360,7 +2360,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
             if (node && node->isMouseFocusable()) {
                 if (!page->focusController()->setFocusedNode(node, m_frame))
                     swallowEvent = true;
-            } else if (!node || !node->focused()) {
+            } else if (!node || !node->isElementNode() || !toElement(node)->focused()) {
                 if (!page->focusController()->setFocusedNode(0, m_frame))
                     swallowEvent = true;
             }

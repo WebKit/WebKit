@@ -402,10 +402,27 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
     return nullAtom;
 }
 
+bool Element::isUserActionElementFocused() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isFocused(this);
+}
+
 bool Element::isUserActionElementHovered() const
 {
     ASSERT(isUserActionElement());
     return document()->userActionElements().isHovered(this);
+}
+
+void Element::setFocus(bool flag)
+{
+    if (flag == focused())
+        return;
+
+    if (Document* document = this->document())
+        document->userActionElements().setFocused(this, flag);
+
+    setNeedsStyleRecalc();
 }
 
 void Element::setHovered(bool flag)

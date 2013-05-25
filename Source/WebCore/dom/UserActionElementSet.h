@@ -42,11 +42,11 @@ class UserActionElementSet {
 public:
     static PassOwnPtr<UserActionElementSet> create() { return adoptPtr(new UserActionElementSet()); }
 
-    bool isFocused(const Node* node) { return hasFlags(node, IsFocusedFlag); }
+    bool isFocused(const Element* element) { return hasFlags(element, IsFocusedFlag); }
     bool isActive(const Node* node) { return hasFlags(node, IsActiveFlag); }
     bool isInActiveChain(const Node* node) { return hasFlags(node, InActiveChainFlag); }
-    bool isHovered(const Node* node) { return hasFlags(node, IsHoveredFlag); }
-    void setFocused(Node* node, bool enable) { setFlags(node, enable, IsFocusedFlag); }
+    bool isHovered(const Element* element) { return hasFlags(element, IsHoveredFlag); }
+    void setFocused(Element* element, bool enable) { setFlags(element, enable, IsFocusedFlag); }
     void setActive(Node* node, bool enable) { setFlags(node, enable, IsActiveFlag); }
     void setInActiveChain(Node* node, bool enable) { setFlags(node, enable, InActiveChainFlag); }
     void setHovered(Element* element, bool enable) { setFlags(element, enable, IsHoveredFlag); }
