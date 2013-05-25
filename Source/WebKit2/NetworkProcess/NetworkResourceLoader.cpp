@@ -65,16 +65,6 @@ NetworkResourceLoader::~NetworkResourceLoader()
     ASSERT(!m_handle);
 }
 
-CoreIPC::Connection* NetworkResourceLoader::connection() const
-{
-    return connectionToWebProcess()->connection();
-}
-
-uint64_t NetworkResourceLoader::destinationID() const
-{
-    return identifier();
-}
-
 void NetworkResourceLoader::start()
 {
     ASSERT(isMainThread());
@@ -111,7 +101,7 @@ void NetworkResourceLoader::cleanup()
 
 template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message, unsigned messageSendFlags)
 {
-    bool result = connection()->send(message, destinationID(), messageSendFlags);
+    bool result = messageSenderConnection()->send(message, messageSenderDestinationID(), messageSendFlags);
     if (!result)
         abort();
     return result;
@@ -302,6 +292,16 @@ void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle* han
 
     // This function is probably not needed (see <rdar://problem/8960124>).
     notImplemented();
+}
+
+CoreIPC::Connection* NetworkResourceLoader::messageSenderConnection()
+{
+    return connectionToWebProcess()->connection();
+}
+
+uint64_t NetworkResourceLoader::messageSenderDestinationID()
+{
+    return identifier();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

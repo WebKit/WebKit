@@ -59,12 +59,12 @@ WebResourceLoader::~WebResourceLoader()
 {
 }
 
-CoreIPC::Connection* WebResourceLoader::connection() const
+CoreIPC::Connection* WebResourceLoader::messageSenderConnection()
 {
     return WebProcess::shared().networkConnection()->connection();
 }
 
-uint64_t WebResourceLoader::destinationID() const
+uint64_t WebResourceLoader::messageSenderDestinationID()
 {
     return m_coreLoader->identifier();
 }

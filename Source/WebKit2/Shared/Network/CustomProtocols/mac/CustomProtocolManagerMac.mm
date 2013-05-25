@@ -142,7 +142,7 @@ void CustomProtocolManager::initialize(const WebProcessCreationParameters& param
 #if ENABLE(NETWORK_PROCESS)
     ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
     if (parameters.usesNetworkProcess) {
-        m_childProcess->connection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
+        m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
         m_messageQueue = nullptr;
         return;
     }

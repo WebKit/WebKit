@@ -47,7 +47,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class RemoteNetworkingContext;
 
-class NetworkResourceLoader : public SchedulableLoader, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender<NetworkResourceLoader> {
+class NetworkResourceLoader : public SchedulableLoader, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender {
 public:
     static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
     {
@@ -55,10 +55,6 @@ public:
     }
     
     ~NetworkResourceLoader();
-
-    // Used by MessageSender.
-    CoreIPC::Connection* connection() const;
-    uint64_t destinationID() const;
 
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
     void didConvertHandleToDownload();
@@ -106,6 +102,10 @@ public:
 
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
     void continueDidReceiveResponse();

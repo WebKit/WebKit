@@ -881,7 +881,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
     for (NSString *type in types)
         pasteboardTypes.append(type);
 
-    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes), 0);
 
     for (NSUInteger i = 0, count = items.count; i < count; ++i) {
         NSString *type = [types objectAtIndex:i];
@@ -895,7 +895,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
 
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
             RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
+            WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
         } else {
             RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
 
@@ -906,7 +906,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
             RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
             memcpy(sharedMemory->data(), buffer->data(), buffer->size());
             sharedMemory->createHandle(handle, SharedMemory::ReadOnly);
-            WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()), 0);
+            WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()), 0);
         }
     }
 }

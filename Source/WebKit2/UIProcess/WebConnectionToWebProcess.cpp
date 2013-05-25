@@ -61,19 +61,19 @@ bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& deco
     return decoder.decode(messageBodyDecoder);
 }
 
-CoreIPC::Connection* WebConnectionToWebProcess::connection() const
+bool WebConnectionToWebProcess::hasValidConnection() const
+{
+    return m_process;
+}
+
+CoreIPC::Connection* WebConnectionToWebProcess::messageSenderConnection()
 {
     return m_process->connection();
 }
 
-uint64_t WebConnectionToWebProcess::destinationID() const
+uint64_t WebConnectionToWebProcess::messageSenderDestinationID()
 {
     return 0;
-}
-
-bool WebConnectionToWebProcess::hasValidConnection() const
-{
-    return m_process;
 }
 
 } // namespace WebKit

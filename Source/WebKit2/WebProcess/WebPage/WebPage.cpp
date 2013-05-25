@@ -454,9 +454,14 @@ void WebPage::dummy(bool&)
 {
 }
 
-CoreIPC::Connection* WebPage::connection() const
+CoreIPC::Connection* WebPage::messageSenderConnection()
 {
-    return WebProcess::shared().connection();
+    return WebProcess::shared().parentProcessConnection();
+}
+
+uint64_t WebPage::messageSenderDestinationID()
+{
+    return pageID();
 }
 
 #if ENABLE(CONTEXT_MENUS)

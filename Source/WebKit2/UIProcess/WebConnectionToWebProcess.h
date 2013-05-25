@@ -46,9 +46,11 @@ private:
     // WebConnection
     virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) OVERRIDE;
     virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) OVERRIDE;
-    virtual CoreIPC::Connection* connection() const OVERRIDE;
-    virtual uint64_t destinationID() const OVERRIDE;
     virtual bool hasValidConnection() const OVERRIDE;
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     WebProcessProxy* m_process;
 };

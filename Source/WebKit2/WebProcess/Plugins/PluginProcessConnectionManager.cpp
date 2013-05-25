@@ -70,7 +70,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
 
     CoreIPC::Attachment encodedConnectionIdentifier;
     bool supportsAsynchronousInitialization;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginProcessToken),
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginProcessToken),
                                                      Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier, supportsAsynchronousInitialization), 0))
         return 0;
 

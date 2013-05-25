@@ -296,7 +296,7 @@ void WebPlatformStrategies::populatePluginCache()
     ASSERT(m_cachedPlugins.isEmpty());
     
     // FIXME: Should we do something in case of error here?
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins), 0))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins), 0))
         return;
 
     m_shouldRefreshPlugins = false;
@@ -363,7 +363,7 @@ void WebPlatformStrategies::addVisitedLink(Page*, LinkHash linkHash)
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardTypes(pasteboardName),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardTypes(pasteboardName),
                                                 Messages::WebContext::GetPasteboardTypes::Reply(types), 0);
 }
 
@@ -371,7 +371,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const Str
 {
     SharedMemory::Handle handle;
     uint64_t size = 0;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardBufferForType(pasteboardName, pasteboardType),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardBufferForType(pasteboardName, pasteboardType),
                                                 Messages::WebContext::GetPasteboardBufferForType::Reply(handle, size), 0);
     if (handle.isNull())
         return 0;
@@ -381,27 +381,27 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const Str
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardPathnamesForType(pasteboardName, pasteboardType),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardPathnamesForType(pasteboardName, pasteboardType),
                                                 Messages::WebContext::GetPasteboardPathnamesForType::Reply(pathnames), 0);
 }
 
 String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
 {
     String value;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardStringForType(pasteboardName, pasteboardType),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardStringForType(pasteboardName, pasteboardType),
                                                 Messages::WebContext::GetPasteboardStringForType::Reply(value), 0);
     return value;
 }
 
 void WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
 {
-    WebProcess::shared().connection()->send(Messages::WebContext::PasteboardCopy(fromPasteboard, toPasteboard), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::PasteboardCopy(fromPasteboard, toPasteboard), 0);
 }
 
 int WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
 {
     uint64_t changeCount;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardChangeCount(pasteboardName),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardChangeCount(pasteboardName),
                                                 Messages::WebContext::GetPasteboardChangeCount::Reply(changeCount), 0);
     return changeCount;
 }
@@ -409,7 +409,7 @@ int WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
 String WebPlatformStrategies::uniqueName()
 {
     String pasteboardName;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardUniqueName(),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardUniqueName(),
                                                 Messages::WebContext::GetPasteboardUniqueName::Reply(pasteboardName), 0);
     return pasteboardName;
 }
@@ -417,7 +417,7 @@ String WebPlatformStrategies::uniqueName()
 Color WebPlatformStrategies::color(const String& pasteboardName)
 {
     Color color;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardColor(pasteboardName),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardColor(pasteboardName),
                                                 Messages::WebContext::GetPasteboardColor::Reply(color), 0);
     return color;
 }
@@ -425,19 +425,19 @@ Color WebPlatformStrategies::color(const String& pasteboardName)
 KURL WebPlatformStrategies::url(const String& pasteboardName)
 {
     String urlString;
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardURL(pasteboardName),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardURL(pasteboardName),
                                                 Messages::WebContext::GetPasteboardURL::Reply(urlString), 0);
     return KURL(ParsedURLString, urlString);
 }
 
 void WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->send(Messages::WebContext::AddPasteboardTypes(pasteboardName, pasteboardTypes), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::AddPasteboardTypes(pasteboardName, pasteboardTypes), 0);
 }
 
 void WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardTypes(pasteboardName, pasteboardTypes), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardTypes(pasteboardName, pasteboardTypes), 0);
 }
 
 void WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
@@ -448,17 +448,17 @@ void WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, co
         memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
         sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
     }
-    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardBufferForType(pasteboardName, pasteboardType, handle, buffer ? buffer->size() : 0), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardBufferForType(pasteboardName, pasteboardType, handle, buffer ? buffer->size() : 0), 0);
 }
 
 void WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardPathnamesForType(pasteboardName, pasteboardType, pathnames), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardPathnamesForType(pasteboardName, pasteboardType, pathnames), 0);
 }
 
 void WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardStringForType(pasteboardName, pasteboardType, string), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardStringForType(pasteboardName, pasteboardType, string), 0);
 }
 #endif
 

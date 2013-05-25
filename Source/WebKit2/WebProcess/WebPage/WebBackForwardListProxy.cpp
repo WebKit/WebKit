@@ -89,7 +89,7 @@ static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
     EncoderAdapter encoder;
     item->encodeBackForwardTree(encoder);
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, item->originalURLString(), item->urlString(), item->title(), encoder.dataReference()), 0);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, item->originalURLString(), item->urlString(), item->title(), encoder.dataReference()), 0);
 }
 
 void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)
@@ -180,7 +180,7 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
         return 0;
 
     uint64_t itemID = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
         return 0;
 
     if (!itemID)
@@ -195,7 +195,7 @@ int WebBackForwardListProxy::backListCount()
         return 0;
 
     int backListCount = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
         return 0;
 
     return backListCount;
@@ -207,7 +207,7 @@ int WebBackForwardListProxy::forwardListCount()
         return 0;
 
     int forwardListCount = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
         return 0;
 
     return forwardListCount;

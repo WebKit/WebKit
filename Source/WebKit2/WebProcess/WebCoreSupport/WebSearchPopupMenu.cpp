@@ -56,7 +56,7 @@ void WebSearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vect
     if (!page)
         return;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->pageID());
 }
 
 void WebSearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& resultItems)
@@ -68,7 +68,7 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<Str
     if (!page)
         return;
 
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), Messages::WebPageProxy::LoadRecentSearches::Reply(resultItems), page->pageID());
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), Messages::WebPageProxy::LoadRecentSearches::Reply(resultItems), page->pageID());
 }
 
 bool WebSearchPopupMenu::enabled()

@@ -70,15 +70,11 @@ class WebPage;
 class QtFileDownloader;
 #endif
 
-class Download : public CoreIPC::MessageSender<Download> {
+class Download : public CoreIPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
     static PassOwnPtr<Download> create(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
     ~Download();
-
-    // Used by MessageSender.
-    CoreIPC::Connection* connection() const;
-    uint64_t destinationID() const { return downloadID(); }
 
     void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
@@ -119,6 +115,10 @@ public:
 
 private:
     Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     void platformInvalidate();
 

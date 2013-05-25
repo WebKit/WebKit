@@ -187,7 +187,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 }
             } else {
                 bool commandWasHandledByUIProcess = false;
-                WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), 
+                WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), 
                     Messages::WebPageProxy::ExecuteSavedCommandBySelector::Reply(commandWasHandledByUIProcess), m_pageID);
                 eventWasHandled |= commandWasHandledByUIProcess;
             }
@@ -215,7 +215,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands
     if (saveCommands) {
         KeyboardEvent* oldEvent = m_keyboardEventBeingInterpreted;
         m_keyboardEventBeingInterpreted = event;
-        bool sendResult = WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(editorState()), 
+        bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(editorState()), 
             Messages::WebPageProxy::InterpretQueuedKeyEvent::Reply(eventWasHandled, commands), m_pageID);
         m_keyboardEventBeingInterpreted = oldEvent;
         if (!sendResult)

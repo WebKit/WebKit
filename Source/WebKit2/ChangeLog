@@ -1,3 +1,177 @@
+2013-05-24  Anders Carlsson  <andersca@apple.com>
+
+        MessageSender shouldn't be a class template
+        https://bugs.webkit.org/show_bug.cgi?id=116743
+
+        Reviewed by Andreas Kling.
+
+        Change MessageSender to be a proper abstract base class. Subclasses of MessageSender must
+        implement messageSenderConnection() as well as messageSenderDestinationID().
+
+        This reduces code size and will allow us to be more flexible with MessageSender in the future.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        (WebKit::NetworkResourceLoader::messageSenderConnection):
+        (WebKit):
+        (WebKit::NetworkResourceLoader::messageSenderDestinationID):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (NetworkResourceLoader):
+        * NetworkProcess/mac/DiskCacheMonitor.h:
+        (DiskCacheMonitor):
+        * NetworkProcess/mac/DiskCacheMonitor.mm:
+        (WebKit::DiskCacheMonitor::messageSenderConnection):
+        (WebKit::DiskCacheMonitor::messageSenderDestinationID):
+        (WebKit):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC):
+        (MessageSender):
+        (CoreIPC::MessageSender::send):
+        (CoreIPC::MessageSender::sendSync):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::messageSenderConnection):
+        (WebKit):
+        (WebKit::ChildProcess::messageSenderDestinationID):
+        * Shared/ChildProcess.h:
+        (ChildProcess):
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::messageSenderConnection):
+        (WebKit):
+        (WebKit::Download::messageSenderDestinationID):
+        * Shared/Downloads/Download.h:
+        (Download):
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::initialize):
+        * Shared/WebConnection.h:
+        (WebConnection):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::hasValidConnection):
+        (WebKit::WebConnectionToWebProcess::messageSenderConnection):
+        (WebKit::WebConnectionToWebProcess::messageSenderDestinationID):
+        * UIProcess/WebConnectionToWebProcess.h:
+        (WebConnectionToWebProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::retainIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::releaseIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::synchronousIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::loadDecisionForIconURL):
+        (WebKit::WebIconDatabaseProxy::setIconURLForPageURL):
+        (WebKit::WebIconDatabaseProxy::setIconDataForIconURL):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderConnection):
+        (WebKit::WebResourceLoader::messageSenderDestinationID):
+        * WebProcess/Network/WebResourceLoader.h:
+        (WebResourceLoader):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::hasValidConnection):
+        (WebKit::WebConnectionToUIProcess::messageSenderConnection):
+        (WebKit::WebConnectionToUIProcess::messageSenderDestinationID):
+        * WebProcess/WebConnectionToUIProcess.h:
+        (WebConnectionToUIProcess):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        (WebKit::WebChromeClient::focusedFrameChanged):
+        (WebKit::WebChromeClient::createWindow):
+        (WebKit::WebChromeClient::toolbarsVisible):
+        (WebKit::WebChromeClient::statusbarVisible):
+        (WebKit::WebChromeClient::menubarVisible):
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::shouldInterruptJavaScript):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp:
+        (WebKit::WebColorChooser::WebColorChooser):
+        (WebKit::WebColorChooser::setSelectedColor):
+        (WebKit::WebColorChooser::endChooser):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveIcon):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        (WebKit::WebPlatformStrategies::getTypes):
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        (WebKit::WebPlatformStrategies::stringForType):
+        (WebKit::WebPlatformStrategies::copy):
+        (WebKit::WebPlatformStrategies::changeCount):
+        (WebKit::WebPlatformStrategies::uniqueName):
+        (WebKit::WebPlatformStrategies::color):
+        (WebKit::WebPlatformStrategies::url):
+        (WebKit::WebPlatformStrategies::addTypes):
+        (WebKit::WebPlatformStrategies::setTypes):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::setPathnamesForType):
+        (WebKit::WebPlatformStrategies::setStringForType):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        (WebKit::WebPopupMenu::hide):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::sendDidReceiveEvent):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount):
+        (WebKit::WebBackForwardListProxy::forwardListCount):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::createInspectorPage):
+        (WebKit::WebInspector::didClose):
+        (WebKit::WebInspector::bringToFront):
+        (WebKit::WebInspector::inspectedURLChanged):
+        (WebKit::WebInspector::save):
+        (WebKit::WebInspector::append):
+        (WebKit::WebInspector::attachBottom):
+        (WebKit::WebInspector::attachRight):
+        (WebKit::WebInspector::detach):
+        (WebKit::WebInspector::setAttachedWindowHeight):
+        (WebKit::WebInspector::setAttachedWindowWidth):
+        (WebKit::WebInspector::setToolbarHeight):
+        (WebKit::WebInspector::updateDockingAvailability):
+        (WebKit::WebInspector::sendMessageToRemoteFrontend):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::messageSenderConnection):
+        (WebKit):
+        (WebKit::WebPage::messageSenderDestinationID):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::shouldTerminate):
+
 2013-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Animated GIFs don't repaint after TiledCoreAnimationDrawingArea un-suspends painting

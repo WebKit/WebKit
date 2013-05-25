@@ -62,7 +62,7 @@ void WebGeolocationManager::registerWebPage(WebPage* page)
     m_pageSet.add(page);
     
     if (wasEmpty)
-        m_process->connection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(), 0);
+        m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(), 0);
 }
 
 void WebGeolocationManager::unregisterWebPage(WebPage* page)
@@ -70,7 +70,7 @@ void WebGeolocationManager::unregisterWebPage(WebPage* page)
     m_pageSet.remove(page);
 
     if (m_pageSet.isEmpty())
-        m_process->connection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(), 0);
+        m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(), 0);
 }
 
 void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data& data)

@@ -64,18 +64,18 @@ void WebIconDatabaseProxy::setEnabled(bool enabled)
 
 void WebIconDatabaseProxy::retainIconForPageURL(const String& pageURL)
 {
-    m_process->connection()->send(Messages::WebIconDatabase::RetainIconForPageURL(pageURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::RetainIconForPageURL(pageURL), 0);
 }
 
 void WebIconDatabaseProxy::releaseIconForPageURL(const String& pageURL)
 {
-    m_process->connection()->send(Messages::WebIconDatabase::ReleaseIconForPageURL(pageURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::ReleaseIconForPageURL(pageURL), 0);
 }
 
 Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& /*size*/)
 {
     CoreIPC::DataReference result;
-    if (!m_process->connection()->sendSync(Messages::WebIconDatabase::SynchronousIconDataForPageURL(pageURL), Messages::WebIconDatabase::SynchronousIconDataForPageURL::Reply(result), 0))
+    if (!m_process->parentProcessConnection()->sendSync(Messages::WebIconDatabase::SynchronousIconDataForPageURL(pageURL), Messages::WebIconDatabase::SynchronousIconDataForPageURL::Reply(result), 0))
         return 0;
     
     // FIXME: Return Image created with the above data.
@@ -114,7 +114,7 @@ void WebIconDatabaseProxy::loadDecisionForIconURL(const String& iconURL, PassRef
     uint64_t id = callback->callbackID();
     m_iconLoadDecisionCallbacks.add(id, callback);
     
-    m_process->connection()->send(Messages::WebIconDatabase::GetLoadDecisionForIconURL(iconURL, id), 0);
+    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::GetLoadDecisionForIconURL(iconURL, id), 0);
 }
 
 void WebIconDatabaseProxy::receivedIconLoadDecision(int decision, uint64_t callbackID)
@@ -130,13 +130,13 @@ void WebIconDatabaseProxy::iconDataForIconURL(const String& /*iconURL*/, PassRef
 
 void WebIconDatabaseProxy::setIconURLForPageURL(const String& iconURL, const String& pageURL)
 {
-    m_process->connection()->send(Messages::WebIconDatabase::SetIconURLForPageURL(iconURL, pageURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::SetIconURLForPageURL(iconURL, pageURL), 0);
 }
 
 void WebIconDatabaseProxy::setIconDataForIconURL(PassRefPtr<SharedBuffer> iconData, const String& iconURL)
 {
     CoreIPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData ? iconData->data() : 0), iconData ? iconData->size() : 0);
-    m_process->connection()->send(Messages::WebIconDatabase::SetIconDataForIconURL(data, iconURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::SetIconDataForIconURL(data, iconURL), 0);
 }
 
 void WebIconDatabaseProxy::urlImportFinished()

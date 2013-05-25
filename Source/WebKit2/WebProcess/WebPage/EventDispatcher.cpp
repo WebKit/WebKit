@@ -146,7 +146,7 @@ void EventDispatcher::dispatchGestureEvent(uint64_t pageID, const WebGestureEven
 #if ENABLE(THREADED_SCROLLING)
 void EventDispatcher::sendDidReceiveEvent(uint64_t pageID, const WebEvent& event, bool didHandleEvent)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);
 }
 #endif
 

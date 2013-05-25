@@ -30,12 +30,14 @@
 #include "Connection.h"
 
 namespace CoreIPC {
-    
-template<typename T> class MessageSender {
+
+class MessageSender {
 public:
+    virtual ~MessageSender();
+
     template<typename U> bool send(const U& message)
     {
-        return send(message, static_cast<T*>(this)->destinationID());
+        return send(message, messageSenderDestinationID());
     }
 
     template<typename U> bool send(const U& message, uint64_t destinationID)
@@ -44,30 +46,27 @@ public:
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
-        return static_cast<T*>(this)->sendMessage(encoder.release());
-    }
-    
-    bool sendMessage(PassOwnPtr<MessageEncoder> encoder)
-    {
-        Connection* connection = static_cast<T*>(this)->connection();
-        ASSERT(connection);
-
-        return connection->sendMessage(encoder);
+        return sendMessage(encoder.release());
     }
 
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)
     {
         COMPILE_ASSERT(U::isSync, SyncMessageExpected);
-        return sendSync(message, reply, static_cast<T*>(this)->destinationID(), timeout);
+        return sendSync(message, reply, messageSenderDestinationID(), timeout);
     }
-    
+
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = Connection::NoTimeout)
     {
-        Connection* connection = static_cast<T*>(this)->connection();
-        ASSERT(connection);
+        ASSERT(messageSenderConnection());
 
-        return connection->sendSync(message, reply, destinationID, timeout);
+        return messageSenderConnection()->sendSync(message, reply, destinationID, timeout);
     }
+
+    bool sendMessage(PassOwnPtr<MessageEncoder>);
+
+private:
+    virtual Connection* messageSenderConnection() = 0;
+    virtual uint64_t messageSenderDestinationID() = 0;
 };
 
 } // namespace CoreIPC

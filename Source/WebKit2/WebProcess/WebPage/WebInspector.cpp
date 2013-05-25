@@ -78,7 +78,7 @@ WebPage* WebInspector::createInspectorPage()
     uint64_t inspectorPageID = 0;
     WebPageCreationParameters parameters;
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPage(),
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPage(),
             Messages::WebInspectorProxy::CreateInspectorPage::Reply(inspectorPageID, parameters),
             m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
         return 0;
@@ -107,58 +107,58 @@ void WebInspector::destroyInspectorPage()
 // Called from WebInspectorFrontendClient
 void WebInspector::didClose()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
     destroyInspectorPage();
 }
 
 void WebInspector::bringToFront()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::BringToFront(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::BringToFront(), m_page->pageID());
 }
 
 void WebInspector::inspectedURLChanged(const String& urlString)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
 }
 
 void WebInspector::save(const String& filename, const String& content, bool forceSaveAs)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Save(filename, content, forceSaveAs), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::Save(filename, content, forceSaveAs), m_page->pageID());
 }
 
 void WebInspector::append(const String& filename, const String& content)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Append(filename, content), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::Append(filename, content), m_page->pageID());
 }
 
 void WebInspector::attachBottom()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachBottom(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::AttachBottom(), m_page->pageID());
 }
 
 void WebInspector::attachRight()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachRight(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::AttachRight(), m_page->pageID());
 }
 
 void WebInspector::detach()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Detach(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::Detach(), m_page->pageID());
 }
 
 void WebInspector::setAttachedWindowHeight(unsigned height)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowHeight(height), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SetAttachedWindowHeight(height), m_page->pageID());
 }
 
 void WebInspector::setAttachedWindowWidth(unsigned width)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_page->pageID());
 }
 
 void WebInspector::setToolbarHeight(unsigned height)
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetToolbarHeight(height), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SetToolbarHeight(height), m_page->pageID());
 }
 
 // Called by WebInspector messages
@@ -299,7 +299,7 @@ void WebInspector::updateDockingAvailability()
         return;
 
     bool canAttachWindow = m_frontendClient->canAttachWindow();
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachAvailabilityChanged(canAttachWindow), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::AttachAvailabilityChanged(canAttachWindow), m_page->pageID());
     m_frontendClient->setDockingUnavailable(!canAttachWindow);
 }
 
@@ -307,7 +307,7 @@ void WebInspector::updateDockingAvailability()
 void WebInspector::sendMessageToRemoteFrontend(const String& message)
 {
     ASSERT(m_remoteFrontendConnected);
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
 }
 
 void WebInspector::dispatchMessageFromRemoteFrontend(const String& message)

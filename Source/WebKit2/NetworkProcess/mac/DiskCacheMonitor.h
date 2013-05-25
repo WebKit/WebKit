@@ -37,19 +37,19 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class NetworkResourceLoader;
 
-class DiskCacheMonitor : public CoreIPC::MessageSender<DiskCacheMonitor> {
+class DiskCacheMonitor : public CoreIPC::MessageSender {
 public:
     static void monitorFileBackingStoreCreation(CFCachedURLResponseRef, NetworkResourceLoader*);
 
-    // Used by MessageSender.
-    CoreIPC::Connection* connection() const;
-    uint64_t destinationID() const { return 0; }
-    
     const WebCore::ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
 private:
     DiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
-    
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+
     RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::ResourceRequest m_resourceRequest;
 };

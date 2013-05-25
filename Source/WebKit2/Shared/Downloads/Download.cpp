@@ -67,11 +67,6 @@ Download::~Download()
     m_downloadManager.didDestroyDownload();
 }
 
-CoreIPC::Connection* Download::connection() const
-{
-    return m_downloadManager.downloadProxyConnection();
-}
-
 void Download::didStart()
 {
     send(Messages::DownloadProxy::DidStart(m_request));
@@ -163,6 +158,16 @@ void Download::didCancel(const CoreIPC::DataReference& resumeData)
         m_sandboxExtension = nullptr;
     }
     m_downloadManager.downloadFinished(this);
+}
+
+CoreIPC::Connection* Download::messageSenderConnection()
+{
+    return m_downloadManager.downloadProxyConnection();
+}
+
+uint64_t Download::messageSenderDestinationID()
+{
+    return m_downloadID;
 }
 
 } // namespace WebKit

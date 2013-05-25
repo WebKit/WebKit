@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConnectionToUIProcess_h
-#define WebConnectionToUIProcess_h
+#include "config.h"
+#include "MessageSender.h"
 
-#include "WebConnection.h"
+namespace CoreIPC {
 
-namespace WebKit {
+MessageSender::~MessageSender()
+{
+}
 
-class WebProcess;
+bool MessageSender::sendMessage(PassOwnPtr<MessageEncoder> encoder)
+{
+    ASSERT(messageSenderConnection());
 
-class WebConnectionToUIProcess : public WebConnection {
-public:
-    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*);
+    return messageSenderConnection()->sendMessage(encoder);
+}
 
-    void invalidate();
-
-private:
-    WebConnectionToUIProcess(WebProcess*);
-
-    // WebConnection
-    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) OVERRIDE;
-    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) OVERRIDE;
-    virtual bool hasValidConnection() const OVERRIDE;
-
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
-
-    WebProcess* m_process;
-};
-
-} // namespace WebKit
-
-#endif // WebConnectionToUIProcess_h
+} // namespace CoreIPC

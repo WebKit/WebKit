@@ -73,7 +73,7 @@ static uint64_t generateSecItemRequestID()
 static PassOwnPtr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
     uint64_t requestID = generateSecItemRequestID();
-    if (!sharedProcess->connection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
+    if (!sharedProcess->parentProcessConnection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
         return nullptr;
 
     return responseMap().waitForResponse(requestID);

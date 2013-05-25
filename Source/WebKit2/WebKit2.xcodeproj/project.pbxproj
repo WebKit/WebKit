@@ -172,6 +172,7 @@
 		1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64256612DE42EC00CAAE2C /* BackingStore.h */; };
 		1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64256712DE42EC00CAAE2C /* BackingStore.cpp */; };
 		1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */; };
+		1A6506D2175015E700174518 /* MessageSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6506D1175015E700174518 /* MessageSender.cpp */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */; };
@@ -1600,6 +1601,7 @@
 		1A64256612DE42EC00CAAE2C /* BackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackingStore.h; sourceTree = "<group>"; };
 		1A64256712DE42EC00CAAE2C /* BackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackingStore.cpp; sourceTree = "<group>"; };
 		1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackingStoreMac.mm; sourceTree = "<group>"; };
+		1A6506D1175015E700174518 /* MessageSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSender.cpp; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
@@ -3455,6 +3457,7 @@
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
+				1A6506D1175015E700174518 /* MessageSender.cpp */,
 				1A119A94127B796200A9ECB1 /* MessageSender.h */,
 				1A13BEB11635A9C800F19C03 /* StringReference.cpp */,
 				1A13BEB21635A9C800F19C03 /* StringReference.h */,
@@ -6752,6 +6755,7 @@
 				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				E1EDFDA9162886AC0039ECDA /* SharedWorkerProcess.cpp in Sources */,
 				E1EDFDB0162889820039ECDA /* SharedWorkerProcessCreationParameters.cpp in Sources */,
+				1A6506D2175015E700174518 /* MessageSender.cpp in Sources */,
 				E1EDFDA8162886990039ECDA /* SharedWorkerProcessMac.mm in Sources */,
 				BC82839516B4608300A278FE /* SharedWorkerProcessMain.mm in Sources */,
 				E1EDFE121628CFB20039ECDA /* SharedWorkerProcessManager.cpp in Sources */,

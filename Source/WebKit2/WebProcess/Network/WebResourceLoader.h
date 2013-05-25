@@ -53,15 +53,11 @@ namespace WebKit {
 class PlatformCertificateInfo;
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader> {
+class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender {
 public:
     static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
     ~WebResourceLoader();
-
-    // Used by MessageSender.
-    CoreIPC::Connection* connection() const;
-    uint64_t destinationID() const;
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
@@ -71,6 +67,10 @@ public:
 
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     void cancelResourceLoader();
 

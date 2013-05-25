@@ -129,6 +129,16 @@ void ChildProcess::enableTermination()
     m_terminationTimer.startOneShot(m_terminationTimeout);
 }
 
+CoreIPC::Connection* ChildProcess::messageSenderConnection()
+{
+    return m_connection.get();
+}
+
+uint64_t ChildProcess::messageSenderDestinationID()
+{
+    return 0;
+}
+
 void ChildProcess::terminationTimerFired()
 {
     if (!shouldTerminate())

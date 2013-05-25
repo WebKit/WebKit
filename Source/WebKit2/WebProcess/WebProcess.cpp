@@ -370,7 +370,7 @@ void WebProcess::ensureNetworkProcessConnection()
 
     CoreIPC::Attachment encodedConnectionIdentifier;
 
-    if (!connection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(),
+    if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(),
         Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0))
         return;
 
@@ -605,7 +605,7 @@ bool WebProcess::shouldTerminate()
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
-    if (connection()->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
+    if (parentProcessConnection()->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
         && !shouldTerminate)
         return false;
 

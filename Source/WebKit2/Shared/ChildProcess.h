@@ -46,7 +46,7 @@ struct ChildProcessInitializationParameters {
     HashMap<String, String> extraInitializationData;
 };
 
-class ChildProcess : protected CoreIPC::Connection::Client, public CoreIPC::MessageSender<ChildProcess> {
+class ChildProcess : protected CoreIPC::Connection::Client, public CoreIPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
 
 public:
@@ -70,10 +70,6 @@ public:
 
     CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }
 
-    // Used by CoreIPC::MessageSender
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
-    uint64_t destinationID() const { return 0; }
-
     CoreIPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
 protected:
@@ -91,6 +87,10 @@ protected:
     virtual void terminate();
 
 private:
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+
     void terminationTimerFired();
 
     void platformInitialize();

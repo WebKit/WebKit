@@ -117,7 +117,7 @@ void WebPopupMenu::show(const IntRect& rect, FrameView* view, int index)
     PlatformPopupMenuData platformData;
     setUpPlatformData(pageCoordinates, platformData);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, m_popupClient->menuStyle().textDirection(), items, index, platformData), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, m_popupClient->menuStyle().textDirection(), items, index, platformData), m_page->pageID());
 }
 
 void WebPopupMenu::hide()
@@ -125,7 +125,7 @@ void WebPopupMenu::hide()
     if (!m_page || !m_popupClient)
         return;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::HidePopupMenu(), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::HidePopupMenu(), m_page->pageID());
     m_page->setActivePopupMenu(0);
 }
 

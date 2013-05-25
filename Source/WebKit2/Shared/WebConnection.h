@@ -34,17 +34,13 @@
 
 namespace WebKit {
 
-class WebConnection : public TypedAPIObject<APIObject::TypeConnection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebConnection> {
+class WebConnection : public TypedAPIObject<APIObject::TypeConnection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender {
 public:
     virtual ~WebConnection();
 
     void initializeConnectionClient(const WKConnectionClient*);
     void postMessage(const String&, APIObject*);
     void didClose();
-
-    // Used by CoreIPC::MessageSender
-    virtual CoreIPC::Connection* connection() const = 0;
-    virtual uint64_t destinationID() const = 0;
 
 protected:
     explicit WebConnection();
