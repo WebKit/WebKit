@@ -34,7 +34,7 @@ enum {
     kWKPageVisibilityStateVisible,
     kWKPageVisibilityStateHidden,
     kWKPageVisibilityStatePrerender,
-    kWKPageVisibilityStatePreview
+    kWKPageVisibilityStateUnloaded
 };
 typedef uint32_t WKPageVisibilityState;
 

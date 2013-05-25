@@ -317,7 +317,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitpointerlockerror);
 #endif
 #if ENABLE(PAGE_VISIBILITY_API)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitvisibilitychange);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(visibilitychange);
 #endif
 #if ENABLE(CSP_NEXT)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(securitypolicyviolation);
@@ -410,8 +410,8 @@ public:
     virtual KURL baseURI() const;
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    String webkitVisibilityState() const;
-    bool webkitHidden() const;
+    String visibilityState() const;
+    bool hidden() const;
     void dispatchVisibilityStateChangeEvent();
 #endif
 
@@ -1268,7 +1268,7 @@ private:
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    PageVisibilityState visibilityState() const;
+    PageVisibilityState pageVisibilityState() const;
 #endif
 
     PassRefPtr<HTMLCollection> ensureCachedCollection(CollectionType);

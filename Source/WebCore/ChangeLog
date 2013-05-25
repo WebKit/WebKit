@@ -1,3 +1,38 @@
+2013-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix Page Visibility API
+        https://bugs.webkit.org/show_bug.cgi?id=102340
+
+        Reviewed by Tim Horton.
+        
+        Remove prefixes from the document properties, and the visibilitychanged event.
+        
+        Rename the "preview" state to "unloaded". The "unloaded" state is never
+        reached yet (see https://bugs.webkit.org/show_bug.cgi?id=116769).
+        
+        Add some comments to places where we should update the visibility state
+        when going in and out of the page cache, but cannot safely do so yet.
+
+        Tested by existing Page Visibility tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::pageVisibilityState):
+        (WebCore::Document::visibilityState):
+        (WebCore::Document::hidden):
+        (WebCore::Document::dispatchVisibilityStateChangeEvent):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/EventNames.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/Page.cpp:
+        (WebCore::Page::setVisibilityState):
+        * page/PageVisibilityState.cpp:
+        (WebCore::pageVisibilityStateString):
+        * page/PageVisibilityState.h:
+
 2013-05-25  Andreas Kling  <akling@apple.com>
 
         Move Node::isMouseFocusable() to Element.

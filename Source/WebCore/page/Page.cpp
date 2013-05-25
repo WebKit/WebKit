@@ -1252,6 +1252,8 @@ void Page::checkSubframeCountConsistency() const
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
 {
+    // FIXME: the visibility state needs to be stored on the top-level document
+    // https://bugs.webkit.org/show_bug.cgi?id=116769
 #if ENABLE(PAGE_VISIBILITY_API)
     if (m_visibilityState == visibilityState)
         return;

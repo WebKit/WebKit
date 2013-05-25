@@ -9,8 +9,8 @@ description("This test checks that Page Visibility state values are correct when
 var subdocument = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
 
 shouldBeTrue("subdocument.defaultView == null");
-shouldBeEqualToString("subdocument.webkitVisibilityState", "hidden");
-shouldBeTrue("subdocument.webkitHidden");
+shouldBeEqualToString("subdocument.visibilityState", "hidden");
+shouldBeTrue("subdocument.hidden");
 
 </script>
 

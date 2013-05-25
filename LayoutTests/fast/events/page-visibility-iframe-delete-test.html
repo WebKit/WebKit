@@ -32,9 +32,9 @@ function startTest() {
     subFrame2 = frame3.contentDocument.getElementById("subIframe2");
 
     document.addEventListener(
-        "webkitvisibilitychange", onMainPageVisibilityChange, false);
+        "visibilitychange", onMainPageVisibilityChange, false);
     frame2.contentDocument.addEventListener(
-        "webkitvisibilitychange", onFrame2VisibilityChange, false);
+        "visibilitychange", onFrame2VisibilityChange, false);
     // Change the visibility of the current page to invisible.
     if (window.testRunner) {
         numVisibilityChanges++;

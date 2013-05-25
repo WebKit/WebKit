@@ -379,8 +379,8 @@
 #endif
 
     // Page visibility API.
-    [Conditional=PAGE_VISIBILITY_API] readonly attribute DOMString webkitVisibilityState;
-    [Conditional=PAGE_VISIBILITY_API] readonly attribute boolean webkitHidden;
+    [Conditional=PAGE_VISIBILITY_API] readonly attribute DOMString visibilityState;
+    [Conditional=PAGE_VISIBILITY_API] readonly attribute boolean hidden;
 
     // Security Policy API: http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces
     [Conditional=CSP_NEXT] readonly attribute DOMSecurityPolicy securityPolicy;

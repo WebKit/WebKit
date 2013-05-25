@@ -1,3 +1,15 @@
+2013-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix Page Visibility API
+        https://bugs.webkit.org/show_bug.cgi?id=102340
+
+        Reviewed by Tim Horton.
+
+        Renaming of the "preview" state to "unloaded".
+
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2013-05-25  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/13924889> -webView:didPerformClientRedirectFromURL:toURL:inFrame: should be given the redirecting URL as the “from” URL

@@ -2487,7 +2487,7 @@ enum _Ewk_Page_Visibility_State {
     EWK_PAGE_VISIBILITY_STATE_VISIBLE,
     EWK_PAGE_VISIBILITY_STATE_HIDDEN,
     EWK_PAGE_VISIBILITY_STATE_PRERENDER,
-    EWK_PAGE_VISIBILITY_STATE_PREVIEW
+    EWK_PAGE_VISIBILITY_STATE_UNLOADED
 };
 /// Creates a type name for @a _Ewk_Page_Visibility_State.
 typedef enum _Ewk_Page_Visibility_State Ewk_Page_Visibility_State;

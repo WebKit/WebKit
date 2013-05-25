@@ -1,3 +1,26 @@
+2013-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix Page Visibility API
+        https://bugs.webkit.org/show_bug.cgi?id=102340
+
+        Reviewed by Tim Horton.
+        
+        Rename "preview" state to "unloaded" state, and adjust the tests
+        to test for it.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setPageVisibility):
+        * TestWebKitAPI/Tests/WebKit2/PageVisibilityState.cpp:
+        (TestWebKitAPI::setPageVisibilityStateWithEvalContinuation):
+        (TestWebKitAPI::didRunStep2StateChangeHiddenToPrerender):
+        (TestWebKitAPI::didRunStep3StateChangePrerenderToUnloaded):
+        (TestWebKitAPI::didRunStep4InStateUnloaded):
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.html:
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPageVisibility):
+
 2013-05-24  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix. Don't use new NRWT logic needed

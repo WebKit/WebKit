@@ -402,6 +402,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                         m_pageDismissalEventBeingDispatched = PageHideDismissal;
                         m_frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     }
+
+                    // FIXME: update Page Visibility state here.
+                    // https://bugs.webkit.org/show_bug.cgi?id=116770
+
                     if (!m_frame->document()->inPageCache()) {
                         RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
                         // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed

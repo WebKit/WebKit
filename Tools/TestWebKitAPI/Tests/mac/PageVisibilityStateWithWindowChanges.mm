@@ -108,7 +108,7 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     // This WebView does not have a window and superview. PageVisibility should be "hidden".
     EXPECT_NULL([view window]);
     EXPECT_NULL([view superview]);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
 
     // Add it to a non-visible window. PageVisibility should still be "hidden".
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -116,26 +116,26 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_NOT_NULL([view window]);
     EXPECT_NOT_NULL([view superview]);
     EXPECT_FALSE([window.get() isVisible]);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
 
     // Make the window visible. PageVisibility should become "visible".
     didGetPageSignalToContinue = false;    
     [window.get() makeKeyAndOrderFront:nil];
     EXPECT_TRUE([window.get() isVisible]);
     Util::run(&didGetPageSignalToContinue);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "visible");
+    EXPECT_JS_EQ(view, "document.visibilityState", "visible");
 
     // Minimize the window. PageVisibility should become "hidden".
     didGetPageSignalToContinue = false;
     [window.get() miniaturize:nil];
     Util::run(&didGetPageSignalToContinue);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
 
     // Deminimize the window. PageVisibility should become "visible".
     didGetPageSignalToContinue = false;
     [window.get() deminiaturize:nil];
     Util::run(&didGetPageSignalToContinue);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "visible");
+    EXPECT_JS_EQ(view, "document.visibilityState", "visible");
 
     // Remove the WebView from its superview. PageVisibility should become "hidden".
     didGetPageSignalToContinue = false;
@@ -144,7 +144,7 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_NULL([view superview]);
     EXPECT_TRUE([window.get() isVisible]);
     Util::run(&didGetPageSignalToContinue);
-    EXPECT_JS_EQ(view, "document.webkitVisibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
 }
     
 TEST_F(PageVisibilityStateWithWindowChanges, WebKit)
