@@ -431,7 +431,7 @@ private:
 
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool supportsFocus() const;
-    virtual bool isMouseFocusable() const;
+    virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;

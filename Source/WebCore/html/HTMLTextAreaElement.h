@@ -104,7 +104,7 @@ private:
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
     virtual bool hasCustomFocusLogic() const OVERRIDE;
-    virtual bool isMouseFocusable() const;
+    virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
 

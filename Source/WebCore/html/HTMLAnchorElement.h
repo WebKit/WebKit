@@ -109,7 +109,7 @@ protected:
 
 private:
     virtual bool supportsFocus() const;
-    virtual bool isMouseFocusable() const;
+    virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual void defaultEventHandler(Event*);
     virtual void setActive(bool active = true, bool pause = false);

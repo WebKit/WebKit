@@ -81,7 +81,7 @@ private:
     virtual bool isSVGStyledElement() const OVERRIDE FINAL { return true; }
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isMouseFocusable() const;
+    virtual bool isMouseFocusable() const OVERRIDE;
 
     void buildPendingResourcesIfNeeded();
 

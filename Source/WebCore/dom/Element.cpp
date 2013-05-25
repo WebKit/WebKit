@@ -254,6 +254,11 @@ bool Element::isKeyboardFocusable(KeyboardEvent*) const
     return isFocusable() && tabIndex() >= 0;
 }
 
+bool Element::isMouseFocusable() const
+{
+    return isFocusable();
+}
+
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);

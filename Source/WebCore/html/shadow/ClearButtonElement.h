@@ -48,7 +48,7 @@ public:
 private:
     ClearButtonElement(Document*, ClearButtonOwner&);
     virtual void detach();
-    virtual bool isMouseFocusable() const { return false; }
+    virtual bool isMouseFocusable() const OVERRIDE { return false; }
     virtual void defaultEventHandler(Event*);
 
     ClearButtonOwner* m_clearButtonOwner;

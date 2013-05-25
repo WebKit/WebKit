@@ -885,11 +885,6 @@ bool Node::isFocusable() const
     return true;
 }
 
-bool Node::isMouseFocusable() const
-{
-    return isFocusable();
-}
-
 Node* Node::focusDelegate()
 {
     return this;

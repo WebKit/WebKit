@@ -433,6 +433,7 @@ public:
     virtual void setFocus(bool flag);
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isMouseFocusable() const;
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 

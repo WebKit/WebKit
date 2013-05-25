@@ -1,5 +1,17 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::isMouseFocusable() to Element.
+        <http://webkit.org/b/116762>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+
+            Check that the potentially activated Node is an Element before asking if it's mouse-focusable.
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         REGRESSION: WebProcess is terminated when all Safari windows are closed.
         <rdar://problem/13990901>
         <http://webkit.org/b/116766>

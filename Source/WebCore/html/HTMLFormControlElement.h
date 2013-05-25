@@ -117,7 +117,7 @@ protected:
 
     virtual bool supportsFocus() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isMouseFocusable() const;
+    virtual bool isMouseFocusable() const OVERRIDE;
 
     virtual void didRecalcStyle(StyleChange) OVERRIDE;
 

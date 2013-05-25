@@ -73,13 +73,13 @@ typedef float (*DistanceFunction)(const IntPoint&, const IntRect&, const Subtarg
 // Takes non-const Node* because isContentEditable is a non-const function.
 bool nodeRespondsToTapGesture(Node* node)
 {
-    if (node->isMouseFocusable())
-        return true;
     if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents())
         return true;
     // Accept nodes that has a CSS effect when touched.
     if (node->isElementNode()) {
         Element* element = toElement(node);
+        if (element->isMouseFocusable())
+            return true;
         if (element->childrenAffectedByActive() || element->childrenAffectedByHover())
             return true;
     }

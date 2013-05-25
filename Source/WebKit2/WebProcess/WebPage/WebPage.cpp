@@ -1883,7 +1883,7 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
                 break;
 
             // We always highlight focusable (form-elements), image links or content-editable elements.
-            if (node->isMouseFocusable() || node->isLink() || node->isContentEditable())
+            if ((node->isElementNode() && toElement(node)->isMouseFocusable()) || node->isLink() || node->isContentEditable())
                 activationNode = node;
             else if (node->willRespondToMouseClickEvents()) {
                 // Highlight elements with default mouse-click handlers, but highlight only inline elements with

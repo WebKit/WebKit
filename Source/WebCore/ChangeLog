@@ -1,5 +1,51 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::isMouseFocusable() to Element.
+        <http://webkit.org/b/116762>
+
+        Reviewed by Anders Carlsson.
+
+        Node::isMouseFocusable() would just return isFocusable(), which is never true for a non-Element
+        since Node::supportsFocus() always returns false. So move it to Element!
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::Element::isMouseFocusable):
+
+            Moved here from Node.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setFocusedNodeIfNeeded):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+
+            Walk up the parent chain with parentOrShadowHostElement() instead of parentOrShadowHostNode().
+            Removed a misleading no-op hunk about mouse-focusable ShadowRoots, since ShadowRoots are not
+            Elements and thus cannot be mouse-focusable.
+
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::nodeRespondsToTapGesture):
+
+            Check that the Node is an Element before asking if it's mouse-focusable.
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/shadow/ClearButtonElement.h:
+        * html/shadow/TextControlInnerElements.h:
+        * svg/SVGAElement.h:
+        * svg/SVGStyledElement.h:
+
+            Sprinkle OVERRIDE.
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Move Node::isKeyboardFocusable() to Element.
         <http://webkit.org/b/116761>
 
