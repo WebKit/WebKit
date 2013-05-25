@@ -390,6 +390,7 @@ SOURCES += \
     Platform/CoreIPC/MessageDecoder.cpp \
     Platform/CoreIPC/MessageEncoder.cpp \
     Platform/CoreIPC/MessageReceiverMap.cpp \
+    Platform/CoreIPC/MessageSender.cpp \
     Platform/CoreIPC/StringReference.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \

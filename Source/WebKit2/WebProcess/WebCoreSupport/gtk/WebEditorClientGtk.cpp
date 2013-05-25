@@ -41,7 +41,7 @@ void WebEditorClient::getEditorCommandsForKeyEvent(const KeyboardEvent* event, V
 
     /* First try to interpret the command in the UI and get the commands.
        UI needs to receive event type because only knows current NativeWebKeyboardEvent.*/
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(event->type()),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(event->type()),
                                                 Messages::WebPageProxy::GetEditorCommandsForKeyEvent::Reply(pendingEditorCommands),
                                                 m_page->pageID(), CoreIPC::Connection::NoTimeout);
 }
