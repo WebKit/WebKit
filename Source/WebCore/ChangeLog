@@ -1,3 +1,22 @@
+2013-05-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        Fixing invalid block recovery in some declaration list.
+        https://bugs.webkit.org/show_bug.cgi?id=115159
+
+        Reviewed by Darin Adler.
+
+        From Blink r148889 by <serya@chromium.org>
+
+        Improves the detection of some invalid block declarations inside a
+        declaration list. This allows the parser not to completely discard
+        a whole declaration list that contains an invalid block. In
+        particular grammar failed in tests 8, 12, 13, 15, 16 and 17 in the
+        new test added by this change.
+
+        Test: fast/css/parsing-invalid-block-recovery.html
+
+        * css/CSSGrammar.y.in:
+
 
 2013-05-24  Beth Dakin  <bdakin@apple.com>
 

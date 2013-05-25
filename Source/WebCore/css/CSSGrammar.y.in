@@ -1544,7 +1544,7 @@ declaration_list:
         parser->syntaxError($2, CSSParser::PropertyDeclarationError);
         $$ = $1;
     }
-    | decl_list error_location invalid_block_list {
+    | decl_list errors invalid_block_list error {
         parser->syntaxError($2, CSSParser::PropertyDeclarationError);
         $$ = $1;
     }
