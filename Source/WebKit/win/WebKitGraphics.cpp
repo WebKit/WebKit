@@ -54,9 +54,7 @@ static Font makeFont(const WebFontDescription& description)
     String fontFamilyString(description.family, description.familyLength);
 
     FontDescription f;
-    FontFamily family;
-    family.setFamily(fontFamilyString);
-    f.setFamily(family);
+    f.setOneFamily(fontFamilyString);
     f.setSpecifiedSize(description.size);
     f.setComputedSize(description.size);
     f.setItalic(description.italic);

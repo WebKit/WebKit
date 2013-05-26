@@ -1,3 +1,12 @@
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
+        Build fix
+        
+        Not reviewed.
+
+        * WebKitGraphics.cpp:
+        (makeFont):
+
 2013-05-26  Andreas Kling  <akling@apple.com>
 
         FocusController::setFocusedNode() should be setFocusedElement().
