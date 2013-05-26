@@ -1,5 +1,43 @@
 2013-05-26  Andreas Kling  <akling@apple.com>
 
+        FocusController::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116780>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can have focus, so make the public API of FocusController take Element*.
+
+        * WebCore.exp.in:
+        * page/FocusController.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElement):
+
+            Out with the setFocusedNode(), in with the setFocusedElement().
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::focusPluginElement):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setFocusedNodeIfNeeded):
+
+            Tweak for FocusController taking Element* instead of Node*.
+
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+
+            Renamed from setFocusedNodeIfNeeded().
+
+        * editing/htmlediting.h:
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingAnchorElement):
+
+            Cleaned up the loop for readability and made it return an Element.
+
+2013-05-26  Andreas Kling  <akling@apple.com>
+
         Move some form control things from Element to HTMLFormControlElement.
         <http://webkit.org/b/116779>
 

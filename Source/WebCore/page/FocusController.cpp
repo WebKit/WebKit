@@ -590,13 +590,13 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     s->clear();
 }
 
-bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFrame, FocusDirection direction)
+bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newFocusedFrame, FocusDirection direction)
 {
     RefPtr<Frame> oldFocusedFrame = focusedFrame();
     RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
     
     Node* oldFocusedNode = oldDocument ? oldDocument->focusedNode() : 0;
-    if (oldFocusedNode == node)
+    if (oldFocusedNode == element)
         return true;
 
     // FIXME: Might want to disable this check for caretBrowsing
@@ -605,19 +605,19 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
 
     m_page->editorClient()->willSetInputMethodState();
 
-    clearSelectionIfNeeded(oldFocusedFrame.get(), newFocusedFrame.get(), node);
+    clearSelectionIfNeeded(oldFocusedFrame.get(), newFocusedFrame.get(), element);
 
-    if (!node) {
+    if (!element) {
         if (oldDocument)
             oldDocument->setFocusedNode(0);
         m_page->editorClient()->setInputMethodState(false);
         return true;
     }
 
-    RefPtr<Document> newDocument = node->document();
+    RefPtr<Document> newDocument = element->document();
 
-    if (newDocument && newDocument->focusedNode() == node) {
-        m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
+    if (newDocument && newDocument->focusedNode() == element) {
+        m_page->editorClient()->setInputMethodState(element->shouldUseInputMethod());
         return true;
     }
     
@@ -630,16 +630,15 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     }
     setFocusedFrame(newFocusedFrame);
 
-    // Setting the focused node can result in losing our last reft to node when JS event handlers fire.
-    RefPtr<Node> protect = node;
+    RefPtr<Element> protect(element);
     if (newDocument) {
-        bool successfullyFocused = newDocument->setFocusedNode(node, direction);
+        bool successfullyFocused = newDocument->setFocusedNode(element, direction);
         if (!successfullyFocused)
             return false;
     }
 
-    if (newDocument->focusedNode() == node)
-        m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
+    if (newDocument->focusedNode() == element)
+        m_page->editorClient()->setInputMethodState(element->shouldUseInputMethod());
 
     return true;
 }

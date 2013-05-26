@@ -674,15 +674,16 @@ Node* enclosingTableCell(const Position& p)
     return toElement(enclosingNodeOfType(p, isTableCell));
 }
 
-Node* enclosingAnchorElement(const Position& p)
+Element* enclosingAnchorElement(const Position& p)
 {
     if (p.isNull())
         return 0;
-    
-    Node* node = p.deprecatedNode();
-    while (node && !(node->isElementNode() && node->isLink()))
-        node = node->parentNode();
-    return node;
+
+    for (Node* node = p.deprecatedNode(); node; node = node->parentNode()) {
+        if (node->isElementNode() && node->isLink())
+            return toElement(node);
+    }
+    return 0;
 }
 
 HTMLElement* enclosingList(Node* node)

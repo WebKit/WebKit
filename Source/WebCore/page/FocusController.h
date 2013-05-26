@@ -69,8 +69,8 @@ public:
 
     bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
-        
-    bool setFocusedNode(Node*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
+
+    bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
 
     void setActive(bool);
     bool isActive() const { return m_isActive; }

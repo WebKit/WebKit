@@ -1,3 +1,13 @@
+2013-05-26  Andreas Kling  <akling@apple.com>
+
+        FocusController::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116780>
+
+        Reviewed by Antti Koivisto.
+
+        * WebView.cpp:
+        (WebView::clearFocusNode):
+
 2013-05-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Expose database storage and cache locations via preferences.

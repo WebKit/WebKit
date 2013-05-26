@@ -236,7 +236,6 @@ public:
     bool shouldDeleteSelection(const VisibleSelection&) const;
     enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
     void setNonDirectionalSelectionIfNeeded(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
-    void setFocusedNodeIfNeeded();
     void notifyRendererOfSelectionChange(EUserTriggered);
 
     void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
@@ -285,6 +284,7 @@ private:
     void notifyAccessibilityForSelectionChange();
 #endif
 
+    void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
     void caretBlinkTimerFired(Timer<FrameSelection>*);

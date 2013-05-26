@@ -1,3 +1,16 @@
+2013-05-26  Andreas Kling  <akling@apple.com>
+
+        FocusController::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116780>
+
+        Reviewed by Antti Koivisto.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::clearFocusNode):
+        (BlackBerry::WebKit::WebPage::setNodeFocus):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove PagePopup code

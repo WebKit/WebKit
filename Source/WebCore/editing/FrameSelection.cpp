@@ -311,7 +311,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     setCaretRectNeedsUpdate();
     
     if (!s.isNone() && !(options & DoNotSetFocus))
-        setFocusedNodeIfNeeded();
+        setFocusedElementIfNeeded();
 
     if (!(options & DoNotUpdateAppearance)) {
 #if ENABLE(TEXT_CARET)
@@ -1876,15 +1876,15 @@ static bool isFrameElement(const Node* n)
     return widget && widget->isFrameView();
 }
 
-void FrameSelection::setFocusedNodeIfNeeded()
+void FrameSelection::setFocusedElementIfNeeded()
 {
     if (isNone() || !isFocused())
         return;
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
     if (caretBrowsing) {
-        if (Node* anchor = enclosingAnchorElement(base())) {
-            m_frame->page()->focusController()->setFocusedNode(anchor, m_frame);
+        if (Element* anchor = enclosingAnchorElement(base())) {
+            m_frame->page()->focusController()->setFocusedElement(anchor, m_frame);
             return;
         }
     }
@@ -1896,7 +1896,7 @@ void FrameSelection::setFocusedNodeIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(target)) {
-                m_frame->page()->focusController()->setFocusedNode(target, m_frame);
+                m_frame->page()->focusController()->setFocusedElement(target, m_frame);
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -1905,7 +1905,7 @@ void FrameSelection::setFocusedNodeIfNeeded()
     }
 
     if (caretBrowsing)
-        m_frame->page()->focusController()->setFocusedNode(0, m_frame);
+        m_frame->page()->focusController()->setFocusedElement(0, m_frame);
 }
 
 void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const

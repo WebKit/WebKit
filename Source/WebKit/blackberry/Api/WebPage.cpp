@@ -4167,7 +4167,7 @@ void WebPagePrivate::clearFocusNode()
     ASSERT(frame->document());
 
     if (frame->document()->focusedNode())
-        frame->page()->focusController()->setFocusedNode(0, frame);
+        frame->page()->focusController()->setFocusedElement(0, frame);
 }
 
 BlackBerry::Platform::String WebPage::textEncoding()
@@ -4907,12 +4907,12 @@ bool WebPage::setNodeFocus(const WebDOMNode& node, bool on)
         if (Page* page = doc->page()) {
             // Modify if focusing on node or turning off focused node.
             if (on) {
-                page->focusController()->setFocusedNode(nodeImpl, doc->frame());
+                page->focusController()->setFocusedElement(toElement(nodeImpl), doc->frame());
                 if (nodeImpl->isElementNode())
                     toElement(nodeImpl)->updateFocusAppearance(true);
                 d->m_inputHandler->didNodeOpenPopup(nodeImpl);
             } else if (doc->focusedNode() == nodeImpl) // && !on
-                page->focusController()->setFocusedNode(0, doc->frame());
+                page->focusController()->setFocusedElement(0, doc->frame());
 
             return true;
         }

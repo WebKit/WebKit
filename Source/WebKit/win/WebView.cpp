@@ -5274,7 +5274,7 @@ HRESULT STDMETHODCALLTYPE WebView::standardUserAgentWithApplicationName(
 HRESULT STDMETHODCALLTYPE WebView::clearFocusNode()
 {
     if (m_page && m_page->focusController())
-        m_page->focusController()->setFocusedNode(0, 0);
+        m_page->focusController()->setFocusedElement(0, 0);
     return S_OK;
 }
 
