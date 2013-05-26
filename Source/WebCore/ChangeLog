@@ -1,3 +1,57 @@
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
+        Rename FontFallbackList to FontGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=116797
+
+        Reviewed by Andreas Kling.
+
+        Maybe it was a fallback list once. Nowadays its purpose is to cache realized glyphs and related data.
+        
+        File renaming will be done separately.
+
+        * WebCore.exp.in:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::operator==):
+        
+            Refactored to early return style.
+
+        (WebCore::Font::update):
+        (WebCore::Font::width):
+        * platform/graphics/Font.h:
+        (Font):
+        (WebCore::Font::glyphs):
+        (WebCore::Font::loadingCustomFonts):
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::fontDataAt):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::fontSelector):
+        * platform/graphics/FontCache.h:
+        (FontCache):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::invalidate):
+        (WebCore::FontGlyphs::releaseFontData):
+        (WebCore::FontGlyphs::determinePitch):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+        
+            Renamed for clarity along with m_fontList -> m_realizedFontData.
+
+        (WebCore::FontGlyphs::setPlatformFont):
+        * platform/graphics/FontFallbackList.h:
+        (FontGlyphs):
+        (WebCore::FontGlyphs::GlyphPagesStateSaver::GlyphPagesStateSaver):
+        (WebCore::FontGlyphs::GlyphPagesStateSaver::~GlyphPagesStateSaver):
+        (GlyphPagesStateSaver):
+        (WebCore::FontGlyphs::create):
+        (WebCore::FontGlyphs::~FontGlyphs):
+        (WebCore::FontGlyphs::primaryFontData):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataAndPageForCharacter):
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+
 2013-05-26  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_CALENDAR_PICKER

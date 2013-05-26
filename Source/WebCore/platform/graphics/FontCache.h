@@ -153,7 +153,7 @@ private:
     friend class ComplexTextController;
 #endif
     friend class SimpleFontData; // For getCachedFontData(const FontPlatformData*)
-    friend class FontFallbackList;
+    friend class FontGlyphs;
 };
 
 // Get the global fontCache.

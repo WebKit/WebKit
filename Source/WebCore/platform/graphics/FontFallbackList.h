@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,35 +39,35 @@ class FontSelector;
 
 const int cAllFamiliesScanned = -1;
 
-class FontFallbackList : public RefCounted<FontFallbackList> {
-    WTF_MAKE_NONCOPYABLE(FontFallbackList);
+class FontGlyphs : public RefCounted<FontGlyphs> {
+    WTF_MAKE_NONCOPYABLE(FontGlyphs);
 public:
     typedef HashMap<int, GlyphPageTreeNode*, DefaultHash<int>::Hash> GlyphPages;
 
     class GlyphPagesStateSaver {
     public:
-        GlyphPagesStateSaver(FontFallbackList& fallbackList)
-            : m_fallbackList(fallbackList)
-            , m_pages(fallbackList.m_pages)
-            , m_pageZero(fallbackList.m_pageZero)
+        GlyphPagesStateSaver(FontGlyphs& glyphs)
+            : m_glyphs(glyphs)
+            , m_pages(glyphs.m_pages)
+            , m_pageZero(glyphs.m_pageZero)
         {
         }
 
         ~GlyphPagesStateSaver()
         {
-            m_fallbackList.m_pages = m_pages;
-            m_fallbackList.m_pageZero = m_pageZero;
+            m_glyphs.m_pages = m_pages;
+            m_glyphs.m_pageZero = m_pageZero;
         }
 
     private:
-        FontFallbackList& m_fallbackList;
+        FontGlyphs& m_glyphs;
         GlyphPages& m_pages;
         GlyphPageTreeNode* m_pageZero;
     };
 
-    static PassRefPtr<FontFallbackList> create() { return adoptRef(new FontFallbackList()); }
+    static PassRefPtr<FontGlyphs> create() { return adoptRef(new FontGlyphs()); }
 
-    ~FontFallbackList() { releaseFontData(); }
+    ~FontGlyphs() { releaseFontData(); }
     void invalidate(PassRefPtr<FontSelector>);
     
     bool isFixedPitch(const Font* f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
@@ -83,7 +83,7 @@ public:
     WidthCache& widthCache() const { return m_widthCache; }
 
 private:
-    FontFallbackList();
+    FontGlyphs();
 
     const SimpleFontData* primarySimpleFontData(const Font* f)
     { 
@@ -93,14 +93,14 @@ private:
         return m_cachedPrimarySimpleFontData;
     }
 
-    const FontData* primaryFontData(const Font* f) const { return fontDataAt(f, 0); }
-    const FontData* fontDataAt(const Font*, unsigned index) const;
+    const FontData* primaryFontData(const Font* f) const { return realizeFontDataAt(f, 0); }
+    const FontData* realizeFontDataAt(const Font*, unsigned index) const;
 
     void setPlatformFont(const FontPlatformData&);
 
     void releaseFontData();
     
-    mutable Vector<RefPtr<FontData>, 1> m_fontList;
+    mutable Vector<RefPtr<FontData>, 1> m_realizedFontData;
     mutable GlyphPages m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;

@@ -186,9 +186,9 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
 
     // Save data fromt he font fallback list because we may modify it later. Do this before the
     // potential change to glyphData.fontData below.
-    FontFallbackList* fontList = font.fontList();
-    ASSERT(fontList);
-    FontFallbackList::GlyphPagesStateSaver glyphPagesSaver(*fontList);
+    FontGlyphs* glyph = font.glyphs();
+    ASSERT(glyph);
+    FontGlyphs::GlyphPagesStateSaver glyphPagesSaver(*glyph);
 
     // Characters enclosed by an <altGlyph> element, may not be registered in the GlyphPage.
     const SimpleFontData* originalFontData = glyphData.fontData;

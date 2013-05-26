@@ -140,7 +140,6 @@ public:
 
     bool isPlatformFont() const { return m_isPlatformFont; }
 
-    // Metrics that we query the FontFallbackList for.
     const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
     float spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
     float tabWidth(const SimpleFontData&, unsigned tabSize, float position) const;
@@ -247,12 +246,12 @@ public:
     static String normalizeSpaces(const UChar*, unsigned length);
 
     bool needsTranscoding() const { return m_needsTranscoding; }
-    FontFallbackList* fontList() const { return m_fontFallbackList.get(); }
+    FontGlyphs* glyphs() const { return m_glyphs.get(); }
 
 private:
     bool loadingCustomFonts() const
     {
-        return m_fontFallbackList && m_fontFallbackList->loadingCustomFonts();
+        return m_glyphs && m_glyphs->loadingCustomFonts();
     }
 
     TypesettingFeatures computeTypesettingFeatures() const
@@ -304,7 +303,7 @@ private:
     static TypesettingFeatures s_defaultTypesettingFeatures;
 
     FontDescription m_fontDescription;
-    mutable RefPtr<FontFallbackList> m_fontFallbackList;
+    mutable RefPtr<FontGlyphs> m_glyphs;
     short m_letterSpacing;
     short m_wordSpacing;
     bool m_isPlatformFont;
@@ -318,25 +317,25 @@ inline Font::~Font()
 
 inline const SimpleFontData* Font::primaryFont() const
 {
-    ASSERT(m_fontFallbackList);
-    return m_fontFallbackList->primarySimpleFontData(this);
+    ASSERT(m_glyphs);
+    return m_glyphs->primarySimpleFontData(this);
 }
 
 inline const FontData* Font::fontDataAt(unsigned index) const
 {
-    ASSERT(m_fontFallbackList);
-    return m_fontFallbackList->fontDataAt(this, index);
+    ASSERT(m_glyphs);
+    return m_glyphs->realizeFontDataAt(this, index);
 }
 
 inline bool Font::isFixedPitch() const
 {
-    ASSERT(m_fontFallbackList);
-    return m_fontFallbackList->isFixedPitch(this);
+    ASSERT(m_glyphs);
+    return m_glyphs->isFixedPitch(this);
 }
 
 inline FontSelector* Font::fontSelector() const
 {
-    return m_fontFallbackList ? m_fontFallbackList->fontSelector() : 0;
+    return m_glyphs ? m_glyphs->fontSelector() : 0;
 }
 
 inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const

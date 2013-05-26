@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-FontFallbackList::FontFallbackList()
+FontGlyphs::FontGlyphs()
     : m_pageZero(0)
     , m_cachedPrimarySimpleFontData(0)
     , m_fontSelector(0)
@@ -47,10 +47,10 @@ FontFallbackList::FontFallbackList()
 {
 }
 
-void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
+void FontGlyphs::invalidate(PassRefPtr<FontSelector> fontSelector)
 {
     releaseFontData();
-    m_fontList.clear();
+    m_realizedFontData.clear();
     m_pageZero = 0;
     m_pages.clear();
     m_cachedPrimarySimpleFontData = 0;
@@ -63,18 +63,18 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_widthCache.clear();
 }
 
-void FontFallbackList::releaseFontData()
+void FontGlyphs::releaseFontData()
 {
-    unsigned numFonts = m_fontList.size();
+    unsigned numFonts = m_realizedFontData.size();
     for (unsigned i = 0; i < numFonts; ++i) {
-        if (!m_fontList[i]->isCustomFont()) {
-            ASSERT(!m_fontList[i]->isSegmented());
-            fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].get()));
-        }
+        if (m_realizedFontData[i]->isCustomFont())
+            continue;
+        ASSERT(!m_realizedFontData[i]->isSegmented());
+        fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_realizedFontData[i].get()));
     }
 }
 
-void FontFallbackList::determinePitch(const Font* font) const
+void FontGlyphs::determinePitch(const Font* font) const
 {
     const FontData* fontData = primaryFontData(font);
     if (!fontData->isSegmented())
@@ -89,13 +89,13 @@ void FontFallbackList::determinePitch(const Font* font) const
     }
 }
 
-const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realizedFontIndex) const
+const FontData* FontGlyphs::realizeFontDataAt(const Font* font, unsigned realizedFontIndex) const
 {
-    if (realizedFontIndex < m_fontList.size())
-        return m_fontList[realizedFontIndex].get(); // This fallback font is already in our list.
+    if (realizedFontIndex < m_realizedFontData.size())
+        return m_realizedFontData[realizedFontIndex].get(); // This fallback font is already in our list.
 
     // Make sure we're not passing in some crazy value here.
-    ASSERT(realizedFontIndex == m_fontList.size());
+    ASSERT(realizedFontIndex == m_realizedFontData.size());
 
     if (m_familyIndex == cAllFamiliesScanned)
         return 0;
@@ -107,19 +107,19 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     ASSERT(fontCache()->generation() == m_generation);
     RefPtr<FontData> result = fontCache()->getFontData(*font, m_familyIndex, m_fontSelector.get());
     if (result) {
-        m_fontList.append(result);
+        m_realizedFontData.append(result);
         if (result->isLoading())
             m_loadingCustomFonts = true;
     }
     return result.get();
 }
 
-void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
+void FontGlyphs::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;
     ASSERT(fontCache()->generation() == m_generation);
     RefPtr<FontData> fontData = fontCache()->getCachedFontData(&platformData);
-    m_fontList.append(fontData);
+    m_realizedFontData.append(fontData);
 }
 
 }
