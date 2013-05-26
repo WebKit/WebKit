@@ -110,7 +110,7 @@ void ValidationMessage::setMessage(const String& message)
     }
 
     // Don't modify the DOM tree in this context.
-    // If so, an assertion in Node::isFocusable() fails.
+    // If so, an assertion in Element::isFocusable() fails.
     ASSERT(!message.isEmpty());
     m_message = message;
     if (!m_bubble)

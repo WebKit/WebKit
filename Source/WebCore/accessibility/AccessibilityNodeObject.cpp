@@ -315,7 +315,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
         return ParagraphRole;
     if (node()->hasTagName(labelTag))
         return LabelRole;
-    if (node()->isFocusable())
+    if (node()->isElementNode() && toElement(node())->isFocusable())
         return GroupRole;
     
     return UnknownRole;

@@ -41,7 +41,7 @@ public:
 private:
     HTMLLabelElement(const QualifiedName&, Document*);
 
-    virtual bool isFocusable() const;
+    virtual bool isFocusable() const OVERRIDE;
 
     virtual void accessKeyAction(bool sendMouseEvents);
 

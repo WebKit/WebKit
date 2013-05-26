@@ -1,5 +1,47 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::isFocusable() to Element.
+        <http://webkit.org/b/116777>
+
+        Reviewed by Anders Carlsson.
+
+        Nodes cannot be focusable, so move isFocusable() from Node to Element.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable):
+
+            Moved here from Node.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+
+            Check that the underlying node is an Element before asking if it's focusable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+
+            Renamed the 'anchorNode' variable to 'anchorElement' because reasons.
+
+        * html/HTMLAreaElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLLabelElement.h:
+        * html/HTMLOptionElement.h:
+        * svg/SVGAElement.h:
+
+            Sprinkle OVERRIDE.
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessage):
+
+            Update a comment to refer to Element::isFocusable() instead of Node.
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Move Node::tabIndex() to Element.
         <http://webkit.org/b/116772>
 

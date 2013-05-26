@@ -1842,30 +1842,30 @@ bool FrameView::scrollToAnchor(const String& name)
 
     m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
-    Element* anchorNode = m_frame->document()->findAnchor(name);
+    Element* anchorElement = m_frame->document()->findAnchor(name);
 
     // Setting to null will clear the current target.
-    m_frame->document()->setCSSTarget(anchorNode);
+    m_frame->document()->setCSSTarget(anchorElement);
 
 #if ENABLE(SVG)
     if (m_frame->document()->isSVGDocument()) {
         if (SVGSVGElement* svg = toSVGDocument(m_frame->document())->rootElement()) {
-            svg->setupInitialView(name, anchorNode);
-            if (!anchorNode)
+            svg->setupInitialView(name, anchorElement);
+            if (!anchorElement)
                 return true;
         }
     }
 #endif
   
     // Implement the rule that "" and "top" both mean top of page as in other browsers.
-    if (!anchorNode && !(name.isEmpty() || equalIgnoringCase(name, "top")))
+    if (!anchorElement && !(name.isEmpty() || equalIgnoringCase(name, "top")))
         return false;
 
-    maintainScrollPositionAtAnchor(anchorNode ? static_cast<Node*>(anchorNode) : m_frame->document());
+    maintainScrollPositionAtAnchor(anchorElement ? static_cast<Node*>(anchorElement) : m_frame->document());
     
     // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
-    if (anchorNode && anchorNode->isFocusable())
-        m_frame->document()->setFocusedNode(anchorNode);
+    if (anchorElement && anchorElement->isFocusable())
+        m_frame->document()->setFocusedNode(anchorElement);
     
     return true;
 }

@@ -66,7 +66,7 @@ public:
 
     virtual bool isDisabledFormControl() const OVERRIDE;
 
-    virtual bool isFocusable() const;
+    virtual bool isFocusable() const OVERRIDE;
     virtual bool isEnumeratable() const { return false; }
 
     bool isRequired() const;

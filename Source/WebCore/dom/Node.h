@@ -402,8 +402,6 @@ public:
     // Whether this kind of node can receive focus by default. Most nodes are
     // not focusable but some elements, such as form controls and links, are.
     virtual bool supportsFocus() const;
-    // Whether the node can actually be focused.
-    virtual bool isFocusable() const;
 
     enum UserSelectAllTreatment {
         UserSelectAllDoesNotAffectEditability,
