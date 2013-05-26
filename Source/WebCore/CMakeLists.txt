@@ -1898,7 +1898,6 @@ set(WebCore_SOURCES
     platform/graphics/FontData.cpp
     platform/graphics/FontDescription.cpp
     platform/graphics/FontFallbackList.cpp
-    platform/graphics/FontFamily.cpp
     platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/LayoutBoxExtent.cpp

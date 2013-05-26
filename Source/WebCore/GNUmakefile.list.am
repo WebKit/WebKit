@@ -5646,8 +5646,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/FontDescription.h \
 	Source/WebCore/platform/graphics/FontFallbackList.cpp \
 	Source/WebCore/platform/graphics/FontFallbackList.h \
-	Source/WebCore/platform/graphics/FontFamily.cpp \
-	Source/WebCore/platform/graphics/FontFamily.h \
 	Source/WebCore/platform/graphics/FontFastPath.cpp \
 	Source/WebCore/platform/graphics/FontFeatureSettings.cpp \
 	Source/WebCore/platform/graphics/FontFeatureSettings.h \

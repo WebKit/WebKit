@@ -1,5 +1,24 @@
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
+        Remove FontFamily.h/.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=116788
+
+        Reviewed by Anders Carlsson.
+        
+        Empty files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontFamily.cpp: Removed.
+        * platform/graphics/FontFamily.h: Removed.
+
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
         Use Vector instead of custom linked list for font families
         https://bugs.webkit.org/show_bug.cgi?id=116783
 

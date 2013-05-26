@@ -25,7 +25,6 @@
 #ifndef FontDescription_h
 #define FontDescription_h
 
-#include "FontFamily.h"
 #include "FontFeatureSettings.h"
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"

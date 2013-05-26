@@ -29882,14 +29882,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FontFamily.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\FontFamily.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\FontFastPath.cpp"
 					>
 				</File>

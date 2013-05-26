@@ -993,7 +993,6 @@ SOURCES += \
     platform/HistogramSupport.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFallbackList.cpp \
-    platform/graphics/FontFamily.cpp \
     platform/graphics/FontFeatureSettings.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
@@ -2211,7 +2210,6 @@ HEADERS += \
     platform/graphics/FloatSize.h \
     platform/graphics/FontData.h \
     platform/graphics/FontDescription.h \
-    platform/graphics/FontFamily.h \
     platform/graphics/FontFeatureSettings.h \
     platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
