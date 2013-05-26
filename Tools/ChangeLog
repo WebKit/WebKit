@@ -1,5 +1,12 @@
 2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another WKR build fix. Sorry for the mess. It seems like I can't win today :(
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot.next_work_item):
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         WKR and webkitbot build fixes.
 
         * Scripts/webkitpy/tool/bot/irc_command.py:

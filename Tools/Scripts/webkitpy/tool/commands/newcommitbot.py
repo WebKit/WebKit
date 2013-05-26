@@ -90,10 +90,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
                 commit_log = self._tool.executive.run_command(['svn', 'log', 'https://svn.webkit.org/repository/webkit/trunk', '--non-interactive', '--revision',
                     self._tool.scm().strip_r_from_svn_revision(new_revision)])
             except ScriptError:
-                continue
-
-            if commit_log.find('No such revision') >= 0:
-                continue
+                break
 
             self._last_svn_revision = new_revision
             if self._is_empty_log(commit_log):
