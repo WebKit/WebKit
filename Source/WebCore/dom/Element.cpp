@@ -244,6 +244,11 @@ bool Element::supportsFocus() const
     return hasRareData() && elementRareData()->tabIndexSetExplicitly();
 }
 
+Element* Element::focusDelegate()
+{
+    return this;
+}
+
 short Element::tabIndex() const
 {
     return hasRareData() ? elementRareData()->tabIndex() : 0;

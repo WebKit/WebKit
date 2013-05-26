@@ -885,11 +885,6 @@ bool Node::isFocusable() const
     return true;
 }
 
-Node* Node::focusDelegate()
-{
-    return this;
-}
-
 unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();

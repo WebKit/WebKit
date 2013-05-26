@@ -1,3 +1,25 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        Move Node::focusDelegate() to Element.
+        <http://webkit.org/b/116768>
+
+        Reviewed by Anders Carlsson.
+
+        Only Element can be a focus delegate (it's currently only ever HTMLInputElement actually)
+        so move Node::focusDelegate() to Element. Sprinkled isElementNode() checks as needed.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Element.h:
+        * dom/Element.cpp:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::focusDelegate):
+        * html/shadow/SliderThumbElement.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isFocused):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
 2013-05-25  Alberto Garcia  <agarcia@igalia.com>
 
         Path: clean up addPathForRoundedRect()

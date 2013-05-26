@@ -435,6 +435,8 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
+    virtual Element* focusDelegate();
+
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)

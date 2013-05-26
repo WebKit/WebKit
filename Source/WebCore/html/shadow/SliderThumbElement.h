@@ -68,7 +68,7 @@ private:
     virtual bool isDisabledFormControl() const OVERRIDE;
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
-    virtual Node* focusDelegate();
+    virtual Element* focusDelegate() OVERRIDE;
     void startDragging();
     void stopDragging();
 

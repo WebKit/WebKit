@@ -406,7 +406,6 @@ public:
     virtual bool supportsFocus() const;
     // Whether the node can actually be focused.
     virtual bool isFocusable() const;
-    virtual Node* focusDelegate();
 
     enum UserSelectAllTreatment {
         UserSelectAllDoesNotAffectEditability,
