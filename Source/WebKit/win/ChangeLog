@@ -1,5 +1,16 @@
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
+        Another build fix.
+        
+        Not reviewed.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::font):
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
         Build fix
         
         Not reviewed.

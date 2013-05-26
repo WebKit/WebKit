@@ -1255,7 +1255,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescriptio
         return E_FAIL;
 
     FontDescription fontDescription = renderer->style()->font().fontDescription();
-    AtomicString family = fontDescription.family().family();
+    AtomicString family = fontDescription.firstFamily();
     webFontDescription->family = family.characters();
     webFontDescription->familyLength = family.length();
     webFontDescription->size = fontDescription.computedSize();
