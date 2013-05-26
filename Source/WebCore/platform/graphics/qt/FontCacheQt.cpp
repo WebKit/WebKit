@@ -80,7 +80,7 @@ PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& fon
 
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
-    const AtomicString fallbackFamily = QFont(fontDescription.family().family()).lastResortFamily();
+    const AtomicString fallbackFamily = QFont(fontDescription.firstFamily()).lastResortFamily();
     return getCachedFontData(new FontPlatformData(fontDescription, fallbackFamily), shouldRetain);
 }
 

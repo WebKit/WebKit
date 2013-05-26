@@ -124,9 +124,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
         NONCLIENTMETRICS metrics;
         metrics.cbSize = sizeof(metrics);
         SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-        FontFamily family;
-        family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
-        desc.setFamily(family);
+        desc.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
 
         desc.setComputedSize(18);
         

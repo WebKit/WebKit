@@ -1,3 +1,84 @@
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
+        Use Vector instead of custom linked list for font families
+        https://bugs.webkit.org/show_bug.cgi?id=116783
+
+        Reviewed by Andreas Kling.
+
+        Get rid of FontFamily and SharedFontFamily.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasSameFont):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontFamilyFromStyle):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontFamily::applyInheritValue):
+        (WebCore::ApplyPropertyFontFamily::applyInitialValue):
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForDocument):
+        (WebCore::StyleResolver::initializeFontStyle):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::font):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::systemFont):
+        * platform/graphics/Font.h:
+        (WebCore::Font::firstFamily):
+        (WebCore::Font::familyCount):
+        (WebCore::Font::familyAt):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getFontData):
+        * platform/graphics/FontDescription.cpp:
+        (SameSizeAsFontDescription):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::familyCount):
+        (WebCore::FontDescription::firstFamily):
+        (WebCore::FontDescription::familyAt):
+        (WebCore::FontDescription::families):
+        (WebCore::FontDescription::useFixedDefaultSize):
+        (WebCore::FontDescription::setOneFamily):
+        (WebCore::FontDescription::setFamilies):
+        (WebCore::FontDescription::adoptFamilies):
+        (WebCore::FontDescription::operator==):
+        * platform/graphics/FontFamily.cpp:
+        * platform/graphics/FontFamily.h:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::systemFont):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::controlFont):
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+        * platform/text/transcoder/FontTranscoder.cpp:
+        (WebCore::FontTranscoder::converterType):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::dragLabelFont):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::systemFont):
+        (WebCore::RenderThemeSafari::setFontFromControlSize):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::fillFontDescription):
+
 2013-05-26  Andreas Kling  <akling@apple.com>
 
         Move "active" state logic from Node to Element.

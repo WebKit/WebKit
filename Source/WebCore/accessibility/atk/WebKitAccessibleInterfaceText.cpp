@@ -253,7 +253,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }
 
-    String fontFamilyName = style->font().family().family().string();
+    String fontFamilyName = style->font().firstFamily();
     if (fontFamilyName.left(8) == "-webkit-")
         fontFamilyName = fontFamilyName.substring(8);
 

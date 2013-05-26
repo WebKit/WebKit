@@ -3242,7 +3242,7 @@ bool AccessibilityRenderObject::hasSameFont(RenderObject* renderer) const
     if (!m_renderer || !renderer)
         return false;
     
-    return m_renderer->style()->fontDescription().family() == renderer->style()->fontDescription().family();
+    return m_renderer->style()->fontDescription().families() == renderer->style()->fontDescription().families();
 }
 
 bool AccessibilityRenderObject::hasSameFontColor(RenderObject* renderer) const

@@ -110,10 +110,7 @@ static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
 
     FontDescription description;
     description.setWeight(bold ? FontWeightBold : FontWeightNormal);
-
-    FontFamily family;
-    family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
-    description.setFamily(family);
+    description.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);

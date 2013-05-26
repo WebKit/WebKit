@@ -1980,13 +1980,11 @@ String CanvasRenderingContext2D::font() const
     serializedFont.appendNumber(fontDescription.computedPixelSize());
     serializedFont.appendLiteral("px");
 
-    const FontFamily& firstFontFamily = fontDescription.family();
-    for (const FontFamily* fontFamily = &firstFontFamily; fontFamily; fontFamily = fontFamily->next()) {
-        if (fontFamily != &firstFontFamily)
+    for (unsigned i = 0; i < state().m_font.familyCount(); ++i) {
+        if (i)
             serializedFont.append(',');
-
         // FIXME: We should append family directly to serializedFont rather than building a temporary string.
-        String family = fontFamily->family();
+        String family = state().m_font.familyAt(i);
         if (family.startsWith("-webkit-"))
             family = family.substring(8);
         if (family.contains(' '))
@@ -2027,11 +2025,8 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (RenderStyle* computedStyle = canvas()->computedStyle())
         newStyle->setFontDescription(computedStyle->fontDescription());
     else {
-        FontFamily fontFamily;
-        fontFamily.setFamily(defaultFontFamily);
-
         FontDescription defaultFontDescription;
-        defaultFontDescription.setFamily(fontFamily);
+        defaultFontDescription.setOneFamily(defaultFontFamily);
         defaultFontDescription.setSpecifiedSize(defaultFontSize);
         defaultFontDescription.setComputedSize(defaultFontSize);
 

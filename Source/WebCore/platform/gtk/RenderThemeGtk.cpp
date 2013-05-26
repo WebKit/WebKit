@@ -451,7 +451,7 @@ void RenderThemeGtk::systemFont(int, FontDescription& fontDescription) const
     if (!pangoDescription)
         return;
 
-    fontDescription.firstFamily().setFamily(pango_font_description_get_family(pangoDescription));
+    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
 
     int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
     // If the size of the font is in points, we need to convert it to pixels.

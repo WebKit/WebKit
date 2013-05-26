@@ -250,9 +250,7 @@ void RenderThemeQStyle::adjustButtonStyle(StyleResolver* styleResolver, RenderSt
     fontDescription.setComputedSize(style->fontSize());
 #endif
 
-    FontFamily fontFamily;
-    fontFamily.setFamily(m_buttonFontFamily);
-    fontDescription.setFamily(fontFamily);
+    fontDescription.setOneFamily(m_buttonFontFamily);
     style->setFontDescription(fontDescription);
     style->font().update(styleResolver->fontSelector());
     style->setLineHeight(RenderStyle::initialLineHeight());

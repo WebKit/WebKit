@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct SameSizeAsFontDescription {
-    FontFamily familyList;
+    Vector<AtomicString, 1> families;
     RefPtr<FontFeatureSettings> m_featureSettings;
     float sizes[2];
     // FXIME: Make them fit into one word.

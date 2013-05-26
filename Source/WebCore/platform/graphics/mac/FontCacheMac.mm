@@ -159,18 +159,16 @@ PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& fon
     // the presence of keywords in the the requested names.  For example, we'll
     // match any name that contains "Arabic" to Geeza Pro.
     RefPtr<SimpleFontData> simpleFontData;
-    const FontFamily* currFamily = &font.fontDescription().family();
-    while (currFamily && !simpleFontData) {
-        if (currFamily->family().length()) {
-            static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
-            DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
-            for (int j = 0; j < 3 && !simpleFontData; ++j)
-                if (currFamily->family().contains(*matchWords[j], false))
-                    simpleFontData = getCachedFontData(font.fontDescription(), geezaStr);
-        }
-        currFamily = currFamily->next();
+    for (unsigned i = 0; i < font.familyCount(); ++i) {
+        const AtomicString& family = font.familyAt(i);
+        if (family.isEmpty())
+            continue;
+        static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
+        DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
+        for (int j = 0; j < 3 && !simpleFontData; ++j)
+            if (family.contains(*matchWords[j], false))
+                simpleFontData = getCachedFontData(font.fontDescription(), geezaStr);
     }
-
     return simpleFontData.release();
 }
 

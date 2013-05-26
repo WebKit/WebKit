@@ -1018,7 +1018,7 @@ void RenderThemeEfl::systemFont(int, FontDescription& fontDescription) const
     DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Sans")));
     float fontSize = defaultFontSize;
 
-    fontDescription.firstFamily().setFamily(fontFace);
+    fontDescription.setOneFamily(fontFace);
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setGenericFamily(FontDescription::NoFamily);

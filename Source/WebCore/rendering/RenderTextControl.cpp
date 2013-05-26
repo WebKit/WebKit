@@ -262,7 +262,7 @@ float RenderTextControl::scaleEmToUnits(int x) const
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     // Use average character width. Matches IE.
-    AtomicString family = style()->font().family().family();
+    const AtomicString& family = style()->font().firstFamily();
     maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAvgCharWidth(family));
     if (RenderBox* innerTextRenderBox = innerTextElement()->renderBox())
         maxLogicalWidth += innerTextRenderBox->paddingStart() + innerTextRenderBox->paddingEnd();

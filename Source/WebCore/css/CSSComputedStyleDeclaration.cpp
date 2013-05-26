@@ -1450,11 +1450,10 @@ static void logUnimplementedPropertyID(CSSPropertyID propertyID)
 }
 
 static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
-{
-    const FontFamily& firstFamily = style->fontDescription().family();
+    {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    for (const FontFamily* family = &firstFamily; family; family = family->next())
-        list->append(valueForFamily(family->family()));
+    for (unsigned i = 0; i < style->font().familyCount(); ++i)
+        list->append(valueForFamily(style->font().familyAt(i)));
     return list.release();
 }
 

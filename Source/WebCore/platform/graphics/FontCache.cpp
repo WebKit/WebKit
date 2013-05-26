@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -479,44 +479,38 @@ size_t FontCache::inactiveFontDataCount()
 
 PassRefPtr<FontData> FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)
 {
+    ASSERT(familyIndex != cAllFamiliesScanned);
     RefPtr<FontData> result;
 
-    int startIndex = familyIndex;
-    const FontFamily* startFamily = &font.fontDescription().family();
-    for (int i = 0; startFamily && i < startIndex; i++)
-        startFamily = startFamily->next();
-    const FontFamily* currFamily = startFamily;
-    while (currFamily && !result) {
-        familyIndex++;
-        if (currFamily->family().length()) {
-            if (fontSelector)
-                result = fontSelector->getFontData(font.fontDescription(), currFamily->family());
-
-            if (!result)
-                result = getCachedFontData(font.fontDescription(), currFamily->family());
-        }
-        currFamily = currFamily->next();
+    bool isFirst = !familyIndex;
+    int familyCount = font.familyCount();
+    for (;familyIndex < familyCount && !result; ++familyIndex) {
+        const AtomicString& family = font.familyAt(familyIndex);
+        if (family.isEmpty())
+            continue;
+        if (fontSelector)
+            result = fontSelector->getFontData(font.fontDescription(), family);
+        if (!result)
+            result = getCachedFontData(font.fontDescription(), family);
     }
-
-    if (!currFamily)
+    if (familyIndex == familyCount)
         familyIndex = cAllFamiliesScanned;
 
-    if (!result)
+    if (!result) {
         // We didn't find a font. Try to find a similar font using our own specific knowledge about our platform.
         // For example on OS X, we know to map any families containing the words Arabic, Pashto, or Urdu to the
         // Geeza Pro font.
         result = getSimilarFontPlatformData(font);
+    }
 
-    if (!result && startIndex == 0) {
+    if (!result && isFirst) {
         // If it's the primary font that we couldn't find, we try the following. In all other cases, we will
         // just use per-character system fallback.
-
         if (fontSelector) {
             // Try the user's preferred standard font.
             if (RefPtr<FontData> data = fontSelector->getFontData(font.fontDescription(), standardFamily))
                 return data.release();
         }
-
         // Still no result.  Hand back our last resort fallback font.
         result = getLastResortFallbackFont(font.fontDescription());
     }

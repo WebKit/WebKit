@@ -62,7 +62,7 @@ FontTranscoder::FontTranscoder()
 
 FontTranscoder::ConverterType FontTranscoder::converterType(const FontDescription& fontDescription, const TextEncoding* encoding) const
 {
-    const AtomicString& fontFamily = fontDescription.family().family().string();
+    const AtomicString& fontFamily = fontDescription.firstFamily();
     if (!fontFamily.isNull()) {
         HashMap<AtomicString, ConverterType>::const_iterator found = m_converterTypes.find(fontFamily);
         if (found != m_converterTypes.end())

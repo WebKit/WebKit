@@ -130,8 +130,9 @@ public:
 
     TypesettingFeatures typesettingFeatures() const { return m_typesettingFeatures; }
 
-    FontFamily& firstFamily() { return m_fontDescription.firstFamily(); }
-    const FontFamily& family() const { return m_fontDescription.family(); }
+    const AtomicString& firstFamily() const { return m_fontDescription.firstFamily(); }
+    unsigned familyCount() const { return m_fontDescription.familyCount(); }
+    const AtomicString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
     FontItalic italic() const { return m_fontDescription.italic(); }
     FontWeight weight() const { return m_fontDescription.weight(); }

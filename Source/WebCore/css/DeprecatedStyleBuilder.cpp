@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -664,7 +665,7 @@ public:
         FontDescription parentFontDescription = styleResolver->parentStyle()->fontDescription();
         
         fontDescription.setGenericFamily(parentFontDescription.genericFamily());
-        fontDescription.setFamily(parentFontDescription.firstFamily());
+        fontDescription.setFamilies(parentFontDescription.families());
         fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
         styleResolver->setFontDescription(fontDescription);
         return;
@@ -679,8 +680,8 @@ public:
         if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize())
             styleResolver->setFontSize(fontDescription, styleResolver->fontSizeForKeyword(styleResolver->document(), CSSValueXxSmall + fontDescription.keywordSize() - 1, false));
         fontDescription.setGenericFamily(initialDesc.genericFamily());
-        if (!initialDesc.firstFamily().familyIsEmpty())
-            fontDescription.setFamily(initialDesc.firstFamily());
+        if (!initialDesc.firstFamily().isEmpty())
+            fontDescription.setFamilies(initialDesc.families());
 
         styleResolver->setFontDescription(fontDescription);
         return;
@@ -692,23 +693,20 @@ public:
             return;
 
         FontDescription fontDescription = styleResolver->style()->fontDescription();
-        FontFamily& firstFamily = fontDescription.firstFamily();
-        FontFamily* currFamily = 0;
-
         // Before mapping in a new font-family property, we should reset the generic family.
         bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
         fontDescription.setGenericFamily(FontDescription::NoFamily);
 
+        Vector<AtomicString, 1> families;
         for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
             if (!item->isPrimitiveValue())
                 continue;
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
-            Settings* settings = styleResolver->document()->settings();
             if (contentValue->isString())
                 face = contentValue->getStringValue();
-            else if (settings) {
+            else if (Settings* settings = styleResolver->document()->settings()) {
                 switch (contentValue->getIdent()) {
                 case CSSValueWebkitBody:
                     face = settings->standardFontFamily();
@@ -740,31 +738,21 @@ public:
                 }
             }
 
-            if (!face.isEmpty()) {
-                if (!currFamily) {
-                    // Filling in the first family.
-                    firstFamily.setFamily(face);
-                    firstFamily.appendFamily(0); // Remove any inherited family-fallback list.
-                    currFamily = &firstFamily;
-                    fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
-                } else {
-                    RefPtr<SharedFontFamily> newFamily = SharedFontFamily::create();
-                    newFamily->setFamily(face);
-                    currFamily->appendFamily(newFamily);
-                    currFamily = newFamily.get();
-                }
-            }
+            if (face.isEmpty())
+                continue;
+            if (families.isEmpty())
+                fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
+            families.append(face);
         }
 
-        // We can't call useFixedDefaultSize() until all new font families have been added
-        // If currFamily is non-zero then we set at least one family on this description.
-        if (currFamily) {
-            if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
-                styleResolver->setFontSize(fontDescription, styleResolver->fontSizeForKeyword(styleResolver->document(), CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize));
+        if (families.isEmpty())
+            return;
+        fontDescription.adoptFamilies(families);
 
-            styleResolver->setFontDescription(fontDescription);
-        }
-        return;
+        if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
+            styleResolver->setFontSize(fontDescription, styleResolver->fontSizeForKeyword(styleResolver->document(), CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize));
+
+        styleResolver->setFontDescription(fontDescription);
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
