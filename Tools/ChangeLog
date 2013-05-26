@@ -1,3 +1,17 @@
+2013-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Teach webkitbot and WKR how to respond to yt?
+        https://bugs.webkit.org/show_bug.cgi?id=116775
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi): Fixed the usage string.
+        (Hi.execute): Made it more generic so that it works in WKR.
+        (YouThere): Added.
+        (YouThere.execute): Added.
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix the EFL build.

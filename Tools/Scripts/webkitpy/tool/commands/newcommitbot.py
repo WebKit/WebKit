@@ -37,6 +37,7 @@ from webkitpy.tool.bot.irc_command import Help
 from webkitpy.tool.bot.irc_command import Hi
 from webkitpy.tool.bot.irc_command import PingPong
 from webkitpy.tool.bot.irc_command import Restart
+from webkitpy.tool.bot.irc_command import YouThere
 from webkitpy.tool.bot.ircbot import IRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
@@ -52,6 +53,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         "hi": Hi,
         "ping": PingPong,
         "restart": Restart,
+        "yt?": YouThere,
     }
 
     _maximum_number_of_revisions_to_avoid_spamming_irc = 10

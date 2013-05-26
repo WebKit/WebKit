@@ -111,10 +111,10 @@ class Help(IRCCommand):
 
 class Hi(IRCCommand):
     usage_string = "hi"
-    help_string = "Retrieves a random quip from Bugzilla."
+    help_string = "Responds with hi."
 
     def execute(self, nick, args, tool, sheriff):
-        if len(args) and re.match(r'webkitbot_*\s*!\s*', ' '.join(args)):
+        if len(args) and re.match(sheriff.name() + r'_*\s*!\s*', ' '.join(args)):
             return "%s: hi %s!" % (nick, nick)
         quips = tool.bugs.quips()
         quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
@@ -127,6 +127,14 @@ class PingPong(IRCCommand):
 
     def execute(self, nick, args, tool, sheriff):
         return nick + ": pong"
+
+
+class YouThere(IRCCommand):
+    usage_string = "yt?"
+    help_string = "Responds with yes."
+
+    def execute(self, nick, args, tool, sheriff):
+        return "%s: yes" % nick
 
 
 class Restart(IRCCommand):
@@ -298,6 +306,7 @@ visible_commands = {
     "roll-chromium-deps": RollChromiumDEPS,
     "rollout": Rollout,
     "whois": Whois,
+    "yt?": YouThere,
 }
 
 # Add revert as an "easter egg" command. Why?
