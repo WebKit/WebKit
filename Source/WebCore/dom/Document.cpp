@@ -92,6 +92,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
@@ -3345,11 +3346,11 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
         if (oldFocusedNode->isElementNode())
             toElement(oldFocusedNode.get())->setFocus(false);
 
-        // Dispatch a change event for text fields or textareas that have been edited
-        if (oldFocusedNode->isElementNode()) {
-            Element* element = toElement(oldFocusedNode.get());
-            if (element->wasChangedSinceLastFormControlChangeEvent())
-                element->dispatchFormControlChangeEvent();
+        // Dispatch a change event for form control elements that have been edited.
+        if (oldFocusedNode->isElementNode() && toElement(oldFocusedNode.get())->isFormControlElement()) {
+            HTMLFormControlElement* formControlElement = toHTMLFormControlElement(oldFocusedNode.get());
+            if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
+                formControlElement->dispatchFormControlChangeEvent();
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)

@@ -58,11 +58,11 @@ public:
     virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     virtual void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
 
-    virtual bool wasChangedSinceLastFormControlChangeEvent() const;
-    virtual void setChangedSinceLastFormControlChangeEvent(bool);
+    bool wasChangedSinceLastFormControlChangeEvent() const { return m_wasChangedSinceLastFormControlChangeEvent; }
+    void setChangedSinceLastFormControlChangeEvent(bool);
 
     virtual void dispatchFormControlChangeEvent();
-    virtual void dispatchFormControlInputEvent();
+    void dispatchFormControlInputEvent();
 
     virtual bool isDisabledFormControl() const OVERRIDE;
 
@@ -73,7 +73,7 @@ public:
 
     const AtomicString& type() const { return formControlType(); }
 
-    virtual const AtomicString& formControlType() const OVERRIDE = 0;
+    virtual const AtomicString& formControlType() const = 0;
 
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -168,6 +168,20 @@ private:
 
     bool m_hasAutofocused : 1;
 };
+
+inline bool isHTMLFormControlElement(const Node* node)
+{
+    return node->isElementNode() && toElement(node)->isFormControlElement();
+}
+
+inline HTMLFormControlElement* toHTMLFormControlElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFormControlElement(node));
+    return static_cast<HTMLFormControlElement*>(node);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toHTMLFormControlElement(const HTMLFormControlElement*);
 
 } // namespace
 

@@ -71,7 +71,7 @@ public:
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
-    virtual void dispatchFormControlChangeEvent();
+    virtual void dispatchFormControlChangeEvent() OVERRIDE FINAL;
 
     virtual int maxLength() const = 0;
     virtual String value() const = 0;

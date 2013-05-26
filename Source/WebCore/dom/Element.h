@@ -574,12 +574,6 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return true; }
 
-    virtual const AtomicString& formControlType() const { return nullAtom; }
-
-    virtual bool wasChangedSinceLastFormControlChangeEvent() const;
-    virtual void setChangedSinceLastFormControlChangeEvent(bool);
-    virtual void dispatchFormControlChangeEvent() { }
-
     // Used for disabled form elements; if true, prevents mouse events from being dispatched
     // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool isDisabledFormControl() const;

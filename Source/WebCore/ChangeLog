@@ -1,3 +1,40 @@
+2013-05-26  Andreas Kling  <akling@apple.com>
+
+        Move some form control things from Element to HTMLFormControlElement.
+        <http://webkit.org/b/116779>
+
+        Reviewed by Antti Koivisto.
+
+        The following methods sit better on HTMLFormControlElement than on Element:
+
+            - formControlType()
+            - wasChangedSinceLastFormControlChangeEvent()
+            - setChangedSinceLastFormControlChangeEvent()
+            - dispatchFormControlChangeEvent()
+
+        Moved them, and devirtualized as much as possible.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+
+            Check if the old focus target is an Element before (possibly) dispatching a change event.
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+
+            Removed some stub methods that were only used by HTMLFormControlElement subclasses.
+
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormControlElement.h:
+        (WebCore::isHTMLFormControlElement):
+        (WebCore::toHTMLFormControlElement):
+
+            Add toHTMLFormControlElement() helper with ASSERT_WITH_SECURITY_IMPLICATION.
+
+        * html/HTMLTextFormControlElement.h:
+
+            Sprinkle OVERRIDE.
+
 2013-05-25  Andreas Kling  <akling@apple.com>
 
         Move Node::supportsFocus() to Element.

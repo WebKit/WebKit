@@ -1208,15 +1208,6 @@ bool Element::isDateTimeFieldElement() const
 }
 #endif
 
-bool Element::wasChangedSinceLastFormControlChangeEvent() const
-{
-    return false;
-}
-
-void Element::setChangedSinceLastFormControlChangeEvent(bool)
-{
-}
-
 bool Element::isDisabledFormControl() const
 {
 #if ENABLE(DIALOG_ELEMENT)
