@@ -1,5 +1,12 @@
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Try to fix the EFL build.
+        
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::setPageVisibility):
+
+2013-05-25  Simon Fraser  <simon.fraser@apple.com>
+
         Unprefix Page Visibility API
         https://bugs.webkit.org/show_bug.cgi?id=102340
 

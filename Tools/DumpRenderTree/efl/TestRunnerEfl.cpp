@@ -824,8 +824,8 @@ void TestRunner::setPageVisibility(const char* visibility)
         ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_HIDDEN, false);
     else if (newVisibility == "prerender")
         ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_PRERENDER, false);
-    else if (newVisibility == "preview")
-        ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_PREVIEW, false);
+    else if (newVisibility == "unloaded")
+        ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_UNLOADED, false);
 }
 
 void TestRunner::setAutomaticLinkDetectionEnabled(bool)
