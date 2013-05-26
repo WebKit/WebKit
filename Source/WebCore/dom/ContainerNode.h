@@ -260,6 +260,11 @@ inline bool Node::needsShadowTreeWalker() const
     return parent && parent->getFlag(NeedsShadowTreeWalkerFlag);
 }
 
+inline bool Node::isTreeScope() const
+{
+    return treeScope()->rootNode() == this;
+}
+
 // This constant controls how much buffer is initially allocated
 // for a Node Vector that is used to store child Nodes of a given Node.
 // FIXME: Optimize the value.

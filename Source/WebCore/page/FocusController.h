@@ -35,6 +35,7 @@
 namespace WebCore {
 
 struct FocusCandidate;
+class ContainerNode;
 class Document;
 class Element;
 class Frame;
@@ -47,7 +48,7 @@ class TreeScope;
 
 class FocusNavigationScope {
 public:
-    Node* rootNode() const;
+    ContainerNode* rootNode() const;
     Element* owner() const;
     static FocusNavigationScope focusNavigationScopeOf(Node*);
     static FocusNavigationScope focusNavigationScopeOwnedByShadowHost(Node*);

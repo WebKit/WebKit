@@ -72,14 +72,14 @@ FocusNavigationScope::FocusNavigationScope(TreeScope* treeScope)
     ASSERT(treeScope);
 }
 
-Node* FocusNavigationScope::rootNode() const
+ContainerNode* FocusNavigationScope::rootNode() const
 {
     return m_rootTreeScope->rootNode();
 }
 
 Element* FocusNavigationScope::owner() const
 {
-    Node* root = rootNode();
+    ContainerNode* root = rootNode();
     if (root->isShadowRoot())
         return toShadowRoot(root)->host();
     if (Frame* frame = root->document()->frame())

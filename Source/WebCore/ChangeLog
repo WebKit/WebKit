@@ -1,5 +1,31 @@
 2013-05-26  Andreas Kling  <akling@apple.com>
 
+        TreeScope::rootNode() should return a ContainerNode.
+        <http://webkit.org/b/116782>
+
+        Reviewed by Antti Koivisto.
+
+        The rootNode() of a TreeScope is always a ContainerNode, so update pointer types to reflect that.
+        This lets us take advantage of Antti's optimized traversal functions.
+
+        * dom/ContainerNode.h:
+        (WebCore::Node::isTreeScope):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/Node.cpp:
+        (WebCore::Node::containingShadowRoot):
+        * dom/Node.h:
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::rootNode):
+        (TreeScope):
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::rootNode):
+        (WebCore::FocusNavigationScope::owner):
+        * page/FocusController.h:
+        (FocusNavigationScope):
+
+2013-05-26  Andreas Kling  <akling@apple.com>
+
         FocusController::setFocusedNode() should be setFocusedElement().
         <http://webkit.org/b/116780>
 

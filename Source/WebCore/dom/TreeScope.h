@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,7 @@ public:
     // Used by the basic DOM mutation methods (e.g., appendChild()).
     void adoptIfNeeded(Node*);
 
-    Node* rootNode() const { return m_rootNode; }
+    ContainerNode* rootNode() const { return m_rootNode; }
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
@@ -162,7 +162,7 @@ private:
     void beginDeletion() { }
 #endif
 
-    Node* m_rootNode;
+    ContainerNode* m_rootNode;
     Document* m_documentScope;
     TreeScope* m_parentTreeScope;
     int m_guardRefCount;

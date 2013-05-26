@@ -1223,7 +1223,7 @@ Node* Node::deprecatedShadowAncestorNode() const
 
 ShadowRoot* Node::containingShadowRoot() const
 {
-    Node* root = treeScope()->rootNode();
+    ContainerNode* root = treeScope()->rootNode();
     return root && root->isShadowRoot() ? toShadowRoot(root) : 0;
 }
 
