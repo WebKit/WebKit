@@ -1304,7 +1304,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
         if (offsetIsBeforeLastNodeOffset(endOffset, endNode))
             return false;
 
-        unsigned parentLastOffset = end.deprecatedNode()->parentNode()->childNodes()->length() - 1;
+        unsigned parentLastOffset = end.deprecatedNode()->parentNode()->childNodeCount() - 1;
         if (end.deprecatedNode()->nextSibling())
             return false;
 
@@ -1324,7 +1324,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
         mergeIdenticalElements(element, nextElement);
 
         bool shouldUpdateStart = start.containerNode() == endNode;
-        int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodes()->length();
+        int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodeCount();
         updateStartEnd(shouldUpdateStart ? Position(nextElement, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start,
                        Position(nextElement, endOffset, Position::PositionIsOffsetInAnchor));
         return true;
