@@ -115,7 +115,7 @@ protected:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
 

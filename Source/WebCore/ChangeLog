@@ -1,5 +1,53 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::supportsFocus() to Element.
+        <http://webkit.org/b/116778>
+
+        Reviewed by Antti Koivisto.
+
+        Node never supports focus, so move supportsFocus() to Element instead.
+
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+
+            Removed Node::supportsFocus(), it always returned false anyway.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetFocusAttribute):
+
+            Check that the underlying Node is an Element before asking if it supports focus.
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLBodyElement.h:
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLOutputElement.h:
+        * svg/SVGAElement.h:
+        * svg/SVGCircleElement.h:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGGElement.h:
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPolyElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextElement.h:
+        * svg/SVGUseElement.h:
+
+            OVERRIDE ALL THE THINGS!
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Move Node::isFocusable() to Element.
         <http://webkit.org/b/116777>
 

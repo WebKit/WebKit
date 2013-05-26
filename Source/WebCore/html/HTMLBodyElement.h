@@ -79,7 +79,7 @@ private:
     
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
 
     virtual int scrollLeft();
     virtual void setScrollLeft(int scrollLeft);

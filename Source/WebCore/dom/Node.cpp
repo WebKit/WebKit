@@ -845,11 +845,6 @@ void Node::lazyAttach(ShouldSetAttached shouldSetAttached)
     markAncestorsWithChildNeedsStyleRecalc();
 }
 
-bool Node::supportsFocus() const
-{
-    return false;
-}
-    
 unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();

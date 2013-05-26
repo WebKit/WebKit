@@ -55,7 +55,7 @@ protected:
     virtual void attach();
 
 private:
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
     virtual void setFocus(bool) OVERRIDE;
     
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;

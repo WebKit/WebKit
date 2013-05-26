@@ -1785,10 +1785,15 @@ bool AccessibilityNodeObject::canSetFocusAttribute() const
     if (!node)
         return false;
 
-    if (isDisabledFormControl(node))
+    if (!node->isElementNode())
         return false;
 
-    return node->supportsFocus();
+    Element* element = toElement(node);
+
+    if (element->isDisabledFormControl())
+        return false;
+
+    return element->supportsFocus();
 }
 
 AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const

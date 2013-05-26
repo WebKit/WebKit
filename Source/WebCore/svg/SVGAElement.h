@@ -56,7 +56,7 @@ private:
 
     virtual void defaultEventHandler(Event*);
     
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isFocusable() const OVERRIDE;

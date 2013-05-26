@@ -55,7 +55,7 @@ public:
     using SVGStyledTransformableElement::deref;
 
     virtual bool isValid() const { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const { return true; }
+    virtual bool supportsFocus() const OVERRIDE { return true; }
 
     // 'SVGSVGElement' functions
     const AtomicString& contentScriptType() const;

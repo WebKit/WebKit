@@ -65,7 +65,7 @@ public:
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
     virtual bool hasCustomFocusLogic() const;
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
 
     String contentEditable() const;
     void setContentEditable(const String&, ExceptionCode&);

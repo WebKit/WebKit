@@ -430,7 +430,7 @@ private:
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool hasCustomFocusLogic() const OVERRIDE;
-    virtual bool supportsFocus() const;
+    virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

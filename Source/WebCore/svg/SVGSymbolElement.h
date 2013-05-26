@@ -42,7 +42,7 @@ public:
 private:
     SVGSymbolElement(const QualifiedName&, Document*);
 
-    virtual bool supportsFocus() const { return true; }
+    virtual bool supportsFocus() const OVERRIDE { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

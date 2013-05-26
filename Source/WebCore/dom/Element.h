@@ -432,6 +432,7 @@ public:
     virtual void setHovered(bool flag = true);
     virtual void setFocus(bool flag);
 
+    virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
@@ -655,7 +656,6 @@ protected:
 
     void clearTabIndexExplicitlyIfNeeded();    
     void setTabIndexExplicitly(short);
-    virtual bool supportsFocus() const OVERRIDE;
 
     PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType);
