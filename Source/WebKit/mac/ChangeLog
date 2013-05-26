@@ -1,3 +1,15 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        Remove Document::getFocusableNodes().
+        <http://webkit.org/b/116773>
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove the private _focusableNodes API on DOMDocument, it has no clients.
+
+        * DOM/WebDOMOperations.mm:
+        * DOM/WebDOMOperationsPrivate.h:
+
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Unprefix Page Visibility API

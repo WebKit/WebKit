@@ -1,5 +1,18 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Remove Document::getFocusableNodes().
+        <http://webkit.org/b/116773>
+
+        Reviewed by Joseph Pecoraro.
+
+        This was added in r42191 and there are no remaining clients of the API.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * WebCore.exp.in:
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Move Node::focusDelegate() to Element.
         <http://webkit.org/b/116768>
 

@@ -33,10 +33,6 @@
 + (DOMElement *)_DOMElementFromJSContext:(JSContextRef)context value:(JSValueRef)value;
 @end
 
-@interface DOMDocument (WebDOMDocumentOperationsPrivate)
-- (NSArray *)_focusableNodes;
-@end
-
 @interface DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
 - (void)_setAutofilled:(BOOL)autofilled;
 @end

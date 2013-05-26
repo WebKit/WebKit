@@ -183,20 +183,6 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 @end
 
-@implementation DOMDocument (WebDOMDocumentOperationsPrivate)
-
-- (NSArray *)_focusableNodes
-{
-    Vector<RefPtr<Node> > nodes;
-    core(self)->getFocusableNodes(nodes);
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:nodes.size()];
-    for (unsigned i = 0; i < nodes.size(); ++i)
-        [array addObject:kit(nodes[i].get())];
-    return array;
-}
-
-@end
-
 @implementation DOMRange (WebDOMRangeOperations)
 
 - (WebArchive *)webArchive
