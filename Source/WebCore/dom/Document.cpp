@@ -100,6 +100,7 @@
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPlugInElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
@@ -5770,7 +5771,7 @@ Node* eventTargetNodeForDocument(Document* doc)
     Node* node = doc->focusedNode();
     if (!node && doc->isPluginDocument()) {
         PluginDocument* pluginDocument = toPluginDocument(doc);
-        node =  pluginDocument->pluginNode();
+        node = pluginDocument->pluginElement();
     }
     if (!node && doc->isHTMLDocument())
         node = doc->body();

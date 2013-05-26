@@ -1,5 +1,23 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        PluginDocument::pluginNode() should be pluginElement() instead.
+        <http://webkit.org/b/116774>
+
+        Reviewed by Anders Carlsson.
+
+        Make PluginDocument hand out a HTMLPlugInElement* instead of a Node*.
+
+        * dom/Document.cpp:
+        (WebCore::eventTargetNodeForDocument):
+        * html/PluginDocument.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocument::pluginWidget):
+        (WebCore::PluginDocument::setPluginElement):
+        (WebCore::PluginDocument::detach):
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Remove Document::getFocusableNodes().
         <http://webkit.org/b/116773>
 

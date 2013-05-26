@@ -1,3 +1,13 @@
+2013-05-25  Andreas Kling  <akling@apple.com>
+
+        PluginDocument::pluginNode() should be pluginElement() instead.
+        <http://webkit.org/b/116774>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::focusedPluginViewForFrame):
+
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Unprefix Page Visibility API

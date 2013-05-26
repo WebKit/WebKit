@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
-#include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
@@ -96,7 +95,7 @@ void PluginDocumentParser::createDocumentStructure()
     if (loader)
         m_embedElement->setAttribute(typeAttr, loader->writer()->mimeType());
 
-    toPluginDocument(document())->setPluginNode(m_embedElement);
+    toPluginDocument(document())->setPluginElement(m_embedElement);
 
     body->appendChild(embedElement, IGNORE_EXCEPTION);
 }
@@ -150,22 +149,22 @@ PassRefPtr<DocumentParser> PluginDocument::createParser()
 
 Widget* PluginDocument::pluginWidget()
 {
-    if (m_pluginNode && m_pluginNode->renderer()) {
-        ASSERT(m_pluginNode->renderer()->isEmbeddedObject());
-        return toRenderEmbeddedObject(m_pluginNode->renderer())->widget();
+    if (m_pluginElement && m_pluginElement->renderer()) {
+        ASSERT(m_pluginElement->renderer()->isEmbeddedObject());
+        return toRenderEmbeddedObject(m_pluginElement->renderer())->widget();
     }
     return 0;
 }
 
-Node* PluginDocument::pluginNode()
+void PluginDocument::setPluginElement(PassRefPtr<HTMLPlugInElement> element)
 {
-    return m_pluginNode.get();
+    m_pluginElement = element;
 }
 
 void PluginDocument::detach()
 {
-    // Release the plugin node so that we don't have a circular reference.
-    m_pluginNode = 0;
+    // Release the plugin Element so that we don't have a circular reference.
+    m_pluginElement = 0;
     if (FrameLoader* loader = frame()->loader())
         loader->client()->redirectDataToPlugin(0);
     HTMLDocument::detach();

@@ -744,7 +744,7 @@ PluginView* WebPage::focusedPluginViewForFrame(Frame* frame)
 
     PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
 
-    if (pluginDocument->focusedNode() != pluginDocument->pluginNode())
+    if (pluginDocument->focusedNode() != pluginDocument->pluginElement())
         return 0;
 
     PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
