@@ -457,6 +457,12 @@ bool Element::isFocusable() const
     return true;
 }
 
+bool Element::isUserActionElementInActiveChain() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isInActiveChain(this);
+}
+
 bool Element::isUserActionElementActive() const
 {
     ASSERT(isUserActionElement());
@@ -1469,8 +1475,13 @@ void Element::detach()
         shadow->detach();
     }
 
-    if (hovered())
-        document()->hoveredNodeDetached(this);
+    if (isUserActionElement()) {
+        if (hovered())
+            document()->hoveredNodeDetached(this);
+        if (inActiveChain())
+            document()->activeChainNodeDetached(this);
+        document()->userActionElements().didDetach(this);
+    }
 
     ContainerNode::detach();
 }

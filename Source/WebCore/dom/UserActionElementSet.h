@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class Node;
 class Element;
 
 class UserActionElementSet {
@@ -45,17 +44,17 @@ public:
 
     bool isFocused(const Element* element) { return hasFlags(element, IsFocusedFlag); }
     bool isActive(const Element* element) { return hasFlags(element, IsActiveFlag); }
-    bool isInActiveChain(const Node* node) { return hasFlags(node, InActiveChainFlag); }
+    bool isInActiveChain(const Element* element) { return hasFlags(element, InActiveChainFlag); }
     bool isHovered(const Element* element) { return hasFlags(element, IsHoveredFlag); }
     void setFocused(Element* element, bool enable) { setFlags(element, enable, IsFocusedFlag); }
     void setActive(Element* element, bool enable) { setFlags(element, enable, IsActiveFlag); }
-    void setInActiveChain(Node* node, bool enable) { setFlags(node, enable, InActiveChainFlag); }
+    void setInActiveChain(Element* element, bool enable) { setFlags(element, enable, InActiveChainFlag); }
     void setHovered(Element* element, bool enable) { setFlags(element, enable, IsHoveredFlag); }
 
     UserActionElementSet();
     ~UserActionElementSet();
 
-    void didDetach(Node*);
+    void didDetach(Element*);
     void documentDidRemoveLastRef();
 
 private:
@@ -65,11 +64,6 @@ private:
         IsHoveredFlag     = 1 << 2,
         IsFocusedFlag     = 1 << 3
     };
-
-    void setFlags(Node* node, bool enable, unsigned flags) { enable ? setFlags(node, flags) : clearFlags(node, flags); }
-    void setFlags(Node*, unsigned);
-    void clearFlags(Node*, unsigned);
-    bool hasFlags(const Node*, unsigned flags) const;
 
     void setFlags(Element* element, bool enable, unsigned flags) { enable ? setFlags(element, flags) : clearFlags(element, flags); }
     void setFlags(Element*, unsigned);

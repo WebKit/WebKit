@@ -426,6 +426,7 @@ public:
 
     virtual const AtomicString& shadowPseudoId() const;
 
+    bool inActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
@@ -664,6 +665,7 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
+    bool isUserActionElementInActiveChain() const;
     bool isUserActionElementActive() const;
     bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;

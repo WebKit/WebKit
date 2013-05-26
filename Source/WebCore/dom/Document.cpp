@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -5870,12 +5870,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = oldActiveElement->renderer(); curr; curr = curr->parent()) {
-            if (curr->node()) {
-                ASSERT(!curr->node()->isTextNode());
-                if (curr->node()->isElementNode())
-                    toElement(curr->node())->setActive(false);
-                m_userActionElements.setInActiveChain(curr->node(), false);
-            }
+            if (!curr->node() || !curr->node()->isElementNode())
+                continue;
+            Element* element = toElement(curr->node());
+            element->setActive(false);
+            m_userActionElements.setInActiveChain(element, false);
         }
         setActiveElement(0);
     } else {
@@ -5884,8 +5883,9 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             // We are setting the :active chain and freezing it. If future moves happen, they
             // will need to reference this chain.
             for (RenderObject* curr = newActiveElement->renderer(); curr; curr = curr->parent()) {
-                if (curr->node() && !curr->isText())
-                    m_userActionElements.setInActiveChain(curr->node(), true);
+                if (!curr->node() || !curr->node()->isElementNode() || curr->isText())
+                    continue;
+                m_userActionElements.setInActiveChain(toElement(curr->node()), true);
             }
 
             setActiveElement(newActiveElement);
@@ -5949,7 +5949,9 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-            if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
+            if (!curr->node() || curr->isText())
+                continue;
+            if (!mustBeInActiveChain || (curr->node()->isElementNode() && toElement(curr->node())->inActiveChain()))
                 nodesToRemoveFromChain.append(curr->node());
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
@@ -5961,7 +5963,9 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     // Now set the hover state for our new object up to the root.
     for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
-        if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
+        if (!curr->node() || curr->isText())
+            continue;
+        if (!mustBeInActiveChain || (curr->node()->isElementNode() && toElement(curr->node())->inActiveChain()))
             nodesToAddToChain.append(curr->node());
     }
 

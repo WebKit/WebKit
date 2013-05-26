@@ -106,7 +106,6 @@
 #include "TreeScopeAdopter.h"
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
-#include "UserActionElementSet.h"
 #include "WheelEvent.h"
 #include "WindowEventContext.h"
 #include "XMLNames.h"
@@ -1049,13 +1048,6 @@ void Node::detach()
     if (renderer())
         renderer()->destroyAndCleanupAnonymousWrappers();
     setRenderer(0);
-
-    Document* doc = document();
-    if (isUserActionElement()) {
-        if (inActiveChain())
-            doc->activeChainNodeDetached(this);
-        doc->userActionElements().didDetach(this);
-    }
 
     clearFlag(IsAttachedFlag);
 
@@ -2675,12 +2667,6 @@ size_t Node::numberOfScopedHTMLStyleChildren() const
     }
 
     return count;
-}
-
-bool Node::isUserActionElementInActiveChain() const
-{
-    ASSERT(isUserActionElement());
-    return document()->userActionElements().isInActiveChain(this);
 }
 
 } // namespace WebCore

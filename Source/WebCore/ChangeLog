@@ -1,3 +1,39 @@
+2013-05-26  Andreas Kling  <akling@apple.com>
+
+        Move :active chain participation state from Node to Element.
+        <http://webkit.org/b/116786>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can be in the :active chain so move the logic there from Node.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+
+            Add isElementNode() type checks when updating the :active chain.
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        (WebCore::Node::detach):
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+
+            Move the remaining logic for detaching from the UserActionElementSet to Element.
+
+        (WebCore::Element::isUserActionElementInActiveChain):
+        * dom/Element.h:
+        (WebCore::Element::inActiveChain):
+
+            Move all the :active chain stuff from Node to Element.
+
+        * dom/UserActionElementSet.cpp:
+        (WebCore::UserActionElementSet::didDetach):
+        * dom/UserActionElementSet.h:
+        (WebCore::UserActionElementSet::isInActiveChain):
+        (WebCore::UserActionElementSet::setInActiveChain):
+
+            UserActionElementSet now only takes Element* in its API.
+
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
         Remove FontFamily.h/.cpp
