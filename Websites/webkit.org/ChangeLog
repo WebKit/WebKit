@@ -1,3 +1,13 @@
+2013-05-25  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Broken link to committers list on contributing web page
+        https://bugs.webkit.org/show_bug.cgi?id=116722
+
+        Reviewed by Andreas Kling.
+
+        * coding/contributing.html:
+        Changed broken link to point to the team page instead.
+
 2013-05-24  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Make team.html have each contributor's area of expertise
