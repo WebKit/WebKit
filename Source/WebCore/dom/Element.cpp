@@ -40,6 +40,7 @@
 #include "DocumentFragment.h"
 #include "DocumentSharedObjectPool.h"
 #include "ElementRareData.h"
+#include "EventDispatcher.h"
 #include "ExceptionCode.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
@@ -262,6 +263,11 @@ bool Element::isKeyboardFocusable(KeyboardEvent*) const
 bool Element::isMouseFocusable() const
 {
     return isFocusable();
+}
+
+void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
+{
+    EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, eventOptions, visualOptions);
 }
 
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);

@@ -2404,11 +2404,6 @@ bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
 }
 #endif
 
-void Node::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
-{
-    EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, eventOptions, visualOptions);
-}
-
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 {
     if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))

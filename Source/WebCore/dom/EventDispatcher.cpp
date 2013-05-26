@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -44,8 +44,6 @@
 
 namespace WebCore {
 
-static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
-
 bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
@@ -76,32 +74,29 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMe
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
-void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)
+void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)
 {
-    if (isDisabledFormControl(node))
+    if (element->isDisabledFormControl())
         return;
 
-    if (!gNodesDispatchingSimulatedClicks)
-        gNodesDispatchingSimulatedClicks = new HashSet<Node*>;
-    else if (gNodesDispatchingSimulatedClicks->contains(node))
+    DEFINE_STATIC_LOCAL(HashSet<Element*>, elementsDispatchingSimulatedClicks, ());
+    if (!elementsDispatchingSimulatedClicks.add(element).isNewEntry)
         return;
-
-    gNodesDispatchingSimulatedClicks->add(node);
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
-        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mouseoverEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
+        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mouseoverEvent, element->document()->defaultView(), underlyingEvent)).dispatch();
 
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
-    node->setActive(true, visualOptions == ShowPressedLook);
+        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mousedownEvent, element->document()->defaultView(), underlyingEvent)).dispatch();
+    element->setActive(true, visualOptions == ShowPressedLook);
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
-    node->setActive(false);
+        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mouseupEvent, element->document()->defaultView(), underlyingEvent)).dispatch();
+    element->setActive(false);
 
     // always send click
-    EventDispatcher(node, SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
+    EventDispatcher(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document()->defaultView(), underlyingEvent)).dispatch();
 
-    gNodesDispatchingSimulatedClicks->remove(node);
+    elementsDispatchingSimulatedClicks.remove(element);
 }
 
 bool EventDispatcher::dispatch()

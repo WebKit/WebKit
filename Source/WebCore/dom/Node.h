@@ -633,7 +633,6 @@ public:
     bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
 #endif
 
-    void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
     virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection);
