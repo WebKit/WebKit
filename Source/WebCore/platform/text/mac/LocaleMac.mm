@@ -130,42 +130,7 @@ const Vector<String>& LocaleMac::monthLabels()
         m_monthLabels.append(WTF::monthFullName[i]);
     return m_monthLabels;
 }
-#endif
 
-#if ENABLE(CALENDAR_PICKER)
-const Vector<String>& LocaleMac::weekDayShortLabels()
-{
-    if (!m_weekDayShortLabels.isEmpty())
-        return m_weekDayShortLabels;
-    m_weekDayShortLabels.reserveCapacity(7);
-    NSArray *array = [shortDateFormatter().get() shortWeekdaySymbols];
-    if ([array count] == 7) {
-        for (unsigned i = 0; i < 7; ++i)
-            m_weekDayShortLabels.append(String([array objectAtIndex:i]));
-        return m_weekDayShortLabels;
-    }
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::weekdayName); ++i) {
-        // weekdayName starts with Monday.
-        m_weekDayShortLabels.append(WTF::weekdayName[(i + 6) % 7]);
-    }
-    return m_weekDayShortLabels;
-}
-
-unsigned LocaleMac::firstDayOfWeek()
-{
-    // The document for NSCalendar - firstWeekday doesn't have an explanation of
-    // firstWeekday value. We can guess it by the document of NSDateComponents -
-    // weekDay, so it can be 1 through 7 and 1 is Sunday.
-    return [m_gregorianCalendar.get() firstWeekday] - 1;
-}
-
-bool LocaleMac::isRTL()
-{
-    return NSLocaleLanguageDirectionRightToLeft == [NSLocale characterDirectionForLanguage:[NSLocale canonicalLanguageIdentifierFromString:[m_locale.get() localeIdentifier]]];
-}
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 RetainPtr<NSDateFormatter> LocaleMac::timeFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterMediumStyle);

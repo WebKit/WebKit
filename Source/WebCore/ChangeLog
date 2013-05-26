@@ -1,3 +1,32 @@
+2013-05-26  Kent Tamura  <tkent@chromium.org>
+
+        Remove ENABLE_CALENDAR_PICKER
+        https://bugs.webkit.org/show_bug.cgi?id=116795
+
+        Reviewed by Ryosuke Niwa.
+
+        This feature was used only by Chromium port.
+
+        * Resources/pagepopups/calendarPicker.css: Removed.
+        * Resources/pagepopups/calendarPicker.js: Removed.
+        * css/html.css:
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::LocaleICU):
+        (WebCore):
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+        * platform/text/PlatformLocale.h:
+        (Locale):
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac):
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::monthLabels):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LocaleWin::LocaleWin):
+        (WebCore::LocaleWin::monthLabels):
+        * platform/text/win/LocaleWin.h:
+        (LocaleWin):
+
 2013-05-26  Andreas Kling  <akling@apple.com>
 
         Move :active chain participation state from Node to Element.

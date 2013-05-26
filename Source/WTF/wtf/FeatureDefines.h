@@ -302,10 +302,6 @@
 #define ENABLE_BLOB 0
 #endif
 
-#if !defined(ENABLE_CALENDAR_PICKER)
-#define ENABLE_CALENDAR_PICKER 0
-#endif
-
 #if !defined(ENABLE_CANVAS_PATH)
 #define ENABLE_CANVAS_PATH 1
 #endif

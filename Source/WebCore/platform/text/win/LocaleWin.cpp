@@ -156,13 +156,6 @@ inline LocaleWin::LocaleWin(LCID lcid)
     : m_lcid(lcid)
     , m_didInitializeNumberData(false)
 {
-#if ENABLE(CALENDAR_PICKER)
-    DWORD value = 0;
-    getLocaleInfo(LOCALE_IFIRSTDAYOFWEEK, value);
-    // 0:Monday, ..., 6:Sunday.
-    // We need 1 for Monday, 0 for Sunday.
-    m_firstDayOfWeek = (value + 1) % 7;
-#endif
 }
 
 PassOwnPtr<LocaleWin> LocaleWin::create(LCID lcid)
@@ -358,64 +351,13 @@ void LocaleWin::ensureMonthLabels()
 #endif
 }
 
-#if ENABLE(CALENDAR_PICKER)
-void LocaleWin::ensureWeekDayShortLabels()
-{
-    if (!m_weekDayShortLabels.isEmpty())
-        return;
-    const LCTYPE types[7] = {
-        LOCALE_SABBREVDAYNAME7, // Sunday
-        LOCALE_SABBREVDAYNAME1, // Monday
-        LOCALE_SABBREVDAYNAME2,
-        LOCALE_SABBREVDAYNAME3,
-        LOCALE_SABBREVDAYNAME4,
-        LOCALE_SABBREVDAYNAME5,
-        LOCALE_SABBREVDAYNAME6
-    };
-    m_weekDayShortLabels.reserveCapacity(WTF_ARRAY_LENGTH(types));
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(types); ++i) {
-        m_weekDayShortLabels.append(getLocaleInfoString(types[i]));
-        if (m_weekDayShortLabels.last().isEmpty()) {
-            m_weekDayShortLabels.shrink(0);
-            m_weekDayShortLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::weekdayName));
-            for (unsigned w = 0; w < WTF_ARRAY_LENGTH(WTF::weekdayName); ++w) {
-                // weekdayName starts with Monday.
-                m_weekDayShortLabels.append(WTF::weekdayName[(w + 6) % 7]);
-            }
-            return;
-        }
-    }
-}
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleWin::monthLabels()
 {
     ensureMonthLabels();
     return m_monthLabels;
 }
-#endif
 
-#if ENABLE(CALENDAR_PICKER)
-const Vector<String>& LocaleWin::weekDayShortLabels()
-{
-    ensureWeekDayShortLabels();
-    return m_weekDayShortLabels;
-}
-
-unsigned LocaleWin::firstDayOfWeek()
-{
-    return m_firstDayOfWeek;
-}
-
-bool LocaleWin::isRTL()
-{
-    WTF::Unicode::Direction dir = WTF::Unicode::direction(monthLabels()[0][0]);
-    return dir == WTF::Unicode::RightToLeft || dir == WTF::Unicode::RightToLeftArabic;
-}
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 String LocaleWin::dateFormat()
 {
     if (m_dateFormat.isNull())

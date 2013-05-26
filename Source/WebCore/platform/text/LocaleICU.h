@@ -49,11 +49,6 @@ public:
     static PassOwnPtr<LocaleICU> create(const char* localeString);
     virtual ~LocaleICU();
 
-#if ENABLE(CALENDAR_PICKER)
-    virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
-    virtual unsigned firstDayOfWeek() OVERRIDE;
-    virtual bool isRTL() OVERRIDE;
-#endif
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
@@ -81,10 +76,6 @@ private:
     bool initializeShortDateFormat();
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
-#if ENABLE(CALENDAR_PICKER)
-    void initializeCalendar();
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     PassOwnPtr<Vector<String> > createLabelVector(const UDateFormat*, UDateFormatSymbolType, int32_t startIndex, int32_t size);
     void initializeDateTimeFormat();
@@ -96,10 +87,6 @@ private:
     bool m_didCreateDecimalFormat;
     bool m_didCreateShortDateFormat;
 
-#if ENABLE(CALENDAR_PICKER)
-    OwnPtr<Vector<String> > m_weekDayShortLabels;
-    unsigned m_firstDayOfWeek;
-#endif
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     OwnPtr<Vector<String> > m_monthLabels;
     String m_dateFormat;

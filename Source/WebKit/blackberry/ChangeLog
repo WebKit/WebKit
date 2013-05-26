@@ -1,3 +1,13 @@
+2013-05-26  Kent Tamura  <tkent@chromium.org>
+
+        Remove ENABLE_CALENDAR_PICKER
+        https://bugs.webkit.org/show_bug.cgi?id=116795
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        The list was wrong. Blackberry port doesn't use CALENDAR_PICKER code.
+
 2013-05-26  Andreas Kling  <akling@apple.com>
 
         FocusController::setFocusedNode() should be setFocusedElement().

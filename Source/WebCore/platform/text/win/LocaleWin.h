@@ -46,11 +46,6 @@ class LocaleWin : public Locale {
 public:
     static PassOwnPtr<LocaleWin> create(LCID);
     ~LocaleWin();
-#if ENABLE(CALENDAR_PICKER)
-    virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
-    virtual unsigned firstDayOfWeek() OVERRIDE;
-    virtual bool isRTL() OVERRIDE;
-#endif
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
@@ -74,9 +69,6 @@ private:
     void getLocaleInfo(LCTYPE, DWORD&);
     void ensureShortMonthLabels();
     void ensureMonthLabels();
-#if ENABLE(CALENDAR_PICKER)
-    void ensureWeekDayShortLabels();
-#endif
     // Locale function:
     virtual void initializeLocaleData() OVERRIDE;
 
@@ -92,10 +84,6 @@ private:
     String m_dateTimeFormatWithSeconds;
     String m_dateTimeFormatWithoutSeconds;
     Vector<String> m_timeAMPMLabels;
-#endif
-#if ENABLE(CALENDAR_PICKER)
-    Vector<String> m_weekDayShortLabels;
-    unsigned m_firstDayOfWeek;
 #endif
     bool m_didInitializeNumberData;
 };

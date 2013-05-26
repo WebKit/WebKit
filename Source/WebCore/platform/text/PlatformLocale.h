@@ -111,20 +111,6 @@ public:
     virtual const Vector<String>& monthLabels() = 0;
 #endif
 
-#if ENABLE(CALENDAR_PICKER)
-    // Returns a vector of string of which size is 7. The first item is a
-    // localized short string of Monday, and the last item is a localized
-    // short string of Saturday. These strings should be short.
-    virtual const Vector<String>& weekDayShortLabels() = 0;
-
-    // The first day of a week. 0 is Sunday, and 6 is Saturday.
-    virtual unsigned firstDayOfWeek() = 0;
-
-    // Returns true if people use right-to-left writing in the locale for this
-    // object.
-    virtual bool isRTL() = 0;
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     enum FormatType { FormatTypeUnspecified, FormatTypeShort, FormatTypeMedium };
 
