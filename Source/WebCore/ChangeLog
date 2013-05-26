@@ -1,3 +1,17 @@
+2013-05-25  Alberto Garcia  <agarcia@igalia.com>
+
+        Path: clean up addPathForRoundedRect()
+        https://bugs.webkit.org/show_bug.cgi?id=116765
+
+        Reviewed by Andreas Kling.
+
+        Reorganize code that is a bit redundant.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addPathForRoundedRect):
+
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Unprefix Page Visibility API
