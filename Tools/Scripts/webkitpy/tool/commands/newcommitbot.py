@@ -83,7 +83,6 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
 
         _log.info('Last SVN revision: %d' % self._last_svn_revision)
 
-        return
         count = 0
         while count < self._maximum_number_of_revisions_to_avoid_spamming_irc:
             new_revision = self._last_svn_revision + 1

@@ -1,5 +1,12 @@
 2013-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert another erroneous change.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot.next_work_item):
+
+2013-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert an erroneous change.
 
         * Scripts/webkitpy/tool/commands/sheriffbot.py:
