@@ -1,5 +1,21 @@
 2013-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Some build fixes for WKR and webkitbot.
+
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help):
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (Agent):
+        (Agent.__init__):
+        (Agent.name):
+        (NewCommitBot):
+        (NewCommitBot.begin_work_queue):
+        (NewCommitBot.next_work_item):
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        (SheriffBot):
+
+2013-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Teach webkitbot and WKR how to respond to yt?
         https://bugs.webkit.org/show_bug.cgi?id=116775
 

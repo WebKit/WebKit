@@ -45,8 +45,17 @@ from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 _log = logging.getLogger(__name__)
 
 
+class Agent(object):
+    def __init__(self, tool, newcommitbot):
+        self._tool = tool
+        self._newcommitbot = newcommitbot
+
+    def name(self):
+        return 'WKR'
+
+
 class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
-    name = "new-commit-bot"
+    name = "WKR"
     watchers = AbstractQueue.watchers + ["rniwa@webkit.org"]
 
     _commands = {
@@ -63,7 +72,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
         self._last_svn_revision = int(self._tool.scm().head_svn_revision())
-        self._irc_bot = IRCBot('WKR', self._tool, None, self._commands)
+        self._irc_bot = IRCBot(self.name, self._tool, Agent(self._tool, self), self._commands)
         self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
     def work_item_log_path(self, failure_map):
@@ -74,6 +83,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
 
         _log.info('Last SVN revision: %d' % self._last_svn_revision)
 
+        return
         count = 0
         while count < self._maximum_number_of_revisions_to_avoid_spamming_irc:
             new_revision = self._last_svn_revision + 1
