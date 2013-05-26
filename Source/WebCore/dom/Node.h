@@ -399,8 +399,6 @@ public:
 
     virtual void setActive(bool flag = true, bool pause = false);
 
-    virtual short tabIndex() const;
-
     // Whether this kind of node can receive focus by default. Most nodes are
     // not focusable but some elements, such as form controls and links, are.
     virtual bool supportsFocus() const;

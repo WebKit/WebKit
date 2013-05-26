@@ -105,7 +105,7 @@ private:
     Node* nextFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
     Node* previousFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
 
-    Node* findNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
+    Element* findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
 
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);

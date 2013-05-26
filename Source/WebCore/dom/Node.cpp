@@ -499,11 +499,6 @@ HTMLInputElement* Node::toInputElement()
     return 0;
 }
 
-short Node::tabIndex() const
-{
-    return 0;
-}
-
 String Node::nodeValue() const
 {
     return String();

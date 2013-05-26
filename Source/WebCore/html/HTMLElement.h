@@ -50,7 +50,7 @@ public:
 
     virtual String title() const OVERRIDE FINAL;
 
-    virtual short tabIndex() const;
+    virtual short tabIndex() const OVERRIDE;
     void setTabIndex(int);
 
     String innerHTML() const;

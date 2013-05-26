@@ -117,7 +117,7 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual bool canStartSelection() const;
     virtual String target() const;
-    virtual short tabIndex() const;
+    virtual short tabIndex() const OVERRIDE FINAL;
     virtual bool draggable() const;
 
     void sendPings(const KURL& destinationURL);

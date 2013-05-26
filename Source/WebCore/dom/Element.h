@@ -435,6 +435,7 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
+    virtual short tabIndex() const;
     virtual Element* focusDelegate();
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
@@ -654,7 +655,6 @@ protected:
     void clearTabIndexExplicitlyIfNeeded();    
     void setTabIndexExplicitly(short);
     virtual bool supportsFocus() const OVERRIDE;
-    virtual short tabIndex() const OVERRIDE;
 
     PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType);

@@ -149,7 +149,9 @@ static inline bool isFocusableShadowHost(Node* node, KeyboardEvent* event)
 static inline int adjustedTabIndex(Node* node, KeyboardEvent* event)
 {
     ASSERT(node);
-    return isNonFocusableShadowHost(node, event) ? 0 : node->tabIndex();
+    if (!node->isElementNode())
+        return 0;
+    return isNonFocusableShadowHost(node, event) ? 0 : toElement(node)->tabIndex();
 }
 
 static inline bool shouldVisit(Node* node, KeyboardEvent* event)
@@ -415,41 +417,50 @@ Node* FocusController::findFocusableNode(FocusDirection direction, FocusNavigati
         : previousFocusableNode(scope, node, event);
 }
 
-Node* FocusController::findNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
+Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
 {
     // Search is inclusive of start
     using namespace NodeRenderingTraversal;
     for (Node* node = start; node; node = direction == FocusDirectionForward ? nextInScope(node) : previousInScope(node)) {
-        if (shouldVisit(node, event) && adjustedTabIndex(node, event) == tabIndex)
-            return node;
+        if (!node->isElementNode())
+            continue;
+        Element* element = toElement(node);
+        if (shouldVisit(element, event) && adjustedTabIndex(element, event) == tabIndex)
+            return element;
     }
     return 0;
 }
 
-static Node* nextNodeWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
 {
     // Search is inclusive of start
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
-    Node* winner = 0;
+    Element* winner = 0;
     for (Node* node = start; node; node = NodeRenderingTraversal::nextInScope(node)) {
-        if (shouldVisit(node, event) && node->tabIndex() > tabIndex && node->tabIndex() < winningTabIndex) {
-            winner = node;
-            winningTabIndex = node->tabIndex();
+        if (!node->isElementNode())
+            continue;
+        Element* element = toElement(node);
+        if (shouldVisit(element, event) && element->tabIndex() > tabIndex && element->tabIndex() < winningTabIndex) {
+            winner = element;
+            winningTabIndex = element->tabIndex();
         }
     }
 
     return winner;
 }
 
-static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
 {
     // Search is inclusive of start
     int winningTabIndex = 0;
-    Node* winner = 0;
+    Element* winner = 0;
     for (Node* node = start; node; node = NodeRenderingTraversal::previousInScope(node)) {
-        int currentTabIndex = adjustedTabIndex(node, event);
-        if ((shouldVisit(node, event) || isNonFocusableShadowHost(node, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
-            winner = node;
+        if (!node->isElementNode())
+            continue;
+        Element* element = toElement(node);
+        int currentTabIndex = adjustedTabIndex(element, event);
+        if ((shouldVisit(element, event) || isNonFocusableShadowHost(element, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
+            winner = element;
             winningTabIndex = currentTabIndex;
         }
     }
@@ -471,7 +482,7 @@ Node* FocusController::nextFocusableNode(FocusNavigationScope scope, Node* start
         }
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (Node* winner = findNodeWithExactTabIndex(nextInScope(start), tabIndex, event, FocusDirectionForward))
+        if (Element* winner = findElementWithExactTabIndex(nextInScope(start), tabIndex, event, FocusDirectionForward))
             return winner;
 
         if (!tabIndex)
@@ -479,15 +490,15 @@ Node* FocusController::nextFocusableNode(FocusNavigationScope scope, Node* start
             return 0;
     }
 
-    // Look for the first node in the scope that:
+    // Look for the first Element in the scope that:
     // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
     // 2) comes first in the scope, if there's a tie.
-    if (Node* winner = nextNodeWithGreaterTabIndex(scope.rootNode(), start ? adjustedTabIndex(start, event) : 0, event))
+    if (Element* winner = nextElementWithGreaterTabIndex(scope.rootNode(), start ? adjustedTabIndex(start, event) : 0, event))
         return winner;
 
     // There are no nodes with a tabindex greater than start's tabindex,
     // so find the first node with a tabindex of 0.
-    return findNodeWithExactTabIndex(scope.rootNode(), 0, event, FocusDirectionForward);
+    return findElementWithExactTabIndex(scope.rootNode(), 0, event, FocusDirectionForward);
 }
 
 Node* FocusController::previousFocusableNode(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
@@ -519,14 +530,14 @@ Node* FocusController::previousFocusableNode(FocusNavigationScope scope, Node* s
         }
     }
 
-    if (Node* winner = findNodeWithExactTabIndex(startingNode, startingTabIndex, event, FocusDirectionBackward))
+    if (Element* winner = findElementWithExactTabIndex(startingNode, startingTabIndex, event, FocusDirectionBackward))
         return winner;
 
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
     // 2) comes last in the scope, if there's a tie.
     startingTabIndex = (start && startingTabIndex) ? startingTabIndex : std::numeric_limits<short>::max();
-    return previousNodeWithLowerTabIndex(last, startingTabIndex, event);
+    return previousElementWithLowerTabIndex(last, startingTabIndex, event);
 }
 
 static bool relinquishesEditingFocus(Node *node)

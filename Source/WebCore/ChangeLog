@@ -1,5 +1,38 @@
 2013-05-25  Andreas Kling  <akling@apple.com>
 
+        Move Node::tabIndex() to Element.
+        <http://webkit.org/b/116772>
+
+        Reviewed by Ryosuke Niwa.
+
+        Since only Elements are keyboard-focusable, it doesn't make sense for Node to have a tabIndex().
+
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+
+            A Node can't have a tab index, so move tabIndex() to Element.
+
+        * page/FocusController.h:
+        * page/FocusController.cpp:
+        (WebCore::adjustedTabIndex):
+        (WebCore::FocusController::findElementWithExactTabIndex):
+        (WebCore::nextElementWithGreaterTabIndex):
+        (WebCore::previousElementWithLowerTabIndex):
+        (WebCore::FocusController::nextFocusableNode):
+        (WebCore::FocusController::previousFocusableNode):
+
+            Make this code deal in Element* when doing tab index stuff. FocusController needs
+            more Node->Element cleanup, but let's do that separately.
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.h:
+
+            Sprinkle OVERRIDE.
+
+2013-05-25  Andreas Kling  <akling@apple.com>
+
         Don't instantiate ChildNodeLists just to get a child count.
         <http://webkit.org/b/116776>
 
