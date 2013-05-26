@@ -1,5 +1,57 @@
 2013-05-26  Andreas Kling  <akling@apple.com>
 
+        Move "active" state logic from Node to Element.
+        <http://webkit.org/b/116785>
+
+        Reviewed by Antti Koivisto.
+
+        Resolve another 7 year old FIXME by merging the "active" state logic from Node and ContainerNode
+        and moving it all to Element instead.
+
+        * dom/UserActionElementSet.h:
+        (WebCore::UserActionElementSet::isActive):
+        (WebCore::UserActionElementSet::setActive):
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Element.h:
+        (WebCore::Element::active):
+        * dom/Element.cpp:
+        (WebCore::Element::isUserActionElementActive):
+        (WebCore::Element::setActive):
+
+            Moved here from Node/ContainerNode.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isPressed):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        (WebCore::Document::updateHoverActiveState):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isPressed):
+        (WebCore::RenderTheme::isSpinUpButtonPartPressed):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::getMediaUIPartStateFlags):
+        (WebCore::RenderThemeMac::updatePressedState):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::getMediaControlForegroundColor):
+
+            Check that the inspected Node is an Element before asking if it's active.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setActive):
+
+            Call the right superclass.
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLLabelElement.h:
+        * html/shadow/MediaControlElementTypes.h:
+
+            Sprinkle OVERRIDE>
+
+2013-05-26  Andreas Kling  <akling@apple.com>
+
         Move Node::dispatchSimulatedClick() to Element.
         <http://webkit.org/b/116784>
 

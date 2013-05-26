@@ -358,7 +358,6 @@ public:
     bool isUserActionElement() const { return getFlag(IsUserActionElement); }
     void setUserActionElement(bool flag) { setFlag(flag, IsUserActionElement); }
 
-    bool active() const { return isUserActionElement() && isUserActionElementActive(); }
     bool inActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
 
     bool attached() const { return getFlag(IsAttachedFlag); }
@@ -396,8 +395,6 @@ public:
     };
     void lazyAttach(ShouldSetAttached = SetAttached);
     void lazyReattach(ShouldSetAttached = SetAttached);
-
-    virtual void setActive(bool flag = true, bool pause = false);
 
     enum UserSelectAllTreatment {
         UserSelectAllDoesNotAffectEditability,
@@ -773,9 +770,7 @@ private:
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
     bool isEditableToAccessibility(EditableLevel) const;
 
-    bool isUserActionElementActive() const;
     bool isUserActionElementInActiveChain() const;
-    bool isUserActionElementFocused() const;
 
     void setStyleChange(StyleChangeType);
 

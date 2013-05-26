@@ -215,7 +215,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
 
     }
     
-    ContainerNode::setActive(down, pause);
+    HTMLElement::setActive(down, pause);
 }
 
 void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

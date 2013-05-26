@@ -594,7 +594,7 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
     if (!o)
         return fgColor;
 
-    if (o->node()->active())
+    if (o->node() && o->node()->isElementNode() && toElement(o->node())->active())
         fgColor = fgColor.lighter();
 
     if (!mediaElementCanPlay(o))

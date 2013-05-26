@@ -634,7 +634,9 @@ bool AccessibilityNodeObject::isPressed() const
         return false;
     }
 
-    return node->active();
+    if (!node->isElementNode())
+        return false;
+    return toElement(node)->active();
 }
 
 bool AccessibilityNodeObject::isChecked() const

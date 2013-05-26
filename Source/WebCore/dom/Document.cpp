@@ -3340,11 +3340,13 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
     if (oldFocusedNode) {
         ASSERT(!oldFocusedNode->inDetach());
 
-        if (oldFocusedNode->active())
-            oldFocusedNode->setActive(false);
+        if (oldFocusedNode->isElementNode()) {
+            Element* oldFocusedElement = toElement(oldFocusedNode.get());
+            if (oldFocusedElement->active())
+                oldFocusedElement->setActive(false);
 
-        if (oldFocusedNode->isElementNode())
             toElement(oldFocusedNode.get())->setFocus(false);
+        }
 
         // Dispatch a change event for form control elements that have been edited.
         if (oldFocusedNode->isElementNode() && toElement(oldFocusedNode.get())->isFormControlElement()) {
@@ -5870,7 +5872,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         for (RenderObject* curr = oldActiveElement->renderer(); curr; curr = curr->parent()) {
             if (curr->node()) {
                 ASSERT(!curr->node()->isTextNode());
-                curr->node()->setActive(false);
+                if (curr->node()->isElementNode())
+                    toElement(curr->node())->setActive(false);
                 m_userActionElements.setInActiveChain(curr->node(), false);
             }
         }
@@ -5973,8 +5976,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     bool sawCommonAncestor = false;
     size_t addCount = nodesToAddToChain.size();
     for (size_t i = 0; i < addCount; ++i) {
-        if (allowActiveChanges)
-            nodesToAddToChain[i]->setActive(true);
+        if (allowActiveChanges && nodesToAddToChain[i]->isElementNode())
+            toElement(nodesToAddToChain[i].get())->setActive(true);
         if (ancestor && nodesToAddToChain[i] == ancestor->node())
             sawCommonAncestor = true;
         if (!sawCommonAncestor) {

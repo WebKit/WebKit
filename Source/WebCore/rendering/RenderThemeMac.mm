@@ -252,7 +252,7 @@ static unsigned getMediaUIPartStateFlags(Node* node)
 
     if (isDisabledFormControl(node))
         flags |= MediaUIPartDisabledFlag;
-    else if (node->active())
+    else if (node->isElementNode() && toElement(node)->active())
         flags |= MediaUIPartPressedFlag;
     return flags;
 }
@@ -975,7 +975,7 @@ void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject* o)
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject* o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = (o->node() && o->node()->active());
+    bool pressed = o->node() && o->node()->isElementNode() && toElement(o->node())->active();
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }

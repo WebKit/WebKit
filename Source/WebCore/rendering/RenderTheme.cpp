@@ -805,19 +805,20 @@ bool RenderTheme::isFocused(const RenderObject* o) const
 
 bool RenderTheme::isPressed(const RenderObject* o) const
 {
-    if (!o->node())
+    if (!o->node() || !o->node()->isElementNode())
         return false;
-    return o->node()->active();
+    return toElement(o->node())->active();
 }
 
 bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject* o) const
 {
     Node* node = o->node();
-    if (!node || !node->active() || !node->isElementNode()
-        || !toElement(node)->isSpinButtonElement())
+    if (!node || !node->isElementNode())
         return false;
-    SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
-    return element->upDownState() == SpinButtonElement::Up;
+    Element* element = toElement(node);
+    if (!element->active() || !element->isSpinButtonElement())
+        return false;
+    return static_cast<SpinButtonElement*>(element)->upDownState() == SpinButtonElement::Up;
 }
 
 bool RenderTheme::isReadOnlyControl(const RenderObject* o) const

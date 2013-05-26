@@ -30,6 +30,8 @@
 #include "Attr.h"
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ClassList.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
@@ -86,6 +88,7 @@
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include <wtf/BitVector.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
@@ -454,6 +457,12 @@ bool Element::isFocusable() const
     return true;
 }
 
+bool Element::isUserActionElementActive() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isActive(this);
+}
+
 bool Element::isUserActionElementFocused() const
 {
     ASSERT(isUserActionElement());
@@ -464,6 +473,54 @@ bool Element::isUserActionElementHovered() const
 {
     ASSERT(isUserActionElement());
     return document()->userActionElements().isHovered(this);
+}
+
+void Element::setActive(bool flag, bool pause)
+{
+    if (flag == active())
+        return;
+
+    if (Document* document = this->document())
+        document->userActionElements().setActive(this, flag);
+
+    if (!renderer())
+        return;
+
+    bool reactsToPress = renderStyle()->affectedByActive() || childrenAffectedByActive();
+    if (reactsToPress)
+        setNeedsStyleRecalc();
+
+    if (renderer()->style()->hasAppearance() && renderer()->theme()->stateChanged(renderer(), PressedState))
+        reactsToPress = true;
+
+    // The rest of this function implements a feature that only works if the
+    // platform supports immediate invalidations on the ChromeClient, so bail if
+    // that isn't supported.
+    if (!document()->page()->chrome().client()->supportsImmediateInvalidation())
+        return;
+
+    if (reactsToPress && pause) {
+        // The delay here is subtle. It relies on an assumption, namely that the amount of time it takes
+        // to repaint the "down" state of the control is about the same time as it would take to repaint the
+        // "up" state. Once you assume this, you can just delay for 100ms - that time (assuming that after you
+        // leave this method, it will be about that long before the flush of the up state happens again).
+#ifdef HAVE_FUNC_USLEEP
+        double startTime = currentTime();
+#endif
+
+        Document::updateStyleForAllDocuments();
+        // Do an immediate repaint.
+        if (renderer())
+            renderer()->repaint(true);
+
+        // FIXME: Come up with a less ridiculous way of doing this.
+#ifdef HAVE_FUNC_USLEEP
+        // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
+        double remainingTime = 0.1 - (currentTime() - startTime);
+        if (remainingTime > 0)
+            usleep(static_cast<useconds_t>(remainingTime * 1000000.0));
+#endif
+    }
 }
 
 void Element::setFocus(bool flag)

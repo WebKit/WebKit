@@ -2677,18 +2677,6 @@ size_t Node::numberOfScopedHTMLStyleChildren() const
     return count;
 }
 
-void Node::setActive(bool flag, bool)
-{
-    if (Document* document = this->document())
-        document->userActionElements().setActive(this, flag);
-}
-
-bool Node::isUserActionElementActive() const
-{
-    ASSERT(isUserActionElement());
-    return document()->userActionElements().isActive(this);
-}
-
 bool Node::isUserActionElementInActiveChain() const
 {
     ASSERT(isUserActionElement());
