@@ -154,8 +154,8 @@ class RollChromiumDEPS(IRCCommand):
         if not len(args):
             return self.usage(nick)
         tool.irc().post("%s: Will roll Chromium DEPS to %s" % (nick, ' '.join(args)))
-        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, ' '.join(args))
-        tool.irc().post("%s: Rolled Chromium DEPS to %s" % (nick, ' '.join(args))
+        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, ' '.join(args)))
+        tool.irc().post("%s: Rolled Chromium DEPS to %s" % (nick, ' '.join(args)))
         tool.irc().post("%s: Thank You" % nick)
 
 

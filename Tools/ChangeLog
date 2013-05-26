@@ -1,5 +1,14 @@
 2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WKR and webkitbot build fixes.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (RollChromiumDEPS.execute):
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot.next_work_item):
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         roll-chromium-deps doesn't repeat the full name.
 
         Rubber-stamped by Andreas Kling.
