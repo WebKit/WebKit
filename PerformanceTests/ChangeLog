@@ -1,3 +1,22 @@
+2013-05-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a balanced benchmark for QuerySelector
+        https://bugs.webkit.org/show_bug.cgi?id=116811
+
+        Reviewed by Sam Weinig.
+
+        The goal of this benchmark is to have an overview of querySelector as typically used
+        by webpages.
+
+        It uses queries similar to what is used by popular websites and applies somewhat
+        similar weighting for each type of query.
+
+        The tree used for the queries is intentionally kept simple to ensure we measure QuerySelector
+        a not purely the overhead of traversal.
+
+        * CSS/QuerySelector.html: Added.
+        * CSS/resources/query-selector.html: Added.
+
 2013-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a performance test for copying
