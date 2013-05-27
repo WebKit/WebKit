@@ -97,6 +97,18 @@ void WebPage::platformInitialize()
     m_mockAccessibilityElement = mockAccessibilityElement;
 }
 
+NSObject *WebPage::accessibilityObjectForMainFramePlugin()
+{
+    Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return 0;
+
+    if (PluginView* pluginView = pluginViewForFrame(frame))
+        return pluginView->accessibilityObject();
+
+    return 0;
+}
+
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
     if (WebInspector* inspector = this->inspector())

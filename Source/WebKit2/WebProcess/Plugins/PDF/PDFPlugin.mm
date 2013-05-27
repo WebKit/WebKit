@@ -45,6 +45,7 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import "WKAccessibilityWebPageObject.h"
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/Cursor.h>
@@ -64,6 +65,7 @@
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/UUID.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -100,10 +102,161 @@ static const char* annotationStyle =
 // will jump to the next or previous page, to match PDFKit behavior.
 static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
-@interface WKPDFPluginScrollbarLayer : CALayer
+@interface WKPDFPluginAccessibilityObject : NSObject
+
+@property(assign) PDFLayerController *pdfLayerController;
+@property(assign) NSObject *parent;
+@property(assign) WebKit::PDFPlugin* pdfPlugin;
+
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
+
+@end
+
+@implementation WKPDFPluginAccessibilityObject
+
+@synthesize pdfLayerController = _pdfLayerController;
+@synthesize parent = _parent;
+@synthesize pdfPlugin = _pdfPlugin;
+
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
-    WebKit::PDFPlugin* _pdfPlugin;
+    if (!(self = [super init]))
+        return nil;
+
+    _pdfPlugin = plugin;
+
+    return self;
 }
+
+- (BOOL)accessibilityIsIgnored
+{
+    return NO;
+}
+
+- (id)accessibilityAttributeValue:(NSString *)attribute
+{
+    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+        return _parent;
+    else if ([attribute isEqualToString:NSAccessibilityValueAttribute])
+        return [_pdfLayerController accessibilityValueAttribute];
+    else if ([attribute isEqualToString:NSAccessibilitySelectedTextAttribute])
+        return [_pdfLayerController accessibilitySelectedTextAttribute];
+    else if ([attribute isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
+        return [_pdfLayerController accessibilitySelectedTextRangeAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
+        return [_pdfLayerController accessibilityNumberOfCharactersAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute])
+        return [_pdfLayerController accessibilityVisibleCharacterRangeAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return [_pdfLayerController accessibilityRoleAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
+        return [_pdfLayerController accessibilityRoleDescriptionAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+    else if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
+        return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
+    else if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityFocusedAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
+    else if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
+        return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
+
+    return 0;
+}
+
+- (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+{
+    if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
+        NSRect boundsInPDFViewCoordinates = [[_pdfLayerController accessibilityBoundsForRangeAttributeForParameter:parameter] rectValue];
+        NSRect boundsInScreenCoordinates = _pdfPlugin->convertFromPDFViewToScreen(boundsInPDFViewCoordinates);
+        return [NSValue valueWithRect:boundsInScreenCoordinates];;
+    } else if ([attribute isEqualToString:NSAccessibilityLineForIndexParameterizedAttribute])
+        return [_pdfLayerController accessibilityLineForIndexAttributeForParameter:parameter];
+    else if ([attribute isEqualToString:NSAccessibilityRangeForLineParameterizedAttribute])
+        return [_pdfLayerController accessibilityRangeForLineAttributeForParameter:parameter];
+    else if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute])
+        return [_pdfLayerController accessibilityStringForRangeAttributeForParameter:parameter];
+
+    return 0;
+}
+
+- (CPReadingModel *)readingModel
+{
+    return [_pdfLayerController readingModel];
+}
+
+- (NSArray *)accessibilityAttributeNames
+{
+    static NSArray *attributeNames = 0;
+
+    if (!attributeNames)
+        attributeNames = [[NSArray arrayWithObjects:NSAccessibilityValueAttribute,
+            NSAccessibilitySelectedTextAttribute,
+            NSAccessibilitySelectedTextRangeAttribute,
+            NSAccessibilityNumberOfCharactersAttribute,
+            NSAccessibilityVisibleCharacterRangeAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityRoleAttribute,
+            NSAccessibilityWindowAttribute,
+            NSAccessibilityTopLevelUIElementAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityPositionAttribute,
+            nil] retain];
+
+    return attributeNames;
+}
+
+- (NSArray *)accessibilityActionNames
+{
+    static NSArray *actionNames = 0;
+    
+    if (!actionNames)
+        actionNames = [[NSArray arrayWithObject:NSAccessibilityShowMenuAction] retain];
+    
+    return actionNames;
+}
+
+- (void)accessibilityPerformAction:(NSString *)action
+{
+    if ([action isEqualToString:NSAccessibilityShowMenuAction])
+        _pdfPlugin->showContextMenuAtPoint(IntRect(IntPoint(), _pdfPlugin->size()).center());
+}
+
+- (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute
+{
+    return [_pdfLayerController accessibilityIsAttributeSettable:attribute];
+}
+
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute
+{
+    return [_pdfLayerController accessibilitySetValue:value forAttribute:attribute];
+}
+
+- (NSArray *)accessibilityParameterizedAttributeNames
+{
+    return [_pdfLayerController accessibilityParameterizedAttributeNames];
+}
+
+- (id)accessibilityFocusedUIElement
+{
+    return self;
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    return self;
+}
+
+@end
+
+
+@interface WKPDFPluginScrollbarLayer : CALayer
 
 @property(assign) WebKit::PDFPlugin* pdfPlugin;
 
@@ -111,7 +264,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @implementation WKPDFPluginScrollbarLayer
 
-@synthesize pdfPlugin=_pdfPlugin;
+@synthesize pdfPlugin = _pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -251,6 +404,10 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
         m_annotationContainer->appendChild(m_annotationStyle.get());
         document->body()->appendChild(m_annotationContainer.get());
     }
+
+    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this]);
+    m_accessibilityObject.get().pdfLayerController = m_pdfLayerController.get();
+    m_accessibilityObject.get().parent = webFrame()->page()->accessibilityRemoteObject();
 
     [m_containerLayer.get() addSublayer:m_contentLayer.get()];
     [m_containerLayer.get() addSublayer:m_scrollCornerLayer.get()];
@@ -456,14 +613,45 @@ PlatformLayer* PDFPlugin::pluginLayer()
     return m_containerLayer.get();
 }
 
+IntPoint PDFPlugin::convertFromPluginToPDFView(const IntPoint& point) const
+{
+    return IntPoint(point.x(), size().height() - point.y());
+}
+
 IntPoint PDFPlugin::convertFromRootViewToPlugin(const IntPoint& point) const
 {
     return m_rootViewToPluginTransform.mapPoint(point);
 }
 
-IntPoint PDFPlugin::convertFromPluginToPDFView(const IntPoint& point) const
+IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 {
-    return IntPoint(point.x(), size().height() - point.y());
+    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
+    return m_rootViewToPluginTransform.inverse().mapPoint(pointInPluginCoordinates);
+}
+
+FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
+{
+    FrameView* frameView = webFrame()->coreFrame()->view();
+
+    if (!frameView)
+        return FloatRect();
+
+    FloatPoint originInPluginCoordinates(rect.x(), size().height() - rect.y() - rect.height());
+    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().mapRect(FloatRect(originInPluginCoordinates, rect.size()));
+
+    return frameView->contentsToScreen(enclosingIntRect(rectInRootViewCoordinates));
+}
+
+IntRect PDFPlugin::boundsOnScreen() const
+{
+    FrameView* frameView = webFrame()->coreFrame()->view();
+
+    if (!frameView)
+        return IntRect();
+
+    FloatRect bounds = FloatRect(FloatPoint(), size());
+    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().mapRect(bounds);
+    return frameView->contentsToScreen(enclosingIntRect(rectInRootViewCoordinates));
 }
 
 void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, const AffineTransform& pluginToRootViewTransform)
@@ -700,13 +888,20 @@ bool PDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     return false;
 }
     
+bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
+{
+    FrameView* frameView = webFrame()->coreFrame()->view();
+    IntPoint contentsPoint = frameView->contentsToRootView(point);
+    WebMouseEvent event(WebEvent::MouseDown, WebMouseEvent::RightButton, contentsPoint, contentsPoint, 0, 0, 0, 1, static_cast<WebEvent::Modifiers>(0), monotonicallyIncreasingTime());
+    return handleContextMenuEvent(event);
+}
+
 bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
-    NSMenu *nsMenu = [m_pdfLayerController.get() menuForEvent:nsEventForWebMouseEvent(event)];
-
     FrameView* frameView = webFrame()->coreFrame()->view();
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
-    if (nsMenu) {
+    
+    if (NSMenu *nsMenu = [m_pdfLayerController.get() menuForEvent:nsEventForWebMouseEvent(event)]) {
         WKPopupContextMenu(nsMenu, point);
         return true;
     }
@@ -911,12 +1106,6 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
     }
 }
 
-IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
-{
-    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return m_rootViewToPluginTransform.inverse().mapPoint(pointInPluginCoordinates);
-}
-
 void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CGPoint point)
 {
     DictionaryPopupInfo dictionaryPopupInfo;
@@ -1104,6 +1293,11 @@ NSData *PDFPlugin::liveData() const
         m_activeAnnotation->commit();
 
     return SimplePDFPlugin::liveData();
+}
+
+NSObject *PDFPlugin::accessibilityObject() const
+{
+    return m_accessibilityObject.get();
 }
 
 } // namespace WebKit

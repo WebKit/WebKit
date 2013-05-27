@@ -38,6 +38,7 @@
 #if PLATFORM(MAC)
 #include "LayerHostingContext.h"
 
+OBJC_CLASS NSObject;
 OBJC_CLASS PDFDocument;
 #endif
 
@@ -259,6 +260,7 @@ public:
 
 #if PLATFORM(MAC)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
+    virtual NSObject *accessibilityObject() const { return 0; }
 #endif
 
     virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;

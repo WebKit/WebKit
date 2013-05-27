@@ -1,3 +1,13 @@
+2013-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Main-frame PDFPlugin Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=116563
+        <rdar://problem/13458534>
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in: Export AffineTransform::mapRect.
+
 2013-05-27  Tiancheng Jiang  <tijiang@rim.com>
 
         Checkbox UX update.

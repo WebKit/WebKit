@@ -25,6 +25,8 @@
 
 #import <PDFKit/PDFKit.h>
 
+@class CPReadingModel;
+
 @protocol PDFLayerControllerDelegate <NSObject>
 
 - (void)updateScrollPosition:(CGPoint)newPosition;
@@ -113,5 +115,29 @@
 - (void)attemptToUnlockWithPassword:(NSString *)password;
 
 - (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
+
+// Accessibility
+
+- (CPReadingModel *)readingModel;
+- (id)accessibilityFocusedUIElement;
+- (NSArray *)accessibilityAttributeNames;
+- (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute;
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute;
+- (NSArray *)accessibilityParameterizedAttributeNames;
+- (NSString *)accessibilityRoleAttribute;
+- (NSString *)accessibilityRoleDescriptionAttribute;
+- (NSString *)accessibilityValueAttribute;
+- (BOOL)accessibilityIsValueAttributeSettable;
+- (NSString *)accessibilitySelectedTextAttribute;
+- (BOOL)accessibilityIsSelectedTextAttributeSettable;
+- (NSValue *)accessibilitySelectedTextRangeAttribute;
+- (NSNumber *)accessibilityNumberOfCharactersAttribute;
+- (BOOL)accessibilityIsNumberOfCharactersAttributeSettable;
+- (NSValue *)accessibilityVisibleCharacterRangeAttribute;
+- (BOOL)accessibilityIsVisibleCharacterRangeAttributeSettable;
+- (NSNumber *)accessibilityLineForIndexAttributeForParameter:(id)parameter;
+- (NSValue *)accessibilityRangeForLineAttributeForParameter:(id)parameter;
+- (NSString *)accessibilityStringForRangeAttributeForParameter:(id)parameter;
+- (NSValue *)accessibilityBoundsForRangeAttributeForParameter:(id)parameter;
 
 @end

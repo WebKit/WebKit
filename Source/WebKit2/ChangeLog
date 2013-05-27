@@ -1,3 +1,78 @@
+2013-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Main-frame PDFPlugin Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=116563
+        <rdar://problem/13458534>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        Forward-declare a variety of accessibility methods.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        Add convertFromPDFViewToScreen, boundsOnScreen, accessibilityObject, and
+        storage for our accessibility wrapper.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        Add WKPDFPluginAccessibilityObject.
+
+        (-[WKPDFPluginAccessibilityObject accessibilityIsIgnored]):
+        We want to be included in the accessibility tree.
+
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:forParameter:]):
+        Grab values for accessibility attributes from the relevant sources
+        (mostly from PDFLayerController).
+
+        (-[WKPDFPluginAccessibilityObject readingModel]): Ditto.
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeNames]):
+        (-[WKPDFPluginAccessibilityObject accessibilityParameterizedAttributeNames]):
+        (-[WKPDFPluginAccessibilityObject accessibilityActionNames]):
+        Return the set of accessibility attributes, actions, and parameterized
+        attributes that we support.
+
+        (-[WKPDFPluginAccessibilityObject accessibilityIsAttributeSettable:]):
+        (-[WKPDFPluginAccessibilityObject accessibilitySetValue:forAttribute:]):
+        Forward some other accessibility methods to PDFLayerController.
+
+        (-[WKPDFPluginAccessibilityObject accessibilityFocusedUIElement]):
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+        We have no children, so if a hit test makes it to us, it's ours.
+
+        (WebKit::PDFPlugin::PDFPlugin):
+        Make a WKPDFPluginAccessibilityObject and hook it up.
+        [FIXME: this could use some de-crapifying]
+
+        (WebKit::PDFPlugin::convertFromPluginToPDFView):
+        Transform a point from plugin space to PDFLayerController space.
+
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView):
+        (WebKit::PDFPlugin::convertFromPDFViewToScreen): Added.
+        (WebKit::PDFPlugin::boundsOnScreen):
+        Return the PDFPlugin's frame in screen coordinates.
+
+        (WebKit::PDFPlugin::accessibilityObject):
+        Return our accessibility wrapper.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::accessibilityObject):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::accessibilityObject):
+        * WebProcess/Plugins/PluginView.h:
+        Add accessibilityObject(), to acquire accessibility wrappers from plugins.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add accessibilityObjectForMainFramePlugin();
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityRootObjectWrapper]):
+        If the main frame has a PluginDocument that has an accessibilityObject,
+        use that one instead of the WebPage's.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::accessibilityObjectForMainFramePlugin):
+        Return the accessibilityObject from the main-frame PluginDocument, if
+        there is one.
+
 2013-05-27  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [WK2][CoordinatedGraphics] Misuse of DrawingAreaProxy::setVisibleContentsRect() in WebView::updateViewportSize()
