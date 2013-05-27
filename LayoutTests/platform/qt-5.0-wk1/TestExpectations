@@ -163,3 +163,6 @@ webkit.org/b/113569 fast/events/event-attribute.html [ Skip ]
 
 # [Qt][WK1] REGRESSION(r148310): http/tests/ssl/ping-with-unsafe-redirect.html causes http/tests/ssl/referer-301.html to crash
 webkit.org/b/114619 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]
+
+# [Qt] REGRESSION(r150688,r150693): http/tests/globalhistory/history-delegate-basic-refresh-redirect.html fails
+webkit.org/b/116809 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Skip ]

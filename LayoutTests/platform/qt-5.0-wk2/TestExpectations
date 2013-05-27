@@ -789,6 +789,11 @@ editing/spelling/grammar.html
 
 # [Qt][WK2] REGRESSION(r148594): fast/events/mouseout-on-window.html fails with enabled sub-pixel layout
 webkit.org/b/42194 fast/events/mouseout-on-window.html [ Skip ]
+# [Qt][WK2] REGRESSION(r148594) fast/multicol/vertical-rl/float-multicol.html
+webkit.org/b/116812 fast/multicol/vertical-rl/float-multicol.html [ Skip ]
 
 # [Qt][WK2] fast/events/touch/frame-hover-update.html fails
 webkit.org/b/116668 fast/events/touch/frame-hover-update.html [ Skip ]
+
+# [Qt] Newly addded test in r150234 fast/frames/flattening/scrolling-in-object.html fails
+webkit.org/b/116810 fast/frames/flattening/scrolling-in-object.html [ Skip ]
