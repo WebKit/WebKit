@@ -279,11 +279,6 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font&)
-{
-    return 0;
-}
-
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDesc, ShouldRetain shouldRetain)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick

@@ -1,3 +1,40 @@
+2013-05-27  Antti Koivisto  <antti@apple.com>
+
+        Tighten FontGlyphs interfaces to take FontDescription instead of Font
+        https://bugs.webkit.org/show_bug.cgi?id=116818
+
+        Reviewed by Andreas Kling.
+
+        This gives better understanding of what the actual inputs are.
+
+        * WebCore.exp.in:
+        * platform/graphics/Font.h:
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::fontDataAt):
+        (WebCore::Font::isFixedPitch):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getFontData):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::determinePitch):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontGlyphs::primaryFontData):
+        (WebCore::FontGlyphs::isFixedPitch):
+        (WebCore::FontGlyphs::primarySimpleFontData):
+        * platform/graphics/blackberry/FontCacheBlackBerry.cpp:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::similarFontPlatformData):
+        
+            Drop get* naming and make this Mac only as no other platform has it.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        * platform/graphics/win/FontCacheWin.cpp:
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore):
+
 2013-05-27  Andreas Kling  <akling@apple.com>
 
         Strengthen typing of detaching an Element from Document's :active chain.

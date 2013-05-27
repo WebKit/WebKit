@@ -73,11 +73,6 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return getCachedFontData(&alternateFont, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
-{
-    return 0;
-}
-
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     const AtomicString fallbackFamily = QFont(fontDescription.firstFamily()).lastResortFamily();

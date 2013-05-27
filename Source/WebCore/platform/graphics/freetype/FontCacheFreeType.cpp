@@ -100,11 +100,6 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return getCachedFontData(&alternateFontData, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font&)
-{
-    return 0;
-}
-
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     // We want to return a fallback font here, otherwise the logic preventing FontConfig

@@ -296,11 +296,6 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return fontData.release();
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
-{
-    return 0;
-}
-
 PassRefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
     AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));

@@ -71,7 +71,7 @@ public:
 
     enum ShouldRetain { Retain, DoNotRetain };
 
-    PassRefPtr<FontData> getFontData(const Font&, int& familyIndex, FontSelector*);
+    PassRefPtr<FontData> getFontData(const FontDescription&, int& familyIndex, FontSelector*);
     void releaseFontData(const SimpleFontData*);
 
     // This method is implemented by the platform.
@@ -141,8 +141,10 @@ private:
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
-    PassRefPtr<SimpleFontData> getSimilarFontPlatformData(const Font&);
     PassOwnPtr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
+#if PLATFORM(MAC)
+    PassRefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
+#endif
 
     PassRefPtr<SimpleFontData> getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
 

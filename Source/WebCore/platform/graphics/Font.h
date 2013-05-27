@@ -321,19 +321,19 @@ inline Font::~Font()
 inline const SimpleFontData* Font::primaryFont() const
 {
     ASSERT(m_glyphs);
-    return m_glyphs->primarySimpleFontData(this);
+    return m_glyphs->primarySimpleFontData(m_fontDescription);
 }
 
 inline const FontData* Font::fontDataAt(unsigned index) const
 {
     ASSERT(m_glyphs);
-    return m_glyphs->realizeFontDataAt(this, index);
+    return m_glyphs->realizeFontDataAt(m_fontDescription, index);
 }
 
 inline bool Font::isFixedPitch() const
 {
     ASSERT(m_glyphs);
-    return m_glyphs->isFixedPitch(this);
+    return m_glyphs->isFixedPitch(m_fontDescription);
 }
 
 inline FontSelector* Font::fontSelector() const

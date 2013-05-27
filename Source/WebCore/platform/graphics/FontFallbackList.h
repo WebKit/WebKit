@@ -73,8 +73,8 @@ public:
 
     std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const Font&, UChar32, bool mirror, FontDataVariant) const;
     
-    bool isFixedPitch(const Font* f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
-    void determinePitch(const Font*) const;
+    bool isFixedPitch(const FontDescription&) const;
+    void determinePitch(const FontDescription&) const;
 
     bool loadingCustomFonts() const { return m_loadingCustomFonts; }
 
@@ -85,9 +85,9 @@ public:
 
     WidthCache& widthCache() const { return m_widthCache; }
 
-    const SimpleFontData* primarySimpleFontData(const Font*) const;
-    const FontData* primaryFontData(const Font* f) const { return realizeFontDataAt(f, 0); }
-    const FontData* realizeFontDataAt(const Font*, unsigned index) const;
+    const SimpleFontData* primarySimpleFontData(const FontDescription&) const;
+    const FontData* primaryFontData(const FontDescription& description) const { return realizeFontDataAt(description, 0); }
+    const FontData* realizeFontDataAt(const FontDescription&, unsigned index) const;
 
 private:
     FontGlyphs();
@@ -108,11 +108,18 @@ private:
     mutable bool m_loadingCustomFonts : 1;
 };
 
-inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const Font* f) const
+inline bool FontGlyphs::isFixedPitch(const FontDescription& description) const
+{
+    if (m_pitch == UnknownPitch)
+        determinePitch(description);
+    return m_pitch == FixedPitch;
+};
+
+inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const FontDescription& description) const
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimarySimpleFontData)
-        m_cachedPrimarySimpleFontData = primaryFontData(f)->fontDataForCharacter(' ');
+        m_cachedPrimarySimpleFontData = primaryFontData(description)->fontDataForCharacter(' ');
     return m_cachedPrimarySimpleFontData;
 }
 

@@ -178,11 +178,6 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return getCachedFontData(&platformData, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font&)
-{
-    return 0;
-}
-
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, sansStr, ("Sans"));
