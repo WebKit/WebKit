@@ -1,3 +1,26 @@
+2013-05-27  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Reveal HTTP error code for XHR even if there is no response body
+        https://bugs.webkit.org/show_bug.cgi?id=116543
+
+        Reviewed by Rob Buis.
+        Reviewed internally by Joe Mason.
+
+        It's a regression introduced by r132556.
+        BlackBerry is doing friendly HTTP error handling: if there is no response body
+        for an HTTP error it will display an error message made by the port. But for a
+        XHR request, which usually does not result in displaying error messages to the
+        end user, HTTP error code should be revealed to let the JavaScript know what
+        the actual server error code is.
+
+        Covered by existing tests:
+        ManualTests/blackberry/head-xhr-nonexistant-file.html
+        LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-check-head-readystate-for-404.html
+        LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-body.html
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::shouldNotifyClientFailed):
+
 2013-05-27  Tiancheng Jiang  <tijiang@rim.com>
 
         Adjust date input width.
