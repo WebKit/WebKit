@@ -1,3 +1,26 @@
+2013-05-27  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [WK2][CoordinatedGraphics] Misuse of DrawingAreaProxy::setVisibleContentsRect() in WebView::updateViewportSize()
+        https://bugs.webkit.org/show_bug.cgi?id=116688
+
+        Reviewed by Noam Rosenthal.
+
+        Visible contents area passed to DrawingAreaProxy::setVisibleContentsRect()
+        must be calculated including the page scale factor and avoid crossing the
+        boundaries of the page contents size. In other words the DrawingArea
+        must know the actual dimensions of what it being drawn. If the
+        DrawingArea thinks the visible rectangle is bigger than it is, the
+        contents will be drawn pixelated and blurry.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didChangeContentsSize):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::visibleContentsSize):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        (WebKit::WebView::contentsSize):
+        (WebView):
+
 2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView child widgets are not rendered with recent GTK+

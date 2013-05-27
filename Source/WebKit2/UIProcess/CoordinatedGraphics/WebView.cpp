@@ -186,6 +186,7 @@ void WebView::initializeClient(const WKViewClient* client)
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
+    m_contentsSize = size;
     m_client.didChangeContentsSize(this, size);
 }
 
@@ -224,7 +225,9 @@ void WebView::updateViewportSize()
     if (DrawingAreaProxy* drawingArea = page()->drawingArea()) {
         // Web Process expects sizes in UI units, and not raw device units.
         drawingArea->setSize(roundedIntSize(dipSize()), IntSize(), IntSize());
-        drawingArea->setVisibleContentsRect(FloatRect(contentPosition(), dipSize()), FloatPoint());
+        FloatRect visibleContentsRect(contentPosition(), visibleContentsSize());
+        visibleContentsRect.intersect(FloatRect(FloatPoint(), contentsSize()));
+        drawingArea->setVisibleContentsRect(visibleContentsRect, FloatPoint());
     }
 }
 
@@ -234,6 +237,14 @@ inline WebCore::FloatSize WebView::dipSize() const
     dipSize.scale(1 / m_page->deviceScaleFactor());
 
     return dipSize;
+}
+
+WebCore::FloatSize WebView::visibleContentsSize() const
+{
+    FloatSize visibleContentsSize(dipSize());
+    visibleContentsSize.scale(1 / m_contentScaleFactor);
+
+    return visibleContentsSize;
 }
 
 // Page Client
