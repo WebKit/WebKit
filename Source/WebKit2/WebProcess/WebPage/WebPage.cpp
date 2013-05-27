@@ -850,6 +850,20 @@ void WebPage::close()
     m_determinePrimarySnapshottedPlugInTimer.stop();
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+    m_contextMenuClient.initialize(0);
+#endif
+    m_editorClient.initialize(0);
+    m_formClient.initialize(0);
+    m_loaderClient.initialize(0);
+    m_policyClient.initialize(0);
+    m_resourceLoadClient.initialize(0);
+    m_uiClient.initialize(0);
+#if ENABLE(FULLSCREEN_API)
+    m_fullScreenClient.initialize(0);
+#endif
+    m_logDiagnosticMessageClient.initialize(0);
+
     m_underlayPage = nullptr;
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader()->detachFromParent();

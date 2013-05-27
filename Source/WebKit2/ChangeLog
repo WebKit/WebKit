@@ -1,3 +1,18 @@
+2013-05-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reset all clients on WebPage close
+        https://bugs.webkit.org/show_bug.cgi?id=112334
+
+        Reviewed by Anders Carlsson.
+
+        We do not reset the clients on WebPage::close(), so there's a
+        small chance that someone will try to access them after that. This
+        won't work and will generally cause runtime warnings, crashes or
+        other issues. Reset them all to null to prevent this situation.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2013-05-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Notify WebProcess in WebKitURISchemeRequest when we fail to read the user InputStream
