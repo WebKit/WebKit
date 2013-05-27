@@ -1,3 +1,21 @@
+2013-05-27  Andreas Kling  <akling@apple.com>
+
+        Strengthen typing of detaching an Element from Document's :active chain.
+        <http://webkit.org/b/116815>
+
+        Reviewed by Antti Koivisto.
+
+        Tiny cleanup now that the :active chain can only contain elements.
+        Rename Document::activeChainNodeDetached() to elementInActiveChainDidDetach().
+
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::elementInActiveChainDidDetach):
+
+            Rename, take Element*, remove silly condition that was always true.
+
 2013-05-27  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Remove the offsetFromLogicalTopOfFirstPage parameter from layout functions

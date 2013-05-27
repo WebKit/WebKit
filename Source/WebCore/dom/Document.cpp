@@ -3295,12 +3295,12 @@ void Document::hoveredNodeDetached(Node* node)
         frame()->eventHandler()->scheduleHoverStateUpdate();
 }
 
-void Document::activeChainNodeDetached(Node* node)
+void Document::elementInActiveChainDidDetach(Element* element)
 {
-    if (!m_activeElement || (node != m_activeElement && (!m_activeElement->isTextNode() || node != m_activeElement->parentNode())))
+    if (!m_activeElement || element != m_activeElement)
         return;
 
-    m_activeElement = node->parentElement();
+    m_activeElement = element->parentElement();
     while (m_activeElement && !m_activeElement->renderer())
         m_activeElement = m_activeElement->parentElement();
 }

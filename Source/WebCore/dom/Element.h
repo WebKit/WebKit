@@ -665,6 +665,8 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
+    bool isTextNode() const;
+
     bool isUserActionElementInActiveChain() const;
     bool isUserActionElementActive() const;
     bool isUserActionElementFocused() const;

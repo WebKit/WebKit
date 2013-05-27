@@ -689,7 +689,7 @@ public:
     void focusedNodeRemoved();
     void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
     void hoveredNodeDetached(Node*);
-    void activeChainNodeDetached(Node*);
+    void elementInActiveChainDidDetach(Element*);
 
     void updateHoverActiveState(const HitTestRequest&, Element*, const PlatformMouseEvent* = 0);
 
