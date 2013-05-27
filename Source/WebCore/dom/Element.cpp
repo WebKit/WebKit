@@ -1477,7 +1477,7 @@ void Element::detach()
 
     if (isUserActionElement()) {
         if (hovered())
-            document()->hoveredNodeDetached(this);
+            document()->hoveredElementDidDetach(this);
         if (inActiveChain())
             document()->elementInActiveChainDidDetach(this);
         document()->userActionElements().didDetach(this);

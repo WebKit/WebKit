@@ -1,3 +1,31 @@
+2013-05-27  Andreas Kling  <akling@apple.com>
+
+        Document::setHoveredNode() should be setHoveredElement().
+        <http://webkit.org/b/116819>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can be hovered, teach Document about this.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::dispose):
+        (WebCore::Document::detach):
+
+            m_hoverNode => m_hoveredElement.
+            Removed hoverNode() and setHoverNode() since those were only used internally.
+
+        (WebCore::Document::updateHoverActiveState):
+
+            Updated for hovered things always being Elements.
+
+        (WebCore::Document::hoveredElementDidDetach):
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+
+            Renamed Document::hoveredNodeDetached() to hoveredElementDidDetach() and fix it up
+            following the same pattern as elementInActiveChainDidDetach().
+
 2013-05-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r150716): It made 15 inspector and 1 mozilla test to assert

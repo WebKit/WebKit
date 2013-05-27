@@ -661,7 +661,7 @@ void Document::dispose()
     // these extra pointers or we will create a reference cycle.
     m_docType = 0;
     m_focusedNode = 0;
-    m_hoverNode = 0;
+    m_hoveredElement = 0;
     m_activeElement = 0;
     m_titleElement = 0;
     m_documentElement = 0;
@@ -2103,7 +2103,7 @@ void Document::detach()
         setFullScreenRenderer(0);
 #endif
 
-    m_hoverNode = 0;
+    m_hoveredElement = 0;
     m_focusedNode = 0;
     m_activeElement = 0;
 
@@ -3244,11 +3244,6 @@ void Document::notifySeamlessChildDocumentsOfStylesheetUpdate() const
     }
 }
 
-void Document::setHoverNode(PassRefPtr<Node> newHoverNode)
-{
-    m_hoverNode = newHoverNode;
-}
-
 void Document::setActiveElement(PassRefPtr<Element> newActiveElement)
 {
     if (!newActiveElement) {
@@ -3283,14 +3278,14 @@ void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
         document()->focusedNodeRemoved();
 }
 
-void Document::hoveredNodeDetached(Node* node)
+void Document::hoveredElementDidDetach(Element* element)
 {
-    if (!m_hoverNode || (node != m_hoverNode && (!m_hoverNode->isTextNode() || node != m_hoverNode->parentNode())))
+    if (!m_hoveredElement || element != m_hoveredElement)
         return;
 
-    m_hoverNode = node->parentNode();
-    while (m_hoverNode && !m_hoverNode->renderer())
-        m_hoverNode = m_hoverNode->parentNode();
+    m_hoveredElement = element->parentElement();
+    while (m_hoveredElement && !m_hoveredElement->renderer())
+        m_hoveredElement = m_hoveredElement->parentElement();
     if (frame())
         frame()->eventHandler()->scheduleHoverStateUpdate();
 }
@@ -5900,25 +5895,24 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // at the time the mouse went down.
     bool mustBeInActiveChain = request.active() && request.move();
 
-    RefPtr<Node> oldHoverNode = hoverNode();
+    RefPtr<Element> oldHoveredElement = m_hoveredElement.release();
 
     // A touch release does not set a new hover target; setting the element we're working with to 0
     // will clear the chain of hovered elements all the way to the top of the tree.
     if (request.touchRelease())
         innerElementInDocument = 0;
 
-    // Check to see if the hovered node has changed.
+    // Check to see if the hovered Element has changed.
     // If it hasn't, we do not need to do anything.
-    Node* newHoverNode = innerElementInDocument;
-    while (newHoverNode && !newHoverNode->renderer())
-        newHoverNode = newHoverNode->parentOrShadowHostNode();
+    Element* newHoveredElement = innerElementInDocument;
+    while (newHoveredElement && !newHoveredElement->renderer())
+        newHoveredElement = newHoveredElement->parentOrShadowHostElement();
 
-    // Update our current hover node.
-    setHoverNode(newHoverNode);
+    m_hoveredElement = newHoveredElement;
 
     // We have two different objects. Fetch their renderers.
-    RenderObject* oldHoverObj = oldHoverNode ? oldHoverNode->renderer() : 0;
-    RenderObject* newHoverObj = newHoverNode ? newHoverNode->renderer() : 0;
+    RenderObject* oldHoverObj = oldHoveredElement ? oldHoveredElement->renderer() : 0;
+    RenderObject* newHoverObj = newHoveredElement ? newHoveredElement->renderer() : 0;
 
     // Locate the common ancestor render object for the two renderers.
     RenderObject* ancestor = nearestCommonHoverAncestor(oldHoverObj, newHoverObj);
@@ -5931,14 +5925,14 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // This optimization is necessary since these events can cause O(n²) capturing event-handler checks.
     bool hasCapturingMouseEnterListener = false;
     bool hasCapturingMouseLeaveListener = false;
-    if (event && newHoverNode != oldHoverNode.get()) {
-        for (Node* curr = newHoverNode; curr; curr = curr->parentOrShadowHostNode()) {
+    if (event && newHoveredElement != oldHoveredElement.get()) {
+        for (Node* curr = newHoveredElement; curr; curr = curr->parentOrShadowHostNode()) {
             if (curr->hasCapturingEventListeners(eventNames().mouseenterEvent)) {
                 hasCapturingMouseEnterListener = true;
                 break;
             }
         }
-        for (Node* curr = oldHoverNode.get(); curr; curr = curr->parentOrShadowHostNode()) {
+        for (Node* curr = oldHoveredElement.get(); curr; curr = curr->parentOrShadowHostNode()) {
             if (curr->hasCapturingEventListeners(eventNames().mouseleaveEvent)) {
                 hasCapturingMouseLeaveListener = true;
                 break;
@@ -5955,8 +5949,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 nodesToRemoveFromChain.append(curr->node());
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
-        if (oldHoverNode && oldHoverNode->isFrameOwnerElement()) {
-            if (Document* contentDocument = toFrameOwnerElement(oldHoverNode.get())->contentDocument())
+        if (oldHoveredElement && oldHoveredElement->isFrameOwnerElement()) {
+            if (Document* contentDocument = toFrameOwnerElement(oldHoveredElement.get())->contentDocument())
                 contentDocument->updateHoverActiveState(request, 0);
         }
     }
@@ -5974,7 +5968,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         if (nodesToRemoveFromChain[i]->isElementNode())
             toElement(nodesToRemoveFromChain[i].get())->setHovered(false);
         if (event && (hasCapturingMouseLeaveListener || nodesToRemoveFromChain[i]->hasEventListeners(eventNames().mouseleaveEvent)))
-            nodesToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoverNode);
+            nodesToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoveredElement);
     }
 
     bool sawCommonAncestor = false;
@@ -5989,7 +5983,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             if (nodesToAddToChain[i]->isElementNode())
                 toElement(nodesToAddToChain[i].get())->setHovered(true);
             if (event && (hasCapturingMouseEnterListener || nodesToAddToChain[i]->hasEventListeners(eventNames().mouseenterEvent)))
-                nodesToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoverNode.get());
+                nodesToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoveredElement.get());
         }
     }
 

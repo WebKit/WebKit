@@ -680,15 +680,12 @@ public:
     bool ignoreAutofocus() const { return m_ignoreAutofocus; };
     void setIgnoreAutofocus(bool shouldIgnore = true) { m_ignoreAutofocus = shouldIgnore; };
 
-    void setHoverNode(PassRefPtr<Node>);
-    Node* hoverNode() const { return m_hoverNode.get(); }
-
     void setActiveElement(PassRefPtr<Element>);
     Element* activeElement() const { return m_activeElement.get(); }
 
     void focusedNodeRemoved();
     void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
-    void hoveredNodeDetached(Node*);
+    void hoveredElementDidDetach(Element*);
     void elementInActiveChainDidDetach(Element*);
 
     void updateHoverActiveState(const HitTestRequest&, Element*, const PlatformMouseEvent* = 0);
@@ -1349,7 +1346,7 @@ private:
     Color m_textColor;
 
     RefPtr<Node> m_focusedNode;
-    RefPtr<Node> m_hoverNode;
+    RefPtr<Element> m_hoveredElement;
     RefPtr<Element> m_activeElement;
     RefPtr<Element> m_documentElement;
     UserActionElementSet m_userActionElements;
