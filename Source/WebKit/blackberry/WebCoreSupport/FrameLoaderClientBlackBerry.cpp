@@ -289,10 +289,8 @@ void FrameLoaderClientBlackBerry::committedLoad(DocumentLoader* loader, const ch
     // Thereafter, all data will be re-directed to the PluginView; i.e., no additional data will go
     // to receivedData.
 
-    if (!m_pluginView) {
-        const String& textEncoding = loader->response().textEncodingName();
-        receivedData(data, length, textEncoding);
-    }
+    if (!m_pluginView)
+        receivedData(loader, data, length);
 
     if (m_pluginView) {
         if (!m_hasSentResponseToPlugin) {
@@ -347,7 +345,7 @@ void FrameLoaderClientBlackBerry::redirectDataToPlugin(Widget* pluginWidget)
         m_hasSentResponseToPlugin = false;
 }
 
-void FrameLoaderClientBlackBerry::receivedData(const char* data, int length, const String& textEncoding)
+void FrameLoaderClientBlackBerry::receivedData(DocumentLoader* loader, const char* data, int length)
 {
     if (!m_frame)
         return;
@@ -359,13 +357,8 @@ void FrameLoaderClientBlackBerry::receivedData(const char* data, int length, con
         return;
     }
 
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    String encoding = m_frame->loader()->documentLoader()->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = textEncoding;
-    m_frame->loader()->documentLoader()->writer()->setEncoding(encoding, userChosen);
-    m_frame->loader()->documentLoader()->writer()->addData(data, length);
+    // The encoder now checks the override encoding and sets everything on our behalf.
+    loader->commitData(data, length);
 }
 
 void FrameLoaderClientBlackBerry::finishedLoading(DocumentLoader*)

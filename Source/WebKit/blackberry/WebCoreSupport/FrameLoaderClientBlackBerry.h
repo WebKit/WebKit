@@ -181,7 +181,7 @@ public:
     void suppressChildFrameCreation() { m_childFrameCreationSuppressed = true; }
 
 private:
-    void receivedData(const char*, int, const String&);
+    void receivedData(DocumentLoader*, const char*, int, const String&);
     void didFinishOrFailLoading(const ResourceError&);
     bool isMainFrame() const;
 

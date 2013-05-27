@@ -1,5 +1,23 @@
 2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] Remove encoding parameter from FrameLoaderClientBlackBerry::receivedData()
+        https://bugs.webkit.org/show_bug.cgi?id=116598
+
+        Reviewed by Rob Buis.
+
+        It's no longer needed since the encoder now checks the override encoding.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::committedLoad): Call
+        receivedData() passing the DocumentLoader instead of the text
+        encoding.
+        (WebCore::FrameLoaderClientBlackBerry::receivedData): Call
+        DocumentLoader::commitData() directly.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Move PagePopup implementation to WebKitSupport
         https://bugs.webkit.org/show_bug.cgi?id=116824
 
