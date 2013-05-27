@@ -1,3 +1,18 @@
+2013-05-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [CSS] -webkit-var prefix is case-sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=116829
+
+        Reviewed by Darin Adler.
+
+        Tests: Added case to fast/css/variables/case-sensitive.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isEqualToCSSCaseSensitiveIdentifier): Add variant to
+        IsEqualToCSSIdentifier that respects case-sensitivity.
+        (WebCore::CSSParser::realLex): Use the above method for CSS
+        variable declarations.
+
 2013-05-27  Zalan Bujtas  <zalan@apple.com>
 
         drop-shadow filter with overflow:hidden child misbehaves.
