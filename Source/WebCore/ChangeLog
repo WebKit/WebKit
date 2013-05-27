@@ -1,3 +1,26 @@
+2013-05-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Active DOM objects stopped twice
+        https://bugs.webkit.org/show_bug.cgi?id=116524
+
+        Reviewed by Alexey Proskuryakov.
+
+        Only iterate over all active DOM object to stop them once.
+
+        To ensure later created active DOM objects are stopped,
+        suspendActiveDOMObjectIfNeeded now also stops active DOM objects
+        if needed. This also fixes an existing bug when active DOM
+        objects were created after stopActiveDOMObjects had been called.
+
+        Two existing tests creates new active DOM objects after stopActiveDOMObjects
+        has been called:
+            fast/dom/xmlhttprequest-constructor-in-detached-document.html
+            fast/dom/Window/timer-null-script-execution-context.html
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjectIfNeeded):
+
 2013-05-27  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Remove redundant CachedRawResource::loader()

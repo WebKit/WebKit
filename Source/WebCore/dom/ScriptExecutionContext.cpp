@@ -212,6 +212,8 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSu
 
 void ScriptExecutionContext::stopActiveDOMObjects()
 {
+    if (m_activeDOMObjectsAreStopped)
+        return;
     m_activeDOMObjectsAreStopped = true;
     // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
@@ -233,6 +235,8 @@ void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject* obj
     // Ensure all ActiveDOMObjects are suspended also newly created ones.
     if (m_activeDOMObjectsAreSuspended)
         object->suspend(m_reasonForSuspendingActiveDOMObjects);
+    if (m_activeDOMObjectsAreStopped)
+        object->stop();
 }
 
 void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject* object)
