@@ -21,6 +21,7 @@
 #define WebSoupRequestManagerClient_h
 
 #include "APIClient.h"
+#include "WKAPICast.h"
 #include "WKSoupRequestManager.h"
 
 namespace WebKit {

@@ -26,7 +26,6 @@
 #ifndef WKSoupRequestManager_h
 #define WKSoupRequestManager_h
 
-#include "WKAPICast.h"
 #include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
