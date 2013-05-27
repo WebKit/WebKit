@@ -1,5 +1,11 @@
 2013-05-27  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed build fix take 2.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+
+2013-05-27  Tim Horton  <timothy_horton@apple.com>
+
         Unreviewed build fix.
 
         * WebProcess/Plugins/PDF/PDFPlugin.mm:
